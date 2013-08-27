@@ -1,12 +1,19 @@
 scoop-extras
 ============
 
-"Extras" bucket for [Scoop](http://scoop.sh).
+The "extras" bucket for [Scoop](http://scoop.sh), for anything that doesn't fit in the main bucket.
 
-This is for apps that don't strictly fit the mold of Scoop apps for at least one of the following reasons...
+To make it easy to install apps from this bucket, run
+    scoop bucket add extras
 
-* it's primarily a GUI program
-* it's not designed for developers/programmers
-* it's not well-known enough or widely used yet
+## Why does this exist?
 
-... but they're still good to have because they're kinda cool or fun or useful in some way.
+For an app to be acceptable for the main bucket, it should be:
+
+* open source
+* a command-line program
+* the latest stable version of the program
+* reasonably well-known and widely used
+
+The "extras" bucket has more relaxed requirements, so it's a good place to put anything that doesn't quite fit
+in the main bucket.
