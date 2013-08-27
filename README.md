@@ -1,7 +1,7 @@
 scoop-extras
 ============
 
-The "extras" bucket for [Scoop](http://scoop.sh), for anything that doesn't fit in the main bucket.
+The "extras" bucket for [Scoop](http://scoop.sh), for anything that doesn't fit in the [main bucket](https://github.com/lukesampson/scoop/bucket).
 
 To make it easy to install apps from this bucket, run
     scoop bucket add extras
