@@ -3,10 +3,18 @@
   "homepage": "https://github.com/nvie/gitflow",
   "url": "https://raw.githubusercontent.com/nvie/gitflow/develop/contrib/gitflow-installer.sh",
   "post_install": "
-    mkdir \"$dir\\bin\" | Out-Null
     $env:INSTALL_PREFIX=\"$dir\\bin\"
     $env:REPO_NAME=\"$dir\\repo\"
-    iex \"sh $dir\\gitflow-installer.sh\" | Out-Null
+    $env:REPO_HOME=\"https://github.com/nvie/gitflow\"
+
+    iex \"
+      busybox mkdir -p $dir\\bin;
+      git clone $env:REPO_HOME --recursive $env:REPO_NAME; 
+      sh $dir\\gitflow-installer.sh;
+      cp $env:REPO_NAME\\shFlags\\src\\shflags $dir\\bin\\gitflow-shFlags;
+    \" | Out-Null
+
+    Remove-Item Env:/REPO_HOME
     Remove-Item Env:/REPO_NAME
     Remove-Item Env:/INSTALL_PREFIX
   ",
