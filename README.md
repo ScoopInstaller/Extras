@@ -15,5 +15,4 @@ For an app to be acceptable for the main bucket, it should be:
 * the latest stable version of the program
 * reasonably well-known and widely used
 
-The "extras" bucket has more relaxed requirements, so it's a good place to put anything that doesn't quite fit
-in the main bucket.
+The "extras" bucket has more relaxed requirements, so it's a good place to put anything that doesn't quite fit in the main bucket.
