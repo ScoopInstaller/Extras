@@ -13,6 +13,6 @@ if($unpack.ExitCode -eq 0)
     $install = Start-Process msiexec -Wait -ea stop -PassThru -arg "/a $dir\$sourcetreeIns.msi /qb TARGETDIR=$dir\app"
     if($install.ExitCode -ne 0)
     {
-        Write-Host "Installer failed."
+        Write-Error "Installer failed."
     }
 }
