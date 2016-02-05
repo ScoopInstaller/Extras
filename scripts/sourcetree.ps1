@@ -7,7 +7,7 @@ $unpack = Start-Process "$dir\$sourcetreeIns.exe" -Wait -ea Stop -PassThru -arg 
 if($unpack.ExitCode -eq 0)
 {
     mkdir $dir\app
-    $install = Start-Process msiexec -Wait -ea stop -PassThru -arg "/a $sourcetreeIns.msi /qb TARGETDIR=$dir\app"
+    $install = Start-Process msiexec -Wait -ea stop -PassThru -arg "/a $dir\$sourcetreeIns.msi /qb TARGETDIR=$dir\app"
     if($install.ExitCode -ne 0)
     {
         Write-Host "Installer failed."
