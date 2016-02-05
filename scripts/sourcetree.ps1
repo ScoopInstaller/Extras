@@ -1,4 +1,10 @@
-param($dir, $installer)
+param($dir, $fname, $installer, $inst)
 
-$installer.exe /extract
-msiexec /a $installer2.msi /qb TARGETDIR="$dir"
+echo $fname
+echo $installer
+$unpack = Start-Process ".\$inst.exe" -Wait -ea Stop -PassThru -arg "/extract"
+if($unpack.ExitCode -eq 0)
+{
+    mkdir "$pwd\app"
+    iex "msiexec /a $inst.msi /qb TARGETDIR=$pwd\app"
+}
