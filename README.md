@@ -10,9 +10,8 @@ To make it easy to install apps from this bucket, run
 
 For an app to be acceptable for the main bucket, it should be:
 
-* open source
-* a command-line program
+* a reasonably well-known and widely used developer tool
 * the latest stable version of the program
-* reasonably well-known and widely used
+* a fairly standard install (e.g. uses a version-specific download URL, no elaborate pre/post install scripts)
 
 The "extras" bucket has more relaxed requirements, so it's a good place to put anything that doesn't quite fit in the main bucket.
