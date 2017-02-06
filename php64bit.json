@@ -1,17 +1,42 @@
 {
-	"homepage": "http://windows.php.net",
-	"version": "5.6.12",
-	"license": "http://www.php.net/license/",
-	"architecture": {
-		"64bit": {
-			"url": "http://windows.php.net/downloads/releases/php-5.6.12-Win32-VC11-x64.zip",
-			"hash": "sha1:99e624272a0bee3b9c61013db2f924d5ddbd6c7e"
-		}
-	},
-	"bin": "php.exe",
-	"post_install": "cp \"$dir\\php.ini-production\" \"$dir\\php.ini\"",
-	"checkver": {
-		"url": "http://windows.php.net/download/",
-		"re": "<h3 id=\"php-5.6\".*?>.*?\\(([0-9\\.]+)\\)</h3>"
-	}
+    "homepage": "http://windows.php.net",
+    "version": "5.6.30",
+    "license": "https://www.php.net/license/",
+    "architecture": {
+        "64bit": {
+            "url": "http://windows.php.net/downloads/releases/php-5.6.30-Win32-VC11-x64.zip",
+            "hash": "sha1:ae0b41a4e2e3eda219ff44c16b9e7baa6d7fc9bc"
+        }
+    },
+    "bin": [
+        "php.exe",
+        "php-cgi.exe"
+    ],
+    "env_set": {
+        "PHP_INI_SCAN_DIR": "$dir\\..\\conf"
+    },
+    "post_install": "
+#Copy PHP configuration file to expected location
+cp \"$dir\\php.ini-production\" \"$dir\\php.ini\"
+
+#Enable extensions to be found in installation-relative folder (the default is to search C:/php)
+(gc \"$dir\\php.ini\") | % { $_ -replace '; extension_dir = \"ext\"', 'extension_dir = \"ext\"' } | sc \"$dir\\php.ini\"
+",
+    "checkver": {
+        "url": "http://windows.php.net/download/",
+        "re": "<h3 id=\"php-5.6\".*?>.*?\\(([0-9\\.]+)\\)</h3>"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "http://windows.php.net/downloads/releases/php-$version-Win32-VC11-x64.zip"
+            }
+        },
+        "hash": {
+            "mode": "extract",
+            "type": "sha1",
+            "url": "http://windows.php.net/downloads/releases/sha1sum.txt",
+            "find": "([a-z0-9]{40})\\s+(?:$basename)"
+        }
+    }
 }
