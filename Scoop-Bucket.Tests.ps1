@@ -1,29 +1,42 @@
+. "$env:scoop_home\test\Scoop-TestLib.ps1"
+. "$env:scoop_home\lib\core.ps1"
 . "$env:scoop_home\lib\manifest.ps1"
 
 describe "manifest-validation" {
-    $bucketdir = "$psscriptroot"
-    $manifest_files = gci $bucketdir *.json
+    beforeall {
+        $working_dir = setup_working "manifest"
+        $schema = "$env:scoop_home\schema.json"
+        Add-Type -Path "$env:scoop_home\supporting\validator\Newtonsoft.Json.dll"
+        Add-Type -Path "$env:scoop_home\supporting\validator\Newtonsoft.Json.Schema.dll"
+        Add-Type -Path "$env:scoop_home\supporting\validator\Scoop.Validator.dll"
+    }
 
-    $manifest_files | % {
-        it "test validity of $_" {
-            $manifest = parse_json $_.fullname
+    it "Scoop.Validator is available" {
+        ([System.Management.Automation.PSTypeName]'Scoop.Validator').Type | should be 'Scoop.Validator'
+    }
 
-            $url = arch_specific "url" $manifest "32bit"
-            $url | should not match "\$"
-            $url64 = arch_specific "url" $manifest "64bit"
-            $url64 | should not match "\$"
-            if(!$url) {
-                $url = $url64
+    context "manifest validates against the schema" {
+        beforeall {
+            $bucketdir = "$psscriptroot"
+            $manifest_files = gci $bucketdir *.json
+            $validator = new-object Scoop.Validator($schema, $true)
+        }
+        $manifest_files | % {
+            it "$_" {
+                $validator.Validate($_.fullname)
+                if ($validator.Errors.Count -gt 0) {
+                    write-host -f yellow $validator.ErrorsAsString
+                }
+                $validator.Errors.Count | should be 0
+
+                $manifest = parse_json $_.fullname
+                $url = arch_specific "url" $manifest "32bit"
+                $url64 = arch_specific "url" $manifest "64bit"
+                if(!$url) {
+                    $url = $url64
+                }
+                $url | should not benullorempty
             }
-            $url | should not benullorempty
-
-            $extract_dir32 = arch_specific "extract_dir" $manifest "32bit"
-            $extract_dir32 | should not match "\$"
-            $extract_dir64 = arch_specific "extract_dir" $manifest "64bit"
-            $extract_dir64 | should not match "\$"
-
-            $manifest | should not benullorempty
-            $manifest.version | should not benullorempty
         }
     }
 }
