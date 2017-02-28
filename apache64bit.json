@@ -1,30 +1,46 @@
 {
-	"homepage": "http://www.apachelounge.com",
-	"version": "2.4.18",
-	"license": "Apache 2.0",
-	"architecture": {
-		"64bit": {
-			"url": "https://www.apachelounge.com/download/VC14/binaries/httpd-2.4.18-win64-VC14.zip",
-			"hash": "DC71519467DBB49229FEE7C789118B809AC2FFC0ED5F8BADA6C956DF3A4AF337"
-		}
-	},
-	"extract_dir": "Apache24",
-	"bin": [
-		"bin\\ab.exe",
-		"bin\\abs.exe",
-		"bin\\htcacheclean.exe",
-		"bin\\htdbm.exe",
-		"bin\\htdigest.exe",
-		"bin\\htpasswd.exe",
-		"bin\\httpd.exe",
-		"bin\\httxt2dbm.exe",
-		"bin\\logresolve.exe",
-		"bin\\rotatelogs.exe"
-	],
-	"post_install": "
+    "homepage": "https://www.apachelounge.com",
+    "version": "2.4.25",
+    "license": "Apache 2.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://www.apachelounge.com/download/VC14/binaries/httpd-2.4.25-win64-VC14.zip",
+            "hash": "E03A43B53F00320DE27D9B7046F5E317D06268795592EF32353CE857D7AA4D76"
+        }
+    },
+    "extract_dir": "Apache24",
+    "bin": [
+        "bin\\ab.exe",
+        "bin\\abs.exe",
+        "bin\\htcacheclean.exe",
+        "bin\\htdbm.exe",
+        "bin\\htdigest.exe",
+        "bin\\htpasswd.exe",
+        "bin\\httpd.exe",
+        "bin\\httxt2dbm.exe",
+        "bin\\logresolve.exe",
+        "bin\\rotatelogs.exe"
+    ],
+    "post_install": "
 # set directory in httpd.conf
 $conf = \"$dir/conf/httpd.conf\"
 $root=(scoop which httpd | split-path -res -par | split-path -par) -replace '\\\\', '/';
 (gc $conf) | % { $_ -replace 'c:/Apache24', \"$root\" } | sc $conf
-"
+",
+    "checkver": {
+        "url": "https://www.apachelounge.com/download/",
+        "re": "Apache ([\\d.]+) Win32"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://www.apachelounge.com/download/VC14/binaries/httpd-$version-win64-VC14.zip"
+            }
+        },
+        "hash": {
+            "mode": "extract",
+            "url": "$url.txt",
+            "find": "SHA256-Checksum for: (?:$basename):\\s+([a-zA-Z0-9]{64})"
+        }
+    }
 }
