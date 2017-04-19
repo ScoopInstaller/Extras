@@ -1,6 +1,6 @@
 {
     "homepage": "http://www.oracle.com/technetwork/java/javase/overview/index.html",
-    "version": "1.8.0-u131",
+    "version": "8u131-b11",
     "architecture": {
         "64bit": {
             "url": "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jre-8u131-windows-x64.tar.gz",
@@ -18,5 +18,28 @@
     "env_add_path": "bin",
     "env_set": {
         "JRE_HOME": "$dir"
+    },
+    "checkver": {
+        "url": "http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html",
+        "re": "(?<version>[ub\\-\\d]+)/(?<random>[a-fA-F0-9]{32})/jre-(?<short>(?<release>[\\d]+)u(?<shorter>[\\d]+))-windows-x64.tar.gz"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "http://download.oracle.com/otn-pub/java/jdk/$version/$matchRandom/jre-$matchShort-windows-x64.tar.gz",
+                "hash": {
+                    "url": "http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html",
+                    "find": "jre-(?:[u\\d]+)-windows-x64.tar.gz.*([a-fA-F0-9]{64})\"};"
+                }
+            },
+            "32bit": {
+                "url": "http://download.oracle.com/otn-pub/java/jdk/$version/$matchRandom/jre-$matchShort-windows-i586.tar.gz",
+                "hash": {
+                    "url": "http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html",
+                    "find": "jre-(?:[u\\d]+)-windows-i586.tar.gz.*([a-fA-F0-9]{64})\"};"
+                }
+            }
+        },
+        "extract_dir": "jre1.$matchRelease.0_$matchShorter"
     }
 }

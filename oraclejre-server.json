@@ -1,6 +1,6 @@
 {
     "homepage": "http://www.oracle.com/technetwork/java/javase/overview/index.html",
-    "version": "1.8.0-u131",
+    "version": "8u131-b11",
     "architecture": {
         "64bit": {
             "url": "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/server-jre-8u131-windows-x64.tar.gz",
@@ -15,5 +15,21 @@
     "env_set": {
         "JAVA_HOME": "$dir",
         "JRE_HOME": "$dir\\jre"
+    },
+    "checkver": {
+        "url": "http://www.oracle.com/technetwork/java/javase/downloads/server-jre8-downloads-2133154.html",
+        "re": "(?<version>[ub\\-\\d]+)/(?<random>[a-fA-F0-9]{32})/server-jre-(?<short>(?<release>[\\d]+)u(?<shorter>[\\d]+))-windows-x64.tar.gz"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "http://download.oracle.com/otn-pub/java/jdk/$version/$matchRandom/server-jre-$matchShort-windows-x64.tar.gz",
+                "hash": {
+                    "url": "http://www.oracle.com/technetwork/java/javase/downloads/server-jre8-downloads-2133154.html",
+                    "find": "server-jre-(?:[u\\d]+)-windows-x64.tar.gz.*([a-fA-F0-9]{64})\"};"
+                }
+            }
+        },
+        "extract_dir": "jdk1.$matchRelease.0_$matchShorter"
     }
 }
