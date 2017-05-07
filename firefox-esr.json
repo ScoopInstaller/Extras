@@ -1,0 +1,52 @@
+{
+    "homepage": "https://www.mozilla.org/en-US/firefox/organizations/",
+    "version": "52.1.1",
+    "architecture": {
+        "64bit": {
+            "url": "https://download.mozilla.org/?product=firefox-52.1.1esr-SSL&os=win64&lang=en-US#/firefox-setup.exe",
+            "hash": "2071d16040c0da42ddc3109be311810d527ab96385d0718d45ecde60b7f3d2d6"
+        },
+        "32bit": {
+            "url": "https://download.mozilla.org/?product=firefox-52.1.1esr-SSL&os=win&lang=en-US#/firefox-setup.exe",
+            "hash": "1b48d5b7dcc477ab3470236fc7c2b5b0967cf20083fd3abe4d8bb602bf858c67"
+        }
+    },
+    "bin": "firefox.exe",
+    "shortcuts": [
+        [
+            "firefox.exe",
+            "Mozilla Firefox"
+        ]
+    ],
+    "pre_install": "echo \"[Install]`nInstallDirectoryPath=$dir\" | sc \"$dir\\install.ini\"",
+    "installer": {
+        "file": "firefox-setup.exe",
+        "args": "/INI=$dir\\install.ini"
+    },
+    "uninstaller": {
+        "file": "uninstall\\helper.exe",
+        "args": "/S"
+    },
+    "checkver": {
+        "url": "https://www.mozilla.org/en-US/firefox/organizations/all/",
+        "re": "firefox-([\\d.]+)esr-SSL&amp;os=win64&amp;lang=en-US"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download.mozilla.org/?product=firefox-$versionesr-SSL&os=win64&lang=en-US#/firefox-setup.exe",
+                "hash": {
+                    "find": "([a-fA-F0-9]{64})\\s+(?:win64/en-US/Firefox Setup ([\\d.]+)esr.exe)",
+                    "url": "https://download-installer.cdn.mozilla.net/pub/firefox/releases/$versionesr/SHA256SUMS"
+                }
+            },
+            "32bit": {
+                "url": "https://download.mozilla.org/?product=firefox-$versionesr-SSL&os=win&lang=en-US#/firefox-setup.exe",
+                "hash": {
+                    "find": "([a-fA-F0-9]{64})\\s+(?:win32/en-US/Firefox Setup ([\\d.]+)esr.exe)",
+                    "url": "https://download-installer.cdn.mozilla.net/pub/firefox/releases/$versionesr/SHA256SUMS"
+                }
+            }
+        }
+    }
+}
