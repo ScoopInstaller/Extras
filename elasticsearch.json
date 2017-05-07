@@ -32,9 +32,9 @@
     ],
     "post_install": "
     # we have to overwrite SCRIPT_DIR because elasticsearch.in.bat doesn't care if SCRIPT_DIR or ES_HOME are already set ...
-    (gc $original_dir\\bin\\elasticsearch.in.bat) | % { $_ -replace 'set SCRIPT_DIR=%~dp0', \"set SCRIPT_DIR=$original_dir\" } | sc $original_dir\\bin\\elasticsearch.in.bat
+    (gc \"$original_dir\\bin\\elasticsearch.in.bat\") | % { $_ -replace 'set SCRIPT_DIR=%~dp0', \"set SCRIPT_DIR=$original_dir\" } | sc \"$original_dir\\bin\\elasticsearch.in.bat\"
     # use persistent data/logs directory
-    (gc \"$dir\\config\\elasticsearch.yml\") | % { $_ -replace '#path.data: /path/to/data', \"path.data: $persist_dir\\data\" } | % { $_ -replace '#path.logs: /path/to/logs', \"path.logs: $persist_dir\\logs\" } | sc '$dir\\config\\elasticsearch.yml'
+    (gc \"$dir\\config\\elasticsearch.yml\") | % { $_ -replace '#path.data: /path/to/data', \"path.data: $persist_dir\\data\" } | % { $_ -replace '#path.logs: /path/to/logs', \"path.logs: $persist_dir\\logs\" } | sc \"$dir\\config\\elasticsearch.yml\"
     ",
     "suggest": {
         "JDK": [
