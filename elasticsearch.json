@@ -1,11 +1,56 @@
 {
-	"homepage": "https://www.elastic.co/products/elasticsearch",
-	"version": "1.7.4",
-	"suggest": {
-        "JDK": [ "extras/oraclejdk", "openjdk" ]
+    "homepage": "https://www.elastic.co/products/elasticsearch",
+    "version": "5.4.0",
+    "url": "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.4.0.zip",
+    "hash": "sha1:6ca6f8157fe2bb6b9d07ac6c77a96a5ff366e420",
+    "extract_dir": "elasticsearch-5.4.0",
+    "bin": [
+        [
+            "bin\\elasticsearch.bat",
+            "elasticsearch"
+        ],
+        [
+            "bin\\elasticsearch-keystore.bat",
+            "elasticsearch-keystore"
+        ],
+        [
+            "bin\\elasticsearch-plugin.bat",
+            "elasticsearch-plugin"
+        ],
+        [
+            "bin\\elasticsearch-service.bat",
+            "elasticsearch-service"
+        ],
+        [
+            "bin\\elasticsearch-translog.bat",
+            "elasticsearch-translog"
+        ]
+    ],
+    "persist": [
+        "config",
+        "plugins"
+    ],
+    "post_install": "
+    # we have to overwrite SCRIPT_DIR because elasticsearch.in.bat doesn't care if SCRIPT_DIR or ES_HOME are already set ...
+    (gc $original_dir\\bin\\elasticsearch.in.bat) | % { $_ -replace 'set SCRIPT_DIR=%~dp0', \"set SCRIPT_DIR=$original_dir\" } | sc $original_dir\\bin\\elasticsearch.in.bat
+    # use persistent data/logs directory
+    (gc \"$dir\\config\\elasticsearch.yml\") | % { $_ -replace '#path.data: /path/to/data', \"path.data: $persist_dir\\data\" } | % { $_ -replace '#path.logs: /path/to/logs', \"path.logs: $persist_dir\\logs\" } | sc '$dir\\config\\elasticsearch.yml'
+    ",
+    "suggest": {
+        "JDK": [
+            "extras/oraclejdk",
+            "openjdk"
+        ]
     },
-	"url": "https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.4.zip",
-	"hash": "sha1:4bb5f9b2a5c5665ff6d89336407ab6b5e70fa14e",
-	"extract_dir": "elasticsearch-1.7.4",
-	"bin": [["bin\\elasticsearch.bat"],["bin\\service.bat", "elssrv", ""], ["bin\\plugin.bat", "elsplugin"]]
+    "checkver": {
+        "url": "https://www.elastic.co/downloads/past-releases",
+        "re": "elasticsearch-(5.[\\d.]+).zip.sha1"
+    },
+    "autoupdate": {
+        "url": "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-$version.zip",
+        "extract_dir": "elasticsearch-$version",
+        "hash": {
+            "url": "$url.sha1"
+        }
+    }
 }
