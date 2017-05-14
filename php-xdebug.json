@@ -1,0 +1,37 @@
+{
+    "homepage": "https://xdebug.org/",
+    "version": "2.5.3-7.1",
+    "license": "https://xdebug.org/license.php",
+    "architecture": {
+        "64bit": {
+            "url": "https://xdebug.org/files/php_xdebug-2.5.3-7.1-vc14-x86_64.dll#/php_xdebug.dll",
+            "hash": "51daf9c0ef4f6a4271e6fa65d4f870d8fdb9e7e078aa6f064c423cce1e8d27dd"
+        },
+        "32bit": {
+            "url": "https://xdebug.org/files/php_xdebug-2.5.3-7.1-vc14.dll#/php_xdebug.dll",
+            "hash": "d57abe0b7800697f149341eef56f1ac7291aaf68ae3e53418d423c2776f1d352"
+        }
+    },
+    "post_install": "
+    $phpconfd = \"$persist_dir\\..\\php\\cli\\conf.d\"
+    if((test-path $phpconfd)) {
+        echo \"Enabling extension $(Convert-Path $phpconfd)\\xdebug.ini\"
+        echo \"extension=$dir\\php_xdebug.dll\" | sc \"$phpconfd\\xdebug.ini\"
+    } else { write-host -f yellow \"PHP was not installed through scoop, you have to activate php_xdebug.dll manually!\" }",
+    "notes": "Xdebug is already enabled if PHP was installed through scoop!
+Otherwise add '$dir\\php_xdebug.dll' to your php.ini",
+    "checkver": {
+        "url": "https://xdebug.org/download.php",
+        "re": "php_xdebug-([\\d.]+-7.1)-vc14-x86_64.dll"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://xdebug.org/files/php_xdebug-$version-vc14-x86_64.dll#/php_xdebug.dll"
+            },
+            "32bit": {
+                "url": "https://xdebug.org/files/php_xdebug-$version-vc14.dll#/php_xdebug.dll"
+            }
+        }
+    }
+}
