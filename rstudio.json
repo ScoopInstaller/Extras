@@ -4,9 +4,16 @@
     "homepage": "https://www.rstudio.com/",
     "url": "https://download1.rstudio.org/RStudio-1.0.143.zip",
     "hash": "06e3c1bdb63fb7c3c0054b5ef0c2f3947707075ed795a194092bf8eb5200ccb3",
-    "depends" : "r",
-    "bin": ["bin/rstudio.exe"],
-    "shortcuts": [["bin/rstudio.exe", "R Studio"]],
+    "depends": "r",
+    "bin": [
+        "bin/rstudio.exe"
+    ],
+    "shortcuts": [
+        [
+            "bin/rstudio.exe",
+            "R Studio"
+        ]
+    ],
     "post_install": "
         $rstudio=$env:APPDATA+'/RStudio'
         if (-not (Test-Path $rstudio)) {
@@ -18,5 +25,12 @@
             [IO.File]::WriteAllLines($rstudioini, ('[General]', $rbin), $enc)
             Write-Host Configuration written to $rstudioini
         }
-    "
+    ",
+    "checkver": {
+        "url": "https://www.rstudio.com/products/rstudio/download/",
+        "re": "RStudio-([\\d.]+).zip"
+    },
+    "autoupdate": {
+        "url": "https://download1.rstudio.org/RStudio-$version.zip"
+    }
 }
