@@ -1,0 +1,22 @@
+{
+    "version": "1.0.143",
+    "license": "AGPL",
+    "homepage": "https://www.rstudio.com/",
+    "url": "https://download1.rstudio.org/RStudio-1.0.143.zip",
+    "hash": "06e3c1bdb63fb7c3c0054b5ef0c2f3947707075ed795a194092bf8eb5200ccb3",
+    "depends" : "r",
+    "bin": ["bin/rstudio.exe"],
+    "shortcuts": [["bin/rstudio.exe", "R Studio"]],
+    "post_install": "
+        $rstudio=$env:APPDATA+'/RStudio'
+        if (-not (Test-Path $rstudio)) {
+            mkdir $rstudio | Out-Null
+            $rbin = 'RBinDir=' + $scoopdir.Replace('\\','/') + '/apps/r/current/bin/'
+            if($architecture.Equals('64bit')) { $rbin+='x64'} else { $rbin+='i386'}
+            $rstudioini = $rstudio+'/desktop.ini'
+            $enc = New-Object Text.UTF8Encoding $False
+            [IO.File]::WriteAllLines($rstudioini, ('[General]', $rbin), $enc)
+            Write-Host Configuration written to $rstudioini
+        }
+    "
+}
