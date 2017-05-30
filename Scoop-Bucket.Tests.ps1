@@ -1,6 +1,6 @@
-. "$env:scoop_home\test\Scoop-TestLib.ps1"
-. "$env:scoop_home\lib\core.ps1"
-. "$env:scoop_home\lib\manifest.ps1"
+. "$env:SCOOP_HOME\test\Scoop-TestLib.ps1"
+. "$env:SCOOP_HOME\lib\core.ps1"
+. "$env:SCOOP_HOME\lib\manifest.ps1"
 
 $repo_dir = (Get-Item $MyInvocation.MyCommand.Path).directory.FullName
 
@@ -150,10 +150,10 @@ describe 'Style constraints for non-binary project files' {
 describe "manifest-validation" {
     beforeall {
         $working_dir = setup_working "manifest"
-        $schema = "$env:scoop_home\schema.json"
-        Add-Type -Path "$env:scoop_home\supporting\validator\Newtonsoft.Json.dll"
-        Add-Type -Path "$env:scoop_home\supporting\validator\Newtonsoft.Json.Schema.dll"
-        Add-Type -Path "$env:scoop_home\supporting\validator\Scoop.Validator.dll"
+        $schema = "$env:SCOOP_HOME\schema.json"
+        Add-Type -Path "$env:SCOOP_HOME\supporting\validator\Newtonsoft.Json.dll"
+        Add-Type -Path "$env:SCOOP_HOME\supporting\validator\Newtonsoft.Json.Schema.dll"
+        Add-Type -Path "$env:SCOOP_HOME\supporting\validator\Scoop.Validator.dll"
     }
 
     it "Scoop.Validator is available" {
