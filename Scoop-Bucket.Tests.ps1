@@ -7,8 +7,10 @@ $repo_dir = (Get-Item $MyInvocation.MyCommand.Path).directory.FullName
 $repo_files = @(Get-ChildItem $repo_dir -file -recurse)
 
 $project_file_exclusions = @(
-    $([regex]::Escape($repo_dir)+'\\.git\\.*$'),
-    '.sublime-workspace$'
+    $([regex]::Escape($repo_dir)+'(\\|/).git(\\|/).*$'),
+    '.sublime-workspace$',
+    '.DS_Store$',
+    'supporting(\\|/)validator(\\|/)packages(\\|/)*'
 )
 
 describe 'Style constraints for non-binary project files' {
@@ -150,7 +152,7 @@ describe 'Style constraints for non-binary project files' {
 describe "manifest-validation" {
     beforeall {
         $working_dir = setup_working "manifest"
-        $schema = "$env:SCOOP_HOME\schema.json"
+        $schema = "$env:SCOOP_HOME/schema.json"
         Add-Type -Path "$env:SCOOP_HOME\supporting\validator\Newtonsoft.Json.dll"
         Add-Type -Path "$env:SCOOP_HOME\supporting\validator\Newtonsoft.Json.Schema.dll"
         Add-Type -Path "$env:SCOOP_HOME\supporting\validator\Scoop.Validator.dll"
