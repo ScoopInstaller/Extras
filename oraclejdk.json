@@ -3,28 +3,36 @@
     "version": "8u131-b11",
     "architecture": {
         "64bit": {
-            "url": "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-windows-x64.exe",
+            "url": "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-windows-x64.exe#/dl.exe",
             "hash": "8226ff89769ec3bd212305dbc83a678ad42560e65a430819917bb7965a2b89bb"
         },
         "32bit": {
-            "url": "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-windows-i586.exe",
+            "url": "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-windows-i586.exe#/dl.exe",
             "hash": "df39112240957b1ddb2469f0cfa1a221e4a7582f403c1fb98ca52b6c677427ba"
         }
     },
     "cookie": {
         "oraclelicense": "accept-securebackup-cookie"
     },
+    "pre_install": "
+$scoopdir = $env:SCOOP, \"$env:USERPROFILE\\scoop\" | select -first 1
+$oldscoopdir = \"$env:LOCALAPPDATA\\scoop\"
+if((test-path $oldscoopdir) -and !$env:SCOOP) {
+    $scoopdir = $oldscoopdir
+}
+cp \"$scoopdir\\buckets\\extras\\scripts\\oraclejdk8.ps1\" \"$dir\"
+    ",
     "installer": {
+        "file": "oraclejdk8.ps1",
         "args": [
-            "/s",
-            "ADDLOCAL=\"ToolsFeature,SourceFeature\"",
-            "INSTALLDIR=$dir"
+            "$dir"
         ],
         "keep": "true"
     },
     "env_add_path": "bin",
     "env_set": {
-        "JAVA_HOME": "$dir"
+        "JAVA_HOME": "$dir",
+        "JRE_HOME": "$dir\\jre"
     },
     "checkver": {
         "url": "http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html",
@@ -33,10 +41,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "http://download.oracle.com/otn-pub/java/jdk/$version/$matchRandom/jdk-$matchShort-windows-x64.exe"
+                "url": "http://download.oracle.com/otn-pub/java/jdk/$version/$matchRandom/jdk-$matchShort-windows-x64.exe#/dl.7z"
             },
             "32bit": {
-                "url": "http://download.oracle.com/otn-pub/java/jdk/$version/$matchRandom/jdk-$matchShort-windows-i586.exe"
+                "url": "http://download.oracle.com/otn-pub/java/jdk/$version/$matchRandom/jdk-$matchShort-windows-i586.exe#/dl.7z"
             }
         },
         "hash": {
