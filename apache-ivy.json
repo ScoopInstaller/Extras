@@ -1,0 +1,40 @@
+{
+    "version":  "2.4.0",
+    "license": "Apache 2.0",
+    "url":  "http://apache.mirrors.hoobly.com//ant/ivy/2.4.0/apache-ivy-2.4.0-bin.zip",
+    "homepage":  "http://ant.apache.org/ivy/index.html",
+    "hash":  "9301045658d98cdd4e3476a8fb5e2d480513cdef63ce3e21b2169a1f5f716328",
+    "depends": "ant",
+    "extract_dir": "apache-ivy-2.4.0",
+    "autoupdate": {
+        "url": "http://apache.mirrors.hoobly.com//ant/ivy/$version/apache-ivy-$version-bin.zip",
+        "extract_dir": "apache-ivy-$version"
+    },
+    "pre_install": "
+        # Create the installation script
+        echo '$antLibPath = \"$env:USERPROFILE\\scoop\\apps\\ant\\current\\lib\"' | out-file $dir\\install-apache-ivy.ps1
+        echo 'Write-Host -fore blue \"Copying ivy-$version.jar to $antLibPath\"' | out-file $dir\\install-apache-ivy.ps1 -append
+        echo 'Copy-Item \"$dir\\ivy-$version.jar\" $antLibPath' | out-file $dir\\install-apache-ivy.ps1 -append
+
+        # Create the uninstallation script
+        echo '$antLibPath = \"$env:USERPROFILE\\scoop\\apps\\ant\\current\\lib\"' | out-file $dir\\uninstall-apache-ivy.ps1
+        echo 'Write-Host -fore blue \"Removing ivy-$version.jar from $antLibPath\"' | out-file $dir\\uninstall-apache-ivy.ps1 -append
+        echo 'Remove-Item -force $antLibPath\\ivy-$version.jar' | out-file $dir\\uninstall-apache-ivy.ps1 -append
+    ",
+    "checkver": {
+        "url": "http://ant.apache.org/ivy/download.cgi",
+        "re": "Version ([\\d.]+) of Apache Ivy"
+    },
+    "suggest": {
+        "JDK": [
+            "extras/oraclejdk",
+            "openjdk"
+        ]
+    },
+    "installer": {
+        "file": "install-apache-ivy.ps1"
+    },
+    "uninstaller": {
+        "file": "uninstall-apache-ivy.ps1"
+    }
+}
