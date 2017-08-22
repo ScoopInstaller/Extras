@@ -13,17 +13,6 @@
             "url": "$url.sha"
         }
     },
-    "pre_install": "
-        # Create the installation script
-        echo '$antLibPath = \"$(appsdir $global)\\ant\\current\\lib\"' | out-file $dir\\install-apache-ivy.ps1
-        echo 'Write-Host -fore blue \"Copying ivy-$version.jar to $antLibPath\"' | out-file $dir\\install-apache-ivy.ps1 -append
-        echo 'Copy-Item \"$dir\\ivy-$version.jar\" $antLibPath' | out-file $dir\\install-apache-ivy.ps1 -append
-
-        # Create the uninstallation script
-        echo '$antLibPath = \"$(appsdir $global)\\ant\\current\\lib\"' | out-file $dir\\uninstall-apache-ivy.ps1
-        echo 'Write-Host -fore blue \"Removing ivy-$version.jar from $antLibPath\"' | out-file $dir\\uninstall-apache-ivy.ps1 -append
-        echo 'Remove-Item -force $antLibPath\\ivy-$version.jar' | out-file $dir\\uninstall-apache-ivy.ps1 -append
-    ",
     "checkver": {
         "url": "https://ant.apache.org/ivy/download.cgi",
         "re": "Version ([\\d.]+) of Apache Ivy"
@@ -35,9 +24,15 @@
         ]
     },
     "installer": {
-        "file": "install-apache-ivy.ps1"
+        "script": "
+            $antLibPath = \"$(appsdir $global)\\ant\\current\\lib\"
+            Write-Host -fore blue \"Copying ivy-$version.jar to $antLibPath\"
+            Copy-Item \"$dir\\ivy-$version.jar\" $antLibPath"
     },
     "uninstaller": {
-        "file": "uninstall-apache-ivy.ps1"
+        "script": "
+            $antLibPath = \"$(appsdir $global)\\ant\\current\\lib\"
+            Write-Host -fore blue \"Removing ivy-$version.jar from $antLibPath\"
+            Remove-Item -force $antLibPath\\ivy-$version.jar"
     }
 }
