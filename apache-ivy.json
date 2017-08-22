@@ -1,0 +1,38 @@
+{
+    "version": "2.4.0",
+    "license": "Apache 2.0",
+    "url": "https://www.apache.org/dist/ant/ivy/2.4.0/apache-ivy-2.4.0-bin.zip",
+    "homepage": "https://ant.apache.org/ivy/index.html",
+    "hash": "sha1:3cea604f019b19562c715be63f98a7f2197f2d03",
+    "depends": "ant",
+    "extract_dir": "apache-ivy-2.4.0",
+    "autoupdate": {
+        "url": "https://www.apache.org/dist/ant/ivy/$version/apache-ivy-$version-bin.zip",
+        "extract_dir": "apache-ivy-$version",
+        "hash": {
+            "url": "$url.sha"
+        }
+    },
+    "checkver": {
+        "url": "https://ant.apache.org/ivy/download.cgi",
+        "re": "Version ([\\d.]+) of Apache Ivy"
+    },
+    "suggest": {
+        "JDK": [
+            "extras/oraclejdk",
+            "openjdk"
+        ]
+    },
+    "installer": {
+        "script": "
+            $antLibPath = \"$(appsdir $global)\\ant\\current\\lib\"
+            Write-Host -fore blue \"Copying ivy-$version.jar to $antLibPath\"
+            Copy-Item \"$dir\\ivy-$version.jar\" $antLibPath"
+    },
+    "uninstaller": {
+        "script": "
+            $antLibPath = \"$(appsdir $global)\\ant\\current\\lib\"
+            Write-Host -fore blue \"Removing ivy-$version.jar from $antLibPath\"
+            Remove-Item -force $antLibPath\\ivy-$version.jar"
+    }
+}
