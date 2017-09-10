@@ -1,28 +1,38 @@
 {
     "homepage": "https://www.elastic.co/products/logstash",
-    "version": "2.3.0",
-    "depends": [
-        "nssm",
-        "openjdk"
-    ],
-    "url": [
-        "https://download.elastic.co/logstash/logstash/logstash-2.3.0.zip",
-        "https://raw.githubusercontent.com/vidarkongsli/vidars-scoop-bucket/50e4d7784c4c6369368c7a5753a03306996293ef/logstash/logstashsrv.ps1"
-    ],
-    "hash": [
-        "sha1:381d61527091c4a4f0cd04e99fae0c6a330aa88c",
-        "52cf19e2c178cbb43bfa101ae8d583447975040bd27f99ca45fae63b5ba91f05"
-    ],
+    "version": "5.5.2",
+    "url": "https://artifacts.elastic.co/downloads/logstash/logstash-5.5.2.zip",
+    "hash": "sha1:303d99236b5708093c6b29dd8b2a7064b902767c",
+    "extract_dir": "logstash-5.5.2",
     "bin": [
-        "bin\\logstash.bat",
         [
-            "bin\\plugin.bat",
-            "logstash_plugin"
+            "bin\\logstash.bat",
+            "logstash"
         ],
         [
-            "logstashsrv.ps1",
-            "logstash_service"
+            "bin\\logstash-plugin.bat",
+            "logstash-plugin"
         ]
     ],
-    "extract_dir": "logstash-2.3.0"
+    "persist": [
+        "config",
+        "data"
+    ],
+    "suggest": {
+        "JDK": [
+            "extras/oraclejdk",
+            "openjdk"
+        ]
+    },
+    "checkver": {
+        "url": "https://www.elastic.co/downloads/past-releases",
+        "re": "logstash-([\\d.]+).zip.sha1"
+    },
+    "autoupdate": {
+        "url": "https://artifacts.elastic.co/downloads/logstash/logstash-$version.zip",
+        "extract_dir": "logstash-$version",
+        "hash": {
+            "url": "$url.sha1"
+        }
+    }
 }
