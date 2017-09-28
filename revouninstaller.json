@@ -1,0 +1,28 @@
+{
+    "homepage": "https://www.revouninstaller.com/index.html",
+    "url": "https://www.revouninstaller.com/download-free-portable.php#/revo.zip",
+    "version": "2.0.3",
+    "hash": "70d7e4a367883f708449cea4031fe6afc4d91815dcab37420bbe1fef13d7d664",
+    "extract_dir": "RevoUninstaller_Portable",
+    "bin": [
+        [
+            "RevoUPort.exe",
+            "revouninstaller"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "RevoUPort.exe",
+            "RevoUninstaller"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.revouninstaller.com/revo_uninstaller_free_download.html",
+        "re": "Version:\\s+<span\\s+class=\"version\">([\\d.]+)</span>"
+    },
+    "post_install": "$regPath = 'HKCU:\\Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers';
+IF(!(Test-Path $regPath)) { New-Item -Path $registryPath | Out-Null; }
+New-ItemProperty -Path $regPath -Name \"$($dir)\\RevoUPort.exe\" -Value 'RunAsInvoker' -Force | Out-Null",
+    "notes": "A new value was defined in registry in order to avoid an UAC prompt when using RevoUninstaller. Please make sure to delete it when you have uninstalled RevoUninstaller.
+The Value is located at 'HKCU:\\Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers': $dir\\RevoUPort.exe = RunAsInvoker"
+}
