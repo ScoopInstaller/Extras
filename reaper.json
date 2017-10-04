@@ -1,0 +1,54 @@
+{
+    "version": "5.51",
+    "homepage": "https://www.reaper.fm",
+    "bin": [
+        "reaper.exe",
+        "reamote.exe"
+    ],
+    "shortcuts": [
+        [
+            "reaper.exe",
+            "Reaper"
+        ],
+        [
+            "reamote.exe",
+            "Reamote"
+        ]
+    ],
+    "installer": {
+        "script": "
+            # Copy out installation files
+            Move-Item \"$dir\\`$INSTDIR`$_8_\\*\" -Destination \"$dir\"
+
+            # Remove unused folders
+            Remove-Item \"$dir\\`$INSTDIR`$_8_\" -Recurse
+            Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse
+            Remove-Item \"$dir\\`$COMMONFILES64\" -Recurse
+        "
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://www.reaper.fm/files/5.x/reaper551_x64-install.exe#/dl.7z",
+            "hash": "3a96ab2ffbe82cd1aefcc0cf647f9e8be5a2a9b1106a3c40d8ca8262f09e3ef4"
+        },
+        "32bit": {
+            "url": "https://www.reaper.fm/files/5.x/reaper551-install.exe#/dl.7z",
+            "hash": "170c5760a490b0f822443f491c1466fc876dde5be48cb034727bc1ee3e4780fc"
+        }
+    },
+    "checkver": {
+        "url": "https://www.reaper.fm/download.php",
+        "re": "Version (\\d+\\.\\d+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://www.reaper.fm/files/$majorVersion.x/reaper$cleanVersion_x64-install.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://www.reaper.fm/files/$majorVersion.x/reaper$cleanVersion-install.exe#/dl.7z"
+            }
+        }
+    },
+    "notes": "The portable version of Reaper does not include ReWire."
+}
