@@ -1,46 +1,34 @@
 {
     "homepage": "http://www.oracle.com/technetwork/java/javase/overview/index.html",
-    "version": "8u144-b01",
+    "version": "9-181",
     "architecture": {
         "64bit": {
-            "url": "http://download.oracle.com/otn-pub/java/jdk/8u144-b01/090f390dda5b47b9b721c7dfaa008135/jdk-8u144-windows-x64.exe",
-            "hash": "be9f6e920f817757ce1913c9c3f0a5d63046c720f37a95e4a14450a179f48a18"
-        },
-        "32bit": {
-            "url": "http://download.oracle.com/otn-pub/java/jdk/8u144-b01/090f390dda5b47b9b721c7dfaa008135/jdk-8u144-windows-i586.exe",
-            "hash": "f2c6657812986aa4b992173da495cdc3620edcdc26927860d7d920958f12575c"
+            "url": "http://download.oracle.com/otn-pub/java/jdk/9+181/jdk-9_windows-x64_bin.exe#/dl.7z",
+            "hash": "d4885a5fbd2dce383c579fe4a1569b6d8b5db1574af602e37cadcac781115297"
         }
     },
     "cookie": {
         "oraclelicense": "accept-securebackup-cookie"
     },
-    "installer": {
-        "args": [
-            "/s",
-            "ADDLOCAL=\"ToolsFeature,SourceFeature\"",
-            "INSTALLDIR=$dir"
-        ],
-        "keep": "true"
-    },
+    "pre_install": "7z.exe x -o\"$dir\" \"$dir\\tools.zip\" -y | out-null",
+    "post_install": "rm \"$dir\\tools.zip\"",
     "env_add_path": "bin",
     "env_set": {
         "JAVA_HOME": "$dir"
     },
     "checkver": {
-        "url": "http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html",
-        "re": "(?<version>[ub\\-\\d]+)/(?<random>[a-fA-F0-9]{32})/jdk-(?<short>[u\\d]+)-windows"
+        "url": "http://www.oracle.com/technetwork/java/javase/downloads/jdk9-downloads-3848520.html",
+        "re": "otn-pub/java/jdk/(?<path>(?<major>[\\d.]+)\\+(?<build>[\\d]+)/jdk-(?:.*?)_windows-x64_bin.exe)",
+        "replace": "${major}-${build}"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "http://download.oracle.com/otn-pub/java/jdk/$version/$matchRandom/jdk-$matchShort-windows-x64.exe"
-            },
-            "32bit": {
-                "url": "http://download.oracle.com/otn-pub/java/jdk/$version/$matchRandom/jdk-$matchShort-windows-i586.exe"
+                "url": "http://download.oracle.com/otn-pub/java/jdk/$matchPath#/dl.7z"
             }
         },
         "hash": {
-            "url": "http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html",
+            "url": "http://www.oracle.com/technetwork/java/javase/downloads/jdk9-downloads-3848520.html",
             "find": "$basename.*([a-fA-F0-9]{64})\"};"
         }
     }
