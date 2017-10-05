@@ -1,15 +1,15 @@
 {
     "homepage": "https://www.eclipse.org",
     "license": "https://www.eclipse.org/legal/epl-v10.html",
-    "version": "4.7.0",
+    "version": "4.7.1-201709061700",
     "architecture": {
         "64bit": {
-            "url": "https://version-to-train.azurewebsites.net/org.eclipse.sdk.zip?version=4.7.0&architecture=64bit#/dl.7z",
-            "hash": "sha512:1442e9bafb9e8de3ae62bc661950f8de252d092eeda2e74f175942dc96f8872c0890d7c717c754d54ccce8cfd5f7c88447fcaf2cda2ccf37919f4ce88fdd8ce7"
+            "url": "https://www.eclipse.org/downloads/download.php?file=/eclipse/downloads/drops4/R-4.7.1-201709061700/eclipse-SDK-4.7.1-win32-x86_64.zip&r=1#/dl.7z",
+            "hash": "sha512:93bad48b272bd74bdfbeb01a5b1455e5793b86960a142ba40ece2ca502f54d8a659c80c423b640ffb1f45a1052719ead0a6c072be71c34d84c0de20de9ed0a9e"
         },
         "32bit": {
-            "url": "https://version-to-train.azurewebsites.net/org.eclipse.sdk.zip?version=4.7.0&architecture=32bit#/dl.7z",
-            "hash": "sha512:afb80a75875b4689259d517ce9c3af704710f18845f8c87e905efa718f9aa6087e390e36dae28ea71007424c15b25452f3d8d3ad7c280c52b17ff70001665d48"
+            "url": "https://www.eclipse.org/downloads/download.php?file=/eclipse/downloads/drops4/R-4.7.1-201709061700/eclipse-SDK-4.7.1-win32.zip&r=1#/dl.7z",
+            "hash": "sha512:3c895ba08d0c4ab460de349a37178718ebc8da9ea0eefe030985301a95408584b6a4d0a018b49bad625aa3f67dba6b1786ce3e6f2f74f2833eed35a4dc9fdb83"
         }
     },
     "extract_dir": "eclipse",
@@ -20,22 +20,23 @@
         ]
     ],
     "checkver": {
-        "url": "https://version-to-train.azurewebsites.net/versions.txt",
-        "re": "org.eclipse.sdk=([\\d.]+[\\d]+)"
+        "url": "http://download.eclipse.org/eclipse/downloads/",
+        "re": "<a href=\"(?<drop>drops4/R-(?<release>[\\d.]+)-(?<date>[\\d]{12}))/\" title=\"Latest Release\">([\\d.]+)",
+        "replace": "${release}-${date}"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://version-to-train.azurewebsites.net/org.eclipse.sdk.zip?version=$version&architecture=64bit#/dl.7z",
+                "url": "https://www.eclipse.org/downloads/download.php?file=/eclipse/downloads/$matchDrop/eclipse-SDK-$matchRelease-win32-x86_64.zip&r=1#/dl.7z",
                 "hash": {
-                    "url": "https://version-to-train.azurewebsites.net/org.eclipse.sdk.zip.sha512?version=$version&architecture=64bit",
+                    "url": "http://download.eclipse.org/eclipse/downloads/$matchDrop/checksum/eclipse-SDK-$matchRelease-win32-x86_64.zip.sha512",
                     "find": "([a-fA-F0-9]{128})"
                 }
             },
             "32bit": {
-                "url": "https://version-to-train.azurewebsites.net/org.eclipse.sdk.zip?version=$version&architecture=32bit#/dl.7z",
+                "url": "https://www.eclipse.org/downloads/download.php?file=/eclipse/downloads/$matchDrop/eclipse-SDK-$matchRelease-win32.zip&r=1#/dl.7z",
                 "hash": {
-                    "url": "https://version-to-train.azurewebsites.net/org.eclipse.sdk.zip.sha512?version=$version&architecture=32bit",
+                    "url": "http://download.eclipse.org/eclipse/downloads/$matchDrop/checksum/eclipse-SDK-$matchRelease-win32.zip.sha512",
                     "find": "([a-fA-F0-9]{128})"
                 }
             }
