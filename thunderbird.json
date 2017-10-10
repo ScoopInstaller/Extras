@@ -1,25 +1,33 @@
 {
-	"homepage": "https://www.mozilla.org/en-US/thunderbird/",
-	"version": "2045.4.0",
-	"url": [
-		"https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/45.4.0/win32/en-US/Thunderbird%20Setup%2045.4.0.exe",
-		"https://raw.githubusercontent.com/vidarkongsli/vidars-scoop-bucket/3dd91936e430010e47dc34c74e3af615bde3f811/thunderbird/installer.ps1",
-		"https://raw.githubusercontent.com/vidarkongsli/vidars-scoop-bucket/290a481082485bb4309275af0c7f852410077720/thunderbird/template.ini"
-		],
-	"hash": [
-		"403055448547DD648C65D5636CFED62F63D163FFADB82C85EBD99BECA56FFE5B",
-		"68845D20C414E2C5F2BA290A8EE66451BEA0B4421F526222314E71C31D97AEEB",
-		"4E253DFA55ACA047CF36D8BB80DB79D7A169E61329A64630F541E7FFA3C8257B"
-		],
-	"bin": "thunderbird.exe",
-	"shortcuts": [
-        [ "thunderbird.exe", "Mozilla Thunderbird" ]
+    "homepage": "https://www.mozilla.org/en-US/thunderbird/",
+    "version": "52.4.0",
+    "url": "https://download.mozilla.org/?product=thunderbird-52.4.0-SSL&os=win&lang=en-US#/thunderbird-setup.exe",
+    "hash": "sha512:8b765c62495a7d4e0674b1b53d4e4077125be40dd1ed468c633e5ceefe377632cb89c53b2a0296c7091c962f90ab8e74d375651cd203cd0dec2d2e1d808d6dd4",
+    "bin": "thunderbird.exe",
+    "shortcuts": [
+        [
+            "thunderbird.exe",
+            "Mozilla Thunderbird"
+        ]
     ],
-	"installer": {
-		"file" : "installer.ps1"
-		},
-	"uninstaller": {
-	    "file": "uninstall\\helper.exe",
-	    		"args": "-ms"
-	  	}
+    "pre_install": "echo \"[Install]`nInstallDirectoryPath=$dir`nQuickLaunchShortcut=false`nDesktopShortcut=false`nStartMenuShortcuts=false\" | sc \"$dir\\install.ini\"",
+    "installer": {
+        "file": "thunderbird-setup.exe",
+        "args": "/INI=$dir\\install.ini"
+    },
+    "uninstaller": {
+        "file": "uninstall\\helper.exe",
+        "args": "/S"
+    },
+    "checkver": {
+        "url": "https://www.mozilla.org/en-US/thunderbird/all/",
+        "re": "thunderbird-([\\d.]+)-SSL&amp;os=win&amp;lang=en-US"
+    },
+    "autoupdate": {
+        "url": "https://download.mozilla.org/?product=thunderbird-$version-SSL&os=win&lang=en-US#/thunderbird-setup.exe",
+        "hash": {
+            "find": "([a-fA-F0-9]{128})\\s+(?:win32/en-US/Thunderbird Setup ([\\d.]+).exe)",
+            "url": "https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$version/SHA512SUMS"
+        }
+    }
 }

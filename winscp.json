@@ -1,0 +1,35 @@
+{
+    "homepage": "http://winscp.net/",
+    "license": "http://winscp.net/eng/docs/license",
+    "version": "5.11.1",
+    "url": "https://sourceforge.net/projects/winscp/files/WinSCP/5.11.1/WinSCP-5.11.1-Portable.zip",
+    "hash": "cf2cb0fda0d6e8473e5d50717e130b3cbd8efe2bced404ce35eb00503e7296a3",
+    "bin": [
+        "WinSCP.exe"
+    ],
+    "persist": "winscp.ini",
+    "pre_install": "
+if (!(Test-Path \"$persist_dir\\winscp.ini\")) {
+    New-Item $dir\\winscp.ini -type file
+    write-output \"[Configuration\\Interface]`r`nRandomSeedFile=.\\winscp.rnd\" | Out-File -encoding \"ASCII\" $dir\\winscp.ini
+}
+    ",
+    "checkver": {
+        "url": "https://sourceforge.net/p/winscp/news/feed",
+        "re": "<title>WinSCP:\\s+([\\d.]+)\\s+released</title>"
+    },
+    "autoupdate": {
+        "url": "https://sourceforge.net/projects/winscp/files/WinSCP/$version/WinSCP-$version-Portable.zip",
+        "hash": {
+            "mode": "extract",
+            "url": "https://sourceforge.net/projects/winscp/files/WinSCP/$version/WinSCP-$version-ReadMe.txt",
+            "find": "$basename\\r?\\n - MD5: [0-9a-f]+\\r?\\n - SHA-1: [0-9a-f]+\\r?\\n - SHA-256: ([0-9a-f]+)"
+        }
+    },
+    "shortcuts": [
+        [
+            "WinSCP.exe",
+            "WinSCP"
+        ]
+    ]
+}

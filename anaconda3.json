@@ -1,0 +1,59 @@
+{
+    "version": "5.0.0",
+    "license": "BSD",
+    "homepage": "https://www.anaconda.com/",
+    "checkver": {
+        "url": "https://repo.continuum.io/archive",
+        "re": "Anaconda3-([\\d.]+)-Windows"
+    },
+    "bin": [
+        [
+            "python.exe",
+            "python3"
+        ]
+    ],
+    "pre_install": "
+        Write-Host 'Installing Anaconda 3. This can take up to 30 minutes on an HDD.' -ForegroundColor Magenta
+    ",
+    "installer": {
+        "file": "anaconda3-installer.exe",
+        "args": [
+            "/S",
+            "/InstallationType=JustMe",
+            "/RegisterPython=1",
+            "/AddToPath=0",
+            "/D=$dir"
+        ]
+    },
+    "uninstaller": {
+        "file": "Uninstall-Anaconda.exe",
+        "args": [
+            "/S"
+        ]
+    },
+    "env_add_path": "Scripts",
+    "architecture": {
+        "64bit": {
+            "url": "http://repo.continuum.io/archive/Anaconda3-5.0.0-Windows-x86_64.exe#/anaconda3-installer.exe",
+            "hash": "md5:fee3fad608d0006afa5c7bca4de3d02b"
+        },
+        "32bit": {
+            "url": "http://repo.continuum.io/archive/Anaconda3-5.0.0-Windows-x86.exe#/anaconda3-installer.exe",
+            "hash": "md5:4a48ded89f15b4a2e39ffa69f3532df2"
+        }
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "http://repo.continuum.io/archive/Anaconda3-$version-Windows-x86_64.exe#/anaconda3-installer.exe"
+            },
+            "32bit": {
+                "url": "http://repo.continuum.io/archive/Anaconda3-$version-Windows-x86.exe#/anaconda3-installer.exe"
+            }
+        },
+        "hash": {
+            "url": "$baseurl",
+            "find": "$basename<.*\\s+<.*\\s+<.*\\s+<td>([a-fA-F0-9]{32})</td>"
+        }
+    }
+}
