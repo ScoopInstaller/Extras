@@ -36,5 +36,34 @@
                 "url": "http://www.mega-nerd.com/libsndfile/files/libsndfile-$version-w32.zip"
             }
         }
+    },
+    "installer": {
+        "script": "
+            $pcdir = \"$(current_dir $dir)\\lib\\pkgconfig\"
+
+            # future sessions
+            $null, $currpath = strip_path (env 'PKG_CONFIG_PATH' $global) $pcdir
+            env 'PKG_CONFIG_PATH' $global \"$pcdir;$currpath\"
+
+            # this session
+            $null, $env:PKG_CONFIG_PATH = strip_path $env:PKG_CONFIG_PATH $pcdir
+            $env:PKG_CONFIG_PATH = \"$pcdir;$env:PKG_CONFIG_PATH\"
+        "
+    },
+    "uninstaller": {
+        "script": "
+            $pcdir = \"$(current_dir $dir)\\lib\\pkgconfig\"
+
+            # future sessions
+            $was_in_path, $newpath = strip_path (env 'PKG_CONFIG_PATH' $global) $pcdir
+            if($was_in_path) {
+                write-host \"Removing $(friendly_path $pcdir) from your path.\"
+                env 'PKG_CONFIG_PATH' $global $newpath
+            }
+
+            # current session
+            $was_in_path, $newpath = strip_path $env:PKG_CONFIG_PATH $pcdir
+            if($was_in_path) { $env:PKG_CONFIG_PATH = $newpath }
+        "
     }
 }
