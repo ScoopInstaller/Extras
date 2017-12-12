@@ -1,0 +1,71 @@
+{
+    "homepage": "www.fftw.org",
+    "version": "3.3.5",
+    "architecture": {
+        "64bit": {
+            "url": [
+                "ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll64.zip",
+                "https://gist.githubusercontent.com/tresf/7687a9b45ab260762631af60bb89621f/raw/895af98eddd9b755dbfe74245a03aa38fc0dc1f8/fftw3.pc"
+            ],
+            "hash": "cfd88dc0e8d7001115ea79e069a2c695d52c8947f5b4f3b7ac54a192756f439f"
+        },
+        "32bit": {
+            "url": [
+                "ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll32.zip",
+                "https://gist.githubusercontent.com/tresf/7687a9b45ab260762631af60bb89621f/raw/895af98eddd9b755dbfe74245a03aa38fc0dc1f8/fftw3.pc"
+            ],
+            "hash": "29882a43033c9393479a4df52a2e9120589c06a2b724155b1a682747fa3e57d4"
+        }
+    },
+    "bin": [
+        "bin\\fftwf-wisdom.exe",
+        "bin\\fftwl-wisdom.exe",
+        "bin\\fftw-wisdom.exe"
+    ],
+    "checkver": {
+        "url": "http://www.fftw.org/install/windows.html",
+        "re": "\"ftp://ftp.fftw.org/pub/fftw/fftw-([\\d.]+)-dll64.zip\""
+    },
+    "installer": {
+        "script": "
+            # organize files
+            mkdir -f \"$dir\\lib\" > $null
+            mkdir -f \"$dir\\lib\\pkgconfig\" > $null
+            mkdir -f \"$dir\\include\" > $null
+
+            mv \"$dir\\*.dll\" \"$dir\\lib\"
+            mv \"$dir\\*.def\" \"$dir\\lib\"
+            mv \"$dir\\*.exe\" \"$dir\\lib\"
+            mv \"$dir\\*.pc\" \"$dir\\lib\\pkgconfig\"
+            mv \"$dir\\*.h\" \"$dir\\include\"
+            mv \"$dir\\*.f*\" \"$dir\\include\"
+
+            # exes expect adjacent dlls, leave them together
+            cmd /c mklink /j \"$dir\\bin\" \"$dir\\lib\" > $null
+
+            $pcdir = \"$(current_dir $dir)\\lib\\pkgconfig\"
+
+            # future sessions
+            $null, $currpath = strip_path (env 'PKG_CONFIG_PATH' $global) $pcdir
+            env 'PKG_CONFIG_PATH' $global \"$pcdir;$currpath\"
+
+            # this session
+            $null, $env:PKG_CONFIG_PATH = strip_path $env:PKG_CONFIG_PATH $pcdir
+            $env:PKG_CONFIG_PATH = \"$pcdir;$env:PKG_CONFIG_PATH\"
+        "
+    },
+    "uninstaller": {
+        "script": "
+            $pcdir = \"$(current_dir $dir)\\lib\\pkgconfig\"
+            # future sessions
+            $was_in_path, $newpath = strip_path (env 'PKG_CONFIG_PATH' $global) $pcdir
+            if($was_in_path) {
+                write-host \"Removing $(friendly_path $pcdir) from your path.\"
+                env 'PKG_CONFIG_PATH' $global $newpath
+            }
+            # current session
+            $was_in_path, $newpath = strip_path $env:PKG_CONFIG_PATH $pcdir
+            if($was_in_path) { $env:PKG_CONFIG_PATH = $newpath }
+        "
+    }
+}
