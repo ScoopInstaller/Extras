@@ -5,14 +5,14 @@
         "64bit": {
             "url": [
                 "ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll64.zip",
-                "https://gist.githubusercontent.com/tresf/7687a9b45ab260762631af60bb89621f/raw/8ac3246668acb7f70ac955a04efd8b951c5670fc/fftw3f.pc"
+                "https://raw.githubusercontent.com/FFTW/fftw3/6e615417da7e1c7cba49b1a73c9edcc15d938cf9/fftw.pc.in"
             ],
             "hash": "cfd88dc0e8d7001115ea79e069a2c695d52c8947f5b4f3b7ac54a192756f439f"
         },
         "32bit": {
             "url": [
                 "ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll32.zip",
-                "https://gist.githubusercontent.com/tresf/7687a9b45ab260762631af60bb89621f/raw/8ac3246668acb7f70ac955a04efd8b951c5670fc/fftw3f.pc"
+                "https://raw.githubusercontent.com/FFTW/fftw3/6e615417da7e1c7cba49b1a73c9edcc15d938cf9/fftw.pc.in"
             ],
             "hash": "29882a43033c9393479a4df52a2e9120589c06a2b724155b1a682747fa3e57d4"
         }
@@ -36,9 +36,24 @@
             mv \"$dir\\*.dll\" \"$dir\\lib\"
             mv \"$dir\\*.def\" \"$dir\\lib\"
             mv \"$dir\\*.exe\" \"$dir\\lib\"
-            mv \"$dir\\*.pc\" \"$dir\\lib\\pkgconfig\"
             mv \"$dir\\*.h\" \"$dir\\include\"
             mv \"$dir\\*.f*\" \"$dir\\include\"
+
+            # generate normal, float and long pkgconfig files
+            $types = @(\"\",\"f\",\"l\")
+            foreach ($type in $types) {
+                $source = \"$dir\\fftw.pc.in\"
+                $target = \"$dir\\lib\\pkgconfig\\fftw3$($type).pc\"
+                sc $target ((gc $source) `
+                    -replace \"@prefix@\",\"\" `
+                    -replace \"@exec_prefix@\",\"`${prefix}\" `
+                    -replace \"@libdir@\",\"`${exec_prefix}/lib\" `
+                    -replace \"@includedir@\",\"`${prefix}/include\" `
+                    -replace \"@VERSION@\",\"$version\" `
+                    -replace \"@PREC_SUFFIX@\",\"$type\" `
+                    -replace \"@LIBQUADMATH@\",\"\" `
+                )
+            }
 
             # exes expect adjacent dlls, leave them together
             cmd /c mklink /j \"$dir\\bin\" \"$dir\\lib\" > $null
@@ -54,6 +69,9 @@
             $env:PKG_CONFIG_PATH = \"$pcdir;$env:PKG_CONFIG_PATH\"
         "
     },
+    "post_install": "
+        rm \"$dir\\fftw.pc.in\"
+    ",
     "uninstaller": {
         "script": "
             $pcdir = \"$(current_dir $dir)\\lib\\pkgconfig\"
