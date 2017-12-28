@@ -1,0 +1,84 @@
+{
+    "homepage": "https://www.libsdl.org",
+    "version": "2.0.7",
+    "architecture": {
+        "32bit": {
+            "url": [
+                "https://www.libsdl.org/release/SDL2-2.0.7-win32-x86.zip",
+                "https://github.com/tresf/scoop-extras/files/1587923/SDL2-2.0.7-win32-x86-msvc.zip",
+                "https://www.libsdl.org/release/SDL2-2.0.7.zip"
+            ],
+            "hash": "9f4de98f10be556c4ecba31d5897bd3b9778f130cf5c05e0f0b8fe241ea62831"
+        },
+        "64bit": {
+            "url": [
+                "https://www.libsdl.org/release/SDL2-2.0.7-win32-x64.zip",
+                "https://github.com/tresf/scoop-extras/files/1587922/SDL2-2.0.7-win32-x64-msvc.zip",
+                "https://www.libsdl.org/release/SDL2-2.0.7.zip"
+            ],
+            "hash": "444ae8b358f50d8f118163a89d886d452ff6cfbfaf2ef31cb10574604929f960"
+        }
+    },
+    "installer": {
+        "script": "
+            # organize files
+            mkdir -f \"$dir\\lib\\pkgconfig\" > $null
+            mkdir -f \"$dir\\include\\SDL2\" > $null
+            mv \"$dir\\*.dll\" \"$dir\\lib\"
+
+            $srcdir = \"$dir\\SDL2-$version\\\"
+            mv \"$srcdir\\include\\*.h\"  \"$dir\\include\\SDL2\"
+            rm \"$dir\\include\\*.h.*\"
+            $pcin = \"$srcdir\\sdl2.pc.in\"
+            $pcout = \"$dir\\lib\\pkgconfig\\sdl2.pc\"
+            sc $pcout ((gc $pcin) `
+                -replace \"@prefix@\",\"\" `
+                -replace \"@exec_prefix@\",\"`${prefix}\" `
+                -replace \"@libdir@\",\"`${exec_prefix}/lib\" `
+                -replace \"@includedir@\",\"`${prefix}/include\" `
+                -replace \"@SDL_VERSION@\",\"$version\" `
+                -replace \"@SDL_RLD_FLAGS@\",\"\" `
+                -replace \"@SDL_LIBS@\",\"-lSDL2\" `
+                -replace \"@SDL_STATIC_LIBS@\",\"-lSDL2\" `
+                -replace \"@SDL_CFLAGS@\",\"-lpthread -lasound\" `
+            )
+
+            rm -r \"$srcdir\"
+
+            $pcdir = \"$(current_dir $dir)\\lib\\pkgconfig\"
+            $cmdir = \"$(current_dir $dir)\"
+            # future sessions
+            $null, $currpath = strip_path (env 'PKG_CONFIG_PATH' $global) $pcdir
+            env 'PKG_CONFIG_PATH' $global \"$pcdir;$currpath\"
+            $null, $currpath = strip_path (env 'CMAKE_PREFIX_PATH' $global) $cmddir
+            env 'CMAKE_PREFIX_PATH' $global \"$cmddir;$currpath\"
+            # this session
+            $null, $env:PKG_CONFIG_PATH = strip_path $env:PKG_CONFIG_PATH $pcdir
+            $env:PKG_CONFIG_PATH = \"$pcdir;$env:PKG_CONFIG_PATH\"
+            $null, $env:CMAKE_PREFIX_PATH = strip_path $env:CMAKE_PREFIX_PATH $cmdir
+            $env:CMAKE_PREFIX_PATH = \"$cmdir;$env:CMAKE_PREFIX_PATH\"
+        "
+    },
+    "uninstaller": {
+        "script": "
+            $pcdir = \"$(current_dir $dir)\\lib\\pkgconfig\"
+            $cmdir = \"$(current_dir $dir)\"
+            # future sessions
+            $was_in_path, $newpath = strip_path (env 'PKG_CONFIG_PATH' $global) $pcdir
+            if($was_in_path) {
+                write-host \"Removing $(friendly_path $pcdir) from your path.\"
+                env 'PKG_CONFIG_PATH' $global $newpath
+            }
+            $was_in_path, $newpath = strip_path (env 'CMAKE_PREFIX_PATH' $global) $cmdir
+            if($was_in_path) {
+                write-host \"Removing $(friendly_path $cmdir) from your path.\"
+                env 'CMAKE_PREFIX_PATH' $global $newpath
+            }
+            # current session
+            $was_in_path, $newpath = strip_path $env:PKG_CONFIG_PATH $pcdir
+            if($was_in_path) { $env:PKG_CONFIG_PATH = $newpath }
+            $was_in_path, $newpath = strip_path $env:CMAKE_PREFIX_PATH $cmdir
+            if($was_in_path) { $env:CMAKE_PREFIX_PATH = $newpath }
+        "
+    }
+}
