@@ -1,8 +1,5 @@
 {
     "_comment": "Because of Explorer integration, this installer requires admin privileges to run.
-        Maintainers should update the MSI GUID for uninstaller by navigating to registry path, i.e.
-        for 64-bit installs HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/
-
         Sometimes, during the uninstall process, the user is prompted some applications should be
         closed before continuing. Rather than have the MSI automatically close applications, please
         choose the other option to reboot manually later. Otherwise, the uninstaller never returns
@@ -10,14 +7,13 @@
     "homepage": "https://tortoisesvn.net",
     "version": "1.9.7",
     "license": "GPL",
-    "url": "https://sourceforge.net/projects/tortoisesvn/files/1.9.7/Application/TortoiseSVN-1.9.7.27907-x64-svn-1.9.7.msi",
+    "url": "https://sourceforge.net/projects/tortoisesvn/files/1.9.7/Application/TortoiseSVN-1.9.7.27907-x64-svn-1.9.7.msi#/TortoiseSVN.msi",
     "hash": "a0616034862a0deb79b0601cb724c6e8e5859f9ee5e3a057d42bf3c723241396",
     "installer": {
-        "args": "/passive ADDLOCAL=ALL TARGETDIR=$dir INSTALLDIR=$dir"
+        "args": "/passive ADDLOCAL=ALL TARGETDIR=$dir INSTALLDIR=$dir",
+        "keep": true
     },
-    "post_install": "iex \"cp C:/Windows/System32/msiexec.exe $dir\"",
     "uninstaller": {
-        "file": "msiexec.exe",
-        "args": "/x{1655E9E4-04C9-414E-8581-6D1162DFB802}"
+        "script": "iex \"$env:SystemRoot\\System32\\msiexec.exe /passive /x $dir\\TortoiseSVN.msi\""
     }
 }
