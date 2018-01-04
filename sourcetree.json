@@ -1,22 +1,25 @@
 {
     "homepage": "https://www.sourcetreeapp.com/",
-    "version": "2.3.5.0",
-    "url": "https://downloads.atlassian.com/software/sourcetree/windows/ga/SourceTreeSetup-2.3.5.0.exe#/dl.7z",
-    "hash": "0e02ea2ab6dc4a4e5d4b12be50705bb840f01d978a46757b24ca5a818bb75bd8",
-    "bin": [
-        "lib/net45/sourcetree.exe"
-    ],
+    "version": "2.4.7",
+    "url": "https://www.sourcetreeapp.com/update/windows/ga/SourceTree-2.4.7-full.nupkg#/dl.7z",
+    "hash": "sha1:947764D1741F0267457547D8C9F1F63960565B8F",
+    "bin": "lib\\net45\\sourcetree.exe",
     "shortcuts": [
         [
-            "lib/net45/sourcetree.exe",
+            "lib\\net45\\sourcetree.exe",
             "Atlassian SourceTree"
         ]
     ],
-    "installer": {
-        "script": "extract_7zip \"$dir\\SourceTree-*-full.nupkg\" \"$dir\""
+    "checkver": {
+        "url": "https://www.sourcetreeapp.com/update/windows/ga/RELEASES?id=SourceTree&localVersion=0&arch=amd64",
+        "re": "SourceTree-([\\d.]+)-full.nupkg",
+        "reverse": true
     },
-    "checkver": "SourceTreeSetup-([\\d.]+).exe",
+    "post_install": "New-Item \"$dir\\lib\\Update.exe\" -force | out-null",
     "autoupdate": {
-        "url": "https://downloads.atlassian.com/software/sourcetree/windows/ga/SourceTreeSetup-$version.exe#/dl.7z"
+        "url": "https://www.sourcetreeapp.com/update/windows/ga/SourceTree-$version-full.nupkg#/dl.7z",
+        "hash": {
+            "url": "$baseurl/RELEASES"
+        }
     }
 }
