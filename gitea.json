@@ -13,15 +13,15 @@
         }
     },
     "post_install": "echo 'Creating $persist_dir\\custom\\conf.app.ini'
-    if(!(test-path $persist_dir\\custom\\conf)) { mkdir $persist_dir\\custom\\conf > $null }
-    if(!(test-path $persist_dir\\custom\\conf\\app.ini)) {
+    if(!(test-path \"$persist_dir\\custom\\conf\")) { mkdir \"$persist_dir\\custom\\conf\" > $null }
+    if(!(test-path \"$persist_dir\\custom\\conf\\app.ini\")) {
         $gitea = \"[database]`nPATH = $persist_dir/data/gitea.db\"
         $gitea += \"`n[repository]`nROOT = $persist_dir/repositories\"
         $gitea += \"`n[log]`nROOT_PATH = $persist_dir/log\"
-        echo $gitea | % {$_.replace(\"\\\",\"/\") } | out-file -encoding oem $persist_dir\\custom\\conf\\app.ini
+        echo $gitea | % {$_.replace(\"\\\",\"/\") } | out-file -encoding oem \"$persist_dir\\custom\\conf\\app.ini\"
     }",
     "bin": "gitea.exe",
-    "notes": "Run 'gitea web -c $persist_dir\\custom\\conf\\app.ini' to start the webserver",
+    "notes": "Run 'gitea web -c \"$persist_dir\\custom\\conf\\app.ini\"' to start the webserver",
     "checkver": {
         "github": "https://github.com/go-gitea/gitea"
     },
