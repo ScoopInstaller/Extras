@@ -2,25 +2,35 @@
     "homepage": "https://streamlink.github.io/",
     "version": "0.10.0",
     "license": "https://github.com/streamlink/streamlink/blob/master/LICENSE",
-    "url": "https://github.com/streamlink/streamlink/releases/download/0.10.0/streamlink-0.10.0.exe",
+    "url": "https://github.com/streamlink/streamlink/releases/download/0.10.0/streamlink-0.10.0.exe#/dl.7z",
     "hash": "daa46bf8321c69f9f07effcb3e323e578607ec3a99b3845a3c13dc0f306ecfab",
     "notes": "Streamlink settings can be changed in '%APPDATA%\\streamlink\\streamlinkrc'",
-    "installer": {
-        "args": [
-            "/S",
-            "/D=$dir"
-        ]
-    },
-    "uninstaller": {
-        "file": "Uninstall.exe",
-        "args": [
-            "/S"
+    "bin": "bin\\streamlink.exe",
+    "post_install": [
+        "If(!(Test-Path \"$env:APPDATA\\streamlink\\streamlinkrc\")) {",
+        "Write-Host \"Copying default 'streamlinkrc' to '%APPDATA%\\streamlink\\streamlinkrc'\"",
+        "New-Item -Force -Type directory -Path \"$env:APPDATA\\streamlink\" | Out-Null",
+        "Copy-Item \"$dir\\`$APPDATA\\streamlink\\streamlinkrc\" \"$env:APPDATA\\streamlink\\streamlinkrc\"",
+        "}",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
+        "Remove-Item \"$dir\\ffmpeg\" -Recurse",
+        "Remove-Item \"$dir\\rtmpdump\" -Recurse",
+        "Remove-Item \"$dir\\uninstall.exe\"",
+        "(Get-Content \"$dir\\bin\\streamlink-script.py\").replace('#!python', \"#!`\"$dir\\Python\\python.exe`\"\") | Set-Content \"$dir\\bin\\streamlink-script.py\""
+    ],
+    "suggest": {
+        "FFmpeg": [
+            "ffmpeg",
+            "ffmpeg-nightly"
+        ],
+        "RTMPDump": [
+            "rtmpdump"
         ]
     },
     "checkver": {
         "github": "https://github.com/streamlink/streamlink"
     },
     "autoupdate": {
-        "url": "https://github.com/streamlink/streamlink/releases/download/$version/streamlink-$version.exe"
+        "url": "https://github.com/streamlink/streamlink/releases/download/$version/streamlink-$version.exe#/dl.7z"
     }
 }
