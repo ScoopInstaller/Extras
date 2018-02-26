@@ -1,30 +1,21 @@
 {
     "homepage": "https://www.libsdl.org",
     "version": "2.0.7",
-    "architecture": {
-        "32bit": {
-            "url": [
-                "https://www.libsdl.org/release/SDL2-2.0.7-win32-x86.zip",
-                "https://github.com/tresf/scoop-extras/files/1587923/SDL2-2.0.7-win32-x86-msvc.zip",
-                "https://www.libsdl.org/release/SDL2-2.0.7.zip"
-            ],
-            "hash": "9f4de98f10be556c4ecba31d5897bd3b9778f130cf5c05e0f0b8fe241ea62831"
-        },
-        "64bit": {
-            "url": [
-                "https://www.libsdl.org/release/SDL2-2.0.7-win32-x64.zip",
-                "https://github.com/tresf/scoop-extras/files/1587922/SDL2-2.0.7-win32-x64-msvc.zip",
-                "https://www.libsdl.org/release/SDL2-2.0.7.zip"
-            ],
-            "hash": "444ae8b358f50d8f118163a89d886d452ff6cfbfaf2ef31cb10574604929f960"
-        }
-    },
+    "url": [
+        "https://www.libsdl.org/release/SDL2-devel-2.0.7-VC.zip",
+        "https://www.libsdl.org/release/SDL2-2.0.7.zip"
+    ],
+    "hash": "572dbed4ddc236498e53bd93092d677f65cfc8faec64e0b99e8752f6358efcc1",
     "installer": {
         "script": "
             # organize files
             mkdir -f \"$dir\\lib\\pkgconfig\" > $null
             mkdir -f \"$dir\\include\\SDL2\" > $null
-            mv \"$dir\\*.dll\" \"$dir\\lib\"
+            # make arch consistent with scoop naming
+            mv \"$dir\\SDL2-$version\\lib\\x86\" \"$dir\\SDL2-$version\\lib\\32bit\"
+            mv \"$dir\\SDL2-$version\\lib\\x64\" \"$dir\\SDL2-$version\\lib\\64bit\"
+            # only install the requested architecture
+            mv \"$dir\\SDL2-$version\\lib\\$architecture\\*\" \"$dir\\lib\"
 
             $srcdir = \"$dir\\SDL2-$version\\\"
             mv \"$srcdir\\include\\*.h\"  \"$dir\\include\\SDL2\"
