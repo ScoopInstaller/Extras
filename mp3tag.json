@@ -1,8 +1,8 @@
 {
     "homepage": "https://www.mp3tag.de/",
-    "version": "2.86",
-    "url": "https://download.mp3tag.de/mp3tagv286setup.exe#dl.7z",
-    "hash": "61d4253a086f9e5aa435b4ba12ec50ae625140aad1778688327736c93b43f2fe",
+    "version": "2.87a",
+    "url": "https://download.mp3tag.de/mp3tagv287asetup.exe#dl.7z",
+    "hash": "5856afed594e453174c4015b5f001ff5b288b203d0460a75268ea5ebfb58dec5",
     "license": "http://help.mp3tag.de/misc_license.html",
     "bin": "mp3tag.exe",
     "shortcuts": [
@@ -16,11 +16,15 @@
         "export",
         "mp3tag.cfg"
     ],
-    "checkver": "Mp3tag v([\\d.]+)",
+    "checkver": "Mp3tag v([\\d\\w.]+)",
     "autoupdate": {
         "url": "https://download.mp3tag.de/mp3tagv$cleanVersionsetup.exe#dl.7z"
     },
-    "pre_install": "New-Item \"$dir\\mp3tag.cfg\"",
+    "pre_install": [
+        "if (!(Test-Path \"$dir\\mp3tag.cfg\")) {",
+        "   New-Item -ItemType File \"$dir\\mp3tag.cfg\"",
+        "}"
+    ],
     "post_install": [
         "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
         "Remove-Item \"$dir\\`$R0\"",
