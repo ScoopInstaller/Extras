@@ -1,41 +1,34 @@
 {
     "homepage": "http://www.oracle.com/technetwork/java/javase/overview/index.html",
-    "version": "8u162-b12",
+    "version": "10-46",
     "architecture": {
         "64bit": {
-            "url": "http://download.oracle.com/otn-pub/java/jdk/8u162-b12/0da788060d494f5095bf8624735fa2f1/jre-8u162-windows-x64.tar.gz",
-            "hash": "b6e97fc695a91ef74651f850ce76cb14112c0c5a7f615d3fc0bce686e30ee345"
-        },
-        "32bit": {
-            "url": "http://download.oracle.com/otn-pub/java/jdk/8u162-b12/0da788060d494f5095bf8624735fa2f1/jre-8u162-windows-i586.tar.gz",
-            "hash": "b2bd0b0ea2cdf159bec16f7735f94456f76cfdff8fddb4793faed16c6e64433b"
+            "url": "http://download.oracle.com/otn-pub/java/jdk/10+46/76eac37278c24557a3c4199677f19b62/jre-10_windows-x64_bin.tar.gz",
+            "hash": "0053d9adb4e6d264b3673cc1bb3b1a7b3857ad98e30db0ec659b1381284aa15e"
         }
     },
     "cookie": {
         "oraclelicense": "accept-securebackup-cookie"
     },
-    "extract_dir": "jre1.8.0_162",
+    "extract_dir": "jre-10",
     "env_add_path": "bin",
     "env_set": {
-        "JRE_HOME": "$dir"
+        "JAVA_HOME": "$dir"
     },
     "checkver": {
-        "url": "http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html",
-        "re": "(?<version>[ub\\-\\d]+)/(?<random>[a-fA-F0-9]{32})/jre-(?<short>(?<release>[\\d]+)u(?<shorter>[\\d]+))-windows-x64.tar.gz",
-        "reverse": true
+        "url": "http://www.oracle.com/technetwork/java/javase/downloads/jre10-downloads-4417026.html",
+        "re": "otn-pub/java/jdk/(?<path>(?<major>[\\d.]+)\\+(?<build>[\\d]+)/(?<hash>[a-fA-F0-9]{32})/jre-(?:.*?)_windows-x64_bin.tar.gz)",
+        "replace": "${major}-${build}"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "http://download.oracle.com/otn-pub/java/jdk/$version/$matchRandom/jre-$matchShort-windows-x64.tar.gz"
-            },
-            "32bit": {
-                "url": "http://download.oracle.com/otn-pub/java/jdk/$version/$matchRandom/jre-$matchShort-windows-i586.tar.gz"
+                "url": "http://download.oracle.com/otn-pub/java/jdk/$matchPath"
             }
         },
-        "extract_dir": "jre1.$matchRelease.0_$matchShorter",
+        "extract_dir": "jre-$matchMajor",
         "hash": {
-            "url": "http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html",
+            "url": "http://www.oracle.com/technetwork/java/javase/downloads/jre10-downloads-4417026.html",
             "find": "$basename.*([a-fA-F0-9]{64})\"};"
         }
     }

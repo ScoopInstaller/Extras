@@ -1,35 +1,34 @@
 {
     "homepage": "http://www.oracle.com/technetwork/java/javase/overview/index.html",
-    "version": "8u162-b12",
+    "version": "10-46",
     "architecture": {
         "64bit": {
-            "url": "http://download.oracle.com/otn-pub/java/jdk/8u162-b12/0da788060d494f5095bf8624735fa2f1/server-jre-8u162-windows-x64.tar.gz",
-            "hash": "4a4d07429be8ef50ea1f80794dc85489db0b66db1f20e01a1ee38eaa19ec4789"
+            "url": "http://download.oracle.com/otn-pub/java/jdk/10+46/76eac37278c24557a3c4199677f19b62/serverjre-10_windows-x64_bin.tar.gz",
+            "hash": "f304d02c0ab3fe2a44bc16082d84747bec9f4e56858f6948b76b2a6c8c1997f2"
         }
     },
     "cookie": {
         "oraclelicense": "accept-securebackup-cookie"
     },
-    "extract_dir": "jdk1.8.0_162",
+    "extract_dir": "jdk-10",
     "env_add_path": "bin",
     "env_set": {
-        "JAVA_HOME": "$dir",
-        "JRE_HOME": "$dir\\jre"
+        "JAVA_HOME": "$dir"
     },
     "checkver": {
-        "url": "http://www.oracle.com/technetwork/java/javase/downloads/server-jre8-downloads-2133154.html",
-        "re": "(?<version>[ub\\-\\d]+)/(?<random>[a-fA-F0-9]{32})/server-jre-(?<short>(?<release>[\\d]+)u(?<shorter>[\\d]+))-windows-x64.tar.gz",
-        "reverse": true
+        "url": "http://www.oracle.com/technetwork/java/javase/downloads/sjre10-downloads-4417025.html",
+        "re": "otn-pub/java/jdk/(?<path>(?<major>[\\d.]+)\\+(?<build>[\\d]+)/(?<hash>[a-fA-F0-9]{32})/serverjre-(?:.*?)_windows-x64_bin.tar.gz)",
+        "replace": "${major}-${build}"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "http://download.oracle.com/otn-pub/java/jdk/$version/$matchRandom/server-jre-$matchShort-windows-x64.tar.gz"
+                "url": "http://download.oracle.com/otn-pub/java/jdk/$matchPath"
             }
         },
-        "extract_dir": "jdk1.$matchRelease.0_$matchShorter",
+        "extract_dir": "jdk-$matchMajor",
         "hash": {
-            "url": "http://www.oracle.com/technetwork/java/javase/downloads/server-jre8-downloads-2133154.html",
+            "url": "http://www.oracle.com/technetwork/java/javase/downloads/sjre10-downloads-4417025.html",
             "find": "$basename.*([a-fA-F0-9]{64})\"};"
         }
     }
