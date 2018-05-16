@@ -1,0 +1,37 @@
+{
+    "version": "3.14.6",
+    "description": "Bring all your web communication tools together for faster, smarter working",
+    "homepage": "https://wavebox.io/",
+    "license": "MPL-2.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/wavebox/waveboxapp/releases/download/v3.14.6/Install_Wavebox_3_14_6_x64.exe#/dl.7z",
+            "hash": "1dba9f84944f71afb7c0f72ec271a418f0a1122cdad8378716cd7482e140c084"
+        },
+        "32bit": {
+            "url": "https://github.com/wavebox/waveboxapp/releases/download/v3.14.6/Install_Wavebox_3_14_6_ia32.exe#/dl.7z",
+            "hash": "b18445a7be7105237c9df853e008c45d256a713544fc97ee08f5374a6c652962"
+        }
+    },
+    "pre_install": [
+        "$newName = \"$dir\\cosi.7z\"; $nupkg = \"$dir\\wavebox-$version-full.nupkg\"",
+        "Rename-Item -Path $nupkg -NewName $newName",
+        "Remove-Item -Path \"$dir\\*\" -Force -Exclude \"cosi.7z\"",
+        "extract_7zip $newName $dir $false",
+        "Get-ChildItem $dir -Exclude lib | Remove-Item -Force -Recurse",
+        "Move-Item -Path \"$dir\\lib\\net45\\*\" -Destination \"$dir\"",
+        "Remove-Item -Path \"$dir\\lib\" -Force -Recurse"
+    ],
+    "bin": [
+        "Wavebox.exe"
+    ],
+    "shortcuts": [
+        [
+            "Wavebox.exe",
+            "Wavebox"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/wavebox/waveboxapp"
+    }
+}
