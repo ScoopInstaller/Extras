@@ -1,0 +1,51 @@
+{
+    "homepage": "https://mpv.io/",
+    "description": "Video player based on MPlayer/mplayer2 (builds by shinchiro)",
+    "license": "GPL-2.0+",
+    "version": "20180603",
+    "architecture": {
+        "64bit": {
+            "url": "https://sourceforge.net/projects/mpv-player-windows/files/64bit/mpv-x86_64-20180603-git-7f625ea.7z",
+            "hash": "sha1:3786b4f1b0829c270ed7862970124367b6cb56c7"
+        },
+        "32bit": {
+            "url": "https://sourceforge.net/projects/mpv-player-windows/files/32bit/mpv-i686-20180603-git-7f625ea.7z",
+            "hash": "sha1:3397167fc6f39ef18f2e36242e5c6fa0f07db598"
+        }
+    },
+    "bin": "mpv.exe",
+    "shortcuts": [
+        [
+            "mpv.exe",
+            "mpv"
+        ]
+    ],
+    "post_install": [
+        "(Get-Content \"$(shimdir $global)\\mpv.ps1\").replace('mpv.exe','mpv.com') | Out-File \"$(shimdir $global)\\mpv.ps1\" -encoding utf8",
+        "(Get-Content \"$(shimdir $global)\\mpv.shim\").replace('mpv.exe','mpv.com') | Out-File \"$(shimdir $global)\\mpv.shim\" -encoding utf8"
+    ],
+    "suggest": {
+        "youtube-dl": [
+            "youtube-dl"
+        ]
+    },
+    "notes": [
+        "- To set up file type associations and AutoPlay handlers run '~\\scoop\\apps\\mpv-git\\current\\installer\\mpv-install.bat' as administrator.",
+        "This doesn't need to be done everytime you update mpv-git however, do keep in mind that if you want to uninstall mpv-git you'll need to run '(same directory)\\mpv-uninstall.bat' beforehand since this action will not be performed automatically.",
+        "- You can use Icaros (https://www.majorgeeks.com/files/details/icaros.html) to enable thumbnails for all media types."
+    ],
+    "checkver": {
+        "url": "https://sourceforge.net/projects/mpv-player-windows/files/64bit/",
+        "re": "mpv-x86_64-(?<version>[\\d]{8})-git-(?<commit>[\\a-z]{7})\\.7z"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://sourceforge.net/projects/mpv-player-windows/files/64bit/mpv-x86_64-$matchVersion-git-$matchCommit.7z"
+            },
+            "32bit": {
+                "url": "https://sourceforge.net/projects/mpv-player-windows/files/32bit/mpv-i686-$matchVersion-git-$matchCommit.7z"
+            }
+        }
+    }
+}
