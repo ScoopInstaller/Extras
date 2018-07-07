@@ -12,14 +12,16 @@
             "hash": "d8bf0b580925ea881b0ba22aaf7a79d8031baf4114bbc00fa8a98593cd21226e"
         }
     },
-    "post_install": "echo 'Creating $persist_dir\\custom\\conf.app.ini'
-    if(!(test-path \"$persist_dir\\custom\\conf\")) { mkdir \"$persist_dir\\custom\\conf\" > $null }
-    if(!(test-path \"$persist_dir\\custom\\conf\\app.ini\")) {
-        $gitea = \"[database]`nPATH = $persist_dir/data/gitea.db\"
-        $gitea += \"`n[repository]`nROOT = $persist_dir/repositories\"
-        $gitea += \"`n[log]`nROOT_PATH = $persist_dir/log\"
-        echo $gitea | % {$_.replace(\"\\\",\"/\") } | out-file -encoding oem \"$persist_dir\\custom\\conf\\app.ini\"
-    }",
+    "post_install": [
+        "echo 'Creating $persist_dir\\custom\\conf.app.ini'",
+        "if(!(test-path \"$persist_dir\\custom\\conf\")) { mkdir \"$persist_dir\\custom\\conf\" > $null }",
+        "if(!(test-path \"$persist_dir\\custom\\conf\\app.ini\")) {",
+        "    $gitea = \"[database]`nPATH = $persist_dir/data/gitea.db\"",
+        "    $gitea += \"`n[repository]`nROOT = $persist_dir/repositories\"",
+        "    $gitea += \"`n[log]`nROOT_PATH = $persist_dir/log\"",
+        "    echo $gitea | % {$_.replace(\"\\\",\"/\") } | out-file -encoding oem \"$persist_dir\\custom\\conf\\app.ini\"",
+        "}"
+    ],
     "bin": "gitea.exe",
     "notes": "Run 'gitea web -c \"$persist_dir\\custom\\conf\\app.ini\"' to start the webserver",
     "checkver": {
