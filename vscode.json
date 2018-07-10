@@ -2,7 +2,12 @@
     "homepage": "https://code.visualstudio.com/",
     "version": "1.25.0",
     "license": "https://code.visualstudio.com/License/",
-    "notes": "Want to add vscode as a context menu option in explorer? See this guide: http://thisdavej.com/right-click-on-windows-folder-and-open-with-visual-studio-code/",
+    "notes": [
+        "VSCode now supports Portable Mode! Please move the following directories:",
+        "From \"$env:USERPROFILE\\.vscode\\extensions\" to \"$env:USERPROFILE\\scoop\\persist\\vscode\\data\\extensions\"",
+        "From \"$env:APPDATA\\Code\" to \"$env:USERPROFILE\\scoop\\persist\\vscode\\data\\user-data\"",
+        "Add VSCode as a context menu option by running: '$dir\\vscode-install-context.reg'"
+    ],
     "bin": [
         [
             "bin\\code.cmd",
@@ -17,6 +22,14 @@
     ],
     "persist": [
         "data"
+    ],
+    "post_install": [
+        "if(Test-Path(\"$dir\\vscode-install-context.reg\")) {",
+        "  $codepath = \"$dir\\Code.exe\".Replace('\\', '\\\\')",
+        "  $content = Get-Content \"$dir\\vscode-install-context.reg\"",
+        "  $content = $content.Replace('$code', $codepath)",
+        "  $content | Set-Content -Path \"$dir\\vscode-install-context.reg\"",
+        "}"
     ],
     "checkver": {
         "url": "https://code.visualstudio.com/sha?build=stable",
