@@ -1,8 +1,13 @@
 {
     "homepage": "https://code.visualstudio.com/",
-    "version": "1.26.0-insider",
+    "version": "nightly",
     "license": "https://code.visualstudio.com/License/",
-    "notes": "Want to add vscode as a context menu option in explorer? See this guide: http://thisdavej.com/right-click-on-windows-folder-and-open-with-visual-studio-code/",
+    "notes": [
+        "VSCode now supports Portable Mode! Please move the following directories:",
+        "From \"$env:USERPROFILE\\.vscode-insiders\\extensions\" to \"$env:USERPROFILE\\scoop\\persist\\vscode-insiders\\data\\extensions\"",
+        "From \"$env:APPDATA\\Code - Insiders\" to \"$env:USERPROFILE\\scoop\\persist\\vscode-insiders\\data\\user-data\"",
+        "Add VSCode as a context menu option by running: '$dir\\vscode-install-context.reg'"
+    ],
     "bin": [
         [
             "bin\\code-insiders.cmd",
@@ -18,36 +23,32 @@
     "persist": [
         "data"
     ],
-    "checkver": {
-        "url": "https://code.visualstudio.com/sha?build=insider",
-        "jp": "$.products[?(@.platform.os == 'win32-x64-archive')].name"
-    },
+    "post_install": [
+        "if(Test-Path(\"$dir\\vscode-install-context.reg\")) {",
+        "  $codepath = \"$dir\\Code - Insiders.exe\".Replace('\\', '\\\\')",
+        "  $content = Get-Content \"$dir\\vscode-install-context.reg\"",
+        "  $content = $content.Replace('$code', $codepath)",
+        "  $content = $content.Replace('&Code', 'Code &Insiders')",
+        "  $content | Set-Content -Path \"$dir\\vscode-install-context.reg\"",
+        "}",
+        "if(Test-Path(\"$dir\\vscode-uninstall-context.reg\")) {",
+        "  $content = Get-Content \"$dir\\vscode-uninstall-context.reg\"",
+        "  $content = $content.Replace('&Code', 'Code &Insiders')",
+        "  $content | Set-Content -Path \"$dir\\vscode-uninstall-context.reg\"",
+        "}"
+    ],
     "architecture": {
         "64bit": {
-            "url": "https://vscode-update.azurewebsites.net/1.26.0-insider/win32-x64-archive/insider#/dl.7z",
-            "hash": "22d309113c35bfa7da0e497b7e43c9309963e6116dfe7c7fedbb8722ed197c33"
+            "url": [
+                "https://vscode-update.azurewebsites.net/1.26.0-insider/win32-x64-archive/insider#/dl.7z"
+            ]
         },
         "32bit": {
-            "url": "https://vscode-update.azurewebsites.net/1.26.0-insider/win32-archive/insider#/dl.7z",
-            "hash": "c56a40c3278717cb5fcacba1c6d308b48135104c53c79c4b902fb9195bd5e191"
-        }
-    },
-    "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://vscode-update.azurewebsites.net/$version/win32-x64-archive/insider#/dl.7z",
-                "hash": {
-                    "url": "https://code.visualstudio.com/sha?build=insider",
-                    "jp": "$.products[?(@.platform.os == 'win32-x64-archive')].sha256hash"
-                }
-            },
-            "32bit": {
-                "url": "https://vscode-update.azurewebsites.net/$version/win32-archive/insider#/dl.7z",
-                "hash": {
-                    "url": "https://code.visualstudio.com/sha?build=insider",
-                    "jp": "$.products[?(@.platform.os == 'win32-archive')].sha256hash"
-                }
-            }
+            "url": [
+                "https://vscode-update.azurewebsites.net/1.26.0-insider/win32-archive/insider#/dl.7z",
+                "https://raw.github.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg",
+                "https://raw.github.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg"
+            ]
         }
     }
 }
