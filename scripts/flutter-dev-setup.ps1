@@ -84,11 +84,20 @@ function get-platforms {
     $platforms
 }
 
+# Check internet conenction first and only continue on success
+$connection = Test-NetConnection
+
+if ($connection.PingSucceeded -eq $false) {
+    $scriptName = $MyInvocation.MyCommand.Name
+    Write-Host "$scriptName could not connect to the internet. Please connect to the internet and try again, or install flutter requirements manually." -ForegroundColor Yellow
+    exit 1
+}
+
 # Check if sdkmanager exists and in path. Program cannot continue without it
 Get-Command "sdkmanager" -ErrorAction SilentlyContinue -ErrorVariable err | Out-Null
 if ($err.Count -eq $true) {
     Write-Host "Could not find 'sdkmanager' in PATH. Make sure you have android-sdk installed." -ForegroundColor Red
-    Exit
+    exit 2
 }
 
 # Runs sdkmanager with the --list argument to see what is installed on the system
