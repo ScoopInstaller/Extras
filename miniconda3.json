@@ -1,0 +1,65 @@
+{
+    "version": "4.4.10",
+    "homepage": "https://conda.io/miniconda.html",
+    "license": "BSD-3-Clause",
+    "checkver": {
+        "url": "https://repo.continuum.io/miniconda",
+        "re": "Miniconda3-([\\d.]+)-Windows"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://repo.continuum.io/miniconda/Miniconda3-4.4.10-Windows-x86_64.exe",
+            "hash": "md5:7842b190762abd73c4e5ca6b643827c8"
+        },
+        "32bit": {
+            "url": "https://repo.continuum.io/miniconda/Miniconda3-4.4.10-Windows-x86.exe",
+            "hash": "md5:babd60b85e37830a6dbbfe5c9d74d8dc"
+        }
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://repo.continuum.io/miniconda/Miniconda3-$version-Windows-x86_64.exe"
+            },
+            "32bit": {
+                "url": "https://repo.continuum.io/miniconda/Miniconda3-$version-Windows-x86.exe"
+            }
+        },
+        "hash": {
+            "url": "$baseurl",
+            "find": "$basename<.*\\s+<.*\\s+<.*\\s+<td>([a-fA-F0-9]{32})</td>"
+        }
+    },
+    "installer": {
+        "args": [
+            "/S",
+            "/InstallationType=JustMe",
+            "/RegisterPython=0",
+            "/AddToPath=0",
+            "/D=$dir"
+        ]
+    },
+    "uninstaller": {
+        "file": "Uninstall-Miniconda3.exe",
+        "args": [
+            "/S"
+        ]
+    },
+    "bin": [
+        "python.exe",
+        "pythonw.exe",
+        [
+            "python.exe",
+            "python3"
+        ]
+    ],
+    "persist": [
+        "envs"
+    ],
+    "env_add_path": "scripts",
+    "notes": [
+        "Currently conda envs activate and deactivate doesn't work on PowerShell,
+        for more information, see: https://github.com/conda/conda/issues/626,
+        or just execute: 'conda install -n root -c pscondaenvs pscondaenvs'"
+    ]
+}

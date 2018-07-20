@@ -1,27 +1,27 @@
 {
     "homepage": "https://gitea.io/",
-    "version": "1.2.1",
-    "license": "https://github.com/go-gitea/gitea/blob/master/LICENSE",
+    "version": "1.4.0",
+    "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/go-gitea/gitea/releases/download/v1.2.1/gitea-1.2.1-windows-4.0-amd64.exe#/gitea.exe",
-            "hash": "a053e8fba80a19657061583987432036e3c2882dbb0d9adca354ae1f95e2a137"
+            "url": "https://github.com/go-gitea/gitea/releases/download/v1.4.0/gitea-1.4.0-windows-4.0-amd64.exe#/gitea.exe",
+            "hash": "4f078ff87f19c78722cb5d286f52c897b3ee0d8f5f2a61f0587bf462ef13b711"
         },
         "32bit": {
-            "url": "https://github.com/go-gitea/gitea/releases/download/v1.2.1/gitea-1.2.1-windows-4.0-386.exe#/gitea.exe",
-            "hash": "b8244ba89befdf549cb77fe5d01b976fa17175b8d3b7e34233c082fba9e0ce36"
+            "url": "https://github.com/go-gitea/gitea/releases/download/v1.4.0/gitea-1.4.0-windows-4.0-386.exe#/gitea.exe",
+            "hash": "115e6a176f5e59b4b9f2a716a983270dd8dc22062d966c1d9e2897eccc5b02b0"
         }
     },
     "post_install": "echo 'Creating $persist_dir\\custom\\conf.app.ini'
-    if(!(test-path $persist_dir\\custom\\conf)) { mkdir $persist_dir\\custom\\conf > $null }
-    if(!(test-path $persist_dir\\custom\\conf\\app.ini)) {
+    if(!(test-path \"$persist_dir\\custom\\conf\")) { mkdir \"$persist_dir\\custom\\conf\" > $null }
+    if(!(test-path \"$persist_dir\\custom\\conf\\app.ini\")) {
         $gitea = \"[database]`nPATH = $persist_dir/data/gitea.db\"
         $gitea += \"`n[repository]`nROOT = $persist_dir/repositories\"
         $gitea += \"`n[log]`nROOT_PATH = $persist_dir/log\"
-        echo $gitea | % {$_.replace(\"\\\",\"/\") } | out-file -encoding oem $persist_dir\\custom\\conf\\app.ini
+        echo $gitea | % {$_.replace(\"\\\",\"/\") } | out-file -encoding oem \"$persist_dir\\custom\\conf\\app.ini\"
     }",
     "bin": "gitea.exe",
-    "notes": "Run 'gitea web -c $persist_dir\\custom\\conf\\app.ini' to start the webserver",
+    "notes": "Run 'gitea web -c \"$persist_dir\\custom\\conf\\app.ini\"' to start the webserver",
     "checkver": {
         "github": "https://github.com/go-gitea/gitea"
     },
