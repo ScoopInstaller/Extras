@@ -1,0 +1,33 @@
+{
+    "homepage": "http://jdownloader.org/",
+    "description": "JDownloader is a free, open-source download management tool",
+    "license": "GNU GPLv3",
+    "version": "2",
+    "url": "http://installer.jdownloader.org/JDownloader.jar",
+    "depends": "java/oraclejre",
+    "persist": [
+        "cfg"
+    ],
+    "bin": "JDownloader.jar",
+    "pre_install": [
+        "Start-Process $(which javaw.exe) -ArgumentList '-jar', \"$dir\\JDownloader.jar\", '-?'",
+        "while (!(Test-Path $dir\\themes\\standard\\org\\jdownloader\\images\\logo\\icon.ico)) { Start-Sleep 1 }"
+    ],
+    "shortcuts": [
+        [
+            "..\\..\\..\\shims\\JDownloader.cmd",
+            "JDownloader 2"
+        ]
+    ],
+    "post_install": [
+        "$wsShell = New-Object -ComObject WScript.Shell",
+        "if($global) { $shortcut_path = [System.IO.Path]::Combine([Environment]::GetFolderPath('commonstartmenu'), 'Programs', 'Scoop Apps', 'JDownloader 2.lnk') }",
+        "else { $shortcut_path = [System.IO.Path]::Combine([Environment]::GetFolderPath('startmenu'), 'Programs', 'Scoop Apps', 'JDownloader 2.lnk') }",
+        "$wsShell = $wsShell.CreateShortcut($shortcut_path)",
+        "$wsShell.TargetPath = \"$(which javaw.exe)\"",
+        "$wsShell.WorkingDirectory = $dir",
+        "$wsShell.Arguments = \"-jar $(Join-Path $dir JDownloader.jar)\"",
+        "$wsShell.IconLocation = \"$(Join-Path $dir themes/standard/org/jdownloader/images/logo/icon.ico)\"",
+        "$wsShell.Save()"
+    ]
+}
