@@ -1,7 +1,6 @@
 {
     "homepage": "http://jdownloader.org/",
     "description": "JDownloader is a free, open-source download management tool",
-    "license": "GNU GPLv3",
     "version": "2",
     "url": "http://installer.jdownloader.org/JDownloader.jar",
     "depends": "java/oraclejre",
@@ -9,25 +8,19 @@
         "cfg"
     ],
     "bin": "JDownloader.jar",
-    "pre_install": [
-        "Start-Process $(which javaw.exe) -ArgumentList '-jar', \"$dir\\JDownloader.jar\", '-?'",
-        "while (!(Test-Path $dir\\themes\\standard\\org\\jdownloader\\images\\logo\\icon.ico)) { Start-Sleep 1 }"
-    ],
+    "installer": {
+        "script": [
+            "Start-Process $(which javaw.exe) -ArgumentList '-jar', \"$dir\\JDownloader.jar\", '-?'",
+            "while (!(Test-Path $dir\\themes\\standard\\org\\jdownloader\\images\\logo\\icon.ico)) { Start-Sleep 1 }",
+            "\"start javaw.exe -jar JDownloader.jar\" | Out-File -Encoding ASCII \"$dir\\JDownloader.bat\""
+        ]
+    },
     "shortcuts": [
         [
-            "..\\..\\..\\shims\\JDownloader.cmd",
-            "JDownloader 2"
+            "JDownloader.bat",
+            "JDownloader 2",
+            "",
+            "themes\\standard\\org\\jdownloader\\images\\logo\\icon.ico"
         ]
-    ],
-    "post_install": [
-        "$wsShell = New-Object -ComObject WScript.Shell",
-        "if($global) { $shortcut_path = [System.IO.Path]::Combine([Environment]::GetFolderPath('commonstartmenu'), 'Programs', 'Scoop Apps', 'JDownloader 2.lnk') }",
-        "else { $shortcut_path = [System.IO.Path]::Combine([Environment]::GetFolderPath('startmenu'), 'Programs', 'Scoop Apps', 'JDownloader 2.lnk') }",
-        "$wsShell = $wsShell.CreateShortcut($shortcut_path)",
-        "$wsShell.TargetPath = \"$(which javaw.exe)\"",
-        "$wsShell.WorkingDirectory = $dir",
-        "$wsShell.Arguments = \"-jar $(Join-Path $dir JDownloader.jar)\"",
-        "$wsShell.IconLocation = \"$(Join-Path $dir themes/standard/org/jdownloader/images/logo/icon.ico)\"",
-        "$wsShell.Save()"
     ]
 }
