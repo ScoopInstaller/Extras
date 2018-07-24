@@ -20,9 +20,24 @@
         "ANDROID_HOME": "$dir",
         "PROGUARD_HOME": "$dir\\tools\\proguard"
     },
+    "persist": [
+        ".knownPackages",
+        "build-tools",
+        "emulator",
+        "extras",
+        "licenses",
+        "patcher",
+        "platforms",
+        "sources"
+    ],
     "env_add_path": "tools\\bin",
     "depends": "adb",
-    "post_install": "if (Test-Path \"$(appdir adb)\") { cmd /c mklink /j \"$dir\\platform-tools\" \"$(appdir adb)\\current\\platform-tools\" | out-null; attrib \"$(appdir adb)\\current\\platform-tools\" +R /L }",
+    "post_install": [
+        "if (Test-Path \"$(appdir adb)\") {",
+        "cmd /c mklink /j \"$dir\\platform-tools\" \"$(appdir adb)\\current\\platform-tools\" | out-null",
+        "attrib \"$(appdir adb)\\current\\platform-tools\" +R /L",
+        "}"
+    ],
     "checkver": "repository/sdk-tools-windows-([\\d]+).zip",
     "autoupdate": {
         "url": "https://dl.google.com/android/repository/sdk-tools-windows-$version.zip",
