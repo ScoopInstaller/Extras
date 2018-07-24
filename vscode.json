@@ -1,8 +1,13 @@
 {
     "homepage": "https://code.visualstudio.com/",
-    "version": "1.23.1",
-    "license": "https://code.visualstudio.com/License/",
-    "notes": "Want to add vscode as a context menu option in explorer? See this guide: http://thisdavej.com/right-click-on-windows-folder-and-open-with-visual-studio-code/",
+    "version": "1.25.1",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://code.visualstudio.com/License/"
+    },
+    "notes": [
+        "Add VSCode as a context menu option by running: '$dir\\vscode-install-context.reg'"
+    ],
     "bin": [
         [
             "bin\\code.cmd",
@@ -15,18 +20,42 @@
             "Visual Studio Code"
         ]
     ],
+    "post_install": [
+        "if(Test-Path(\"$dir\\vscode-install-context.reg\")) {",
+        "  $codepath = \"$dir\\Code.exe\".Replace('\\', '\\\\')",
+        "  $content = Get-Content \"$dir\\vscode-install-context.reg\"",
+        "  $content = $content.Replace('$code', $codepath)",
+        "  $content | Set-Content -Path \"$dir\\vscode-install-context.reg\"",
+        "}"
+    ],
     "checkver": {
         "url": "https://code.visualstudio.com/sha?build=stable",
         "jp": "$.products[?(@.platform.os == 'win32-x64-archive')].name"
     },
     "architecture": {
         "64bit": {
-            "url": "https://vscode-update.azurewebsites.net/1.23.1/win32-x64-archive/stable#/dl.7z",
-            "hash": "0e8a52d1cd19620ace8f0654cac253c55aa4ca23a241e70ad5f0e50b50331c26"
+            "url": [
+                "https://vscode-update.azurewebsites.net/1.25.1/win32-x64-archive/stable#/dl.7z",
+                "https://raw.github.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg",
+                "https://raw.github.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg"
+            ],
+            "hash": [
+                "aa920ae1b7e8861dcf13a93077206e30de48ea245f0b30bd3ddbea496df16102",
+                "3ef2104fba3fa00afd6fd60f9d8432e90ca8f1b456f9a614bfa3c530c9ad4b3e",
+                "9b55432e91e8534cc871d8d57f826761649d1ed7a3a5d7cabc3089fe5a6e147f"
+            ]
         },
         "32bit": {
-            "url": "https://vscode-update.azurewebsites.net/1.23.1/win32-archive/stable#/dl.7z",
-            "hash": "e0d279eafe0bc74da959f46c4fe7e6dd0efda1196cd29970d9c0e398abc67be3"
+            "url": [
+                "https://vscode-update.azurewebsites.net/1.25.1/win32-archive/stable#/dl.7z",
+                "https://raw.github.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg",
+                "https://raw.github.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg"
+            ],
+            "hash": [
+                "9a7b60e88a1dd5d9bed721bbb3a3ae97c4451804bf953326ba082b6e4375a73b",
+                "3ef2104fba3fa00afd6fd60f9d8432e90ca8f1b456f9a614bfa3c530c9ad4b3e",
+                "9b55432e91e8534cc871d8d57f826761649d1ed7a3a5d7cabc3089fe5a6e147f"
+            ]
         }
     },
     "autoupdate": {

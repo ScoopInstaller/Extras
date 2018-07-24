@@ -1,9 +1,9 @@
 {
-    "version": "1.1.453",
-    "license": "AGPL-3.0",
+    "version": "1.1.456",
+    "license": "AGPL-3.0-only",
     "homepage": "https://www.rstudio.com/",
-    "url": "https://download1.rstudio.org/RStudio-1.1.453.zip",
-    "hash": "67cc9a9421ec1c4cc1cb35efe9119a0cd51891ed28816cc280710fa8eed6acb8",
+    "url": "https://download1.rstudio.org/RStudio-1.1.456.zip",
+    "hash": "5d01f15807318ec62355088fe766d6d2edeb964d07047125e20b553807f52f58",
     "depends": "r",
     "bin": [
         "bin/rstudio.exe"
@@ -14,18 +14,18 @@
             "R Studio"
         ]
     ],
-    "post_install": "
-        $rstudio=$env:APPDATA+'/RStudio'
-        if (-not (Test-Path $rstudio)) {
-            mkdir $rstudio | Out-Null
-            $rbin = 'RBinDir=' + $scoopdir.Replace('\\','/') + '/apps/r/current/bin/'
-            if($architecture.Equals('64bit')) { $rbin+='x64'} else { $rbin+='i386'}
-            $rstudioini = $rstudio+'/desktop.ini'
-            $enc = New-Object Text.UTF8Encoding $False
-            [IO.File]::WriteAllLines($rstudioini, ('[General]', $rbin), $enc)
-            Write-Host Configuration written to $rstudioini
-        }
-    ",
+    "post_install": [
+        "$rstudio=$env:APPDATA+'/RStudio'",
+        "if (-not (Test-Path $rstudio)) {",
+        "    mkdir $rstudio | Out-Null",
+        "    $rbin = 'RBinDir=' + $scoopdir.Replace('\\','/') + '/apps/r/current/bin/'",
+        "    if($architecture.Equals('64bit')) { $rbin+='x64'} else { $rbin+='i386'}",
+        "    $rstudioini = $rstudio+'/desktop.ini'",
+        "    $enc = New-Object Text.UTF8Encoding $False",
+        "    [IO.File]::WriteAllLines($rstudioini, ('[General]', $rbin), $enc)",
+        "    Write-Host Configuration written to $rstudioini",
+        "}"
+    ],
     "checkver": {
         "url": "https://www.rstudio.com/products/rstudio/download/",
         "re": "RStudio-([\\d.]+).zip"

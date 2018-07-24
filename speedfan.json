@@ -1,0 +1,34 @@
+{
+    "homepage": "http://www.almico.com/speedfan.php",
+    "description": "SpeedFan is a system monitor for Microsoft Windows that can read temperatures, voltages and fan speeds of computer components. It can change computer fan speeds depending on the temperature of various components.",
+    "license": "Freeware",
+    "version": "4.52",
+    "url": "http://www.almico.com/speedfan452.exe",
+    "hash": "e2ccb3c0d23f0d04ee8057f5ce3861eea952fb20694c1656c9805b1d4cd922ff",
+    "installer": {
+        "args": [
+            "/S",
+            "/D=$dir"
+        ]
+    },
+    "bin": "speedfan.exe",
+    "uninstaller": {
+        "file": "uninstall.exe",
+        "args": [
+            "/S"
+        ]
+    },
+    "pre_install": "ForEach ($emptyFile in $manifest.persist) {New-Item \"$dir\\$emptyFile\" -ItemType file -ErrorAction SilentlyContinue | Out-Null}",
+    "persist": [
+        "speedfanevents.cfg",
+        "speedfanparams.cfg",
+        "speedfansens.cfg"
+    ],
+    "checkver": {
+        "url": "http://www.almico.com/sfdownload.php",
+        "re": "<a href=\"speedfan\\d+.exe\">SpeedFan ([\\d\\.]+)</a>"
+    },
+    "autoupdate": {
+        "url": "http://www.almico.com/speedfan$cleanVersion.exe"
+    }
+}
