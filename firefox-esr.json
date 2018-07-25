@@ -1,18 +1,20 @@
 {
+    "description": "Extended Support Release of Firefox: the popular open source web browser.",
     "homepage": "https://www.mozilla.org/en-US/firefox/organizations/",
-    "version": "52.7.4",
+    "version": "52.9.0",
+    "license": "MPL-2.0",
     "architecture": {
         "64bit": {
-            "url": "https://download.mozilla.org/?product=firefox-52.7.4esr-SSL&os=win64&lang=en-US#/firefox-setup.exe",
-            "hash": "139cee15bb98c070212fc94137cffb5d056495f8dd34a7e5cfaf3bcd06f91335"
+            "url": "https://download.mozilla.org/?product=firefox-52.9.0esr-SSL&os=win64&lang=en-US#/firefox.7z",
+            "hash": "8bffe514bc17d0cf81c75c241c3453a80d0500b8d86646e3bd005ecc12ad86cb"
         },
         "32bit": {
-            "url": "https://download.mozilla.org/?product=firefox-52.7.4esr-SSL&os=win&lang=en-US#/firefox-setup.exe",
-            "hash": "b5eb043293bac64aa60331e44ce344e63c1601e3bcf9da706b7a1f8a475bbe34"
+            "url": "https://download.mozilla.org/?product=firefox-52.9.0esr-SSL&os=win&lang=en-US#/firefox.7z",
+            "hash": "6ec090bcf8d8ec23820bc41dd548f56f10990b8d40c151cce8a641687a92b1c2"
         }
     },
+    "extract_dir": "core",
     "bin": [
-        "firefox.exe",
         [
             "firefox.exe",
             "firefox-esr"
@@ -24,30 +26,25 @@
             "Mozilla Firefox"
         ]
     ],
-    "pre_install": "echo \"[Install]`nInstallDirectoryPath=$dir\" | sc \"$dir\\install.ini\"",
-    "installer": {
-        "file": "firefox-setup.exe",
-        "args": "/INI=$dir\\install.ini"
-    },
-    "uninstaller": {
-        "file": "uninstall\\helper.exe",
-        "args": "/S"
-    },
+    "##": [
+        "At certain times of year there are two 'current' ESR versions, and we want the OLDER one.",
+        "See https://github.com/lukesampson/scoop-extras/pull/1079#issuecomment-407587329 for details."
+    ],
     "checkver": {
         "url": "https://www.mozilla.org/en-US/firefox/organizations/all/",
-        "re": "data-esr-versions=\"([\\d.]+)\""
+        "re": "data-esr-versions=\"([0-9]+(\\.[0-9]+)*)( [0-9]+(\\.[0-9]+)*)?\""
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.mozilla.org/?product=firefox-$versionesr-SSL&os=win64&lang=en-US#/firefox-setup.exe",
+                "url": "https://download.mozilla.org/?product=firefox-$versionesr-SSL&os=win64&lang=en-US#/firefox.7z",
                 "hash": {
                     "find": "([a-fA-F0-9]{64})\\s+(?:win64/en-US/Firefox Setup ([\\d.]+)esr.exe)",
                     "url": "https://download-installer.cdn.mozilla.net/pub/firefox/releases/$versionesr/SHA256SUMS"
                 }
             },
             "32bit": {
-                "url": "https://download.mozilla.org/?product=firefox-$versionesr-SSL&os=win&lang=en-US#/firefox-setup.exe",
+                "url": "https://download.mozilla.org/?product=firefox-$versionesr-SSL&os=win&lang=en-US#/firefox.7z",
                 "hash": {
                     "find": "([a-fA-F0-9]{64})\\s+(?:win32/en-US/Firefox Setup ([\\d.]+)esr.exe)",
                     "url": "https://download-installer.cdn.mozilla.net/pub/firefox/releases/$versionesr/SHA256SUMS"
