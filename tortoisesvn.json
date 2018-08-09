@@ -59,14 +59,14 @@
         "$null, $bucket = find_manifest($app)",
         "$bucketdir = bucketdir($bucket)",
         "$escdir = $dir -replace \"\\\\\",\"\\\\\"",
-        "(Get-Content $bucketdir\\scripts\\tortoisesvn\\tortoisesvn-install.reg.templ) | Foreach-Object {$_ -replace \"%TSVNHOME%\",\"$escdir\"} | Out-File -Encoding oem $dir\\tortoisesvn-install.reg",
+        "(gc \"$bucketdir\\scripts\\tortoisesvn\\tortoisesvn-install.reg.templ\") | % {$_ -replace \"%TSVNHOME%\",\"$escdir\"} | out-file -enc oem \"$dir\\tortoisesvn-install.reg\"",
         "cp \"$bucketdir\\scripts\\tortoisesvn\\tortoisesvn-install-tools.reg\" \"$dir\"",
         "cp \"$bucketdir\\scripts\\tortoisesvn\\tortoisesvn-uninstall.reg\" \"$dir\""
     ],
     "notes": [
         "To add TortoiseSVN as a context menu option, run '$dir\\tortoisesvn-install.reg'",
         "For File Association, run '$dir\\tortoisesvn-install-tools.reg'",
-        "Run '$dir\\tortoisesvn-uninstall.reg' before uninstalling TortoiseSVN"
+        "Before uninstalling TortoiseSVN, run '$dir\\tortoisesvn-uninstall.reg' "
     ],
     "checkver": {
         "url": "https://tortoisesvn.net/downloads.html",
