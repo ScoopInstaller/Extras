@@ -28,11 +28,25 @@
             "ShadowsocksR .Net 2.0"
         ]
     ],
+    "pre_install": [
+        "   #Create placeholder files",
+        "function CreateFile([String] $file, [String] $content = $null) {",
+        "    if(!(Test-Path \"$persist_dir\\$file\")) {",
+        "        Write-Host \"Create placeholder for shadowsocksr-csharp: $file\"",
+        "        New-Item -Force -Path \"$persist_dir\\$file\" -ItemType file -Value $content | Out-Null",
+        "    }",
+        "}",
+        "CreateFile 'gui-config.json' '{}'",
+        "CreateFile 'pac.txt'",
+        "CreateFile 'transfer_log.json' '{}'",
+        "CreateFile 'user-rule.txt'"
+    ],
     "persist": [
         "gui-config.json",
         "pac.txt",
         "transfer_log.json",
-        "user-rule.txt"
+        "user-rule.txt",
+        "temp"
     ],
     "checkver": {
         "github": "https://github.com/shadowsocksrr/shadowsocksr-csharp"
