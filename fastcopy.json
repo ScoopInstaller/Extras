@@ -1,0 +1,55 @@
+{
+    "homepage": "https://fastcopy.jp/en/",
+    "description": "The Fastest Copy/Delete Software on Windows",
+    "version": "3.54",
+    "autoupdate": {
+        "url": "https://fastcopy.jp/archive/FastCopy$cleanVersion_installer.zip"
+    },
+    "bin": [
+        "FastCopy.exe"
+    ],
+    "checkver": {
+        "re": "FastCopy ver ([\\d.]+)",
+        "url": "https://fastcopy.jp/en/"
+    },
+    "hash": "3a4cf521ed9ff4ceb16dca1695488ba28c6a646bfc9a3b8420175f74a3b436d8",
+    "installer": {
+        "args": [
+            "/SILENT",
+            "/DIR=\"$dir\""
+        ],
+        "file": "FastCopy_installer.exe"
+    },
+    "license": "GPL-3.0-only",
+    "persist": [
+        "FastCopy2.ini",
+        "Log"
+    ],
+    "pre_install": [
+        "Move-Item \"$dir/FastCopy*_installer.exe\" \"$dir/FastCopy_installer.exe\" -Force",
+        "if (!(Test-Path \"$dir/FastCopy2.ini\")) {",
+        "   Set-Content \"$dir/FastCopy2.ini\" -value '[main]'",
+        "}",
+        "if (!(Test-Path \"$dir/Log\")) {",
+        "   New-Item \"$dir/Log\" -type directory -force",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "FastCopy.exe",
+            "FastCopy - The Fastest Copy-Delete Software on Windows"
+        ],
+        [
+            "FastCopy.chm",
+            "FastCopy Manual"
+        ]
+    ],
+    "uninstaller": {
+        "file": "setup.exe",
+        "args": [
+            "/SILENT",
+            "/r"
+        ]
+    },
+    "url": "https://fastcopy.jp/archive/FastCopy354_installer.zip"
+}
