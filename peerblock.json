@@ -1,0 +1,59 @@
+{
+    "homepage": "https://forums.peerblock.com/",
+    "description": "An IP filter for Windows 7/10, forked from PeerGuardian 2",
+    "version": "518",
+    "license": "zlib-acknowledgement",
+    "architecture": {
+        "64bit": {
+            "url": "https://jaist.dl.sourceforge.net/project/peerblock/PeerBlock_r518__x64_Release.zip",
+            "hash": "D645AFE4EF0C422E2E163ABB19C70B38160465F5FB0ECA6DD5F5E49A9C7826AD"
+        },
+        "32bit": {
+            "url": "https://nchc.dl.sourceforge.net/project/peerblock/PeerBlock_r518__Win32_Release.zip",
+            "hash": "7DD44CBB8EF45E9A351321B3B6EC58C395F593A24E63E7C562BEC9093278A0F9"
+        }
+    },
+    "bin": [
+        "peerblock.exe"
+    ],
+    "shortcuts": [
+        [
+            "peerblock.exe",
+            "PeerBlock"
+        ]
+    ],
+    "persist": [
+        "lists",
+        "cache.p2b",
+        "peerblock.conf",
+        "peerblock.conf.bak",
+        "peerblock.conf.failed"
+    ],
+    "pre_install": [
+        "   #Create placeholder files",
+        "function CreateFile([String] $file, [String] $content = $null) {",
+        "    if(!(Test-Path \"$persist_dir\\$file\")) {",
+         "        Write-Host \"Create placeholder for peerblock: $file\"",
+        "        New-Item -Force -Path \"$persist_dir\\$file\" -ItemType file -Value $content | Out-Null",
+        "    }",
+        "}",
+        "CreateFile 'cache.p2b'",
+        "CreateFile 'peerblock.conf'",
+        "CreateFile 'peerblock.conf.bak'",
+        "CreateFile 'peerblock.conf.failed'"
+    ],
+    "checkver": {
+        "url": "https://sourceforge.net/projects/peerblock/files/",
+        "re": "<span class=\"label\">Download Latest Version</span>\\s+<span class=\"sub-label\">(?<version>v(\\d+\\.)+\\d+) Stable Release \\((?<preReleaseVersion>r\\d+)\\)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://jaist.dl.sourceforge.net/project/peerblock/PeerBlock_$preReleaseVersion__x64_Release.zip"
+            },
+            "32bit": {
+                "url": "https://nchc.dl.sourceforge.net/project/peerblock/PeerBlock_$preReleaseVersion__Win32_Release.zip"
+            }
+        }
+    }
+}
