@@ -42,17 +42,32 @@
         "CreateFile 'peerblock.conf.bak'",
         "CreateFile 'peerblock.conf.failed'"
     ],
+    "post_install": [
+        "   #- Check if it is still older than 1.1_r691",
+        "   #- If it is, check latest PeerBlock release in official forum",
+        "   #   -If no newer release than 1.1_r691, arbitrarily update PeerBlock to 1.1_r691",
+        "   #    from github repo retia-adolf/dormant/, cause its official link is dead",
+        "if ($version -lt 691) {",
+        "   $downloadJsonDir = $(basedir $global)",
+        "   if ($global) {",
+        "       $globalArg = '--global'",
+        "   }",
+        "   wget --quiet https://github.com/retia-adolf/dormant/raw/master/peerblock.json $downloadJsonDir",
+        "   $powershell = [System.Diagnotics.Process]::GetCurrentProcess().Path",
+        "   Start-Process $powershell -ArgumentList \"-Command\", \"scoop uninstall peerblock $globalArg `; if ($?) { scoop install $downloadJsonDir\\peerblock.json $globalArg }\" -WindowStyle Hidden",
+        "}"
+    ],
     "checkver": {
         "url": "https://sourceforge.net/projects/peerblock/files/",
-        "re": "<span class=\"label\">Download Latest Version</span>\\s+<span class=\"sub-label\">(?<version>v(\\d+\\.)+\\d+) Stable Release \\((?<preReleaseVersion>r\\d+)\\)"
+        "re": "<span class=\"label\">Download Latest Version</span>\\s+<span class=\"sub-label\">(?<finalRelease>v(\\d+\\.)+\\d+) Stable Release \\(r(?<version>\\d+)\\)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://jaist.dl.sourceforge.net/project/peerblock/PeerBlock_$preReleaseVersion__x64_Release.zip"
+                "url": "https://jaist.dl.sourceforge.net/project/peerblock/PeerBlock_r$matchVersion__x64_Release.zip"
             },
             "32bit": {
-                "url": "https://nchc.dl.sourceforge.net/project/peerblock/PeerBlock_$preReleaseVersion__Win32_Release.zip"
+                "url": "https://nchc.dl.sourceforge.net/project/peerblock/PeerBlock_r$matchVersion__Win32_Release.zip"
             }
         }
     }
