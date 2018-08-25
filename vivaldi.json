@@ -1,0 +1,62 @@
+{
+    "homepage": "https://vivaldi.com/",
+    "description": "An innovatively designed web browser, based on Blink, for users in Vivaldi.net community that replaced departed My Opera",
+    "version": "1.15.1147.64",
+    "license": {
+        "identifier": "freeware,BSD",
+        "url": "https://vivaldi.com/privacy/vivaldi-end-user-license-agreement/"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://downloads.vivaldi.com/stable/Vivaldi.1.15.1147.64.x64.exe",
+            "hash": ""
+        },
+        "32bit": {
+            "url": "https://downloads.vivaldi.com/stable/Vivaldi.1.15.1147.64.exe",
+            "hash": ""
+        }
+    },
+    "installer": {
+        "script": [
+            "cd $dir",
+            "$dlFileName = (Get-Item Vivaldi*.exe).Name",
+            "7z t -r .\\$dlFileName",
+            "   if ($?) {",
+            "       7z x -o. -r .\\$dlFileName",
+            "       7z t -r .\\vivaldi.7z",
+            "       if ($?) {",
+            "           7z x -o. -r .\\vivaldi.7z",
+            "           Rename-Item -Path . -NewName 'Application'",
+            "           Return $?",
+            "       }",
+            "   Return $?",
+            "   }",
+            "Return $?"
+        ]
+    },
+    "bin": [
+        "$dir\\Application\\vivaldi.exe"
+    ],
+    "shortcuts": [
+        [
+            "$dir\\Application\\vivaldi.exe",
+            "Vivaldi"
+        ]
+    ],
+    "persist": [
+        "User Data"
+    ],
+    "checkver": {
+        "re": "(?:https://downloads\\.vivaldi\\.com/stable/Vivaldi\\.)((\\d+\\.)+\\d+)(?:\\.exe)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://downloads.vivaldi.com/stable/Vivaldi.$version.x64.exe"
+            },
+            "32bit": {
+                "url": "https://downloads.vivaldi.com/stable/Vivaldi.$version.exe"
+            }
+        }
+    }
+}
