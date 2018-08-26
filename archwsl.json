@@ -1,0 +1,51 @@
+{
+    "homepage": "https://github.com/yuk7/ArchWSL/",
+    "description": "Install ArchLinux as a WSL Instance",
+    "notes": [
+        "Even when you are logging in as 'root',",
+        "some operations (like Docker) require Windows administrator privileges"
+    ],
+    "version": "18081100",
+    "url": "https://github.com/yuk7/ArchWSL/releases/download/18081100/Arch.zip",
+    "hash": "5fe0f07e9b58f0ca87e8cfa9148be056f0b523ebe3ed53a93b695b5900dae432",
+    "checkver": {
+        "url": "https://api.github.com/repos/yuk7/ArchWSL/releases/latest",
+        "re": "\"tag_name\":\"([^\"]+)\""
+    },
+    "autoupdate": {
+        "url": "https://github.com/yuk7/ArchWSL/releases/download/$version/Arch.zip"
+    },
+    "bin": "Arch.exe",
+    "shortcuts": [
+        [
+            "Arch.exe",
+            "Arch Linux"
+        ]
+    ],
+    "##": "'rootfs' must be a 'real' directory (at least on Windows 10 RS4)",
+    "persist": "data",
+    "post_install": [
+        "\"`n\" | & (Join-Path -Path $dir -ChildPath 'Arch.exe')",
+        "Write-Host \"`n\"",
+        "$lxUid = & (Join-Path -Path $dir -ChildPath 'Arch.exe') get --lxuid",
+        "$new_fs = Join-Path -Path $dir -ChildPath 'rootfs'",
+        "$persist_fs = Join-Path -Path $persist_dir -ChildPath 'data\\rootfs'",
+        "Set-ItemProperty -Path ('HKCU:Software\\Microsoft\\Windows\\CurrentVersion\\Lxss\\' + $lxUid) `",
+        "   -Name BasePath -Value (Join-Path -Path $persist_dir -ChildPath 'data')",
+        "if (Test-Path $persist_fs) {",
+        "    Remove-Item -Recurse -Path $new_fs",
+        "} else {",
+        "    Move-Item -Path $new_fs -Destination $persist_fs",
+        "}",
+        "Remove-Item -Recurse -Path (Join-Path -Path $dir -ChildPath 'temp')"
+    ],
+    "uninstaller": {
+        "script": [
+            "$lxUid = & (Join-Path -Path $dir -ChildPath 'Arch.exe') get --lxuid",
+            "Set-ItemProperty -Path ('HKCU:Software\\Microsoft\\Windows\\CurrentVersion\\Lxss\\' + $lxUid) `",
+            "   -Name BasePath -Value $dir",
+            "mkdir -Path (Join-Path -Path $dir -ChildPath 'rootfs') >$null",
+            "wslconfig /u Arch"
+        ]
+    }
+}
