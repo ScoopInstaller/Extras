@@ -10,7 +10,7 @@
     "hash": "5fe0f07e9b58f0ca87e8cfa9148be056f0b523ebe3ed53a93b695b5900dae432",
     "checkver": {
         "url": "https://api.github.com/repos/yuk7/ArchWSL/releases/latest",
-        "re": "\"tag_name\":\"([^\"]+)\""
+        "jp": "$.tag_name"
     },
     "autoupdate": {
         "url": "https://github.com/yuk7/ArchWSL/releases/download/$version/Arch.zip"
@@ -24,6 +24,19 @@
     ],
     "##": "'rootfs' must be a 'real' directory (at least on Windows 10 RS4)",
     "persist": "data",
+    "pre_install": [
+        "if ($null -eq (Get-Command wslconfig -ErrorAction SilentlyContinue)) {",
+        "   Write-Host 'WSL appears not to be enabeld. Are you sure to continue? [y/N]' `",
+        "       -NoNewLine -ForegroundColor Yellow",
+        "   $ans = Read-Host",
+        "   if ('y' -ne $ans.toLower()) {",
+        "       Write-Host -ForegroundColor Yellow 'To enable Windows Subsystem for Linux,",
+        "open Control Panel, click Programs and Features, click Turn Windows features on or off.",
+        "(administrator privileges required)'",
+        "       throw 'UserCancel'",
+        "   }",
+        "}"
+    ],
     "post_install": [
         "\"`n\" | & (Join-Path -Path $dir -ChildPath 'Arch.exe')",
         "Write-Host \"`n\"",
