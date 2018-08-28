@@ -1,10 +1,7 @@
 {
     "homepage": "https://github.com/yuk7/ArchWSL/",
     "description": "Install ArchLinux as a WSL Instance",
-    "notes": [
-        "Even when you are logging in as 'root',",
-        "some operations (like Docker) require Windows administrator privileges"
-    ],
+    "notes": "Even when you are logging in as 'root', some operations (like service command) require Windows administrator privileges",
     "version": "18081100",
     "url": "https://github.com/yuk7/ArchWSL/releases/download/18081100/Arch.zip",
     "hash": "5fe0f07e9b58f0ca87e8cfa9148be056f0b523ebe3ed53a93b695b5900dae432",
@@ -24,41 +21,54 @@
     ],
     "##": "'rootfs' must be a 'real' directory (at least on Windows 10 RS4)",
     "persist": "data",
-    "pre_install": [
-        "if ($null -eq (Get-Command wslconfig -ErrorAction SilentlyContinue)) {",
-        "   Write-Host 'WSL appears not to be enabeld. Are you sure to continue? [y/N]' `",
-        "       -NoNewLine -ForegroundColor Yellow",
-        "   $ans = Read-Host",
-        "   if ('y' -ne $ans.toLower()) {",
-        "       Write-Host -ForegroundColor Yellow 'To enable Windows Subsystem for Linux,",
-        "open Control Panel, click Programs and Features, click Turn Windows features on or off.",
-        "(administrator privileges required)'",
-        "       throw 'UserCancel'",
-        "   }",
-        "}"
-    ],
-    "post_install": [
-        "\"`n\" | & (Join-Path -Path $dir -ChildPath 'Arch.exe')",
-        "Write-Host \"`n\"",
-        "$lxUid = & (Join-Path -Path $dir -ChildPath 'Arch.exe') get --lxuid",
-        "$new_fs = Join-Path -Path $dir -ChildPath 'rootfs'",
-        "$persist_fs = Join-Path -Path $persist_dir -ChildPath 'data\\rootfs'",
-        "Set-ItemProperty -Path ('HKCU:Software\\Microsoft\\Windows\\CurrentVersion\\Lxss\\' + $lxUid) `",
-        "   -Name BasePath -Value (Join-Path -Path $persist_dir -ChildPath 'data')",
-        "if (Test-Path $persist_fs) {",
-        "    Remove-Item -Recurse -Path $new_fs",
-        "} else {",
-        "    Move-Item -Path $new_fs -Destination $persist_fs",
-        "}",
-        "Remove-Item -Recurse -Path (Join-Path -Path $dir -ChildPath 'temp')"
-    ],
+    "installer": {
+        "script": [
+            "$installable = $true",
+            "$user = [Security.Principal.WindowsIdentity]::GetCurrent() -as [Security.Principal.WindowsPrincipal]",
+            "$permission = Get-Acl $dir | select -ExpandProperty Access | where {",
+            "    ($user.IsInRole($_.IdentityReference)) -and `",
+            "    ($_.FileSystemRights.ToString() -eq 'FullControl') -and `",
+            "    # 3 = ([Security.AccessControl.InheritanceFlags]::ContainerInherit -bor ObjectInherit)",
+            "    ($_.InheritanceFlags -band 3) -and `",
+            "    ($_.PropagationFlags.ToString() -ne 'NoPropagateInherit')",
+            "}",
+            "if ($null -eq $permission) {",
+            "   warn \"Full Control access to the scoop directory is necessary to install WSL distribution.\"",
+            "   warn \"Change directory security and reinstall ArchWSL.\"",
+            "   $installable = $false",
+            "}",
+            "if ($null -eq (Get-Command wslconfig -ErrorAction SilentlyContinue)) {",
+            "    warn \"WSL appears not to be enabled!\"",
+            "    warn \"Run 'Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux'\"",
+            "    warn \"from an elevated PowerShell. Restart your computer when prompted and reinstall ArchWSL.\"",
+            "    $installable = $false",
+            "}",
+            "if ($installable) {",
+            "    \"`$si = New-Object System.Diagnostics.ProcessStartInfo '$dir\\Arch.exe' -Property @{ UseShellExecute = `$false; RedirectStandardInput = `$true }",
+            "    `$p = [System.Diagnostics.Process]::Start(`$si)",
+            "    `$p.StandardInput.Write('y')",
+            "    `$p.WaitForExit()",
+            "    `$lx_uid = & '$dir\\Arch.exe' get --lxuid",
+            "    if(!`$lx_uid) { error 'ArchWsl is not installed!'; return }",
+            "    Set-ItemProperty -Path ('HKCU:Software\\Microsoft\\Windows\\CurrentVersion\\Lxss\\' + `$lx_uid) -Name BasePath -Value '$persist_dir\\data'",
+            "    if (Test-Path '$persist_dir') {",
+            "        Remove-Item -Recurse -Path '$dir\\rootfs'",
+            "    } else {",
+            "        Move-Item -Path '$dir\\rootfs' -Destination '$persist_dir\\data\\rootfs'",
+            "    }",
+            "    Remove-Item -Recurse -Path '$dir\\temp'",
+            "    \" | Set-Content \"$dir\\install.ps1\"",
+            "    & \"$dir\\install.ps1\"",
+            "}"
+        ]
+    },
     "uninstaller": {
         "script": [
-            "$lxUid = & (Join-Path -Path $dir -ChildPath 'Arch.exe') get --lxuid",
-            "Set-ItemProperty -Path ('HKCU:Software\\Microsoft\\Windows\\CurrentVersion\\Lxss\\' + $lxUid) `",
-            "   -Name BasePath -Value $dir",
-            "mkdir -Path (Join-Path -Path $dir -ChildPath 'rootfs') >$null",
-            "wslconfig /u Arch"
+            "$lx_uid = & \"$dir\\Arch.exe\" get --lxuid",
+            "if(!$lx_uid) { error 'ArchWsl is not registered!'; return }",
+            "Set-ItemProperty -Path \"HKCU:Software\\Microsoft\\Windows\\CurrentVersion\\Lxss\\$lx_uid\" -Name BasePath -Value $dir",
+            "New-Item -ItemType Directory -Path \"$dir\\rootfs\" | Out-Null",
+            "'y' | & \"$dir\\Arch.exe\" clean"
         ]
     }
 }
