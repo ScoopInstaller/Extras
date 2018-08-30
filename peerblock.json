@@ -1,0 +1,75 @@
+{
+    "homepage": "https://forums.peerblock.com/",
+    "description": "An IP filter for Windows 7/10, forked from PeerGuardian 2",
+    "version": "1.1.518",
+    "license": "zlib-acknowledgement",
+    "architecture": {
+        "64bit": {
+            "url": "https://downloads.sourceforge.net/project/peerblock/PeerBlock_r518__x64_Release.zip",
+            "hash": "sha1:6bad36ff269db1ce7ba484b9e5dc919df94b87a4"
+        },
+        "32bit": {
+            "url": "https://downloads.sourceforge.net/project/peerblock/PeerBlock_r518__Win32_Release.zip",
+            "hash": "sha1:7b1c3cc19dc3b782e04896d48902d09606ac2d98"
+        }
+    },
+    "bin": [
+        "peerblock.exe"
+    ],
+    "shortcuts": [
+        [
+            "peerblock.exe",
+            "PeerBlock"
+        ]
+    ],
+    "persist": [
+        "lists",
+        "cache.p2b",
+        "peerblock.conf",
+        "peerblock.conf.bak",
+        "peerblock.conf.failed"
+    ],
+    "pre_install": [
+        "   #Create placeholder files",
+        "function CreateFile([String] $file, [String] $content = $null) {",
+        "    if(!(Test-Path \"$persist_dir\\$file\")) {",
+        "        Write-Host \"Create placeholder for peerblock: $file\"",
+        "        New-Item -Force -Path \"$persist_dir\\$file\" -ItemType file -Value $content | Out-Null",
+        "    }",
+        "}",
+        "CreateFile 'cache.p2b'",
+        "CreateFile 'peerblock.conf'",
+        "CreateFile 'peerblock.conf.bak'",
+        "CreateFile 'peerblock.conf.failed'"
+    ],
+    "post_install": [
+        "   #- Check if it is still older than 1.1_r691",
+        "   #- If it is, check latest PeerBlock release in official forum",
+        "   #   -If no newer release than 1.1_r691, arbitrarily update PeerBlock to 1.1_r691",
+        "   #    from github repo retia-adolf/dormant/, cause its official link is dead",
+        "if ($version -lt 691) {",
+        "   $downloadJsonDir = $(basedir $global)",
+        "   if ($global) {",
+        "       $globalArg = '--global'",
+        "   }",
+        "   wget --quiet https://github.com/retia-adolf/dormant/raw/master/peerblock.json $downloadJsonDir",
+        "   $powershell = [System.Diagnotics.Process]::GetCurrentProcess().Path",
+        "   Start-Process $powershell -ArgumentList \"-Command\", \"scoop uninstall peerblock $globalArg `; if ($?) { scoop install $downloadJsonDir\\peerblock.json $globalArg }\" -WindowStyle Hidden",
+        "}"
+    ],
+    "checkver": {
+        "url": "https://sourceforge.net/projects/peerblock/files/",
+        "re": "v(?<release>[\\d.]+) Stable Release \\(r(?<build>\\d+)\\)",
+        "replace": "${release}.${build}"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://downloads.sourceforge.net/project/peerblock/PeerBlock_r$matchBuild__x64_Release.zip"
+            },
+            "32bit": {
+                "url": "https://downloads.sourceforge.net/project/peerblock/PeerBlock_r$matchBuild__Win32_Release.zip"
+            }
+        }
+    }
+}

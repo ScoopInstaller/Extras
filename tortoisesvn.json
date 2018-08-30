@@ -1,19 +1,85 @@
 {
-    "_comment": "Because of Explorer integration, this installer requires admin privileges to run.
-        Sometimes, during the uninstall process, the user is prompted some applications should be
-        closed before continuing. Rather than have the MSI automatically close applications, please
-        choose the other option to reboot manually later. Otherwise, the uninstaller never returns
-        to scoop and not all directories are removed, though the actual program is uninstalled.",
     "homepage": "https://tortoisesvn.net",
-    "version": "1.9.7",
-    "license": "GPL-2.0",
-    "url": "https://downloads.sourceforge.net/project/tortoisesvn/1.9.7/Application/TortoiseSVN-1.9.7.27907-x64-svn-1.9.7.msi#/TortoiseSVN.msi",
-    "hash": "a0616034862a0deb79b0601cb724c6e8e5859f9ee5e3a057d42bf3c723241396",
-    "installer": {
-        "args": "/passive ADDLOCAL=ALL TARGETDIR=$dir INSTALLDIR=\"$dir\"",
-        "keep": true
+    "version": "1.10.1.28295",
+    "license": "GPL-2.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://osdn.net/frs/redir.php?m=auto&f=/storage/g/t/to/tortoisesvn/1.10.1/Application/TortoiseSVN-1.10.1.28295-x64-svn-1.10.2.msi",
+            "hash": "fbc6492d425756a244ae715effa3eb28eb8cee1b4b8e79949ae53a61439f73f9"
+        },
+        "32bit": {
+            "url": "https://osdn.net/frs/redir.php?m=auto&f=/storage/g/t/to/tortoisesvn/1.10.1/Application/TortoiseSVN-1.10.1.28295-win32-svn-1.10.2.msi",
+            "hash": "3484fcfea5684c6459092d9202b20dbc5fabc965d2ed152fb9ef05ae02615cd5"
+        }
     },
-    "uninstaller": {
-        "script": "iex \"$env:SystemRoot\\System32\\msiexec.exe /passive /x $dir\\TortoiseSVN.msi\""
+    "extract_dir": "Program Files\\TortoiseSVN",
+    "bin": [
+        "bin\\svn.exe",
+        "bin\\svnadmin.exe",
+        "bin\\svnbench.exe",
+        "bin\\svndumpfilter.exe",
+        "bin\\svnlook.exe",
+        "bin\\svnmucc.exe",
+        "bin\\svnrdump.exe",
+        "bin\\svnserve.exe",
+        "bin\\svnsync.exe",
+        "bin\\svnversion.exe"
+    ],
+    "shortcuts": [
+        [
+            "bin\\TortoiseIDiff.exe",
+            "TortoiseIDiff"
+        ],
+        [
+            "bin\\TortoiseMerge.exe",
+            "TortoiseMerge"
+        ],
+        [
+            "bin\\TortoiseProc.exe",
+            "TortoiseSVN",
+            "/command:rtfm"
+        ],
+        [
+            "bin\\TortoiseProc.exe",
+            "TortoiseSVN Project Monitor",
+            "/command:monitor"
+        ],
+        [
+            "bin\\TortoiseProc.exe",
+            "TortoiseSVN Repository Browser",
+            "/command:repobrowser"
+        ],
+        [
+            "bin\\TortoiseProc.exe",
+            "TortoiseSVN Settings",
+            "/command:settings"
+        ]
+    ],
+    "post_install": [
+        "$null, $bucket = find_manifest($app)",
+        "$bucketdir = bucketdir($bucket)",
+        "$escdir = $dir -replace \"\\\\\",\"\\\\\"",
+        "(gc \"$bucketdir\\scripts\\tortoisesvn\\tortoisesvn-install.reg.templ\") | % {$_ -replace \"%TSVNHOME%\",\"$escdir\"} | out-file -enc oem \"$dir\\tortoisesvn-install.reg\"",
+        "(gc \"$bucketdir\\scripts\\tortoisesvn\\tortoisesvn-install-tools.reg.templ\") | % {$_ -replace \"%TSVNHOME%\",\"$escdir\"} | out-file -enc oem \"$dir\\tortoisesvn-install-tools.reg\"",
+        "cp \"$bucketdir\\scripts\\tortoisesvn\\tortoisesvn-uninstall.reg\" \"$dir\""
+    ],
+    "notes": [
+        "To add TortoiseSVN as a context menu option, run '$dir\\tortoisesvn-install.reg'",
+        "For file associations, run '$dir\\tortoisesvn-install-tools.reg'",
+        "Before uninstalling TortoiseSVN, run '$dir\\tortoisesvn-uninstall.reg' "
+    ],
+    "checkver": {
+        "url": "https://tortoisesvn.net/downloads.html",
+        "re": "tortoisesvn/storage/(?<release>[\\d.]+)/Application/TortoiseSVN-([\\d.]+)-x64-svn-(?<svn>[\\d.]+).msi"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://osdn.net/frs/redir.php?m=auto&f=/storage/g/t/to/tortoisesvn/$matchRelease/Application/TortoiseSVN-$version-x64-svn-$matchSvn.msi"
+            },
+            "32bit": {
+                "url": "https://osdn.net/frs/redir.php?m=auto&f=/storage/g/t/to/tortoisesvn/$matchRelease/Application/TortoiseSVN-$version-win32-svn-$matchSvn.msi"
+            }
+        }
     }
 }

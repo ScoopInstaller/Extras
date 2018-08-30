@@ -1,0 +1,53 @@
+{
+    "homepage": "https://code.visualstudio.com/",
+    "version": "nightly",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://code.visualstudio.com/License/"
+    },
+    "notes": [
+        "Add VSCode as a context menu option by running: '$dir\\vscode-install-context.reg'"
+    ],
+    "bin": [
+        [
+            "bin\\code-insiders.cmd",
+            "code-insiders"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "Code - Insiders.exe",
+            "Visual Studio Code - Insiders"
+        ]
+    ],
+    "post_install": [
+        "if(Test-Path(\"$dir\\vscode-install-context.reg\")) {",
+        "  $codepath = \"$dir\\Code - Insiders.exe\".Replace('\\', '\\\\')",
+        "  $content = Get-Content \"$dir\\vscode-install-context.reg\"",
+        "  $content = $content.Replace('$code', $codepath)",
+        "  $content = $content.Replace('&Code', 'Code &Insiders')",
+        "  $content | Set-Content -Path \"$dir\\vscode-install-context.reg\"",
+        "}",
+        "if(Test-Path(\"$dir\\vscode-uninstall-context.reg\")) {",
+        "  $content = Get-Content \"$dir\\vscode-uninstall-context.reg\"",
+        "  $content = $content.Replace('&Code', 'Code &Insiders')",
+        "  $content | Set-Content -Path \"$dir\\vscode-uninstall-context.reg\"",
+        "}"
+    ],
+    "architecture": {
+        "64bit": {
+            "url": [
+                "https://vscode-update.azurewebsites.net/1.26.0-insider/win32-x64-archive/insider#/dl.7z",
+                "https://raw.github.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg",
+                "https://raw.github.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg"
+            ]
+        },
+        "32bit": {
+            "url": [
+                "https://vscode-update.azurewebsites.net/1.26.0-insider/win32-archive/insider#/dl.7z",
+                "https://raw.github.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg",
+                "https://raw.github.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg"
+            ]
+        }
+    }
+}
