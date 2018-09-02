@@ -1,0 +1,39 @@
+{
+    "version": "2.17",
+    "description": "Windows tool that allows re-configuration and expand the capabilities of mouse.",
+    "homepage": "https://www.highrez.co.uk/downloads/xmousebuttoncontrol.htm",
+    "url": "https://vps2.highrez.co.uk/downloads/XMouseButtonControl%202.17%20Portable.zip",
+    "hash": "13316783364f8fc22d0ffc34cd81f44d092caea6d2993231829ca464eece651f",
+    "architecture": {
+        "64bit": {
+            "extract_dir": "64bit (x64)"
+        },
+        "32bit": {
+            "extract_dir": "32bit (x86)"
+        }
+    },
+    "pre_install": [
+        "$conf = 'XMBCSettings.xml'",
+        "if (!(Test-Path \"$persist_dir\\$conf\")) {",
+        "    Write-Host 'File' $conf 'does not exists. Creating.' -f Yellow",
+        "    $cont = \"<?xml version=`\"1.0`\"?>`n<root>`n\"",
+        "    $cont += \"<CheckVersion Days=`\"5`\" Enable=`\"false`\" Beta=`\"false`\" />`n</root>\"",
+        "    Set-Content \"$dir\\$conf\" $cont -Encoding ascii",
+        "}"
+    ],
+    "persist": "XMBCSettings.xml",
+    "bin": "XMouseButtonControl.exe",
+    "shortcuts": [
+        [
+            "XMouseButtonControl.exe",
+            "X-Mouse Button Control"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.highrez.co.uk/downloads/xmbc_changelog.htm",
+        "re": "Version ([\\d\\.]+)\\s+\\(\\d"
+    },
+    "autoupdate": {
+        "url": "https://vps2.highrez.co.uk/downloads/XMouseButtonControl%20$version%20Portable.zip"
+    }
+}
