@@ -2,29 +2,40 @@
     "homepage": "http://www.bandisoft.com/bandizip/",
     "license": "Freeware(EULA)",
     "version": "6.14",
-    "url": "https://dl.bandisoft.com/bandizip.kr/BANDIZIP-SETUP-KR.EXE#/dl.7z",
-    "hash": "3f6a2216554cffc2916c2410cd7127d6bc9bd5af3733a9c0e6afe396bdef7e8f",
     "architecture": {
         "64bit": {
-            "bin": "Bandizip64.exe",
-            "shortcuts": [
-                [
-                    "Bandizip64.exe",
-                    "Bandizip 64"
-                ]
-            ]
+            "url": "https://dl.bandisoft.com/bandizip/BANDIZIP-PORTABLE-GL-64BIT.ZIP",
+            "hash": "e71fea5e9047fc795c028ec6167f10e6733ba489a06931be5b70e7ccd94c0ef6"
         },
         "32bit": {
-            "bin": "Bandizip32.exe",
-            "shortcuts": [
-                [
-                    "Bandizip32.exe",
-                    "Bandizip 32"
-                ]
-            ]
+            "url": "https://dl.bandisoft.com/bandizip/BANDIZIP-PORTABLE-GL-32BIT.ZIP",
+            "hash": "7231e0e28428ad405bd23337768765e390424574ea8689b0771fe5cecb59cec4"
         }
     },
+    "persist": "Bandizip.ini",
+    "pre_install": [
+		"Get-ChildItem \"$dir\\Bandizip*.exe\" | Rename-Item -NewName \"$dir\\Bandizip.exe\"",
+        "If(!(Test-Path \"$dir\\Bandizip.ini\")) { Set-Content \"$dir\\Bandizip.ini\" -Value $null }"
+    ],
+    "bin": "Bandizip.exe",
+    "shortcuts": [
+        [
+            "Bandizip.exe",
+            "Bandizip"
+        ]
+    ],
+    "checkver": {
+        "url": "https://en.bandisoft.com/bandizip/history/",
+        "re": "<font[^>]+>v([\\d.]+)<"
+    },
     "autoupdate": {
-        "url": "https://dl.bandisoft.com/bandizip.kr/BANDIZIP-SETUP-KR.EXE#/dl.7z"
+        "architecture": {
+            "64bit": {
+                "url": "https://dl.bandisoft.com/bandizip/BANDIZIP-PORTABLE-GL-64BIT.ZIP"
+            },
+            "32bit": {
+                "url": "https://dl.bandisoft.com/bandizip/BANDIZIP-PORTABLE-GL-32BIT.ZIP"
+            }
+        }
     }
 }
