@@ -1,18 +1,11 @@
 {
     "homepage": "https://forums.peerblock.com/",
     "description": "An IP filter for Windows 7/10, forked from PeerGuardian 2",
-    "version": "1.1.518",
+    "version": "1.1.691",
     "license": "zlib-acknowledgement",
-    "architecture": {
-        "64bit": {
-            "url": "https://downloads.sourceforge.net/project/peerblock/PeerBlock_r518__x64_Release.zip",
-            "hash": "sha1:6bad36ff269db1ce7ba484b9e5dc919df94b87a4"
-        },
-        "32bit": {
-            "url": "https://downloads.sourceforge.net/project/peerblock/PeerBlock_r518__Win32_Release.zip",
-            "hash": "sha1:7b1c3cc19dc3b782e04896d48902d09606ac2d98"
-        }
-    },
+    "url": "https://github.com/scoopinstaller/binary-mirror/blob/master/peerblock/PeerBlock-Setup_v1.1%2B_r691.exe",
+    "hash": "sha512:09f3423fcaf0c1f0df2a46f7b8af3dbcd9eab2c79bac1d902272411a228283041babd541f71c115e5678ab8687a875035cc911c90191fbf666a6991cfb2ce8fd",
+    "innosetup": true,
     "bin": [
         "peerblock.exe"
     ],
@@ -42,21 +35,6 @@
         "CreateFile 'peerblock.conf.bak'",
         "CreateFile 'peerblock.conf.failed'"
     ],
-    "post_install": [
-        "   #- Check if it is still older than 1.1_r691",
-        "   #- If it is, check latest PeerBlock release in official forum",
-        "   #   -If no newer release than 1.1_r691, arbitrarily update PeerBlock to 1.1_r691",
-        "   #    from github repo retia-adolf/dormant/, cause its official link is dead",
-        "if ($version -lt 691) {",
-        "   cd \"$dir\"",
-        "   if ($global) {",
-        "       $globalArg = '--global'",
-        "   }",
-        "   wget https://github.com/retia-adolf/dormant/raw/master/peerblock.json",
-        "   $powershell = [System.Diagnostics.Process]::GetCurrentProcess().Path",
-        "   Start-Process $powershell -ArgumentList \"-Command\", \"scoop uninstall peerblock $globalArg `; if ($?) { scoop install .\\peerblock.json $globalArg }\" -WindowStyle Hidden",
-        "}"
-    ],
     "checkver": {
         "url": "https://sourceforge.net/projects/peerblock/files/",
         "re": "v(?<release>[\\d.]+) Stable Release \\(r(?<build>\\d+)\\)",
@@ -70,6 +48,7 @@
             "32bit": {
                 "url": "https://downloads.sourceforge.net/project/peerblock/PeerBlock_r$matchBuild__Win32_Release.zip"
             }
-        }
+        },
+        "innosetup": false
     }
 }
