@@ -17,22 +17,14 @@
     "bin": "gogs.exe",
     "installer": {
         "script": [
-            "if (!(test-path \"$persist_dir\\custom\\conf\")) { mkdir $dir\\custom\\conf | out-null }",
-            "if (!(test-path \"$persist_dir\\repositories\")) { mkdir $dir\\repositories | out-null }",
-            "if (!(test-path \"$persist_dir\\log\")) { mkdir $dir\\log | out-null }",
-            "if (!(test-path \"$persist_dir\\data\")) { mkdir $dir\\data | out-null }",
-            "if (!(test-path \"$persist_dir\\custom\\conf\\app.ini\")) {",
-            "@\"",
-            "[database]",
-            "DB_TYPE  = sqlite3",
-            "PATH     = $persist_dir\\data\\gogs.db",
-            "",
-            "[repository]",
-            "ROOT = $persist_dir\\repositories",
-            "",
-            "[log]",
-            "ROOT_PATH = $persist_dir\\log",
-            "\"@ | % {$_ -replace \"\\\\\",\"/\"} | out-file -en oem $dir\\custom\\conf\\app.ini }"
+            "echo 'Creating $persist_dir\\custom\\conf.app.ini'",
+            "if(!(test-path \"$persist_dir\\custom\\conf\")) { mkdir \"$persist_dir\\custom\\conf\" > $null }",
+            "if(!(test-path \"$persist_dir\\custom\\conf\\app.ini\")) {",
+            "    $gogs = \"[database]`nDB_TYPE = sqlite3`nPATH = $persist_dir/data/gogs.db\"",
+            "    $gogs += \"`n[repository]`nROOT = $persist_dir/repositories\"",
+            "    $gogs += \"`n[log]`nROOT_PATH = $persist_dir/log\"",
+            "    echo $gogs | % {$_.replace(\"\\\",\"/\") } | out-file -encoding oem \"$persist_dir\\custom\\conf\\app.ini\"",
+            "}"
         ]
     },
     "persist": [
