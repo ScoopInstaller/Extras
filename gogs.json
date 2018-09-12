@@ -1,0 +1,60 @@
+{
+    "homepage": "https://gogs.io/",
+    "description": "A painless self-hosted Git service",
+    "license": "MIT",
+    "version": "0.11.53",
+    "architecture": {
+        "64bit": {
+            "url": "https://cdn.gogs.io/0.11.53/gogs_0.11.53_windows_amd64_mws.zip",
+            "hash": "bd64f8e7ee0f74c6b65bdf2dfa33e7746fab33f4856a07166dce0bd121a48ac8"
+        },
+        "32bit": {
+            "url": "https://cdn.gogs.io/0.11.53/gogs_0.11.53_windows_386_mws.zip",
+            "hash": "6da6a3e9452ea6e0af296c251c491c22bb537525e8cfc340c5e103f8c31acc40"
+        }
+    },
+    "extract_dir": "gogs",
+    "bin": "gogs.exe",
+    "installer": {
+        "script": [
+            "if (!(test-path \"$persist_dir\\custom\\conf\")) { mkdir $dir\\custom\\conf | out-null }",
+            "if (!(test-path \"$persist_dir\\repositories\")) { mkdir $dir\\repositories | out-null }",
+            "if (!(test-path \"$persist_dir\\log\")) { mkdir $dir\\log | out-null }",
+            "if (!(test-path \"$persist_dir\\data\")) { mkdir $dir\\data | out-null }",
+            "if (!(test-path \"$persist_dir\\custom\\conf\\app.ini\")) {",
+            "@\"",
+            "[database]",
+            "DB_TYPE  = sqlite3",
+            "PATH     = $persist_dir\\data\\gogs.db",
+            "",
+            "[repository]",
+            "ROOT = $persist_dir\\repositories",
+            "",
+            "[log]",
+            "ROOT_PATH = $persist_dir\\log",
+            "\"@ | % {$_ -replace \"\\\\\",\"/\"} | out-file -en oem $dir\\custom\\conf\\app.ini }"
+        ]
+    },
+    "persist": [
+        "custom",
+        "repositories",
+        "log",
+        "data"
+    ],
+    "checkver": {
+        "github": "https://github.com/gogs/gogs"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://cdn.gogs.io/$version/gogs_$version_windows_amd64_mws.zip"
+            },
+            "32bit": {
+                "url": "https://cdn.gogs.io/$version/gogs_$version_windows_386_mws.zip"
+            }
+        },
+        "hash": {
+            "url": "https://dl.gogs.io/$version/checksum_sha256.txt"
+        }
+    }
+}
