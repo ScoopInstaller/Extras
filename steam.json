@@ -1,0 +1,41 @@
+{
+    "version": "nightly",
+    "description": "Steam. The ultimate entertainment platform.",
+    "homepage": "https://store.steampowered.com/",
+    "notes": "Changing Steam library folder is HIGHLY recommended.",
+    "suggest": {
+        "Skins": [
+            "AirSkin"
+        ]
+    },
+    "url": "https://steamcdn-a.akamaihd.net/client/installer/SteamSetup.exe#/cosi.7z",
+    "installer": {
+        "script": [
+            "Remove-Item \"$dir\\`$PLUGINSDIR\" -Force -Recurse",
+            "foreach ($fold in @(\"skins\", \"steamapps\", \"userdata\")) {",
+            "    if (!(Test-Path \"$persist_dir\\$fold\")) {",
+            "        Write-Host 'Folder' $fold 'does not exists. Creating.' -f Yellow",
+            "        New-Item \"$dir\\$fold\" -Type Directory | Out-Null",
+            "    }",
+            "}"
+        ]
+    },
+    "uninstaller": {
+        "file": "uninstall.exe",
+        "args": [
+            "/S"
+        ]
+    },
+    "persist": [
+        "skins",
+        "steamapps",
+        "userdata"
+    ],
+    "shortcuts": [
+        [
+            "Steam.exe",
+            "Steam",
+            "-dev"
+        ]
+    ]
+}
