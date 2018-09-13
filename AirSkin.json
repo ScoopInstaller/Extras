@@ -1,0 +1,58 @@
+{
+    "version": "2018-0805",
+    "description": "Air For Steam. An elegant and customizable skin for Steam.",
+    "homepage": "http://airforsteam.com/",
+    "license": {
+        "identifier": "CC-BY-NC-4.0",
+        "url": "https://github.com/Outsetini/Air-for-Steam/blob/master/LICENSE.txt"
+    },
+    "notes": [
+        "If you installed steam via scoop, skin was automatically copied.",
+        "Otherwise copy '$dir' folder into '...\\Steam\\skins' folder.",
+        "After copying you can uninstall with 'scoop uninstall AirForSteam'.",
+        "There are few themes, which could be set. (see: https://github.com/Outsetini/Air-for-Steam/wiki#colors)"
+    ],
+    "url": "https://github.com/Outsetini/Air-for-Steam/archive/2018-0805.zip",
+    "hash": "7107b9c09d295a848a549d64e4d242eb90792787a594cb19e6ffb0e1ff884a4e",
+    "extract_dir": "Air-for-Steam-2018-0805",
+    "installer": {
+        "script": [
+            "$extras = \"$dir\\+Extras\"",
+            "$toDelete = @(\"$dir\\Support Air on Patreon.url\", \"$dir\\README.md\", \"$dir\\LICENSE.txt\", \"$dir\\FAQ.url\", ",
+            "    \"$dir\\Contributors.url\", \"$dir\\Changelog.url\", \"$dir\\.gitattributes\", \"$extras\\Fonts\", \"$extras\\Square Avatars\"",
+            ")",
+            "Remove-Item $toDelete -Force -Recurse",
+            "    # Copy rather than moving (could be changed afterwards)",
+            "Copy-Item \"$extras\\Themes\\Dark\\*\" \"$dir\" -Force -Recurse",
+            "    # REPLACING HELL",
+            "$FILE = \"$dir\\config.ini\"",
+            "$content = Get-Content $FILE",
+            "    # Replacing Default Theme",
+            "$find = 'include \"resource/colors/sky.styles\"'",
+            "$replace = \"//$find\"",
+            "$content = $content.Replace($find, $replace)",
+            "    # Enabling Pixeldark / Spotify Theme",
+            "#$find = 'include \"resource/colors/user/pixeldark.styles\"'",
+            "$find = 'include \"resource/colors/user/spotify.styles\"'",
+            "$replace = $find",
+            "$find = \"//$find\"",
+            "$content = $content.Replace($find, $replace)",
+            "    # Final file overwrite",
+            "Set-Content $FILE $content -Encoding Ascii",
+            "    # COPYING",
+            "    # If steam is installed via scoop, copy skin",
+            "if ((Get-ChildItem \"$env:SCOOP\\apps\" -Filter 'Steam').Exists) {",
+            "    Write-Host 'Detected installed steam via SCOOP. Copying Files.' -f Yellow",
+            "    Copy-Item \"$dir\" \"$(Resolve-Path (scoop prefix Steam))\\skins\\\" -Force -Recurse",
+            "}"
+        ]
+    },
+    "checkver": {
+        "url": "https://api.github.com/repos/outsetini/air-for-steam/releases/latest",
+        "jp": "$.tag_name"
+    },
+    "autoupdate": {
+        "url": "https://github.com/Outsetini/Air-for-Steam/archive/$version.zip",
+        "extract_dir": "Air-for-Steam-$version"
+    }
+}
