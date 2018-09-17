@@ -1,8 +1,19 @@
 {
+    "description": "Thunderbird is a free email application that’s easy to set up and customize - and it’s loaded with great features!",
     "homepage": "https://www.mozilla.org/en-US/thunderbird/",
-    "version": "52.9.1",
-    "url": "https://download.mozilla.org/?product=thunderbird-52.9.1-SSL&os=win&lang=en-US#/thunderbird-setup.exe",
-    "hash": "sha512:c09580f5fd344e5d1f4e2ece5d9d530fefd62d0a84a4933d7f2f2157e9158ed18d18af9f7668afc02479f04d498931148997db1e2bd40a421c445e20b0ac1e43",
+    "version": "60.0",
+    "license": "MPL-2.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://download.mozilla.org/?product=thunderbird-60.0-SSL&os=win64&lang=en-US#/thunderbird-setup_x64.7z",
+            "hash": "sha512:4f1750bbfc900b33ac1709ba1d0c1ed08c27b51004a435220acd018af5c3843f1ca29b63f02899a5a9bd9ebda605caebdb8c5675f596310ff5ddf8972d9368b2"
+        },
+        "32bit": {
+            "url": "https://download.mozilla.org/?product=thunderbird-60.0-SSL&os=win&lang=en-US#/thunderbird-setup.7z",
+            "hash": "sha512:03baab7bc1159ab3e21455e2faac89ee2e46eadf2317544d42e2755d93c97d9a605be093973fead493a3a36733953e68ed696f3244aa09b9a3828303bbcb57ff"
+        }
+    },
+    "extract_dir": "core",
     "bin": "thunderbird.exe",
     "shortcuts": [
         [
@@ -10,24 +21,26 @@
             "Mozilla Thunderbird"
         ]
     ],
-    "pre_install": "echo \"[Install]`nInstallDirectoryPath=$dir`nQuickLaunchShortcut=false`nDesktopShortcut=false`nStartMenuShortcuts=false\" | sc \"$dir\\install.ini\"",
-    "installer": {
-        "file": "thunderbird-setup.exe",
-        "args": "/INI=$dir\\install.ini"
-    },
-    "uninstaller": {
-        "file": "uninstall\\helper.exe",
-        "args": "/S"
-    },
     "checkver": {
         "url": "https://www.mozilla.org/en-US/thunderbird/all/",
         "re": "thunderbird-([\\d.]+)-SSL&os=win&lang=en-US"
     },
     "autoupdate": {
-        "url": "https://download.mozilla.org/?product=thunderbird-$version-SSL&os=win&lang=en-US#/thunderbird-setup.exe",
-        "hash": {
-            "find": "([a-fA-F0-9]{128})\\s+(?:win32/en-US/Thunderbird Setup ([\\d.]+).exe)",
-            "url": "https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$version/SHA512SUMS"
+        "architecture": {
+            "64bit": {
+                "url": "https://download.mozilla.org/?product=thunderbird-$version-SSL&os=win64&lang=en-US#/thunderbird-setup_x64.7z",
+                "hash": {
+                    "find": "([a-fA-F0-9]{128})\\s+(?:win64/en-US/Thunderbird Setup ([\\d.]+).exe)",
+                    "url": "https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$version/SHA512SUMS"
+                }
+            },
+            "32bit": {
+                "url": "https://download.mozilla.org/?product=thunderbird-$version-SSL&os=win&lang=en-US#/thunderbird-setup.7z",
+                "hash": {
+                    "find": "([a-fA-F0-9]{128})\\s+(?:win32/en-US/Thunderbird Setup ([\\d.]+).exe)",
+                    "url": "https://download-installer.cdn.mozilla.net/pub/thunderbird/releases/$version/SHA512SUMS"
+                }
+            }
         }
     }
 }
