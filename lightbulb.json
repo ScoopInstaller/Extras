@@ -1,0 +1,45 @@
+{
+    "version": "1.6.4",
+    "description": "A program that reduces eyestrain produced by staring at a computer screen when working late hours",
+    "homepage": "https://github.com/Tyrrrz/LightBulb",
+    "license": {
+        "identifier": "GPL-3.0-only",
+        "url": "https://github.com/Tyrrrz/LightBulb/blob/master/License.txt"
+    },
+    "notes": [
+        ".NET Framework version 4.5.2 or higher is required to run this program.",
+        "If the gamma doesn't change under 6600K, run the Manual_Gamma_Registry_Fix.reg registry key in the program's directory (scoop/apps/lightbulb/current).",
+        "Don't run LightBulb.exe when you're in that folder. Use the file LightBulb_Portable.bat or the created shortcut to run this program."
+    ],
+    "url": "https://github.com/Tyrrrz/LightBulb/releases/download/1.6.4/LightBulb-Portable.zip",
+    "hash": "847053924ab64a872e01d70070d2a6ece816fe0e276003038ba9148c69d9896c",
+    "pre_install": [
+        "#Create placeholder file",
+        "function CreateFile([String] $file, [String] $content = $null) {",
+        "    if(!(Test-Path \"$persist_dir\\$file\")) {",
+        "        Write-Host \"Create placeholder for $file\"",
+        "        New-Item -Force -Path \"$persist_dir\\$file\" -ItemType file -Value $content | Out-Null",
+        "    }",
+        "}",
+        "CreateFile 'Configuration.dat' '{}'"
+    ],
+    "persist": "Configuration.dat",
+    "bin": [
+        [
+            "LightBulb_Portable.bat",
+            "LightBulb"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "LightBulb_Portable.bat",
+            "LightBulb",
+            "",
+            "LightBulb.exe"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "url": "https://github.com/Tyrrrz/LightBulb/releases/download/$version/LightBulb-Portable.zip"
+    }
+}
