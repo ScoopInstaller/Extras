@@ -1,17 +1,32 @@
 {
-    "version": "4.1.1",
+    "version": "4.1.3",
+    "description": "Image and photo editing software.",
+    "homepage": "https://www.getpaint.net/",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.getpaint.net/license.html"
     },
-    "url": "https://www.dotpdn.com/files/paint.net.4.1.1.install.zip",
-    "homepage": "https://www.getpaint.net/",
-    "hash": "7556c819ff24a1db8dc37e5ece950e88dcfc9a56bbe36cf0472ea8762a82bd3c",
+    "notes": ".NET 4.7.1 is required https://www.microsoft.com/en-us/download/details.aspx?id=56115",
+    "url": "https://www.dotpdn.com/files/paint.net.4.1.3.install.zip",
+    "hash": "0fcef83e822121ba9f64f12544ce4bc74d7059f6a62e86d7990cbb38761f5591",
     "pre_install": [
         "extract_7zip \"$dir\\paint.net.$version.install.exe\" \"$dir\\tmp\" $true",
-        "extract_msi \"$dir\\tmp\\PaintDotNet_x86.msi\" \"$dir\"",
-        "rm -rec \"$dir\\tmp\"",
-        "'' > \"$dir\\PaintDotNet.AppSettings.json\"",
+        "Set-Content \"$dir\\PaintDotNet.AppSettings.json\" '{}' -Encoding Ascii"
+    ],
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": "extract_msi \"$dir\\tmp\\PaintDotNet_x64.msi\" \"$dir\""
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": "extract_msi \"$dir\\tmp\\PaintDotNet_x86.msi\" \"$dir\""
+            }
+        }
+    },
+    "post_install": [
+        "Remove-Item \"$dir\\tmp\", \"$dir\\Paint*.msi\" -Recurse -Force",
         "$config = [xml](Get-Content \"$dir\\PaintDotNet.exe.config\")",
         "$elem = $config.CreateElement('add')",
         "$elem.SetAttribute('key', 'PaintDotNet.EnablePortableMode')",
@@ -30,9 +45,6 @@
             "PaintDotNet.exe",
             "paint.net"
         ]
-    ],
-    "notes": [
-        ".NET 4.7.1 is required https://www.microsoft.com/en-us/download/details.aspx?id=56115"
     ],
     "checkver": "paint\\.net\\s+([\\d\\.]+)",
     "autoupdate": {
