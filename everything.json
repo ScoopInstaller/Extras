@@ -12,15 +12,25 @@
             "hash": "8d3d85888ccd01612993f89a9d79df11edb2f06de78972fa71656f74920ce342"
         }
     },
-    "bin": "Everything.exe",
+    "bin": [
+        [
+            "Everything.exe",
+            "everything",
+            "-config data/Everything.ini"
+        ]
+    ],
     "checkver": "Download Everything ([\\d.]+)",
     "persist": [
-        "Everything.ini",
-        "Everything.db"
+        "data"
     ],
     "pre_install": [
-        "if(!(test-path \"$dir\\Everything.ini\")) { & \"$dir\\Everything.exe\" -install-config null }",
-        "if(!(test-path \"$dir\\Everything.db\")) { Add-Content \"$dir\\Everything.db\" $null }"
+        "$data_dir = \"$dir\\data\"",
+        "if(!(Test-Path \"$data_dir\")) {",
+        "    New-Item \"$data_dir\" -ItemType Directory | Out-Null",
+        "}",
+        "if(!(test-path \"$persist_dir\\data\\Everything.ini\")) { ",
+        "   & \"$dir\\Everything.exe\" -config \"$data_dir\\Everything.ini\" -install-config null",
+        "}"
     ],
     "autoupdate": {
         "architecture": {
@@ -38,7 +48,8 @@
     "shortcuts": [
         [
             "Everything.exe",
-            "Everything"
+            "Everything",
+            "-config data/Everything.ini"
         ]
     ]
 }
