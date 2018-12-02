@@ -8,15 +8,11 @@
     "bin": [
         "ddupe.exe",
         "dllusage.exe",
-        "dllusage.vshost.exe",
         "GKalk.exe",
-        "GKalk.vshost.exe",
         "md5sums.exe",
         "pathed.exe",
         "pserv4.exe",
-        "pserv4.vshost.exe",
         "regdiff.exe",
-        "regdiff.vshost.exe",
         "remove_admin_shares.exe",
         ["su.exe","gtools-su"],
         ["touch.exe","gtools-touch"],
@@ -24,9 +20,16 @@
     ],
     "checkver": {
         "url": "http://p-nand-q.com/download/gtools/index.html",
-        "re": "<h1>gtools ([\\d.]+)<\\/h1>"
+        "re": "<h1>gtools ([\\d.]+)<"
     },
     "autoupdate": {
         "url": "http://p-nand-q.com/download/gtools/gtools-$version.exe#dl.7z"
-    }
+    },
+    "post_install": [
+      "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
+      "Remove-Item \"$dir\\*.pdb\" -Recurse",
+      "Remove-Item \"$dir\\pserv4.7z\" -Recurse",
+      "Remove-Item \"$dir\\*vshost*\" -Recurse",
+      "Remove-Item \"$dir\\*.exp\" -Recurse"
+    ]
 }
