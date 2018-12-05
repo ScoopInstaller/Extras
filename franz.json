@@ -1,21 +1,28 @@
 {
-    "homepage": "http://meetfranz.com",
     "version": "5.0.0-beta.19",
+    "description": "Messaging app for services like WhatsApp, Slack, Messenger and many more.",
+    "homepage": "http://meetfranz.com",
     "license": {
         "identifier": "Apache-2.0"
     },
     "url": "https://github.com/meetfranz/franz/releases/download/v5.0.0-beta.19/franz-setup-5.0.0-beta.19.exe#/dl.7z",
-    "hash": "7eac11f1b26c69f5157f07dcf09e2f5eec5d8ef35a13b160528951103268229a",
-    "bin": "Franz.exe",
+    "hash": "sha512:67e0b62bb6d6f6ac607b6795fb8c85bf68c3dc2d969ec1f7baddb380fc58f0dbc134cefdeac678e22a706a482612d96b5d535421e0f5a11d6899ba102e918a18",
+    "extract_dir": "\\$PLUGINSDIR",
+    "pre_install": "Get-ChildItem \"$dir\" -Exclude 'app-64.7z', 'app-32.7z' | Remove-Item -Force -Recurse",
     "architecture": {
         "64bit": {
-            "pre_install": "extract_7zip \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+            "installer": {
+                "script": "extract_7zip \"$dir\\app-64.7z\" \"$dir\""
+            }
         },
         "32bit": {
-            "pre_install": "extract_7zip \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
+            "installer": {
+                "script": "extract_7zip \"$dir\\app-32.7z\" \"$dir\""
+            }
         }
     },
-    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
+    "post_install": "Remove-Item \"$dir\\app-64.7z\", \"$dir\\app-32.7z\"",
+    "bin": "Franz.exe",
     "shortcuts": [
         [
             "Franz.exe",
@@ -23,13 +30,14 @@
         ]
     ],
     "checkver": {
-        "github": "https://github.com/meetfranz/franz",
-        "re": "/releases/tag/v(5[\\d.]+(-(alpha|beta)\\.\\d+)?)"
+        "github": "https://github.com/meetfranz/franz/",
+        "regex": "tag/v([\\w\\.-]+)"
     },
     "autoupdate": {
         "url": "https://github.com/meetfranz/franz/releases/download/v$version/franz-setup-$version.exe#/dl.7z",
         "hash": {
-            "url": "$baseurl/RELEASES"
+            "url": "$baseurl/latest.yml",
+            "find": "sha512:\\s+(.*)"
         }
     }
 }
