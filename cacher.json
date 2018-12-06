@@ -1,24 +1,26 @@
 {
     "homepage": "https://www.cacher.io/",
     "version": "2.2.0",
-    "hash": "960c94a4f7794a214d06bf1c030217263c83d2cce7fe504588ad9f17ea4589ea",
+    "description": "Code snippet organizer for pro developers.",
     "url": "https://s3.amazonaws.com/download.cacher.io/Cacher%20Setup%202.2.0.exe#/dl.7z",
-    "checkver": {
-        "url": "https://s3.amazonaws.com/download.cacher.io/latest.yml",
-        "re": "version:\\s([\\d.]+)"
-    },
+    "hash": "sha512:f363171e45103202c0f0d6b257ae78f73550c47e469dd4613f003fca04b49b8bdb1edf828eef5168718387ff4510f1ac1c7e45915990066134502bbaf694d249",
     "pre_install": "extract_7zip \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
     "shortcuts": [
         [
             "Cacher.exe",
             "Cacher"
         ]
     ],
+    "checkver": {
+        "url": "https://s3.amazonaws.com/download.cacher.io/latest.yml",
+        "regex": "version:\\s([\\d.]+)"
+    },
     "autoupdate": {
         "url": "https://s3.amazonaws.com/download.cacher.io/Cacher%20Setup%20$version.exe#/dl.7z",
         "hash": {
             "url": "$baseurl/latest.yml",
-            "find": "sha2:\\s([a-fA-F0-9]{64})"
+            "find": "sha512:\\s+(.*)"
         }
     }
 }
