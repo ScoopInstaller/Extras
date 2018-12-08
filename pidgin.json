@@ -3,18 +3,27 @@
     "description": "Pidgin IM - A universal instant messaging (IM) program. Pidgin is an instant messaging program which lets you log in to accounts on multiple chat networks simultaneously. It runs on Windows, Linux, and other UNIX operating systems. Pidgin is compatible with the following chat networks out of the box: AIM, ICQ, Google Talk, Jabber/XMPP, MSN Messenger, Yahoo!, Bonjour, Gadu-Gadu, IRC, MXit, Novell GroupWise Messenger, Lotus Sametime, SILC, SIMPLE, MySpaceIM, and Zephyr. It is written in C and makes heavy use of GLib and GTK+.",
     "version": "2.11.0",
     "license": "GPL-2.0-or-later",
-    "url": "https://downloads.sourceforge.net/project/pidgin/Pidgin/2.11.0/pidgin-2.11.0-offline.exe#/dl.7z",
-    "hash": "sha1:58a83bfbf91cee8f6fc2025fab481c7a34d6f245",
+    "url": [
+        "https://downloads.sourceforge.net/project/pidgin/Pidgin/2.11.0/pidgin-2.11.0-offline.exe#/dl.7z",
+        "https://github.com/EionRobb/skype4pidgin/raw/master/skypeweb/libjson-glib-1.0.dll",
+        "https://github.com/EionRobb/skype4pidgin/releases/download/1.5/libskypeweb.dll"
+    ],
+    "hash": [
+        "sha1:58a83bfbf91cee8f6fc2025fab481c7a34d6f245",
+        "SHA256:f3a6d5a52c7e85c34e3a6764928dc8c61fd28a82a358805983b9fd61726ce739",
+        "SHA256:709535267459ab43f32b77028850e60b5e0d87aa6396db692f12c8f548027242"
+    ],
     "env_set": {
         "PURPLEHOME": "$dir",
-        "PIDGINLANG":"en"
+        "PIDGINLANG": "en"
     },
-    "persist": [
-        ".purple"
-    ],
+    "persist": ".purple",
     "bin": "pidgin.exe",
     "pre_install": "extract_7zip \"$dir\\`$PLUGINSDIR\\gtk.zip\" \"$dir\"",
-    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
+    "post_install": [
+        "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
+        "Copy-Item \"$dir\\libskypeweb.dll\" \"$dir\\.purple\\plugins\""
+    ],
     "shortcuts": [
         [
             "pidgin.exe",
