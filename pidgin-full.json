@@ -1,0 +1,65 @@
+{
+    "homepage": "https://pidgin.im/",
+    "description": "Pidgin full = Pidgin IM + facebook, telegram, slack, skype plugins. A universal instant messaging (IM) program. Pidgin is an instant messaging program which lets you log in to accounts on multiple chat networks simultaneously. It runs on Windows, Linux, and other UNIX operating systems. Pidgin is compatible with the following chat networks out of the box: AIM, ICQ, Google Talk, Jabber/XMPP, MSN Messenger, Yahoo!, Bonjour, Gadu-Gadu, IRC, MXit, Novell GroupWise Messenger, Lotus Sametime, SILC, SIMPLE, MySpaceIM, and Zephyr. It is written in C and makes heavy use of GLib and GTK+.",
+    "version": "2.11.0",
+    "license": "GPL-2.0-or-later",
+    "url": [
+        "https://downloads.sourceforge.net/project/pidgin/Pidgin/2.11.0/pidgin-2.11.0-offline.exe#/dl.7z",
+        "https://github.com/EionRobb/skype4pidgin/raw/master/skypeweb/libjson-glib-1.0.dll",
+        "https://github.com/EionRobb/skype4pidgin/releases/download/1.5/libskypeweb.dll",
+        "https://dl.voidium.net/pidgin/libfacebook.dll",
+        "http://eion.robbmob.com/telegram/telegram-purple-1.3.0rev2.exe#/telegram-purple.7z",
+        "https://eion.robbmob.com/libslack.dll",
+        "https://eion.robbmob.com/purple-matrix/purple-matrix-1.0.exe#/matrix.7z"
+    ],
+    "hash": [
+        "sha1:58a83bfbf91cee8f6fc2025fab481c7a34d6f245",
+        "sha256:f3a6d5a52c7e85c34e3a6764928dc8c61fd28a82a358805983b9fd61726ce739",
+        "sha256:709535267459ab43f32b77028850e60b5e0d87aa6396db692f12c8f548027242",
+        "sha256:84a07a6e175b3e0a067e9905941975d00e0a0dc84a9081191ada832b50510c98",
+        "sha256:df7565a4c435d68e20badd4bdc89e33aff36e65a4f161a7ff253dc962449f8b2",
+        "sha256:5d0d109b21ce9c29134cc160d46efdc83a03d86472704e63f7f384eaa124d893",
+        "sha256:5083efd301cadc9dbb0d2e98406aeead108604699979ba5f6491c90f1c7fc52a"
+    ],
+    "env_set": {
+        "PURPLEHOME": "$dir",
+        "PIDGINLANG": "en"
+    },
+    "persist": ".purple",
+    "bin": "pidgin.exe",
+    "pre_install": "extract_7zip \"$dir\\`$PLUGINSDIR\\gtk.zip\" \"$dir\"",
+    "post_install": [
+        "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
+        "Copy-Item \"$dir\\libskypeweb.dll\" \"$dir\\plugins\"",
+        "Copy-Item \"$dir\\libfacebook.dll\" \"$dir\\plugins\"",
+        "Copy-Item \"$dir\\libslack.dll\" \"$dir\\plugins\" -Recurse -Force",
+        "Copy-Item \"$dir\\`$_3_\\*\" \"$dir\" -Recurse -Force",
+        "Remove-Item \"$dir\\`$_3_\" -Recurse"
+    ],
+    "shortcuts": [
+        [
+            "pidgin.exe",
+            "Pidgin IM"
+        ]
+    ],
+    "checkver": {
+        "url": "https://sourceforge.net/projects/pidgin/files/Pidgin/",
+        "re": ">([\\d.]+)<"
+    },
+    "autoupdate": {
+        "url": "https://downloads.sourceforge.net/project/pidgin/Pidgin/$version/pidgin-$version-offline.exe#/dl.7z"
+    },
+    "notes": [
+      "Bundled with",
+      " - [Facebook](https://github.com/dequis/purple-facebook/wiki)",
+      " - [Telegram](https://github.com/majn/telegram-purple)",
+      " - [Slack](https://github.com/dylex/slack-libpurple)",
+      " -   1. Generate token with https://api.slack.com/custom-integrations/legacy-tokens",
+      " -   2. Pidgin > Add Slack",
+      " -        - Host: slack.com",
+      " -        - Advanced > API token: <generated token>",
+      " -        - Username: unique, you could use <user>-<slack-workspace>",
+      " - [Skype](https://github.com/EionRobb/skype4pidgin/tree/master/skypeweb)",
+      " - Hangout - XMPP protocol, User: <user>@gmail.com, Password: Generate a one time password at https://myaccount.google.com/apppasswords"
+   ]
+}
