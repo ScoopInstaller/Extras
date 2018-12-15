@@ -1,0 +1,58 @@
+{
+    "homepage": "https://riot.im/",
+    "description": "Riot is a decentralised, encrypted chat & collaboration powered by matrix.org. It has group chat, integrations, voip & video calling, bridge networks, end to end encryption, file transfer. Lots of rooms already exist in Matrix, linked to existing networks (Slack, IRC, Gitter etc) or independent.",
+    "license": "Apache-2.0",
+    "version": "0.17.3",
+    "architecture": {
+        "64bit": {
+            "url": "https://riot.im/download/desktop/install/win32/x64/Riot%20Setup%200.17.3.exe#/dl.7z",
+            "hash": "sha256:a7a51706332059fc61a2a67ff180634305cff379f669c45c3b4b32ef90f7115e"
+        },
+        "32bit": {
+            "url": "https://riot.im/download/desktop/install/win32/ia32/Riot%20Setup%200.17.3-ia32.exe#/dl.7z",
+            "hash": "sha256:2616a821922a48490bca7c6edd1e3cbbe8e20b931ffc5ecfb1de12d784102caa"
+        }
+    },
+    "persist": [
+        "resources\\webapp\\config.json",
+        "data"
+    ],
+    "bin": "riot.exe",
+    "pre_install": [
+        "extract_7zip \"$dir\\riot-web-*-full.nupkg\" \"$dir\\temp\"",
+        "Copy-Item \"$dir\\temp\\lib\\net45\\*\" \"$dir\" -Recurse -Force",
+        "Remove-Item \"$dir\\riot-web-*-full.nupkg\"",
+        "Remove-Item \"$dir\\temp\" -Recurse -Force",
+        "Remove-Item \"$dir\\background.gif\"",
+        "Remove-Item \"$dir\\RELEASES\"",
+        "Remove-Item \"$dir\\Update.exe\"",
+        "cmd /c mklink /J \"$env:APPDATA\\riot\" \"$persist_dir\\data\""
+    ],
+    "uninstaller": {
+        "script": [
+            "if ((Get-Item -Path \"$env:APPDATA\\riot\" -Force).LinkType -eq \"Junction\") {",
+            "   Remove-Item \"$env:APPDATA\\riot\" -Force -Recurse",
+            "}"
+        ]
+    },
+    "shortcuts": [
+        [
+            "riot.exe",
+            "Riot"
+        ]
+    ],
+    "checkver": {
+        "url": "https://riot.im/desktop.html",
+        "re": ">v([\\d.]+)<"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://riot.im/download/desktop/install/win32/x64/Riot%20Setup%20$version.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://riot.im/download/desktop/install/win32/ia32/Riot%20Setup%20$version-ia32.exe#/dl.7z"
+            }
+        }
+    }
+}
