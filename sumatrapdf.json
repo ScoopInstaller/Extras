@@ -1,6 +1,7 @@
 {
-    "homepage": "https://www.sumatrapdfreader.org",
     "version": "3.1.2",
+    "description": "Free PDF, eBook reader.",
+    "homepage": "https://www.sumatrapdfreader.org",
     "license": "GPL-3.0-only,BSD-2-Clause",
     "architecture": {
         "64bit": {
@@ -12,17 +13,26 @@
             "hash": "4cac356d04f999c7134d32122c3a031f8e7d1f1d09424a00b9f19b8c05b652f1"
         }
     },
+    "pre_install": [
+        "$file = 'SumatraPDF-settings.txt'",
+        "if (-not (Test-Path \"$persist_dir\\$file\")) {",
+        "    Write-Host 'File' $file 'does not exists. Creating.' -f Yellow",
+        "    $CONT = @('CheckForUpdates = false')",
+        "    Set-Content \"$dir\\$file\" ($CONT -join \"`r`n\") -Encoding Ascii",
+        "}"
+    ],
     "bin": "SumatraPDF.exe",
-    "checkver": {
-        "url": "https://www.sumatrapdfreader.org/sumatra.js",
-        "re": "var gSumVer = \"([\\d.]+)\";"
-    },
     "shortcuts": [
         [
             "SumatraPDF.exe",
             "SumatraPDF"
         ]
     ],
+    "persist": "SumatraPDF-settings.txt",
+    "checkver": {
+        "url": "https://www.sumatrapdfreader.org/news.html",
+        "regex": "([\\d\\.]+)\\s+\\(\\d+"
+    },
     "autoupdate": {
         "architecture": {
             "64bit": {
