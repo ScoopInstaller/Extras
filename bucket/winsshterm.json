@@ -17,8 +17,9 @@
         ]
     ],
     "post_install": [
-        "if (!(Test-Path \"$dir\\lib\")) { mkdir \"$dir\\lib\" | Out-Null }",
-        "if (!(Test-Path \"$dir\\tools\")) { mkdir \"$dir\\tools\" | Out-Null }",
+        "New-Item -ItemType Directory -Force -Path \"$dir\\lib\" | Out-Null",
+        "New-Item -ItemType Directory -Force -Path \"$dir\\tools\" | Out-Null",
+        "New-Item -ItemType Directory -Force -Path \"$dir\\config\" | Out-Null",
         "$puttyDir = \"$(appdir putty)\\current\"",
         "$winscpDir = \"$(appdir winscp)\\current\"",
         "$vcxsrvDir = \"$(appdir vcxsrv)\\current\"",
@@ -27,7 +28,6 @@
         "if (Test-Path \"$puttyDir\\plink.exe\") { cmd /c mklink /h \"$dir\\tools\\plink.exe\" \"$puttyDir\\plink.exe\" } else { Write-Output \"Warning: putty's plink.exe not found\"; }",
         "if (Test-Path \"$winscpDir\\WinSCP.exe\") { cmd /c mklink /j \"$dir\\tools\\WinSCP\" \"$winscpDir\" } else { Write-Output \"Note: Install WinSCP for File Transfer support\"; }",
         "if (Test-Path \"$vcxsrvDir\\vcxsrv.exe\") { cmd /c mklink /j \"$dir\\tools\\VcXsrv\" \"$vcxsrvDir\" } else { Write-Output \"Note: Install VcXsrv for X-Server support\"; }",
-        "if (!(Test-Path \"$dir\\config\")) { mkdir \"$dir\\config\" | Out-Null } ",
         "if (!(Test-Path \"$dir\\config\\preferences.xml\")) { [IO.File]::WriteAllLines(\"$dir\\config\\preferences.xml\", \"<?xml version=\"\"1.0\"\" encoding=\"\"utf-8\"\"?><Settings><CheckForXServer>False</CheckForXServer><CheckForWinSCP>False</CheckForWinSCP><CheckForPageant>False</CheckForPageant></Settings>\")  } "
     ],
     "depends": [
