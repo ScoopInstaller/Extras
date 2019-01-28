@@ -5,14 +5,27 @@
     "version": "4.2.9.23626",
     "architecture": {
         "64bit": {
-            "url": "https://www.scootersoftware.com/BCompare-4.2.9.23626_x64.msi",
-            "hash": "802a4487cd0a631e1ac9e44bd7f69c8cc405c88baaf3298838945fa4f08a576c"
+            "url": [
+                "https://www.scootersoftware.com/BCompare-4.2.9.23626_x64.msi",
+                "https://raw.githubusercontent.com/f0ff886f/scoop-extras/master/scripts/beyondcompare-install-context64.reg"
+            ],
+            "hash": [
+                "802a4487cd0a631e1ac9e44bd7f69c8cc405c88baaf3298838945fa4f08a576c",
+                "3901783c8caa117b53f96c2e1f3aed7e5ea2cd421b1050719cd26306bef96a4a"                
+            ]
         },
         "32bit": {
-            "url": "https://www.scootersoftware.com/BCompare-4.2.9.23626_x86.msi",
-            "hash": "409cbfb4f0aec203e9d3bf521b66195931b05b40f491d04a2a28223d6428b983"
+            "url": [
+                "https://www.scootersoftware.com/BCompare-4.2.9.23626_x86.msi",
+                "https://raw.githubusercontent.com/f0ff886f/scoop-extras/master/scripts/beyondcompare-install-context32.reg"
+            ],
+            "hash": [
+                "409cbfb4f0aec203e9d3bf521b66195931b05b40f491d04a2a28223d6428b983",
+                "441545eccb6588293898612c54b33879823f4bfd63eb97548604f00fdbfa4de5"
+            ]
         }
     },
+    "notes": "Add Select File for Compare as a context menu option by running: \"$dir\\beyondcompare-install-context[64/32].reg\"",
     "bin": "Bcomp.exe",
     "extract_dir": "Beyond Compare 4",
     "shortcuts": [
@@ -24,6 +37,20 @@
             "BCClipboard.exe",
             "Clipboard Compare"
         ]
+    ],
+    "post_install": [
+        "if(Test-Path(\"$dir\\beyondcompare-install-context64.reg\")) {",
+        "  $codepath = \"$dir\".Replace('\\', '\\\\')",
+        "  $content = Get-Content \"$dir\\beyondcompare-install-context64.reg\"",
+        "  $content = $content.Replace('bcomp', $codepath)",
+        "  $content | Set-Content -Path \"$dir\\beyondcompare-install-context64.reg\"",
+        "}",
+        "if(Test-Path(\"$dir\\beyondcompare-install-context32.reg\")) {",
+        "  $codepath = \"$dir\".Replace('\\', '\\\\')",
+        "  $content = Get-Content \"$dir\\beyondcompare-install-context32.reg\"",
+        "  $content = $content.Replace('bcomp', $codepath)",
+        "  $content | Set-Content -Path \"$dir\\beyondcompare-install-context32.reg\"",
+        "}"
     ],
     "checkver": {
         "url": "https://www.scootersoftware.com/download.php?zz=kb_dl4_winalternate",
