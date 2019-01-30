@@ -1,0 +1,45 @@
+{
+    "##": "https://github.com/plexinc/plex-media-player",
+    "version": "2.26.0.947-1e21fa2b",
+    "description": "Plex Media Player. Play media.",
+    "homepage": "https://www.plex.tv/apps-devices/#modal-devices-plex-media-player",
+    "license": "GPL-2.0-or-later",
+    "depends": "wixtoolset",
+    "architecture": {
+        "64bit": {
+            "url": "https://downloads.plex.tv/plexmediaplayer/2.26.0.947-1e21fa2b/PlexMediaPlayer-2.26.0.947-1e21fa2b-windows-x64.exe#/installer.exe",
+            "hash": "sha1:04ae4f5c1fbbba41cf3425facd00a86373cce5d5"
+        }
+    },
+    "installer": {
+        "script": [
+            "$extracted = \"$dir\\extracted\"",
+            "$msi = \"$dir\\msi\"",
+            "&(scoop which dark) -nologo -x \"$extracted\" \"$dir\\installer.exe\" | Out-Null",
+            "extract_msi \"$extracted\\AttachedContainer\\PMP.msi\" \"$msi\"",
+            "Move-Item \"$msi\\Msi\\*\" \"$dir\" -Force",
+            "Remove-Item $extracted, $msi, \"$dir\\installer.exe\" -Force -Recurse"
+        ]
+    },
+    "shortcuts": [
+        [
+            "PlexMediaPlayer.exe",
+            "Plex Media Player"
+        ]
+    ],
+    "checkver": {
+        "url": "https://plex.tv/api/downloads/3.json",
+        "jsonpath": "$.computer.windows.version"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://downloads.plex.tv/plexmediaplayer/$version/PlexMediaPlayer-$version-windows-x64.exe#/installer.exe",
+                "hash": {
+                    "url": "https://plex.tv/api/downloads/3.json",
+                    "jsonpath": "$.computer.windows.releases.checksum"
+                }
+            }
+        }
+    }
+}
