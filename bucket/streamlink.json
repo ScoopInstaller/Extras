@@ -18,7 +18,11 @@
     ],
     "pre_install": [
         "\"#!`\"$dir\\Python\\python.exe`\"\" | Set-Content \"$dir\\bin\\python.txt\"",
-        "Get-Content -AsByteStream \"$dir\\bin\\launcher_exe.dat\",\"$dir\\bin\\python.txt\",\"$dir\\bin\\streamlink-append.zip\" | Set-Content -AsByteStream \"$dir\\bin\\streamlink.exe\""
+        "if((Get-Command Get-Content).parameters.ContainsKey('AsByteStream')) {",
+        "   Get-Content -AsByteStream \"$dir\\bin\\launcher_exe.dat\",\"$dir\\bin\\python.txt\",\"$dir\\bin\\streamlink-append.zip\" | Set-Content -AsByteStream \"$dir\\bin\\streamlink.exe\"",
+        "} else {",
+        "   Get-Content -Encoding byte \"$dir\\bin\\launcher_exe.dat\",\"$dir\\bin\\python.txt\",\"$dir\\bin\\streamlink-append.zip\" | Set-Content -Encoding byte \"$dir\\bin\\streamlink.exe\"",
+        "}"
     ],
     "suggest": {
         "FFmpeg": [
