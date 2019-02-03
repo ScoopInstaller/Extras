@@ -8,22 +8,23 @@
     "bin": "bin\\streamlink.exe",
     "post_install": [
         "If(!(Test-Path \"$env:APPDATA\\streamlink\\streamlinkrc\")) {",
-        "Write-Host \"Copying default 'streamlinkrc' to '%APPDATA%\\streamlink\\streamlinkrc'\"",
-        "New-Item -Force -Type directory -Path \"$env:APPDATA\\streamlink\" | Out-Null",
-        "Copy-Item \"$dir\\`$APPDATA\\streamlink\\streamlinkrc\" \"$env:APPDATA\\streamlink\\streamlinkrc\"",
+        "    Write-Host \"Copying default 'streamlinkrc' to '%APPDATA%\\streamlink\\streamlinkrc'\"",
+        "    New-Item -Force -Type directory -Path \"$env:APPDATA\\streamlink\" | Out-Null",
+        "    Copy-Item \"$dir\\`$APPDATA\\streamlink\\streamlinkrc\" \"$env:APPDATA\\streamlink\\streamlinkrc\"",
         "}",
         "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
         "Remove-Item \"$dir\\ffmpeg\" -Recurse",
-        "Remove-Item \"$dir\\rtmpdump\" -Recurse",
-        "Remove-Item \"$dir\\uninstall.exe\"",
-        "(Get-Content \"$dir\\bin\\streamlink-script.py\").replace('#!python', \"#!`\"$dir\\Python\\python.exe`\"\") | Set-Content \"$dir\\bin\\streamlink-script.py\""
+        "Remove-Item \"$dir\\uninstall.exe\""
+    ],
+    "pre_install": [
+        "\"#!`\"$dir\\Python\\python.exe`\"\" | Set-Content \"$dir\\bin\\python.txt\"",
+        "Get-Content -AsByteStream \"$dir\\bin\\launcher_exe.dat\",\"$dir\\bin\\python.txt\",\"$dir\\bin\\streamlink-append.zip\" | Set-Content -AsByteStream \"$dir\\bin\\streamlink.exe\""
     ],
     "suggest": {
         "FFmpeg": [
             "ffmpeg",
             "ffmpeg-nightly"
-        ],
-        "RTMPDump": "rtmpdump"
+        ]
     },
     "checkver": {
         "github": "https://github.com/streamlink/streamlink"
