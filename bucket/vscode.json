@@ -1,0 +1,77 @@
+{
+    "homepage": "https://code.visualstudio.com/",
+    "version": "1.30.2",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://code.visualstudio.com/License/"
+    },
+    "notes": "Add Visual Studio Code as a context menu option by running: \"$dir\\vscode-install-context.reg\"",
+    "bin": [
+        [
+            "bin\\code.cmd",
+            "code"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "code.exe",
+            "Visual Studio Code"
+        ]
+    ],
+    "post_install": [
+        "if(Test-Path(\"$dir\\vscode-install-context.reg\")) {",
+        "  $codepath = \"$dir\\Code.exe\".Replace('\\', '\\\\')",
+        "  $content = Get-Content \"$dir\\vscode-install-context.reg\"",
+        "  $content = $content.Replace('$code', $codepath)",
+        "  $content | Set-Content -Path \"$dir\\vscode-install-context.reg\"",
+        "}"
+    ],
+    "checkver": {
+        "url": "https://code.visualstudio.com/sha?build=stable",
+        "jp": "$.products[?(@.platform.os == 'win32-x64-archive')].name"
+    },
+    "architecture": {
+        "64bit": {
+            "url": [
+                "https://vscode-update.azurewebsites.net/1.30.2/win32-x64-archive/stable#/dl.7z",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg"
+            ],
+            "hash": [
+                "64db94c15b3b998e0c3a3186af4adf5a812d591b510cc1a72187ce3741a82e04",
+                "3673d7767da27418c4c7eea146043fa6a7c59df65199c79850e58367fd66fb56",
+                "9b55432e91e8534cc871d8d57f826761649d1ed7a3a5d7cabc3089fe5a6e147f"
+            ]
+        },
+        "32bit": {
+            "url": [
+                "https://vscode-update.azurewebsites.net/1.30.2/win32-archive/stable#/dl.7z",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg"
+            ],
+            "hash": [
+                "d61bd3e122a8d0872acd346e5fd0fa98a87c0876c34966b31ca2a3004c29d1dc",
+                "3673d7767da27418c4c7eea146043fa6a7c59df65199c79850e58367fd66fb56",
+                "9b55432e91e8534cc871d8d57f826761649d1ed7a3a5d7cabc3089fe5a6e147f"
+            ]
+        }
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://vscode-update.azurewebsites.net/$version/win32-x64-archive/stable#/dl.7z",
+                "hash": {
+                    "url": "https://code.visualstudio.com/sha?build=stable",
+                    "jp": "$.products[?(@.platform.os == 'win32-x64-archive')].sha256hash"
+                }
+            },
+            "32bit": {
+                "url": "https://vscode-update.azurewebsites.net/$version/win32-archive/stable#/dl.7z",
+                "hash": {
+                    "url": "https://code.visualstudio.com/sha?build=stable",
+                    "jp": "$.products[?(@.platform.os == 'win32-archive')].sha256hash"
+                }
+            }
+        }
+    }
+}

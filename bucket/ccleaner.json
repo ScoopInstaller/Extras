@@ -1,0 +1,47 @@
+{
+    "homepage": "https://www.piriform.com/ccleaner",
+    "version": "5.52.6967",
+    "url": "https://download.ccleaner.com/slim/ccsetup552_slim.exe#/dl.7z",
+    "hash": "af58c8965f958425baf88da0848da5b0d42fb3e12bf76d79aed230df4366b2fc",
+    "architecture": {
+        "64bit": {
+            "bin": [
+                [
+                    "CCleaner64.exe",
+                    "CCleaner"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "CCleaner64.exe",
+                    "CCleaner"
+                ]
+            ]
+        },
+        "32bit": {
+            "bin": "CCleaner.exe",
+            "shortcuts": [
+                [
+                    "CCleaner.exe",
+                    "CCleaner"
+                ]
+            ]
+        }
+    },
+    "persist": "ccleaner.ini",
+    "pre_install": [
+        "if(!(test-path \"$dir\\ccleaner.ini\")) { Add-Content \"$dir\\ccleaner.ini\" \"[Options]`nHelpImproveCCleaner=0\" }",
+        "if(!(test-path \"$dir\\portable.dat\")) { Add-Content \"$dir\\portable.dat\" \"#PORTABLE#\" }",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
+        "Remove-Item \"$dir\\`$_75_\" -Recurse",
+        "Remove-Item \"$dir\\uninst.exe\"",
+        "Remove-Item \"$dir\\CCUpdate.exe\""
+    ],
+    "checkver": {
+        "url": "https://www.piriform.com/ccleaner/download",
+        "re": "<strong>v([\\d.]+)</strong>"
+    },
+    "autoupdate": {
+        "url": "https://download.ccleaner.com/slim/ccsetup$majorVersion$minorVersion_slim.exe#/dl.7z"
+    }
+}

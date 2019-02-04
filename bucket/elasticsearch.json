@@ -1,0 +1,56 @@
+{
+    "homepage": "https://www.elastic.co/products/elasticsearch",
+    "version": "6.6.0",
+    "url": "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.6.0.zip",
+    "hash": "sha512:0689de542961cecdf9cbd9976418c6de555d2fb816cac66e3998b8236a9ad9a0e8cbfa5a9b6e858073b5507c0e6dc77af724f9490c343a47fe14243be0e51807",
+    "extract_dir": "elasticsearch-6.6.0",
+    "bin": [
+        [
+            "bin\\elasticsearch.bat",
+            "elasticsearch"
+        ],
+        [
+            "bin\\elasticsearch-keystore.bat",
+            "elasticsearch-keystore"
+        ],
+        [
+            "bin\\elasticsearch-plugin.bat",
+            "elasticsearch-plugin"
+        ],
+        [
+            "bin\\elasticsearch-service.bat",
+            "elasticsearch-service"
+        ],
+        [
+            "bin\\elasticsearch-translog.bat",
+            "elasticsearch-translog"
+        ]
+    ],
+    "persist": [
+        "config",
+        "plugins"
+    ],
+    "post_install": [
+        "# we have to overwrite SCRIPT because elasticsearch-env.bat doesn't care if SCRIPT or ES_HOME are already set ...",
+        "(gc \"$original_dir\\bin\\elasticsearch-env.bat\") | % { $_ -replace 'set SCRIPT=%0', \"set SCRIPT=$original_dir\\bin\\elasticsearch.bat\" } | sc \"$original_dir\\bin\\elasticsearch-env.bat\"",
+        "# use persistent data/logs directory",
+        "(gc \"$dir\\config\\elasticsearch.yml\") | % { $_ -replace '#path.data: /path/to/data', \"path.data: $persist_dir\\data\" } | % { $_ -replace '#path.logs: /path/to/logs', \"path.logs: $persist_dir\\logs\" } | sc \"$dir\\config\\elasticsearch.yml\""
+    ],
+    "suggest": {
+        "JDK": [
+            "java/oraclejdk",
+            "java/openjdk"
+        ]
+    },
+    "checkver": {
+        "url": "https://www.elastic.co/downloads/past-releases",
+        "re": "elasticsearch-([\\d.]+).zip"
+    },
+    "autoupdate": {
+        "url": "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-$version.zip",
+        "extract_dir": "elasticsearch-$version",
+        "hash": {
+            "url": "$url.sha512"
+        }
+    }
+}
