@@ -1,0 +1,48 @@
+{
+    "homepage": "https://www.msi.com/page/afterburner",
+    "description": "Overclocking utility for graphics cards. Main features include GPU/Shader/Memory clock adjustment, advanced fan speed and GPU voltage control.",
+    "license": "Freeware",
+    "version": "4.5.0",
+    "extract_dir": "4.5.0",
+    "url": "http://download.msi.com/uti_exe/vga/MSIAfterburnerSetup.zip#/MSIAfterburnerSetup450.7z",
+    "hash": "87363d88a71279c6bbc91bf1779b85d5f0c31f858ae9cc920f9b9537d7e10c10",
+    "persist": [
+        [
+            "Profiles",
+            "AB_Profiles"
+        ],
+        [
+            "RTSS/Profiles",
+            "RTSS_Profiles"
+        ]
+    ],
+    "bin": [
+        "RTSS/RTSS.exe",
+        "MSIAfterburner.exe"
+    ],
+    "pre_install": [
+        "extract_7zip \"$dir\\MSIAfterburnerSetup*.exe\" \"$dir\"",
+        "extract_7zip \"$dir\\Redist\\RTSSSetup.exe\" \"$dir\\RTSS\"",
+        "Get-ChildItem $dir -Recurse -Include @('MSIAfterburnerSetup*.exe', '$PLUGINSDIR', 'Uninstall.exe.nsis', '$R0') | Remove-Item -Recurse",
+        "Move-Item $dir/RTSS/RTSSHooks.dll.copy $dir/RTSS/RTSSHooks.dll",
+        "Move-Item $dir/RTSS/RTSSHooks64.dll.copy $dir/RTSS/RTSSHooks64.dll"
+    ],
+    "shortcuts": [
+        [
+            "MSIAfterburner.exe",
+            "MSI Afterburner"
+        ],
+        [
+            "RTSS/RTSS.exe",
+            "RivaTuner Statistics Server"
+        ]
+    ],
+    "checkver": {
+        "url": "http://event.msi.com/afterburner/Update.txt",
+        "re": "ProductBetaVersion\\s+=\\s+0.*\\nProductVersion\\s+=\\s+([\\d\\.]+)"
+    },
+    "autoupdate": {
+        "url": "http://download.msi.com/uti_exe/vga/MSIAfterburnerSetup.zip#/MSIAfterburnerSetup$cleanVersion.7z",
+        "extract_dir": "$version"
+    }
+}

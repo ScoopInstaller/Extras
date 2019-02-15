@@ -1,0 +1,35 @@
+{
+    "description": "Music notation editor with easy to use WYSIWYG interface. Cross-platform and available in many languages.",
+    "homepage": "https://musescore.org/",
+    "version": "3.0.2.5315",
+    "license": "GPL-2.0-only",
+    "url": "https://ftp.osuosl.org/pub/musescore/releases/MuseScore-3.0.2/MuseScore-3.0.2.msi",
+    "hash": "01597993e805b3ff4a141ca7b967ff24246ae00c584a9d6da69f34997ebb64c1",
+    "extract_dir": "MuseScore 3",
+    "pre_install": "Get-ChildItem \"$dir\\bin\\MuseScore?.exe\" | Rename-Item -NewName \"$dir\\bin\\MuseScore.exe\"",
+    "bin": [
+        "bin\\MuseScore.exe",
+        [
+            "bin\\MuseScore.exe",
+            "mscore"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "bin\\MuseScore.exe",
+            "MuseScore"
+        ]
+    ],
+    "checkver": {
+        "url": "https://sparkle.musescore.org/stable/3/win/appcast.xml",
+        "regex": "sparkle:version=\"([\\d.]+)\""
+    },
+    "autoupdate": {
+        "url": "https://ftp.osuosl.org/pub/musescore/releases/MuseScore-$matchHead/MuseScore-$matchHead.msi",
+        "extract_dir": "MuseScore $majorVersion",
+        "hash": {
+            "url": "https://musescore.org/en/download/musescore.msi",
+            "find": ">SHA256 Checksum: ([0-9a-fA-F]{64})</"
+        }
+    }
+}

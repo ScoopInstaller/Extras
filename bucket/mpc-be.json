@@ -1,0 +1,54 @@
+{
+    "homepage": "https://sourceforge.net/projects/mpcbe/",
+    "version": "1.5.2",
+    "license": "GPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://downloads.sourceforge.net/project/mpcbe/MPC-BE/Release%20builds/1.5.2/MPC-BE.1.5.2.x64.7z",
+            "hash": "sha1:711e665c9ded1d555e4a6e3fd41eab5d9fe92b21",
+            "bin": [
+                "mpc-be64.exe",
+                [
+                    "mpc-be64.exe",
+                    "mpc-be"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "mpc-be64.exe",
+                    "MPC-BE x64"
+                ]
+            ]
+        },
+        "32bit": {
+            "url": "https://downloads.sourceforge.net/project/mpcbe/MPC-BE/Release%20builds/1.5.2/MPC-BE.1.5.2.x86.7z",
+            "hash": "sha1:d643756829d83dcf22b70e7d3c0cd8e51c45d599",
+            "bin": "mpc-be.exe",
+            "shortcuts": [
+                [
+                    "mpc-be.exe",
+                    "MPC-BE"
+                ]
+            ]
+        }
+    },
+    "pre_install": [
+        "$fold = (Get-ChildItem \"$dir\" 'MPC-BE*')[0]",
+        "Move-Item \"$dir\\$fold\\*\" $dir",
+        "Remove-Item \"$dir\\$fold\" -Force -Recurse"
+    ],
+    "checkver": {
+        "url": "https://sourceforge.net/projects/mpcbe/files/MPC-BE/Release%20builds/",
+        "regex": "title=\"([\\d\\.]+)\"\\s+class=\"folder"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://downloads.sourceforge.net/project/mpcbe/MPC-BE/Release%20builds/$version/MPC-BE.$version.x64.7z"
+            },
+            "32bit": {
+                "url": "https://downloads.sourceforge.net/project/mpcbe/MPC-BE/Release%20builds/$version/MPC-BE.$version.x86.7z"
+            }
+        }
+    }
+}

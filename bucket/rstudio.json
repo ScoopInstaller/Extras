@@ -1,0 +1,34 @@
+{
+    "version": "1.1.463",
+    "license": "AGPL-3.0-only",
+    "homepage": "https://www.rstudio.com/",
+    "url": "https://download1.rstudio.org/RStudio-1.1.463.zip",
+    "hash": "d0b1d8805b0db25d43435a2fcfefb4e6561add51f55be805e799b51d8bfa8114",
+    "depends": "r",
+    "bin": "bin/rstudio.exe",
+    "shortcuts": [
+        [
+            "bin/rstudio.exe",
+            "R Studio"
+        ]
+    ],
+    "post_install": [
+        "$rstudio=$env:APPDATA+'/RStudio'",
+        "if (-not (Test-Path $rstudio)) {",
+        "    mkdir $rstudio | Out-Null",
+        "    $rbin = 'RBinDir=' + $scoopdir.Replace('\\','/') + '/apps/r/current/bin/'",
+        "    if($architecture.Equals('64bit')) { $rbin+='x64'} else { $rbin+='i386'}",
+        "    $rstudioini = $rstudio+'/desktop.ini'",
+        "    $enc = New-Object Text.UTF8Encoding $False",
+        "    [IO.File]::WriteAllLines($rstudioini, ('[General]', $rbin), $enc)",
+        "    Write-Host Configuration written to $rstudioini",
+        "}"
+    ],
+    "checkver": {
+        "url": "https://www.rstudio.com/products/rstudio/download/",
+        "re": "RStudio-([\\d.]+).zip"
+    },
+    "autoupdate": {
+        "url": "https://download1.rstudio.org/RStudio-$version.zip"
+    }
+}
