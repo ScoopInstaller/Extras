@@ -13,14 +13,18 @@
     ],
     "persist": [
         "gui-config.json",
+        "statistics-config.json",
         "pac.txt",
         "user-rule.txt"
     ],
     "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\gui-config.json\")) {",
-        "   Write-Host -ForegroundColor Red \"Create empty config file for shadowsocks\"",
-        "   New-Item -Force -Path \"$persist_dir\\gui-config.json\" -ItemType file -Value \"{}\" | Out-Null",
-        "}"
+        "function CreateFile ($name, $value = $null) {",
+        "    if (!(Test-Path \"$persist_dir\\$name\")) {",
+        "        New-Item -Force -Path $persist_dir -Name $name -Value $value",
+        "    }",
+        "}",
+        "'gui-config.json', 'statistics-config.json' | % {CreateFile $_ '{}'}",
+        "'pac.txt', 'user-rule.txt' | % {CreateFile $_}"
     ],
     "checkver": {
         "github": "https://github.com/shadowsocks/shadowsocks-windows"
