@@ -7,22 +7,20 @@
     "depends": "jmeter",
     "installer": {
         "script": [
-            "$jmeter_dir = resolve-path (split-path (split-path (scoop which jmeter)))",
-            "Copy-Item \"$dir\\jmeter-plugins-manager-$version.jar\" -Destination \"$jmeter_dir\\lib\\ext\""
+            "Copy-Item \"$dir\\jmeter-plugins-manager-$version.jar\" -Destination \"$(appdir jmeter)\\current\\lib\\ext\""
         ]
     },
     "uninstaller": {
         "script": [
-            "$jmeter_dir = resolve-path (split-path (split-path (scoop which jmeter)))",
-            "$jmeter_pm = \"$jmeter_dir\\lib\\ext\\jmeter-plugins-manager-$version.jar\"",
+            "$jmeter_pm = \"$(appdir jmeter)\\current\\lib\\ext\\jmeter-plugins-manager-$version.jar\"",
             "if(Test-Path $jmeter_pm) {",
-            "   Write-Host 'Found jmeter-pm installed into jmeter. Path:' -ForegroundColor DarkYellow",
+            "   Write-Host 'Found jmeter-pm installed for jmeter. Path:' -ForegroundColor DarkYellow",
             "   Write-Host $jmeter_pm -ForegroundColor DarkYellow",
-            "   Remove-Item \"$jmeter_dir\\lib\\ext\\jmeter-plugins-manager-$version.jar\" -Force",
+            "   Remove-Item \"$jmeter_pm\" -Force",
             "   Write-Host 'If you have plugins installed with Plugin Manager, you have to remove them manually.' -ForegroundColor DarkYellow",
             "}",
             "else {",
-            "   Write-Host 'Can''t found jmeter-pm installed into any jmeter, probably because you already uninstalled jmeter.' -ForegroundColor DarkYellow",
+            "   Write-Host 'Couldn''t found jmeter-pm installed for any scoop-managed jmeter, probably because you already uninstalled jmeter.' -ForegroundColor DarkYellow",
             "}"
         ]
     },
