@@ -24,7 +24,14 @@
             ]
         }
     },
-    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Force -Recurse",
+    "pre_install": [
+        "Remove-Item -Path \"$dir\\.*\" -Force -Recurse",
+        "Remove-Item -Path \"$dir\\CERTIFICATE\" -Force -Recurse",
+        "7z x -y \"$dir\\[0]\" -o\"$dir\" \"-xr!`$PLUGINSDIR\" | Out-Null",
+        "Remove-Item \"$dir\\``[0``]\"",
+        "Move-Item -Path \"$dir\\`$_OUTDIR\\*\" -Destination \"$dir\" -Force",
+        "Remove-Item \"$dir\\`$_OUTDIR\" -Force"
+    ],
     "persist": "config",
     "checkver": {
         "url": "https://www.teamspeak.com/en/downloads",
