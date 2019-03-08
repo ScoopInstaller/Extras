@@ -1,45 +1,45 @@
 {
     "homepage": "https://brave.com",
-    "version": "0.26.0",
+    "version": "0.60.48",
+    "description": "Secure, Fast & Private Web Browser with Adblocker",
     "license": {
         "identifier": "Freeware",
-        "url": "https://github.com/brave/browser-laptop/blob/master/LICENSE.txt"
+        "url": "https://github.com/brave/brave-browser/blob/master/LICENSE"
     },
     "architecture": {
         "64bit": {
-            "url": "https://brave-download.global.ssl.fastly.net/multi-channel/releases/dev/0.26.0/winx64/brave-0.26.0-full.nupkg#/dl.7z",
-            "hash": "sha1:8c160c0ebb838d9fa3728712e644ec87138bb386"
+            "url": "https://github.com/brave/brave-browser/releases/download/v0.60.48/brave_installer-x64.exe#/dl.7z",
+            "hash": "65a49641767730cefa4e0042520e66977571a0fb6c8423ee2ded4a3893438dcb"
         },
         "32bit": {
-            "url": "https://brave-download.global.ssl.fastly.net/multi-channel/releases/dev/0.26.0/winia32/brave-0.26.0-full.nupkg#/dl.7z",
-            "hash": "sha1:bb4324a26ed15b177007c2933c33234482873ac7"
+            "url": "https://github.com/brave/brave-browser/releases/download/v0.60.48/brave_installer-ia32.exe#/dl.7z",
+            "hash": "fd0642857b192f3c40322595367ba4434a6aa6afae766df4c08268d80e0907ba"
         }
     },
-    "extract_dir": "lib\\net45",
-    "extract_to": "brave",
-    "bin": "brave\\Brave.exe",
-    "post_install": "Copy-Item -force \"$dir\\brave\\squirrel.exe\" \"$dir\\update.exe\"",
+    "pre_install": [
+        "extract_7zip \"$dir\\chrome.7z\" \"$dir\"",
+        "Move-Item \"$dir\\Chrome-bin\\*\" \"$dir\"",
+        "Remove-Item \"$dir\\Chrome-bin\", \"$dir\\chrome.7z\" -Recurse"
+    ],
+    "bin": "brave.exe",
     "shortcuts": [
         [
-            "brave\\Brave.exe",
+            "brave.exe",
             "Brave"
         ]
     ],
     "checkver": {
-        "url": "https://laptop-updates.brave.com/1/releases/dev/$majorVersion.$minorVersion.0/winx64?accept_preview=false",
-        "jp": "$.version"
+        "url": "https://raw.githubusercontent.com/brave/brave-browser/master/CHANGELOG.md",
+        "regex": "\\[([\\d\\.]+)\\]"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://brave-download.global.ssl.fastly.net/multi-channel/releases/dev/$version/winx64/brave-$version-full.nupkg#/dl.7z"
+                "url": "https://github.com/brave/brave-browser/releases/download/v$version/brave_installer-x64.exe#/dl.7z"
             },
             "32bit": {
-                "url": "https://brave-download.global.ssl.fastly.net/multi-channel/releases/dev/$version/winia32/brave-$version-full.nupkg#/dl.7z"
+                "url": "https://github.com/brave/brave-browser/releases/download/v$version/brave_installer-ia32.exe#/dl.7z"
             }
-        },
-        "hash": {
-            "url": "$baseurl/RELEASES"
         }
     }
 }
