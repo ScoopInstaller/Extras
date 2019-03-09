@@ -1,0 +1,43 @@
+{
+    "homepage": "https://standardnotes.org/",
+    "version": "3.0.6",
+    "description": "A safe place for your notes, thoughts, and life's work.",
+    "license": {
+        "identifier": "AGPL-3.0",
+        "url": "https://github.com/standardnotes/desktop/blob/master/LICENSE"
+    },
+    "url": "https://github.com/standardnotes/desktop/releases/download/v3.0.6/standard-notes-setup-3.0.6.exe#/dl.7z",
+    "hash": "9143f26be822009d9fec72dc1faae227667b68f8831b13951e560cb7bf45053b",
+    "extract_dir": "\\$PLUGINSDIR",
+    "pre_install": "Get-ChildItem \"$dir\" -Exclude 'app-64.7z', 'app-32.7z' | Remove-Item -Force -Recurse",
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": "extract_7zip \"$dir\\app-64.7z\" \"$dir\""
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": "extract_7zip \"$dir\\app-32.7z\" \"$dir\""
+            }
+        }
+    },
+    "post_install": "Remove-Item \"$dir\\app-64.7z\", \"$dir\\app-32.7z\"",
+    "bin": "Standard Notes.exe",
+    "shortcuts": [
+        [
+            "Standard Notes.exe",
+            "Standard Notes"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/standardnotes/desktop"
+    },
+    "autoupdate": {
+        "url": "https://github.com/standardnotes/desktop/releases/download/v$version/standard-notes-setup-$version.exe#/dl.7z",
+        "hash": {
+            "url": "https://github.com/standardnotes/desktop/releases/download/v$version/latest.yml",
+            "find": "sha512:\\s+(.*)"
+        }
+    }
+}
