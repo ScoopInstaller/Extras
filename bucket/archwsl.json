@@ -43,21 +43,20 @@
         "    $installable = $false",
         "}",
         "if ($installable) {",
-        "    Copy-Item \"$dir\\Arch.exe\" \"$persist_dir\\data\\Arch.exe\"",
-        "    \"`$si = New-Object System.Diagnostics.ProcessStartInfo '$persist_dir\\data\\Arch.exe' -Property @{ UseShellExecute = `$false; RedirectStandardInput = `$true; Arguments = `\"install ```\"$dir\\rootfs.tar.gz```\"`\" }",
+        "    \"Copy-Item '$dir\\Arch.exe' '$persist_dir\\data\\Arch.exe'",
+        "    `$si = New-Object System.Diagnostics.ProcessStartInfo '$persist_dir\\data\\Arch.exe' -Property @{ UseShellExecute = `$false; RedirectStandardInput = `$true; Arguments = `\"install ```\"$dir\\rootfs.tar.gz```\"`\" }",
         "    `$p = [System.Diagnostics.Process]::Start(`$si)",
         "    `$p.WaitForExit()",
         "    Remove-Item ('$persist_dir'+'\\data\\Arch.exe') -Force",
-        "    `$lx_uid = & '$dir\\Arch.exe' get --lxuid",
-        "    if(!`$lx_uid) { error 'ArchWsl is not installed!'; return }",
+        "    if(`$p.ExitCode) { error 'ArchWsl installation failed!'; return }",
         "    \" | Set-Content \"$dir\\install.ps1\"",
         "    & \"$dir\\install.ps1\"",
         "}"
     ],
     "uninstaller": {
         "script": [
-            "$lx_uid = & \"$dir\\Arch.exe\" get --lxuid",
-            "if(!$lx_uid) { error 'ArchWsl is not registered!'; return }",
+            "& \"$dir\\Arch.exe\" isregd",
+            "if(!$?) { error 'ArchWsl is not registered!'; return }",
             "& \"$dir\\Arch.exe\" clean -y"
         ]
     }
