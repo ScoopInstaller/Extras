@@ -47,16 +47,15 @@
         "    \"`$si = New-Object System.Diagnostics.ProcessStartInfo '$persist_dir\\data\\Arch.exe' -Property @{ UseShellExecute = `$false; RedirectStandardInput = `$true; Arguments = `\"install ```\"$dir\\rootfs.tar.gz```\"`\" }",
         "    `$p = [System.Diagnostics.Process]::Start(`$si)",
         "    `$p.WaitForExit()",
-        "    `$default_uid = & '$dir\\Arch.exe' get --default-uid",
-        "    if(!`$default_uid) { error 'ArchWsl is not installed!'; return }",
+        "    if(`$p.ExitCode) { error 'ArchWsl installation failed!'; return }",
         "    \" | Set-Content \"$dir\\install.ps1\"",
         "    & \"$dir\\install.ps1\"",
         "}"
     ],
     "uninstaller": {
         "script": [
-            "$default_uid = & \"$dir\\Arch.exe\" get --default-uid",
-            "if(!$default_uid) { error 'ArchWsl is not registered!'; return }",
+            "& \"$dir\\Arch.exe\" isregd",
+            "if(!$?) { error 'ArchWsl is not registered!'; return }",
             "& \"$dir\\Arch.exe\" clean -y"
         ]
     }
