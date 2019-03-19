@@ -44,11 +44,9 @@
         "}",
         "if ($installable) {",
         "    \"Copy-Item '$dir\\Arch.exe' '$persist_dir\\data\\Arch.exe'",
-        "    `$si = New-Object System.Diagnostics.ProcessStartInfo '$persist_dir\\data\\Arch.exe' -Property @{ UseShellExecute = `$false; RedirectStandardInput = `$true; Arguments = `\"install ```\"$dir\\rootfs.tar.gz```\"`\" }",
-        "    `$p = [System.Diagnostics.Process]::Start(`$si)",
-        "    `$p.WaitForExit()",
+        "    `& '$persist_dir\\data\\Arch.exe' install `\"$dir\\rootfs.tar.gz`\";`$res=`$?",
         "    Remove-Item ('$persist_dir'+'\\data\\Arch.exe') -Force",
-        "    if(`$p.ExitCode) { error 'ArchWsl installation failed!'; return }",
+        "    if(!`$res) { error 'ArchWsl installation failed!'; return }",
         "    \" | Set-Content \"$dir\\install.ps1\"",
         "    & \"$dir\\install.ps1\"",
         "}"
