@@ -43,19 +43,13 @@
         "    $installable = $false",
         "}",
         "if ($installable) {",
-        "    \"`$si = New-Object System.Diagnostics.ProcessStartInfo '$dir\\Arch.exe' -Property @{ UseShellExecute = `$false; RedirectStandardInput = `$true }",
+        "    Copy-Item \"$dir\\Arch.exe\" \"$persist_dir\\data\\Arch.exe\"",
+        "    \"`$si = New-Object System.Diagnostics.ProcessStartInfo '$persist_dir\\data\\Arch.exe' -Property @{ UseShellExecute = `$false; RedirectStandardInput = `$true; Arguments = `\"tgz ```\"$dir\\rootfs.tar.gz```\"`\" }",
         "    `$p = [System.Diagnostics.Process]::Start(`$si)",
         "    `$p.StandardInput.Write('y')",
         "    `$p.WaitForExit()",
         "    `$lx_uid = & '$dir\\Arch.exe' get --lxuid",
         "    if(!`$lx_uid) { error 'ArchWsl is not installed!'; return }",
-        "    Set-ItemProperty -Path ('HKCU:Software\\Microsoft\\Windows\\CurrentVersion\\Lxss\\' + `$lx_uid) -Name BasePath -Value '$persist_dir\\data'",
-        "    if (Test-Path ('$persist_dir' + '\\data\\rootfs')) {",
-        "        Remove-Item -Recurse -Path '$dir\\rootfs'",
-        "    } else {",
-        "        Move-Item -Path '$dir\\rootfs' -Destination '$persist_dir\\data\\rootfs'",
-        "    }",
-        "    Remove-Item -Recurse -Path '$dir\\temp'",
         "    \" | Set-Content \"$dir\\install.ps1\"",
         "    & \"$dir\\install.ps1\"",
         "}"
@@ -64,9 +58,7 @@
         "script": [
             "$lx_uid = & \"$dir\\Arch.exe\" get --lxuid",
             "if(!$lx_uid) { error 'ArchWsl is not registered!'; return }",
-            "Set-ItemProperty -Path \"HKCU:Software\\Microsoft\\Windows\\CurrentVersion\\Lxss\\$lx_uid\" -Name BasePath -Value $dir",
-            "New-Item -ItemType Directory -Path \"$dir\\rootfs\" | Out-Null",
-            "'y' | & \"$dir\\Arch.exe\" clean"
+            "& \"$dir\\Arch.exe\" clean -y"
         ]
     }
 }
