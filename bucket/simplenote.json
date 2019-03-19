@@ -1,0 +1,40 @@
+{
+    "version": "1.5.0",
+    "description": "Light, clean, and free. Simplenote is now available for iOS, Android, Mac, Windows, Linux, and the web.",
+    "homepage": "https://simplenote.com",
+    "license": "GPL-2.0",
+    "url": "https://github.com/Automattic/simplenote-electron/releases/download/v1.5.0/Simplenote-win-1.5.0.exe#/dl.7z",
+    "hash": "sha512:df5d2f6f222a620d96ef276fd561c0431b693b7f09e54d5459e6bd397366b4b8e5301eb03c788c8d74737cd3a1babc3ac3c99dea84c82dc5ab1610d1ad253728",
+    "extract_dir": "\\$PLUGINSDIR",
+    "pre_install": "Get-ChildItem \"$dir\" -Exclude 'app-64.7z', 'app-32.7z' | Remove-Item -Force -Recurse",
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": "extract_7zip \"$dir\\app-64.7z\" \"$dir\""
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": "extract_7zip \"$dir\\app-32.7z\" \"$dir\""
+            }
+        }
+    },
+    "post_install": "Remove-Item \"$dir\\app-64.7z\", \"$dir\\app-32.7z\"",
+    "bin": "SimpleNote.exe",
+    "shortcuts": [
+        [
+            "SimpleNote.exe",
+            "SimpleNote"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/Automattic/simplenote-electron"
+    },
+    "autoupdate": {
+        "url": "https://github.com/Automattic/simplenote-electron/releases/download/v$version/Simplenote-win-$version.exe#/dl.7z",
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "find": "sha512:\\s+(.*)"
+        }
+    }
+}
