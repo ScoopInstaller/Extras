@@ -1,0 +1,45 @@
+{
+    "version": "73.0.3683.86",
+    "description": "Fast, secure, and free web browser, built for the modern web.",
+    "homepage": "https://www.google.com/chrome/",
+    "license": "Freeware",
+    "architecture": {
+        "64bit": {
+            "url": "https://redirector.gvt1.com/edgedl/release2/chrome/ey4ZlHoxdEA_73.0.3683.86/73.0.3683.86_chrome_installer.exe#/cosi.7z",
+            "hash": "113309795b6b570f51532343999b9bd6d2ed30a17e940a3c34bb9b0dee607b2e"
+        },
+        "32bit": {
+            "url": "https://redirector.gvt1.com/edgedl/release2/chrome/GGX-dnQvK4Q_73.0.3683.86/73.0.3683.86_chrome_installer.exe#/cosi.7z",
+            "hash": "f77ce4807417608adb2745a57bcd838be972b9fcf7497539c6694d6f976097c0"
+        }
+    },
+    "installer": {
+        "script": [
+            "$arch = \"$dir\\chrome.7z\"",
+            "extract_7zip \"$arch\" \"$dir\"",
+            "Move-Item \"$dir\\Chrome-bin\\*\" \"$dir\"",
+            "Remove-Item \"$arch\", \"$dir\\Chrome-bin\" -Force -Recurse"
+        ]
+    },
+    "bin": "chrome.exe",
+    "shortcuts": [
+        [
+            "chrome.exe",
+            "Google Chrome"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.chrome-portable.com/index.php/google-chrome-offline-installer/",
+        "regex": "(?sm)Version:\\s+([\\d\\.]+).*release2/chrome/(?<32>[\\w-]+)_\\d+.*release2/chrome/(?<64>[\\w-]+)_\\d+.*Download 64-bit"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://redirector.gvt1.com/edgedl/release2/chrome/$match64_$version/$version_chrome_installer.exe#/cosi.7z"
+            },
+            "32bit": {
+                "url": "https://redirector.gvt1.com/edgedl/release2/chrome/$match32_$version/$version_chrome_installer.exe#/cosi.7z"
+            }
+        }
+    }
+}
