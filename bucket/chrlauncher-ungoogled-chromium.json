@@ -1,0 +1,91 @@
+{
+    "homepage": "https://chromium.woolyss.com/",
+    "description": "Standard build of Eloston's ungoogled-chromium. All patches applied, apart from \"Safe Browser\".",
+    "version": "73.0.3683.86-r625896",
+    "license": "BSD-3-Clause,MIT",
+    "architecture": {
+        "64bit": {
+            "url": [
+                "https://chromium.woolyss.com/f/chrlauncher-win64-stable-ungoogled.zip#/chrlauncher.zip",
+                "https://github.com/macchrome/winchrome/releases/download/v73.0.3683.86-r625896-Win64/ungoogled-chromium-73.0.3683.86-1_windows.7z#/dl.7z"
+            ],
+            "hash": [
+                "",
+                "sha1:05fcfd5bd986d3b323258206add31ca0280ee41a"
+            ]
+        },
+        "32bit": {
+            "url": [
+                "https://chromium.woolyss.com/f/chrlauncher-win32-stable-ungoogled.zip#/chrlauncher.zip",
+                "https://github.com/macchrome/winchrome/releases/download/v73.0.3683.86-r625896-Win64/Ungoogled-Chromium-73.0.3683.86-Win32.7z#/dl.7z"
+            ],
+            "hash": [
+                "",
+                "sha1:dad829bde5319c0aafabb3c2d1a7804ac30718dc"
+            ]
+        }
+    },
+    "installer": {
+        "script": [
+            "if(test-path $dir\\chrlauncher.exe) {",
+            "   Remove-Item $dir\\chrlauncher.exe",
+            "}",
+            "Get-ChildItem $dir\\chrlauncher*.exe | ForEach-Object {",
+            "   Move-Item $_ $dir\\chrlauncher.exe",
+            "}",
+            "Get-Item $dir\\Ungoogled-Chromium* | ForEach-Object {",
+            "   Move-Item $_ $dir\\bin",
+            "}",
+            "if(test-path $dir\\*.url) {",
+            "   Remove-Item $dir\\*.url",
+            "}"
+        ]
+    },
+    "persist": [
+        "plugins",
+        "profile"
+    ],
+    "shortcuts": [
+        [
+            "chrlauncher.exe",
+            "Chromium (marmadude's build)"
+        ]
+    ],
+    "checkver":  "/macchrome/winchrome/releases/download/v(?<version>[\\d.]+)-r(?<revision>\\d+)-",
+    "autoupdate":{
+        "architecture": {
+            "64bit": {
+                "url": [
+                    "https://chromium.woolyss.com/f/chrlauncher-win64-stable-ungoogled.zip#/chrlauncher.zip",
+                    "https://github.com/macchrome/winchrome/releases/download/v$matchVersion-r$matchRevision-Win64/ungoogled-chromium-$matchVersion-1_windows.7z#/dl.7z"
+                ],
+                "hash": {
+                    "url": [
+                        "",
+                        "https://chromium.woolyss.com/"
+                    ],
+                    "find": [
+                        "",
+                        "([a-f0-9]{40})</var><s>.</s>-\\s+ungoogled-chromium-[-\\d.]+_windows.7z"
+                    ]
+                }
+            },
+            "32bit": {
+                "url": [
+                    "https://chromium.woolyss.com/f/chrlauncher-win32-stable-ungoogled.zip#/chrlauncher.zip",
+                    "https://github.com/macchrome/winchrome/releases/download/v$matchVersion-r$matchRevision-Win64/Ungoogled-Chromium-$matchVersion-Win32.7z#/dl.7z"
+                ],
+                "hash": {
+                    "url": [
+                        "",
+                        "https://chromium.woolyss.com/"
+                    ],
+                    "find": [
+                        "",
+                        "([a-f0-9]{40})</var><s>.</s>-\\s+ungoogled-chromium-[-\\d.]+_Win32.7z"
+                    ]
+                }
+            }
+        }
+    }
+}
