@@ -20,17 +20,19 @@
     ],
     "pre_install": [
         "if (!(Test-Path \"$persist_dir\\user-wininet.json\")) {",
-        "    New-Item -Force -Path \"$dir\" -Name 'user-wininet.json' -Value '{}' | Out-Null",
+        "    New-Item -Force -Path $dir -Name 'user-wininet.json' -Value '{}' | Out-Null",
         "}",
         "if (!(Test-Path \"$persist_dir\\config.json\")) {",
-        "    Copy-Item \"$(appdir v2ray $global)\\current\\config.json\" \"$dir\" | Out-Null",
+        "    Copy-Item \"$(appdir v2ray $global)\\current\\config.json\" $dir | Out-Null",
         "}",
-        "'*.exe', '*.dat', 'vpoint*.json' | % { % ($file in dir \"$(appdir v2ray)\\current\") {",
-        "    if ($file -Like $_){",
-        "    Write-Host \"Creating hardlink for $file\"",
-        "        New-Item -ItemType HardLink -Path $dir -Name $file -Target \"$(appdir v2ray)\\current\\$file\"",
+        "foreach ($form in @('*.exe', '*.dat', 'vpoint*.json')) {",
+        "    foreach ($file in dir \"$(appdir v2ray)\\current\") {",
+        "        if ($file -Like $form) {",
+        "            Write-Host \"Creating hardlink for $file\"",
+        "            New-Item -ItemType HardLink -Path $dir -Name $file -Target \"$(appdir v2ray)\\current\\$file\" | Out-Null",
+        "        }",
         "    }",
-        "}} | Out-Null"
+        "}"
     ],
     "checkver": "github",
     "autoupdate": {
