@@ -1,0 +1,53 @@
+{
+    "version": "2.0.22",
+    "description": "A flexible DNS proxy, with support for encrypted DNS protocols",
+    "homepage": " https://dnscrypt.info",
+    "license": "ISC",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/jedisct1/dnscrypt-proxy/releases/download/2.0.22/dnscrypt-proxy-win64-2.0.22.zip",
+            "hash": "da9990caf5df0ea476015a1e752245774d153dd537227bae3890e891a29e8bd9",
+            "extract_dir": "win64"
+        },
+        "32bit": {
+            "url": "https://github.com/jedisct1/dnscrypt-proxy/releases/download/2.0.22/dnscrypt-proxy-win32-2.0.22.zip",
+            "hash": "03b44a55b73c85028d76b81a934825e3eae5eed10eeec3ff35472d51abfee378",
+            "extract_dir": "win32"
+        }
+    },
+    "persist": [
+        "blacklist.txt",
+        "cloaking-rules.txt",
+        "dnscrypt-proxy.toml",
+        "forwarding-rules.txt",
+        "whitelist.txt"
+    ],
+    "bin": "dnscrypt-proxy.exe",
+    "shortcuts": [
+        [
+            "dnscrypt-proxy.exe",
+            "dnscrypt-proxy"
+        ]
+    ],
+    "pre_install": [
+        "function CopyFile ($name) {",
+        "    if (!(Test-Path \"$persist_dir\\$name\")) {",
+        "        Copy-Item \"$dir\\example-$name\" \"$dir\\$name\"",
+        "    }",
+        "}",
+        "'blacklist.txt', 'cloaking-rules.txt', 'dnscrypt-proxy.toml', 'forwarding-rules.txt', 'whitelist.txt' | % {CopyFile $_} | Out-Null"
+    ],
+    "checkver": {
+        "github": "https://github.com/jedisct1/dnscrypt-proxy"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/jedisct1/dnscrypt-proxy/releases/download/$version/dnscrypt-proxy-win64-$version.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/jedisct1/dnscrypt-proxy/releases/download/$version/dnscrypt-proxy-win32-$version.zip"
+            }
+        }
+    }
+}
