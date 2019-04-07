@@ -1,27 +1,39 @@
 {
+    "homepage": "https://nteract.io/",
     "version": "0.13.0",
     "license": "BSD-3-Clause",
-    "url": "https://github.com/nteract/nteract/releases/download/v0.13.0/nteract-0.13.0-win.zip#/dl.7z",
-    "homepage": "https://nteract.io/",
-    "hash": "753808e7685c667bd3062c3b6f290102773efa1d32a7f91874e98952bbb4c83e",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/nteract/nteract/releases/download/v0.13.0/nteract.Setup.0.13.0.exe#/dl.7z",
+            "hash": "sha512:1e0ff5c48eb2d544b3cd1bb8843e091c2840e1528760744d12c2811d314c54c7a92ad1e4106163689ab2e1d58193cd2bd889bd667a50486513cc3de182a71ecc",
+            "installer": {
+                "script": [
+                    "extract_7zip \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse",
+                    "info 'Installing Python3 kernel...'",
+                    "python3 -m pip install ipykernel",
+                    "python3 -m ipykernel install --user"
+                ]
+            }
+        }
+    },
     "bin": "nteract.exe",
-    "depends": "python",
-    "post_install": [
-        "Write-Host 'Installing Python3 kernel...' -Foreground Magenta",
-        "python3 -m pip install ipykernel",
-        "python3 -m ipykernel install --user"
-    ],
-    "checkver": {
-        "github": "https://github.com/nteract/nteract"
-    },
-    "autoupdate": {
-        "url": "https://github.com/nteract/nteract/releases/download/v$version/nteract-$version-win.zip#/dl.7z"
-    },
     "shortcuts": [
         [
             "nteract.exe",
             "nteract"
         ]
     ],
+    "depends": "python",
+    "checkver": {
+        "github": "https://github.com/nteract/nteract"
+    },
+    "autoupdate": {
+        "url": "https://github.com/nteract/nteract/releases/download/v$version/nteract.Setup.$version.exe#/dl.7z",
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512: $base64"
+        }
+    },
     "notes": "Instructions for downloading more kernels can be found at: https://nteract.io/kernels"
 }
