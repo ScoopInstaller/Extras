@@ -9,7 +9,8 @@
     "bin": "v2rayN.exe",
     "persist": [
         "user-wininet.json",
-        "config.json"
+        "config.json",
+        "guiNConfig.json"
     ],
     "depends": "v2ray",
     "shortcuts": [
@@ -19,8 +20,10 @@
         ]
     ],
     "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\user-wininet.json\")) {",
-        "    New-Item -Force -Path \"$dir\" -Name 'user-wininet.json' -Value '{}' | Out-Null",
+        "foreach ($name in @('guiNConfig.json', 'user-wininet.json')) {",
+        "    if (!(Test-Path \"$persist_dir\\$name\")) {",
+        "        New-Item -Force -Path \"$dir\" -Name $name | Out-Null",
+        "    }",
         "}",
         "if (!(Test-Path \"$persist_dir\\config.json\")) {",
         "    Copy-Item \"$(appdir v2ray $global)\\current\\config.json\" \"$dir\" | Out-Null",
