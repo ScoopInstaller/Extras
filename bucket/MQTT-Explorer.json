@@ -1,26 +1,40 @@
 {
-    "version": "0.2.3",
     "description": "A all-round MQTT client that provides a structured topic overview.",
     "homepage": "https://mqtt-explorer.com/",
     "license": "MIT",
-    "url": "https://github.com/thomasnordquist/MQTT-Explorer/releases/download/v0.2.3/MQTT-Explorer-0.2.3.exe#/MQTT-Explorer.exe",
-    "hash": "sha512:48fb33bb6fda583d8ffc72e4620a77edd03632dd63a49d2fbd7ed181be215a54279a7b9c1ce0030d3f81bf0f476d10c16944b6e642b1a8be4ce02dc4fac49dc0",
-    "extract_dir": "MQTT-Explorer",
-    "bin": "MQTT-Explorer.exe",
+    "version": "0.2.3",
+    "url": "https://github.com/thomasnordquist/MQTT-Explorer/releases/download/v0.2.3/MQTT-Explorer-Setup-0.2.3.exe#/dl.7z",
+    "hash": "sha512:f116359623ce200d69296daaee4c511cad43010f546ab67552aa10fdb06dfbf9672c8638179ad638d0b61a5ff61963c5c8694ff9c563113b62d856e22be79e29",
+    "bin": "MQTT Explorer.exe",
+    "extract_dir": "\\$PLUGINSDIR",
+    "pre_install": "Get-ChildItem \"$dir\" -Exclude 'app-64.7z', 'app-32.7z' | Remove-Item -Force -Recurse",
+    "post_install": "Remove-Item \"$dir\\app-64.7z\", \"$dir\\app-32.7z\"",
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": "extract_7zip \"$dir\\app-64.7z\" \"$dir\""
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": "extract_7zip \"$dir\\app-32.7z\" \"$dir\""
+            }
+        }
+    },
     "shortcuts": [
         [
-            "MQTT-Explorer.exe",
-            "MQTT-Explorer"
+            "MQTT Explorer.exe",
+            "MQTT Explorer"
         ]
     ],
     "checkver": {
         "github": "https://github.com/thomasnordquist/MQTT-Explorer/"
     },
     "autoupdate": {
-        "url": "https://github.com/thomasnordquist/MQTT-Explorer/releases/download/v$version/MQTT-Explorer-$version.exe#/MQTT-Explorer.exe",
+        "url": "https://github.com/thomasnordquist/MQTT-Explorer/releases/download/v$version/MQTT-Explorer-Setup-$version.exe#/dl.7z",
         "hash": {
-            "url": "https://github.com/thomasnordquist/MQTT-Explorer/releases/download/v$version/latest.yml",
-            "find": "sha512:\\s+(.*)"
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512:\\s+$base64"
         }
     }
 }
