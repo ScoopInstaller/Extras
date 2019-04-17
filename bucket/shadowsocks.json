@@ -1,9 +1,10 @@
 {
-    "version": "4.1.4",
+    "description": "A secure socks5 proxy, designed to protect your Internet traffic.",
+    "version": "4.1.5",
     "homepage": "https://github.com/shadowsocks/shadowsocks-windows",
     "license": "GPL-3.0-only",
-    "url": "https://github.com/shadowsocks/shadowsocks-windows/releases/download/4.1.4/Shadowsocks-4.1.4.zip",
-    "hash": "4acb4274db08c54c943eef6f456c6913557163d203cbd8be63a6780e5dcf7a42",
+    "url": "https://github.com/shadowsocks/shadowsocks-windows/releases/download/4.1.5/Shadowsocks-4.1.5.zip",
+    "hash": "d39f61dbf2a753769c0efb7712dd7bfa6e1d1593ebaed06150f206f3b6ff7de2",
     "bin": "Shadowsocks.exe",
     "shortcuts": [
         [
@@ -13,14 +14,19 @@
     ],
     "persist": [
         "gui-config.json",
+        "statistics-config.json",
         "pac.txt",
         "user-rule.txt"
     ],
     "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\gui-config.json\")) {",
-        "   Write-Host -ForegroundColor Red \"Create empty config file for shadowsocks\"",
-        "   New-Item -Force -Path \"$persist_dir\\gui-config.json\" -ItemType file -Value \"{}\" | Out-Null",
-        "}"
+        "function CreateFile ($name, $value = $null) {",
+        "    if (!(Test-Path \"$persist_dir\\$name\")) {",
+        "        Write-Host -ForegroundColor Yellow -BackgroundColor Black \"Create $name for shadowsocks\"",
+        "        New-Item -Force -Path \"$persist_dir\" -Name $name -Value $value",
+        "    }",
+        "}",
+        "'gui-config.json', 'statistics-config.json' | % {CreateFile $_ '{}'}",
+        "'pac.txt', 'user-rule.txt' | % {CreateFile $_}"
     ],
     "checkver": {
         "github": "https://github.com/shadowsocks/shadowsocks-windows"
