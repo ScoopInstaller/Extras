@@ -19,9 +19,9 @@
         }
     },
     "pre_install": [
-        "if(!(Test-Path \"$persist_dir\\Rainmeter.ini\")) { New-Item \"$dir\\Rainmeter.ini\" -Type File | Out-Null }",
-        "if(!(Test-Path \"$persist_dir\\Rainmeter.data\")) { New-Item \"$dir\\Rainmeter.data\" -Type File | Out-Null }",
-        "if(!(Test-Path \"$persist_dir\\Rainmeter.stats\")) { New-Item \"$dir\\Rainmeter.stats\" -Type File | Out-Null }"
+        "@('Rainmeter.ini', 'Rainmeter.data', 'Rainmeter.stats') | ForEach-Object {",
+        "    if(!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" -Type File | Out-Null }",
+        "}"
     ],
     "persist": [
         "Rainmeter.ini",
@@ -32,9 +32,18 @@
         "Plugins"
     ],
     "post_install": [
-        "if((Get-Content \"$dir\\Rainmeter.ini\") -eq $Null) { Copy-Item \"$dir\\Defaults\\Layouts\\illustro default\\Rainmeter.ini\", \"$dir\\Defaults\\Skins\", \"$dir\\Defaults\\Layouts\" \"$persist_dir\" -Force -Recurse | Out-Null }",
-        "if(Test-Path \"$dir\\Plugins.original\") { Copy-Item \"$dir\\Plugins.original\\*\" \"$persist_dir\\Plugins\" -Force -Recurse; Remove-Item \"$dir\\Plugins.original\" -Force -Recurse | Out-Null }",
-        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\uninst.exe.nsis\", \"$dir\\inst.exe\" -Force -Recurse"
+        "    # Makes default welcome skins appear on new installation.",
+        "if(!(Get-Content \"$dir\\Rainmeter.ini\")) {",
+        "    @('Layouts\\illustro default\\Rainmeter.ini', 'Skins', 'Layouts') | ForEach-Object {",
+        "        Copy-Item \"$dir\\Defaults\\$_\" \"$persist_dir\" -Force -Recurse | Out-Null",
+        "    }",
+        "}",
+        "    # If there was an update for plugin, copy default plugins after persisting.",
+        "if (Test-Path \"$dir\\Plugins.original\") {",
+        "    Copy-Item \"$dir\\Plugins.original\\*\" \"$persist_dir\\Plugins\" -Force -Recurse",
+        "    Remove-Item \"$dir\\Plugins.original\" -Force -Recurse | Out-Null",
+        "}",
+        "@('$PLUGINSDIR', 'uninst.exe.nsis', 'inst.exe') | ForEach-Object { Remove-Item \"$dir\\$_\" -Force -Recurse }"
     ],
     "bin": [
         "Rainmeter.exe",
