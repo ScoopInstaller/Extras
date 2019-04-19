@@ -1,0 +1,76 @@
+{
+    "version": "0.4.2-8.6",
+    "license": "GPLv2+",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/sagemath/sage-windows/releases/download/0.4.2-8.6/SageMath-8.6-Installer-v0.4.2.exe",
+            "hash": "9A60F30FE79AA39A4F793FF023D7BFD81E400F614C88677904DD3F6A8DD60F08"
+        }
+    },
+    "homepage": "https://www.sagemath.org/",
+    "description": "SageMath is a free open-source mathematics software system licensed under the GPL.",
+    "innosetup": true,
+    "bin": [
+        "runtime\\bin\\bash.exe",
+        [
+            "runtime\\bin\\bash.exe",
+            "sagemath",
+            "--login -c \'/opt/sagemath-*/sage\'"
+        ],
+        [
+            "runtime\\bin\\bash.exe",
+            "sagemath-shell",
+            "--login -c \'/opt/sagemath-*/sage -sh\'"
+        ],
+        [
+            "runtime\\bin\\bash.exe",
+            "sagemath-notebook",
+            "--login -c \'/opt/sagemath-*/sage --notebook\'"
+		]
+    ],
+    "shortcuts": [
+		[
+            "runtime\\bin\\mintty.exe",
+            "SageMath",
+            "-t \'SageMath\' /bin/bash --login -c \'/opt/sagemath-*/sage\'",
+            "sagemath.ico"
+        ],
+		[
+            "runtime\\bin\\mintty.exe",
+            "SageMath Shell",
+            "-t \'SageMath Shell\' /bin/bash --login -c \'/opt/sagemath-*/sage -sh\'",
+            "sagemath.ico"
+        ],
+		[
+            "runtime\\bin\\mintty.exe",
+            "SageMath Notebook",
+            "-t \'SageMath Notebook\' /bin/bash --login -c \'/opt/sagemath-*/sage --notebook\'",
+            "sagemath.ico"
+        ]
+    ],
+    "post_install": [
+        "pushd \"$dir\\runtime\"",
+        "mkdir etc\\fstab.d",
+        "mkdir dev\\shm",
+        "mkdir dev\\mqueue",
+        "mkdir home\\sage",
+        "$symlinks = Get-Content etc\\symlinks.lst",
+        "foreach($link in $symlinks) {",
+        "    $f = Get-Item $link",
+        "    $f.Attributes = \'System\'",
+        "}",
+        "popd"
+	],
+    "checkver": {
+        "url": "https://github.com/sagemath/sage-windows/releases/latest",
+        "re": "<a href=\"(?<url>.*?(?<tag>SageMath-(?<version>[\\d.]+)-Installer-v(?<installer_version>[\\d.]+))).exe",
+        "replace": "${installer_version}-${version}"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/$matchUrl.exe"
+            }
+		}
+    }
+}
