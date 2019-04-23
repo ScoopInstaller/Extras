@@ -1,0 +1,52 @@
+{
+    "homepage": "https://www.openscad.org/",
+    "version": "2019.01-RC4",
+    "license": "GPL-2.0-or-later",
+    "description": "The Programmers Solid 3D CAD Modeller",
+    "architecture": {
+        "64bit": {
+            "url": "https://files.openscad.org/snapshots/OpenSCAD-2019.01-RC4-x86-64.zip",
+            "hash": "7279401226019cf387343f794f9bf4fc6ee679ef62351cbe6824e0d630f24679"
+        },
+        "32bit": {
+            "url": "https://files.openscad.org/snapshots/OpenSCAD-2019.01-RC4-x86-32.zip",
+            "hash": "961d3f3f41a02d14192930566307d42024a9308b30ef77866a201de3584ca1a8"
+        }
+    },
+    "bin": [
+        [
+            "openscad.exe",
+            "openscad-dev"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "openscad.exe",
+            "OpenSCAD Snapshot"
+        ]
+    ],
+    "post_install": [
+        "# OpenSCAD can't be started from a symlinked directory. See: https://github.com/openscad/openscad/issues/1309",
+        "startmenu_shortcut \"$original_dir\\openscad.exe\" \"OpenSCAD Snapshot\"",
+        "shim \"$original_dir\\openscad.exe\" $false \"openscad-dev\""
+    ],
+    "extract_dir": "openscad-2019.01-RC4",
+    "checkver": {
+        "url": "https://www.openscad.org/inc/win_snapshot_links.js",
+        "regex": "OpenSCAD-([\\w.-]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://files.openscad.org/snapshots/OpenSCAD-$version-x86-64.zip"
+            },
+            "32bit": {
+                "url": "https://files.openscad.org/snapshots/OpenSCAD-$version-x86-32.zip"
+            }
+        },
+        "extract_dir": "openscad-$version",
+        "hash": {
+            "url": "$url.sha256"
+        }
+    }
+}
