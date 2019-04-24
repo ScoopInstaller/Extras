@@ -1,0 +1,49 @@
+{
+    "homepage": "https://client.pritunl.com",
+    "description": "Open Source OpenVPN Client.",
+    "version": "1.0.1953.32",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://github.com/pritunl/pritunl-client-electron/blob/master/LICENSE"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/pritunl/pritunl-client-electron/releases/download/1.0.1953.32/Pritunl.exe",
+            "hash": "556239d99f6bdda809b5117b1c1076d430dd5b92683d7dc80b8b82af9a22d5ab"
+        }
+    },
+    "innosetup": true,
+    "depends": "sudo",
+    "post_install": "sudo \"$dir\\post_install.exe\"",
+    "uninstaller": {
+        "script": [
+            "sudo \"$dir\\pre_uninstall.exe\"",
+            "sudo Remove-Item 'C:\\ProgramData\\Pritunl' -Recurse -Force"
+        ]
+    },
+    "bin": [
+        [
+            "pritunl.exe",
+            "pritunl",
+            "--no-main"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "pritunl.exe",
+            "Pritunl"
+        ]
+    ],
+    "checkver": "([\\d.]+)/Pritunl.exe",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/pritunl/pritunl-client-electron/releases/download/$version/Pritunl.exe",
+                "hash": {
+                    "url": "https://raw.githubusercontent.com/pritunl/pritunl-client-electron/master/SHA256",
+                    "regex": "$version[\\r\\n]+$sha256.*?$basename"
+                }
+            }
+        }
+    }
+}
