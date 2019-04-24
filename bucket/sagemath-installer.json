@@ -1,75 +1,71 @@
 {
     "version": "0.4.2-8.6",
-    "license": "GPLv2+",
+    "description": "Free open-source mathematics software system.",
+    "homepage": "https://www.sagemath.org/",
+    "license": "GPL-2.0-or-later",
     "architecture": {
         "64bit": {
             "url": "https://github.com/sagemath/sage-windows/releases/download/0.4.2-8.6/SageMath-8.6-Installer-v0.4.2.exe",
             "hash": "9A60F30FE79AA39A4F793FF023D7BFD81E400F614C88677904DD3F6A8DD60F08"
         }
     },
-    "homepage": "https://www.sagemath.org/",
-    "description": "SageMath is a free open-source mathematics software system licensed under the GPL.",
     "innosetup": true,
     "bin": [
         "runtime\\bin\\bash.exe",
         [
             "runtime\\bin\\bash.exe",
             "sagemath",
-            "--login -c \'/opt/sagemath-*/sage\'"
+            "--login -c '/opt/sagemath-*/sage'"
         ],
         [
             "runtime\\bin\\bash.exe",
             "sagemath-shell",
-            "--login -c \'/opt/sagemath-*/sage -sh\'"
+            "--login -c '/opt/sagemath-*/sage -sh'"
         ],
         [
             "runtime\\bin\\bash.exe",
             "sagemath-notebook",
-            "--login -c \'/opt/sagemath-*/sage --notebook\'"
+            "--login -c '/opt/sagemath-*/sage --notebook'"
         ]
     ],
     "shortcuts": [
         [
             "runtime\\bin\\mintty.exe",
             "SageMath",
-            "-t \'SageMath\' /bin/bash --login -c \'/opt/sagemath-*/sage\'",
+            "-t 'SageMath' /bin/bash --login -c '/opt/sagemath-*/sage'",
             "sagemath.ico"
         ],
         [
             "runtime\\bin\\mintty.exe",
             "SageMath Shell",
-            "-t \'SageMath Shell\' /bin/bash --login -c \'/opt/sagemath-*/sage -sh\'",
+            "-t 'SageMath Shell' /bin/bash --login -c '/opt/sagemath-*/sage -sh'",
             "sagemath.ico"
         ],
         [
             "runtime\\bin\\mintty.exe",
             "SageMath Notebook",
-            "-t \'SageMath Notebook\' /bin/bash --login -c \'/opt/sagemath-*/sage --notebook\'",
+            "-t \"SageMath Notebook\" /bin/bash --login -c \"/opt/sagemath-*/sage --notebook\"",
             "sagemath.ico"
         ]
     ],
     "post_install": [
-        "pushd \"$dir\\runtime\"",
-        "mkdir etc\\fstab.d",
-        "mkdir dev\\shm",
-        "mkdir dev\\mqueue",
-        "mkdir home\\sage",
-        "$symlinks = Get-Content etc\\symlinks.lst",
-        "foreach($link in $symlinks) {",
-        "    $f = Get-Item $link",
-        "    $f.Attributes = \'System\'",
+        "@('etc\\fstab.d', 'dev\\shm', 'dev\\mqueue', 'home\\sage') | ForEach-Object {",
+        "    New-Item \"$dir\\runtime\\$_\" -Force -Type Directory | Out-Null",
         "}",
-        "popd"
+        "Get-Content \"$dir\\runtime\\etc\\symlinks.lst\" | ForEach-Object {",
+        "    $f = Get-Item $_",
+        "    $f.Attributes = 'System'",
+        "}"
     ],
     "checkver": {
-        "url": "https://github.com/sagemath/sage-windows/releases/latest",
-        "re": "<a href=\"(?<url>.*?(?<tag>SageMath-(?<version>[\\d.]+)-Installer-v(?<installer_version>[\\d.]+))).exe",
-        "replace": "${installer_version}-${version}"
+        "github": "https://github.com/sagemath/sage-windows/",
+        "regex": "SageMath (?<main>[\\d\\.]+) \\(Windows installer (?<inst>[\\d\\.]+)\\)",
+        "replace": "${main}-${inst}"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/$matchUrl.exe"
+                "url": "https://github.com/sagemath/sage-windows/releases/download/$matchInst-$matchMain/SageMath-$matchMain-Installer-v$matchInst.exe"
             }
         }
     }
