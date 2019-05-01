@@ -1,0 +1,46 @@
+{
+    "version": "2019-05-01",
+    "description": "libev port of shadowsocks",
+    "homepage": "https://github.com/shadowsocks/shadowsocks-libev",
+    "license": "GPL-3.0-only",
+    "persist": "config.json",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/DDoSolitary/shadowsocks-libev-win/archive/release-x86_64.zip",
+            "hash": "f2c975f9ee6a7a81c7acdcf56d69e05268e0ce44fcc9f5361998bd455090b825",
+            "extract_dir": "shadowsocks-libev-win-release-x86_64"
+        },
+        "32bit": {
+            "url": "https://github.com/DDoSolitary/shadowsocks-libev-win/archive/release-x86.zip",
+            "hash": "a6a422887224f88e73f16075f3fb29dbb5659b8c148752681a520a9df483ef81",
+            "extract_dir": "shadowsocks-libev-win-release-x86"
+        }
+    },
+    "bin": [
+        "obfs-local.exe",
+        "obfs-server.exe",
+        "ss-local.exe",
+        "ss-manager.exe",
+        "ss-server.exe",
+        "ss-tunnel.exe"
+    ],
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\config.json\")) {",
+        "    New-Item -Force -Path \"$dir\" -Name \"config.json\" -Value '{}' | Out-Null",
+        "}"
+    ],
+    "checkver": {
+        "url": "https://api.github.com/repos/DDoSolitary/shadowsocks-libev-win/branches/release-x86",
+        "re": "([\\d-]+)T"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/DDoSolitary/shadowsocks-libev-win/archive/release-x86_64.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/DDoSolitary/shadowsocks-libev-win/archive/release-x86.zip"
+            }
+        }
+    }
+}
