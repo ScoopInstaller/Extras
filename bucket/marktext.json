@@ -1,0 +1,40 @@
+{
+    "version": "0.14.0",
+    "description": "A simple and elegant markdown editor.",
+    "homepage": "https://marktext.app/",
+    "license": "MIT",
+    "url": "https://github.com/marktext/marktext/releases/download/v0.14.0/marktext-setup-0.14.0.exe#/dl.7z",
+    "hash": "sha512:656a08e352829348ca5f30a04ab08d8da676f2e1104fa47dfdcae5cfb58b0767d53d087b2586f540b15c89191dfdb9e8b9808e82dc454f815f5dcfd38a79aa77",
+    "extract_dir": "\\$PLUGINSDIR",
+    "pre_install": "Get-ChildItem \"$dir\" -Exclude 'app-64.7z', 'app-32.7z' | Remove-Item -Force -Recurse",
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": "Expand-7zipArchive \"$dir\\app-64.7z\" \"$dir\""
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": "Expand-7zipArchive \"$dir\\app-32.7z\" \"$dir\""
+            }
+        }
+    },
+    "post_install": "Remove-Item \"$dir\\app-64.7z\", \"$dir\\app-32.7z\"",
+    "bin": "Mark Text.exe",
+    "shortcuts": [
+        [
+            "Mark Text.exe",
+            "Mark Text"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/marktext/marktext/"
+    },
+    "autoupdate": {
+        "url": "https://github.com/marktext/marktext/releases/download/v$version/marktext-setup-$version.exe#/dl.7z",
+        "hash": {
+            "url": "https://github.com/marktext/marktext/releases/download/v$version/latest.yml",
+            "regex": "sha512:\\s+$base64"
+        }
+    }
+}
