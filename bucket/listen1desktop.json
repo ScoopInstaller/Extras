@@ -1,0 +1,40 @@
+{
+    "version": "2.1.5",
+    "homepage": "http://listen1.github.io/listen1/",
+    "description": "One for all free music in China",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/listen1/listen1_desktop/releases/download/v2.1.5/Listen1_2.1.5_win64.exe#/dl.7z",
+            "hash": "bf250170523c5a2d39c230fdfd94c3b0956cbdd17e59a18855ba84d1855f6709",
+            "installer": {
+                "script": "Expand-7zipArchive \"$dir\\app-64.7z\" \"$dir\""
+            }
+        },
+        "32bit": {
+            "url": "https://github.com/listen1/listen1_desktop/releases/download/v2.1.5/Listen1_2.1.5_win32.exe#/dl.7z",
+            "hash": "a5a6e40696f94c8126c4fca1c497889634319318e0fe94345e6faaa282655f3b",
+            "installer": {
+                "script": "Expand-7zipArchive \"$dir\\app-32.7z\" \"$dir\""
+            }
+        }
+    },
+    "extract_dir": "\\$PLUGINSDIR",
+    "pre_install": "Get-ChildItem \"$dir\" -Exclude 'app-64.7z', 'app-32.7z' | Remove-Item -Force -Recurse",
+    "post_install": "Remove-Item \"$dir\\app-64.7z\", \"$dir\\app-32.7z\" -Force -ErrorAction SilentlyContinue",
+    "bin": "Listen1.exe",
+    "shortcuts": [["Listen1.exe", "Listen1"]],
+    "checkver": {
+        "github": "https://github.com/listen1/listen1_desktop/"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/listen1/listen1_desktop/releases/download/v$version/Listen1_$version_win64.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://github.com/listen1/listen1_desktop/releases/download/v$version/Listen1_$version_win32.exe#/dl.7z"
+            }
+        }
+    }
+}
