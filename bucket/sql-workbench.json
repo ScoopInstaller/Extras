@@ -7,7 +7,7 @@
     },
     "version": "125",
     "url": "https://www.sql-workbench.eu/Workbench-Build125-with-optional-libs.zip",
-    "hash": "fc7363c2740dee185ec50652366970bc156fe9ac229fb02628cb01c616525ff0",
+    "hash": "sha1:28d757ce65dbab41726ce0bcb11e306334f682a9",
     "architecture": {
         "64bit": {
             "bin": [
@@ -38,11 +38,29 @@
             ]
         }
     },
+    "persist": [
+        "ext",
+        "sqlwbconsole64.ini",
+        "sqlwbconsole.ini",
+        "SQLWorkbench64.ini",
+        "SQLWorkbench.ini"
+    ],
+    "pre_install": [
+        "if(!(Test-Path \"$persist_dir\\sqlwbconsole64.ini\")) { New-Item \"$dir\\sqlwbconsole64.ini\" -Type File }",
+        "if(!(Test-Path \"$persist_dir\\sqlwbconsole.ini\")) { New-Item \"$dir\\sqlwbconsole.ini\" -Type File }",
+        "if(!(Test-Path \"$persist_dir\\SQLWorkbench64.ini\")) { New-Item \"$dir\\SQLWorkbench64.ini\" -Type File }",
+        "if(!(Test-Path \"$persist_dir\\SQLWorkbench.ini\")) { New-Item \"$dir\\SQLWorkbench.ini\" -Type File }"
+    ],
+    "post_install": "if((Test-Path \"$dir\\ext.original\")) { Copy-Item \"$dir\\ext.original\\*\" -Destination \"$persist_dir\\ext\" }",
     "checkver": {
         "url": "https://www.sql-workbench.eu/downloads.html",
         "re": "Current stable release: Build (\\d+)"
     },
     "autoupdate": {
-        "url": "https://www.sql-workbench.eu/Workbench-Build$version-with-optional-libs.zip"
+        "url": "https://www.sql-workbench.eu/Workbench-Build$version-with-optional-libs.zip",
+        "hash": {
+            "url": "$url.sha1",
+            "find": "^$sha1"
+        }
     }
 }
