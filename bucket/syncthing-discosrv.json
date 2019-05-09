@@ -1,0 +1,46 @@
+{
+    "version": "1.0.1",
+    "description": "The Syncthing global discovery server",
+    "homepage": "https://syncthing.net/",
+    "license": "MPL-2.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/syncthing/discosrv/releases/download/v1.0.1/stdiscosrv-windows-amd64-v1.0.1.zip",
+            "hash": "8acf109190c6d50de06132f125a9335e2426085952c7832a0a679822c85b15d7",
+            "extract_dir": "stdiscosrv-windows-amd64-v1.0.1"
+        },
+        "32bit": {
+            "url": "https://github.com/syncthing/discosrv/releases/download/v1.0.1/stdiscosrv-windows-386-v1.0.1.zip",
+            "hash": "5be9f56a690f38a687084330e2668846e35f7e59cbf3a75927676ca46c1988f4",
+            "extract_dir": "stdiscosrv-windows-386-v1.0.1"
+        }
+    },
+    "bin": "stdiscosrv.exe",
+    "persist": [
+        "discovery.db",
+        "cert.pem",
+        "key.pem"
+    ],
+    "pre_install": [
+        "foreach ($name in @('cert.pem', 'key.pem')) {",
+        "    if (!(Test-Path \"$persist_dir\\$name\")) {",
+        "        New-Item -Force -Path \"$dir\" -Name $name | Out-Null",
+        "    }",
+        "}"
+    ],
+    "checkver": {
+        "github": "https://github.com/syncthing/discosrv"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/syncthing/discosrv/releases/download/v$version/stdiscosrv-windows-amd64-v$version.zip",
+                "extract_dir": "stdiscosrv-windows-amd64-v$version"
+            },
+            "32bit": {
+                "url": "https://github.com/syncthing/discosrv/releases/download/v$version/stdiscosrv-windows-386-v$version.zip",
+                "extract_dir": "stdiscosrv-windows-386-v$version"
+            }
+        }
+    }
+}
