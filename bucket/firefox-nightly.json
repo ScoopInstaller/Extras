@@ -1,17 +1,19 @@
 {
     "description": "Nightly builds of Firefox: the popular open source web browser.",
     "homepage": "https://www.mozilla.org/en-US/firefox/nightly/",
-    "version": "nightly",
+    "version": "68.0a1",
     "license": "MPL-2.0",
     "architecture": {
         "64bit": {
-            "url": "https://download.mozilla.org/?product=firefox-nightly-latest-ssl&os=win64&lang=en-US#/firefox.7z"
+            "url": "https://archive.mozilla.org/pub/firefox/nightly/latest-mozilla-central/firefox-68.0a1.en-US.win64.zip",
+            "hash": "9c029b39249dbabf4747fe2e7d0e330c6f519c588c98d859a91a4ea70ea6ff0d"
         },
         "32bit": {
-            "url": "https://download.mozilla.org/?product=firefox-nightly-latest-ssl&os=win&lang=en-US#/firefox.7z"
+            "url": "https://archive.mozilla.org/pub/firefox/nightly/latest-mozilla-central/firefox-68.0a1.en-US.win32.zip",
+            "hash": "9831d9916cc091ff999ea73de5406a32c3c6dec5651b6d6b609bbdb0a118781d"
         }
     },
-    "extract_dir": "core",
+    "extract_dir": "firefox",
     "bin": [
         [
             "firefox.exe",
@@ -23,5 +25,27 @@
             "firefox.exe",
             "Firefox Nightly"
         ]
-    ]
+    ],
+    "checkver": {
+        "url": "https://archive.mozilla.org/pub/firefox/nightly/latest-mozilla-central/",
+        "re": "firefox-([\\d\\.]+a\\d+)\\.en-US"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://archive.mozilla.org/pub/firefox/nightly/latest-mozilla-central/firefox-$version.en-US.win64.zip",
+                "hash": {
+                    "find": "([a-f0-9]{64})\\ssha256\\s\\d+\\sfirefox-$version.en-US.win64.zip",
+                    "url": "https://archive.mozilla.org/pub/firefox/nightly/latest-mozilla-central/firefox-$version.en-US.win64.checksums"
+                }
+            },
+            "32bit": {
+                "url": "https://archive.mozilla.org/pub/firefox/nightly/latest-mozilla-central/firefox-$version.en-US.win32.zip",
+                "hash": {
+                    "find": "([a-f0-9]{64})\\ssha256\\s\\d+\\sfirefox-$version.en-US.win32.zip",
+                    "url": "https://archive.mozilla.org/pub/firefox/nightly/latest-mozilla-central/firefox-$version.en-US.win32.checksums"
+                }
+            }
+        }
+    }
 }
