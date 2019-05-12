@@ -2,28 +2,25 @@
     "homepage": "https://www.freedownloadmanager.org/",
     "description": "A powerful download manager for Windows and macOS.",
     "version": "5.1.38",
-    "license": {
-        "identifier": "Freeware"
-    },
+    "license": "Freeware",
     "architecture": {
         "64bit": {
-            "url": "https://dn3.freedownloadmanager.org/5/5.1-latest/fdm5_x64_setup.exe#/installer.exe",
+            "url": "https://dn3.freedownloadmanager.org/5/5.1-latest/fdm5_x64_setup.exe",
             "hash": "0c05843c56eb0411d1baf2ab5d82207ecbad3fcbb7f7cb8eede1b4b43946bd6d"
         },
         "32bit": {
-            "url": "https://dn3.freedownloadmanager.org/5/5.1-latest/fdm5_x86_setup.exe#/installer.exe",
+            "url": "https://dn3.freedownloadmanager.org/5/5.1-latest/fdm5_x86_setup.exe",
             "hash": "69cca0d59a37fefe70fe0f8308cb063215bc2687b2305c996cb216141e516f16"
         }
     },
-    "depends": "innounp",
     "installer": {
         "script": [
-            "innounp.exe -x -d\"$dir\" \"$dir\\installer.exe\" -y | Out-Null",
-            "Remove-Item \"$dir\\install_script.iss\" | Out-Null",
+            "& (Get-HelperPath 'innounp') -x -d\"$dir\" \"$dir\\$fname\" -y | Out-Null",
             "Move-Item \"$dir\\{app}\\*\" \"$dir\" | Out-Null",
             "Move-Item \"$dir\\{code_CefInstallDir}\\*\" \"$dir\" | Out-Null",
-            "Remove-Item \"$dir\\{app}\" | Out-Null",
-            "Remove-Item \"$dir\\{code_CefInstallDir}\" | Out-Null"
+            "@('install_script.iss', '{app}', '{code_CefInstallDir}', \"$fname\") | ForEach-Object {",
+            "    Remove-Item \"$dir\\$_\" -Recurse -Force",
+            "}"
         ]
     },
     "shortcuts": [
@@ -36,10 +33,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://dn3.freedownloadmanager.org/$majorVersion/$majorVersion.$minorVersion-latest/fdm$majorVersion_x64_setup.exe#/installer.exe"
+                "url": "https://dn3.freedownloadmanager.org/$majorVersion/$majorVersion.$minorVersion-latest/fdm$majorVersion_x64_setup.exe"
             },
             "32bit": {
-                "url": "https://dn3.freedownloadmanager.org/$majorVersion/$majorVersion.$minorVersion-latest/fdm$majorVersion_x86_setup.exe#/installer.exe"
+                "url": "https://dn3.freedownloadmanager.org/$majorVersion/$majorVersion.$minorVersion-latest/fdm$majorVersion_x86_setup.exe"
             }
         }
     }
