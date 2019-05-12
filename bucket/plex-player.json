@@ -4,7 +4,6 @@
     "description": "Plex Media Player. Play media.",
     "homepage": "https://www.plex.tv/apps-devices/#modal-devices-plex-media-player",
     "license": "GPL-2.0-or-later",
-    "depends": "dark",
     "architecture": {
         "64bit": {
             "url": "https://downloads.plex.tv/plexmediaplayer/2.33.1.979-c4087ea7/PlexMediaPlayer-2.33.1.979-c4087ea7-windows-x64.exe#/installer.exe",
@@ -15,8 +14,8 @@
         "script": [
             "$extracted = \"$dir\\extracted\"",
             "$msi = \"$dir\\msi\"",
-            "&(file_path dark dark.exe) -nologo -x \"$extracted\" \"$dir\\installer.exe\" | Out-Null",
-            "extract_msi \"$extracted\\AttachedContainer\\PMP.msi\" \"$msi\"",
+            "Expand-DarkArchive \"$extracted\" \"$dir\\installer.exe\" | Out-Null",
+            "Expand-MsiArchive \"$extracted\\AttachedContainer\\PMP.msi\" \"$msi\"",
             "Move-Item \"$msi\\Msi\\*\" \"$dir\" -Force",
             "Remove-Item $extracted, $msi, \"$dir\\installer.exe\" -Force -Recurse"
         ]
