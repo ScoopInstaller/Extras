@@ -18,8 +18,8 @@
         "script": [
             "Start-Process \"$dir\\$fname\" \"/S /D=$dir\" -NoNewWindow -Wait",
             "Rename-Item \"$dir\\Browser\" scoop-temp",
-            "Get-ChildItem \"$dir\\scoop-temp\" | ForEach-Object { Move-Item \"$dir\\scoop-temp\\$_\" \"$dir\\$_\" }",
-            "@($fname, 'Start Tor Browser.lnk', 'scoop-temp') | ForEach-Object { Remove-Item \"$dir\\$_\" }"
+            "Move-Item \"$dir\\scoop-temp\\*\" \"$dir\"",
+            "@($fname, 'Start Tor Browser.lnk', 'scoop-temp') | ForEach-Object { Remove-Item \"$dir\\$_\" -Recurse }"
         ]
     },
     "bin": [
@@ -36,7 +36,7 @@
     ],
     "checkver": {
         "url": "https://www.torproject.org/download/",
-        "re": "torbrowser/(\\d+(\\.\\d+)*)/torbrowser-install-win64-\\1_en-US.exe"
+        "regex": "torbrowser/([\\d.]+)/torbrowser-install-win64"
     },
     "autoupdate": {
         "architecture": {
@@ -48,7 +48,7 @@
             }
         },
         "hash": {
-            "url": "https://dist.torproject.org/torbrowser/$version/sha256sums-signed-build.txt"
+            "url": "$baseurl/sha256sums-signed-build.txt"
         }
     }
 }
