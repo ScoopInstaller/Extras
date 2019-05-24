@@ -1,12 +1,27 @@
 {
     "description": "Web browser that connects to the internet via the Tor anonymity network",
     "homepage": "https://www.torproject.org/",
-    "version": "8.0.8",
+    "version": "8.5",
     "##": "Multiple components under various open source licenses. Included HTTPS Everywhere extension is the strictest.",
     "license": "GPL-3.0-or-later",
-    "url": "https://dist.torproject.org/torbrowser/8.0.8/torbrowser-install-8.0.8_en-US.exe#/dl.7z",
-    "hash": "bfe32a737e9fa37bf0c8837dbf3385be41cd9e8f9a88850d8f2946bb736e784f",
-    "extract_dir": "Browser",
+    "architecture": {
+        "64bit": {
+            "url": "https://dist.torproject.org/torbrowser/8.5/torbrowser-install-win64-8.5_en-US.exe",
+            "hash": "077032e7b0d9849e95917c42364b0f9e7c81090d2106113c843a6d67c49afc3c"
+        },
+        "32bit": {
+            "url": "https://dist.torproject.org/torbrowser/8.5/torbrowser-install-8.5_en-US.exe",
+            "hash": "119da848876ed7fa786807e0214f7250c93045b4e4d314d2e3a7ad60962b4916"
+        }
+    },
+    "installer": {
+        "script": [
+            "Start-Process \"$dir\\$fname\" \"/S /D=$dir\" -NoNewWindow -Wait",
+            "Rename-Item \"$dir\\Browser\" scoop-temp",
+            "Get-ChildItem \"$dir\\scoop-temp\" | ForEach-Object { Move-Item \"$dir\\scoop-temp\\$_\" \"$dir\\$_\" }",
+            "@($fname, 'Start Tor Browser.lnk', 'scoop-temp') | ForEach-Object { Remove-Item \"$dir\\$_\" }"
+        ]
+    },
     "bin": [
         [
             "firefox.exe",
@@ -20,11 +35,18 @@
         ]
     ],
     "checkver": {
-        "url": "https://www.torproject.org/download/download.html.en",
-        "re": "torbrowser/([0-9]+(\\.[0-9]+)*)/torbrowser-install-\\1_en-US.exe"
+        "url": "https://www.torproject.org/download/",
+        "re": "torbrowser/(\\d+(\\.\\d+)*)/torbrowser-install-win64-\\1_en-US.exe"
     },
     "autoupdate": {
-        "url": "https://dist.torproject.org/torbrowser/$version/torbrowser-install-$version_en-US.exe#/dl.7z",
+        "architecture": {
+            "64bit": {
+                "url": "https://dist.torproject.org/torbrowser/$version/torbrowser-install-win64-$version_en-US.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://dist.torproject.org/torbrowser/$version/torbrowser-install-$version_en-US.exe#/dl.7z"
+            }
+        },
         "hash": {
             "url": "https://dist.torproject.org/torbrowser/$version/sha256sums-signed-build.txt"
         }
