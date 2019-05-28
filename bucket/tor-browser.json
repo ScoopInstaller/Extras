@@ -16,10 +16,9 @@
     },
     "installer": {
         "script": [
-            "Start-Process \"$dir\\$fname\" \"/S /D=$dir\" -NoNewWindow -Wait",
-            "Rename-Item \"$dir\\Browser\" scoop-temp",
-            "Move-Item \"$dir\\scoop-temp\\*\" \"$dir\"",
-            "@($fname, 'Start Tor Browser.lnk', 'scoop-temp') | ForEach-Object { Remove-Item \"$dir\\$_\" -Recurse }"
+            "Start-Process \"$dir\\$fname\" \"/S /D=$dir\" -PassThru -NoNewWindow | Wait-Process",
+            "movedir \"$dir\\Browser\" \"$dir\" | Out-Null",
+            "Remove-Item \"$dir\\$fname\", \"$dir\\*.lnk\" -Force"
         ]
     },
     "bin": [
