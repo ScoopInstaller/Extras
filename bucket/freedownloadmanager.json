@@ -15,12 +15,8 @@
     },
     "installer": {
         "script": [
-            "& (Get-HelperPath 'innounp') -x -d\"$dir\" \"$dir\\$fname\" -y | Out-Null",
-            "Move-Item \"$dir\\{app}\\*\" \"$dir\" | Out-Null",
-            "Move-Item \"$dir\\{code_CefInstallDir}\\*\" \"$dir\" | Out-Null",
-            "@('install_script.iss', '{app}', '{code_CefInstallDir}', \"$fname\") | ForEach-Object {",
-            "    Remove-Item \"$dir\\$_\" -Recurse -Force",
-            "}"
+            "Expand-InnoArchive -Path \"$dir\\$fname\"",
+            "Expand-InnoArchive -Path \"$dir\\$fname\" -ExtractDir '{code_CefInstallDir}' -Removal"
         ]
     },
     "shortcuts": [
