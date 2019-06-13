@@ -1,13 +1,15 @@
 {
     "homepage": "https://www.enpass.io/",
-    "version": "6.0.4.281",
-    "url": "https://dl.enpass.io/stable/windows/package/EnpassPackage-6.0.4.281.zip",
-    "hash": "36d3f0041700fbeb55f62c9c05cbb8c4cf825af022a355a668bf9202b22a66eb",
+    "version": "6.1.0.407",
+    "url": "https://dl.enpass.io/stable/windows/package/EnpassPackage-6.1.0.407.zip",
+    "hash": "dbc3c7e814314fdd2e98e52c46cce0d1a936cf3223d7bf13086b584c1f181d47",
     "bin": "Enpass.exe",
     "installer": {
         "script": [
-            "Expand-7zipArchive \"$dir\\Enpass*setup.exe\" \"$dir\"",
-            "Remove-Item \"$dir\\Enpass*setup.exe\""
+            "Expand-DarkArchive \"$dir\\Enpass-setup.exe\" \"$dir\\tmp\"",
+            "Expand-MsiArchive \"$dir\\tmp\\AttachedContainer\\Enpass.msi\" \"$dir\\tmp\" | Out-Null",
+            "movedir \"$dir\\tmp\\PFiles\\Enpass\" \"$dir\" | Out-Null",
+            "Remove-Item \"$dir\\tmp\", \"$dir\\Enpass-setup.exe\" -Force -Recurse"
         ]
     },
     "shortcuts": [
