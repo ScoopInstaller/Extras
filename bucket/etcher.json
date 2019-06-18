@@ -1,25 +1,42 @@
 {
-    "homepage": "https://etcher.io/",
+    "homepage": "https://www.balena.io/etcher/",
     "license": "Apache-2.0",
     "version": "1.5.50",
+    "description": "Flash OS images to SD cards & USB drives, safely and easily.",
     "url": "https://github.com/balena-io/etcher/releases/download/v1.5.50/balenaEtcher-Setup-1.5.50.exe#/dl.7z",
-    "hash": "8fedaf6c0556eeb2b4f9df6f1813d02934b40fca5f1a4feb87fa3d479b6b5d3a",
+    "hash": "sha512:c404b7442f62c9e18408cffc6e22b3de995f2bc2f9c3a53af7ca56d850cbdb9cfa5a99fe7a9723884dd9f9e8f60bf0ec52c91c0459cbab44afb536ec4a0759f6",
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": [
+                    "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse"
+                ]
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": [
+                    "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\"",
+                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse"
+                ]
+            }
+        }
+    },
     "shortcuts": [
         [
             "balenaEtcher.exe",
             "Etcher"
-        ],
-        [
-            "balenaEtcher.exe",
-            "balenaEtcher"
         ]
     ],
     "checkver": {
         "github": "https://github.com/balena-io/etcher"
     },
-    "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-*.7z\" \"$dir\"",
-    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
     "autoupdate": {
-        "url": "https://github.com/balena-io/etcher/releases/download/v$version/balenaEtcher-Setup-$version.exe#/dl.7z"
+        "url": "https://github.com/balena-io/etcher/releases/download/v$version/balenaEtcher-Setup-$version.exe#/dl.7z",
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512: $base64"
+        }
     }
 }
