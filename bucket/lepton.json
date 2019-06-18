@@ -3,34 +3,36 @@
     "description": "A lean code snippet manager based on GitHub Gist",
     "license": "MIT",
     "version": "1.8.0",
+    "url": "https://github.com/hackjutsu/Lepton/releases/download/v1.8.0/Lepton-Setup-1.8.0.exe#/dl.7z",
+    "hash": "sha512:8aaf1324d9f4061033880cd5238f87d4c53cb434aefcc745f0914dfa0bebb401d453d05e55d0af02bc37d5c49f5e31f8e558f9576bb4f3ee764585d6a5ea6700",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/hackjutsu/Lepton/releases/download/v1.8.0/Lepton-1.8.0-win.7z",
-            "hash": "bfde85ce0f69d1d02a3a4535c4a76ab437b2197845129667af357b805acf51d1"
+            "installer": {
+                "script": "Expand-7zipArchive \"$dir/`$PLUGINSDIR/app-64.7z\" \"$dir\""
+            }
         },
         "32bit": {
-            "url": "https://github.com/hackjutsu/Lepton/releases/download/v1.8.0/Lepton-1.8.0-ia32-win.7z",
-            "hash": "549c151c2710b35d8dca3778945ad76b29598098d15cd1d87390c5871388e3f2"
-        }
-    },
-    "bin": "Lepton.exe",
-    "checkver": {
-        "github": "https://github.com/hackjutsu/Lepton"
-    },
-    "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://github.com/hackjutsu/Lepton/releases/download/v$version/Lepton-$version-win.7z"
-            },
-            "32bit": {
-                "url": "https://github.com/hackjutsu/Lepton/releases/download/v$version/Lepton-$version-ia32-win.7z"
+            "installer": {
+                "script": "Expand-7zipArchive \"$dir/`$PLUGINSDIR/app-32.7z\" \"$dir\""
             }
         }
     },
+    "post_install": "Remove-Item \"$dir/`$PLUGINSDIR\", \"$dir/Uninstall*\" -Force -Recurse",
+    "bin": "Lepton.exe",
     "shortcuts": [
         [
             "Lepton.exe",
             "Lepton"
         ]
-    ]
+    ],
+    "checkver": {
+        "github": "https://github.com/hackjutsu/Lepton"
+    },
+    "autoupdate": {
+        "url": "https://github.com/hackjutsu/Lepton/releases/download/v$version/Lepton-Setup-$version.exe#/dl.7z",
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512: $base64"
+        }
+    }
 }
