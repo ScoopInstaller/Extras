@@ -15,9 +15,13 @@
     },
     "extract_dir": "FileZilla-3.42.1",
     "pre_install": [
-        "$file = 'fzdefaults.xml'",
-        "if (-not (Test-Path \"$persist_dir\\$file\")) {",
-        "    Copy-Item \"$dir\\docs\\fzdefaults.xml.example\" \"$dir\\fzdefaults.xml\"",
+        "if (-not (Test-Path \"$persist_dir\\fzdefaults.xml\")) {",
+        "    $currentDir = current_dir $dir",
+        "    $finalFile = '<FileZilla3><Settings>'",
+        "    $finalFile += \"<Setting name=\"\"Config Location\"\">$currentDir\\data\\config</Setting>\"",
+        "    $finalFile += \"<Setting name=\"\"Cache directory\"\">$currentDir\\data\\cache</Setting>\"",
+        "    $finalFile += '</Settings></FileZilla3>'",
+        "    Set-Content \"$dir\\fzdefaults.xml\" -Value $finalFile -Encoding Ascii",
         "}"
     ],
     "bin": "filezilla.exe",
@@ -27,7 +31,10 @@
             "FileZilla"
         ]
     ],
-    "persist": "fzdefaults.xml",
+    "persist": [
+        "fzdefaults.xml",
+        "data"
+    ],
     "checkver": {
         "url": "https://filezilla-project.org/download.php?show_all=1",
         "re": "The latest stable version of FileZilla Client is ([\\d.]+)"
