@@ -1,0 +1,60 @@
+{
+    "homepage": "https://github.com/ChanpleCai/SmartTaskbar",
+    "version": "1.1.9",
+    "description": "Automatically switch the display state of the Windows Taskbar",
+    "license": [
+        "MIT",
+        {
+            "identifier": "Freeware",
+            "url": "https://github.com/996icu/996.ICU/blob/master/LICENSE"
+        }
+    ],
+    "url": "https://github.com/ChanpleCai/SmartTaskbar/releases/download/v1.1.9/SmartTaskbar_Setup.exe",
+    "hash": "1084517972e7031f8f3ed4612dad572a91b81a3bfb5a4c5eb0703dc588a0b382",
+    "depends": "shortcut",
+    "innosetup": true,
+    "installer": {
+        "script": [
+            "Add-Content -Path \"$dir\\smarttaskbar-add-startup.bat\" -Value '@echo off'",
+            "Add-Content -Path \"$dir\\smarttaskbar-add-startup.bat\" -Value 'shortcut \"/F:%appdata%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\SmartTaskbar.lnk\" /A:C \"/T:%~dp0SmartTaskbar.exe\" \"/W:%~dp0.\"'",
+            "Add-Content -Path \"$dir\\smarttaskbar-add-startup.bat\" -Value 'echo. SmartTaskbar has been added to the startup programs.'",
+            "Add-Content -Path \"$dir\\smarttaskbar-add-startup.bat\" -Value 'echo. (Run `smarttaskbar-remove-startup` to remove from startup.)'",
+            
+            "Add-Content -Path \"$dir\\smarttaskbar-remove-startup.bat\" -Value '@echo off'",
+            "Add-Content -Path \"$dir\\smarttaskbar-remove-startup.bat\" -Value 'del /q \"%appdata%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\smarttaskbar.lnk\"'",
+            "Add-Content -Path \"$dir\\smarttaskbar-remove-startup.bat\" -Value 'echo. SmartTaskbar has been removed from the startup programs.'",
+            "Add-Content -Path \"$dir\\smarttaskbar-remove-startup.bat\" -Value 'echo. (Run `smarttaskbar-add-startup` to add again.)'"
+        ]
+    },
+    "uninstaller": {
+        "file": "smarttaskbar-remove-startup.bat"
+    },
+    "bin": [
+        [
+            "SmartTaskbar.exe",
+            "SmartTaskbar"
+        ],
+        [
+            "smarttaskbar-add-startup.bat",
+            "smarttaskbar-add-startup"
+        ],
+        [
+            "smarttaskbar-remove-startup.bat",
+            "smarttaskbar-remove-startup"
+        ]
+    ],
+    "persist": "SmartTaskbar.exe.config",
+    "shortcuts": [
+        [
+            "SmartTaskbar.exe",
+            "SmartTaskbar"
+        ]
+    ],
+    "notes": "Run `smarttaskbar-add-startup` to add SmartTaskbar to startup programs.",
+    "checkver": {
+        "github": "https://github.com/ChanpleCai/SmartTaskbar/"
+    },
+    "autoupdate": {
+        "url": "https://github.com/ChanpleCai/SmartTaskbar/releases/download/v$version/SmartTaskbar_Setup.exe"
+    }
+}
