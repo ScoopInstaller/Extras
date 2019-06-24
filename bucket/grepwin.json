@@ -3,7 +3,7 @@
     "description": "Regular expression search and replace tool for Windows.",
     "homepage": "https://tools.stefankueng.com/grepWin.html",
     "license": "GPL-3.0-only",
-    "notes": "Run 'grepwin-install-context' to add grepWin to right-click context menu. \n(This does not require admin rights)",
+    "notes": "Run 'reg import $dir\\grepwin-install-context.reg' to add grepWin to right-click context menu. \n(This does not require admin rights)",
     "architecture": {
         "32bit": {
             "url": [
@@ -36,28 +36,12 @@
            "$reg_content = Get-Content \"$dir\\grepwin-install-context.reg\"",
            "$reg_content = $reg_content.Replace('$app_path', $app_path)",
            "$reg_content | Set-Content -Path \"$dir\\grepwin-install-context.reg\"",
-           "$script_content = @(\"",
-           "    reg import $dir\\grepwin-install-context.reg | Out-Null",
-           "    Write-Host `\"grepWin has been added to the right-click menu.`\"",
-           "    Write-Host `\"Run 'grepwin-uninstall-context' to remove from right-click menu.`\"",
-           "\")",
-           "Set-Content \"$dir\\grepwin-install-context.ps1\" -Value ($script_content -join \"`r`n\") -Encoding Ascii",
-           "$script_content = @(\"",
-           "    reg import $dir\\grepwin-uninstall-context.reg | Out-Null",
-           "    Write-Host `\"grepWin has been removed from the right-click menu.`\"",
-           "    Write-Host `\"Run 'grepwin-install-context' to add again.`\"",
-           "\")",
-           "Set-Content \"$dir\\grepwin-uninstall-context.ps1\" -Value ($script_content -join \"`r`n\") -Encoding Ascii"
         ]
     },
     "uninstaller": {
-        "file": "grepwin-uninstall-context.ps1"
+        "script": "reg import grepwin-uninstall-context.reg"
     },
-    "bin": [
-        "grepWin_portable.exe",
-        "grepwin-install-context.ps1",
-        "grepwin-uninstall-context.ps1"
-    ],
+    "bin": "grepWin_portable.exe",
     "persist": "grepwin.ini",
     "shortcuts": [
         [
