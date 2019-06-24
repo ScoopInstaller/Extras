@@ -1,0 +1,82 @@
+{
+    "version": "1.9.1",
+    "description": "Regular expression search and replace tool for Windows.",
+    "homepage": "https://tools.stefankueng.com/grepWin.html",
+    "license": "GPL-3.0-only",
+    "notes": "Run 'grepwin-add-right-click' to add grepWin to right click menu options. \n(This does not require admin rights)",
+    "architecture": {
+        "32bit": {
+            "url": "https://github.com/stefankueng/grepWin/releases/download/1.9.1/grepWin-1.9.1_portable.exe#/grepWin_portable.exe",
+            "hash": "015a9427d29be42dfa0defc73aa613a44d6eb3b0f5b76152f988d941fb8d9868"
+        },
+        "64bit": {
+            "url": "https://github.com/stefankueng/grepWin/releases/download/1.9.1/grepWin-x64-1.9.1_portable.exe#/grepWin_portable.exe",
+            "hash": "95335b4ad1e42149a8e5e3ce4ce7114ba8cc50d5d671209a917c4aa6b8eca653"
+        }
+    },
+    "installer": {
+        "script": [
+           "$dir_double_slash = $dir -replace \"\\\\\", \"\\\\\"",
+           "$cont = @(\"",
+           "    New-Item -Path HKCU:\\Software\\Classes\\Directory\\shell -Name grepWin -Force | Out-Null",
+           "    New-ItemProperty -Path HKCU:\\Software\\Classes\\Directory\\shell\\grepWin -Name `\"(Default)`\" -Value `\"search with grepWin`\" -PropertyType String -Force | Out-Null",
+           "    New-ItemProperty -Path HKCU:\\Software\\Classes\\Directory\\shell\\grepWin -Name `\"Icon`\" -Value `\"$dir_double_slash\\\\grepWin_portable.exe,-107`\" -PropertyType String -Force | Out-Null",
+           "    New-Item -Path HKCU:\\Software\\Classes\\Directory\\shell\\grepWin -Name command -Force | Out-Null",
+           "    New-ItemProperty -Path HKCU:\\Software\\Classes\\Directory\\shell\\grepWin\\command -Name `\"(Default)`\" -Value `\"$dir_double_slash\\\\grepWin_portable.exe /searchpath:```\"%1```\"`\" -PropertyType String -Force | Out-Null",
+           "    New-Item -Path HKCU:\\Software\\Classes\\Directory\\Background -Name shell -Force | Out-Null",
+           "    Copy-Item -Path HKCU:\\Software\\Classes\\Directory\\shell\\grepWin -Destination HKCU:\\Software\\Classes\\Directory\\Background\\shell -Recurse | Out-Null",
+           "    Set-ItemProperty -Path HKCU:\\Software\\Classes\\Directory\\Background\\shell\\grepWin\\command -Name `\"(Default)`\" -Value `\"$dir_double_slash\\\\grepWin_portable.exe /searchpath:```\"%V```\"`\" -Force",
+           "    New-Item -Path 'HKCU:\\Software\\Classes\\```*\\shell' -Name grepWin -Force | Out-Null",
+           "    Copy-Item -Path 'HKCU:\\Software\\Classes\\Directory\\shell\\grepWin' -Destination 'HKCU:\\Software\\Classes\\`*\\shell' -Recurse | Out-Null",
+           "    New-Item -Path HKCU:\\Software\\Classes\\Drive -Name shell -Force | Out-Null",
+           "    Copy-Item -Path HKCU:\\Software\\Classes\\Directory\\shell\\grepWin -Destination HKCU:\\Software\\Classes\\Drive\\shell -Recurse | Out-Null",
+           "    New-Item -Path HKCU:\\Software\\Classes\\Folder -Name shell -Force | Out-Null",
+           "    Copy-Item -Path HKCU:\\Software\\Classes\\Directory\\shell\\grepWin -Destination HKCU:\\Software\\Classes\\Folder\\shell -Recurse | Out-Null",
+           "    New-Item -Path HKCU:\\Software\\Classes\\LibraryFolder\\Background -Name shell -Force | Out-Null",
+           "    Copy-Item -Path HKCU:\\Software\\Classes\\Directory\\Background\\shell\\grepWin -Destination HKCU:\\Software\\Classes\\LibraryFolder\\Background\\shell -Recurse | Out-Null",
+           "    Write-Host `\"grepWin has been added to the right-click menu.`\"",
+           "    Write-Host `\"Run 'grepwin-remove-right-click' to remove from right-click menu.`\"",
+           "\")",
+           "Set-Content \"$dir\\grepwin-add-right-click.ps1\" -Value ($cont -join \"`r`n\") -Encoding Ascii",
+           "$cont = @(\"",
+           "    Remove-Item -Path HKCU:\\Software\\Classes\\Directory\\shell\\grepWin -Force -Recurse | Out-Null",
+           "    Remove-Item -Path HKCU:\\Software\\Classes\\Directory\\Background\\shell\\grepWin -Force -Recurse | Out-Null",
+           "    Remove-Item -Path 'HKCU:\\Software\\Classes\\```*\\shell\\grepWin' -Force -Recurse | Out-Null",
+           "    Remove-Item -Path HKCU:\\Software\\Classes\\Drive\\shell\\grepWin -Force -Recurse | Out-Null",
+           "    Remove-Item -Path HKCU:\\Software\\Classes\\Folder\\shell\\grepWin -Force -Recurse | Out-Null",
+           "    Remove-Item -Path HKCU:\\Software\\Classes\\LibraryFolder\\Background\\shell\\grepWin -Force -Recurse | Out-Null",
+           "    Write-Host `\"grepWin has been removed from the right-click menu.`\"",
+           "    Write-Host `\"Run 'grepwin-add-right-click' to add again.`\"",
+           "\")",
+           "Set-Content \"$dir\\grepwin-remove-right-click.ps1\" -Value ($cont -join \"`r`n\") -Encoding Ascii"
+        ]
+    },
+    "uninstaller": {
+        "file": "grepwin-remove-right-click.ps1"
+    },
+    "bin": [
+        "grepWin_portable.exe",
+        "grepwin-add-right-click.ps1",
+        "grepwin-remove-right-click.ps1"
+    ],
+    "persist": "grepwin.ini",
+    "shortcuts": [
+        [
+            "grepWin_portable.exe",
+            "grepWin"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/stefankueng/grepWin"
+    },
+    "autoupdate": {
+        "architecture": {
+            "32bit": {
+                "url": "https://github.com/stefankueng/grepWin/releases/download/$version/grepWin-$version_portable.exe#/grepWin_portable.exe"
+            },
+            "64bit": {
+                "url": "https://github.com/stefankueng/grepWin/releases/download/$version/grepWin-x64-$version_portable.exe#/grepWin_portable.exe"
+            }
+        }
+    }
+}
