@@ -2,27 +2,22 @@
     "homepage": "https://standardnotes.org/",
     "version": "3.0.15",
     "description": "A safe place for your notes, thoughts, and life's work.",
-    "license": {
-        "identifier": "AGPL-3.0",
-        "url": "https://github.com/standardnotes/desktop/blob/master/LICENSE"
-    },
+    "license": "AGPL-3.0-or-later",
     "url": "https://github.com/standardnotes/desktop/releases/download/v3.0.15/standard-notes-setup-3.0.15.exe#/dl.7z",
     "hash": "sha512:d6a1910de2c94649144729b4f06a3403c57def04613382db66c4555703d93ba612ee11d7d9a78a881b781a444ef7b6a7f8e5b7001ffe9eb3ebfb900c762b4667",
-    "extract_dir": "\\$PLUGINSDIR",
-    "pre_install": "Get-ChildItem \"$dir\" -Exclude 'app-64.7z', 'app-32.7z' | Remove-Item -Force -Recurse",
     "architecture": {
         "64bit": {
             "installer": {
-                "script": "Expand-7zipArchive \"$dir\\app-64.7z\" \"$dir\""
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
             }
         },
         "32bit": {
             "installer": {
-                "script": "Expand-7zipArchive \"$dir\\app-32.7z\" \"$dir\""
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
             }
         }
     },
-    "post_install": "Remove-Item \"$dir\\app-64.7z\", \"$dir\\app-32.7z\"",
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
     "bin": "Standard Notes.exe",
     "shortcuts": [
         [
@@ -36,8 +31,8 @@
     "autoupdate": {
         "url": "https://github.com/standardnotes/desktop/releases/download/v$version/standard-notes-setup-$version.exe#/dl.7z",
         "hash": {
-            "url": "https://github.com/standardnotes/desktop/releases/download/v$version/latest.yml",
-            "find": "sha512:\\s+(.*)"
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512:\\s+$base64"
         }
     }
 }
