@@ -3,8 +3,16 @@
     "description": "Notepad like text editor based on the Scintilla source code.",
     "homepage": "https://www.rizonesoft.com/downloads/notepad3/",
     "license": "BSD-3-Clause",
-    "url": "https://github.com/rizonesoft/Notepad3/releases/download/RELEASE_5.19.108.1602/Notepad3_5.19.108.1602.zip",
-    "hash": "df952cbb4f19888732b75dee04c81527ec9a3abdf9e079f12efff1b223afec74",
+    "url": [
+        "https://github.com/rizonesoft/Notepad3/releases/download/RELEASE_5.19.108.1602/Notepad3_5.19.108.1602.zip",
+        "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/notepad3/replace-windows-notepad.reg",
+        "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/notepad3/restore-windows-notepad.reg"
+    ],
+    "hash": [
+        "df952cbb4f19888732b75dee04c81527ec9a3abdf9e079f12efff1b223afec74",
+        "8f0b02f50f2f46853791bcecf96a080921c3c01a09e412eb0d331ce57bcc974f",
+        "7f7bd17609394ae6dcc2d74a7623f38723d02e28ec4d3d4abe3bf05238acc076"
+    ],
     "bin": [
         "Notepad3.exe",
         "minipath.exe"
@@ -36,7 +44,15 @@
             }
         }
     },
-    "post_install": "Remove-Item \"$dir\\Notepad3_${version}_x*.zip\"",
+    "post_install": [
+        "Remove-Item \"$dir\\Notepad3_${version}_x*.zip\"",
+        "if (Test-Path(\"$dir\\replace-windows-notepad.reg\")) {",
+        "    $notepad3 = \"$dir\\Notepad3.exe\".Replace('\\', '\\\\')",
+        "    $content = Get-Content \"$dir\\replace-windows-notepad.reg\"",
+        "    $content = $content.Replace('$notepad3', $notepad3)",
+        "    $content | Set-Content -Path \"$dir\\replace-windows-notepad.reg\"",
+        "}"
+    ],
     "checkver": {
         "github": "https://github.com/rizonesoft/Notepad3",
         "regex": "/releases/tag/RELEASE_([\\d.]+)"
