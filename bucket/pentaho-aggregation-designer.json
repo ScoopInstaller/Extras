@@ -26,11 +26,10 @@
         "plugins"
     ],
     "post_install": [
-        "(`",
-        "    (Get-Content -path \"$dir\\startaggregationdesigner.bat\" -Raw) `",
-        "    -replace '=java','=javaw' `",
-        "    -replace '\"%_PENTAHO_JAVA%\"','start \"\" \"%_PENTAHO_JAVA%\"' `",
-        ") | Set-Content -Path \"$dir\\startaggregationdesigner.bat\"",
+        "$file = \"$dir\\startaggregationdesigner.bat\"",
+        "$cont = (Get-Content $file) -replace '=java','=javaw'",
+        "$cont = $cont -replace '(\"%_PENTAHO_JAVA%\")', 'start \"\" $1'",
+        "Set-Content $file $cont -Encoding ASCII",
         "Remove-Item \"$dir\\Aggregation Designer.app\" -Recurse"
     ],
     "checkver": {
