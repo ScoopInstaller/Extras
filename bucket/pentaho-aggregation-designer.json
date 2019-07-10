@@ -1,0 +1,50 @@
+{
+    "homepage": "https://pentaho.sourceforge.io/",
+    "description": "The Pentaho Aggregation Designer simplifies the creation and deployment of aggregate tables that improve the performance of your Pentaho Analysis (Mondrian) OLAP cubes.",
+    "license": {
+        "identifier": "GPL-2.0-only",
+        "url": "https://github.com/pentaho/pentaho-aggdesigner/blob/master/LICENSE.txt"
+    },
+    "version": "8.3.0.0-371",
+    "url": [
+        "https://downloads.sourceforge.net/project/pentaho/Pentaho%208.3/client-tools/pad-ce-8.3.0.0-371.zip",
+        "https://gist.githubusercontent.com/edgardmessias/13b3ed8b356a7bc5bc113f7a1a8ede35/raw/pad.ico"
+    ],
+    "hash": [
+        "sha1:2f32241dde0dacd351f92e9f71a880b26dbbca34",
+        "sha1:b1958bfbbe2137c2631d163e5b391ce39002f6ad"
+    ],
+    "extract_dir": "aggregation-designer",
+    "bin": "startaggregationdesigner.bat",
+    "shortcuts": [
+        [
+            "startaggregationdesigner.bat",
+            "Pentaho Aggregation Designer (PAD)",
+            "",
+            "pad.ico"
+        ]
+    ],
+    "persist": [
+        "drivers",
+        "plugins"
+    ],
+    "post_install": [
+        "Write-Host \"Disabling console output\"",
+        "(`",
+        "    (Get-Content -path \"$dir\\startaggregationdesigner.bat\" -Raw) `",
+        "    -replace '=java','=javaw' `",
+        "    -replace '\"%_PENTAHO_JAVA%\"','start \"\" \"%_PENTAHO_JAVA%\"' `",
+        ") | Set-Content -Path \"$dir\\startaggregationdesigner.bat\""
+    ],
+    "checkver": {
+        "url": "https://sourceforge.net/projects/pentaho/rss?path=/",
+        "re": "Pentaho\\s+[\\d.]+/client-tools/pad-ce-([\\w.-]+)\\.zip"
+    },
+    "autoupdate": {
+        "url": "https://downloads.sourceforge.net/project/pentaho/Pentaho%20$majorVersion.$minorVersion/client-tools/pad-ce-$version.zip",
+        "hash": {
+            "url": "$url.sum",
+            "regex": "SHA1=$sha1"
+        }
+    }
+}
