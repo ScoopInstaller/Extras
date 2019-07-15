@@ -1,19 +1,39 @@
 {
     "homepage": "https://www.gimp.org/",
     "license": "GPL-3.0-only",
-    "version": "2.10.12",
-    "url": "https://download.gimp.org/mirror/pub/gimp/v2.10/windows/gimp-2.10.12-setup.exe",
-    "hash": "40bf733beb554e0a5f5ab5b82e75c035eefd715b00cc0eaf1cd57ba8a7e2ab6f",
+    "description": "GNU Image Manipulation Program",
+    "version": "2.10.12-2",
+    "url": "https://download.gimp.org/mirror/pub/gimp/v2.10/windows/gimp-2.10.12-setup-2.exe",
+    "hash": "6cd67baf381c7950ec0a46f6ea9b9a6c9191e29fff09a575ce7c7af6d223b613",
     "installer": {
-        "args": [
-            "/VERYSILENT",
-            "/NORESTART",
-            "/DIR=\"$dir\""
+        "type": "inno",
+        "include": [
+            "gimp32on64",
+            "gs",
+            "py"
+        ],
+        "exclude": [
+            "gimp32",
+            "deps32",
+            "debug",
+            "{sys}"
+        ],
+        "script": [
+            "$defpath = \"`nPATH=`${gimp_installation_dir}\\bin\"",
+            "if ($architecture -eq '64bit') {",
+            "   $defpath += \"`${gimp_installation_dir}\\32\\bin\"",
+            "}",
+            "$defenv = Get-Content \"$dir\\lib\\gimp\\2.0\\environ\\default.env\" -Raw",
+            "$defenv += $defpath",
+            "$defenv += 'PYTHONPATH=${gimp_installation_dir}\\lib\\gimp\\2.0\\python;${gimp_plug_in_dir}\\plug-ins\\python-console'",
+            "$defenv | Set-Content \"$dir\\lib\\gimp\\2.0\\environ\\default.env\"",
+            "$pyenv = Get-Content \"$dir\\lib\\gimp\\2.0\\environ\\pygimp.env\" -Raw",
+            "$pyenv += '__COMPAT_LAYER=HIGHDPIAWARE'",
+            "$pyenv | Set-Content \"$dir\\lib\\gimp\\2.0\\environ\\pygimp.env\"",
+            "$pyint = Get-Content \"$dir\\lib\\gimp\\2.0\\interpreters\\pygimp.interp\" -Raw",
+            "$pyint = ($pyint -Replace '/mingw32', \"$dir\\bin\") -Replace 'py::python2', 'py::python'",
+            "$pyint | Set-Content \"$dir\\lib\\gimp\\2.0\\interpreters\\pygimp.interp\""
         ]
-    },
-    "uninstaller": {
-        "file": "uninst\\unins000.exe",
-        "args": "/VERYSILENT"
     },
     "bin": [
         [

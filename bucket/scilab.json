@@ -1,0 +1,56 @@
+{
+    "homepage": "https://www.scilab.org",
+    "version": "6.0.2",
+    "license": "GPL-2.0-only",
+    "description": "Software for numerical computation",
+    "architecture": {
+        "64bit": {
+            "url": "https://www.scilab.org/download/6.0.2/scilab-6.0.2_x64.exe",
+            "hash": "c57182929a5bd0d58fcd71ab935c211496a55425e1bb50e9516c7c81163b2a77"
+        },
+        "32bit": {
+            "url": "https://www.scilab.org/download/6.0.2/scilab-6.0.2.exe",
+            "hash": "1ac5c2708c4fb43909f185a2bd07c3cde3967aa279299295640bedb47431e937"
+        }
+    },
+    "installer": {
+        "type": "inno",
+        "include": [
+            "CPU_OPTIMIZATION\\MKL",
+            "FFTW\\MKL_LIBRARY",
+            "JVM_MODULE\\graphics\\xcos"
+        ],
+        "script": [
+            "New-Item -Path \"$dir\\.atoms\" -ItemType Directory | Out-Null",
+            "$modules = Get-Content \"$dir\\etc\\modules.xml\"",
+            "$modules | Where-Object { $_ -notlike '*parallel*' } | Set-Content \"$dir\\etc\\modules.xml\" -Encoding ASCII"
+        ]
+    },
+    "bin": [
+        [
+            "bin\\Scilex.exe",
+            "scilab"
+        ],
+        [
+            "bin\\WScilex-cli.exe",
+            "scilab-cli"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "bin\\WScilex.exe",
+            "Scilab"
+        ]
+    ],
+    "checkver": "Scilab ([\\d.]+)",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://www.scilab.org/download/$version/scilab-$version_x64.exe"
+            },
+            "32bit": {
+                "url": "https://www.scilab.org/download/$version/scilab-$version.exe"
+            }
+        }
+    }
+}
