@@ -17,10 +17,8 @@
     ],
     "installer": {
         "script": [
-            "$majorVersion = $version.Split('.') | Select-Object -first 1",
-            "$minorVersion = $version.Split('.') | Select-Object -skip 1 -first 1",
-            "Expand-InnoArchive \"$dir\\`$PLUGINSDIR\\FoxitReader${majorVersion}${minorVersion}_enu_Setup_Prom.exe\" \"$dir\"",
-            "Remove-Item \"$dir\\`$PLUGINSDIR\" -Force -Recurse"
+            "Get-ChildItem \"$dir\" '*_Prom.exe' | Select-Object -ExpandProperty Fullname | Expand-InnoArchive -DestinationPath \"$dir\"",
+            "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse"
         ]
     },
     "checkver": {
