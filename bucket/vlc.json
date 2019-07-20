@@ -1,7 +1,9 @@
 {
-    "homepage": "https://www.videolan.org/",
     "version": "3.0.7.1",
+    "description": "A free and open source cross-platform multimedia player and framework that plays most multimedia files, and various streaming protocols.",
+    "homepage": "https://www.videolan.org/",
     "license": "GPL-2.0-only",
+    "extract_dir": "vlc-3.0.7.1",
     "bin": "vlc.exe",
     "shortcuts": [
         [
@@ -9,35 +11,42 @@
             "VLC media player"
         ]
     ],
+    "persist": "portable",
     "architecture": {
         "64bit": {
             "url": "https://download.videolan.org/pub/vlc/3.0.7.1/win64/vlc-3.0.7.1-win64.7z",
-            "hash": "4860310edad634fa058c40633a5b80310085d2ab13aad91e485885a45c90890c",
-            "extract_dir": "vlc-3.0.7.1"
+            "hash": "4860310edad634fa058c40633a5b80310085d2ab13aad91e485885a45c90890c"
         },
         "32bit": {
             "url": "https://download.videolan.org/pub/vlc/3.0.7.1/win32/vlc-3.0.7.1-win32.7z",
-            "hash": "9cb0e906141106994f29cdb6b2fd1594e9a906e6b44217e9b7313813f202e2df",
-            "extract_dir": "vlc-3.0.7.1"
+            "hash": "9cb0e906141106994f29cdb6b2fd1594e9a906e6b44217e9b7313813f202e2df"
         }
     },
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\portable\") -and (Test-Path \"$Env:AppData\\vlc\")) {",
+        "    Write-Host -F yellow \"Copying old '$Env:AppData\\vlc' to '$persist_dir\\portable'\"",
+        "    New-Item \"$dir\\portable\" -ItemType 'Directory' -Force | Out-Null",
+        "    Copy-Item \"$Env:AppData\\vlc\\*\" \"$dir\\portable\" -Recurse -Force",
+        "    New-Item \"$dir\\portable\\vlc\" -ItemType 'Directory' -Force | Out-Null",
+        "    Move-Item \"$dir\\portable\\vlc-qt-interface.ini\" \"$dir\\portable\\vlc\"",
+        "}"
+    ],
     "checkver": {
         "url": "https://www.videolan.org/vlc/download-windows.html",
-        "re": "\\s+([\\d.]+)</span>"
+        "regex": "\\s+([\\d.]+)</span>"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.videolan.org/pub/vlc/$version/win64/vlc-$version-win64.7z",
-                "extract_dir": "vlc-$version"
+                "url": "https://download.videolan.org/pub/vlc/$version/win64/vlc-$version-win64.7z"
             },
             "32bit": {
-                "url": "https://download.videolan.org/pub/vlc/$version/win32/vlc-$version-win32.7z",
-                "extract_dir": "vlc-$version"
+                "url": "https://download.videolan.org/pub/vlc/$version/win32/vlc-$version-win32.7z"
             }
         },
         "hash": {
             "url": "$url.sha256"
-        }
+        },
+        "extract_dir": "vlc-$version"
     }
 }
