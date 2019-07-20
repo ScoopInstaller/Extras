@@ -1,0 +1,57 @@
+{
+    "version": "77.0.3856.0",
+    "description": "Fast, secure, and free web browser, built for the modern web.",
+    "homepage": "https://www.google.com/chrome/canary",
+    "license": "Freeware",
+    "architecture": {
+        "64bit": {
+            "url": "https://dl.google.com/release2/chrome/drYCEhI5EoP_zSdlJfjs6w_77.0.3856.0/77.0.3856.0_chrome_installer.exe#/dl.7z",
+            "hash": "06819ec715ab2fa9b7b6e3d87e7ecf5c38e2cfddc0d5ecac9e15b64fd81f6cf2"
+        },
+        "32bit": {
+            "url": "https://dl.google.com/release2/chrome/AJQBY0DFktaDYePTIbY_qpY_77.0.3856.0/77.0.3856.0_chrome_installer.exe#/dl.7z",
+            "hash": "a9b46765fcc2f9100fd6f01c5b7768f6d414ae0ec95887816c706fd847bed4c6"
+        }
+    },
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\chrome.7z\" \"$dir\" -Removal",
+            "Move-Item \"$dir\\Chrome-bin\\*\" \"$dir\"",
+            "Remove-Item \"$dir\\Chrome-bin\" -Force -Recurse"
+        ]
+    },
+    "bin": [
+        [
+            "chrome.exe",
+            "chrome-canary"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "chrome.exe",
+            "Google Chrome (Canary)"
+        ]
+    ],
+    "checkver": {
+        "url": "https://lab.skk.moe/chrome/api/chrome.min.xml",
+        "regex": "(?sm)<canary32><version>(?<version>[\\d.]+)</version>.+release2/chrome/(?<32>[\\w-]+)_.+<canary64>.+release2/chrome/(?<64>[\\w-]+)_.+</canary64>"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://dl.google.com/release2/chrome/$match64_$version/$version_chrome_installer.exe#/dl.7z",
+                "hash": {
+                    "url": "https://lab.skk.moe/chrome/api/chrome.min.xml",
+                    "xpath": "/chromechecker/canary64[version='$version']/sha256"
+                }
+            },
+            "32bit": {
+                "url": "https://dl.google.com/release2/chrome/$match32_$version/$version_chrome_installer.exe#/dl.7z",
+                "hash": {
+                    "url": "https://lab.skk.moe/chrome/api/chrome.min.xml",
+                    "xpath": "/chromechecker/canary32[version='$version']/sha256"
+                }
+            }
+        }
+    }
+}

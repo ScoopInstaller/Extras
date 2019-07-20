@@ -1,25 +1,23 @@
 {
-    "version": "1.5.0",
+    "version": "1.6.0",
     "description": "Simplenote is an easy way to keep notes, lists, ideas and more. Your notes stay in sync with all your devices for free.",
     "homepage": "https://simplenote.com",
     "license": "GPL-2.0",
-    "url": "https://github.com/Automattic/simplenote-electron/releases/download/v1.5.0/Simplenote-win-1.5.0.exe#/dl.7z",
-    "hash": "sha512:df5d2f6f222a620d96ef276fd561c0431b693b7f09e54d5459e6bd397366b4b8e5301eb03c788c8d74737cd3a1babc3ac3c99dea84c82dc5ab1610d1ad253728",
-    "extract_dir": "\\$PLUGINSDIR",
-    "pre_install": "Get-ChildItem \"$dir\" -Exclude 'app-64.7z', 'app-32.7z' | Remove-Item -Force -Recurse",
+    "url": "https://github.com/Automattic/simplenote-electron/releases/download/v1.6.0/Simplenote-win-1.6.0.exe#/dl.7z",
+    "hash": "sha512:d6f118b9253873e3dad95634897735bd0f5ad19410f85fa925272c09ff594261b4b5fa21a4ffa1647d2941437f9382e8abca45de66583ace1dc658b7bd809844",
     "architecture": {
         "64bit": {
             "installer": {
-                "script": "Expand-7zipArchive \"$dir\\app-64.7z\" \"$dir\""
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
             }
         },
         "32bit": {
             "installer": {
-                "script": "Expand-7zipArchive \"$dir\\app-32.7z\" \"$dir\""
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
             }
         }
     },
-    "post_install": "Remove-Item \"$dir\\app-64.7z\", \"$dir\\app-32.7z\"",
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
     "bin": "SimpleNote.exe",
     "shortcuts": [
         [
@@ -34,7 +32,7 @@
         "url": "https://github.com/Automattic/simplenote-electron/releases/download/v$version/Simplenote-win-$version.exe#/dl.7z",
         "hash": {
             "url": "$baseurl/latest.yml",
-            "find": "sha512:\\s+(.*)"
+            "regex": "sha512:\\s+$base64"
         }
     }
 }
