@@ -1,0 +1,57 @@
+{
+    "version": "76.0.3809.80",
+    "description": "Fast, secure, and free web browser, built for the modern web.",
+    "homepage": "https://www.google.com/chrome/beta",
+    "license": "Freeware",
+    "architecture": {
+        "64bit": {
+            "url": "https://dl.google.com/release2/chrome/ANpEQa0-aCOITzVbxG3UYyE_76.0.3809.80/76.0.3809.80_chrome_installer.exe#/dl.7z",
+            "hash": "89a7ccc6b567b1909c1ef70680b4008a0c3b9bc4dae1f6517b3a9680032b3ec0"
+        },
+        "32bit": {
+            "url": "https://dl.google.com/release2/chrome/AOiRJM9CRXRCzwWWtCm0Kq0_76.0.3809.80/76.0.3809.80_chrome_installer.exe#/dl.7z",
+            "hash": "293dfd5f020e5ddd89d126c2071c02a88fb24b85795e00374a8971f484dd21a9"
+        }
+    },
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\chrome.7z\" \"$dir\" -Removal",
+            "Move-Item \"$dir\\Chrome-bin\\*\" \"$dir\"",
+            "Remove-Item \"$dir\\Chrome-bin\" -Force -Recurse"
+        ]
+    },
+    "bin": [
+        [
+            "chrome.exe",
+            "chrome-beta"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "chrome.exe",
+            "Google Chrome (Beta)"
+        ]
+    ],
+    "checkver": {
+        "url": "https://lab.skk.moe/chrome/api/chrome.min.xml",
+        "regex": "(?sm)<beta32><version>(?<version>[\\d.]+)</version>.+release2/chrome/(?<32>[\\w-]+)_.+<beta64>.+release2/chrome/(?<64>[\\w-]+)_.+</beta64>"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://dl.google.com/release2/chrome/$match64_$version/$version_chrome_installer.exe#/dl.7z",
+                "hash": {
+                    "url": "https://lab.skk.moe/chrome/api/chrome.min.xml",
+                    "xpath": "/chromechecker/beta64[version='$version']/sha256"
+                }
+            },
+            "32bit": {
+                "url": "https://dl.google.com/release2/chrome/$match32_$version/$version_chrome_installer.exe#/dl.7z",
+                "hash": {
+                    "url": "https://lab.skk.moe/chrome/api/chrome.min.xml",
+                    "xpath": "/chromechecker/beta32[version='$version']/sha256"
+                }
+            }
+        }
+    }
+}
