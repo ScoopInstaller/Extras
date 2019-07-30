@@ -2,7 +2,7 @@
     "homepage": "https://www.freedownloadmanager.org/",
     "description": "A powerful download manager for Windows and macOS.",
     "version": "5.1.38",
-    "license": "Freeware",
+    "license": "Unknown",
     "architecture": {
         "64bit": {
             "url": "https://dn3.freedownloadmanager.org/5/5.1-latest/fdm5_x64_setup.exe",
@@ -16,12 +16,8 @@
     "depends": "innounp",
     "installer": {
         "script": [
-            "& (Get-HelperPath 'innounp') -x -d\"$dir\" \"$dir\\$fname\" -y | Out-Null",
-            "Move-Item \"$dir\\{app}\\*\" \"$dir\" | Out-Null",
-            "Move-Item \"$dir\\{code_CefInstallDir}\\*\" \"$dir\" | Out-Null",
-            "@('install_script.iss', '{app}', '{code_CefInstallDir}', \"$fname\") | ForEach-Object {",
-            "    Remove-Item \"$dir\\$_\" -Recurse -Force",
-            "}"
+            "Expand-InnoArchive -Path \"$dir\\$fname\"",
+            "Expand-InnoArchive -Path \"$dir\\$fname\" -ExtractDir '{code_CefInstallDir}' -Removal"
         ]
     },
     "shortcuts": [
