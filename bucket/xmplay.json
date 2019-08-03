@@ -14,7 +14,11 @@
     ],
     "pre_install": [
         "# Create placeholder files",
-        "function CreateFile([String] $file, [String] $content = $null) {",
+        "function CreateFile([String[]] $file) {",
+        "    foreach ($f in $file) {",
+        "        if (! (Test-Path \"$dir\\$f\")) { New-Item \"$dir\\$f\" -ItemType 'File' | Out-Null }",
+        "    }",
+        "}",
         "    if(!(Test-Path \"$persist_dir\\$file\")) {",
         "        Write-Host \"Create placeholder for xmplay: $file\"",
         "        New-Item -Force -Path \"$persist_dir\\$file\" -ItemType file -Value $content | Out-Null",
