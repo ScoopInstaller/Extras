@@ -5,7 +5,7 @@
     "version": "4.12-201906051800",
     "architecture": {
         "64bit": {
-            "url": "https://www.eclipse.org/downloads/download.php?r=1&file=/eclipse/downloads/drops4/R-4.12-201906051800/eclipse-SDK-4.12-win32-x86_64.zip",
+            "url": "http://download.eclipse.org/eclipse/downloads/drops4/R-4.12-201906051800/eclipse-SDK-4.12-win32-x86_64.zip",
             "hash": "sha512:f65b086dfa075c0f7bc41e1ff68a330cffa8ff4adc3e461d8692ed3471e4e92ad51f95341cb95a313336d10ca9b02195f378d1c89de747bc0830d0e1810295e1"
         }
     },
@@ -17,17 +17,15 @@
         ]
     ],
     "checkver": {
-        "url": "http://download.eclipse.org/eclipse/downloads/",
-        "re": "<a href=\"(?<drop>drops4/R-(?<release>[\\d.]+[a-z]?)-(?<date>[\\d]{12}))/\" title=\"Latest Release\">([\\d.]+)",
-        "replace": "${release}-${date}"
+        "url": "https://download.eclipse.org/eclipse/downloads/",
+        "regex": "/R-([\\d.-]+)/\" title=\"Latest Release"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://www.eclipse.org/downloads/download.php?r=1&file=/eclipse/downloads/$matchDrop/eclipse-SDK-$matchRelease-win32-x86_64.zip",
+                "url": "http://download.eclipse.org/eclipse/downloads/drops$majorVersion/R-$version/eclipse-SDK-$matchHead-win32-x86_64.zip",
                 "hash": {
-                    "url": "https://download.eclipse.org/eclipse/downloads/$matchDrop/checksum/eclipse-SDK-$matchRelease-win32-x86_64.zip.sha512",
-                    "find": "([a-fA-F0-9]{128})"
+                    "url": "$baseurl/checksum/$basename.sha512"
                 }
             }
         }
