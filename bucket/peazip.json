@@ -8,21 +8,21 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://osdn.net/frs/redir.php?m=dotsrc&f=peazip/71229/peazip_portable-6.8.1.WIN64.zip#/dl.7z",
+            "url": "https://osdn.net/frs/redir.php?m=dotsrc&f=peazip/71229/peazip_portable-6.8.1.WIN64.zip#/dl.zip",
             "hash": "098feb0eb36bec848fd36c0d7712815d2b7ac7ddafb9f62642cec10a42e5002a",
             "extract_dir": "peazip_portable-6.8.1.WIN64"
         },
         "32bit": {
-            "url": "https://osdn.net/frs/redir.php?m=dotsrc&f=peazip/71229/peazip_portable-6.8.1.WINDOWS.zip#/dl.7z",
+            "url": "https://osdn.net/frs/redir.php?m=dotsrc&f=peazip/71229/peazip_portable-6.8.1.WINDOWS.zip#/dl.zip",
             "hash": "5e2c7e5820af9ce2b538461d8c0ccf636056f94a6e6fa0b740d355d91f0c79d9",
             "extract_dir": "peazip_portable-6.8.1.WINDOWS"
         }
     },
     "persist": [
+        "res\\altconf.txt",
+        "res\\bookmarks.txt",
         "res\\conf.txt",
         "res\\conf-lastgood.txt",
-        "res\\bookmarks.txt",
-        "res\\altconf.txt",
         "res\\custedit.txt"
     ],
     "bin": "peazip.exe",
@@ -33,8 +33,8 @@
         ]
     ],
     "pre_install": [
-        "if(!(Test-Path \"$dir\\res\\bookmarks.txt\")) { Add-Content \"$dir\\res\\bookmarks.txt\" $null }",
-        "if(!(Test-Path \"$dir\\res\\custedit.txt\")) { Add-Content \"$dir\\res\\custedit.txt\" $null }"
+        "if(!(Test-Path \"$persist_dir\\res\\bookmarks.txt\")) { New-Item \"$dir\\res\\bookmarks.txt\" | Out-Null }",
+        "if(!(Test-Path \"$persist_dir\\res\\custedit.txt\")) { New-Item \"$dir\\res\\custedit.txt\" | Out-Null }"
     ],
     "checkver": {
         "url": "https://osdn.net/projects/peazip/",
@@ -43,21 +43,17 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://osdn.net/frs/redir.php?m=dotsrc&f=peazip/$matchRelease/peazip_portable-$version.WIN64.zip#/dl.7z",
-                "hash": {
-                    "url": "https://osdn.net/projects/peazip/downloads/$matchRelease/$basename",
-                    "regex": "(?sm)SHA256.*?$sha256"
-                },
+                "url": "https://osdn.net/frs/redir.php?m=dotsrc&f=peazip/$matchRelease/peazip_portable-$version.WIN64.zip#/dl.zip",
                 "extract_dir": "peazip_portable-$version.WIN64"
             },
             "32bit": {
-                "url": "https://osdn.net/frs/redir.php?m=dotsrc&f=peazip/$matchRelease/peazip_portable-$version.WINDOWS.zip#/dl.7z",
-                "hash": {
-                    "url": "https://osdn.net/projects/peazip/downloads/$matchRelease/$basename",
-                    "regex": "(?sm)SHA256.*?$sha256"
-                },
+                "url": "https://osdn.net/frs/redir.php?m=dotsrc&f=peazip/$matchRelease/peazip_portable-$version.WINDOWS.zip#/dl.zip",
                 "extract_dir": "peazip_portable-$version.WINDOWS"
             }
+        },
+        "hash": {
+            "url": "https://osdn.net/projects/peazip/downloads/$matchRelease/$basename",
+            "regex": "(?sm)SHA256.*?$sha256"
         }
     }
 }
