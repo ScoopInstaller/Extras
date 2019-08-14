@@ -1,0 +1,45 @@
+{
+    "homepage": "https://openmpt.org/",
+    "description": "Powerful audio application that makes writing music fun, easy and efficient.",
+    "license": "BSD-3-Clause",
+    "version": "1.28.06.00",
+    "architecture": {
+        "32bit": {
+            "url": "https://download.openmpt.org/OpenMPT-1.28.06.00-Setup.exe",
+            "hash": "sha1:7556e76a9a22679b4e9d9d9d67799f3eb9b4c53b"
+        },
+        "64bit": {
+            "url": "https://download.openmpt.org/OpenMPT-1.28.06.00-Setup-x64.exe",
+            "hash": "sha1:f06dd6e0cea62e32460b513eab5bd08e66e3a49c"
+        }
+    },
+    "innosetup": true,
+    "pre_install": [
+        "Remove-Item \"$dir\\*,2*\" -Force",
+        "Get-ChildItem \"$dir\" '*,1*' | ForEach-Object { Rename-Item $_.Fullname \"$($_.Basename.TrimEnd(',1'))$($_.Extension)\" }"
+    ],
+    "shortcuts": [
+        [
+            "mptrack.exe",
+            "OpenMPT"
+        ]
+    ],
+    "checkver": {
+        "url": "https://openmpt.org/download",
+        "regex": "OpenMPT ([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "32bit": {
+                "url": "https://download.openmpt.org/OpenMPT-$version-Setup.exe"
+            },
+            "64bit": {
+                "url": "https://download.openmpt.org/OpenMPT-$version-Setup-x64.exe"
+            }
+        },
+        "hash": {
+            "url": "$url.digests",
+            "regex": "$sha1"
+        }
+    }
+}
