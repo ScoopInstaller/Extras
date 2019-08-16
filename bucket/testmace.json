@@ -1,0 +1,39 @@
+{
+    "homepage": "https://www.testmace.com/",
+    "description": "A simple but powerful tool for API automation testing.",
+    "version": "0.0.1-beta.16",
+    "license": "Freeware",
+    "architecture": {
+        "64bit": {
+            "url": "https://s3.amazonaws.com/testmacedownload/TestMace%20Setup%200.0.1-beta.16.exe#/dl.7z",
+            "hash": "sha512:4a78810b280025add6718828fe63b1f1b6e95ec6faed9bfebcb6dd3042826c1c0d16a8a2e8b3de5c91ab89be43bc29ac561c10e67f76ac40d84e42221675fade",
+            "installer": {
+                "script": [
+                    "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                    "Remove-Item \"$dir\\`$PLUGINSDIR\" -Force -Recurse"
+                ]
+            }
+        }
+    },
+    "shortcuts": [
+        [
+            "TestMace.exe",
+            "TestMace"
+        ]
+    ],
+    "checkver": {
+        "url": "https://s3.amazonaws.com/testmacedownload/latest.yml",
+        "regex": "version: ([\\w-.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://s3.amazonaws.com/testmacedownload/TestMace%20Setup%20$version.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "find": "sha512: $base64"
+                }
+            }
+        }
+    }
+}
