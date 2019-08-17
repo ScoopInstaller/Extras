@@ -7,24 +7,33 @@
     },
     "version": "2019.790a",
     "url": "https://freecommander.com/downloads/FreeCommanderXE-32-public_portable.zip",
-    "checkver": {
-        "url": "https://freecommander.com/en/downloads-portable/",
-        "re": "FreeCommander XE ([\\d.]+) Build ([\\d.a-z]+) portable ZIP",
-        "replace": "${1}.${2}"
-    },
     "hash": "sha1:b3510525b918307667b8d9aa58d65f903d4e5319",
+    "pre_install": [
+        "if(!(Test-Path \"$dir\\fcStart.ini\")) {",
+        "    Set-Content \"$dir\\fcStart.ini\" -Value \"[Start]`nfreeCommanderIniDir=%FcSrcPath%\"",
+        "}"
+    ],
     "bin": "freecommander.exe",
+    "persist": [
+        "Settings",
+        "fcStart.ini"
+    ],
     "shortcuts": [
         [
             "freecommander.exe",
             "Free Commander"
         ]
     ],
+    "checkver": {
+        "url": "https://freecommander.com/en/downloads-portable/",
+        "re": "FreeCommander XE ([\\d.]+) Build ([\\d.a-z]+) portable ZIP",
+        "replace": "${1}.${2}"
+    },
     "autoupdate": {
         "url": "https://freecommander.com/downloads/FreeCommanderXE-32-public_portable.zip",
         "hash": {
             "url": "https://freecommander.com/en/downloads-portable/",
-            "find": "(?:$basename).*\\(SHA1:\\s+([a-fA-F0-9]{40})"
+            "regex": "$basename.*SHA1:\\s+$sha1"
         }
     }
 }
