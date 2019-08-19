@@ -1,54 +1,42 @@
 {
     "homepage": "https://riot.im/",
-    "description": "Riot is a decentralised, encrypted chat & collaboration powered by matrix.org. It has group chat, integrations, voip & video calling, bridge networks, end to end encryption, file transfer. Lots of rooms already exist in Matrix, linked to existing networks (Slack, IRC, Gitter etc) or independent.",
+    "description": "A decentralised, encrypted chat & collaboration powered by matrix.org. It has group chat, integrations, voip & video calling, bridge networks, end to end encryption, file transfer. Lots of rooms already exist in Matrix, linked to existing networks (Slack, IRC, Gitter etc) or independent.",
     "license": "Apache-2.0",
     "version": "1.3.2",
     "architecture": {
         "64bit": {
-            "url": "https://packages.riot.im/desktop/install/win32/x64/Riot%20Setup%201.3.2.exe#/dl.7z",
-            "hash": "3e41ec40ed414284468dac7092adad50feab50c2204a91d483e4f8bc58f0ae3f"
+            "url": "https://packages.riot.im/desktop/update/win32/x64/riot-web-1.3.2-full.nupkg",
+            "hash": "sha1:cf1035f56138209492328af793614da5cab613a6"
         },
         "32bit": {
-            "url": "https://packages.riot.im/desktop/install/win32/ia32/Riot%20Setup%201.3.2.exe#/dl.7z",
-            "hash": "726c501777494d7f47edad38a70e4c933146d5bd34441dcfe85793b049931a0d"
+            "url": "https://packages.riot.im/desktop/update/win32/ia32/riot-web-1.3.2-full.nupkg",
+            "hash": "sha1:87e463074d6e5f75b78f32265432984131abcc76"
         }
     },
-    "persist": [
-        "resources\\webapp\\config.json",
-        "data"
-    ],
+    "extract_dir": "lib\\net45",
     "bin": "riot.exe",
-    "pre_install": [
-        "Expand-7zipArchive \"$dir\\riot-web-*-full.nupkg\" \"$dir\\temp\" -Removal",
-        "Move-Item \"$dir\\temp\\lib\\net45\\*\" \"$dir\" -Force",
-        "@('temp', 'background.gif', 'RELEASES', 'Update.exe') | ForEach-Object { Remove-Item \"$dir\\$_\" -Recurse }",
-        "cmd /c mklink /J \"$env:APPDATA\\riot\" \"$persist_dir\\data\""
-    ],
-    "uninstaller": {
-        "script": [
-            "if ((Get-Item -Path \"$env:APPDATA\\riot\" -Force).LinkType -eq \"Junction\") {",
-            "   Remove-Item \"$env:APPDATA\\riot\" -Force -Recurse",
-            "}"
-        ]
-    },
     "shortcuts": [
         [
             "riot.exe",
             "Riot"
         ]
     ],
+    "persist": "resources\\webapp\\config.json",
     "checkver": {
         "url": "https://riot.im/download/desktop/",
-        "re": ">v([\\d.]+)<"
+        "regex": ">v([\\d.]+)<"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://packages.riot.im/desktop/install/win32/x64/Riot%20Setup%20$version.exe#/dl.7z"
+                "url": "https://packages.riot.im/desktop/update/win32/x64/riot-web-$version-full.nupkg"
             },
             "32bit": {
-                "url": "https://packages.riot.im/desktop/install/win32/ia32/Riot%20Setup%20$version.exe#/dl.7z"
+                "url": "https://packages.riot.im/desktop/update/win32/ia32/riot-web-$version-full.nupkg"
             }
+        },
+        "hash": {
+            "url": "$baseurl/RELEASES"
         }
     }
 }
