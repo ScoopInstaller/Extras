@@ -3,6 +3,7 @@
     "description": "An Apache™ Subversion (SVN)® client, implemented as a Windows shell extension.",
     "version": "1.12.2.28653",
     "license": "GPL-2.0-only",
+    "depends": "sudo",
     "architecture": {
         "64bit": {
             "url": "https://osdn.net/frs/redir.php?m=auto&f=/storage/g/t/to/tortoisesvn/1.12.2/Application/TortoiseSVN-1.12.2.28653-x64-svn-1.12.2.msi",
@@ -58,20 +59,26 @@
     ],
     "post_install": [
         "$null, $bucket = find_manifest($app)",
-        "$bucketdir = bucketdir($bucket)",
+        "$bucketdir = Find-BucketDirectory($bucket)",
         "$escdir = $dir -replace \"\\\\\",\"\\\\\"",
         "(gc \"$bucketdir\\..\\scripts\\tortoisesvn\\tortoisesvn-install.reg.templ\") | % {$_ -replace \"%TSVNHOME%\",\"$escdir\"} | out-file -enc oem \"$dir\\tortoisesvn-install.reg\"",
         "(gc \"$bucketdir\\..\\scripts\\tortoisesvn\\tortoisesvn-install-tools.reg.templ\") | % {$_ -replace \"%TSVNHOME%\",\"$escdir\"} | out-file -enc oem \"$dir\\tortoisesvn-install-tools.reg\"",
-        "cp \"$bucketdir\\..\\scripts\\tortoisesvn\\tortoisesvn-uninstall.reg\" \"$dir\""
+        "cp \"$bucketdir\\..\\scripts\\tortoisesvn\\tortoisesvn-uninstall.reg\" \"$dir\"",
+        "sudo New-Item -ItemType SymbolicLink -Path \"$Env:CommonProgramFiles\\TortoiseOverlays\" -Target \"$dir\\Common\\TortoiseOverlays\" | Out-Null"
     ],
+    "uninstaller": {
+        "script": [
+            "sudo reg import \"$dir\\tortoisesvn-uninstall.reg\" | Out-Null",
+            "sudo cmd /c rmdir \"$Env:CommonProgramFiles\\TortoiseOverlays\" | Out-Null"
+        ]
+    },
     "notes": [
         "To add TortoiseSVN as a context menu option, run '$dir\\tortoisesvn-install.reg'",
-        "For file associations, run '$dir\\tortoisesvn-install-tools.reg'",
-        "Before uninstalling TortoiseSVN, run '$dir\\tortoisesvn-uninstall.reg' "
+        "For file associations, run '$dir\\tortoisesvn-install-tools.reg'"
     ],
     "checkver": {
         "url": "https://tortoisesvn.net/downloads.html",
-        "re": "tortoisesvn/storage/(?<release>[\\d.]+)/Application/TortoiseSVN-([\\d.]+)-x64-svn-(?<svn>[\\d.]+).msi"
+        "regex": "tortoisesvn/storage/(?<release>[\\d.]+)/Application/TortoiseSVN-([\\d.]+)-x64-svn-(?<svn>[\\d.]+).msi"
     },
     "autoupdate": {
         "architecture": {
