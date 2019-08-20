@@ -1,0 +1,42 @@
+{
+    "version": "1.38.0",
+    "description": "A fast and friendly git client for Mac and Windows",
+    "homepage": "https://git-fork.com/",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://git-fork.com/license"
+    },
+    "url": "https://fork.dev/update/win/Fork-1.38.0-full.nupkg",
+    "hash": "sha1:f54638532cfb1e57ebf904cd1acbf673c8445912",
+    "extract_dir": "lib\\net45",
+    "post_install": [
+        "$gitVersion = (Get-Item \"$dir\\PortableGit*\") -Replace '.*-([\\d.]+)-64-bit\\.7z$', '$1'",
+        "New-Item \"$env:LOCALAPPDATA\\Fork\\gitInstance\\$gitVersion\" -ItemType Junction -Target \"$(scoop which git)\\..\\..\" -Force | Out-Null",
+        "@('Fork_ExecutionStub.exe', 'PortableGit-*.7z', 'lib', '7z.*') | ForEach-Object { Remove-Item \"$dir\\$_\" -Recurse }"
+    ],
+    "uninstaller": {
+        "script": [
+            "if(Test-Path \"$env:LOCALAPPDATA\\fork\\gitInstance\") {",
+            "    Remove-Item -LiteralPath \"$env:LOCALAPPDATA\\fork\\gitInstance\" -Force -Recurse",
+            "}"
+        ]
+    },
+    "bin": "Fork.exe",
+    "shortcuts": [
+        [
+            "Fork.exe",
+            "Fork"
+        ]
+    ],
+    "checkver": {
+        "url": "https://fork.dev/update/win/RELEASES",
+        "regex": "Fork-([\\d.]+)-full.nupkg",
+        "reverse": true
+    },
+    "autoupdate": {
+        "url": "https://fork.dev/update/win/Fork-$version-full.nupkg",
+        "hash": {
+            "url": "$baseurl/RELEASES"
+        }
+    }
+}

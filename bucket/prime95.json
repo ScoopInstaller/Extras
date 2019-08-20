@@ -5,12 +5,12 @@
         "identifier": "Freeware",
         "url": "https://www.mersenne.org/legal/#EULA"
     },
-    "version": "29.8b3",
+    "version": "29.8b5",
     "bin": "prime95.exe",
     "architecture": {
         "64bit": {
-            "url": "https://www.mersenne.org/ftp_root/gimps/p95v298b3.win64.zip",
-            "hash": "ca54dbb436abaf9a5d7a425323d2767bb580135d1f63846aa356893399d8a656"
+            "url": "https://www.mersenne.org/ftp_root/gimps/p95v298b5.win64.zip",
+            "hash": "c4d15bae853894ab67feb72657f88042cdb5b1338ebbe70e5df233884ec78d06"
         },
         "32bit": {
             "url": "https://www.mersenne.org/ftp_root/gimps/p95v298b3.win32.zip",
@@ -25,20 +25,24 @@
     ],
     "checkver": {
         "url": "https://www.mersenne.org/download/",
-        "regex": "Windows:\\s+64-bit</td><td>([^<]+)</td>"
+        "regex": "Windows:\\s+64-bit\\D+(?<version>[\\w.]+).*href=\"https?://www.mersenne.org/ftp_root/gimps/(?<file64>[^.]+).win64.zip\".*Windows:\\s+32-bit\\D+(?<version32>[\\w.]+).*href=\"https?://www.mersenne.org/ftp_root/gimps/(?<file32>[^.]+).win32.zip\""
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://www.mersenne.org/ftp_root/gimps/p95v$cleanVersion.win64.zip"
+                "url": "https://www.mersenne.org/ftp_root/gimps/$matchFile64.win64.zip",
+                "hash": {
+                    "url": "https://www.mersenne.org/download/",
+                    "find": "\\.win64\\.zip[^:]+SHA256:<br>$sha256"
+                }
             },
             "32bit": {
-                "url": "https://www.mersenne.org/ftp_root/gimps/p95v$cleanVersion.win32.zip"
+                "url": "https://www.mersenne.org/ftp_root/gimps/$matchFile32.win32.zip",
+                "hash": {
+                    "url": "https://www.mersenne.org/download/",
+                    "find": "\\.win32\\.zip[^:]+SHA256:<br>$sha256"
+                }
             }
-        },
-        "hash": {
-            "url": "https://www.mersenne.org/download/",
-            "find": "$basename[^>]+>[^>]+>[^>]+>[^>]+>SHA256:<br>([^<]+)"
         }
     }
 }
