@@ -78,9 +78,9 @@
         ]
     ],
     "post_install": [
-        "$escdir = $dir -Replace \"\\\\\",\"\\\\\"",
-        "(Get-Content \"$dir\\tortoisesvn-install.reg.templ\") | % {$_ -Replace \"%TSVNHOME%\",\"$escdir\"} | Out-File -Encoding OEM \"$dir\\tortoisesvn-install.reg\"",
-        "(Get-Content \"$dir\\tortoisesvn-install-tools.reg.templ\") | % {$_ -Replace \"%TSVNHOME%\",\"$escdir\"} | Out-File -Encoding OEM \"$dir\\tortoisesvn-install-tools.reg\"",
+        "$escdir = $dir.Replace('\\', '\\\\')",
+        "(Get-Content \"$dir\\tortoisesvn-install.reg.templ\") | ForEach-Object {$_ -replace '%TSVNHOME%',\"$escdir\"} | Out-File \"$dir\\tortoisesvn-install.reg\" -Encoding ASCII",
+        "(Get-Content \"$dir\\tortoisesvn-install-tools.reg.templ\") | ForEach-Object {$_ -replace '%TSVNHOME%',\"$escdir\"} | Out-File \"$dir\\tortoisesvn-install-tools.reg\" -Encoding ASCII",
         "sudo New-Item -ItemType SymbolicLink -Path \"$Env:CommonProgramFiles\\TortoiseOverlays\" -Target \"$dir\\Common\\TortoiseOverlays\" | Out-Null"
     ],
     "uninstaller": {
