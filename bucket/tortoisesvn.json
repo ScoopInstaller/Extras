@@ -1,17 +1,37 @@
 {
     "homepage": "https://tortoisesvn.net",
-    "description": "An Apache™ Subversion (SVN)® client, implemented as a Windows shell extension.",
+    "description": "Apache™ Subversion (SVN)® client implemented as a Windows shell extension.",
     "version": "1.12.2.28653",
     "license": "GPL-2.0-only",
     "depends": "sudo",
     "architecture": {
         "64bit": {
-            "url": "https://osdn.net/frs/redir.php?m=auto&f=/storage/g/t/to/tortoisesvn/1.12.2/Application/TortoiseSVN-1.12.2.28653-x64-svn-1.12.2.msi",
-            "hash": "7b18ca830881fa7cd00ec629ff84ac81e0f79a5c9183f5d177bbadd55e119ccb"
+            "url": [
+                "https://osdn.net/frs/redir.php?m=auto&f=/storage/g/t/to/tortoisesvn/1.12.2/Application/TortoiseSVN-1.12.2.28653-x64-svn-1.12.2.msi",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/tortoisesvn/tortoisesvn-install.reg.templ",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/tortoisesvn/tortoisesvn-install-tools.reg.templ",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/tortoisesvn/tortoisesvn-uninstall.reg"
+            ],
+            "hash": [
+                "7b18ca830881fa7cd00ec629ff84ac81e0f79a5c9183f5d177bbadd55e119ccb",
+                "08f19646e950e48828f18a544de0e52bb8628d97173d89de02a3b80a61044da8",
+                "730bc1e2454d68402d092f5435df4e43017e8af6d8c7779093746254722ff8f3",
+                "3aeb9e65c620d877563e5ec61d93dc910296d427a334622451802117431d1982"
+            ]
         },
         "32bit": {
-            "url": "https://osdn.net/frs/redir.php?m=auto&f=/storage/g/t/to/tortoisesvn/1.12.2/Application/TortoiseSVN-1.12.2.28653-win32-svn-1.12.2.msi",
-            "hash": "3c80c6cdf7c26a3938d20ca0c023b1e869040ba20da7099d87772ec454a644c8"
+            "url": [
+                "https://osdn.net/frs/redir.php?m=auto&f=/storage/g/t/to/tortoisesvn/1.12.2/Application/TortoiseSVN-1.12.2.28653-win32-svn-1.12.2.msi",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/tortoisesvn/tortoisesvn-install.reg.templ",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/tortoisesvn/tortoisesvn-install-tools.reg.templ",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/tortoisesvn/tortoisesvn-uninstall.reg"
+            ],
+            "hash": [
+                "3c80c6cdf7c26a3938d20ca0c023b1e869040ba20da7099d87772ec454a644c8",
+                "08f19646e950e48828f18a544de0e52bb8628d97173d89de02a3b80a61044da8",
+                "730bc1e2454d68402d092f5435df4e43017e8af6d8c7779093746254722ff8f3",
+                "3aeb9e65c620d877563e5ec61d93dc910296d427a334622451802117431d1982"
+            ]
         }
     },
     "extract_dir": "Program Files\\TortoiseSVN",
@@ -58,12 +78,9 @@
         ]
     ],
     "post_install": [
-        "$null, $bucket = find_manifest($app)",
-        "$bucketdir = Find-BucketDirectory($bucket)",
         "$escdir = $dir -replace \"\\\\\",\"\\\\\"",
-        "(gc \"$bucketdir\\..\\scripts\\tortoisesvn\\tortoisesvn-install.reg.templ\") | % {$_ -replace \"%TSVNHOME%\",\"$escdir\"} | out-file -enc oem \"$dir\\tortoisesvn-install.reg\"",
-        "(gc \"$bucketdir\\..\\scripts\\tortoisesvn\\tortoisesvn-install-tools.reg.templ\") | % {$_ -replace \"%TSVNHOME%\",\"$escdir\"} | out-file -enc oem \"$dir\\tortoisesvn-install-tools.reg\"",
-        "cp \"$bucketdir\\..\\scripts\\tortoisesvn\\tortoisesvn-uninstall.reg\" \"$dir\"",
+        "(gc \"$dir\\tortoisesvn-install.reg.templ\") | % {$_ -replace \"%TSVNHOME%\",\"$escdir\"} | out-file -enc oem \"$dir\\tortoisesvn-install.reg\"",
+        "(gc \"$dir\\tortoisesvn-install-tools.reg.templ\") | % {$_ -replace \"%TSVNHOME%\",\"$escdir\"} | out-file -enc oem \"$dir\\tortoisesvn-install-tools.reg\"",
         "sudo New-Item -ItemType SymbolicLink -Path \"$Env:CommonProgramFiles\\TortoiseOverlays\" -Target \"$dir\\Common\\TortoiseOverlays\" | Out-Null"
     ],
     "uninstaller": {
