@@ -16,6 +16,11 @@
         ]
     ],
     "persist": "teamviewer.ini",
+    "post_install": [
+        "$iniFile = \"$dir\\teamviewer.ini\"",
+        "$changeRegex = \"(?<=nosave=)[0-9]*\"",
+        "(Get-Content $iniFile) -replace $changeRegex, \"0\" | Set-Content $iniFile"
+    ],
     "checkver": {
         "url": "https://www.teamviewer.com/en/download/windows/",
         "re": ">\\s*([\\d.]+)\\s*<"
