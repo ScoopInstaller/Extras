@@ -18,8 +18,7 @@
     "persist": [
         "configuration",
         "index-data",
-        "library",
-        "theme.fth"
+        "library"
     ],
     "installer": {
         "script": [
@@ -35,6 +34,9 @@
             "else {",
             "    $shortVersion = $version.Split('.')[0, 1] -Join '.'",
             "    Copy-Item \"$persist_dir\\playlists\" \"$dir\\playlist-v$shortVersion\" -Force -Recurse",
+            "}",
+            "if (Test-Path \"$persist_dir\\theme.fth\") {",
+            "    Copy-Item \"$persist_dir\\theme.fth\" \"$dir\" -Force",
             "}"
         ]
     },
@@ -42,8 +44,7 @@
     "uninstaller": {
         "script": [
             "Copy-Item \"$dir\\playlists-v*\\*\" \"$persist_dir\\playlists\" -Force  -Recurse",
-            "if ((is_directory \"$persist_dir\\theme.fth\") -and (Test-Path \"$dir\\theme.fth\")) {",
-            "    Remove-Item \"$persist_dir\\theme.fth\" -Force",
+            "if (Test-Path \"$dir\\theme.fth\") {",
             "    Copy-Item \"$dir\\theme.fth\" \"$persist_dir\" -Force",
             "}"
         ]
