@@ -78,11 +78,14 @@
         ]
     ],
     "post_install": [
-        "$escdir = $dir.Replace('\\', '\\\\')",
-        "$common = $Env:CommonProgramFiles.Replace('\\', '\\\\')",
-        "(Get-Content \"$dir\\tortoisesvn-install.reg.templ\") | ForEach-Object {$_ -replace '%TSVNHOME%',\"$escdir\" -replace '%COMMON%',\"$common\"} | Out-File \"$dir\\tortoisesvn-install.reg\" -Encoding ASCII",
-        "(Get-Content \"$dir\\tortoisesvn-install-tools.reg.templ\") | ForEach-Object {$_ -replace '%TSVNHOME%',\"$escdir\" -replace '%COMMON%',\"$common\"} | Out-File \"$dir\\tortoisesvn-install-tools.reg\" -Encoding ASCII",
-        "sudo New-Item -ItemType SymbolicLink -Path \"$Env:CommonProgramFiles\\TortoiseOverlays\" -Target \"$dir\\Common\\TortoiseOverlays\" | Out-Null"
+        "function repl($file) {",
+        "    $esc = $dir.Replace('\\', '\\\\')",
+        "    $it = Get-Item \"$dir\\$file\"",
+        "    ((Get-Content $it.Fullname) -replace '%TSVNHOME%', \"$esc\") | Set-Content \"$dir\\$($it.Basename)\" -Encoding ASCII",
+        "}",
+        "repl 'tortoisesvn-install.reg.templ'",
+        "repl 'tortoisesvn-install-tools.reg.templ'",
+        "sudo New-Item -Path \"$env:CommonProgramFiles\\TortoiseOverlays\" -Target \"$dir\\Common\\TortoiseOverlays\" -ItemType SymbolicLink"
     ],
     "uninstaller": {
         "script": [
