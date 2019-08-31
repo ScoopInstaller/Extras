@@ -13,7 +13,11 @@
         ]
     ],
     "persist": "AltDrag.ini",
-    "post_install": "(Get-Content \"$dir\\AltDrag.ini\") -replace 'CheckOnStartup=1','CheckOnStartup=0' | Set-Content \"$dir\\AltDrag.ini\"",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\AltDrag.ini\")) {",
+        "    (Get-Content \"$dir\\AltDrag.ini\") -replace 'CheckOnStartup=1','CheckOnStartup=0' | Set-Content \"$dir\\AltDrag.ini\"",
+        "}"
+    ],
     "checkver": {
         "github": "https://github.com/stefansundin/altdrag"
     },
