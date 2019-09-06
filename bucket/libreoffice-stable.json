@@ -1,63 +1,62 @@
 {
-    "version": "6.2.5",
+    "version": "6.3.1",
     "description": "Powerful office suite.",
     "homepage": "https://libreoffice.org/",
     "license": "MPL-2.0",
-    "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/6.2.5.2/portable/LibreOfficePortable_6.2.5_MultilingualStandard.paf.exe#/dl.7z",
-    "hash": "55c462c4e07690cdfef832aace013115b5480238c40a83b0707144145dc1c963",
-    "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\Data\\settings\")) {",
-        "    New-Item \"$dir\\Data\\settings\\LibreOfficePortableSettings.ini\" -Value \"[LibreOfficePortableSettings]`nInvalidPackageWarningShown=$version.0\" -Force | Out-Null",
-        "    if (Test-Path \"$Env:AppData\\LibreOffice\") {",
-        "        Write-Host -F yellow \"Copying old '$Env:AppData\\LibreOffice' to '$persist_dir\\Data\\settings'\"",
-        "        Get-Item \"$Env:AppData\\LibreOffice\\*\\*\" | Copy-Item -Destination \"$dir\\Data\\settings\" -Recurse -Force",
-        "    }",
-        "    else { Copy-Item \"$dir\\App\\DefaultData\\*\" \"$dir\\Data\" -Recurse -Force }",
-        "}",
-        "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse -Force"
-    ],
+    "suggest": {
+        "Visual C++ Redistributable for Visual Studio 2015": "vcredist2015"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/6.3.1.2/win/x86_64/LibreOffice_6.3.1.2_Win_x64.msi",
+            "hash": "343fabba083ade4223cee497d50de4e32115290ce907c947e18015170ed9df67"
+        },
+        "32bit": {
+            "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/6.3.1.2/win/x86/LibreOffice_6.3.1.2_Win_x86.msi",
+            "hash": "18e90b5f4f630f041554a1cd0fd4d8ff12e99ea0035caab6b1019710677fbe6a"
+        }
+    },
     "shortcuts": [
         [
-            "LibreOfficePortable.exe",
-            "LibreOffice\\LibreOffice"
-        ],
-        [
-            "LibreOfficeBasePortable.exe",
+            "program\\sbase.exe",
             "LibreOffice\\LibreOffice Base"
         ],
         [
-            "LibreOfficeCalcPortable.exe",
+            "program\\scalc.exe",
             "LibreOffice\\LibreOffice Calc"
         ],
         [
-            "LibreOfficeDrawPortable.exe",
+            "program\\sdraw.exe",
             "LibreOffice\\LibreOffice Draw"
         ],
         [
-            "LibreOfficeImpressPortable.exe",
+            "program\\simpress.exe",
             "LibreOffice\\LibreOffice Impress"
         ],
         [
-            "LibreOfficeMathPortable.exe",
+            "program\\smath.exe",
             "LibreOffice\\LibreOffice Math"
         ],
         [
-            "LibreOfficeWriterPortable.exe",
+            "program\\swriter.exe",
             "LibreOffice\\LibreOffice Writer"
         ]
     ],
-    "persist": "Data",
     "checkver": {
-        "url": "https://download.documentfoundation.org/libreoffice/portable/?C=M;O=D",
-        "regex": ">([\\d.]+)/<"
+        "url": "https://www.libreoffice.org/download/download/",
+        "regex": "src/([\\d.]+)/all/libreoffice-(?<fresh>[\\d.]+)\\.tar"
     },
     "autoupdate": {
-        "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/$version.2/portable/LibreOfficePortable_$version_MultilingualStandard.paf.exe#/dl.7z",
+        "architecture": {
+            "64bit": {
+                "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/$matchFresh/win/x86_64/LibreOffice_$matchFresh_Win_x64.msi"
+            },
+            "32bit": {
+                "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/$matchFresh/win/x86/LibreOffice_$matchFresh_Win_x86.msi"
+            }
+        },
         "hash": {
             "url": "$url.sha256"
         }
-    },
-    "suggest": {
-        "vcredist": "extras/vcredist2015"
     }
 }
