@@ -1,18 +1,23 @@
 {
-    "homepage": "http://www.retroarch.com/",
-    "description": "A frontend for emulators, game engines and media players.",
+    "homepage": "https://www.retroarch.com/",
+    "description": "Frontend for emulators, game engines and media players.",
     "license": "GPL-3.0-only",
-    "version": "1.7.8",
+    "version": "1.7.8v3",
     "architecture": {
         "64bit": {
             "url": "https://buildbot.libretro.com/stable/1.7.8/windows/x86_64/RetroArch.7z",
-            "hash": "55c32a131010bc7caee4e078299acf384346ca37e56c382b6721a85841455a60"
+            "hash": "ee0e7b2c0fa6795a68b9e763c2c34ffa33d6dbcffc820fc9fbaa608b3f629006"
         },
         "32bit": {
             "url": "https://buildbot.libretro.com/stable/1.7.8/windows/x86/RetroArch.7z",
-            "hash": "771377378c7b9aed66e0f7cf5b7bc859150247c287702ae23e005dfecf063cdc"
+            "hash": "d982a5e99a9b577c645e4ec57f1337184d238b018146e261361c02ee8c942592"
         }
     },
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\retroarch.cfg\")) {",
+        "    New-Item \"$dir\\retroarch.cfg\" -Type File | Out-Null",
+        "}"
+    ],
     "bin": [
         [
             "retroarch.exe",
@@ -24,11 +29,6 @@
             "retroarch.exe",
             "RetroArch"
         ]
-    ],
-    "pre_install": [
-        "if(!(Test-Path(\"$dir\\retroarch.cfg\"))) {",
-        "New-Item \"$dir\\retroarch.cfg\" -type file | Out-Null",
-        "}"
     ],
     "persist": [
         "assets\\wallpapers",
@@ -45,16 +45,17 @@
         "retroarch.cfg"
     ],
     "checkver": {
-        "url": "http://www.retroarch.com/?page=platforms",
-        "re": "The current stable version is: ([\\d.]+)"
+        "url": "https://www.retroarch.com/?page=platforms",
+        "regex": "The current stable version is: (?<main>[\\d.]+)(\\s*\\((\\w+)\\))?",
+        "replace": "${3}${2}"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://buildbot.libretro.com/stable/$version/windows/x86_64/RetroArch.7z"
+                "url": "https://buildbot.libretro.com/stable/$matchMain/windows/x86_64/RetroArch.7z"
             },
             "32bit": {
-                "url": "https://buildbot.libretro.com/stable/$version/windows/x86/RetroArch.7z"
+                "url": "https://buildbot.libretro.com/stable/$matchMain/windows/x86/RetroArch.7z"
             }
         }
     }
