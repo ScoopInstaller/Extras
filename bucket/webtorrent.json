@@ -17,11 +17,11 @@
     "pre_install": [
         "if (!(Test-Path \"$persist_dir\\Portable Settings\")) {",
         "    New-Item \"$dir\\Portable Settings\\Downloads\" -ItemType 'Directory' -Force | Out-Null",
-        "    foreach ($data in @(\"$env:Appdata\\WebTorrent\", \"$env:LocalAppdata\\WebTorrent\")) {",
-        "        if (Test-Path $data) {",
-        "            Write-Host -F yellow \"Copying old '$data' to '$persist_dir\\Portable Settings'\"",
-        "            Copy-Item \"$data\\*\" \"$dir\\Portable Settings\" -Recurse -Force",
-        "        }",
+        "    $copy = \"$env:LOCALAPPDATA\\Webtorrent\\*\", \"$env:APPDATA\\Webtorrent\\*\"",
+        "    Copy-Item $copy \"$dir\\Portable Settings\" -ErrorAction SilentlyContinue -Force -Recurse",
+        "    if (Test-Path $data) {",
+        "        Write-Host -F yellow \"Copying old '$data' to '$persist_dir\\Portable Settings'\"",
+        "        Copy-Item \"$data\\*\" \"$dir\\Portable Settings\" -Recurse -Force",
         "    }",
         "}"
     ],
