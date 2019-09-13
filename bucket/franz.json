@@ -1,25 +1,22 @@
 {
-    "version": "5.2.0-beta.2",
+    "version": "5.3.1",
     "description": "Messaging app for services like WhatsApp, Slack, Messenger and many more.",
     "homepage": "https://meetfranz.com",
     "license": "Apache-2.0",
-    "url": "https://github.com/meetfranz/franz/releases/download/v5.2.0-beta.2/franz-setup-5.2.0-beta.2.exe#/dl.7z",
-    "hash": "sha512:4b742c3440c591803e581f8d6283e948d6be1a99eb4a62b2f80be3754f62028256eb96a5b54d24cd014915efcd6227c4023cfd1b6b2014d7f6266c6d3deeeb4b",
-    "extract_dir": "\\$PLUGINSDIR",
-    "pre_install": "Get-ChildItem \"$dir\" -Exclude 'app-64.7z', 'app-32.7z' | Remove-Item -Force -Recurse",
+    "url": "https://github.com/meetfranz/franz/releases/download/v5.3.1/franz-setup-5.3.1.exe#/dl.7z",
+    "hash": "sha512:781c803bc029afe20ab9baf5c60b0b4ed2e387f4f1af217a3cbd6288fbf57934fd647497eb4b517aa5c211287fdd6cb2d7dcd2b9b3bf829990e60badb3c05a71",
     "architecture": {
         "64bit": {
             "installer": {
-                "script": "Expand-7zipArchive \"$dir\\app-64.7z\" \"$dir\""
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
             }
         },
         "32bit": {
             "installer": {
-                "script": "Expand-7zipArchive \"$dir\\app-32.7z\" \"$dir\""
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
             }
         }
     },
-    "post_install": "Remove-Item \"$dir\\app-64.7z\", \"$dir\\app-32.7z\"",
     "bin": "Franz.exe",
     "shortcuts": [
         [
@@ -27,15 +24,15 @@
             "Franz"
         ]
     ],
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse",
     "checkver": {
-        "url": "https://github.com/meetfranz/franz/releases",
-        "regex": "tag/v([\\w\\.-]+)"
+        "github": "https://github.com/meetfranz/franz"
     },
     "autoupdate": {
         "url": "https://github.com/meetfranz/franz/releases/download/v$version/franz-setup-$version.exe#/dl.7z",
         "hash": {
             "url": "$baseurl/latest.yml",
-            "find": "sha512:\\s+(.*)"
+            "regex": "sha512:\\s+$base64"
         }
     }
 }

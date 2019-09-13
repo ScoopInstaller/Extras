@@ -1,47 +1,44 @@
 {
-    "version": "4.2.1",
-    "description": "Krita. Professional, FREE and open source painting program.",
+    "version": "4.2.6",
+    "description": "A free digital painting application.",
     "homepage": "https://krita.org/",
-    "license": {
-        "identifier": "Freeware",
-        "url": "https://docs.krita.org/en/KritaFAQ.html#license-rights-and-the-krita-foundation"
-    },
+    "license": "GPL-3.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://download.kde.org/stable/krita/4.2.1/krita-x64-4.2.1.zip",
-            "hash": "md5:40030d55a8eb55f3a6ef466fbc7cd911",
-            "extract_dir": "krita-x64-4.2.1"
+            "url": "https://download.kde.org/stable/krita/4.2.6/krita-x64-4.2.6-setup.exe#/dl.7z",
+            "hash": "9946096460a37f6512c91166b90fac308e9bc6b18cd823224c8082fc153bbdc5"
         },
         "32bit": {
-            "url": "https://download.kde.org/stable/krita/4.2.1/krita-x86-4.2.1.zip",
-            "hash": "md5:449c9dce5cdcfdcf31136dbe95944f15",
-            "extract_dir": "krita-x86-4.2.1"
+            "url": "https://download.kde.org/stable/krita/4.2.6/krita-x86-4.2.6-setup.exe#/dl.7z",
+            "hash": "fceb29051724af3c8fb1122a3c88babc01bf77f18f48379a350b40898554f522"
         }
     },
-    "bin": "bin\\krita.exe",
+    "bin": [
+        "bin\\krita.exe",
+        "bin\\kritarunner.exe"
+    ],
     "shortcuts": [
         [
             "bin\\krita.exe",
             "Krita"
         ]
     ],
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\uninstall.exe.nsis\" -Recurse -Force",
     "checkver": {
         "url": "https://krita.org/en/download/krita-desktop/",
-        "regex": "Download Krita\\s+([\\d+\\.]+)"
+        "regex": "Download Krita\\s+([\\d.]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.kde.org/stable/krita/$version/krita-x64-$version.zip",
-                "extract_dir": "krita-x64-$version"
+                "url": "https://download.kde.org/stable/krita/$version/krita-x64-$version-setup.exe#/dl.7z"
             },
             "32bit": {
-                "url": "https://download.kde.org/stable/krita/$version/krita-x86-$version.zip",
-                "extract_dir": "krita-x86-$version"
+                "url": "https://download.kde.org/stable/krita/$version/krita-x86-$version-setup.exe#/dl.7z"
             }
         },
         "hash": {
-            "url": "$baseurl/md5sum.txt"
+            "url": "$url.sha256"
         }
     }
 }
