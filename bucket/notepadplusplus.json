@@ -3,14 +3,22 @@
     "description": "A free source code editor and Notepad replacement that supports several languages.",
     "version": "7.7.1",
     "license": "GPL-2.0-only",
-    "notes": "The following page explains how to add explorer context menu entries for notepad++. http://docs.notepad-plus-plus.org/index.php/Explorer_Context_Menu",
+    "notes": "Replace default notepad with Notepad++ by running: \"$dir\\notepadplusplus-install-context.reg\"",
     "architecture": {
         "64bit": {
-            "url": "https://notepad-plus-plus.org/repository/7.x/7.7.1/npp.7.7.1.bin.x64.7z",
+            "url": [
+                "https://notepad-plus-plus.org/repository/7.x/7.7.1/npp.7.7.1.bin.x64.7z",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/notepadplusplus-install-context.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/notepadplusplus-uninstall-context.reg"
+            ],
             "hash": "528ec2bf90fd409b4bf914c198b93db28cecd4fa2a8cdf6180f1b9cded7f8dfa"
         },
         "32bit": {
-            "url": "https://notepad-plus-plus.org/repository/7.x/7.7.1/npp.7.7.1.bin.7z",
+            "url": [
+                "https://notepad-plus-plus.org/repository/7.x/7.7.1/npp.7.7.1.bin.7z",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/notepadplusplus-install-context.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/notepadplusplus-uninstall-context.reg"
+            ],
             "hash": "f0af67993bd5f420ef0d9268f9667d628090491899f6529a7a75f60244700ef1"
         }
     },
@@ -30,6 +38,14 @@
         "Add-Content \"$dir/config.xml\" $null",
         "Add-Content \"$dir/session.xml\" $null",
         "Add-Content \"$dir/userDefineLang.xml\" $null"
+    ],
+    "post_install": [
+        "if(Test-Path(\"$dir\\notepadplusplus-install-context.reg\")) {",
+        "  $codepath = \"$dir\\notepad++.exe\".Replace('\\', '\\\\')",
+        "  $content = Get-Content \"$dir\\notepadplusplus-install-context.reg\"",
+        "  $content = $content.Replace('$code', $codepath)",
+        "  $content | Set-Content -Path \"$dir\\notepadplusplus-install-context.reg\"",
+        "}"
     ],
     "shortcuts": [
         [
