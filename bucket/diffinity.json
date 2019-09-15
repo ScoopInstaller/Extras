@@ -1,30 +1,26 @@
 {
-    "homepage": "http://www.truehumandesign.se/s_diffinity.php",
-    "description": "A free diff and merging tool for Windows with focus on accurate and easy to read source code diffs.",
     "version": "0.9",
+    "description": "Diff and merging tool with focus on accurate and easy to read source code diffs.",
+    "homepage": "http://www.truehumandesign.se/s_diffinity.php",
     "license": {
         "identifier": "Freeware",
         "url": "http://www.truehumandesign.se/licenseDiffinity.php"
     },
     "url": "http://www.truehumandesign.se/download/diffinityInstaller.exe#/dl.7z",
     "hash": "c6222897140226dac1ca309577126c51c486853288e5c2f62d0edab12b0988bf",
+    "pre_install": [
+        "if (!(Test-Path \"$dir\\diffinity.cfg\")) { New-Item \"$dir\\diffinity.cfg\" -ItemType File | Out-Null }",
+        "Remove-Item \"$dir\\*\" -Include '$PLUGINSDIR', 'uninstall.exe' -Force -Recurse"
+    ],
+    "bin": "Diffinity.exe",
     "shortcuts": [
         [
             "Diffinity.exe",
             "Diffinity"
         ]
     ],
-    "persist": [
-        "diffinity.cfg"
-    ],
-    "pre_install": [
-        "if (!(Test-Path \"$dir\\diffinity.cfg\")) { New-Item \"$dir\\diffinity.cfg\" -ItemType File | Out-Null }"
-    ],
-    "post_install": [
-        "Remove-Item \"$dir\\uninstall.exe\" -Force",
-        "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse -Force"
-    ],
-    "checkver": "<b>Version:</b>\\s*([\\d.]+)",
+    "persist": "diffinity.cfg",
+    "checkver": "Version:</b>\\s*([\\d.]+)",
     "autoupdate": {
         "url": "http://www.truehumandesign.se/download/diffinityInstaller.exe#/dl.7z"
     }
