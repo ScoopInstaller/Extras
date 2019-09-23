@@ -24,27 +24,29 @@
     "installer": {
         "script": [
             "Remove-Item \"$dir\\`$*\", \"$dir\\uninstall.exe\" -Force -Recurse",
-            "New-Item \"$dir\\portable_mode_enabled\" -Force | Out-Null",
-            "if(!(Test-Path \"$persist_dir\\playlists\")) {",
-            "    New-Item \"$persist_dir\\playlists\" -ItemType Directory -Force | Out-Null",
+            "New-Item \"$dir\\portable_mode_enabled\" | Out-Null",
+            "if(!(Test-Path \"$persist_dir\")) {",
             "    if (Test-Path \"$env:Appdata\\foobar2000\") {",
             "        Write-Host -F yellow \"Copying old '$env:Appdata\\foobar2000' to '$persist_dir'\"",
-            "        Copy-Item \"$env:Appdata\\foobar2000\\*\" \"$dir\" -Force -Recurse",
+            "        Copy-Item \"$env:Appdata\\foobar2000\\*\" \"$dir\" -Recurse",
             "    }",
             "}",
             "else {",
-            "    Copy-Item \"$persist_dir\\playlists\\*\" \"$dir\" -Force -Recurse",
+            "    Move-Item \"$persist_dir\\playlists*\" \"$dir\"",
             "}",
             "if (Test-Path \"$persist_dir\\theme.fth\") {",
-            "    Copy-Item \"$persist_dir\\theme.fth\" \"$dir\" -Force",
+            "    Copy-Item \"$persist_dir\\theme.fth\" \"$dir\"",
             "}"
         ]
     },
     "uninstaller": {
         "script": [
-            "Copy-Item \"$dir\\playlists-v*\" \"$persist_dir\\playlists\" -Force -Recurse",
+            "$shortVersion = $version.Split('.')[0, 1] -Join '.'",
+            "if (Test-Path \"$dir\\playlists-v$shortVersion\") {",
+            "    Copy-Item \"$dir\\playlists-v$shortVersion\" \"$persist_dir\" -Recurse",
+            "}",
             "if (Test-Path \"$dir\\theme.fth\") {",
-            "    Copy-Item \"$dir\\theme.fth\" \"$persist_dir\" -Force",
+            "    Copy-Item \"$dir\\theme.fth\" \"$persist_dir\"",
             "}"
         ]
     },
