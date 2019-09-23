@@ -1,14 +1,16 @@
 {
     "description": "Developer builds of Firefox: the popular open source web browser.",
     "homepage": "https://www.mozilla.org/en-US/firefox/developer/",
-    "version": "nightly",
+    "version": "70.0b8",
     "license": "MPL-2.0",
     "architecture": {
         "64bit": {
-            "url": "https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=win64&lang=en-US#/firefox.7z"
+            "url": "https://archive.mozilla.org/pub/devedition/releases/70.0b8/win64/en-US/Firefox%20Setup%2070.0b8.exe#/dl.7z",
+            "hash": "sha512:08f5b2aba3dbdff066d0a4d761c0e6029f9e03c59b796ce14c0a239772ecc6e0199fd6b79c1a41c2f125ede1ecb916a7dd82281028ab73f4d4dad9527c4321b3"
         },
         "32bit": {
-            "url": "https://download.mozilla.org/?product=firefox-devedition-latest-ssl&os=win&lang=en-US#/firefox.7z"
+            "url": "https://archive.mozilla.org/pub/devedition/releases/70.0b8/win32/en-US/Firefox%20Setup%2070.0b8.exe#/dl.7z",
+            "hash": "sha512:6a3f280f8b3a0907fa371b75f31a657ab7f49f444081313fcdb2d0f3edc6415f5b0a51c65c43c570c2db9cb483fcea86c838f16b3dfc99e93c0d0e4fc13d3827"
         }
     },
     "extract_dir": "core",
@@ -27,5 +29,28 @@
             "firefox.exe",
             "Firefox Developer Edition"
         ]
-    ]
+    ],
+    "checkver": {
+        "url": "https://aus5.mozilla.org/update/6/Firefox/60.0/_/WINNT_x86_64-msvc-x64/en-US/aurora/_/_/_/_/update.xml",
+        "xpath": "/updates/update/patch/@URL",
+        "regex": "devedition-([\\db.]+)-"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://archive.mozilla.org/pub/devedition/releases/$version/win64/en-US/Firefox%20Setup%20$version.exe#/dl.7z",
+                "hash": {
+                    "url": "https://archive.mozilla.org/pub/devedition/releases/$version/SHA512SUMS",
+                    "regex": "$sha512\\s+win64/en-US/Firefox Setup"
+                }
+            },
+            "32bit": {
+                "url": "https://archive.mozilla.org/pub/devedition/releases/$version/win32/en-US/Firefox%20Setup%20$version.exe#/dl.7z",
+                "hash": {
+                    "url": "https://archive.mozilla.org/pub/devedition/releases/$version/SHA512SUMS",
+                    "regex": "$sha512\\s+win32/en-US/Firefox Setup"
+                }
+            }
+        }
+    }
 }
