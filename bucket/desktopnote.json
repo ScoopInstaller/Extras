@@ -12,6 +12,16 @@
             "DesktopNote"
         ]
     ],
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\")) { New-Item \"$persist_dir\" -ItemType Directory -Force | Out-Null }",
+        "else { Copy-Item \"$persist_dir\\DesktopNoteContent*\" \"$dir\" }"
+    ],
+    "uninstaller": {
+        "script": [
+            "Remove-Item \"$persist_dir\\DesktopNoteContent*\"",
+            "Copy-Item \"$dir\\DesktopNoteContent*\" \"$persist_dir\""
+        ]
+    },
     "checkver": {
         "url": "https://github.com/changbowen/DesktopNote/blob/master_C%23/bin/Release/DesktopNote.exe",
         "regex": "href=\"/changbowen/DesktopNote/commit/([\\da-f]{40})\""
