@@ -17,19 +17,13 @@
     "installer": {
         "script": [
             "if (!(Test-Path \"$persist_dir\\qtox.ini\")) {",
-            "    if (Test-Path \"$env:AppData\\Tox\" -PathType Container) {",
-            "        Copy-Item \"$env:AppData\\Tox\\*\" \"$dir\" -Include '*.ini', '*.db', '*.tox'",
-            "    }",
-            "    if (Test-Path \"$dir\\qtox.ini\") {",
-            "        (Get-Content \"$dir\\qtox.ini\") -replace 'makeToxPortable=false', 'makeToxPortable=true' | Set-Content \"$dir\\qtox.ini\" -Encoding ASCII",
-            "    }",
-            "    else { Set-Content \"$dir\\qtox.ini\" @('[Advanced]', 'makeToxPortable=true') -Encoding ASCII -Force }",
+            "    Set-Content \"$dir\\qtox.ini\" @('[Advanced]', 'makeToxPortable=true', '[%General]', 'checkUpdates=false') -Encoding ASCII -Force",
             "}",
-            "else { Copy-Item \"$persist_dir\\*\" \"$dir\" -Exclude 'qtox.ini' }"
+            "else { Move-Item \"$persist_dir\\*\" \"$dir\" -Include '*.ini', '*.db', '*.tox' }"
         ]
     },
     "uninstaller": {
-        "script": "Copy-Item \"$dir\\*\" \"$persist_dir\" -Include '*.ini', '*.db', '*.tox' -Force"
+        "script": "Move-Item \"$dir\\*\" \"$persist_dir\" -Include '*.ini', '*.db', '*.tox'"
     },
     "bin": "qtox.exe",
     "shortcuts": [
