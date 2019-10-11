@@ -12,8 +12,8 @@
             ],
             "hash": [
                 "6380d9fe0516c65ab10b73236dada48003e59e6f0765438c711c090ec184cac2",
-                "3673d7767da27418c4c7eea146043fa6a7c59df65199c79850e58367fd66fb56",
-                "9b55432e91e8534cc871d8d57f826761649d1ed7a3a5d7cabc3089fe5a6e147f"
+                "e6dfc921ed698cf70b3718342315387491407fdb1ac3f4e2baf807be0a9eeeb7",
+                "48206f4dbb72f30f4d56e07d0f32f45db60e3a750eed836c4c7c3f521e437e74"
             ]
         },
         "32bit": {
@@ -24,8 +24,8 @@
             ],
             "hash": [
                 "148b5724a479e1fd236ae5d877637fe899458a1d97b335a67083559dec15a762",
-                "3673d7767da27418c4c7eea146043fa6a7c59df65199c79850e58367fd66fb56",
-                "9b55432e91e8534cc871d8d57f826761649d1ed7a3a5d7cabc3089fe5a6e147f"
+                "e6dfc921ed698cf70b3718342315387491407fdb1ac3f4e2baf807be0a9eeeb7",
+                "48206f4dbb72f30f4d56e07d0f32f45db60e3a750eed836c4c7c3f521e437e74"
             ]
         }
     },
@@ -38,16 +38,22 @@
         ]
     ],
     "post_install": [
-        "if(Test-Path(\"$dir\\vscodium-install-context.reg\")) {",
+        "if (Test-Path(\"$dir\\vscodium-install-context.reg\")) {",
         "  $codepath = \"$dir\\VSCodium.exe\".Replace('\\', '\\\\')",
         "  $content = Get-Content \"$dir\\vscodium-install-context.reg\"",
         "  $content = $content.Replace('$code', $codepath)",
         "  $content = $content.Replace('Code', 'VSCodium')",
+        "  if ($global) {",
+        "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "  }",
         "  $content | Set-Content -Path \"$dir\\vscodium-install-context.reg\"",
         "}",
-        "if(Test-Path(\"$dir\\vscodium-uninstall-context.reg\")) {",
+        "if (Test-Path(\"$dir\\vscodium-uninstall-context.reg\")) {",
         "  $content = Get-Content \"$dir\\vscodium-uninstall-context.reg\"",
         "  $content = $content.Replace('Code', 'VSCodium')",
+        "  if ($global) {",
+        "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "  }",
         "  $content | Set-Content -Path \"$dir\\vscodium-uninstall-context.reg\"",
         "}"
     ],
