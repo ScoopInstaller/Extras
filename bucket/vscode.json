@@ -20,7 +20,7 @@
         ]
     ],
     "post_install": [
-        "if (Test-Path(\"$dir\\vscode-install-context.reg\")) {",
+        "if (Test-Path \"$dir\\vscode-install-context.reg\") {",
         "  $codepath = \"$dir\\Code.exe\".Replace('\\', '\\\\')",
         "  $content = Get-Content \"$dir\\vscode-install-context.reg\"",
         "  $content = $content.Replace('$code', $codepath)",
@@ -29,9 +29,11 @@
         "  }",
         "  $content | Set-Content -Path \"$dir\\vscode-install-context.reg\"",
         "}",
-        "if ($global -and Test-Path(\"$dir\\vscode-uninstall-context.reg\")) {",
+        "if (Test-Path \"$dir\\vscode-uninstall-context.reg\") {",
         "  $content = Get-Content \"$dir\\vscode-uninstall-context.reg\"",
-        "  $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "  if ($global) {",
+        "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "  }",
         "  $content | Set-Content -Path \"$dir\\vscode-uninstall-context.reg\"",
         "}"
     ],
