@@ -1,0 +1,37 @@
+{
+    "homepage": "https://wexond.net/",
+    "version": "3.1.0",
+    "license": "GPL-3.0-or-later",
+    "description": "A privacy-focused, extensible and beautiful web browser.",
+    "url": "https://github.com/wexond/wexond/releases/download/v3.1.0/wexond-setup-3.1.0.exe#/dl.7z",
+    "hash": "sha512:d1d3f89b0e5f14200249a540a5345f548a8192a10e317d7176ea589fe6579fff3150343add35a21f2d2acbd5c7c957fcbc45aebc6c555885154c45d061c288c5",
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
+            }
+        }
+    },
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse",
+    "shortcuts": [
+        [
+            "Wexond.exe",
+            "Wexond"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/wexond/wexond"
+    },
+    "autoupdate": {
+        "url": "https://github.com/wexond/wexond/releases/download/v$version/wexond-setup-$version.exe#/dl.7z",
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512: $base64"
+        }
+    }
+}

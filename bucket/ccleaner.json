@@ -1,8 +1,10 @@
 {
-    "homepage": "https://www.piriform.com/ccleaner",
-    "version": "5.57.7182",
-    "url": "https://download.ccleaner.com/slim/ccsetup557_slim.exe#/dl.7z",
-    "hash": "67f9af41f940bb7141c333854ce5895d3902b02c17cfe22db8f412dc7e9c2958",
+    "homepage": "https://www.ccleaner.com/ccleaner",
+    "version": "5.63.7540",
+    "license": "Freeware",
+    "description": "Number-one tool for cleaning your PC.",
+    "url": "https://download.ccleaner.com/portable/ccsetup563.zip",
+    "hash": "ff83bfc0077b993a72473d8f3e62b163773a4e4018fd0ba104d821647c029646",
     "architecture": {
         "64bit": {
             "bin": [
@@ -28,19 +30,17 @@
             ]
         }
     },
-    "persist": "ccleaner.ini",
     "pre_install": [
-        "if(!(test-path \"$persist_dir\\ccleaner.ini\")) { Add-Content \"$dir\\ccleaner.ini\" \"[Options]`nHelpImproveCCleaner=0\" }",
-        "if(!(test-path \"$dir\\portable.dat\")) { Add-Content \"$dir\\portable.dat\" \"#PORTABLE#\" }",
-        "Remove-Item \"$dir\\`$*\" -Recurse",
-        "Remove-Item \"$dir\\uninst.exe\"",
-        "Remove-Item \"$dir\\CCUpdate.exe\""
+        "if(!(Test-Path \"$persist_dir\\ccleaner.ini\")) {",
+        "   Set-Content \"$dir\\ccleaner.ini\" (@('[Options]', 'UpdateAuto=0', 'UpdateNotify=0', 'UpdateCheck=0', 'HelpImproveCCleaner=0') -join \"`r`n\") -Encoding ASCII",
+        "}"
     ],
+    "persist": "ccleaner.ini",
     "checkver": {
-        "url": "https://www.piriform.com/ccleaner/download",
-        "re": "<strong>v([\\d.]+)</strong>"
+        "url": "https://www.ccleaner.com/ccleaner/version-history",
+        "regex": ">v([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://download.ccleaner.com/slim/ccsetup$majorVersion$minorVersion_slim.exe#/dl.7z"
+        "url": "https://download.ccleaner.com/portable/ccsetup$majorVersion$minorVersion.zip"
     }
 }

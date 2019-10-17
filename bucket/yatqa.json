@@ -1,8 +1,13 @@
 {
-    "homepage": "http://yat.qa/",
-    "version": "3.9.7",
-    "url": "https://dl.yat.qa/stable/#/setup.exe",
-    "hash": "6cf766c33268b8d37d00688e52e1611ba1c2ad8108296b634b5b5e315b81d44e",
+    "homepage": "https://yat.qa/",
+    "description": "Manage TeamSpeak 3 servers and instances using a query interface",
+    "version": "3.9.8.2",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://referencesource.microsoft.com/license.html"
+    },
+    "url": "https://dl.yat.qa/stable/YaTQA-Setup_3.9.8.2.exe",
+    "hash": "9e7e6d57a1f8c52a55775aaae889d3b1b0a8d92d5df549580e1db7d165f3cda6",
     "bin": "yatqa.exe",
     "persist": "yatqa.ini",
     "shortcuts": [
@@ -12,13 +17,14 @@
         ]
     ],
     "installer": {
-        "args": "/S /D=$dir"
+        "script": "Expand-7zipArchive -Overwrite Skip \"$dir\\$fname\" -Removal"
     },
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
     "checkver": {
-        "url": "http://31.172.95.122/yatqa/.update",
-        "re": "(?:v?)([\\d.a-z]+)\\s+\\(.*\\)"
+        "url": "https://yat.qa/.update",
+        "regex": "v([\\d.]+)\\s+\\("
     },
     "autoupdate": {
-        "url": "https://dl.yat.qa/stable/#/setup.exe"
+        "url": "https://dl.yat.qa/stable/YaTQA-Setup_$version.exe"
     }
 }

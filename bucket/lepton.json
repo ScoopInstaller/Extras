@@ -2,35 +2,36 @@
     "homepage": "https://hackjutsu.com/Lepton/",
     "description": "A lean code snippet manager based on GitHub Gist",
     "license": "MIT",
-    "version": "1.7.3",
+    "version": "1.8.1",
+    "url": "https://github.com/hackjutsu/Lepton/releases/download/v1.8.1/Lepton-Setup-1.8.1.exe#/dl.7z",
+    "hash": "sha512:10a0cc5a025a6167f9d1ed0a6bc2ff2056404eaa19fceb3a2dfdecec05fe2bb351a37083de51128d44435d9996b44189f78aaeae281f8b1080ea97097d0f65f8",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/hackjutsu/Lepton/releases/download/v1.7.3/Lepton-1.7.3-win.7z",
-            "hash": "8990f36b34da0262081859e31d6ad136b3a6f863a165dc58eb1ada2f1e5f64a5"
+            "installer": {
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR/app-64.7z\" \"$dir\""
+            }
         },
         "32bit": {
-            "url": "https://github.com/hackjutsu/Lepton/releases/download/v1.7.3/Lepton-1.7.3-ia32-win.7z",
-            "hash": "16f415651f5a5c84280e1cc92b58205f9749c8531738f87ea7e94ba8442ec593"
-        }
-    },
-    "bin": "Lepton.exe",
-    "checkver": {
-        "github": "https://github.com/hackjutsu/Lepton"
-    },
-    "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "hhttps://github.com/hackjutsu/Lepton/releases/download/v$version/Lepton-$version-win.7z"
-            },
-            "32bit": {
-                "url": "https://github.com/hackjutsu/Lepton/releases/download/v$version/Lepton-$version-ia32-win.7z"
+            "installer": {
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR/app-32.7z\" \"$dir\""
             }
         }
     },
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse",
     "shortcuts": [
         [
             "Lepton.exe",
             "Lepton"
         ]
-    ]
+    ],
+    "checkver": {
+        "github": "https://github.com/hackjutsu/Lepton"
+    },
+    "autoupdate": {
+        "url": "https://github.com/hackjutsu/Lepton/releases/download/v$version/Lepton-Setup-$version.exe#/dl.7z",
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512: $base64"
+        }
+    }
 }

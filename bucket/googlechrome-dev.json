@@ -1,0 +1,56 @@
+{
+    "version": "79.0.3941.4",
+    "description": "Fast, secure, and free web browser, built for the modern web.",
+    "homepage": "https://www.google.com/chrome/dev",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.google.com/chrome/privacy/eula_text.html"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://dl.google.com/release2/chrome/Kk4HoQDau4uYTOl5BgE4jg_79.0.3941.4/79.0.3941.4_chrome_installer.exe#/dl.7z",
+            "hash": "7683935f24353735dcdc933dd40b3e7c66a161f91406da354a8621d83fc579bc"
+        },
+        "32bit": {
+            "url": "https://dl.google.com/release2/chrome/DeTphfxHQ1SXwZDDWbsZ6Q_79.0.3941.4/79.0.3941.4_chrome_installer.exe#/dl.7z",
+            "hash": "efcc20cfff4325bb982b5b4ebd5a2b05cccf842ae97964234e69e833df2c477f"
+        }
+    },
+    "installer": {
+        "script": "Expand-7zipArchive \"$dir\\chrome.7z\" -ExtractDir 'Chrome-bin' -Removal"
+    },
+    "bin": [
+        [
+            "chrome.exe",
+            "chrome-dev"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "chrome.exe",
+            "Google Chrome (Dev)"
+        ]
+    ],
+    "checkver": {
+        "url": "https://lab.skk.moe/chrome/api/chrome.min.xml",
+        "regex": "(?sm)<dev32><version>(?<version>[\\d.]+)</version>.+release2/chrome/(?<32>[\\w-]+)_.+<dev64>.+release2/chrome/(?<64>[\\w-]+)_.+</dev64>"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://dl.google.com/release2/chrome/$match64_$version/$version_chrome_installer.exe#/dl.7z",
+                "hash": {
+                    "url": "https://lab.skk.moe/chrome/api/chrome.min.xml",
+                    "xpath": "/chromechecker/dev64[version='$version']/sha256"
+                }
+            },
+            "32bit": {
+                "url": "https://dl.google.com/release2/chrome/$match32_$version/$version_chrome_installer.exe#/dl.7z",
+                "hash": {
+                    "url": "https://lab.skk.moe/chrome/api/chrome.min.xml",
+                    "xpath": "/chromechecker/dev32[version='$version']/sha256"
+                }
+            }
+        }
+    }
+}

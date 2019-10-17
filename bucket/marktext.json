@@ -1,26 +1,24 @@
 {
-    "version": "0.14.0",
+    "version": "0.15.1",
     "description": "A simple and elegant markdown editor.",
     "homepage": "https://marktext.app/",
     "license": "MIT",
-    "url": "https://github.com/marktext/marktext/releases/download/v0.14.0/marktext-setup-0.14.0.exe#/dl.7z",
-    "hash": "sha512:656a08e352829348ca5f30a04ab08d8da676f2e1104fa47dfdcae5cfb58b0767d53d087b2586f540b15c89191dfdb9e8b9808e82dc454f815f5dcfd38a79aa77",
-    "extract_dir": "\\$PLUGINSDIR",
-    "pre_install": "Get-ChildItem \"$dir\" -Exclude 'app-64.7z', 'app-32.7z' | Remove-Item -Force -Recurse",
     "architecture": {
         "64bit": {
-            "installer": {
-                "script": "Expand-7zipArchive \"$dir\\app-64.7z\" \"$dir\""
-            }
+            "url": "https://github.com/marktext/marktext/releases/download/v0.15.1/marktext-0.15.1-x64-win.zip",
+            "hash": "62c88372e5771b3cde44fb6e04b88a88cdf1efd1a98b0e8a3dbc065ace2a4b8f"
         },
         "32bit": {
-            "installer": {
-                "script": "Expand-7zipArchive \"$dir\\app-32.7z\" \"$dir\""
-            }
+            "url": "https://github.com/marktext/marktext/releases/download/v0.15.1/marktext-0.15.1-ia32-win.zip",
+            "hash": "f37872d6c4e429fe4c44a2bf20fa3553aa9cec42cc783615be3e64d1cb08c85e"
         }
     },
-    "post_install": "Remove-Item \"$dir\\app-64.7z\", \"$dir\\app-32.7z\"",
-    "bin": "Mark Text.exe",
+    "bin": [
+        [
+            "Mark Text.exe",
+            "marktext"
+        ]
+    ],
     "shortcuts": [
         [
             "Mark Text.exe",
@@ -31,10 +29,17 @@
         "github": "https://github.com/marktext/marktext/"
     },
     "autoupdate": {
-        "url": "https://github.com/marktext/marktext/releases/download/v$version/marktext-setup-$version.exe#/dl.7z",
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/marktext/marktext/releases/download/v$version/marktext-$version-x64-win.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/marktext/marktext/releases/download/v$version/marktext-$version-ia32-win.zip"
+            }
+        },
         "hash": {
-            "url": "https://github.com/marktext/marktext/releases/download/v$version/latest.yml",
-            "regex": "sha512:\\s+$base64"
+            "url": "https://github.com/marktext/marktext/releases/tag/v$version",
+            "regex": "(?s)$basename.*?$sha256"
         }
     }
 }

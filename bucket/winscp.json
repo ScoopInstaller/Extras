@@ -1,28 +1,35 @@
 {
     "homepage": "https://winscp.net",
+    "description": "Copy files between a local computer and remote servers using FTP, FTPS, SCP, SFTP, WebDAV or S3 file transfer protocols.",
     "license": "GPL-3.0-or-later",
-    "version": "5.15.1",
-    "url": "https://downloads.sourceforge.net/project/winscp/WinSCP/5.15.1/WinSCP-5.15.1-Portable.zip",
-    "hash": "sha1:213fb621b46783348d0c68a60d1272b599641752",
-    "bin": "WinSCP.exe",
-    "persist": "winscp.ini",
+    "version": "5.15.5",
+    "url": "https://downloads.sourceforge.net/project/winscp/WinSCP/5.15.5/WinSCP-5.15.5-Portable.zip",
+    "hash": "aaa8fa28dfa484eae974acbc4d0c327c42e9688c35a2193a17d8ea7aeb3fcf58",
     "pre_install": [
         "if (!(Test-Path \"$persist_dir\\winscp.ini\")) {",
-        "    new-item \"$dir\\winscp.ini\" -type file | out-null",
-        "    write-output \"[Configuration\\Interface]`r`nRandomSeedFile=.\\winscp.rnd\" | Out-File -encoding \"ASCII\" \"$dir\\winscp.ini\"",
+        "    @(",
+        "        '[Configuration\\Interface]'",
+        "        'RandomSeedFile=.\\winscp.rnd'",
+        "    ) | Add-Content -Path \"$dir\\winscp.ini\" -Encoding ASCII -Force",
         "}"
     ],
-    "checkver": {
-        "url": "https://winscp.net/eng/downloads.php",
-        "re": "WinSCP-([\\d.]+)-Portable\\.zip"
-    },
-    "autoupdate": {
-        "url": "https://downloads.sourceforge.net/project/winscp/WinSCP/$version/WinSCP-$version-Portable.zip"
-    },
+    "bin": "WinSCP.exe",
     "shortcuts": [
         [
             "WinSCP.exe",
             "WinSCP"
         ]
-    ]
+    ],
+    "persist": "winscp.ini",
+    "checkver": {
+        "url": "https://winscp.net/eng/downloads.php",
+        "regex": "WinSCP-([\\d.]+)-Portable\\.zip"
+    },
+    "autoupdate": {
+        "url": "https://downloads.sourceforge.net/project/winscp/WinSCP/$version/WinSCP-$version-Portable.zip",
+        "hash": {
+            "url": "https://winscp.net/download/WinSCP-$version-ReadMe.txt",
+            "regex": "(?sm)$basename.*?SHA-256: $sha256"
+        }
+    }
 }

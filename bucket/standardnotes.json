@@ -1,28 +1,23 @@
 {
     "homepage": "https://standardnotes.org/",
-    "version": "3.0.9",
+    "version": "3.0.17",
     "description": "A safe place for your notes, thoughts, and life's work.",
-    "license": {
-        "identifier": "AGPL-3.0",
-        "url": "https://github.com/standardnotes/desktop/blob/master/LICENSE"
-    },
-    "url": "https://github.com/standardnotes/desktop/releases/download/v3.0.9/standard-notes-setup-3.0.9.exe#/dl.7z",
-    "hash": "sha512:3df1f564973371a7ec4b29cbc4c6085d7dff1f49d14d2cf921b808f14f416ad58affcb70c6a2ce95814addbc7e7d6daaaf631c7f360dd9644123cf7ded90379b",
-    "extract_dir": "\\$PLUGINSDIR",
-    "pre_install": "Get-ChildItem \"$dir\" -Exclude 'app-64.7z', 'app-32.7z' | Remove-Item -Force -Recurse",
+    "license": "AGPL-3.0-or-later",
+    "url": "https://github.com/standardnotes/desktop/releases/download/v3.0.17/standard-notes-setup-3.0.17.exe#/dl.7z",
+    "hash": "sha512:2357fb03b116864063e049fcbf3db1468ae7bff84348055e8de976a91d1b97221a48a43122a724a2a3a3a07bc2c94fc8f3fc83f278396e78069fda0bf260d5a2",
     "architecture": {
         "64bit": {
             "installer": {
-                "script": "Expand-7zipArchive \"$dir\\app-64.7z\" \"$dir\""
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
             }
         },
         "32bit": {
             "installer": {
-                "script": "Expand-7zipArchive \"$dir\\app-32.7z\" \"$dir\""
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
             }
         }
     },
-    "post_install": "Remove-Item \"$dir\\app-64.7z\", \"$dir\\app-32.7z\"",
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
     "bin": "Standard Notes.exe",
     "shortcuts": [
         [
@@ -36,8 +31,8 @@
     "autoupdate": {
         "url": "https://github.com/standardnotes/desktop/releases/download/v$version/standard-notes-setup-$version.exe#/dl.7z",
         "hash": {
-            "url": "https://github.com/standardnotes/desktop/releases/download/v$version/latest.yml",
-            "find": "sha512:\\s+(.*)"
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512:\\s+$base64"
         }
     }
 }
