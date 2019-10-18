@@ -1,0 +1,51 @@
+{
+    "version": "3.1.1_b2",
+    "description": "A collection of lightweight, high quality Windows shell extensions capable of providing File Explorer thumbnails for essentially any video format.",
+    "homepage": "https://www.majorgeeks.com/files/details/icaros.html",
+    "license": "Freeware",
+    "url": "https://www.videohelp.com/download/Icaros_v3.1.1_b2.zip",
+    "hash": "039148150c431e8f4562ff54ce94c742e922a8aae148709a24b087662f9cea31",
+    "pre_install": [
+        "if (!(is_admin)) {",
+        "    error \"Administrator rights are required to install $app.\"",
+        "    exit 1",
+        "}"
+    ],
+    "post_install": [
+        "regsvr32 /s \"$dir\\32-bit\\IcarosThumbnailProvider.dll\"",
+        "regsvr32 /s \"$dir\\32-bit\\IcarosPropertyHandler.dll\"",
+        "regsvr32 /s \"$dir\\64-bit\\IcarosThumbnailProvider.dll\"",
+        "regsvr32 /s \"$dir\\64-bit\\IcarosPropertyHandler.dll\"",
+        "reg add HKLM\\SOFTWARE\\Icaros /f /v \"Thumbnail Extensions\" /t REG_SZ /d \"3g2;3gp;3gp2;3gpp;amv;ape;asf;avi;bik;cb7;cbr;cbz;divx;dpg;dv;dvr-ms;epub;evo;f4v;flac;flv;hdmov;k3g;m1v;m2t;m2ts;m2v;m4b;m4p;m4v;mk3d;mka;mkv;mov;mp2v;mp4;mp4v;mpc;mpe;mpeg;mpg;mpv2;mpv4;mqv;mts;mxf;nsv;ofr;ofs;ogg;ogm;ogv;opus;qt;ram;rm;rmvb;skm;spx;swf;tak;tp;tpr;trp;ts;tta;vob;wav;webm;wm;wmv;wv;xvid\" | Out-Null",
+        "Stop-Process -Name explorer"
+    ],
+    "uninstaller": {
+        "script": [
+            "if (!(is_admin)) {",
+            "    error \"Administrator rights are required to uninstall $app.\"",
+            "    exit 1",
+            "}",
+            "",
+            "regsvr32 /s /u \"$dir\\32-bit\\IcarosThumbnailProvider.dll\"",
+            "regsvr32 /s /u \"$dir\\32-bit\\IcarosPropertyHandler.dll\"",
+            "regsvr32 /s /u \"$dir\\64-bit\\IcarosThumbnailProvider.dll\"",
+            "regsvr32 /s /u \"$dir\\64-bit\\IcarosPropertyHandler.dll\"",
+            "reg delete /f HKLM\\SOFTWARE\\Icaros | Out-Null"
+        ]
+    },
+    "bin": "IcarosConfig.exe",
+    "shortcuts": [
+        [
+            "IcarosConfig.exe",
+            "Icaros"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.videohelp.com/software/Icaros",
+        "regex": "/download/Icaros_v([\\w.]+)\\.zip",
+        "reverse": true
+    },
+    "autoupdate": {
+        "url": "https://www.videohelp.com/download/Icaros_v$version.zip"
+    }
+}
