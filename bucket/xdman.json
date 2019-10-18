@@ -1,23 +1,34 @@
 {
-    "homepage": "http://xdman.sourceforge.net/",
-    "description": "A powerful FOSS downloader supports protocols as HTTP,HTTPS,FTP,MPEG-DASH,HLS,HDS and features as seamlessly integration with browsers, monitoring and capture, broken/dead tasks resumption",
+    "homepage": "http://xdman.sourceforge.net",
+    "description": "A powerful downloader.",
     "version": "7.2.8",
-    "license": "Unknown",
-    "url": "https://downloads.sourceforge.net/project/xdman/xdmsetup-2018.msi",
-    "hash": "sha1:506c8b1014aa1ea17979c548aa7c4dd1bd110f14",
-    "extract_dir": "XDM",
-    "bin": "xdman.jar",
+    "license": "GPL-3.0-only",
+    "url": "http://xdman.sourceforge.net/xdman.jar",
+    "hash": "372d5e7945677f89fcc26b7dfe0f4d893bd93fb5b9c38e1d9debb51ddd46f306",
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\$fname\" -Switches icons\\xxhdpi\\icon.png",
+        "Set-Content \"$dir\\RunXDM.bat\" 'start javaw -Xmx1024m -jar xdman.jar' -Encoding ASCII",
+        "$stream = [System.IO.File]::OpenWrite(\"$dir\\icon.ico\")",
+        "$bitmap = [System.Drawing.Image]::FromFile(\"$dir\\icons\\xxhdpi\\icon.png\")",
+        "([System.Drawing.Icon]::FromHandle($bitmap.GetHicon())).Save($stream)"
+    ],
+    "bin": "RunXDM.bat",
     "shortcuts": [
         [
-            "xdman.jar",
-            "Xtreme Download Manager"
+            "RunXDM.bat",
+            "Xtreme Download Manager",
+            "",
+            "icon.ico"
         ]
     ],
-    "checkver": {
-        "url": "http://xdman.sourceforge.net/",
-        "re": "XDM\\s+(?<year>\\d{4})\\s+Version\\s+(?<version>[\\d.]+)"
+    "suggest": {
+        "JDK": [
+            "java/oraclejdk",
+            "java/openjdk"
+        ]
     },
+    "checkver": "XDM\\s+(?<year>\\d+)\\s+Version\\s+([\\d.]+)",
     "autoupdate": {
-        "url": "https://downloads.sourceforge.net/project/xdman/xdmsetup-$matchYear.msi"
+        "url": "http://xdman.sourceforge.net/xdman.jar"
     }
 }
