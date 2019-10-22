@@ -6,17 +6,23 @@
     "innosetup": true,
     "url": "https://github.com/analogdevicesinc/scopy/releases/download/v1.1.1/scopy-v1.1.1-Windows-setup.exe",
     "hash": "035249c4b0e34578a7747ad3616ea7282d691f119ed913406636579391b98ff6",
-    "installer": {
-        "script": [
-            "Set-Location $dir",
-            "if ($architecture -eq '64bit') {",
-            "   Get-ChildItem -Filter '*,2*' -Recurse | Rename-Item -NewName { $_.name -Replace ',2','' }",
-            "   Get-ChildItem -Filter '*,1*' -Recurse | Remove-Item",
-            "} else {",
-            "   Get-ChildItem -Filter '*,1*' -Recurse | Rename-Item -NewName { $_.name -Replace ',1','' }",
-            "   Get-ChildItem -Filter '*,2*' -Recurse | Remove-Item",
-            "}"
-        ]
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": [
+                    "Get-ChildItem \"$dir\" '*,1*' -Recurse | Remove-Item -Force",
+                    "Get-ChildItem \"$dir\" '*,2*' -Recurse | ForEach-Object { Rename-Item $_.Fullname ($_.Name -Replace ',2') }"
+                ]
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": [
+                    "Get-ChildItem \"$dir\" '*,2*' -Recurse | Remove-Item -Force",
+                    "Get-ChildItem \"$dir\" '*,1*' -Recurse | ForEach-Object { Rename-Item $_.Fullname ($_.Name -Replace ',1') }"
+                ]
+            }
+        }
     },
     "env_set": {
         "SCOPY_PYTHONPATH": "$dir\\python3.7;$dir\\python3.7\\plat-win;$dir\\python3.7\\lib-dynload;$dir\\python3.7\\site-packages"
