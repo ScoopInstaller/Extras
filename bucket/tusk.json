@@ -5,12 +5,23 @@
     "license": "MIT",
     "url": "https://github.com/klaussinani/tusk/releases/download/v0.23.0/tusk-0.23.0.exe/#dl.7z",
     "hash": "838b087669b43c54220436e7007035a8c90b4bc94543e9bd9eb5de2961644b05",
-    "extract_dir": "$PLUGINSDIR",
-    "installer": {
-        "script": [
-            "Expand-7zipArchive \"$dir\\app-$(if ($architecture -eq '64bit') { '64' } else { '86' }).7z\" \"$dir\"",
-            "Remove-Item \"$dir\\app-*.7z\""
-        ]
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": [
+                    "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse"
+                ]
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": [
+                    "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\"",
+                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse"
+                ]
+            }
+        }
     },
     "bin": "Tusk.exe",
     "shortcuts": [
