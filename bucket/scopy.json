@@ -1,0 +1,36 @@
+{
+    "version": "1.1.1",
+    "description": "A software oscilloscope and signal analysis toolset",
+    "homepage": "https://wiki.analog.com/university/tools/m2k/scopy",
+    "license": "GPL-3.0-only",
+    "innosetup": true,
+    "url": "https://github.com/analogdevicesinc/scopy/releases/download/v1.1.1/scopy-v1.1.1-Windows-setup.exe",
+    "hash": "035249c4b0e34578a7747ad3616ea7282d691f119ed913406636579391b98ff6",
+    "installer": {
+        "script": [
+            "Set-Location $dir",
+            "if ($architecture -eq '64bit') {",
+            "   Get-ChildItem -Filter '*,2*' -Recurse | Rename-Item -NewName { $_.name -Replace ',2','' }",
+            "   Get-ChildItem -Filter '*,1*' -Recurse | Remove-Item",
+            "} else {",
+            "   Get-ChildItem -Filter '*,1*' -Recurse | Rename-Item -NewName { $_.name -Replace ',1','' }",
+            "   Get-ChildItem -Filter '*,2*' -Recurse | Remove-Item",
+            "}"
+        ]
+    },
+    "env_set": {
+        "SCOPY_PYTHONPATH": "$dir\\python3.7;$dir\\python3.7\\plat-win;$dir\\python3.7\\lib-dynload;$dir\\python3.7\\site-packages"
+    },
+    "shortcuts": [
+        [
+            "Scopy.exe",
+            "Scopy"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/analogdevicesinc/scopy"
+    },
+    "autoupdate": {
+        "url": "https://github.com/analogdevicesinc/scopy/releases/download/v$version/scopy-v$version-Windows-setup.exe"
+    }
+}
