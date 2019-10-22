@@ -1,26 +1,37 @@
 {
     "homepage": "https://github.com/transmission-remote-gui/transgui",
-    "description": "A feature rich cross platform Transmission BitTorrent client. Faster and has more functionality than the built-in web GUI.",
-    "version": "5.17.0",
+    "description": "A feature rich front-end to remotely control Transmission daemon via its RPC protocol.",
+    "version": "5.18.0",
     "license": "GPL-2.0-or-later",
-    "url": "https://github.com/transmission-remote-gui/transgui/releases/download/v5.17.0/transgui-5.17.0-setup.exe",
-    "hash": "9944fb4d0b7937c4fd57767857482d2d64a54c13eaf42af21f26c3e6845e9d0e",
-    "innosetup": true,
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/transmission-remote-gui/transgui/releases/download/v5.18.0/transgui-5.18.0-x86_64-win64.zip",
+            "hash": "3bef7b1ff5da7126559383e4627fd7ffec1df14f5db54eae6447cb0e4abd22ef"
+        },
+        "32bit": {
+            "url": "https://github.com/transmission-remote-gui/transgui/releases/download/v5.18.0/transgui-5.18.0-i386-win32.zip",
+            "hash": "aa3debd3255621b20fe0215b38f3951c0c4c75af3bdb9d42ba4e6f3c8dc9fc00"
+        }
+    },
+    "pre_install": "if (!(Test-Path \"$persist_dir\\transgui.ini\")) { New-Item \"$dir\\transgui.ini\" | Out-Null }",
     "bin": "transgui.exe",
-    "pre_install": "if(!(Test-Path \"$persist_dir\\transgui.ini\")) { New-Item \"$dir\\transgui.ini\" -Type File | Out-Null }",
-    "persist": "transgui.ini",
     "shortcuts": [
         [
             "transgui.exe",
             "Transmission Remote GUI"
         ]
     ],
-    "checkver": {
-        "github": "https://github.com/transmission-remote-gui/transgui",
-        "re": "v([\\d\\.]+)/transgui-([\\d\\.]+)-setup"
-    },
+    "persist": "transgui.ini",
+    "checkver": "github",
     "autoupdate": {
-        "url": "https://github.com/transmission-remote-gui/transgui/releases/download/v$version/transgui-$match2-setup.exe"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/transmission-remote-gui/transgui/releases/download/v$version/transgui-$version-x86_64-win64.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/transmission-remote-gui/transgui/releases/download/v$version/transgui-$version-i386-win32.zip"
+            }
+        }
     },
     "suggest": {
         "transmission": [

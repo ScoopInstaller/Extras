@@ -1,21 +1,12 @@
 {
+    "version": "2019-10-02",
     "homepage": "http://euler-math-toolbox.de",
-    "version": "2019-08-21",
-    "license": "GPL-3.0-or-later",
     "description": "A powerful math program combining numerical and symbolic tools (using the computer algebra system Maxima).",
+    "license": "GPL-3.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://downloads.sourceforge.net/project/eumat/Installer/EulerSetup-64_2019-08-21.exe",
-            "hash": "sha1:017bfb2d3d4ff119e5d8a3f8f132f779f44484b5",
-            "installer": {
-                "script": [
-                    "Expand-InnoArchive -Path \"$dir\\$fname\"",
-                    "Expand-InnoArchive -Path \"$dir\\$fname\" -ExtractDir '{sys}' -Removal",
-                    "if (!(Test-Path \"$persist_dir\\.euler.profile\")) {",
-                    "   New-Item -Path \"$dir\\.euler.profile\" -ItemType 'File' | Out-Null",
-                    "}"
-                ]
-            },
+            "url": "https://downloads.sourceforge.net/project/eumat/Installer/EulerSetup-64_2019-10-02.exe",
+            "hash": "sha1:e6a426c69f3151592b106352316d2840dbd8735b",
             "bin": [
                 "euler64.exe",
                 [
@@ -31,11 +22,23 @@
             ]
         }
     },
+    "installer": {
+        "script": [
+            "Expand-InnoArchive -Path \"$dir\\$fname\"",
+            "Expand-InnoArchive -Path \"$dir\\$fname\" -ExtractDir '{sys}' -Removal",
+            "if (!(Test-Path \"$persist_dir\\.euler.profile\")) {",
+            "   New-Item -Path \"$dir\\.euler.profile\" -ItemType 'File' | Out-Null",
+            "}"
+        ]
+    },
     "persist": [
         "Euler Files",
         ".euler.profile"
     ],
-    "checkver": "Version ([\\d-]+)",
+    "checkver": {
+        "url": "https://sourceforge.net/projects/eumat/rss?path=/Installer",
+        "regex": "EulerSetup-64_([\\d-]+)\\.exe"
+    },
     "autoupdate": {
         "architecture": {
             "64bit": {
