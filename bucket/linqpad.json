@@ -9,6 +9,14 @@
     "url": "http://download.linqpad.net/public/LINQPad6.zip",
     "hash": "d9995e26e11faa9f03c1916d7a0382f59055c8aeef318abe8b783a47f24e458f",
     "depends": "dotnet-sdk",
+    "pre_install": [
+        "$major = $version -split '\\.' | Select-Object -First 1",
+        "Get-ChildItem \"$dir\" 'l*.exe' | ForEach-Object {",
+        "         # $1 is needed to not remove character",
+        "    $newName = $_.Basename -replace \"([^8])$major\", '$1'",
+        "    Rename-Item $_.Fullname ($newName + $_.Extension)",
+        "}"
+    ],
     "architecture": {
         "64bit": {
             "bin": [
