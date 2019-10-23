@@ -1,0 +1,44 @@
+{
+    "homepage": "https://github.com/microsoft/terminal",
+    "description": "The new Windows Terminal, and the original Windows console host - all in the same place!",
+    "version": "0.6.2951.0",
+    "license": "MIT",
+    "url": "https://github.com/microsoft/terminal/releases/download/v0.6.2951.0/Microsoft.WindowsTerminal_0.6.2951.0_8wekyb3d8bbwe.msixbundle#/dl.7z",
+    "hash": "1e55cd46043ad5613242aae3bceb528b81a181a8b388015ebe7767000102d06a",
+    "architecture": {
+        "64bit": {
+            "pre_install": "gci $dir -Exclude CascadiaPackage_$($version)_x64.msix | rm -Recurse -Force"
+        },
+        "32bit": {
+            "pre_install": "gci $dir -Exclude CascadiaPackage_$($version)_x32.msix | rm -Recurse -Force"
+        }
+    },
+    "installer": {
+        "script": [
+            "$WindowsVersion=[Environment]::OSVersion.Version",
+            "if ($WindowsVersion.Major -ne \"10\") {",
+            "  throw \"This package requires Windows 10.\"",
+            "}",
+            "#The .msixbundle format is not supported on Windows 10 version 1709 and 1803. https://docs.microsoft.com/en-us/windows/msix/msix-1709-and-1803-support",
+            "$IsCorrectBuild=[Environment]::OSVersion.Version.Build",
+            "if ($IsCorrectBuild -lt \"18362\") {",
+            "  throw \"This package requires at least Windows 10 version 1903/OS build 18362.x.\"",
+            "}",
+            "Expand-7zipArchive -Path \"$($dir)\\CascadiaPackage_$($version)_x64.msix\" -Removal"
+        ]
+    },
+    "bin": "WindowsTerminal.exe",
+    "shortcuts": [
+        [
+            "WindowsTerminal.exe",
+            "Windows Terminal (Preview)"
+        ]
+    ],
+    "checkver": {
+        "url": "https://github.com/microsoft/terminal/releases",
+        "regex": "Microsoft\\.WindowsTerminal_(.+)_(.*)\\.msixbundle"
+    },
+    "autoupdate": {
+        "url": "https://github.com/microsoft/terminal/releases/download/v$version/Microsoft.WindowsTerminal_$version_$match2.msixbundle#/dl.7z"
+    }
+}
