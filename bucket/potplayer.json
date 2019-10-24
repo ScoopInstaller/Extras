@@ -36,11 +36,24 @@
             ]
         }
     },
-    "installer": {
-        "script": [
-            "Remove-Item \"$dir\\`$*\" -Force -Recurse"
-        ]
-    },
+    "pre_install": [
+        "Remove-Item \"$dir\\`$*\" -Force -Recurse",
+        "$setFiles = @('PotPlayerMini64.ini', 'PotPlayerMini.ini', 'PotPlayer64.ini', 'PotPlayer.ini')",
+        "$CONT = @(",
+        "    '[Settings]'",
+        "    'AutoUpdateStart=0'",
+        "    'CheckAutoUpdate=0'",
+        "    'FastAutoUpdate=0'",
+        ")",
+        "$finalFile = $CONT -join \"`r`n\"",
+        "    # Set Configs for all executables",
+        "foreach ($f in $setFiles) {",
+        "    if (-not (Test-Path \"$persist_dir\\$f\")) {",
+        "        Write-Host 'File' $f 'does not exists. Creating' -f Yellow",
+        "        Set-Content \"$dir\\$f\" $finalFile -Encoding Ascii",
+        "    }",
+        "}"
+    ],
     "persist": [
         "Capture",
         "Extention",
