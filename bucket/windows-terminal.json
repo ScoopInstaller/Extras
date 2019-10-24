@@ -10,7 +10,7 @@
             "pre_install": "gci $dir -Exclude CascadiaPackage_$($version)_x64.msix | rm -Recurse -Force"
         },
         "32bit": {
-            "pre_install": "gci $dir -Exclude CascadiaPackage_$($version)_x32.msix | rm -Recurse -Force"
+            "pre_install": "gci $dir -Exclude CascadiaPackage_$($version)_x86.msix | rm -Recurse -Force"
         }
     },
     "installer": {
@@ -24,7 +24,8 @@
             "if ($IsCorrectBuild -lt \"18362\") {",
             "  throw \"This package requires at least Windows 10 version 1903/OS build 18362.x.\"",
             "}",
-            "Expand-7zipArchive -Path \"$($dir)\\CascadiaPackage_$($version)_x64.msix\" -Removal"
+            "$arch=if ($architecture -eq \"64bit\") { \"x64\" } else { \"x86\" }",
+            "Expand-7zipArchive -Path \"$($dir)\\CascadiaPackage_$($version)_$($arch).msix\" -Removal"
         ]
     },
     "bin": "WindowsTerminal.exe",
