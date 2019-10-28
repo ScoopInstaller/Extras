@@ -7,25 +7,17 @@
     "hash": "1e55cd46043ad5613242aae3bceb528b81a181a8b388015ebe7767000102d06a",
     "architecture": {
         "64bit": {
-            "pre_install": "gci $dir -Exclude CascadiaPackage_$($version)_x64.msix | rm -Recurse -Force"
+            "pre_install": "Get-ChildItem \"$dir\" -Exclude '*x64.msix' | Remove-Item -Force -Recurse"
         },
         "32bit": {
-            "pre_install": "gci $dir -Exclude CascadiaPackage_$($version)_x86.msix | rm -Recurse -Force"
+            "pre_install": "Get-ChildItem \"$dir\" -Exclude '*x86.msix' | Remove-Item -Force -Recurse"
         }
     },
     "installer": {
         "script": [
-            "$WindowsVersion=[Environment]::OSVersion.Version",
-            "if ($WindowsVersion.Major -ne \"10\") {",
-            "  throw \"This package requires Windows 10.\"",
-            "}",
-            "#The .msixbundle format is not supported on Windows 10 version 1709 and 1803. https://docs.microsoft.com/en-us/windows/msix/msix-1709-and-1803-support",
-            "$IsCorrectBuild=[Environment]::OSVersion.Version.Build",
-            "if ($IsCorrectBuild -lt \"18362\") {",
-            "  throw \"This package requires at least Windows 10 version 1903/OS build 18362.x.\"",
-            "}",
-            "$arch=if ($architecture -eq \"64bit\") { \"x64\" } else { \"x86\" }",
-            "Expand-7zipArchive -Path \"$($dir)\\CascadiaPackage_$($version)_$($arch).msix\" -Removal"
+            "$winVer = [Environment]::OSVersion.Version",
+            "if (($winver.Major -lt '10') -or ($winVer.Build -lt 18362)) { error 'At least Windows 10 18362 is required.'; break }",
+            "Get-ChildItem \"$dir\" '*.msix' | Select-Object -ExpandProperty Fullname | Expand-7zipArchive -DestinationPath \"$dir\" -Removal"
         ]
     },
     "bin": "WindowsTerminal.exe",
@@ -37,9 +29,9 @@
     ],
     "checkver": {
         "url": "https://github.com/microsoft/terminal/releases",
-        "regex": "Microsoft\\.WindowsTerminal_(.+)_(.*)\\.msixbundle"
+        "regex": "WindowsTerminal_([\\d.]+)_8wekyb3d8bbwe\\.msixbundle"
     },
     "autoupdate": {
-        "url": "https://github.com/microsoft/terminal/releases/download/v$version/Microsoft.WindowsTerminal_$version_$match2.msixbundle#/dl.7z"
+        "url": "https://github.com/microsoft/terminal/releases/download/v$version/Microsoft.WindowsTerminal_$version_8wekyb3d8bbwe.msixbundle#/dl.7z"
     }
 }
