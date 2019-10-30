@@ -11,21 +11,23 @@
     },
     "innosetup": true,
     "bin": [
-        "runtime\\bin\\bash.exe",
         [
-            "runtime\\bin\\bash.exe",
-            "sagemath",
-            "--login -c \"cd $(. \"$(scoop prefix sagemath-installer)/runtime/bin/cygpath\" -- (Get-Location).Path) && /opt/sagemath-*/sage $($args | % { . \"$(scoop prefix sagemath-installer)/runtime/bin/cygpath\" -- $_ })\""
+            "sagemath.ps1",
+            "sage"
         ],
         [
-            "runtime\\bin\\bash.exe",
+            "sagemath.ps1",
+            "sagemath"
+        ],
+        [
+            "sagemath.ps1",
             "sagemath-shell",
-            "--login -c '/opt/sagemath-*/sage -sh'"
+            "-sh"
         ],
         [
-            "runtime\\bin\\bash.exe",
+            "sagemath.ps1",
             "sagemath-notebook",
-            "--login -c '/opt/sagemath-*/sage --notebook'"
+            "--notebook"
         ]
     ],
     "shortcuts": [
@@ -47,6 +49,16 @@
             "-t \"SageMath Notebook\" /bin/bash --login -c \"/opt/sagemath-*/sage --notebook\"",
             "sagemath.ico"
         ]
+    ],
+    "pre_install": [
+        "$CONT = @(",
+        "    '$exedir = \"$PSScriptRoot\\runtime\\bin\"'",
+        "    '$cwd_unix = (& \"$exedir\\cygpath.exe\" -- (Get-Location).Path)'",
+        "    '$args_unix = ($args | ForEach-Object { & \"$exedir\\cygpath.exe\" -- $_ })'",
+        "    '$args_unix_quoted = ($args_unix | ForEach-Object { \"''$_''\" })',",
+        "    '& \"$exedir\\bash.exe\" --login -c \"cd ''$cwd_unix'' && /opt/sagemath-*/sage $args_unix_quoted\"'",
+        ")",
+        "Set-Content $dir\\sagemath.ps1 $CONT -Encoding ASCII"
     ],
     "post_install": [
         "@('etc\\fstab.d', 'dev\\shm', 'dev\\mqueue', 'home\\sage') | ForEach-Object {",
