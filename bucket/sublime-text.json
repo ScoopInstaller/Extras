@@ -6,19 +6,53 @@
         "identifier": "Shareware",
         "url": "https://www.sublimetext.com/eula"
     },
+    "post_install": [
+        "if (Test-Path \"$dir\\sublime-text-install-context.reg\") {",
+        "  $sublimepath = \"$dir\\sublime_text.exe\".Replace('\\', '\\\\')",
+        "  $content = Get-Content \"$dir\\sublime-text-install-context.reg\"",
+        "  $content = $content.Replace('$sublime', $sublimepath)",
+        "  if ($global) {",
+        "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "  }",
+        "  $content | Set-Content -Path \"$dir\\sublime-text-install-context.reg\"",
+        "}",
+        "if (Test-Path \"$dir\\sublime-text-uninstall-context.reg\") {",
+        "  $content = Get-Content \"$dir\\sublime-text-uninstall-context.reg\"",
+        "  if ($global) {",
+        "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "  }",
+        "  $content | Set-Content -Path \"$dir\\sublime-text-uninstall-context.reg\"",
+        "}"
+    ],
     "architecture": {
         "64bit": {
-            "url": "https://download.sublimetext.com/Sublime%20Text%20Build%203211%20x64.zip",
-            "hash": "fb77731fa3eda907620a9e8b85bdccc5b5cb4dcf655dcfdc6c7591b78abd0f31"
+            "url": [
+                "https://download.sublimetext.com/Sublime%20Text%20Build%203211%20x64.zip",
+                "https://raw.githubusercontent.com/tkit1994/scooptkit/master/scripts/sublime-text-install-context.reg",
+                "https://raw.githubusercontent.com/tkit1994/scooptkit/master/scripts/sublime-text-uninstall-context.reg"
+            ],
+            "hash": [
+                "fb77731fa3eda907620a9e8b85bdccc5b5cb4dcf655dcfdc6c7591b78abd0f31",
+                "fcbb651905bd0fe0348e649cadefbdd158eab563a64ad85772eb423976bc9390",
+                "861844dcacc7b744cae66c0d2458278d9ea496070d5081ea42531f306d5cbe82"
+            ]
         },
         "32bit": {
-            "url": "https://download.sublimetext.com/Sublime%20Text%20Build%203211.zip",
-            "hash": "e169691d88498fdc8dddc72d336680339707d459d12acf665e830f5ed4a4c98d"
+            "url": [
+                "https://download.sublimetext.com/Sublime%20Text%20Build%203211.zip",
+                "https://raw.githubusercontent.com/tkit1994/scooptkit/master/scripts/sublime-text-install-context.reg",
+                "https://raw.githubusercontent.com/tkit1994/scooptkit/master/scripts/sublime-text-uninstall-context.reg"
+            ],
+            "hash": [
+                "e169691d88498fdc8dddc72d336680339707d459d12acf665e830f5ed4a4c98d",
+                "fcbb651905bd0fe0348e649cadefbdd158eab563a64ad85772eb423976bc9390",
+                "861844dcacc7b744cae66c0d2458278d9ea496070d5081ea42531f306d5cbe82"
+            ]
         }
     },
     "bin": "subl.exe",
     "persist": "Data",
-    "notes": "Sublime Text may be downloaded and evaluated for free, however a license must be purchased for continued use. There is currently no enforced time limit for the evaluation. For more information please see https://www.sublimetext.com/3",
+    "notes": "Sublime Text may be downloaded and evaluated for free, however a license must be purchased for continued use. There is currently no enforced time limit for the evaluation. For more information please see https://www.sublimetext.com/3. Add Sublime Text as a context menu option by running: \"$dir\\sublime-text-install-context.reg\"",
     "shortcuts": [
         [
             "sublime_text.exe",
