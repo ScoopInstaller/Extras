@@ -6,30 +6,12 @@
         "identifier": "Shareware",
         "url": "https://www.sublimetext.com/eula"
     },
-    "post_install": [
-        "if (Test-Path \"$dir\\sublime-text-install-context.reg\") {",
-        "  $sublimepath = \"$dir\\sublime_text.exe\".Replace('\\', '\\\\')",
-        "  $content = Get-Content \"$dir\\sublime-text-install-context.reg\"",
-        "  $content = $content.Replace('$sublime', $sublimepath)",
-        "  if ($global) {",
-        "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
-        "  }",
-        "  $content | Set-Content -Path \"$dir\\sublime-text-install-context.reg\"",
-        "}",
-        "if (Test-Path \"$dir\\sublime-text-uninstall-context.reg\") {",
-        "  $content = Get-Content \"$dir\\sublime-text-uninstall-context.reg\"",
-        "  if ($global) {",
-        "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
-        "  }",
-        "  $content | Set-Content -Path \"$dir\\sublime-text-uninstall-context.reg\"",
-        "}"
-    ],
     "architecture": {
         "64bit": {
             "url": [
                 "https://download.sublimetext.com/Sublime%20Text%20Build%203211%20x64.zip",
-                "https://raw.githubusercontent.com/tkit1994/scoop-extras/master/scripts/sublime-text-install-context.reg",
-                "https://raw.githubusercontent.com/tkit1994/scoop-extras/master/scripts/sublime-text-uninstall-context.reg"
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/sublime-text-install-context.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/sublime-text-uninstall-context.reg"
             ],
             "hash": [
                 "fb77731fa3eda907620a9e8b85bdccc5b5cb4dcf655dcfdc6c7591b78abd0f31",
@@ -40,8 +22,8 @@
         "32bit": {
             "url": [
                 "https://download.sublimetext.com/Sublime%20Text%20Build%203211.zip",
-                "https://raw.githubusercontent.com/tkit1994/scoop-extras/master/scripts/sublime-text-install-context.reg",
-                "https://raw.githubusercontent.com/tkit1994/scoop-extras/master/scripts/sublime-text-uninstall-context.reg"
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/sublime-text-install-context.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/sublime-text-uninstall-context.reg"
             ],
             "hash": [
                 "e169691d88498fdc8dddc72d336680339707d459d12acf665e830f5ed4a4c98d",
@@ -50,19 +32,32 @@
             ]
         }
     },
-    "bin": "subl.exe",
-    "persist": "Data",
-    "notes": "Sublime Text may be downloaded and evaluated for free, however a license must be purchased for continued use. There is currently no enforced time limit for the evaluation. For more information please see https://www.sublimetext.com/3. Add Sublime Text as a context menu option by running: \"$dir\\sublime-text-install-context.reg\"",
-    "shortcuts": [
-        [
-            "sublime_text.exe",
-            "Sublime Text 3"
-        ]
+    "pre_install": [
+        "$file = \"$dir\\sublime-text-install-context.reg\"",
+        "if (Test-Path $file) {",
+        "    $sublimepath = \"$dir\\sublime_text.exe\".Replace('\\', '\\\\')",
+        "    $content = Get-Content $file",
+        "    $content = $content.Replace('$sublime', $sublimepath)",
+        "    if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "    Set-Content $file $content -Encoding Ascii -Force",
+        "}",
+        "$file = \"$dir\\sublime-text-uninstall-context.reg\"",
+        "if (Test-Path $file) {",
+        "    $content = Get-Content $file",
+        "    if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "    Set-Content $file $content -Encoding Ascii -Force",
+        "}"
     ],
-    "checkver": {
-        "url": "https://www.sublimetext.com/3",
-        "re": "Version:</i>\\sBuild\\s([\\d]+)</p>"
-    },
+    "notes": [
+        "Sublime Text may be downloaded and evaluated for free, however a license must be purchased for continued use.",
+        "There is currently no enforced time limit for the evaluation.",
+        "For more information please see 'https://www.sublimetext.com/3'.",
+        "Add Sublime Text as a context menu option by running: \"reg import '$dir\\sublime-text-install-context.reg'\""
+    ],
+    "bin": "subl.exe",
+    "shortcuts": [["sublime_text.exe", "Sublime Text 3"]],
+    "persist": "Data",
+    "checkver": "Version:</i>\\s*Build\\s*([\\d]+)</p>",
     "autoupdate": {
         "architecture": {
             "64bit": {
