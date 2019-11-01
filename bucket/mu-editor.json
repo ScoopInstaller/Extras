@@ -15,21 +15,17 @@
     },
     "pre_install": [
         "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\uninst*\" -Recurse -Force",
-        "if ($PSVersionTable.PSVersion.Major -gt 5) {",
-        "   $exe = Get-Content \"$dir\\bin\\launcher_exe.dat\" -AsByteStream -Raw",
-        "   $mu_debug = Get-Content \"$dir\\bin\\mu-debug-append.zip\" -AsByteStream -Raw",
-        "   $pgzrun = Get-Content \"$dir\\bin\\pgzrun-append.zip\" -AsByteStream -Raw",
-        "   $py = [System.Text.Encoding]::UTF8.GetBytes('#!\"' + $dir + '\\Python\\python.exe\"') + [byte]'13' + [byte]'10'",
-        "   $exe + $py + $mu_debug | Set-Content \"$dir\\bin\\mu-debug.exe\" -AsByteStream -NoNewline",
-        "   $exe + $py + $pgzrun | Set-Content \"$dir\\bin\\pgzrun.exe\" -AsByteStream -NoNewline",
+        "if ((Get-Command Get-Content).Parameters.ContainsKey('AsByteStream')) {",
+        "   $enc = @{ 'AsByteStream' = $true }",
         "} else {",
-        "   $exe = Get-Content \"$dir\\bin\\launcher_exe.dat\" -Encoding Byte -Raw",
-        "   $mu_debug = Get-Content \"$dir\\bin\\mu-debug-append.zip\" -Encoding Byte -Raw",
-        "   $pgzrun = Get-Content \"$dir\\bin\\pgzrun-append.zip\" -Encoding Byte -Raw",
-        "   $py = [System.Text.Encoding]::UTF8.GetBytes('#!\"' + $dir + '\\Python\\python.exe\"') + [byte]'13' + [byte]'10'",
-        "   $exe + $py + $mu_debug | Set-Content \"$dir\\bin\\mu-debug.exe\" -Encoding Byte -NoNewline",
-        "   $exe + $py + $pgzrun | Set-Content \"$dir\\bin\\pgzrun.exe\" -Encoding Byte -NoNewline",
-        "}"
+        "   $enc = @{ 'Encoding' = 'Byte' }",
+        "}",
+        "$exe = Get-Content \"$dir\\bin\\launcher_exe.dat\" @enc -Raw",
+        "$mu_debug = Get-Content \"$dir\\bin\\mu-debug-append.zip\" @enc -Raw",
+        "$pgzrun = Get-Content \"$dir\\bin\\pgzrun-append.zip\" @enc -Raw",
+        "$py = [System.Text.Encoding]::UTF8.GetBytes('#!\"' + $dir + '\\Python\\python.exe\"') + [byte]'13' + [byte]'10'",
+        "$exe + $py + $mu_debug | Set-Content \"$dir\\bin\\mu-debug.exe\" @enc -NoNewline",
+        "$exe + $py + $pgzrun | Set-Content \"$dir\\bin\\pgzrun.exe\" @enc -NoNewline"
     ],
     "shortcuts": [
         [
