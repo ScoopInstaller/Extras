@@ -1,13 +1,13 @@
 {
-    "version": "9.6.0.25144",
+    "version": "9.7.0.29455",
     "homepage": "https://www.foxitsoftware.com/",
     "description": "Super-fast, feature rich PDF reader that offers a delightful reading experience in a small footprint.",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.foxitsoftware.com/pdf-reader/eula.html"
     },
-    "url": "https://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/win/9.x/9.6/en_us/FoxitReader96_Setup_Prom_IS.exe#/dl.7z",
-    "hash": "432dcea5ac97ac9198b042d7ec463dcf9cfd28541e5ebc4ce4672f4163498162",
+    "url": "https://cdn01.foxitsoftware.com/product/reader/desktop/win/9.7/D205F785AF753E06041933E5C5E19E5C/FoxitReader97_enu_Setup_Prom.exe",
+    "hash": "md5:d205f785af753e06041933e5c5e19e5c",
     "bin": "FoxitReader.exe",
     "shortcuts": [
         [
@@ -15,17 +15,16 @@
             "Foxit Reader"
         ]
     ],
-    "installer": {
-        "script": [
-            "Get-ChildItem \"$dir\\`$PLUGINSDIR\" '*_Prom.exe' | Select-Object -ExpandProperty Fullname | Expand-InnoArchive -DestinationPath \"$dir\"",
-            "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse"
-        ]
-    },
+    "innosetup": true,
     "checkver": {
         "url": "https://www.foxitsoftware.com/downloads/downloadForm.php?retJson=1&product=Foxit-Reader&platform=Windows&language=English",
-        "jsonpath": "$.package_info.version[0]"
+        "regex": "([\\d.]+).*(?<md5hash>([a-fA-F0-9]{32}))"
     },
     "autoupdate": {
-        "url": "https://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/win/$majorVersion.x/$majorVersion.$minorVersion/en_us/FoxitReader$majorVersion$minorVersion_Setup_Prom_IS.exe#/dl.7z"
+        "url": "https://cdn01.foxitsoftware.com/product/reader/desktop/win/$majorVersion.$minorVersion/$matchMd5hash/FoxitReader$majorVersion$minorVersion_enu_Setup_Prom.exe",
+        "hash": {
+            "url": "https://www.foxitsoftware.com/downloads/downloadForm.php?retJson=1&product=Foxit-Reader&platform=Windows&language=English",
+            "regex": "$md5"
+        }
     }
 }

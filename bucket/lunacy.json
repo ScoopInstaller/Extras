@@ -1,29 +1,42 @@
 {
+    "version": "4.5.0",
     "homepage": "https://icons8.com/lunacy",
-    "description": "Free graphic design software that works offline and supports .sketch files.",
+    "description": "Free Graphic Design Software.",
     "license": {
         "identifier": "Freeware",
         "url": "https://docs.icons8.com/lunacy%20license.md"
     },
-    "version": "4.0.1",
-    "url": "https://desktop.icons8.com/lunacy/LunacySetup_4.0.1.exe",
-    "hash": "521c3a2b0e12095965c3adbe50622f7dc6bd8873ca7f862037b00971bee7ac22",
-    "bin": [
-        [
-            "Lunacy.exe",
-            "lunacy"
-        ]
-    ],
+    "url": "https://desktop.icons8.com/lunacy/LunacySetup_4.5.0.exe",
+    "hash": "71c51bf8c6bfdf6ffbf8381a968c5ff81291b5443cd68664c1e9afe323dff657",
+    "innosetup": true,
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": [
+                    "Get-ChildItem \"$dir\" '*,1.*' | ForEach-Object { Rename-Item $_.Fullname \"$($_.Basename.TrimEnd(',1'))$($_.Extension)\" }",
+                    "Remove-Item \"$dir\\*,2*\""
+                ]
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": [
+                    "Get-ChildItem \"$dir\" '*,2.*' | ForEach-Object { Rename-Item $_.Fullname \"$($_.Basename.TrimEnd(',2'))$($_.Extension)\" }",
+                    "Remove-Item \"$dir\\*,1*\""
+                ]
+            }
+        }
+    },
+    "bin": "Lunacy.exe",
     "shortcuts": [
         [
             "Lunacy.exe",
             "Lunacy"
         ]
     ],
-    "innosetup": true,
     "checkver": {
         "url": "https://docs.icons8.com/release-notes/",
-        "re": ">([\\d.]+)</h2>"
+        "regex": "LunacySetup_([\\d.]+)\\.exe"
     },
     "autoupdate": {
         "url": "https://desktop.icons8.com/lunacy/LunacySetup_$version.exe"

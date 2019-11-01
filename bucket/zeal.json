@@ -15,7 +15,11 @@
             "extract_dir": "zeal-portable-0.6.1-windows-x64"
         }
     },
-    "pre_install": "if (!(Test-Path \"$dir\\zeal.ini\")) { New-Item \"$dir\\zeal.ini\" -Force | Out-Null }",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\zeal.ini\")) {",
+        "    Set-Content \"$dir\\zeal.ini\" @('[General]', 'check_for_update=false') -Encoding ASCII",
+        "}"
+    ],
     "bin": "zeal.exe",
     "shortcuts": [
         [
