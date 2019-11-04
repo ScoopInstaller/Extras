@@ -1,6 +1,6 @@
 {
     "homepage": "https://www.visualstudio.com/downloads/",
-    "description": "Microsoft Visual C++ Redistributable for Visual Studio 2005/2008/2010/2012/2013/2015-2019.",
+    "description": "Microsoft Visual C++ Redistributable for Visual Studio 2019.",
     "version": "14.22.27821.0",
     "license": {
         "identifier": "Freeware",
@@ -14,16 +14,9 @@
         "6ed7281196f390184dbca70cb5604be5759095693c232a1232699b014828c794",
         "8a8b3995620aeda29d2d99359172c7a3be17720b627a2b09cb293e8c1a76b41b"
     ],
-    "post_install": [
-        "Invoke-ExternalCommand -FilePath \"$dir\\vc_redist.x64.exe\" -ArgumentList \"/fo /quiet /norestart\" -RunAs | Out-Null",
-        "Invoke-ExternalCommand -FilePath \"$dir\\vc_redist.x86.exe\" -ArgumentList \"/fo /quiet /norestart\" -RunAs | Out-Null"
-    ],
-    "notes": "You can now remove all vcredist installers with 'scoop uninstall vcredist vcredist2005 vcredist2008 vcredist2010 vcredist2012 vcredist2013'",
-    "depends": [
-        "vcredist2005",
-        "vcredist2008",
-        "vcredist2010",
-        "vcredist2012",
-        "vcredist2013"
+    "pre_install": [
+        "Get-ChildItem \"$dir\\vc_redist*.exe\" | ForEach-Object { Expand-DarkArchive $_ \"$dir\\vcredist\" -Removal }",
+        "Get-ChildItem \"$dir\\vcredist\\AttachedContainer\\packages\\*\\*.msi\" | ForEach-Object { Expand-MsiArchive $_ \"$dir\" }",
+        "Remove-Item \"$dir\\vcredist\" -Recurse"
     ]
 }
