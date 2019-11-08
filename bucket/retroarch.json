@@ -14,16 +14,12 @@
         }
     },
     "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\retroarch.cfg\")) {",
-        "    New-Item \"$dir\\retroarch.cfg\" -Type File | Out-Null",
+        "if (!(Test-Path \"$persist_dir\\retroarch.cfg\")) { Move-Item \"$dir\\retroarch.default.cfg\" \"$dir\\retroarch.cfg\" }",
+        "'favorites', 'history' | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\content_$_.lpl\")) { New-Item \"$dir\\content_$_.lpl\" | Out-Null }",
         "}"
     ],
-    "bin": [
-        [
-            "retroarch.exe",
-            "retroarch"
-        ]
-    ],
+    "bin": "retroarch.exe",
     "shortcuts": [
         [
             "retroarch.exe",
@@ -34,14 +30,18 @@
         "assets\\wallpapers",
         "cores",
         "cheats",
+        "config",
         "playlists",
         "records",
         "recordings",
         "saves",
         "screenshots",
+        "shaders\\presets",
         "states",
         "system",
         "thumbnails",
+        "content_favorites.lpl",
+        "content_history.lpl",
         "retroarch.cfg"
     ],
     "checkver": {
