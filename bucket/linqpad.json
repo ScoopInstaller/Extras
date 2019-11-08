@@ -1,26 +1,57 @@
 {
-    "version": "5.40.0",
+    "version": "6.3",
     "homepage": "https://www.linqpad.net",
     "description": "The .NET programmer’s playground.",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.linqpad.net/eula.txt"
     },
-    "url": "http://download.linqpad.net/public/LINQPad5.zip",
-    "hash": "573a1bc6590511b3752e854c0572a3ac70377002538d22dc1400e84a8dc4afd7",
-    "bin": [
-        "lprun.exe",
-        "linqpad.exe"
+    "url": "http://download.linqpad.net/public/LINQPad6.zip",
+    "hash": "d9995e26e11faa9f03c1916d7a0382f59055c8aeef318abe8b783a47f24e458f",
+    "depends": "dotnet-sdk",
+    "pre_install": [
+        "$major = $version -split '\\.' | Select-Object -First 1",
+        "Get-ChildItem \"$dir\" 'l*.exe' | ForEach-Object {",
+        "         # $1 is needed to not remove character",
+        "    $newName = $_.Basename -replace \"([^8])$major\", '$1'",
+        "    Rename-Item $_.Fullname ($newName + $_.Extension)",
+        "}"
     ],
-    "shortcuts": [
-        [
-            "linqpad.exe",
-            "LINQPad"
-        ]
-    ],
+    "architecture": {
+        "64bit": {
+            "bin": [
+                "lprun.exe",
+                "linqpad.exe",
+                "lprun-x86.exe",
+                "linqpad-x86.exe"
+            ],
+            "shortcuts": [
+                [
+                    "linqpad.exe",
+                    "LINQPad"
+                ],
+                [
+                    "linqpad-x86.exe",
+                    "LINQPad x86"
+                ]
+            ]
+        },
+        "32bit": {
+            "bin": [
+                "lprun-x86.exe",
+                "linqpad-x86.exe"
+            ],
+            "shortcuts": [
+                [
+                    "linqpad-x86.exe",
+                    "LINQPad"
+                ]
+            ]
+        }
+    },
     "checkver": {
         "url": "https://www.linqpad.net/Download.aspx",
-        "regex": "Current release version: <b>([\\d.]+)</b>"
+        "regex": "<td>([\\d.]+)</td>\\s+</tr>"
     },
     "autoupdate": {
         "url": "http://download.linqpad.net/public/LINQPad$majorVersion.zip"

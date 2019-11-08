@@ -1,6 +1,6 @@
 {
     "homepage": "https://code.visualstudio.com/",
-    "version": "1.37.1",
+    "version": "1.40.0",
     "description": "Visual Studio Code is a lightweight but powerful source code editor (Portable Edition).",
     "license": {
         "identifier": "Freeware",
@@ -26,11 +26,21 @@
     ],
     "persist": "data",
     "post_install": [
-        "if(Test-Path(\"$dir\\vscode-install-context.reg\")) {",
+        "if (Test-Path \"$dir\\vscode-install-context.reg\") {",
         "  $codepath = \"$dir\\Code.exe\".Replace('\\', '\\\\')",
         "  $content = Get-Content \"$dir\\vscode-install-context.reg\"",
         "  $content = $content.Replace('$code', $codepath)",
+        "  if ($global) {",
+        "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "  }",
         "  $content | Set-Content -Path \"$dir\\vscode-install-context.reg\"",
+        "}",
+        "if (Test-Path \"$dir\\vscode-uninstall-context.reg\") {",
+        "  $content = Get-Content \"$dir\\vscode-uninstall-context.reg\"",
+        "  if ($global) {",
+        "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "  }",
+        "  $content | Set-Content -Path \"$dir\\vscode-uninstall-context.reg\"",
         "}"
     ],
     "checkver": {
@@ -40,26 +50,26 @@
     "architecture": {
         "64bit": {
             "url": [
-                "https://vscode-update.azurewebsites.net/1.37.1/win32-x64-archive/stable#/dl.7z",
+                "https://vscode-update.azurewebsites.net/1.40.0/win32-x64-archive/stable#/dl.7z",
                 "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg",
                 "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg"
             ],
             "hash": [
-                "2a918c5fd5d9296923810bc1375ea2edf2e3f83e769ffb511f74f0fcbb1ed42b",
-                "3673d7767da27418c4c7eea146043fa6a7c59df65199c79850e58367fd66fb56",
-                "9b55432e91e8534cc871d8d57f826761649d1ed7a3a5d7cabc3089fe5a6e147f"
+                "58040125cc4493e5210f4116497e86a05afa0a6af5da6d8256c7ebe694a80a32",
+                "b65d66860d9ccc18bfb05237b03e06db0d6c574be3d4b946c2a5e6865c08cb28",
+                "df2a5162e72e2518e2b75b4337c8e7b46c136554872af90fa0de1cf6ebef376f"
             ]
         },
         "32bit": {
             "url": [
-                "https://vscode-update.azurewebsites.net/1.37.1/win32-archive/stable#/dl.7z",
+                "https://vscode-update.azurewebsites.net/1.40.0/win32-archive/stable#/dl.7z",
                 "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg",
                 "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg"
             ],
             "hash": [
-                "d603b3476e2e23f0dab16d000ba21793aef2ea3f2806bb95a1a85be0ee4e2e82",
-                "3673d7767da27418c4c7eea146043fa6a7c59df65199c79850e58367fd66fb56",
-                "9b55432e91e8534cc871d8d57f826761649d1ed7a3a5d7cabc3089fe5a6e147f"
+                "1a2527f87d52c24f9e2eddb2e8e867e959bf0dcafa970546b2fe0f8e426431d8",
+                "b65d66860d9ccc18bfb05237b03e06db0d6c574be3d4b946c2a5e6865c08cb28",
+                "df2a5162e72e2518e2b75b4337c8e7b46c136554872af90fa0de1cf6ebef376f"
             ]
         }
     },
