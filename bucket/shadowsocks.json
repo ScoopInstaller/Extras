@@ -4,7 +4,16 @@
     "homepage": "https://github.com/shadowsocks/shadowsocks-windows",
     "license": "GPL-3.0-only",
     "url": "https://github.com/shadowsocks/shadowsocks-windows/releases/download/4.1.8.0/Shadowsocks-4.1.8.0.zip",
-    "hash": "14f0840dbabc554d43cf3021e04f7b11c7285bd85ee13dfb9d59c0a942bcd515",
+    "hash": "sha512:795616559cbd3ae09ae1f0d1b5f21eefe7ffaafa4b89d84cf4c9a68c4a134a4452b787f756a49148f36b9e3223483bd7830c4abe5f3ec3c0559009e401483b62",
+    "pre_install": [
+        "function CreateFile ($name, $value = $null) {",
+        "    if (!(Test-Path \"$persist_dir\\$name\")) {",
+        "        Set-Content \"$dir\\$name\" $value -Encoding Ascii",
+        "    }",
+        "}",
+        "'gui-config.json', 'statistics-config.json' | ForEach-Object { CreateFile $_ '{}' }",
+        "'pac.txt', 'user-rule.txt' | ForEach-Object { CreateFile $_ }"
+    ],
     "bin": "Shadowsocks.exe",
     "shortcuts": [
         [
@@ -18,20 +27,12 @@
         "pac.txt",
         "user-rule.txt"
     ],
-    "pre_install": [
-        "function CreateFile ($name, $value = $null) {",
-        "    if (!(Test-Path \"$persist_dir\\$name\")) {",
-        "        Write-Host -ForegroundColor Yellow -BackgroundColor Black \"Create $name for shadowsocks\"",
-        "        New-Item -Force -Path \"$persist_dir\" -Name $name -Value $value",
-        "    }",
-        "}",
-        "'gui-config.json', 'statistics-config.json' | % {CreateFile $_ '{}'}",
-        "'pac.txt', 'user-rule.txt' | % {CreateFile $_}"
-    ],
-    "checkver": {
-        "github": "https://github.com/shadowsocks/shadowsocks-windows"
-    },
+    "checkver": "github",
     "autoupdate": {
-        "url": "https://github.com/shadowsocks/shadowsocks-windows/releases/download/$version/Shadowsocks-$version.zip"
+        "url": "https://github.com/shadowsocks/shadowsocks-windows/releases/download/$version/Shadowsocks-$version.zip",
+        "hash": {
+            "url": "https://github.com/shadowsocks/shadowsocks-windows/releases/tag/$version",
+            "regex": "(?sm)$basename.*?$sha512"
+        }
     }
 }
