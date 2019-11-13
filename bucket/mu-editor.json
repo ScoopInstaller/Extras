@@ -1,0 +1,51 @@
+{
+    "homepage": "https://codewith.mu",
+    "version": "1.0.2",
+    "license": "GPL-3.0-or-later",
+    "description": "A small, simple editor for beginner Python programmers.",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/mu-editor/mu/releases/download/1.0.2/mu-editor_1.0.2_win64.exe#/dl.7z",
+            "hash": "84e74aef73b884a9e94092a55e512e9f6e2fd459a573dd4d9d0ed18afe1eba37"
+        },
+        "32bit": {
+            "url": "https://github.com/mu-editor/mu/releases/download/1.0.2/mu-editor_1.0.2_win32.exe#/dl.7z",
+            "hash": "576baea0bd64649583a61bf6ce2836a91b02dce450c4b886d6adc7c35460ae8c"
+        }
+    },
+    "pre_install": [
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\uninst*\" -Recurse -Force",
+        "if ((Get-Command Get-Content).Parameters.ContainsKey('AsByteStream')) {",
+        "   $enc = @{ 'AsByteStream' = $true }",
+        "} else {",
+        "   $enc = @{ 'Encoding' = 'Byte' }",
+        "}",
+        "$exe = Get-Content \"$dir\\bin\\launcher_exe.dat\" @enc -Raw",
+        "$mu_debug = Get-Content \"$dir\\bin\\mu-debug-append.zip\" @enc -Raw",
+        "$pgzrun = Get-Content \"$dir\\bin\\pgzrun-append.zip\" @enc -Raw",
+        "$py = [System.Text.Encoding]::UTF8.GetBytes('#!\"' + $dir + '\\Python\\python.exe\"') + [byte]'13' + [byte]'10'",
+        "$exe + $py + $mu_debug | Set-Content \"$dir\\bin\\mu-debug.exe\" @enc -NoNewline",
+        "$exe + $py + $pgzrun | Set-Content \"$dir\\bin\\pgzrun.exe\" @enc -NoNewline"
+    ],
+    "shortcuts": [
+        [
+            "Python\\pythonw.exe",
+            "Mu",
+            "\"$dir\\Mu.launch.pyw\"",
+            "win_icon.ico"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/mu-editor/mu"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/mu-editor/mu/releases/download/$version/mu-editor_$version_win64.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://github.com/mu-editor/mu/releases/download/$version/mu-editor_$version_win32.exe#/dl.7z"
+            }
+        }
+    }
+}
