@@ -17,9 +17,20 @@
     },
     "bin": [
         "KeePassXC.exe",
-        "keepassxc-cli.exe"
+        "keepassxc-cli.exe",
+        "keepassxc-proxy.exe"
     ],
-    "persist": "keepassxc.ini",
+    "installer": {
+        "script": [
+            "if (!(Test-Path \"$persist_dir\\keepass.ini\")) {",
+            "    New-Item \"$persist_dir\\keepass.ini\" -Force | Out-Null",
+            "}",
+            "Copy-Item \"$persist_dir\\keepass.ini\" \"$dir\\keepass.ini\" -Force",
+        ]
+    },
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\*\" \"$persist_dir\" -Include 'keepass.ini' -Force"
+    },
     "shortcuts": [
         [
             "KeePassXC.exe",
