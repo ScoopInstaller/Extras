@@ -32,8 +32,10 @@
         ]
     },
     "uninstaller": {
-        "file": "Uninstall.exe",
-        "args": "/S"
+        "script": [
+            "if (-not (is_admin)) { error 'Admin privileges are needed.'; break }",
+            "Invoke-ExternalCommand -FilePath \"$dir\\Uninstall.exe\" -ArgumentList '/S' | Out-Null"
+        ]
     },
     "bin": "bin\\openvpn.exe",
     "shortcuts": [
