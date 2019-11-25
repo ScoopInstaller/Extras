@@ -1,38 +1,60 @@
 {
-    "homepage": "https://ryochan7.github.io/ds4windows-site/",
-    "description": "Portable program that allows you to get the best experience while using a DualShock 4 on your PC.",
-    "version": "1.7.23",
-    "license": "Unknown",
-    "architecture": {
-        "64bit": {
-            "url": "https://github.com/Ryochan7/DS4Windows/releases/download/v1.7.23/DS4Windows_1.7.23_x64.zip",
-            "hash": "602fee01c42e9a3847c82c8379999711a16a64e2fee1ad65b61312748c344401"
-        },
-        "32bit": {
-            "url": "https://github.com/Ryochan7/DS4Windows/releases/download/v1.7.23/DS4Windows_1.7.23_x86.zip",
-            "hash": "089f5cabf9686f588a9c29ff93863e6d29acf0955f5e3a1d2ae859e7c04f0ba9"
-        }
-    },
-    "bin": "DS4Windows.exe",
-    "extract_dir": "DS4Windows",
-    "post_install": "If (Test-Path \"$dir\\DS4Updater.exe\") { Remove-Item \"$dir\\DS4Updater.exe\" -Force }",
-    "shortcuts": [
-        [
-            "DS4Windows.exe",
-            "DS4Windows"
-        ]
-    ],
-    "checkver": {
-        "github": "https://github.com/Ryochan7/DS4Windows"
-    },
-    "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://github.com/Ryochan7/DS4Windows/releases/download/v$version/DS4Windows_$version_x64.zip"
-            },
-            "32bit": {
-                "url": "https://github.com/Ryochan7/DS4Windows/releases/download/v$version/DS4Windows_$version_x86.zip"
-            }
-        }
-    }
+	"homepage": "https://ryochan7.github.io/ds4windows-site/",
+	"description": "Portable program that allows you to get the best experience while using a DualShock 4 on your PC.",
+	"version": "1.7.23",
+	"license": "MIT",
+	"architecture": {
+		"64bit": {
+			"url": "https://github.com/Ryochan7/DS4Windows/releases/download/v1.7.23/DS4Windows_1.7.23_x64.zip",
+			"hash": "602fee01c42e9a3847c82c8379999711a16a64e2fee1ad65b61312748c344401"
+		},
+		"32bit": {
+			"url": "https://github.com/Ryochan7/DS4Windows/releases/download/v1.7.23/DS4Windows_1.7.23_x86.zip",
+			"hash": "089f5cabf9686f588a9c29ff93863e6d29acf0955f5e3a1d2ae859e7c04f0ba9"
+		}
+	},
+	"bin": "DS4Windows.exe",
+	"extract_dir": "DS4Windows",
+	"installer": {
+		"script": [
+			"$FILE = 'Actions.xml'",
+			"if (!(Test-Path \"$persist_dir\\$FILE\")) {",
+			"    New-Item \"$dir\\$FILE\" -Type File | Out-Null",
+			"}",
+			"$FILE = 'Auto Profiles.xml'",
+			"if (!(Test-Path \"$persist_dir\\$FILE\")) {",
+			"    New-Item \"$dir\\$FILE\" -Type File | Out-Null",
+			"}",
+			"$FILE = 'Profiles.xml'",
+			"if (!(Test-Path \"$persist_dir\\$FILE\")) {",
+			"    New-Item \"$dir\\$FILE\" -Type File | Out-Null",
+			"}"
+		]
+	},
+	"persist": [
+		"Profiles",
+		"Actions.xml",
+		"Auto Profiles.xml",
+		"Profiles.xml"
+	],
+	"post_install": "If (Test-Path \"$dir\\DS4Updater.exe\") { Remove-Item \"$dir\\DS4Updater.exe\" -Force }",
+	"shortcuts": [
+		[
+			"DS4Windows.exe",
+			"DS4Windows"
+		]
+	],
+	"checkver": {
+		"github": "https://github.com/Ryochan7/DS4Windows"
+	},
+	"autoupdate": {
+		"architecture": {
+			"64bit": {
+				"url": "https://github.com/Ryochan7/DS4Windows/releases/download/v$version/DS4Windows_$version_x64.zip"
+			},
+			"32bit": {
+				"url": "https://github.com/Ryochan7/DS4Windows/releases/download/v$version/DS4Windows_$version_x86.zip"
+			}
+		}
+	}
 }
