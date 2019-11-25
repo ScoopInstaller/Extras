@@ -15,29 +15,22 @@
     },
     "bin": "DS4Windows.exe",
     "extract_dir": "DS4Windows",
-    "installer": {
-        "script": [
-            "$FILE = 'Actions.xml'",
-            "if (!(Test-Path \"$persist_dir\\$FILE\")) {",
-            "    New-Item \"$dir\\$FILE\" -Type File | Out-Null",
-            "}",
-            "$FILE = 'Auto Profiles.xml'",
-            "if (!(Test-Path \"$persist_dir\\$FILE\")) {",
-            "    New-Item \"$dir\\$FILE\" -Type File | Out-Null",
-            "}",
-            "$FILE = 'Profiles.xml'",
-            "if (!(Test-Path \"$persist_dir\\$FILE\")) {",
-            "    New-Item \"$dir\\$FILE\" -Type File | Out-Null",
-            "}"
-        ]
-    },
+    "pre_install": [
+        "'Actions.xml', 'Profiles.xml' | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\$_\")) {",
+        "        New-Item \"$dir\\$_\" | Out-Null",
+        "    }",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\Auto Profiles.xml\")) {",
+        "   Set-Content -Path \"$dir\\Auto Profiles.xml\" -Value '<?xml version=\"1.0\" encoding=\"utf-8\"?><Programs />'",
+        "}"
+    ],
     "persist": [
         "Profiles",
         "Actions.xml",
         "Auto Profiles.xml",
         "Profiles.xml"
     ],
-    "post_install": "If (Test-Path \"$dir\\DS4Updater.exe\") { Remove-Item \"$dir\\DS4Updater.exe\" -Force }",
     "shortcuts": [
         [
             "DS4Windows.exe",
