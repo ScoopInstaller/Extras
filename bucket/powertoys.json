@@ -21,12 +21,10 @@
         ]
     ],
     "notes": [
-        "Add the PowerRename tool as a context menu item by running:",
-        "\"$dir\\powertoys-install-context.reg\"",
+        "Add the PowerRename tool as a context menu item by running: '$dir\\powertoys-install-context.reg'",
         "If installed globally, other users can enable the context menu item in the PowerToys app.",
         "",
-        "To remove the context menu item, which should be done before uninstalling:",
-        "\"$dir\\powertoys-uninstall-context.reg\"",
+        "To remove the context menu item, which should be done before uninstalling: '$dir\\powertoys-uninstall-context.reg'",
         "You may also need to close Explorer or other file managers when uninstalling."
     ],
     "post_install": [
@@ -36,13 +34,13 @@
         "  if ($global) {",
         "    $content = $content.Replace('HKEY_CURRENT_USER\\Software\\Classes', 'HKEY_CLASSES_ROOT')",
         "  }",
-        "  $content | Set-Content -Path \"$dir\\powertoys-install-context.reg\"",
+        "  Set-Content \"$dir\\powertoys-install-context.reg\" $content -Encoding Ascii",
         "}",
         "if (Test-Path \"$dir\\powertoys-uninstall-context.reg\") {",
         "  if ($global) {",
         "    $content = Get-Content \"$dir\\powertoys-uninstall-context.reg\"",
         "    $content = $content.Replace('HKEY_CURRENT_USER\\Software\\Classes', 'HKEY_CLASSES_ROOT')",
-        "    $content | Set-Content -Path \"$dir\\powertoys-uninstall-context.reg\"",
+        "    Set-Content \"$dir\\powertoys-uninstall-context.reg\" $content -Encoding Ascii",
         "  }",
         "}"
     ],
