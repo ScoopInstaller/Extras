@@ -5,35 +5,55 @@
     "version": "2.10.14",
     "url": "https://download.gimp.org/mirror/pub/gimp/v2.10/windows/gimp-2.10.14-setup.exe",
     "hash": "6de7f8722a0601e821c6cbfe3fc8b5055fb32d59d2b64fbdbd19f7dcf5a4b8e9",
-    "installer": {
-        "type": "inno",
-        "include": [
-            "gimp32on64",
-            "gs",
-            "py"
-        ],
-        "exclude": [
-            "gimp32",
-            "deps32",
-            "debug",
-            "{sys}"
-        ],
-        "script": [
-            "$defpath = \"`nPATH=`${gimp_installation_dir}\\bin\"",
-            "if ($architecture -eq '64bit') {",
-            "   $defpath += \"`${gimp_installation_dir}\\32\\bin\"",
-            "}",
-            "$defenv = Get-Content \"$dir\\lib\\gimp\\2.0\\environ\\default.env\" -Raw",
-            "$defenv += $defpath",
-            "$defenv += 'PYTHONPATH=${gimp_installation_dir}\\lib\\gimp\\2.0\\python;${gimp_plug_in_dir}\\plug-ins\\python-console'",
-            "$defenv | Set-Content \"$dir\\lib\\gimp\\2.0\\environ\\default.env\"",
-            "$pyenv = Get-Content \"$dir\\lib\\gimp\\2.0\\environ\\pygimp.env\" -Raw",
-            "$pyenv += '__COMPAT_LAYER=HIGHDPIAWARE'",
-            "$pyenv | Set-Content \"$dir\\lib\\gimp\\2.0\\environ\\pygimp.env\"",
-            "$pyint = Get-Content \"$dir\\lib\\gimp\\2.0\\interpreters\\pygimp.interp\" -Raw",
-            "$pyint = ($pyint -Replace '/mingw32', \"$dir\\bin\") -Replace 'py::python2', 'py::python'",
-            "$pyint | Set-Content \"$dir\\lib\\gimp\\2.0\\interpreters\\pygimp.interp\""
-        ]
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "type": "inno",
+                "include": "gimp32on64",
+                "exclude": [
+                    "gimp32",
+                    "deps32",
+                    "debug",
+                    "{sys}"
+                ],
+                "script": [
+                    "$defenv = Get-Content \"$dir\\lib\\gimp\\2.0\\environ\\default.env\" -Raw",
+                    "$defenv += \"`nPATH=`${gimp_installation_dir}\\bin;`${gimp_installation_dir}\\32\\bin`n\"",
+                    "$defenv += 'PYTHONPATH=${gimp_installation_dir}\\lib\\gimp\\2.0\\python;${gimp_plug_in_dir}\\plug-ins\\python-console'",
+                    "$defenv | Set-Content \"$dir\\lib\\gimp\\2.0\\environ\\default.env\"",
+                    "$pyenv = Get-Content \"$dir\\lib\\gimp\\2.0\\environ\\pygimp.env\" -Raw",
+                    "$pyenv += '__COMPAT_LAYER=HIGHDPIAWARE'",
+                    "$pyenv | Set-Content \"$dir\\lib\\gimp\\2.0\\environ\\pygimp.env\"",
+                    "$pyint = Get-Content \"$dir\\lib\\gimp\\2.0\\interpreters\\pygimp.interp\" -Raw",
+                    "$pyint = ($pyint -Replace '/mingw32', \"$dir\\bin\") -Replace 'py::python2', 'py::python'",
+                    "$pyint | Set-Content \"$dir\\lib\\gimp\\2.0\\interpreters\\pygimp.interp\""
+                ]
+            }
+        },
+        "32bit": {
+            "installer": {
+                "type": "inno",
+                "exclude": [
+                    "gimp32on64",
+                    "gimp64",
+                    "deps64",
+                    "debug",
+                    "{sys}"
+                ],
+                "script": [
+                    "$defenv = Get-Content \"$dir\\lib\\gimp\\2.0\\environ\\default.env\" -Raw",
+                    "$defenv += \"`nPATH=`${gimp_installation_dir}\\bin`n\"",
+                    "$defenv += 'PYTHONPATH=${gimp_installation_dir}\\lib\\gimp\\2.0\\python;${gimp_plug_in_dir}\\plug-ins\\python-console'",
+                    "$defenv | Set-Content \"$dir\\lib\\gimp\\2.0\\environ\\default.env\"",
+                    "$pyenv = Get-Content \"$dir\\lib\\gimp\\2.0\\environ\\pygimp.env\" -Raw",
+                    "$pyenv += '__COMPAT_LAYER=HIGHDPIAWARE'",
+                    "$pyenv | Set-Content \"$dir\\lib\\gimp\\2.0\\environ\\pygimp.env\"",
+                    "$pyint = Get-Content \"$dir\\lib\\gimp\\2.0\\interpreters\\pygimp.interp\" -Raw",
+                    "$pyint = ($pyint -Replace '/mingw32', \"$dir\\bin\") -Replace 'py::python2', 'py::python'",
+                    "$pyint | Set-Content \"$dir\\lib\\gimp\\2.0\\interpreters\\pygimp.interp\""
+                ]
+            }
+        }
     },
     "bin": [
         [
