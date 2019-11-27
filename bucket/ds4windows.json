@@ -16,11 +16,14 @@
     "bin": "DS4Windows.exe",
     "extract_dir": "DS4Windows",
     "pre_install": [
-        "'Actions.xml', 'Profiles.xml' | ForEach-Object {",
-        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "if (!(Test-Path \"$persist_dir\\Profiles.xml\")) {",
+        "    Set-Content \"$dir\\Profiles.xml\" '<?xml version=\"1.0\" encoding=\"utf-8\"?>' -Encoding Ascii",
         "}",
         "if (!(Test-Path \"$persist_dir\\Auto Profiles.xml\")) {",
-        "    Set-Content \"$dir\\Auto Profiles.xml\" '<?xml version=\"1.0\" encoding=\"utf-8\"?><Programs />' -Encoding Ascii",
+        "    Set-Content \"$dir\\Auto Profiles.xml\" '<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Programs />' -Encoding Ascii",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\Actions.xml\")) {",
+        "    Set-Content \"$dir\\Actions.xml\" '<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Actions>\n\t<Action Name=\"Disconnect Controller\">\n\t\t<Trigger>PS/Options</Trigger>\n\t\t<Type>DisconnectBT</Type>\n\t\t<Details>0</Details>\n\t</Action>\n</Actions>' -Encoding Ascii",
         "}"
     ],
     "persist": [
@@ -35,6 +38,7 @@
             "DS4Windows"
         ]
     ],
+    "post_install": "If (Test-Path \"$dir\\DS4Updater.exe\") { Remove-Item \"$dir\\DS4Updater.exe\" -Force }",
     "checkver": {
         "github": "https://github.com/Ryochan7/DS4Windows"
     },
