@@ -1,16 +1,20 @@
 {
-    "version": "373",
+    "version": "375",
     "description": "A personal booru-style media tagger",
     "homepage": "https://hydrusnetwork.github.io/hydrus/",
     "license": "WTFPL",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/hydrusnetwork/hydrus/releases/download/v373/Hydrus.Network.373.-.Windows.-.Extract.only.zip",
-            "hash": "5dd7b27159e366a846f293ccadaf48f6a8b5b05ad963e49cbacf8f373751b40a"
+            "url": "https://github.com/hydrusnetwork/hydrus/releases/download/v375/Hydrus.Network.375.-.Windows.-.Extract.only.zip",
+            "hash": "bc61c8ab9904a206f656a356f7686908928c3f0bdc183f0de1299287272fac7a"
         }
     },
     "extract_dir": "Hydrus Network",
-    "post_install": "Get-ChildItem \"$persist_dir\\db\" -File | Copy-Item -Destination \"$dir\\db\" -Force",
+    "pre_install": [
+        "'client.db', 'client.caches.db', 'client.mappings.db', 'client.master.db' | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\db\\$_\")) { New-Item \"$dir\\db\\$_\" | Out-Null }",
+        "   }"
+    ],
     "uninstaller": {
         "script": "Get-ChildItem \"$dir\\db\\*\" -Include 'client*', 'server*' -File | Copy-Item -Destination \"$persist_dir\\db\" -Force"
     },
@@ -35,6 +39,10 @@
         ]
     ],
     "persist": [
+        "db\\client.db",
+        "db\\client.caches.db",
+        "db\\client.mappings.db",
+        "db\\client.master.db",
         "db\\client_files",
         "db\\server_files"
     ],
