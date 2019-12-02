@@ -2,7 +2,7 @@
     "homepage": "https://ryochan7.github.io/ds4windows-site/",
     "description": "Portable program that allows you to get the best experience while using a DualShock 4 on your PC.",
     "version": "1.7.23",
-    "license": "Unknown",
+    "license": "MIT",
     "architecture": {
         "64bit": {
             "url": "https://github.com/Ryochan7/DS4Windows/releases/download/v1.7.23/DS4Windows_1.7.23_x64.zip",
@@ -13,14 +13,30 @@
             "hash": "089f5cabf9686f588a9c29ff93863e6d29acf0955f5e3a1d2ae859e7c04f0ba9"
         }
     },
-    "bin": "DS4Windows.exe",
     "extract_dir": "DS4Windows",
-    "post_install": "If (Test-Path \"$dir\\DS4Updater.exe\") { Remove-Item \"$dir\\DS4Updater.exe\" -Force }",
+    "pre_install": [
+        "$conf = @(",
+        "    @{'Profiles.xml' = '<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Profile>\n\t<CheckWhen>0</CheckWhen>\n</Profile>'}",
+        "    @{'Auto Profiles.xml' = '<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Programs />'}",
+        "    @{'Actions.xml' = '<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Actions>\n\t<Action Name=\"Disconnect Controller\">\n\t\t<Trigger>PS/Options</Trigger>\n\t\t<Type>DisconnectBT</Type>\n\t\t<Details>0</Details>\n\t</Action>\n</Actions>'}",
+        ")",
+        "foreach ($k in $conf.Keys) {",
+        "    if (-not (Test-Path \"$persist_dir\\$k\")) { Set-Content \"$dir\\$k\" $conf.$k -Encoding Ascii }",
+        "}",
+        "if (Test-Path \"$dir\\DS4Updater.exe\") { Remove-Item \"$dir\\DS4Updater.exe\" -Force }"
+    ],
+    "bin": "DS4Windows.exe",
     "shortcuts": [
         [
             "DS4Windows.exe",
             "DS4Windows"
         ]
+    ],
+    "persist": [
+        "Profiles",
+        "Actions.xml",
+        "Auto Profiles.xml",
+        "Profiles.xml"
     ],
     "checkver": {
         "github": "https://github.com/Ryochan7/DS4Windows"
