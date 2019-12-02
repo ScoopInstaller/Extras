@@ -1,16 +1,14 @@
 {
-    "homepage": "https://github.com/getlantern/lantern",
-    "description": "Lantern is an HTTP/HTTPS proxy, comprised of a desktop/mobile application and a server ecosystem.",
+    "homepage": "https://getlantern.org",
+    "description": "An HTTP/HTTPS proxy",
     "version": "5.6.4",
     "license": "Apache-2.0",
-    "url": "https://github.com/getlantern/lantern-binaries/raw/master/lantern-installer.exe#/dl.7z",
+    "url": "https://raw.githubusercontent.com/getlantern/lantern-binaries/master/lantern-installer.exe#/dl.7z",
     "hash": "f6d02976dcfbf03bbe1f45aa767c830131a62952757fe1d95cc3ea9ed46a447c",
-    "installer": {
-        "script": [
-            "Remove-Item -Recurse -Force \"$dir\\`$PLUGINSDIR\"",
-            "Remove-Item \"$dir\\uninstall.exe.nsis\""
-        ]
-    },
+    "pre_install": [
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\uninstall.exe.nsis\" -Recurse",
+        "if (!(Test-Path \"$persist_dir\\settings.yaml\")) { New-Item \"$dir\\settings.yaml\" | Out-Null }"
+    ],
     "bin": "lantern.exe",
     "shortcuts": [
         [
@@ -20,15 +18,13 @@
             "lantern.ico"
         ]
     ],
-    "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\settings.yaml\")) {",
-        "   New-Item -Force -Path \"$dir\\settings.yaml\" -ItemType file -Value $null | Out-Null",
-        "}"
-    ],
     "persist": "settings.yaml",
-    "checkver": "github",
+    "checkver": {
+        "url": "https://github.com/getlantern/lantern-binaries/commits/master/lantern-installer.exe",
+        "regex": "Lantern ([\\d.]+)"
+    },
     "autoupdate": {
-        "url": "https://github.com/getlantern/lantern-binaries/raw/master/lantern-installer.exe#/dl.7z",
+        "url": "https://raw.githubusercontent.com/getlantern/lantern-binaries/master/lantern-installer.exe#/dl.7z",
         "hash": {
             "url": "$url.sha256"
         }
