@@ -16,20 +16,18 @@
     "extract_dir": "DS4Windows",
     "pre_install": [
         "$conf = @(",
-        "    @{'Profiles.xml' = '<?xml version=\"1.0\" encoding=\"utf-8\"?>
-<Profile>
-	<CheckWhen>0</CheckWhen>
-</Profile>'}",
-        "    @{'Auto Profiles.xml' = '<?xml version=\"1.0\" encoding=\"utf-8\"?>
-<Programs />'}",
-        "    @{'Actions.xml' = '<?xml version=\"1.0\" encoding=\"utf-8\"?>
-<Actions>
-	<Action Name=\"Disconnect Controller\">
-		<Trigger>PS/Options</Trigger>
-		<Type>DisconnectBT</Type>
-		<Details>0</Details>
-	</Action>
-</Actions>'}",
+        "    @{'Profiles.xml' = '<?xml version=\"1.0\" encoding=\"utf-8\"?><Profile><CheckWhen>0</CheckWhen></Profile>' }",
+        "    @{'Auto Profiles.xml' = '<?xml version=\"1.0\" encoding=\"utf-8\"?><Programs />' }",
+        "    @{'Actions.xml' = @'",
+        "<?xml version=\"1.0\" encoding=\"utf-8\"?>",
+        "<Actions>",
+        "    <Action Name=\"Disconnect Controller\">",
+        "        <Trigger>PS/Options</Trigger>",
+        "        <Type>DisconnectBT</Type>",
+        "        <Details>0</Details>",
+        "    </Action>",
+        "</Actions>",
+        "'@ }",
         ")",
         "foreach ($k in $conf.Keys) {",
         "    if (-not (Test-Path \"$persist_dir\\$k\")) { Set-Content \"$dir\\$k\" $conf.$k -Encoding Ascii }",
