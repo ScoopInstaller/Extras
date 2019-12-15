@@ -33,9 +33,29 @@
     "installer": {
         "script": [
             "Move-Item \"$dir\\`$INSTDIR`$_8_\\*\" -Destination \"$dir\"",
-            "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse -Force"
+            "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse -Force",
+            "New-Item -ItemType \"file\" -Path \"$dir\" -Name \"reaper.ini\" -Value \"[REAPER]\nwnd_state=0\n\" | Out-Null",
+            "New-Item -ItemType \"file\" -Path \"$dir\" -Name \"reaper-fxtags.ini\" | Out-Null",
+            "New-Item -ItemType \"file\" -Path \"$dir\" -Name \"reaper-midihw.ini\" | Out-Null",
+            "New-Item -ItemType \"file\" -Path \"$dir\" -Name \"reaper-mouse.ini\" | Out-Null",
+            "New-Item -ItemType \"file\" -Path \"$dir\" -Name \"reaper-reginfo2.ini\" | Out-Null"
         ]
     },
+    "post_install": [
+            "if (Test-Path \"$dir\\reaper.ini.original\") { Remove-Item \"$dir\\reaper.ini.original\" }",
+            "if (Test-Path \"$dir\\reaper-fxtags.ini.original\") { Remove-Item \"$dir\\reaper-fxtags.ini.original\" }",
+            "if (Test-Path \"$dir\\reaper-midihw.ini.original\") { Remove-Item \"$dir\\reaper-midihw.ini.original\" }",
+            "if (Test-Path \"$dir\\reaper-mouse.ini.original\") { Remove-Item \"$dir\\reaper-mouse.ini.original\" }",
+            "if (Test-Path \"$dir\\reaper-reginfo2.ini.original\") { Remove-Item \"$dir\\reaper-reginfo2.ini.original\" }"
+    ],
+    "persist": [
+        "UserPlugins",
+        "reaper.ini",
+        "reaper-fxtags.ini",
+        "reaper-midihw.ini",
+        "reaper-mouse.ini",
+        "reaper-reginfo2.ini"
+    ],
     "checkver": {
         "url": "https://www.reaper.fm/download.php",
         "regex": "Version ([\\d.]+)"
