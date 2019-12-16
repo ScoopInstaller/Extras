@@ -1,21 +1,29 @@
 {
-    "version": "3.0.6",
+    "homepage": "https://github.com/mintty/wsltty",
     "description": "Mintty as a terminal for WSL (Windows Subsystem for Linux).",
     "license": "GPL-3.0-or-later",
-    "url": "https://github.com/mintty/wsltty/releases/download/3.0.6/wsltty-3.0.6-install.exe#/dl.7z",
-    "homepage": "https://github.com/mintty/wsltty",
-    "hash": "90b0bb924969d5d831fe47b95d39c07039c9c7d93a354dd356770df4a79fe1dd",
-    "checkver": {
-        "github": "https://github.com/mintty/wsltty"
+    "version": "3.1.0",
+    "url": "https://github.com/mintty/wsltty/releases/download/3.1.0/wsltty-3.1.0-install-x86_64.exe#/dl.7z",
+    "hash": "a85816783c9321aeded45f0de151886a7a7527b3e9b900d1993bcae307744e80",
+    "extract_to": "installer",
+    "installer": {
+        "script": [
+            "Push-Location \"$dir\\installer\"",
+            "& .\\install.bat \"$dir\" \"$dir\\config\"",
+            "Pop-Location"
+        ]
     },
+    "post_install": "Remove-Item -LiteralPath \"$dir\\installer\" -Force -Recurse",
+    "uninstaller": {
+        "script": [
+            "$env:installdir = $dir",
+            "Push-Location \"$dir\"",
+            "& .\\uninstall.bat",
+            "Pop-Location"
+        ]
+    },    
+    "checkver": "github",
     "autoupdate": {
         "url": "https://github.com/mintty/wsltty/releases/download/$version/wsltty-$version-install.exe#/dl.7z"
-    },
-    "installer": {
-        "file": "install.bat",
-        "keep": true
-    },
-    "uninstaller": {
-        "file": "uninstall.bat"
     }
 }
