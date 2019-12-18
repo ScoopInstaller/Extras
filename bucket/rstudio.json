@@ -3,18 +3,10 @@
     "homepage": "https://www.rstudio.com/",
     "description": "An IDE for R, which includes a console, syntax-highlighting editor that supports direct code execution, as well as tools for plotting, history, debugging and workspace management.",
     "license": "AGPL-3.0-only",
-    "url": "https://download1.rstudio.org/desktop/windows/RStudio-1.2.5033.zip",
-    "hash": "md5:d867c066f65aa1d9c3cf3c53a37cea2f",
-    "depends": "r",
-    "bin": "bin\\rstudio.exe",
-    "shortcuts": [
-        [
-            "bin\\rstudio.exe",
-            "R Studio"
-        ]
-    ],
     "architecture": {
         "64bit": {
+            "url": "https://download1.rstudio.org/desktop/windows/RStudio-1.2.5033.zip",
+            "hash": "d867c066f65aa1d9c3cf3c53a37cea2ff9f5e0d34be4f62898f32020e5920833",
             "post_install": [
                 "if (!(Test-Path \"$env:Appdata\\RStudio\")) {",
                 "    New-Item \"$env:Appdata\\RStudio\" -ItemType Directory -Force | Out-Null",
@@ -24,27 +16,30 @@
                 "    ) | Add-Content -Path \"$env:Appdata\\RStudio\\desktop.ini\" -Encoding UTF8 -Force",
                 "}"
             ]
-        },
-        "32bit": {
-            "post_install": [
-                "if (!(Test-Path \"$env:Appdata\\RStudio\")) {",
-                "    New-Item \"$env:Appdata\\RStudio\" -ItemType Directory -Force | Out-Null",
-                "    @(",
-                "        '[General]'",
-                "        \"RBinDir=`\"$(appdir r $global)\\current\\bin\\i386`\"\".Replace('\\', '/')",
-                "    ) | Add-Content -Path \"$env:Appdata\\RStudio\\desktop.ini\" -Encoding UTF8 -Force",
-                "}"
-            ]
         }
     },
+    "depends": "r",
+    "bin": "bin\\rstudio.exe",
+    "shortcuts": [
+        [
+            "bin\\rstudio.exe",
+            "R Studio"
+        ]
+    ],
     "checkver": {
-        "github": "https://github.com/rstudio/rstudio/"
+        "url": "https://rstudio.com/products/rstudio/download/",
+        "regex": ">RStudio Desktop ([\\d.]+)<"
     },
     "autoupdate": {
-        "url": "https://download1.rstudio.org/desktop/windows/RStudio-$version.zip",
-        "hash": {
-            "url": "https://www.rstudio.com/products/rstudio/download/",
-            "regex": "(?sm)$url.*?$md5"
+        "architecture": {
+            "64bit": {
+                "url": "https://download1.rstudio.org/desktop/windows/RStudio-$version.zip",
+                "hash": {
+                    "url": "https://www.rstudio.com/products/rstudio/download/",
+                    "regex": "(?s)$basename.*?$sha256"
+                }
+            }
         }
-    }
+    },
+    "notes": "For 32bit, please install 'versions/rstudio11"
 }
