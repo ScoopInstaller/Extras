@@ -1,0 +1,34 @@
+{
+    "homepage": "https://zadig.akeo.ie",
+    "version": "2.4",
+    "license": "GPL-3.0-or-later",
+    "description": "Installs generic USB drivers, such as WinUSB, libusb-win32/libusb0.sys or libusbK, to help you access USB devices.",
+    "url": "https://github.com/pbatard/libwdi/releases/download/b721/zadig-2.4.exe#/zadig.exe",
+    "hash": "4b7c58696b7a809525f6abcea9b3e9c1bf91518ebdc0d19af31e219654074342",
+    "bin": "zadig.exe",
+    "shortcuts": [
+        [
+            "zadig.exe",
+            "Zadig"
+        ]
+    ],
+    "pre_install": [
+        "$file = 'zadig.ini'",
+        "if (!(Test-Path \"$persist_dir\\$file\")) {",
+        "   Write-Host 'File' $file 'does not exists. Creating.' -f Yellow",
+        "   $CONT = @(",
+        "       '[driver]'",
+        "       '  default_dir = \"' + $persist_dir + '\\usb_driver\"'",
+        "   )",
+        "   Set-Content \"$dir\\$file\" ($CONT -replace '\\\\', '\\\\' -join \"`r`n\") -Encoding Ascii",
+        "}"
+    ],
+    "persist": [
+        "zadig.ini",
+        "usb_driver"
+    ],
+    "checkver": "download/(?<build>[bv\\d.]+)/zadig-([\\d.]+)\\.exe",
+    "autoupdate": {
+        "url": "https://github.com/pbatard/libwdi/releases/download/$matchBuild/zadig-$version.exe#/zadig.exe"
+    }
+}
