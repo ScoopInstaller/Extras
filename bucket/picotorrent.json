@@ -8,12 +8,28 @@
     "version": "0.17.0",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/picotorrent/picotorrent/releases/download/v0.17.0/PicoTorrent-0.17.0-x64.zip",
-            "hash": "de6f29e85a1d4d8141d39c0497023f6924cce1747e9654b6adee341a478d84f2"
+            "url": [
+                "https://github.com/picotorrent/picotorrent/releases/download/v0.17.0/PicoTorrent-0.17.0-x64.zip",
+                "https://raw.githubusercontent.com/BlackPowerade/scoop-extras/picotorrent-regs/scripts/picotorrent/picotorrent-install-associations.reg",
+                "https://raw.githubusercontent.com/BlackPowerade/scoop-extras/picotorrent-regs/scripts/picotorrent/picotorrent-uninstall-associations.reg"
+            ],
+            "hash": [
+                "de6f29e85a1d4d8141d39c0497023f6924cce1747e9654b6adee341a478d84f2",
+                "802d176c2b383903e411eee0d170c1681508f672a9b3e5ba75bfeccf8aa61269",
+                "5e5461ad15b11c01263ae5270bc917814b65a62d27ffc57979ef9ed87957b0a4"
+            ]
         },
         "32bit": {
-            "url": "https://github.com/picotorrent/picotorrent/releases/download/v0.17.0/PicoTorrent-0.17.0-x86.zip",
-            "hash": "6ab828df2ebc6347e59807b43546b25c12ae4c12eccecb7604da3b482bd0547d"
+            "url": [
+                "https://github.com/picotorrent/picotorrent/releases/download/v0.17.0/PicoTorrent-0.17.0-x86.zip",
+                "https://raw.githubusercontent.com/BlackPowerade/scoop-extras/picotorrent-regs/scripts/picotorrent/picotorrent-install-associations.reg",
+                "https://raw.githubusercontent.com/BlackPowerade/scoop-extras/picotorrent-regs/scripts/picotorrent/picotorrent-uninstall-associations.reg"
+            ],
+            "hash": [
+                "6ab828df2ebc6347e59807b43546b25c12ae4c12eccecb7604da3b482bd0547d",
+                "802d176c2b383903e411eee0d170c1681508f672a9b3e5ba75bfeccf8aa61269",
+                "5e5461ad15b11c01263ae5270bc917814b65a62d27ffc57979ef9ed87957b0a4"
+            ]
         }
     },
     "shortcuts": [
@@ -25,12 +41,32 @@
     "bin": "PicoTorrent.exe",
     "pre_install": [
         "if (!(Test-Path \"$persist_dir\\Session.dat\")) { Set-Content \"$dir\\Session.dat\" $null -Encoding Ascii }",
-        "if (!(Test-Path \"$persist_dir\\PicoTorrent.json\")) { Set-Content \"$dir\\PicoTorrent.json\" '{}' -Encoding Ascii }"
+        "if (!(Test-Path \"$persist_dir\\PicoTorrent.json\")) { Set-Content \"$dir\\PicoTorrent.json\" '{}' -Encoding Ascii }",
+        "if (!(Test-Path \"$persist_dir\\PicoTorrent.sqlite\")) { New-Item \"$dir\\PicoTorrent.sqlite\" -ItemType File | Out-Null }"
     ],
     "persist": [
         "Torrents",
         "Session.dat",
-        "PicoTorrent.json"
+        "PicoTorrent.json",
+        "PicoTorrent.sqlite"
+    ],
+    "post_install": [
+        "if (Test-Path \"$dir\\picotorrent-install-associations.reg\") {",
+        "  $picopath = \"$dir\\PicoTorrent.exe\".Replace('\\', '\\\\')",
+        "  $content = Get-Content \"$dir\\picotorrent-install-associations.reg\"",
+        "  $content = $content.Replace('$pico', $picopath)",
+        "  if ($global) {",
+        "    $content = $content.Replace('HKEY_CURRENT_USER\\Software\\Classes', 'HKEY_CLASSES_ROOT')",
+        "  }",
+        "  $content | Set-Content -Path \"$dir\\picotorrent-install-associations.reg\"",
+        "}",
+        "if (Test-Path \"$dir\\picotorrent-uninstall-associations.reg\") {",
+        "  $content = Get-Content \"$dir\\picotorrent-uninstall-associations.reg\"",
+        "  if ($global) {",
+        "    $content = $content.Replace('HKEY_CURRENT_USER\\Software\\Classes', 'HKEY_CLASSES_ROOT')",
+        "  }",
+        "  $content | Set-Content -Path \"$dir\\picotorrent-uninstall-associations.reg\"",
+        "}"
     ],
     "checkver": {
         "github": "https://github.com/picotorrent/picotorrent"
