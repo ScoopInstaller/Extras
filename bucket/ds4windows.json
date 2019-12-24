@@ -1,24 +1,33 @@
 {
     "homepage": "https://ryochan7.github.io/ds4windows-site/",
     "description": "Portable program that allows you to get the best experience while using a DualShock 4 on your PC.",
-    "version": "1.7.23",
+    "version": "1.7.28",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/Ryochan7/DS4Windows/releases/download/v1.7.23/DS4Windows_1.7.23_x64.zip",
-            "hash": "602fee01c42e9a3847c82c8379999711a16a64e2fee1ad65b61312748c344401"
+            "url": "https://github.com/Ryochan7/DS4Windows/releases/download/v1.7.28/DS4Windows_1.7.28_x64.zip",
+            "hash": "a577cb04942a6e771b75307b8887b55053a0fafe6852dddd6626cfa3b63b08a4"
         },
         "32bit": {
-            "url": "https://github.com/Ryochan7/DS4Windows/releases/download/v1.7.23/DS4Windows_1.7.23_x86.zip",
-            "hash": "089f5cabf9686f588a9c29ff93863e6d29acf0955f5e3a1d2ae859e7c04f0ba9"
+            "url": "https://github.com/Ryochan7/DS4Windows/releases/download/v1.7.28/DS4Windows_1.7.28_x86.zip",
+            "hash": "ab2759db2c44ba9df92cca0e7096719abc197ed72837d78e0debc1a462dfffd4"
         }
     },
     "extract_dir": "DS4Windows",
     "pre_install": [
         "$conf = @(",
-        "    @{'Profiles.xml' = '<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Profile>\n\t<CheckWhen>0</CheckWhen>\n</Profile>'}",
-        "    @{'Auto Profiles.xml' = '<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Programs />'}",
-        "    @{'Actions.xml' = '<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Actions>\n\t<Action Name=\"Disconnect Controller\">\n\t\t<Trigger>PS/Options</Trigger>\n\t\t<Type>DisconnectBT</Type>\n\t\t<Details>0</Details>\n\t</Action>\n</Actions>'}",
+        "    @{'Profiles.xml' = '<?xml version=\"1.0\" encoding=\"utf-8\"?><Profile><CheckWhen>0</CheckWhen></Profile>' }",
+        "    @{'Auto Profiles.xml' = '<?xml version=\"1.0\" encoding=\"utf-8\"?><Programs />' }",
+        "    @{'Actions.xml' = @'",
+        "<?xml version=\"1.0\" encoding=\"utf-8\"?>",
+        "<Actions>",
+        "    <Action Name=\"Disconnect Controller\">",
+        "        <Trigger>PS/Options</Trigger>",
+        "        <Type>DisconnectBT</Type>",
+        "        <Details>0</Details>",
+        "    </Action>",
+        "</Actions>",
+        "'@ }",
         ")",
         "foreach ($k in $conf.Keys) {",
         "    if (-not (Test-Path \"$persist_dir\\$k\")) { Set-Content \"$dir\\$k\" $conf.$k -Encoding Ascii }",
