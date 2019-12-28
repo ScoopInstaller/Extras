@@ -14,6 +14,17 @@
         }
     },
     "extract_dir": "lib\\net45",
+    "pre_install": [
+        "$appdata = \"$env:APPDATA\\Authy\u0020Desktop\"",
+        "if (!(Test-Path $persist_dir)) {",
+        "   New-Item -ItemType Directory -Path $persist_dir | Out-Null",
+        "}",
+        "if (Test-Path $appdata) {",
+        "   Remove-Item -Force -Recurse $appdata | Out-Null",
+        "}",
+        "New-Item -ItemType Junction -Path $appdata -Target $persist_dir | Out-Null"
+    ],
+    "persist": "void",
     "bin": [
         [
             "Authy Desktop.exe",
@@ -26,6 +37,9 @@
             "Authy Desktop"
         ]
     ],
+    "uninstaller": {
+        "script": "Remove-Item -Confirm:$false -Force -Recurse -Path \"$env:APPDATA\\Authy\u0020Desktop\""
+    },
     "checkver": {
         "url": "https://s3.amazonaws.com/authy-electron-repository-production/_squirrel/authy/stable/x64/RELEASES",
         "regex": "authy-electron-([\\d\\.]+)-full\\.nupkg",
