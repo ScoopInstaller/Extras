@@ -1,17 +1,27 @@
 {
-    "version": "110",
+    "##": "TODO: There will be an option portable mode in the near future. See https://github.com/TablePlus/TablePlus/projects/1 for details.",
+    "version": "3.1.0",
     "description": "Relational database explorer",
     "homepage": "https://tableplus.com",
-    "license": "Proprietary",
-    "url": "https://s3.amazonaws.com/tableplus-win-builds/110/TablePlusSetup.exe",
-    "hash": "be696fb0c6f1f39c51cae409e02a364ebcda0172c21cb42c941430f8a9eedce5",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://tableplus.com/blog/2018/01/license-agreement.html"
+    },
+    "url": "https://s3.amazonaws.com/tableplus-win-builds/112/TablePlusSetup.exe",
+    "hash": "3f54873222e897bca34d51f6aa4444133ef31614aa5c00b5ae331bcaeeaab38d",
     "innosetup": true,
-    "architecture" :{
+    "architecture": {
         "32bit": {
-            "pre_install": "Get-ChildItem \"$dir\" '*,1*' | Rename-Item -NewName { $_.FullName -Replace ',1' }"
+            "pre_install": [
+                "Get-ChildItem \"$dir\" '*,1*' | Rename-Item -NewName { $_.FullName -Replace ',1' }",
+                "Remove-Item \"$dir\\*,2*\""
+            ]
         },
         "64bit": {
-            "pre_install": "Get-ChildItem \"$dir\" '*,2*' | Rename-Item -NewName { $_.FullName -Replace ',2' }"
+            "pre_install": [
+                "Get-ChildItem \"$dir\" '*,2*' | Rename-Item -NewName { $_.FullName -Replace ',2' }",
+                "Remove-Item \"$dir\\*,1*\""
+            ]
         }
     },
     "bin": "TablePlus.exe",
@@ -22,10 +32,10 @@
         ]
     ],
     "checkver": {
-        "url": "https://tableplus.com/blog/2018/09/changelogs-windows.html",
-        "regex": "Build (\\d+)</h3>"
+        "url": "https://tableplus.com/win/version.xml?sign=&version=x64",
+        "regex": "sparkle:version=\"(?<build>\\d+)\"\\s+sparkle:shortVersionString=\"([\\d.]+)\""
     },
     "autoupdate": {
-        "url": "https://s3.amazonaws.com/tableplus-win-builds/$version/TablePlusSetup.exe"
+        "url": "https://s3.amazonaws.com/tableplus-win-builds/$matchBuild/TablePlusSetup.exe"
     }
 }
