@@ -1,6 +1,6 @@
 {
     "##": "TODO: There will be an option for portable mode in the near future. See #3424 for details.",
-    "version": "3.1.0",
+    "version": "3.1.0.112",
     "description": "Relational database explorer",
     "homepage": "https://tableplus.com",
     "license": {
@@ -14,7 +14,7 @@
         "32bit": {
             "pre_install": [
                 "Get-ChildItem \"$dir\" '*,1.*' | Rename-Item -NewName { $_.FullName -replace ',1\\.', '.' }",
-                "Remove-Item \"$dir\\*,2*\""
+                "Remove-Item \"$dir\\*,2.*\""
             ]
         },
         "64bit": {
@@ -33,9 +33,10 @@
     ],
     "checkver": {
         "url": "https://tableplus.com/win/version.xml?sign=&version=x64",
-        "regex": "sparkle:version=\"(?<build>\\d+)\"\\s+sparkle:shortVersionString=\"([\\d.]+)\""
+        "regex": "sparkle:version=\"(\\d+)\"\\s+sparkle:shortVersionString=\"([\\d.]+)\"",
+        "replace": "${2}.${1}"
     },
     "autoupdate": {
-        "url": "https://s3.amazonaws.com/tableplus-win-builds/$matchBuild/TablePlusSetup.exe"
+        "url": "https://s3.amazonaws.com/tableplus-win-builds/$buildVersion/TablePlusSetup.exe"
     }
 }
