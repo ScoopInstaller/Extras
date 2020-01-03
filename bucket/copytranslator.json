@@ -1,0 +1,39 @@
+{
+    "version": "9.0.0",
+    "description": "Foreign language translating assistant basing on clipboard.",
+    "homepage": "https://copytranslator.github.io/",
+    "license": "GPL-2.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/CopyTranslator/CopyTranslator/releases/download/v9.0.0/copytranslator-setup-9.0.0.exe#dl.7z",
+            "hash": "sha512:d8e6f38027ede2692b3ff2242d970923c8c468ac07bc231bcf169d6e18b947d1edb778d4256a0f64ebfed97d8500e70799d453e94c58e8176ec43228cf0dc15a",
+            "installer": {
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+            }
+        }
+    },
+    "post_install": [
+        "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
+        "Remove-Item \"$dir\\Uninstall*\""
+    ],
+    "shortcuts": [
+        [
+            "copytranslator.exe",
+            "Copy Translator"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/copytranslator/copytranslator"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/CopyTranslator/CopyTranslator/releases/download/v$version/copytranslator-setup-$version.exe",
+                "hash": {
+                    "url": "https://github.com/CopyTranslator/CopyTranslator/releases/download/v$version/latest.yml",
+                    "regex": "([a-zA-Z0-9+/=]{88})"
+                }
+            }
+        }
+    }
+}
