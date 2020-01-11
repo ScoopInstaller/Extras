@@ -1,21 +1,19 @@
 {
-    "##": "Check chromium.woolyss.com for different versions of Chromium releases.",
     "version": "79.0.3945.117",
-    "description": "Browser aiming for safer, faster, and more stable way for all users to experience the web.",
-    "license": "BSD-3-Clause",
+    "description": "Browser aiming for safer, faster, and more stable way for all users to experience the web (Hibbiki's build)",
     "homepage": "https://www.chromium.org",
+    "license": "BSD-3-Clause",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/macchrome/winchrome/releases/download/v79.0.3945.117-r706915-Win64/ungoogled-chromium-79.0.3945.117-1_windows.7z",
-            "hash": "sha1:745c9dd30ec46cef517343bd953bb154ed44cbbb",
-            "extract_dir": "ungoogled-chromium-79.0.3945.117-1_windows"
+            "url": "https://github.com/Hibbiki/chromium-win64/releases/download/v79.0.3945.117-r706915/mini_installer.sync.exe#/dl.7z",
+            "hash": "sha1:4401d2d1e40a199ae6952e3f49bf1c3155fbbac8"
         },
         "32bit": {
-            "url": "https://github.com/macchrome/winchrome/releases/download/v79.0.3945.117-r706915-Win64/Ungoogled-Chromium-79.0.3945.117-Win32.7z",
-            "hash": "sha1:907094d8a3dd925b6db490bd8d65d50a3419f866",
-            "extract_dir": "Ungoogled-Chromium-79.0.3945.117-Win32"
+            "url": "https://github.com/Hibbiki/chromium-win32/releases/download/v79.0.3945.117-r706915/mini_installer.sync.exe#/dl.7z",
+            "hash": "sha1:9517b8d63728c71d78cd5d71ffd2528dd26064c4"
         }
     },
+    "pre_install": "Expand-7zipArchive \"$dir\\chrome.7z\" \"$dir\" -ExtractDir 'Chrome-bin' -Removal",
     "bin": [
         "chrome.exe",
         [
@@ -30,23 +28,25 @@
         ]
     ],
     "checkver": {
-        "github": "https://github.com/macchrome/winchrome",
-        "regex": "v([\\d.]+)-r(?<build>\\d+)-Win64"
+        "github": "https://github.com/Hibbiki/chromium-win64",
+        "regex": "v([\\d.]+)-r(?<rev>\\d+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/macchrome/winchrome/releases/download/v$version-r$matchBuild-Win64/ungoogled-chromium-$version-1_windows.7z",
-                "extract_dir": "ungoogled-chromium-$version-1_windows"
+                "url": "https://github.com/Hibbiki/chromium-win64/releases/download/v$version-r$matchRev/mini_installer.sync.exe#/dl.7z",
+                "hash": {
+                    "url": "https://github.com/Hibbiki/chromium-win64/releases/v$version-r$matchRev",
+                    "regex": "$sha1 /mnt/d/out/x64/$basename"
+                }
             },
             "32bit": {
-                "url": "https://github.com/macchrome/winchrome/releases/download/v$version-r$matchBuild-Win64/Ungoogled-Chromium-$version-Win32.7z",
-                "extract_dir": "Ungoogled-Chromium-$version-Win32"
+                "url": "https://github.com/Hibbiki/chromium-win32/releases/download/v$version-r$matchRev/mini_installer.sync.exe#/dl.7z",
+                "hash": {
+                    "url": "https://github.com/Hibbiki/chromium-win32/releases/v$version-r$matchRev",
+                    "regex": "$sha1 /mnt/d/out/x86/$basename"
+                }
             }
-        },
-        "hash": {
-            "url": "https://github.com/macchrome/winchrome/releases/v$version-r$matchBuild-Win64",
-            "regex": "(?s)$basename.*?$sha1"
         }
     }
 }
