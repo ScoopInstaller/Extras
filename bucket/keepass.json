@@ -1,16 +1,15 @@
 {
-    "homepage": "https://keepass.info/",
-    "description": "Free, open source, light-weight and easy-to-use password manager.",
+    "version": "2.43",
+    "description": "Light-weight and easy-to-use password manager",
+    "homepage": "https://keepass.info",
     "license": "GPL-2.0-or-later",
-    "version": "2.44",
     "url": "https://downloads.sourceforge.net/project/keepass/KeePass%202.x/2.44/KeePass-2.44.zip",
     "hash": "sha1:b7a493b104a44e89a5962083709c0a0f325bd66a",
+    "pre_install": "if (Test-Path \"$persist_dir\\KeePass.config.xml\") { Copy-Item \"$persist_dir\\KeePass.config.xml\" \"$dir\" }",
+    "uninstaller": {
+        "script": "if (Test-Path \"$dir\\KeePass.config.xml\") { Copy-Item \"$dir\\KeePass.config.xml\" \"$persist_dir\" -Force }"
+    },
     "bin": "KeePass.exe",
-    "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\KeePass.config.xml\")) {",
-        "   New-Item -Path \"$dir\\KeePass.config.xml\" | Out-Null",
-        "}"
-    ],
     "shortcuts": [
         [
             "KeePass.exe",
@@ -19,12 +18,11 @@
     ],
     "persist": [
         "Plugins",
-        "Languages",
-        "KeePass.config.xml"
+        "Languages"
     ],
     "checkver": {
         "url": "https://keepass.info/update/version2x.txt",
-        "re": "KeePass:([\\d.]+)"
+        "regex": "KeePass:([\\d.]+)"
     },
     "autoupdate": {
         "url": "https://downloads.sourceforge.net/project/keepass/KeePass%20$majorVersion.x/$version/KeePass-$version.zip"
