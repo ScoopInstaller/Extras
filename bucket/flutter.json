@@ -1,6 +1,6 @@
 {
     "homepage": "https://flutter.dev/",
-    "version": "1.12.13+hotfix.7",
+    "version": "1.12.13-hotfix.7",
     "license": "BSD-3-Clause",
     "url": [
         "https://storage.googleapis.com/flutter_infra/releases/stable/windows/flutter_windows_v1.12.13+hotfix.7-stable.zip",
@@ -28,13 +28,14 @@
     ],
     "checkver": {
         "url": "https://storage.googleapis.com/flutter_infra/releases/releases_windows.json",
-        "regex": "windows_v([\\w-+.]+)-stable"
+        "regex": "windows_v(?<ver>[\\d.]+)[-+](?<build>[\\w.]+)-stable",
+        "replace": "${ver}-${build}"
     },
     "autoupdate": {
-        "url": "https://storage.googleapis.com/flutter_infra/releases/stable/windows/flutter_windows_v$version-stable.zip",
+        "url": "https://storage.googleapis.com/flutter_infra/releases/stable/windows/flutter_windows_v$matchVer+$matchBuild-stable.zip",
         "hash": {
             "url": "https://storage.googleapis.com/flutter_infra/releases/releases_windows.json",
-            "jsonpath": "$.releases[?(@.archive =~ /.*flutter_windows_v$version-stable.zip/)].sha256"
+            "jsonpath": "$.releases[?(@.archive =~ /.*flutter_windows_v$matchVer[+]$matchBuild-stable.zip/)].sha256"
         }
     },
     "suggest": {
