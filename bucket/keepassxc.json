@@ -1,7 +1,7 @@
 {
-    "homepage": "https://keepassxc.org/",
-    "description": "KeePass Cross-Platform Community Edition.",
     "version": "2.5.3",
+    "homepage": "https://keepassxc.org",
+    "description": "Community fork of KeePass",
     "license": "GPL-2.0-only",
     "architecture": {
         "64bit": {
@@ -15,17 +15,20 @@
             "extract_dir": "KeePassXC-2.5.3-Win32"
         }
     },
+    "installer": {
+        "script": "if (Test-Path \"$persist_dir\\keepassxc.ini\") { Copy-Item \"$persist_dir\\keepassxc.ini\" \"$dir\" -Force }"
+    },
+    "uninstaller": {
+        "script": [
+            "New-Item \"$persist_dir\" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null",
+            "if (Test-Path \"$dir\\keepassxc.ini\") { Copy-Item \"$dir\\keepassxc.ini\" \"$persist_dir\" -Force }"
+        ]
+    },
     "bin": [
         "KeePassXC.exe",
         "keepassxc-cli.exe",
         "keepassxc-proxy.exe"
     ],
-    "installer": {
-        "script": "if (Test-Path \"$persist_dir\\keepassxc.ini\") { Copy-Item \"$persist_dir\\keepassxc.ini\" \"$dir\" -Force }"
-    },
-    "uninstaller": {
-        "script": "if (Test-Path \"$dir\\keepassxc.ini\") { Copy-Item \"$dir\\keepassxc.ini\" \"$persist_dir\" -Force }"
-    },
     "shortcuts": [
         [
             "KeePassXC.exe",
@@ -39,19 +42,17 @@
         "architecture": {
             "64bit": {
                 "url": "https://github.com/keepassxreboot/keepassxc/releases/download/$version/KeePassXC-$version-Win64-Portable.zip",
-                "extract_dir": "KeePassXC-$version-Win64",
                 "hash": {
-                    "find": "([a-fA-F0-9]+)\\s+\\*?(?:KeePassXC-([\\d.]+)-Win64(-Portable)?.zip)",
                     "url": "$url.DIGEST"
-                }
+                },
+                "extract_dir": "KeePassXC-$version-Win64"
             },
             "32bit": {
                 "url": "https://github.com/keepassxreboot/keepassxc/releases/download/$version/KeePassXC-$version-Win32-Portable.zip",
-                "extract_dir": "KeePassXC-$version-Win32",
                 "hash": {
-                    "find": "([a-fA-F0-9]+)\\s+\\*?(?:KeePassXC-([\\d.]+)-Win32(-Portable)?.zip)",
                     "url": "$url.DIGEST"
-                }
+                },
+                "extract_dir": "KeePassXC-$version-Win32"
             }
         }
     }
