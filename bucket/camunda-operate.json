@@ -1,27 +1,37 @@
 {
-    "homepage": "https://github.com/zeebe-io/zeebe",
     "version": "1.2.0",
-    "license": "Zeebe Community License Version 1.0",
-    "description": "Monitor, manage and troubleshoot running workflow instances.",
+    "description": "Camunda workflow instance monitor/manager",
+    "homepage": "https://github.com/zeebe-io/zeebe",
+    "license": {
+        "identifier": "Zeebe Community License Version 1.0",
+        "url": "https://zeebe.io/legal/zeebe-community-license-1.0/"
+    },
     "architecture": {
         "64bit": {
             "url": "https://github.com/zeebe-io/zeebe/releases/download/0.22.1/camunda-operate-1.2.0.zip",
-            "hash": "b236f41f1085199e0edfcd12f013b6b2dc8844eeee5a3e54ffb53047e700ebb3"
+            "hash": "sha1:b8e6330d5e2c917250add386b8077524fa74c54e"
         }
     },
     "extract_dir": "camunda-operate-1.2.0",
-    "bin": "bin\\operate.bat",
+    "bin": [
+        [
+            "bin\\operate.bat",
+            "camunda-operate"
+        ]
+    ],
     "checkver": {
-        "url": "https://github.com/zeebe-io/zeebe/releases",
-        "regex": "https://github.com/zeebe-io/zeebe/releases/download/(?<release>[\\d.]+)/camunda-operate-(?<version>[\\d.]+).zip",
-        "replace": "$matchVersion",
-        "extract_dir": "camunda-operate-$matchVersion"
+        "github": "https://github.com/zeebe-io/zeebe",
+        "regex": "download/(?<release>[\\d.]+)/camunda-operate-([\\d.]+)\\.zip"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/zeebe-io/zeebe/releases/download/$matchRelease/camunda-operate-$matchVersion.zip"
+                "url": "https://github.com/zeebe-io/zeebe/releases/download/$matchRelease/camunda-operate-$version.zip"
             }
-        }
+        },
+        "hash": {
+            "url": "$url.sha1sum"
+        },
+        "extract_dir": "camunda-operate-$version"
     }
 }
