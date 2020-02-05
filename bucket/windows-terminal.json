@@ -1,0 +1,46 @@
+{
+    "version": "0.8.10261.0",
+    "description": "The new Windows Terminal, and the original Windows console host - all in the same place!",
+    "homepage": "https://github.com/microsoft/terminal",
+    "license": "MIT",
+    "suggest": {
+        "vcredist": "extras/vcredist2019"
+    },
+    "url": "https://github.com/microsoft/terminal/releases/download/v0.8.10261.0/Microsoft.WindowsTerminal_0.8.10261.0_8wekyb3d8bbwe.msixbundle#/dl.7z",
+    "hash": "73fa2d7a6297b37e3907e02a0d93fa66126865982308fbee09403e9fc751a0bf",
+    "architecture": {
+        "64bit": {
+            "pre_install": "Get-ChildItem \"$dir\" -Exclude '*x64.msix' | Remove-Item -Force -Recurse"
+        },
+        "32bit": {
+            "pre_install": "Get-ChildItem \"$dir\" -Exclude '*x86.msix' | Remove-Item -Force -Recurse"
+        }
+    },
+    "installer": {
+        "script": [
+            "$winVer = [Environment]::OSVersion.Version",
+            "if (($winver.Major -lt '10') -or ($winVer.Build -lt 18362)) { error 'At least Windows 10 18362 is required.'; break }",
+            "Get-ChildItem \"$dir\" '*.msix' | Select-Object -ExpandProperty Fullname | Expand-7zipArchive -DestinationPath \"$dir\" -Removal"
+        ]
+    },
+    "bin": [
+        "WindowsTerminal.exe",
+        [
+            "WindowsTerminal.exe",
+            "wt"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "WindowsTerminal.exe",
+            "Windows Terminal"
+        ]
+    ],
+    "checkver": {
+        "url": "https://github.com/microsoft/terminal/releases",
+        "regex": "WindowsTerminal_([\\d.]+)_8wekyb3d8bbwe\\.msixbundle"
+    },
+    "autoupdate": {
+        "url": "https://github.com/microsoft/terminal/releases/download/v$version/Microsoft.WindowsTerminal_$version_8wekyb3d8bbwe.msixbundle#/dl.7z"
+    }
+}
