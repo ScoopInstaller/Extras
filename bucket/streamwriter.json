@@ -7,9 +7,25 @@
     "hash": "d9939da465b718c57ac28176ac6262397eca91addf9221b52bf6533a65b6ffc9",
     "pre_install": [
         "if (!(Test-Path \"$persist_dir\\streamwriter_settings.ini\")) {",
-        "    Set-Content \"$dir\\streamwriter_settings.ini\" \"[Settings]`nAutoUpdate=0\" -Encoding Ascii | Out-Null",
+        "    $cur = current_dir \"$dir\"",
+        "    @\"",
+        "[Settings]",
+        "AutoUpdate=0",
+        "Dir=$cur\\Music",
+        "DirAuto=$cur\\Music",
+        "\"@ | Set-Content -LiteralPath \"$dir\\streamwriter_settings.ini\" -Encoding Ascii",
+        "}",
+        "if (Test-Path \"$persist_dir\\streamwriter_data.dat\") {",
+        "    Copy-Item \"$persist_dir\\streamwriter_data.dat\" -Destination \"$dir\"",
         "}"
     ],
+    "uninstaller": {
+        "script": [
+            "if (Test-Path \"$dir\\streamwriter_data.dat\") {",
+            "    Copy-Item \"$dir\\streamwriter_data.dat\" -Destination \"$persist_dir\" -Force",
+            "}"
+        ]
+    },
     "bin": "streamwriter.exe",
     "shortcuts": [
         [
