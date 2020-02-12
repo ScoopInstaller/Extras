@@ -12,13 +12,9 @@
             "hash": "f0d5a8c9017b9d58168024a710b30306c6628a6e52e9b815585ab30e886608b5"
         }
     },
-    "pre_install": [
-        "if (-not (is_admin)) { error 'This package requires admin privileges to install'; break }",
-        "Invoke-ExternalCommand innounp -ArgumentList('-q', '-x', \"$dir\\dl.exe\", \"-d$dir\", '-y') | Out-Null",
-        "Move-Item \"$dir\\{app}\\*\" \"$dir\"",
-        "Remove-Item \"$dir\\{app}\", \"$dir\\dl.exe\", \"$dir\\install_script.iss\" -Force -Recurse",
-        "Invoke-ExternalCommand \"$dir\\post_install.exe\" -RunAs | Out-Null"
-    ],
+    "innosetup": true,
+    "pre_install": "if (-not (is_admin)) { error 'This package requires admin privileges to install'; break }",
+    "post_install": "Invoke-ExternalCommand \"$dir\\post_install.exe\" -RunAs | Out-Null",
     "uninstaller": {
         "script": [
             "if (-not (is_admin)) { error 'This package requires admin privileges to uninstall'; break }",
