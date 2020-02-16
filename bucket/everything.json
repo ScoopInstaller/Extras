@@ -1,7 +1,8 @@
 {
-    "homepage": "https://www.voidtools.com/",
-    "license": "MIT",
     "version": "1.4.1.935",
+    "description": "Locate files and folders by name instantly.",
+    "homepage": "https://www.voidtools.com",
+    "license": "MIT",
     "architecture": {
         "64bit": {
             "url": "https://www.voidtools.com/Everything-1.4.1.935.x64.zip",
@@ -12,16 +13,30 @@
             "hash": "b0a5c0854a4ed33e0f3f10a0c58db434486f554d260cfdbe15c2aa2fa4bd67c5"
         }
     },
-    "bin": "Everything.exe",
-    "checkver": "Download Everything ([\\d.]+)",
-    "persist": [
-        "Everything.ini",
-        "Everything.db"
-    ],
     "pre_install": [
-        "if(!(test-path \"$dir\\Everything.ini\")) { & \"$dir\\Everything.exe\" -install-config null }",
-        "if(!(test-path \"$dir\\Everything.db\")) { Add-Content \"$dir\\Everything.db\" $null }"
+        "if (!(Test-Path \"$persist_dir\\Everything.ini\")) { & \"$dir\\Everything.exe\" -install-config null }",
+        "if (!(Test-Path \"$persist_dir\\Everything.db\")) { New-Item \"$dir\\Everything.db\" | Out-Null }",
+        "if (Test-Path \"$persist_dir\\Bookmarks.csv\") {",
+        "    Copy-Item \"$persist_dir\\Bookmarks.csv\" \"$dir\"",
+        "} else {",
+        "    New-Item \"$dir\\Bookmarks.csv\" | Out-Null",
+        "}"
     ],
+    "uninstaller": {
+        "script": "if (Test-Path \"$dir\\Bookmarks.csv\") { Copy-Item \"$dir\\Bookmarks.csv\" \"$persist_dir\" -Force }"
+    },
+    "bin": "Everything.exe",
+    "shortcuts": [
+        [
+            "Everything.exe",
+            "Everything"
+        ]
+    ],
+    "persist": [
+        "Everything.db",
+        "Everything.ini"
+    ],
+    "checkver": "Download Everything ([\\d.]+)",
     "autoupdate": {
         "architecture": {
             "64bit": {
@@ -32,13 +47,7 @@
             }
         },
         "hash": {
-            "url": "https://www.voidtools.com/Everything-$version.sha256"
+            "url": "$baseurl/Everything-$version.sha256"
         }
-    },
-    "shortcuts": [
-        [
-            "Everything.exe",
-            "Everything"
-        ]
-    ]
+    }
 }

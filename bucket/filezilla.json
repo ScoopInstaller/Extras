@@ -1,17 +1,25 @@
 {
+    "version": "3.46.3",
+    "description": "Fast and reliable cross-platform FTP, FTPS and SFTP client with lots of useful features and an intuitive graphical user interface.",
     "homepage": "https://filezilla-project.org/",
-    "version": "3.41.2",
+    "license": "GPL-2.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://download.filezilla-project.org/client/FileZilla_3.41.2_win64.zip",
-            "hash": "sha512:63ad44c14fe501777fe577b449d8e05f9c9ab05aff4aa26acf99e90074dc814c210d5de801fb796ce2b41be2e3963e57d2572d139bd5a96a8635fbc6bb0c5488"
+            "url": "https://download.filezilla-project.org/client/FileZilla_3.46.3_win64.zip",
+            "hash": "sha512:86fb928d39a947a7d06853be94de0ecf5cabc888c1f0216859912cca9d615b97c8eb8c7574d1acdabcda82b80d3cbf76cc79497ea864184ca9e891d1df960eaa"
         },
         "32bit": {
-            "url": "https://download.filezilla-project.org/client/FileZilla_3.41.2_win32.zip",
-            "hash": "sha512:72d1adf580a5ab498cb928e5487accc249882fba03b05b47948b81cb0fdb87f7e603fb0366f1c052fadecaee3467f32d7cf649d0c599a3e94d3f900206005498"
+            "url": "https://download.filezilla-project.org/client/FileZilla_3.46.3_win32.zip",
+            "hash": "sha512:324d9e9fdc6289652f80c9d001348576dde9af8c0a1169d0aaa454dd2078c9795c9baee3676743a96e239099ff982fd6ddbfa880a20b4f1f2a55078ec212697f"
         }
     },
-    "extract_dir": "FileZilla-3.41.2",
+    "extract_dir": "FileZilla-3.46.3",
+    "pre_install": [
+        "$file = 'fzdefaults.xml'",
+        "if (-not (Test-Path \"$persist_dir\\$file\")) {",
+        "    Copy-Item \"$dir\\docs\\fzdefaults.xml.example\" \"$dir\\fzdefaults.xml\"",
+        "}"
+    ],
     "bin": "filezilla.exe",
     "shortcuts": [
         [
@@ -19,12 +27,12 @@
             "FileZilla"
         ]
     ],
+    "persist": "fzdefaults.xml",
     "checkver": {
         "url": "https://filezilla-project.org/download.php?show_all=1",
         "re": "The latest stable version of FileZilla Client is ([\\d.]+)"
     },
     "autoupdate": {
-        "extract_dir": "FileZilla-$version",
         "architecture": {
             "64bit": {
                 "url": "https://download.filezilla-project.org/client/FileZilla_$version_win64.zip"
@@ -34,7 +42,8 @@
             }
         },
         "hash": {
-            "url": "https://download.filezilla-project.org/client/FileZilla_$version.sha512"
-        }
+            "url": "$baseurl/FileZilla_$version.sha512"
+        },
+        "extract_dir": "FileZilla-$version"
     }
 }

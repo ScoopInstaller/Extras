@@ -1,25 +1,30 @@
 {
+    "version": "1.31.0",
     "homepage": "https://signal.org/",
+    "description": "A cross-platform encrypted messaging service.",
     "license": "GPL-3.0-only",
-    "version": "1.22.0",
-    "hash": "b367a5b57e869e2dcda08a01738606b6c38590d3a47de57d134b8b4f4f5a2a54",
-    "url": "https://updates.signal.org/desktop/signal-desktop-win-1.22.0.exe#/dl.7z",
-    "checkver": {
-        "url": "https://updates.signal.org/desktop/latest.yml",
-        "re": "version:\\s([\\d.]+)"
-    },
-    "pre_install": "extract_7zip \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+    "url": "https://updates.signal.org/desktop/signal-desktop-win-1.31.0.exe#/dl.7z",
+    "hash": "sha512:479e24dd972cbfd8a039a4850cb0a18a3fe451e4badedff157f07a42413388c6a74334e0f730bcb50d0195aa533ef22565f983ae591db6aa18665556fa169df8",
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall Signal.exe\" -Recurse -Force"
+    ],
+    "bin": "signal.exe",
     "shortcuts": [
         [
             "signal.exe",
             "Signal"
         ]
     ],
+    "checkver": {
+        "url": "https://updates.signal.org/desktop/latest.yml",
+        "regex": "version:\\s([\\d.]+)"
+    },
     "autoupdate": {
         "url": "https://updates.signal.org/desktop/signal-desktop-win-$version.exe#/dl.7z",
         "hash": {
             "url": "$baseurl/latest.yml",
-            "find": "sha2:\\s([a-fA-F0-9]{64})"
+            "regex": "sha512:\\s$base64"
         }
     }
 }

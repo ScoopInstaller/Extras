@@ -1,0 +1,50 @@
+{
+    "homepage": "https://www.lazarus-ide.org",
+    "version": "2.0.6",
+    "description": "A Delphi compatible cross-platform IDE for Rapid Application Development.",
+    "license": {
+        "identifier": "GPL-2.0-or-later | FPC-modified-LGPL-2.0-or-later",
+        "url": "http://wiki.lazarus.freepascal.org/licensing"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://downloads.sourceforge.net/project/lazarus/Lazarus%20Windows%2064%20bits/Lazarus%202.0.6/lazarus-2.0.6-fpc-3.0.4-win64.exe",
+            "hash": "acf428903551097094ba4bb31209c1d160f911ffb507ebc52aaca09aa0ae10ee"
+        },
+        "32bit": {
+            "url": "https://downloads.sourceforge.net/project/lazarus/Lazarus%20Windows%2032%20bits/Lazarus%202.0.6/lazarus-2.0.6-fpc-3.0.4-win32.exe",
+            "hash": "24155786b2de69334be13a8cabaf28d52a7b72e735a098cd538dbb1aae18e0c3"
+        }
+    },
+    "innosetup": true,
+    "post_install": [
+        "$fpcdir = \"$dir\\fpc\\\" + ($fname -replace '.*fpc-([\\d.]+)-.*', '$1')",
+        "& \"$fpcdir\\bin\\x86_64-win64\\fpcmkcfg.exe\" -d \"basepath=$fpcdir\" -o \"$fpcdir\\bin\\x86_64-win64\\fpc.cfg\""
+    ],
+    "shortcuts": [
+        [
+            "lazarus.exe",
+            "Lazarus"
+        ],
+        [
+            "startlazarus.exe",
+            "Lazarus (debug)",
+            "--debug"
+        ]
+    ],
+    "checkver": "lazarus-([\\d.]+)-fpc-(?<fpc>[\\d.]+)-win64.exe",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://downloads.sourceforge.net/project/lazarus/Lazarus%20Windows%2064%20bits/Lazarus%20$version/lazarus-$version-fpc-$matchFpc-win64.exe"
+            },
+            "32bit": {
+                "url": "https://downloads.sourceforge.net/project/lazarus/Lazarus%20Windows%2032%20bits/Lazarus%20$version/lazarus-$version-fpc-$matchFpc-win32.exe"
+            }
+        },
+        "hash": {
+            "url": "http://www.lazarus-ide.org/index.php?page=checksums",
+            "regex": "$sha256.*?$basename"
+        }
+    }
+}

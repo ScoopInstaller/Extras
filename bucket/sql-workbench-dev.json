@@ -5,17 +5,11 @@
         "identifier": "Freeware",
         "url": "https://www.sql-workbench.eu/manual/license.html"
     },
-    "version": "124.3",
-    "url": "https://www.sql-workbench.eu/Workbench-Build124.3-with-optional-libs.zip",
-    "hash": "sha1:241051f41ee270d019a53875719ff3cfc50b99f8",
+    "version": "125.5",
+    "url": "https://www.sql-workbench.eu/Workbench-Build125.5-with-optional-libs.zip",
+    "hash": "sha1:9558841b129bc83a50e6d8b7262fbffd8a8f6c7e",
     "architecture": {
         "64bit": {
-            "bin": [
-                [
-                    "sqlwbconsole64.exe",
-                    "sqlwbconsole"
-                ]
-            ],
             "shortcuts": [
                 [
                     "SQLWorkbench64.exe",
@@ -24,12 +18,6 @@
             ]
         },
         "32bit": {
-            "bin": [
-                [
-                    "sqlwbconsole.exe",
-                    "sqlwbconsole"
-                ]
-            ],
             "shortcuts": [
                 [
                     "SQLWorkbench.exe",
@@ -38,6 +26,7 @@
             ]
         }
     },
+    "bin": "sqlwbconsole.cmd",
     "persist": [
         "ext",
         "sqlwbconsole64.ini",
@@ -46,10 +35,9 @@
         "SQLWorkbench.ini"
     ],
     "pre_install": [
-        "if(!(Test-Path \"$persist_dir\\sqlwbconsole64.ini\")) { New-Item \"$dir\\sqlwbconsole64.ini\" -Type File }",
-        "if(!(Test-Path \"$persist_dir\\sqlwbconsole.ini\")) { New-Item \"$dir\\sqlwbconsole.ini\" -Type File }",
-        "if(!(Test-Path \"$persist_dir\\SQLWorkbench64.ini\")) { New-Item \"$dir\\SQLWorkbench64.ini\" -Type File }",
-        "if(!(Test-Path \"$persist_dir\\SQLWorkbench.ini\")) { New-Item \"$dir\\SQLWorkbench.ini\" -Type File }"
+        "@('sqlwbconsole64.ini', 'sqlwbconsole.ini', 'SQLWorkbench64.ini', 'SQLWorkbench.ini') | ForEach-Object {",
+        "    if(!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" -Type File | Out-Null }",
+        "}"
     ],
     "post_install": "if((Test-Path \"$dir\\ext.original\")) { Copy-Item \"$dir\\ext.original\\*\" -Destination \"$persist_dir\\ext\" }",
     "checkver": {

@@ -1,24 +1,23 @@
 {
     "##": "https://github.com/plexinc/plex-media-player",
-    "version": "2.29.1.961-bb236059",
+    "version": "2.50.0.1045-37e9e857",
     "description": "Plex Media Player. Play media.",
     "homepage": "https://www.plex.tv/apps-devices/#modal-devices-plex-media-player",
     "license": "GPL-2.0-or-later",
-    "depends": "dark",
     "architecture": {
         "64bit": {
-            "url": "https://downloads.plex.tv/plexmediaplayer/2.29.1.961-bb236059/PlexMediaPlayer-2.29.1.961-bb236059-windows-x64.exe#/installer.exe",
-            "hash": "sha1:c5a61f6957392b7d22b2469965ab76948ca58659"
+            "url": "https://downloads.plex.tv/plexmediaplayer/2.50.0.1045-37e9e857/PlexMediaPlayer-2.50.0.1045-37e9e857-windows-x64.exe",
+            "hash": "sha1:27ae3a8049d77ce41d84d5e8010327266bff13c5"
         }
     },
     "installer": {
         "script": [
             "$extracted = \"$dir\\extracted\"",
             "$msi = \"$dir\\msi\"",
-            "&(file_path dark dark.exe) -nologo -x \"$extracted\" \"$dir\\installer.exe\" | Out-Null",
-            "extract_msi \"$extracted\\AttachedContainer\\PMP.msi\" \"$msi\"",
+            "Expand-DarkArchive \"$dir\\$fname\" \"$extracted\"",
+            "Expand-MsiArchive \"$extracted\\AttachedContainer\\PMP.msi\" \"$msi\"",
             "Move-Item \"$msi\\Msi\\*\" \"$dir\" -Force",
-            "Remove-Item $extracted, $msi, \"$dir\\installer.exe\" -Force -Recurse"
+            "Remove-Item $extracted, $msi, \"$dir\\$fname\" -Force -Recurse"
         ]
     },
     "shortcuts": [
@@ -34,7 +33,7 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://downloads.plex.tv/plexmediaplayer/$version/PlexMediaPlayer-$version-windows-x64.exe#/installer.exe",
+                "url": "https://downloads.plex.tv/plexmediaplayer/$version/PlexMediaPlayer-$version-windows-x64.exe",
                 "hash": {
                     "url": "https://plex.tv/api/downloads/3.json",
                     "jsonpath": "$.computer.windows.releases.checksum"

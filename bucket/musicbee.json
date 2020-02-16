@@ -1,16 +1,13 @@
 {
-    "version": "3.2.6902",
+    "version": "3.3.7310",
+    "description": "The ultimate music player to easily manage, find, and play music, podcasts, web radio stations, etc",
     "license": "GPL-2.0-or-later",
     "homepage": "https://getmusicbee.com/",
-    "url": "https://www.mediafire.com/file/nl8iqge26fjt1cu/MusicBeePortable_3_2_Update3.zip/file#/dl.zip",
-    "hash": "fe4875f540c3e066e8c12c82696da71b940bfa8d88419bbb6f888f589b15a900",
-    "pre_install": "(Get-ChildItem \"$dir\\MusicBeePortable_*.exe\" | Rename-Item -NewName \"setup.exe\");",
+    "notes": "Currently it's not possible to make Plugins and Skins persistent",
+    "url": "https://www.mediafire.com/file/ocl0n2qujig7tui/MusicBeePortable_3_3_Update4.zip/file#/dl.zip",
+    "hash": "87141a31df3206a27f8e14a25bade2469bb261e848b2f0e85f3a7ef328a1bee3",
     "installer": {
-        "file": "setup.exe",
-        "args": [
-            "/S",
-            "/D=$dir"
-        ]
+        "script": "Get-ChildItem \"$dir\" 'MusicBeePortable*.exe' | Select-Object -First 1 -ExpandProperty Fullname | Expand-7zipArchive -DestinationPath \"$dir\" -Removal"
     },
     "bin": "MusicBee.exe",
     "shortcuts": [
@@ -25,7 +22,9 @@
     ],
     "checkver": {
         "url": "https://getmusicbee.com/downloads/",
-        "re": "MusicBee ([\\d.]+)</h2>"
+        "regex": "(?sm)MusicBee\\s*([\\d.]+)<.*https://www\\.mediafire\\.com/file/(?<random>[^/]+)/MusicBeePortable_(?<majorminor>[^.]+)\\."
     },
-    "notes": "Currently it's not possible to make Plugins and Skins persistent"
+    "autoupdate": {
+        "url": "https://www.mediafire.com/file/$matchRandom/MusicBeePortable_$matchMajorminor.zip/file#/dl.zip"
+    }
 }

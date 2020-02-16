@@ -1,37 +1,52 @@
 {
-    "version": "73.0.3683.75-r625896",
+    "##": "Check chromium.woolyss.com for different versions of Chromium releases.",
+    "version": "80.0.3987.87",
+    "description": "Browser aiming for safer, faster, and more stable way for all users to experience the web.",
     "license": "BSD-3-Clause",
     "homepage": "https://www.chromium.org",
-    "checkver": {
-        "url": "https://chromium.woolyss.com/api/v3/?os=windows&bit=64&type=stable-codecs-sync&out=string",
-        "re": "v([\\d.]+-r(?:\\d+))-win64"
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/macchrome/winchrome/releases/download/v80.0.3987.87-r722274-Win64/ungoogled-chromium-80.0.3987.87-1_windows.7z",
+            "hash": "sha1:709ae94dc292dd8a7f683777cd77f943d821d49d",
+            "extract_dir": "ungoogled-chromium-80.0.3987.87-1_windows"
+        },
+        "32bit": {
+            "url": "https://github.com/macchrome/winchrome/releases/download/v80.0.3987.87-r722274-Win64/Ungoogled-Chromium-80.0.3987.87-Win32.7z",
+            "hash": "sha1:5f917a1c6f6aa9e35ff2ce7b4577e6ae4fd3f26e",
+            "extract_dir": "Ungoogled-Chromium-80.0.3987.87-Win32"
+        }
     },
-    "bin": "chrome.exe",
-    "extract_dir": "chrome-win32",
+    "bin": [
+        "chrome.exe",
+        [
+            "chrome.exe",
+            "chromium"
+        ]
+    ],
     "shortcuts": [
         [
             "chrome.exe",
             "Chromium"
         ]
     ],
-    "architecture": {
-        "64bit": {
-            "url": "https://github.com/henrypp/chromium/releases/download/v73.0.3683.75-r625896-win64/chromium-sync.zip",
-            "hash": "e170b251f762ae3e1bf7c77671542ac205eea4d24c6dcd4e328d1bd41367fa4e"
-        },
-        "32bit": {
-            "url": "https://github.com/henrypp/chromium/releases/download/v73.0.3683.75-r625896-win32/chromium-sync.zip",
-            "hash": "cfabb128f07f1917fffbb7c0437c866c6e60fd013f5ffef7bd86ba413cba6f91"
-        }
+    "checkver": {
+        "github": "https://github.com/macchrome/winchrome",
+        "regex": "v([\\d.]+)-r(?<build>\\d+)-Win64"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/henrypp/chromium/releases/download/v$version-win64/chromium-sync.zip"
+                "url": "https://github.com/macchrome/winchrome/releases/download/v$version-r$matchBuild-Win64/ungoogled-chromium-$version-1_windows.7z",
+                "extract_dir": "ungoogled-chromium-$version-1_windows"
             },
             "32bit": {
-                "url": "https://github.com/henrypp/chromium/releases/download/v$version-win32/chromium-sync.zip"
+                "url": "https://github.com/macchrome/winchrome/releases/download/v$version-r$matchBuild-Win64/Ungoogled-Chromium-$version-Win32.7z",
+                "extract_dir": "Ungoogled-Chromium-$version-Win32"
             }
+        },
+        "hash": {
+            "url": "https://github.com/macchrome/winchrome/releases/v$version-r$matchBuild-Win64",
+            "regex": "(?s)$basename.*?$sha1"
         }
     }
 }

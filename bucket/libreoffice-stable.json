@@ -1,0 +1,63 @@
+{
+    "version": "6.3.4",
+    "description": "Powerful office suite.",
+    "homepage": "https://libreoffice.org/",
+    "license": "MPL-2.0",
+    "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/6.3.4.2/portable/LibreOfficePortable_6.3.4_MultilingualStandard.paf.exe#/dl.7z",
+    "hash": "5ab8be46f34a5cfb5f9a44592ded5d2fa76c82965ad95e60587986d13459108f",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\Data\\settings\")) {",
+        "    New-Item \"$dir\\Data\\settings\\LibreOfficePortableSettings.ini\" -Value \"[LibreOfficePortableSettings]`nInvalidPackageWarningShown=$version.0\" -Force | Out-Null",
+        "    if (Test-Path \"$Env:AppData\\LibreOffice\") {",
+        "        Write-Host -F yellow \"Copying old '$Env:AppData\\LibreOffice' to '$persist_dir\\Data\\settings'\"",
+        "        Get-Item \"$Env:AppData\\LibreOffice\\*\\*\" | Copy-Item -Destination \"$dir\\Data\\settings\" -Recurse -Force",
+        "    }",
+        "    else { Copy-Item \"$dir\\App\\DefaultData\\*\" \"$dir\\Data\" -Recurse -Force }",
+        "}",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse -Force"
+    ],
+    "shortcuts": [
+        [
+            "LibreOfficePortable.exe",
+            "LibreOffice\\LibreOffice"
+        ],
+        [
+            "LibreOfficeBasePortable.exe",
+            "LibreOffice\\LibreOffice Base"
+        ],
+        [
+            "LibreOfficeCalcPortable.exe",
+            "LibreOffice\\LibreOffice Calc"
+        ],
+        [
+            "LibreOfficeDrawPortable.exe",
+            "LibreOffice\\LibreOffice Draw"
+        ],
+        [
+            "LibreOfficeImpressPortable.exe",
+            "LibreOffice\\LibreOffice Impress"
+        ],
+        [
+            "LibreOfficeMathPortable.exe",
+            "LibreOffice\\LibreOffice Math"
+        ],
+        [
+            "LibreOfficeWriterPortable.exe",
+            "LibreOffice\\LibreOffice Writer"
+        ]
+    ],
+    "persist": "Data",
+    "checkver": {
+        "url": "https://download.documentfoundation.org/libreoffice/portable/?C=M;O=D",
+        "regex": ">([\\d.]+)/<"
+    },
+    "autoupdate": {
+        "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/$version.2/portable/LibreOfficePortable_$version_MultilingualStandard.paf.exe#/dl.7z",
+        "hash": {
+            "url": "$url.sha256"
+        }
+    },
+    "suggest": {
+        "vcredist": "extras/vcredist2015"
+    }
+}

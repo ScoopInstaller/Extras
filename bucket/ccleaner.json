@@ -1,8 +1,10 @@
 {
-    "homepage": "https://www.piriform.com/ccleaner",
-    "version": "5.55.7108",
-    "url": "https://download.ccleaner.com/slim/ccsetup555_slim.exe#/dl.7z",
-    "hash": "258034f18ec5e0c2230c0cc9ea4c9d09e98061fe223472d3fc21113508f88234",
+    "homepage": "https://www.ccleaner.com/ccleaner",
+    "version": "5.63.7540",
+    "license": "Freeware",
+    "description": "Number-one tool for cleaning your PC.",
+    "url": "https://download.ccleaner.com/portable/ccsetup563.zip",
+    "hash": "ff83bfc0077b993a72473d8f3e62b163773a4e4018fd0ba104d821647c029646",
     "architecture": {
         "64bit": {
             "bin": [
@@ -28,19 +30,25 @@
             ]
         }
     },
-    "persist": "ccleaner.ini",
     "pre_install": [
-        "if(!(test-path \"$persist_dir\\ccleaner.ini\")) { Add-Content \"$dir\\ccleaner.ini\" \"[Options]`nHelpImproveCCleaner=0\" }",
-        "if(!(test-path \"$dir\\portable.dat\")) { Add-Content \"$dir\\portable.dat\" \"#PORTABLE#\" }",
-        "Remove-Item \"$dir\\`$*\" -Recurse",
-        "Remove-Item \"$dir\\uninst.exe\"",
-        "Remove-Item \"$dir\\CCUpdate.exe\""
+        "if(!(Test-Path \"$persist_dir\\ccleaner.ini\")) {",
+        "   Set-Content \"$dir\\ccleaner.ini\" (@('[Options]', 'UpdateAuto=0', 'UpdateNotify=0', 'UpdateCheck=0', 'HelpImproveCCleaner=0') -join \"`r`n\") -Encoding ASCII",
+        "}",
+        "'winapp.ini', 'winreg.ini', 'winsys.ini' | ForEach-Object {",
+        "   if(!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "}"
+    ],
+    "persist": [
+        "ccleaner.ini",
+        "winapp.ini",
+        "winreg.ini",
+        "winsys.ini"
     ],
     "checkver": {
-        "url": "https://www.piriform.com/ccleaner/download",
-        "re": "<strong>v([\\d.]+)</strong>"
+        "url": "https://www.ccleaner.com/ccleaner/version-history",
+        "regex": ">v([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://download.ccleaner.com/slim/ccsetup$majorVersion$minorVersion_slim.exe#/dl.7z"
+        "url": "https://download.ccleaner.com/portable/ccsetup$majorVersion$minorVersion.zip"
     }
 }

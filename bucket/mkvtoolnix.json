@@ -1,17 +1,34 @@
 {
-    "version": "32.0.0",
+    "version": "43.0.0",
+    "homepage": "https://mkvtoolnix.download",
+    "description": "A set of tools to create, alter and inspect Matroska files.",
+    "license": "GPL-2.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://mkvtoolnix.download/windows/releases/32.0.0/mkvtoolnix-64-bit-32.0.0.7z",
-            "hash": "sha512:cb8748f512b52ee884a4bd5e6d55b6a7fcc428c896b267281cbf83146b6fbee3d7465005f2d286ef514103a56d957a1528fe7b11acade3713feb808bcf58f96c"
+            "url": "https://mkvtoolnix.download/windows/releases/43.0.0/mkvtoolnix-64-bit-43.0.0.7z",
+            "hash": "sha512:2b1c17bb8de55369f1344ee131edff022f02a57ec83fd5e95999cd67e76e553d90685759946335a3778f1bd91b4646bc9626e32dabeaae1138717ff7f6041bbd"
         },
         "32bit": {
-            "url": "https://mkvtoolnix.download/windows/releases/32.0.0/mkvtoolnix-32-bit-32.0.0.7z",
-            "hash": "sha512:c9b0a482973a560f57bcfaf1fd63333381fef210e6f3acf080dcb5080e6d41248408f1003c5ca1286a4d306a0485eb526791fee70d2d94b54a55e5ba0fe60428"
+            "url": "https://mkvtoolnix.download/windows/releases/43.0.0/mkvtoolnix-32-bit-43.0.0.7z",
+            "hash": "sha512:6f9e63c4c36eed473ace7197197f7b8fbb9d12e1f7e261e3d84d792357d3addae4cdf81fc8c9310e74e25dceb4fa41bacdc874a0ca61bea67c279b4c3371b9e7"
         }
     },
-    "homepage": "https://mkvtoolnix.download/",
     "extract_dir": "mkvtoolnix",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\mkvtoolnix-gui.ini\")) {",
+        "    Set-Content \"$dir\\mkvtoolnix-gui.ini\" @('[settings]', 'updates\\checkForUpdates=false') -Encoding Ascii",
+        "} else {",
+        "    # Persist mkvtoolnix-gui.ini manully because symlink doesn't work.",
+        "    Copy-Item \"$persist_dir\\mkvtoolnix-gui.ini\" \"$dir\"",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "if (Test-Path \"$dir\\mkvtoolnix-gui.ini\") {",
+            "    Copy-Item \"$dir\\mkvtoolnix-gui.ini\" \"$persist_dir\" -Force",
+            "}"
+        ]
+    },
     "bin": [
         "mkvextract.exe",
         "mkvinfo.exe",
@@ -24,6 +41,10 @@
             "mkvtoolnix-gui.exe",
             "MKVToolNix GUI"
         ]
+    ],
+    "persist": [
+        "cache",
+        "jobQueue"
     ],
     "checkver": "Released v([\\d.]+)",
     "autoupdate": {

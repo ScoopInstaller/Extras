@@ -1,28 +1,23 @@
 {
     "homepage": "https://standardnotes.org/",
-    "version": "3.0.6",
+    "version": "3.3.2",
     "description": "A safe place for your notes, thoughts, and life's work.",
-    "license": {
-        "identifier": "AGPL-3.0",
-        "url": "https://github.com/standardnotes/desktop/blob/master/LICENSE"
-    },
-    "url": "https://github.com/standardnotes/desktop/releases/download/v3.0.6/standard-notes-setup-3.0.6.exe#/dl.7z",
-    "hash": "9143f26be822009d9fec72dc1faae227667b68f8831b13951e560cb7bf45053b",
-    "extract_dir": "\\$PLUGINSDIR",
-    "pre_install": "Get-ChildItem \"$dir\" -Exclude 'app-64.7z', 'app-32.7z' | Remove-Item -Force -Recurse",
+    "license": "AGPL-3.0-or-later",
+    "url": "https://github.com/standardnotes/desktop/releases/download/v3.3.2/standard-notes-setup-3.3.2.exe#/dl.7z",
+    "hash": "sha512:b461d7c3c5b793abe80080156eae6e82aa1c17352be1b6b12e1285f0cd211717f2f02d87eee2bbdc86c80eb7051155cd96de0d2d3b6815846b0f17b50deb0d5c",
     "architecture": {
         "64bit": {
             "installer": {
-                "script": "extract_7zip \"$dir\\app-64.7z\" \"$dir\""
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
             }
         },
         "32bit": {
             "installer": {
-                "script": "extract_7zip \"$dir\\app-32.7z\" \"$dir\""
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
             }
         }
     },
-    "post_install": "Remove-Item \"$dir\\app-64.7z\", \"$dir\\app-32.7z\"",
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
     "bin": "Standard Notes.exe",
     "shortcuts": [
         [
@@ -36,8 +31,8 @@
     "autoupdate": {
         "url": "https://github.com/standardnotes/desktop/releases/download/v$version/standard-notes-setup-$version.exe#/dl.7z",
         "hash": {
-            "url": "https://github.com/standardnotes/desktop/releases/download/v$version/latest.yml",
-            "find": "sha512:\\s+(.*)"
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512:\\s+$base64"
         }
     }
 }

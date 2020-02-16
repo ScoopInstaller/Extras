@@ -1,27 +1,40 @@
 {
-    "version": "0.12.3",
-    "license": "BSD-3-Clause",
-    "url": "https://github.com/nteract/nteract/releases/download/v0.12.3/nteract-0.12.3-win.zip#/dl.7z",
     "homepage": "https://nteract.io/",
-    "hash": "9319d5343cf34ca5b9cd5fa47e0931182f71a1dce24736cba13511731a79375d",
+    "version": "0.21.0",
+    "license": "BSD-3-Clause",
+    "description": "nteract and create with data, words, and visuals.",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/nteract/nteract/releases/download/v0.21.0/nteract-setup-0.21.0.exe#/dl.7z",
+            "hash": "sha512:4d67773c240cb8a1684a4dc01c7cadabb8f64f46b77aa9e6acad253cfd36b8d7873c2669f9a7eb08515330bb3b752fc84ac5e5482b5b844e58d28ed02c569ff9",
+            "installer": {
+                "script": [
+                    "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse",
+                    "info 'Installing Python3 kernel...'",
+                    "python3 -m pip install ipykernel",
+                    "python3 -m ipykernel install --user"
+                ]
+            }
+        }
+    },
     "bin": "nteract.exe",
-    "depends": "python",
-    "post_install": [
-        "Write-Host 'Installing Python3 kernel...' -Foreground Magenta",
-        "python3 -m pip install ipykernel",
-        "python3 -m ipykernel install --user"
-    ],
-    "checkver": {
-        "github": "https://github.com/nteract/nteract"
-    },
-    "autoupdate": {
-        "url": "https://github.com/nteract/nteract/releases/download/v$version/nteract-$version-win.zip#/dl.7z"
-    },
     "shortcuts": [
         [
             "nteract.exe",
             "nteract"
         ]
     ],
+    "depends": "python",
+    "checkver": {
+        "github": "https://github.com/nteract/nteract"
+    },
+    "autoupdate": {
+        "url": "https://github.com/nteract/nteract/releases/download/v$version/nteract-setup-$version.exe#/dl.7z",
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512: $base64"
+        }
+    },
     "notes": "Instructions for downloading more kernels can be found at: https://nteract.io/kernels"
 }

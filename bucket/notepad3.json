@@ -1,0 +1,63 @@
+{
+    "version": "5.19.815.2595",
+    "description": "Notepad like text editor based on the Scintilla source code.",
+    "homepage": "https://www.rizonesoft.com/downloads/notepad3/",
+    "license": "BSD-3-Clause",
+    "url": [
+        "https://github.com/rizonesoft/Notepad3/releases/download/RELEASE_5.19.815.2595/Notepad3_5.19.815.2595.zip",
+        "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/notepad3/replace-windows-notepad.reg",
+        "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/notepad3/restore-windows-notepad.reg"
+    ],
+    "hash": [
+        "f837f7f054f9b681dd9d79d61661c04d3f2ed580b959a0ae3606cc6800b37958",
+        "d39d59e7b26d903a8e91bad545cbfd082a0508d1ed4d3eb4dad8c8ebb87fbd07",
+        "0e294608620e2d84bdf99f9a65de547b7b26431294708d6d0a7d9b42633c74a2"
+    ],
+    "bin": [
+        "Notepad3.exe",
+        "minipath.exe"
+    ],
+    "shortcuts": [
+        [
+            "Notepad3.exe",
+            "Notepad3"
+        ],
+        [
+            "minipath.exe",
+            "minipath"
+        ]
+    ],
+    "persist": [
+        "Favorites",
+        "minipath.ini",
+        "Notepad3.ini"
+    ],
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": "Expand-ZipArchive \"$dir\\Notepad3_${version}_x64.zip\""
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": "Expand-ZipArchive \"$dir\\Notepad3_${version}_x86.zip\""
+            }
+        }
+    },
+    "post_install": [
+        "Remove-Item \"$dir\\Notepad3_${version}_x*.zip\"",
+        "if (Test-Path(\"$dir\\replace-windows-notepad.reg\")) {",
+        "    $notepad3 = \"$dir\\Notepad3.exe\" -Replace '\\\\', '\\\\'",
+        "    $content = Get-Content \"$dir\\replace-windows-notepad.reg\"",
+        "    $content = $content -Replace '\\$notepad3', $notepad3",
+        "    Set-Content \"$dir\\replace-windows-notepad.reg\" $content -Encoding ASCII",
+        "}"
+    ],
+    "checkver": {
+        "github": "https://github.com/rizonesoft/Notepad3",
+        "regex": "/releases/tag/RELEASE_([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://github.com/rizonesoft/Notepad3/releases/download/RELEASE_$version/Notepad3_$version.zip"
+    }
+}

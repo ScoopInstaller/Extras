@@ -1,0 +1,38 @@
+{
+    "version": "1.1.1",
+    "description": "Secure, Simple and Scalable Video Conferences.",
+    "license": "Apache-2.0",
+    "homepage": "https://jitsi.org/meet",
+    "url": "https://github.com/jitsi/jitsi-meet-electron/releases/download/v1.1.1/jitsi-meet.exe#/dl.7z",
+    "hash": "sha512:2430eab34fb60905bc7b70d765d5382800ad0bca11cbf98e8fb579df634f37d2d5e37ac6698ff49887dcafbb7e309a73b23aea9222904451a75ce5f7d53902cd",
+    "bin": "Jitsi Meet.exe",
+    "shortcuts": [
+        [
+            "Jitsi Meet.exe",
+            "Jitsi Meet"
+        ]
+    ],
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
+            }
+        }
+    },
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall Jitsi Meet.exe\" -Recurse",
+    "checkver": {
+        "github": "https://github.com/jitsi/jitsi-meet-electron"
+    },
+    "autoupdate": {
+        "url": "https://github.com/jitsi/jitsi-meet-electron/releases/download/v$version/jitsi-meet.exe#/dl.7z",
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512: $base64"
+        }
+    }
+}

@@ -1,0 +1,56 @@
+{
+    "version": "82.0.4056.3",
+    "description": "Fast, secure, and free web browser, built for the modern web.",
+    "homepage": "https://www.google.com/chrome/dev",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.google.com/chrome/privacy/eula_text.html"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://dl.google.com/release2/chrome/AKzJpyK54mJVXix0wTxMLes_82.0.4056.3/82.0.4056.3_chrome_installer.exe#/dl.7z",
+            "hash": "2b4153207d563483f29129c14f51eab87dfa9df3854f2f3e57a35fe19e023c89"
+        },
+        "32bit": {
+            "url": "https://dl.google.com/release2/chrome/afWeF8VQrc3-H-4ZpFWSDQ_82.0.4056.3/82.0.4056.3_chrome_installer.exe#/dl.7z",
+            "hash": "9154143898f1596c75510521342f664b2926ca762f9356ad31a39f714f695658"
+        }
+    },
+    "installer": {
+        "script": "Expand-7zipArchive \"$dir\\chrome.7z\" -ExtractDir 'Chrome-bin' -Removal"
+    },
+    "bin": [
+        [
+            "chrome.exe",
+            "chrome-dev"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "chrome.exe",
+            "Google Chrome (Dev)"
+        ]
+    ],
+    "checkver": {
+        "url": "https://chrome-dl.com/api/chrome.min.xml",
+        "regex": "(?sm)<dev32><version>(?<version>[\\d.]+)</version>.+release2/chrome/(?<32>[\\w-]+)_.+<dev64>.+release2/chrome/(?<64>[\\w-]+)_.+</dev64>"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://dl.google.com/release2/chrome/$match64_$version/$version_chrome_installer.exe#/dl.7z",
+                "hash": {
+                    "url": "https://chrome-dl.com/api/chrome.min.xml",
+                    "xpath": "/chromechecker/dev64[version='$version']/sha256"
+                }
+            },
+            "32bit": {
+                "url": "https://dl.google.com/release2/chrome/$match32_$version/$version_chrome_installer.exe#/dl.7z",
+                "hash": {
+                    "url": "https://chrome-dl.com/api/chrome.min.xml",
+                    "xpath": "/chromechecker/dev32[version='$version']/sha256"
+                }
+            }
+        }
+    }
+}

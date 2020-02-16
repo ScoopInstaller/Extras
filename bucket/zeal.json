@@ -1,5 +1,6 @@
 {
     "homepage": "https://zealdocs.org/",
+    "description": "An offline documentation browser for software developers.",
     "license": "GPL-3.0-only",
     "version": "0.6.1",
     "architecture": {
@@ -14,24 +15,26 @@
             "extract_dir": "zeal-portable-0.6.1-windows-x64"
         }
     },
-    "bin": "zeal.exe",
     "pre_install": [
-        "if (!(test-path \"$dir\\zeal.ini\")) { new-item -force \"$dir\\zeal.ini\" -itemtype file | out-null }"
+        "if (!(Test-Path \"$persist_dir\\zeal.ini\")) {",
+        "    Set-Content \"$dir\\zeal.ini\" @('[General]', 'check_for_update=false') -Encoding ASCII",
+        "}"
     ],
-    "persist": [
-        "zeal.ini",
-        "cache",
-        "docsets"
-    ],
+    "bin": "zeal.exe",
     "shortcuts": [
         [
             "zeal.exe",
             "Zeal"
         ]
     ],
+    "persist": [
+        "zeal.ini",
+        "cache",
+        "docsets"
+    ],
     "checkver": {
         "url": "https://zealdocs.org/download.html",
-        "re": "zeal-([\\d.]+)-windows"
+        "regex": "zeal-([\\d.]+)-windows"
     },
     "autoupdate": {
         "architecture": {
@@ -43,6 +46,9 @@
                 "url": "https://dl.bintray.com/zealdocs/windows/zeal-portable-$version-windows-x64.7z",
                 "extract_dir": "zeal-portable-$version-windows-x64"
             }
+        },
+        "hash": {
+            "url": "$url.sha256"
         }
     }
 }

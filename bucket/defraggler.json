@@ -1,14 +1,20 @@
 {
     "homepage": "https://www.ccleaner.com/defraggler",
     "version": "2.22.995",
-    "url": "https://www.piriform.com/defraggler/download/portable/downloadfile#/dl.7z",
-    "hash": "2edfa974fc2e8e34c0b8c152077da9c3a4ab28cad81a4ced463f0cf6634a0f01",
+    "license": "Freeware",
+    "description": "Speed up your PC with quick & easy defragmentation.",
+    "url": "https://download.ccleaner.com/dfsetup222.exe#/dl.7z",
+    "hash": "b53eb82d6a46c812171ca878b7342e1939a0afecc277b0b57c708eef8fc700de",
     "architecture": {
         "64bit": {
             "bin": [
                 [
                     "Defraggler64.exe",
                     "Defraggler"
+                ],
+                [
+                    "df64.exe",
+                    "df"
                 ]
             ],
             "shortcuts": [
@@ -19,7 +25,10 @@
             ]
         },
         "32bit": {
-            "bin": "Defraggler.exe",
+            "bin": [
+                "Defraggler.exe",
+                "df.exe"
+            ],
             "shortcuts": [
                 [
                     "Defraggler.exe",
@@ -28,11 +37,19 @@
             ]
         }
     },
+    "pre_install": [
+        "Set-Content \"$dir\\portable.dat\" '#PORTABLE#' -Encoding ASCII",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\uninst.exe\" -Recurse -Force",
+        "if(!(Test-Path \"$persist_dir\\Defraggler.ini\")) {",
+        "   Set-Content \"$dir\\Defraggler.ini\" (@('[Software\\Piriform\\Defraggler]', 'UpdateCheck=0') -join \"`r`n\") -Encoding ASCII",
+        "}"
+    ],
+    "persist": "Defraggler.ini",
     "checkver": {
-        "url": "https://www.piriform.com/defraggler/download",
-        "re": "<strong>\\s*v([\\d.]+)</strong>"
+        "url": "https://www.ccleaner.com/defraggler/version-history",
+        "regex": ">v([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://www.piriform.com/defraggler/download/portable/downloadfile#/dl.7z"
+        "url": "https://download.ccleaner.com/dfsetup$majorVersion$minorVersion.exe#/dl.7z"
     }
 }
