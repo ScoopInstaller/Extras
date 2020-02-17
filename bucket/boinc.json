@@ -1,23 +1,27 @@
 {
     "version": "7.14.2",
-    "description": "Open-source software for volunteer and grid computing",
+    "description": "Volunteer scientific or grid computing client",
     "homepage": "https://boinc.berkeley.edu/",
     "license": "LGPL-3.0-or-later",
     "depends": "isx",
     "architecture": {
         "64bit": {
             "url": "https://boinc.berkeley.edu/dl/boinc_7.14.2_windows_x86_64.exe",
-            "hash": "a8dfa47c58dcf54d29e77434c1fb5a0e7bfdea66b5f5c128a91104449c263987",
-            "installer": {
-                "script": [
-                    "isx \"$dir\\$fname\"",
-                    "$isxextractdir = ((gci \"$dir\" | ? { $_.PSIsContainer } | sort CreationTime)[-1]).Name",
-                    "Expand-MsiArchive \"$dir\\$isxextractdir\\BOINC.msi\" \"$dir\" -ExtractDir 'Program Files 64\\BOINC'",
-                    "Remove-Item -LiteralPath \"$dir\\$fname\" -Force",
-                    "Remove-Item -LiteralPath \"$dir\\$isxextractdir\" -Force -Recurse"
-                ]
-            }
+            "hash": "a8dfa47c58dcf54d29e77434c1fb5a0e7bfdea66b5f5c128a91104449c263987"
+        },
+        "32bit": {
+            "url": "https://boinc.berkeley.edu/dl/boinc_7.14.2_windows_intelx86.exe",
+            "hash": "0f79946d1501d98619f80565b21896b0e0d9732485a4a030b5c14322426aeb79"
         }
+    },
+    "installer": {
+        "script": [
+            "Invoke-ExternalCommand ((Get-Command 'isx' -CommandType Application).Source) -ArgumentList \"$dir\\$fname\" -LogPath \"$dir\\isx.log\" | Out-Null",
+            "$folder = Get-ChildItem \"$dir\" -Directory | Select-Object -First 1 -ExpandProperty FullName",
+            "$extract = if ($architecture -eq '64bit') { 'Program Files 64' } else { 'program files' }",
+            "Expand-MsiArchive \"$folder\\BOINC.msi\" \"$dir\" -ExtractDir \"$extract\\BOINC\" -Removal",
+            "Remove-Item $folder -Force -Recurse"
+        ]
     },
     "bin": [
         "boinc.exe",
@@ -35,12 +39,15 @@
     ],
     "checkver": {
         "url": "https://boinc.berkeley.edu/download_all.php?xml=1",
-        "xpath": "/versions/version[contains(.,'windows_x86_64')]/version_num"
+        "xpath": "/versions/version[platform='Windows 64-bit']/version_num"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
                 "url": "https://boinc.berkeley.edu/dl/boinc_$version_windows_x86_64.exe"
+            },
+            "32bit": {
+                "url": "https://boinc.berkeley.edu/dl/boinc_$version_windows_intelx86.exe"
             }
         }
     }
