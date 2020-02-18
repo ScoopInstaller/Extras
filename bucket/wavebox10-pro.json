@@ -1,18 +1,20 @@
 {
-    "version": "10.0.69.2",
-    "description": "Bring all your web communication tools together for faster, smarter working.",
+    "version": "10.0.82.2",
+    "description": "Wavebox 10. A distraction-free browser for fast and focused working across all web apps.",
     "homepage": "https://wavebox.io/",
-    "license": "Proprietary",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://wavebox.io/eula"
+    },
     "architecture": {
         "64bit": {
-            "url": "https://download.wavebox.app/stable/win/Install%20Wavebox%2010.0.69.exe#/dl.7z",
-            "hash": "ba6f31e170e0b3b8ccd91dac4b4e6201aa0a4dd94817d23eef52a0477ce8ae7d"
+            "url": "https://download.wavebox.app/stable/win/Install%20Wavebox%2010.0.82.2.exe#/dl.7z",
+            "hash": "b98b81e4da110792897a484cdee20cbeed49c56ab120056f995dfcc40447e22c"
         }
     },
-    "pre_install": [
-        "Expand-7zipArchive \"$dir\\chrome.7z\" -DestinationPath \"$dir\" -ExtractDir 'Chrome-bin'",
-        "Remove-Item \"$dir\\chrome.7z\" -Force -Recurse"
-    ],
+    "installer": {
+        "script": "Expand-7zipArchive \"$dir\\chrome.7z\" -ExtractDir 'Chrome-bin' -Removal"
+    },
     "bin": "Wavebox.exe",
     "shortcuts": [
         [
@@ -22,12 +24,12 @@
     ],
     "checkver": {
         "url": "https://download.wavebox.app/appcast/appcast.xml?platform=win32&channel=core&isPayingUser=true",
-        "regex": "sparkle:shortVersionString=\"([\\d.]+)\""
+        "xpath": "/rss/channel/item/enclosure/@sparkle:shortVersionString"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.wavebox.app/stable/win/Install%20Wavebox%20$matchHead.exe#/dl.7z"
+                "url": "https://download.wavebox.app/stable/win/Install%20Wavebox%20$version.exe#/dl.7z"
             }
         }
     }
