@@ -8,16 +8,21 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://dl2.xmind.cn/XMind-ZEN-for-Windows-64bit-10.0.1-202001022330.exe#/dl.7z",
-            "hash": "298d2e0eddc3fbb897ac134d6a2d70274a821d490dc7e4b84cd560a63de429ce",
+            "url": "https://dl2.xmind.cn/XMind-ZEN-for-Windows-64bit-10.0.2-202002120025.exe#/dl.7z",
+            "hash": "d17a7a35734a45db12335be6dad99e3a93989f1b2ac634f2f071eeb698ddee34",
             "installer": {
-                "script": [
-                    "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse"
-                ]
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+            }
+        },
+        "32bit": {
+            "url": "https://dl2.xmind.cn/XMind-ZEN-for-Windows-32bit-10.0.2-202002120038.exe#/dl.7z",
+            "hash": "f68c56574728f4cce88a5b92b01996c26d2a671ca0c73b62c6935a3d4fa5df02",
+            "installer": {
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
             }
         }
     },
+    "post_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Recurse",
     "shortcuts": [
         [
             "XMind ZEN.exe",
@@ -25,13 +30,16 @@
         ]
     ],
     "checkver": {
-        "url": "https://dl2.xmind.cn/latest-win64.yml",
-        "regex": "XMind-ZEN-for-Windows-64bit-([\\d.]+)-(?<time>\\d+)\\.exe"
+        "url": "https://www.xmind.net/download/",
+        "regex": "(?sm)Windows-32bit-([\\d.]+)-(?<time32>\\d+)\\.exe.*?Windows-64bit-[\\d.]+-(?<time64>\\d+)\\.exe"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://dl2.xmind.cn/XMind-ZEN-for-Windows-64bit-$version-$matchTime.exe#/dl.7z"
+                "url": "https://dl2.xmind.cn/XMind-ZEN-for-Windows-64bit-$version-$matchTime64.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://dl2.xmind.cn/XMind-ZEN-for-Windows-32bit-$version-$matchTime32.exe#/dl.7z"
             }
         }
     }
