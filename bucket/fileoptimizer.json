@@ -1,19 +1,12 @@
 {
-    "homepage": "https://nikkhokkho.sourceforge.io/static.php?page=FileOptimizer",
     "version": "14.10.2534",
-    "license": "AGPL-3.0-or-later",
     "description": "File optimizer featuring lossless file size reduction",
+    "homepage": "https://nikkhokkho.sourceforge.io/static.php?page=FileOptimizer",
+    "license": "AGPL-3.0-or-later",
     "url": "https://downloads.sourceforge.net/project/nikkhokkho/FileOptimizer/14.10.2534/FileOptimizerFull.7z.exe#/dl.7z",
     "hash": "sha1:a6ba351d9f5cfbd647c64b37f2d4b26c3c2bfd4d",
     "architecture": {
         "32bit": {
-            "pre_install": [
-                "if (!(Test-Path \"$persist_dir\\FileOptimizer32.ini\")) { New-Item \"$persist_dir\\FileOptimizer32.ini\" -Force | Out-Null }",
-                "Copy-Item \"$persist_dir\\FileOptimizer32.ini\" \"$dir\\FileOptimizer32.ini\" | Out-Null"
-            ],
-            "uninstaller": {
-                "script": "Copy-Item \"$dir\\FileOptimizer32.ini\"  \"$persist_dir\\FileOptimizer32.ini\" -Force | Out-Null"
-            },
             "bin": [
                 [
                     "FileOptimizer32.exe",
@@ -23,18 +16,11 @@
             "shortcuts": [
                 [
                     "FileOptimizer32.exe",
-                    "FileOptimizer"
+                    "File Optimizer"
                 ]
             ]
         },
         "64bit": {
-            "pre_install": [
-                "if (!(Test-Path \"$persist_dir\\FileOptimizer64.ini\")) { New-Item \"$persist_dir\\FileOptimizer64.ini\" -Force | Out-Null }",
-                "Copy-Item \"$persist_dir\\FileOptimizer64.ini\" \"$dir\\FileOptimizer64.ini\" | Out-Null"
-            ],
-            "uninstaller": {
-                "script": "Copy-Item \"$dir\\FileOptimizer64.ini\"  \"$persist_dir\\FileOptimizer64.ini\" -Force | Out-Null"
-            },
             "bin": [
                 [
                     "FileOptimizer64.exe",
@@ -44,11 +30,19 @@
             "shortcuts": [
                 [
                     "FileOptimizer64.exe",
-                    "FileOptimizer"
+                    "File Optimizer"
                 ]
             ]
         }
     },
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\FileOptimizer32.ini\")) { New-Item \"$dir\\FileOptimizer32.ini\" -Force | Out-Null }",
+        "if (!(Test-Path \"$persist_dir\\FileOptimizer64.ini\")) { New-Item \"$dir\\FileOptimizer64.ini\" -Force | Out-Null }"
+    ],
+    "persist": [
+        "FileOptimizer32.ini",
+        "FileOptimizer64.ini"
+    ],
     "checkver": {
         "url": "https://sourceforge.net/projects/nikkhokkho/files/FileOptimizer/",
         "regex": "FileOptimizer/([\\d.]+)"
