@@ -1,10 +1,17 @@
 {
     "version": "14.10.2534",
-    "description": "File optimizer featuring lossless file size reduction",
+    "description": "Lossless file size reduction utility",
     "homepage": "https://nikkhokkho.sourceforge.io/static.php?page=FileOptimizer",
     "license": "AGPL-3.0-or-later",
     "url": "https://downloads.sourceforge.net/project/nikkhokkho/FileOptimizer/14.10.2534/FileOptimizerFull.7z.exe#/dl.7z",
     "hash": "sha1:a6ba351d9f5cfbd647c64b37f2d4b26c3c2bfd4d",
+    "pre_install": [
+        "'32', '64' | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\FileOptimizer$_.ini\")) {",
+        "        Set-Content \"$dir\\FileOptimizer$_.ini\" '[Options]', 'CheckForUpdates=0' -Encoding Ascii",
+        "    }",
+        "}"
+    ],
     "architecture": {
         "32bit": {
             "bin": [
@@ -16,7 +23,7 @@
             "shortcuts": [
                 [
                     "FileOptimizer32.exe",
-                    "File Optimizer"
+                    "FileOptimizer"
                 ]
             ]
         },
@@ -30,16 +37,11 @@
             "shortcuts": [
                 [
                     "FileOptimizer64.exe",
-                    "File Optimizer"
+                    "FileOptimizer"
                 ]
             ]
         }
     },
-    "pre_install": [
-         "'32', '64' | ForEach-Object {",
-         "    if (!(Test-Path \"$persist_dir\\FileOptimizer$_.ini\")) { New-Item \"$dir\\FileOptimizer$_.ini\" | Out-Null }",
-         "}"
-    ],
     "persist": [
         "FileOptimizer32.ini",
         "FileOptimizer64.ini"
