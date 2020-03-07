@@ -1,6 +1,6 @@
 {
     "version": "1.00",
-   "description": "A fast and powerful image resizer",
+    "description": "A fast and powerful image resizer",
     "homepage": "https://www.xnview.com/en/xnresize/",
     "license": "Freeware",
     "architecture": {
@@ -9,6 +9,11 @@
             "hash": "472bd46899743f7f6cb602fc09c92185ca3b287a9841a152e545174dc0cd78a7"
         }
     },
+    "pre_install": [
+        "if ((Test-Path \"$env:APPDATA\\XnResize\\xnresize.ini\")) { Move-Item -Force -Path \"$env:APPDATA\\XnResize\" -Destination \"$dir\"}",
+        "elseif (Test-Path \"$persist_dir\\xnresize.ini\") { Copy-Item \"$persist_dir\\xnresize.ini\" \"$dir\" -Force }",
+        "else { New-Item -Path \"$dir\\xnresize.ini\" -ItemType 'file' | Out-Null }"
+    ],
     "extract_dir": "XnResize",
     "bin": "XnResize.exe",
     "shortcuts": [
@@ -17,6 +22,12 @@
             "XnResize"
         ]
     ],
+    "uninstaller": {
+        "script": [
+            "New-Item \"$persist_dir\" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null",
+            "if (Test-Path \"$dir\\xnresize.ini\") { Copy-Item \"$dir\\xnresize.ini\" \"$persist_dir\" -Force }"
+        ]
+    },
     "checkver": ">XnResize ([\\d.]+)\\s+:",
     "autoupdate": {
         "architecture": {
