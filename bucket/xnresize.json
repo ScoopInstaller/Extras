@@ -10,9 +10,12 @@
         }
     },
     "pre_install": [
-        "if ((Test-Path \"$env:APPDATA\\XnResize\\xnresize.ini\")) { Move-Item -Force -Path \"$env:APPDATA\\XnResize\" -Destination \"$dir\"}",
-        "elseif (Test-Path \"$persist_dir\\xnresize.ini\") { Copy-Item \"$persist_dir\\xnresize.ini\" \"$dir\" -Force }",
-        "else { New-Item -Path \"$dir\\xnresize.ini\" -ItemType 'file' | Out-Null }"
+        "if (-not (Test-Path \"$persist_dir\\xnresize.ini\")) {",
+        "    New-Item \"$persist_dir\" -ItemType Directory -ErrorAction SilentlyContinue -Force | Out-Null",
+        "    Set-Content \"$dir\\xnresize.ini\" '<FILL SOME BATCH key, which i cannot remember>', 'update=0' -Encoding Ascii",
+        "} else {",
+        "    Copy-Item \"$persist_dir\\xnresize.ini\" \"$dir\"",
+        "}"
     ],
     "extract_dir": "XnResize",
     "bin": "XnResize.exe",
