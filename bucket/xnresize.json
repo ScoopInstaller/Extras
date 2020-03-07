@@ -9,15 +9,18 @@
             "hash": "472bd46899743f7f6cb602fc09c92185ca3b287a9841a152e545174dc0cd78a7"
         }
     },
+    "extract_dir": "XnResize",
     "pre_install": [
         "if (-not (Test-Path \"$persist_dir\\xnresize.ini\")) {",
         "    New-Item \"$persist_dir\" -ItemType Directory -ErrorAction SilentlyContinue -Force | Out-Null",
-        "    Set-Content \"$dir\\xnresize.ini\" '<FILL SOME BATCH key, which i cannot remember>', 'update=0' -Encoding Ascii",
+        "    Set-Content \"$dir\\xnresize.ini\" '[BatchResize]', 'update=0' -Encoding Ascii",
         "} else {",
         "    Copy-Item \"$persist_dir\\xnresize.ini\" \"$dir\"",
         "}"
     ],
-    "extract_dir": "XnResize",
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\xnresize.ini\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
+    },
     "bin": "XnResize.exe",
     "shortcuts": [
         [
@@ -25,9 +28,6 @@
             "XnResize"
         ]
     ],
-    "uninstaller": {
-        "script": "Copy-Item \"$dir\\xnresize.ini\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force",
-    },
     "checkver": ">XnResize ([\\d.]+)\\s+:",
     "autoupdate": {
         "architecture": {
