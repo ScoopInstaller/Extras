@@ -4,6 +4,13 @@
     "homepage": "https://boinc.berkeley.edu/",
     "license": "LGPL-3.0-or-later",
     "depends": "isx",
+    "notes": [
+        "Set DATADIR and INSTALLDIR in:",
+        "Computer\\HKEY_LOCAL_MACHINE\\SOFTWARE\\Space Sciences Laboratory, U.C. Berkeley\\BOINC Setup"
+    ],
+    "persist": [
+        "data"
+    ],
     "architecture": {
         "64bit": {
             "url": "https://boinc.berkeley.edu/dl/boinc_7.14.2_windows_x86_64.exe",
@@ -14,6 +21,7 @@
             "hash": "0f79946d1501d98619f80565b21896b0e0d9732485a4a030b5c14322426aeb79"
         }
     },
+    "pre_install": "if (-not (is_admin)) { error 'Administrator privileges are needed for registry entries'; break }",
     "installer": {
         "script": [
             "Invoke-ExternalCommand ((Get-Command 'isx' -CommandType Application).Source) -ArgumentList \"$dir\\$fname\" -LogPath \"$dir\\isx.log\" | Out-Null",
@@ -23,6 +31,11 @@
             "Remove-Item $folder -Force -Recurse"
         ]
     },
+    "post_install": [
+        "$boincregpath = \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Space Sciences Laboratory, U.C. Berkeley\\BOINC Setup\"",
+        "reg add $boincregpath /v INSTALLDIR /t REG_SZ /d \"$dir\\\"",
+        "reg add $boincregpath /v DATADIR /t REG_SZ /d \"$dir\\data\\\""
+    ],
     "bin": [
         "boinc.exe",
         "boinccmd.exe"
