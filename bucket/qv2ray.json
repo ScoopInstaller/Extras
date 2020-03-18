@@ -1,5 +1,5 @@
 {
-    "version": "2.1.2",
+    "version": "2.2.3",
     "description": "Graphical frontend for v2ray",
     "homepage": "https://github.com/Qv2ray/Qv2ray",
     "license": "GPL-3.0-or-later",
@@ -9,15 +9,28 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/Qv2ray/Qv2ray/releases/download/v2.1.2/Qv2ray.v2.1.2.Windows-x64.qt5.13.2.7z",
-            "hash": "14c209b27899d210d7c06a3fb827991855702f5d75922078f2b41ccae2c97915"
+            "url": "https://github.com/Qv2ray/Qv2ray/releases/download/v2.2.3/Qv2ray.v2.2.3.Windows-x64.7z",
+            "hash": "9000fc88d29fc05b3d7052e6a6e1ee79e65ba2e65cb4f9ff42300035bb43e8e1"
         },
         "32bit": {
-            "url": "https://github.com/Qv2ray/Qv2ray/releases/download/v2.1.2/Qv2ray.v2.1.2.Windows-x86.qt5.13.2.7z",
-            "hash": "b1097d84bc4a7a9e1f0780788f6813757930e3fa50a3b845ced669cdd61db6ad"
+            "url": "https://github.com/Qv2ray/Qv2ray/releases/download/v2.2.3/Qv2ray.v2.2.3.Windows-x86.7z",
+            "hash": "dcf3df798094a200578d46e0bc3e8d084eeb813f54970f0523439e9522221f45"
         }
     },
     "extract_dir": "deployment",
+    "pre_install": [
+        "if (-not (Test-Path \"$persist_dir\\config\\Qv2ray.conf\")) {",
+        "    New-Item \"$dir\\config\" -ItemType Directory | Out-Null",
+        "    $current = (appdir 'v2ray' $global) | Join-Path -ChildPath 'current'",
+        "    @{",
+        "        'config_version' = 11",
+        "        'kernelConfig' = @{",
+        "            'v2CorePath_win'   = \"$current\\v2ray.exe\"",
+        "            'v2AssetsPath_win' = \"$current\"",
+        "        }",
+        "    } | ConvertTo-Json -Depth 20 | Out-File \"$dir\\config\\Qv2ray.conf\" -Encoding ascii",
+        "}"
+    ],
     "bin": "qv2ray.exe",
     "shortcuts": [
         [
@@ -26,25 +39,14 @@
         ]
     ],
     "persist": "config",
-    "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\config\\Qv2ray.conf\")) {",
-        "    @{",
-        "        'config_version' = 11",
-        "        'kernelConfig' = @{",
-        "            'v2CorePath_win' = \"$scoopdir\\apps\\v2ray\\current\\v2ray.exe\"",
-        "            'v2AssetsPath_win' = \"$scoopdir\\apps\\v2ray\\current\"",
-        "        }",
-        "    } | ConvertTo-Json -Depth 20 | Out-File \"$dir\\config\\Qv2ray.conf\" -Encoding ascii",
-        "}"
-    ],
     "checkver": "github",
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/Qv2ray/Qv2ray/releases/download/v$version/Qv2ray.v$version.Windows-x64.qt5.13.2.7z"
+                "url": "https://github.com/Qv2ray/Qv2ray/releases/download/v$version/Qv2ray.v$version.Windows-x64.7z"
             },
             "32bit": {
-                "url": "https://github.com/Qv2ray/Qv2ray/releases/download/v$version/Qv2ray.v$version.Windows-x86.qt5.13.2.7z"
+                "url": "https://github.com/Qv2ray/Qv2ray/releases/download/v$version/Qv2ray.v$version.Windows-x86.7z"
             }
         }
     }
