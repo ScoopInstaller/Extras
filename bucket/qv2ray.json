@@ -26,8 +26,16 @@
         ]
     ],
     "persist": "config",
-    "post_install": [
-        "cmd /c mklink /j \"$persist_dir\\config\\vcore\" \"$scoopdir\\apps\\v2ray\\current\""
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\config\\Qv2ray.conf\")) {",
+        "    @{",
+        "        'config_version' = 11",
+        "        'kernelConfig' = @{",
+        "            'v2CorePath_win' = \"$scoopdir\\apps\\v2ray\\current\\v2ray.exe\"",
+        "            'v2AssetsPath_win' = \"$scoopdir\\apps\\v2ray\\current\"",
+        "        }",
+        "    } | ConvertTo-Json -Depth 20 | Out-File \"$dir\\config\\Qv2ray.conf\" -Encoding ascii",
+        "}"
     ],
     "checkver": "github",
     "autoupdate": {
