@@ -1,25 +1,34 @@
 {
     "version": "1.0.7",
-    "description": "An easy to use on-screen annotation software inspired by Epic Pen.",
-    "license": "MIT",
+    "description": "On-screen annotation software inspired by Epic Pen",
     "homepage": "https://github.com/geovens/gInk",
+    "license": "MIT",
     "url": "https://github.com/geovens/gInk/releases/download/v1.0.7/gInk_v1.0.7.zip",
     "hash": "35e6a0231754601ebb8d92634003140d85a515d4c7492f025cd41056a82d1891",
-    "persist": "pens.ini",
+    "extract_dir": "gInk_v1.0.7",
+    "pre_install": [
+        "if (-not (Test-Path \"$persist_dir\\config.ini\")) {",
+        "    $cur = \"$persist_dir\\Snapshots\\\" -replace '\\\\', '/'",
+        "    $c = (Get-Content \"$dir\\config_defaut.ini\") -replace '^(Snapshot_Path =).*$', \"`$1 $cur\"",
+        "    Set-Content  \"$dir\\config.ini\" $c -Encoding Ascii -Force",
+        "}"
+    ],
     "bin": "gInk.exe",
-    "extract_dir": "gInk-1.0.7-bin",
-    "pre_install": "if(!(Test-Path(\"$dir\\pens.ini\"))) { New-Item \"$dir\\freac.xml\" | Out-Null }",
     "shortcuts": [
         [
-            "gink.exe",
+            "gInk.exe",
             "gInk"
         ]
     ],
-    "checkver": {
-        "github": "https://github.com/geovens/gInk/"
-    },
+    "persist": [
+        "Snapshots",
+        "config.ini",
+        "hotkeys.ini",
+        "pens.ini"
+    ],
+    "checkver": "github",
     "autoupdate": {
         "url": "https://github.com/geovens/gInk/releases/download/v$version/gInk_v$version.zip",
-        "extract_dir": "gInk-$version-bin"
+        "extract_dir": "gInk_v$version"
     }
 }
