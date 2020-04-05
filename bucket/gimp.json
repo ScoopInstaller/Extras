@@ -12,7 +12,7 @@
             "Get-ChildItem -Filter '*.debug' -Recurse | Remove-Item -Recurse",
             "if ($architecture -eq '64bit') {",
             "   Rename-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,1.exe' 'twain.exe'",
-            "   Remove-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,2.exe'",
+            "   Remove-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,*.exe'",
             "   Get-ChildItem -Filter '*,1*' -Recurse | Remove-Item",
             "   Get-ChildItem -Filter '*,*' -Recurse | Rename-Item -NewName { $_.name -Replace ',\\d','' }",
             "   New-Item '32\\etc', '32\\share', 'share\\gimp\\2.0\\fonts' -ItemType 'Directory' | Out-Null",
@@ -57,7 +57,6 @@
     ],
     "persist": [
         "etc\\gimp",
-        "lib\\gimp\\2.0\\plug-ins",
         "share\\gimp"
     ],
     "checkver": {
@@ -66,7 +65,7 @@
         "replace": "${1}${2}"
     },
     "autoupdate": {
-        "url": "https://download.gimp.org/mirror/pub/gimp/v$majorVersion.$minorVersion/windows/gimp-$matchVersion-setup$matchBuild.exe",
+        "url": "https://download.gimp.org/mirror/pub/gimp/v$majorVersion.$minorVersion/windows/gimp-$matchHead-setup$matchTail.exe",
         "hash": {
             "url": "$baseurl/SHA256SUMS"
         }
