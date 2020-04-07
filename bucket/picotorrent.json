@@ -8,12 +8,28 @@
     "version": "0.18.0",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/picotorrent/picotorrent/releases/download/v0.18.0/PicoTorrent-0.18.0-x64.zip",
-            "hash": "80da9bd74845ad8f13b9ce604ccb91047fee90c2dadce0607d48fb2c2c106491"
+            "url": [
+                "https://github.com/picotorrent/picotorrent/releases/download/v0.18.0/PicoTorrent-0.18.0-x64.zip",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/picotorrent/install-associations.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/picotorrent/uninstall-associations.reg"
+            ],
+            "hash": [
+                "80da9bd74845ad8f13b9ce604ccb91047fee90c2dadce0607d48fb2c2c106491",
+                "802d176c2b383903e411eee0d170c1681508f672a9b3e5ba75bfeccf8aa61269",
+                "5e5461ad15b11c01263ae5270bc917814b65a62d27ffc57979ef9ed87957b0a4"
+            ]
         },
         "32bit": {
-            "url": "https://github.com/picotorrent/picotorrent/releases/download/v0.18.0/PicoTorrent-0.18.0-x86.zip",
-            "hash": "11968fe939bbde9335aaaf97b3f57b0aa0bdeea2b87a57ee432518397d57276f"
+            "url": [
+                "https://github.com/picotorrent/picotorrent/releases/download/v0.18.0/PicoTorrent-0.18.0-x86.zip",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/picotorrent/install-associations.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/picotorrent/uninstall-associations.reg"
+            ],
+            "hash": [
+                "11968fe939bbde9335aaaf97b3f57b0aa0bdeea2b87a57ee432518397d57276f",
+                "802d176c2b383903e411eee0d170c1681508f672a9b3e5ba75bfeccf8aa61269",
+                "5e5461ad15b11c01263ae5270bc917814b65a62d27ffc57979ef9ed87957b0a4"
+            ]
         }
     },
     "shortcuts": [
@@ -25,12 +41,32 @@
     "bin": "PicoTorrent.exe",
     "pre_install": [
         "if (!(Test-Path \"$persist_dir\\Session.dat\")) { Set-Content \"$dir\\Session.dat\" $null -Encoding Ascii }",
-        "if (!(Test-Path \"$persist_dir\\PicoTorrent.json\")) { Set-Content \"$dir\\PicoTorrent.json\" '{}' -Encoding Ascii }"
+        "if (!(Test-Path \"$persist_dir\\PicoTorrent.json\")) { Set-Content \"$dir\\PicoTorrent.json\" '{}' -Encoding Ascii }",
+        "if (!(Test-Path \"$persist_dir\\PicoTorrent.sqlite\")) { New-Item \"$dir\\PicoTorrent.sqlite\" | Out-Null }"
     ],
     "persist": [
         "Torrents",
         "Session.dat",
-        "PicoTorrent.json"
+        "PicoTorrent.json",
+        "PicoTorrent.sqlite"
+    ],
+    "post_install": [
+        "if (Test-Path \"$dir\\install-associations.reg\") {",
+        "   $picopath = \"$dir\\PicoTorrent.exe\".Replace('\\', '\\\\')",
+        "   $content = Get-Content \"$dir\\install-associations.reg\"",
+        "   $content = $content.Replace('$pico', $picopath)",
+        "   if ($global) {",
+        "       $content = $content.Replace('HKEY_CURRENT_USER\\Software\\Classes', 'HKEY_CLASSES_ROOT')",
+        "   }",
+        "   Set-Content -Path \"$dir\\install-associations.reg\" -Value $content -Encoding Ascii",
+        "}",
+        "if (Test-Path \"$dir\\uninstall-associations.reg\") {",
+        "   $content = Get-Content \"$dir\\uninstall-associations.reg\"",
+        "   if ($global) {",
+        "       $content = $content.Replace('HKEY_CURRENT_USER\\Software\\Classes', 'HKEY_CLASSES_ROOT')",
+        "   }",
+        "   Set-Content -Path \"$dir\\uninstall-associations.reg\" -Value $content -Encoding Ascii",
+        "}"
     ],
     "checkver": {
         "github": "https://github.com/picotorrent/picotorrent"
