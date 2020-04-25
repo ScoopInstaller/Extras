@@ -8,14 +8,39 @@
     "version": "4.3.4.24657",
     "architecture": {
         "64bit": {
-            "url": "https://www.scootersoftware.com/BCompare-4.3.4.24657_x64.msi",
-            "hash": "5dcfbe7cc810e8e93580a972919d32454383ff880f52bd919a790ac9e62f577e"
+            "url": [
+                "https://www.scootersoftware.com/BCompare-4.3.4.24657_x64.msi",
+                "https://raw.githubusercontent.com/vuwjzl17985/scoop-extras/master/scripts/beyondcompare/beyondcompare-install-context-menu-64bit.reg",
+                "https://raw.githubusercontent.com/vuwjzl17985/scoop-extras/master/scripts/beyondcompare/beyondcompare-uninstall-context-menu.reg"
+            ],
+            "hash": [
+                "5dcfbe7cc810e8e93580a972919d32454383ff880f52bd919a790ac9e62f577e",
+                "0177dddde53256cb60bf4aec65bb7d8e67b96347c653b6a44e7bb5df49a0e2b2",
+                "6b28893880e64ac91a6605bb8abe0d59d7e8105d3687e38d9669bf9b6fd95abc"
+            ]
         },
         "32bit": {
-            "url": "https://www.scootersoftware.com/BCompare-4.3.4.24657_x86.msi",
-            "hash": "b732113493a290663b724261801e5220e11652ed85f4feddd4399ded7be8fda3"
+            "url": [
+                "https://www.scootersoftware.com/BCompare-4.3.4.24657_x86.msi",
+                "https://raw.githubusercontent.com/vuwjzl17985/scoop-extras/master/scripts/beyondcompare/beyondcompare-install-context-menu-32bit.reg",
+                "https://raw.githubusercontent.com/vuwjzl17985/scoop-extras/master/scripts/beyondcompare/beyondcompare-uninstall-context-menu.reg"
+            ],
+            "hash": [
+                "b732113493a290663b724261801e5220e11652ed85f4feddd4399ded7be8fda3",
+                "a52ca43199771dd7060a396196c3e040e452a6480eb7e278a20f3601861ac112",
+                "6b28893880e64ac91a6605bb8abe0d59d7e8105d3687e38d9669bf9b6fd95abc"
+            ]
         }
     },
+    "post_install": [
+        "if (Test-Path \"$dir\\beyondcompare-install-context-menu-$architecture.reg\") {",
+        "   $path = \"$dir\".Replace('\\', '\\\\')",
+        "   $content = Get-Content \"$dir\\beyondcompare-install-context-menu-$architecture.reg\"",
+        "   $content = $content.Replace('$path', $path)",
+        "   $content | Set-Content -Path \"$dir\\beyondcompare-install-context-menu.reg\"",
+        "}"
+    ],
+    "notes": "Add Beyond Compare as a context menu option by running: \"$dir\\beyondcompare-install-context-menu.reg\"",
     "bin": "Bcomp.exe",
     "extract_dir": "Beyond Compare 4",
     "shortcuts": [
