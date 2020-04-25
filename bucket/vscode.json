@@ -35,6 +35,24 @@
         "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
         "  }",
         "  $content | Set-Content -Path \"$dir\\vscode-uninstall-context.reg\"",
+        "}",
+        "if ($architecture -eq '64bit') { ",
+        "   $subkey = '771FD6B0-FA20-440A-A002-3B3BAC16DC50'",
+        "} else { ",
+        "   $subkey = 'D628A17A-9713-46BF-8D57-E671B46A741E'",
+        "}",
+        "if (Test-Path \"$dir\\github-integration-install.reg\") {",
+        "   $codepath = \"$dir\\Code.exe\".Replace('\\', '\\\\')",
+        "   $content = Get-Content \"$dir\\github-integration-install.reg\"",
+        "   $content = $content.Replace('$code', $codepath)",
+        "   $content = $content.Replace('$dir', $dir)",
+        "   $content = $content.Replace('$subkey', $subkey)",
+        "   $content | Set-Content -Path \"$dir\\github-integration-install.reg\"",
+        "}",
+        "if (Test-Path \"$dir\\github-integration-uninstall.reg\") {",
+        "   $content = Get-Content \"$dir\\github-integration-uninstall.reg\"",
+        "   $content = $content.Replace('$subkey', $subkey)",
+        "   $content | Set-Content -Path \"$dir\\github-integration-uninstall.reg\"",
         "}"
     ],
     "checkver": {
@@ -46,24 +64,32 @@
             "url": [
                 "https://vscode-update.azurewebsites.net/1.44.2/win32-x64-archive/stable#/dl.7z",
                 "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg",
-                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg"
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode/github-integration-install.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode/github-integration-uninstall.reg"
             ],
             "hash": [
                 "3c3cfbd1585f24f4150e9c156fb5c9fbe715f5839e48f70cf66ddbdf90fdcda6",
                 "b65d66860d9ccc18bfb05237b03e06db0d6c574be3d4b946c2a5e6865c08cb28",
-                "df2a5162e72e2518e2b75b4337c8e7b46c136554872af90fa0de1cf6ebef376f"
+                "df2a5162e72e2518e2b75b4337c8e7b46c136554872af90fa0de1cf6ebef376f",
+                "a0f232accc5b05d454706f0280a14c22bfb03914d831873cae60ceecd00aa707",
+                "94721ef59540eea502a982b259d9767cd5f91cb270b9904b681ccf634679050e"
             ]
         },
         "32bit": {
             "url": [
                 "https://vscode-update.azurewebsites.net/1.44.2/win32-archive/stable#/dl.7z",
                 "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg",
-                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg"
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode/vscode-uninstall-context.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/github-integration-install.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode/github-integration-uninstall.reg"
             ],
             "hash": [
                 "816359902eb549539053f2674a068de6843bec0d81033356a63fed96e1ce580a",
                 "b65d66860d9ccc18bfb05237b03e06db0d6c574be3d4b946c2a5e6865c08cb28",
-                "df2a5162e72e2518e2b75b4337c8e7b46c136554872af90fa0de1cf6ebef376f"
+                "df2a5162e72e2518e2b75b4337c8e7b46c136554872af90fa0de1cf6ebef376f",
+                "a0f232accc5b05d454706f0280a14c22bfb03914d831873cae60ceecd00aa707",
+                "94721ef59540eea502a982b259d9767cd5f91cb270b9904b681ccf634679050e"
             ]
         }
     },
