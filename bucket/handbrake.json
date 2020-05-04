@@ -5,11 +5,32 @@
     "license": "GPL-2.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://download.handbrake.fr/handbrake/releases/1.3.2/HandBrake-1.3.2-x86_64-Win_GUI.zip",
+            "url": "https://github.com/HandBrake/HandBrake/releases/download/1.3.2/HandBrake-1.3.2-x86_64-Win_GUI.zip",
             "hash": "3a01b6fa2588eeec80a6038af57feb20b8525bfc6090cbc1885d40c49310e139"
         }
     },
-    "extract_dir": "Handbrake",
+    "installer": {
+        "script": [
+            "@(\"HandBrake\", \"HandBrake $version\") | %{",
+            "    if (Test-Path \"$dir\\$_\") {",
+            "        Get-ChildItem -Path \"$dir\\$_\" -Force -Recurse | Move-Item -Destination \"$dir\" -Force",
+            "        Remove-Item \"$dir\\$_\" -Force",
+            "    }",
+            "}",
+            "if (!(Test-Path \"$persist_dir\\portable.ini\")) {",
+            "    if (!(Test-Path \"$persist_dir\\storage\") -And (Test-Path \"$env:APPDATA\\HandBrake\")) {",
+            "        New-Item \"$persist_dir\" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null",
+            "        Move-Item -Path \"$env:APPDATA\\HandBrake\" -Destination \"$persist_dir\\storage\" -Force",
+            "    }",
+            "    Copy-Item \"$dir\\portable.ini.template\" \"$dir\\portable.ini\" -Force",
+            "}"
+        ]
+    },
+    "persist": [
+        "portable.ini",
+        "storage",
+        "tmp"
+    ],
     "shortcuts": [
         [
             "HandBrake.exe",
@@ -22,7 +43,7 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.handbrake.fr/handbrake/releases/$version/HandBrake-$version-x86_64-Win_GUI.zip"
+                "url": "https://github.com/HandBrake/HandBrake/releases/download/$version/HandBrake-$version-x86_64-Win_GUI.zip"
             }
         },
         "hash": {
