@@ -1,14 +1,15 @@
 {
-    "homepage": "http://madvr.com/",
-    "description": "madVR is a high quality DirectShow video renderer.",
-    "license": "Unknown",
     "version": "0.92.17",
+    "description": "High quality DirectShow video renderer",
+    "homepage": "http://madvr.com",
+    "license": "Freeware",
+    "depends": "sudo",
     "url": "https://www.videohelp.com/download/madVR09217.zip",
     "hash": "87e088f7b5de20d0a9065c73015d7fb7c225870380dd3169c70171b77e74bb97",
-    "depends": "sudo",
     "pre_install": [
-        "(Get-Content $dir\\install.bat) | Foreach-Object {$_ -replace \"@pause >nul\",\"\"} | Out-File -Encoding oem $dir\\install.bat",
-        "(Get-Content $dir\\uninstall.bat) | Foreach-Object {$_ -replace \"@pause >nul\",\"\"} | Out-File -Encoding oem $dir\\uninstall.bat"
+        "if (-not (Test-Path \"$persist_dir\\settings.bin\")) { New-Item \"$dir\\settings.bin\" | Out-Null }",
+        "(Get-Content \"$dir\\install.bat\") -replace '@pause >nul' | Out-File \"$dir\\install.bat\" -Encoding Ascii -Force",
+        "(Get-Content \"$dir\\uninstall.bat\") -replace '@pause >nul' | Out-File \"$dir\\uninstall.bat\" -Encoding Ascii -Force"
     ],
     "installer": {
         "script": "sudo \"$dir\\install.bat\""
@@ -16,6 +17,21 @@
     "uninstaller": {
         "script": "sudo \"$dir\\uninstall.bat\""
     },
+    "shortcuts": [
+        [
+            "madTPG.exe",
+            "madTPG"
+        ],
+        [
+            "madLevelsTweaker.exe",
+            "NVidia & Intel RGB Levels Tweaker"
+        ],
+        [
+            "madHcCtrl.exe",
+            "mad Home Cinema Control"
+        ]
+    ],
+    "persist": "settings.bin",
     "checkver": "latest release v([\\d.]+):",
     "autoupdate": {
         "url": "https://www.videohelp.com/download/madVR$cleanVersion.zip"
