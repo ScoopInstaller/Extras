@@ -32,27 +32,11 @@
     ],
     "installer": {
         "script": [
-            "Move-Item \"$dir\\`$INSTDIR`$_8_\\*\" -Destination \"$dir\"",
-            "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse -Force",
-            "if (-not (Test-Path \"$persist_dir\\reaper*.ini\")) {",
-            "    if (Test-Path \"$env:APPDATA\\REAPER\") {",
-            "        Move-Item \"$env:APPDATA\\REAPER\\*.ini\" \"$dir\"",
-            "        Remove-Item \"$env:APPDATA\\REAPER\" -Recurse",
-            "    } else {",
-            "        Set-Content \"$dir\\reaper.ini\" '[REAPER]', 'wnd_state=0' -Encoding Ascii",
-            "        'fxtags', 'midihw', 'mouse', 'reginfo2' | ForEach-Object { New-Item \"$dir\\reaper-$_.ini\" | Out-Null }",
-            "    }",
-            "}"
+            "New-Item -Path \"$dir\" -ItemType \"directory\" -Name \"InstallData\"",
+            "Move-Item \"$dir\\`$INSTDIR`$_8_\\*\" -Destination \"$dir\\InstallData\"",
+            "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse -Force"
         ]
     },
-    "persist": [
-        "UserPlugins",
-        "reaper.ini",
-        "reaper-fxtags.ini",
-        "reaper-midihw.ini",
-        "reaper-mouse.ini",
-        "reaper-reginfo2.ini"
-    ],
     "checkver": {
         "url": "https://www.reaper.fm/download.php",
         "regex": "Version ([\\d.]+)"
