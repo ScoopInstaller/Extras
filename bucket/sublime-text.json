@@ -1,11 +1,12 @@
 {
+    "version": "3.2.2-3211",
+    "description": "A sophisticated text editor for code, markup and prose",
     "homepage": "https://www.sublimetext.com/3",
-    "description": "A sophisticated text editor for code, markup and prose.",
-    "version": "3211",
     "license": {
         "identifier": "Shareware",
         "url": "https://www.sublimetext.com/eula"
     },
+    "notes": "Add Sublime Text as a context menu option by running: \"reg import '$dir\\install-context.reg'\"",
     "architecture": {
         "64bit": {
             "url": [
@@ -36,23 +37,14 @@
         "$file = \"$dir\\install-context.reg\"",
         "if (Test-Path $file) {",
         "    $sublimepath = \"$dir\\sublime_text.exe\".Replace('\\', '\\\\')",
-        "    $content = Get-Content $file",
-        "    $content = $content.Replace('$sublime', $sublimepath)",
+        "    $content = (Get-Content $file).Replace('$sublime', $sublimepath)",
         "    if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
         "    Set-Content $file $content -Encoding Ascii -Force",
         "}",
         "$file = \"$dir\\uninstall-context.reg\"",
-        "if (Test-Path $file) {",
-        "    $content = Get-Content $file",
-        "    if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
-        "    Set-Content $file $content -Encoding Ascii -Force",
+        "if ((Test-Path $file) -and $global) {",
+        "    (Get-Content $file).Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') | Set-Content -Path $file -Encoding Ascii -Force",
         "}"
-    ],
-    "notes": [
-        "Sublime Text may be downloaded and evaluated for free, however a license must be purchased for continued use.",
-        "There is currently no enforced time limit for the evaluation.",
-        "For more information please see 'https://www.sublimetext.com/3'.",
-        "Add Sublime Text as a context menu option by running: \"reg import '$dir\\install-context.reg'\""
     ],
     "bin": "subl.exe",
     "shortcuts": [
@@ -62,14 +54,17 @@
         ]
     ],
     "persist": "Data",
-    "checkver": "Version:</i>\\s*Build\\s*([\\d]+)</p>",
+    "checkver": {
+        "regex": "(?i)>([\\d.]+)\\s+\\(BUILD\\s+(\\d+)",
+        "replace": "$1-$2"
+    },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.sublimetext.com/Sublime%20Text%20Build%20$version%20x64.zip"
+                "url": "https://download.sublimetext.com/Sublime%20Text%20Build%20$preReleaseVersion%20x64.zip"
             },
             "32bit": {
-                "url": "https://download.sublimetext.com/Sublime%20Text%20Build%20$version.zip"
+                "url": "https://download.sublimetext.com/Sublime%20Text%20Build%20$preReleaseVersion.zip"
             }
         }
     }

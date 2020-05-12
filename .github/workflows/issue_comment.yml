@@ -1,0 +1,16 @@
+on:
+  issue_comment:
+    types: [ created ]
+name: Commented Pull Request
+jobs:
+  pullRequestHandler:
+    name: PullRequestHandler
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: PullRequestHandler
+      uses: Ash258/Scoop-GithubActions@stable
+      if: startsWith(github.event.comment.body, '/verify')
+      env:
+        GITH_EMAIL: cabera.jakub@gmail.com
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

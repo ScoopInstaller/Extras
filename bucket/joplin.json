@@ -1,25 +1,19 @@
 {
-    "homepage": "https://joplin.cozic.net/",
-    "description": "A note taking and to-do application with synchronization capabilities.",
+    "version": "1.0.201",
+    "description": "A note taking and to-do application with synchronization capabilities",
+    "homepage": "https://joplinapp.org",
     "license": "MIT",
-    "version": "1.0.175",
-    "url": "https://github.com/laurent22/joplin/releases/download/v1.0.175/Joplin-Setup-1.0.175.exe#/dl.7z",
-    "hash": "sha512:95cac0d22225f8aae4d983d0646fb148db22c66fa3f693ac15aced2ecf116d44633aa711a1eb1f46c0dbba091253ee3f8fdd1feb7c85bfbc6f8160b4ab02c8a9",
-    "extract_dir": "$PLUGINSDIR",
-    "pre_install": "Get-ChildItem \"$dir\" -Exclude 'app-64.7z', 'app-32.7z' | Remove-Item -Force -Recurse",
+    "url": "https://github.com/laurent22/joplin/releases/download/v1.0.201/Joplin-Setup-1.0.201.exe#/dl.7z",
+    "hash": "sha512:f4a09ee655dce235d8bc86ff03c5135427cf964cefa032c218eee25d818c08cf4ac6c5b7ad2a6f847779fd6d99ad9d7ac912d4fb962ab492eaec556c366c0066",
     "architecture": {
         "64bit": {
-            "installer": {
-                "script": "Expand-7zipArchive \"$dir\\app-64.7z\" \"$dir\""
-            }
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
         },
         "32bit": {
-            "installer": {
-                "script": "Expand-7zipArchive \"$dir\\app-32.7z\" \"$dir\""
-            }
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
         }
     },
-    "post_install": "Remove-Item \"$dir\\app-64.7z\", \"$dir\\app-32.7z\"",
+    "post_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Recurse",
     "bin": "Joplin.exe",
     "shortcuts": [
         [
@@ -34,7 +28,7 @@
         "url": "https://github.com/laurent22/joplin/releases/download/v$version/Joplin-Setup-$version.exe#/dl.7z",
         "hash": {
             "url": "$baseurl/latest.yml",
-            "find": "sha512:\\s+(.*)"
+            "find": "sha512:\\s+$base64"
         }
     }
 }
