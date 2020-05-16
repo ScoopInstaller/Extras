@@ -1,13 +1,20 @@
 {
     "version": "10.0.0.35798",
-    "homepage": "https://www.foxitsoftware.com/",
     "description": "Super-fast, feature rich PDF reader that offers a delightful reading experience in a small footprint.",
+    "homepage": "https://www.foxitsoftware.com/",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.foxitsoftware.com/pdf-reader/eula.html"
     },
-    "url": "https://cdn01.foxitsoftware.com//pub/foxit/reader/desktop/win/10.x/10.0/en_us/FoxitReader100_Setup_Prom_IS.exe",
+    "url": "https://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/win/10.x/10.0/en_us/FoxitReader100_Setup_Prom_IS.exe#/dl.7z",
     "hash": "eac0bf3cdb0b629381c61fe9c1767d310f8654e34e30f19145d3e88f816cac00",
+    "extract_dir": "$PLUGINSDIR",
+    "installer": {
+        "script": [
+            "Get-ChildItem \"$dir\" -Exclude 'Foxit*Prom.exe' | Remove-Item",
+            "Get-Item \"$dir\\Foxit*prom.exe\" | Expand-InnoArchive -Destination \"$dir\" -Removal"
+        ]
+    },
     "bin": "FoxitReader.exe",
     "shortcuts": [
         [
@@ -15,13 +22,11 @@
             "Foxit Reader"
         ]
     ],
-    "innosetup": true,
     "checkver": {
         "url": "https://www.foxitsoftware.com/downloads/downloadForm.php?retJson=1&product=Foxit-Reader&platform=Windows&language=English",
-        "jsonpath": "$.package_info",
-        "regex": "(?s)([\\d.]+)\".*\"down\":\\s*\"(?<dl>[^\"]+)\""
+        "jsonpath": "$.package_info.version.[0]"
     },
     "autoupdate": {
-        "url": "https://cdn01.foxitsoftware.com/$matchDl"
+        "url": "https://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/win/$majorVersion.x/$majorVersion.$minorVersion/en_us/FoxitReader$majorVersion$minorVersion_Setup_Prom_IS.exe#/dl.7z"
     }
 }
