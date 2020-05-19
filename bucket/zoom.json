@@ -6,11 +6,37 @@
         "identifier": "Proprietary",
         "url": "https://zoom.us/terms"
     },
-    "url": "https://zoom.us/client/latest/ZoomInstaller.exe#/dl.7z",
-    "hash": "c6f540aef1035c09529b5120254026fdc8be5f894dcf0591b0d13ecc234d445b",
+    "url": [
+        "https://zoom.us/client/latest/ZoomInstaller.exe#/dl.7z",
+        "https://raw.githubusercontent.com/klaidliadon/scoop-extras/master/scripts/zoom/url-install.reg",
+        "https://raw.githubusercontent.com/klaidliadon/scoop-extras/master/scripts/zoom/url-uninstall.reg"
+    ],
+    "hash": [
+        "c6f540aef1035c09529b5120254026fdc8be5f894dcf0591b0d13ecc234d445b",
+        "01e0558c936dc5d491ce292abb437c143aa75d321b10bcee8bb4a2e7f036fcdf",
+        "6a2967b20d05c72263079b1d4902db091adb85c507ae8d680acb523ba1e3878d"
+    ],
     "pre_install": [
         "Expand-7zipArchive \"$dir\\Zoom.msi\" -Removal",
         "Remove-Item \"$dir\\Install*\""
+    ],
+    "post_install": [
+        "if (Test-Path \"$dir\\url-install.reg\") {",
+        "  $zoompath = \"$dir\\Zoom.exe\".Replace('\\', '\\\\')",
+        "  $content = Get-Content \"$dir\\url-install.reg\"",
+        "  $content = $content.Replace('$zoom', $zoompath)",
+        "  if ($global) {",
+        "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "  }",
+        "  $content | Set-Content -Path \"$dir\\url-install.reg\"",
+        "}",
+        "if (Test-Path \"$dir\\url-uninstall.reg\") {",
+        "  $content = Get-Content \"$dir\\url-uninstall.reg\"",
+        "  if ($global) {",
+        "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "  }",
+        "  $content | Set-Content -Path \"$dir\\url-uninstall.reg\"",
+        "}"
     ],
     "bin": "Zoom.exe",
     "shortcuts": [
