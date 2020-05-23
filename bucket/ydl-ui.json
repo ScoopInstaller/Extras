@@ -1,20 +1,21 @@
 {
-    "homepage": "https://github.com/Maxstupo/ydl-ui",
+    "version": "2.6.6",
     "description": "A UI for the command-line video downloader youtube-dl",
+    "homepage": "https://github.com/Maxstupo/ydl-ui",
     "license": "MIT",
-    "version": "2.6.5",
-    "url": "https://github.com/Maxstupo/ydl-ui/releases/download/v2.6.5/YDL_UI_v2.6.5_Portable.zip",
-    "hash": "55ca23a2b449e7fc814f65b5a965e2759c4c018572944475e155c351d21d0372",
-    "extract_dir": "YDL_UI_v2.6.5_Portable",
-    "installer": {
-        "script": [
-            "if ((!(Test-Path \"$persist_dir\\ydl-ui.json\")) -and (Test-Path \"$dir\\ydl-ui.json\")) {",
-            "    $cont = Get-Content \"$dir\\ydl-ui.json\" | ConvertFrom-Json",
-            "    $cont.CheckForUpdates = $false",
-            "    $cont | ConvertToPrettyJson | Set-Content \"$dir\\ydl-ui.json\" -Encoding Ascii -Force",
-            "}"
-        ]
-    },
+    "url": "https://github.com/Maxstupo/ydl-ui/releases/download/v2.6.6/YDL-UI_v2.6.6_Portable.zip",
+    "hash": "c0ebd351e4ad4bb4a6fa3d61d131e2fbcd147e6d19346863628b86c3f3c8dcf1",
+    "extract_dir": "YDL-UI_v2.6.6_Portable",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\ydl-ui.json\")) {",
+        "    @{",
+        "        'UpdateInterval' = 'Never'",
+        "        'DefaultDownloadArchive' = ''",
+        "        'DefaultDownloadDirectory' = \"$persist_dir\\download\"",
+        "    } | ConvertToPrettyJson | Set-Content \"$dir\\ydl-ui.json\" -Encoding Ascii -Force",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\download-list.json\")) { Set-Content \"$dir\\download-list.json\" '[]' -Encoding Ascii }"
+    ],
     "bin": "YDL-UI.exe",
     "shortcuts": [
         [
@@ -24,11 +25,12 @@
     ],
     "persist": [
         "download-list.json",
-        "ydl-ui.json"
+        "ydl-ui.json",
+        "download"
     ],
     "checkver": "github",
     "autoupdate": {
-        "url": "https://github.com/Maxstupo/ydl-ui/releases/download/v$version/YDL_UI_v$version_Portable.zip",
-        "extract_dir": "YDL_UI_v$version_Portable"
+        "url": "https://github.com/Maxstupo/ydl-ui/releases/download/v$version/YDL-UI_v$version_Portable.zip",
+        "extract_dir": "YDL-UI_v$version_Portable"
     }
 }
