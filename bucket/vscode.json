@@ -6,7 +6,10 @@
         "identifier": "Freeware",
         "url": "https://code.visualstudio.com/License/"
     },
-    "notes": "Add Visual Studio Code as a context menu option by running: \"$dir\\vscode-install-context.reg\"",
+    "notes": [
+        "Add Visual Studio Code as a context menu option by running: \"$dir\\vscode-install-context.reg\"",
+        "Enable Visual Studio Code - Github desktop integration by running: \"$dir\\vscode-github-integration-install-context.reg\""
+    ],
     "bin": [
         [
             "bin\\code.cmd",
@@ -40,6 +43,25 @@
         "  $content = Get-Content \"$scriptdir\\vscode-uninstall-context.reg.templ\"",
         "  $content = $content.Replace('$key', $key)",
         "  $content | Set-Content -Path \"$dir\\vscode-uninstall-context.reg\"",
+        "}",
+        "if ($architecture -eq '64bit') { ",
+        "   $subkey = '771FD6B0-FA20-440A-A002-3B3BAC16DC50'",
+        "} else { ",
+        "   $subkey = 'D628A17A-9713-46BF-8D57-E671B46A741E'",
+        "}",
+        "if (Test-Path \"$scriptdir\\vscode-github-integration-install.reg.templ\") {",
+        "  $content = Get-Content \"$scriptdir\\vscode-github-integration-install.reg.templ\"",
+        "  $content = $content.Replace('$key', $key)",
+        "  $content = $content.Replace('$code', $codepath)",
+        "  $content = $content.Replace('$subkey', $subkey)",
+        "  $content = $content.Replace('$version', $version)",
+        "  $content | Set-Content -Path \"$dir\\vscode-github-integration-install.reg\"",
+        "}",
+        "if (Test-Path \"$scriptdir\\vscode-github-integration-uninstall.reg.templ\") {",
+        "  $content = Get-Content \"$scriptdir\\vscode-github-integration-uninstall.reg.templ\"",
+        "  $content = $content.Replace('$key', $key)",
+        "  $content = $content.Replace('$subkey', $subkey)",
+        "  $content | Set-Content -Path \"$dir\\vscode-github-integration-uninstall.reg\"",
         "}"
     ],
     "checkver": {
