@@ -1,0 +1,43 @@
+{
+  "homepage": "https://www.nexusmods.com/skyrimspecialedition/mods/6194",
+  "version": "2.2.2.1",
+  "license": "GPL-3.0-or-later",
+  "depends": "vcredist2019",
+  "description": "Mod manager for various PC games.",
+  "url": "https://github.com/ModOrganizer2/modorganizer/releases/download/v2.2.2.1/Mod.Organizer-2.2.2.1.7z",
+  "hash": "65B254431AC5F3BA23251694D8F7B8910243A412EE9D8AEDE1C3259705565FAF",
+  "pre_install": [
+    "if(!(Test-Path \"$dir\\ModOrganizer.ini\")) {",
+    "    Set-Content \"$dir\\ModOrganizer.ini\" -Value \"[Settings]`ncheck_for_updates=false\" -Encoding Default",
+    "}"
+  ],
+  "installer": {
+    "script": [
+      "if (Test-Path \"$persist_dir\\ModOrganizer.ini\") {",
+      "    Copy-Item \"$persist_dir\\ModOrganizer.ini\" \"$dir\" -Force",
+      "}"
+    ]
+  },
+  "uninstaller": {
+    "script": "Copy-Item \"$dir\\*\" \"$persist_dir\" -Include 'ModOrganizer.ini' -ErrorAction SilentlyContinue -Force"
+  },
+  "persist": [
+    "profiles",
+    "overwrite",
+    "downloads",
+    "mods"
+  ],
+  "bin": "ModOrganizer.exe",
+  "shortcuts": [
+    [
+      "ModOrganizer.exe",
+      "Mod Organizer 2"
+    ]
+  ],
+  "checkver": {
+    "github": "https://github.com/ModOrganizer2/modorganizer"
+  },
+  "autoupdate": {
+    "url": "https://github.com/ModOrganizer2/modorganizer/releases/download/v$version/Mod.Organizer-$version.7z"
+  }
+}
