@@ -3,7 +3,7 @@
     "description": "Simple tool to configure Windows Filtering Platform (WFP) which can configure network activity on your computer.",
     "homepage": "https://www.henrypp.org/product/simplewall",
     "license": "GPL-3.0-only",
-    "url": "https://github.com/henrypp/simplewall/releases/download/v.3.1.2/simplewall-3.1.2-bin.zip#/dl.7z",
+    "url": "https://github.com/henrypp/simplewall/releases/download/v.3.1.2/simplewall-3.1.2-bin.zip",
     "hash": "27266220c33d275516296b6746f687e8c896cfc30f2a82efb8a71c07d09cc067",
     "architecture": {
         "64bit": {
@@ -13,7 +13,11 @@
             "extract_dir": "simplewall\\32"
         }
     },
-    "pre_install": "if (!(Test-Path \"$persist_dir\\simplewall.ini\")) { New-Item \"$dir\\simplewall.ini\" | Out-Null }",
+    "pre_install": [
+        "'simplewall.ini', 'profile.xml' | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "}"
+    ],
     "bin": "simplewall.exe",
     "shortcuts": [
         [
@@ -21,13 +25,16 @@
             "simplewall"
         ]
     ],
-    "persist": "simplewall.ini",
+    "persist": [
+        "simplewall.ini",
+        "profile.xml"
+    ],
     "checkver": {
         "github": "https://github.com/henrypp/simplewall",
-        "re": "simplewall-([\\d.]+)-bin\\.zip"
+        "regex": "simplewall-([\\d.]+)-bin\\.zip"
     },
     "autoupdate": {
-        "url": "https://github.com/henrypp/simplewall/releases/download/v.$version/simplewall-$version-bin.zip#/dl.7z",
+        "url": "https://github.com/henrypp/simplewall/releases/download/v.$version/simplewall-$version-bin.zip",
         "hash": {
             "url": "$baseurl/simplewall-$version.sha256"
         }
