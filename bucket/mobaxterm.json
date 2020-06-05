@@ -6,35 +6,37 @@
         "identifier": "Freeware",
         "url": "https://mobaxterm.mobatek.net/license.html"
     },
-    "url": "https://download.mobatek.net/2022020030522248/MobaXterm_Portable_v20.2.zip",
-    "hash": "907409039da5ccaacff57596afb15c794c86e3bd7428e36dbec15587ee1774c1",
-    "pre_install": [
-        "    # Rename executable",
-        "Get-ChildItem \"$dir\" 'mobaxterm*.exe' | Select-Object -First 1 | Rename-Item -NewName 'MobaXterm.exe'",
-        "    # Create files for persisting",
-        "function PersistsFile([String] $file) {",
-        "    if (!(Test-Path \"$persist_dir\\$file\")) {",
-        "        New-Item \"$dir\\$file\" -Type File | Out-Null",
-        "    }",
-        "}",
-        "@('MobaXterm backup.zip', 'MobaXterm.ini') | ForEach-Object { PersistsFile $_ }"
+    "url": [
+        "https://download.mobatek.net/2022020030522248/MobaXterm_Installer_v20.2.zip",
+        "https://mobaxterm.mobatek.net/CygUtils.plugin"
     ],
-    "persist": [
-        "MobaXterm.ini",
-        "MobaXterm backup.zip"
+    "hash": [
+        "e94259ef6c19410cb4a75f91b255b5af9ad060cdd4e65c4bfd31b93fabb18f2c",
+        "73f4d67baad1319daaa559650458748d868a32a5712e805a85a7a3f8040b7c9b"
+    ],
+    "pre_install": [
+        "Expand-MsiArchive \"$dir\\MobaXterm_installer_$version.msi\" \"$dir\" -Removal",
+        "Move-Item \"$dir\\Mobatek\\MobaXterm\\MobaXterm.exe\" \"$dir\"",
+        "Remove-Item \"$dir\\Mobatek\" -Recurse"
     ],
     "bin": "MobaXterm.exe",
     "shortcuts": [
         [
             "MobaXterm.exe",
-            "MobaXterm Personal"
+            "MobaXterm"
         ]
     ],
     "checkver": {
         "url": "https://mobaxterm.mobatek.net/download-home-edition.html",
-        "regex": "//download.mobatek.net/(?<random>[\\d]+)/MobaXterm_Portable_v([\\d\\.]+)\\.zip"
+        "regex": "//download.mobatek.net/(?<random>[\\d]+)/MobaXterm_Installer_v([\\d\\.]+)\\.zip"
     },
     "autoupdate": {
-        "url": "https://download.mobatek.net/$matchRandom/MobaXterm_Portable_v$version.zip"
-    }
+        "url": "https://download.mobatek.net/$matchRandom/MobaXterm_Installer_v$version.zip"
+    },
+    "notes": [
+        "WARNING: the mobaxterm package is reverting back to non-portable installation.",
+        "If you still want portable version, use \"scoop install mobaxterm-portable\" instead.",
+        "If you want to migrate persisted data to portable version",
+        "please rename $persist_dir to \"mobaxterm-portable\"."
+    ]
 }

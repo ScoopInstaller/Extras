@@ -1,0 +1,40 @@
+{
+    "version": "20.2",
+    "description": "Enhanced terminal for Windows with X11 server, tabbed SSH client, network tools and much more.",
+    "homepage": "https://mobaxterm.mobatek.net/",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://mobaxterm.mobatek.net/license.html"
+    },
+    "url": "https://download.mobatek.net/2022020030522248/MobaXterm_Portable_v20.2.zip",
+    "hash": "907409039da5ccaacff57596afb15c794c86e3bd7428e36dbec15587ee1774c1",
+    "pre_install": [
+        "    # Rename executable",
+        "Get-ChildItem \"$dir\" 'mobaxterm*.exe' | Select-Object -First 1 | Rename-Item -NewName 'MobaXterm.exe'",
+        "    # Create files for persisting",
+        "function PersistsFile([String] $file) {",
+        "    if (!(Test-Path \"$persist_dir\\$file\")) {",
+        "        New-Item \"$dir\\$file\" -Type File | Out-Null",
+        "    }",
+        "}",
+        "@('MobaXterm backup.zip', 'MobaXterm.ini') | ForEach-Object { PersistsFile $_ }"
+    ],
+    "persist": [
+        "MobaXterm.ini",
+        "MobaXterm backup.zip"
+    ],
+    "bin": "MobaXterm.exe",
+    "shortcuts": [
+        [
+            "MobaXterm.exe",
+            "MobaXterm Personal"
+        ]
+    ],
+    "checkver": {
+        "url": "https://mobaxterm.mobatek.net/download-home-edition.html",
+        "regex": "//download.mobatek.net/(?<random>[\\d]+)/MobaXterm_Portable_v([\\d\\.]+)\\.zip"
+    },
+    "autoupdate": {
+        "url": "https://download.mobatek.net/$matchRandom/MobaXterm_Portable_v$version.zip"
+    }
+}
