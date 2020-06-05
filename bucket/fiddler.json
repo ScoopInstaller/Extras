@@ -6,7 +6,14 @@
     "url": "https://telerik-fiddler.s3.amazonaws.com/fiddler/FiddlerSetup.exe#/dl.7z",
     "hash": "207e1a39c74a03ae535ad04fe74bc435baa777ecefaec95abe78664cd2b34690",
     "installer": {
-        "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\FiddlerSetup.exe\" \"$dir\" -Removal"
+        "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\FiddlerSetup.exe\" \"$dir\" -Removal",
+        "Move-Item \"$dir\\FSE2.exe\" \"$dir\\ScriptEditor\\\"",
+			"Set-Location -Path 'HKCU:\\Software\\Microsoft'",
+			"New-Item -Name 'Fiddler2\\InstallerSettings' -Force",
+			"Set-Location -Path 'Fiddler2\\InstallerSettings'",
+			"New-ItemProperty -Path '.' -Name 'InstallPath' -Value \"$dir\\\" -PropertyType ExpandString -Force",
+			"New-ItemProperty -Path '.' -Name 'PluginPath' -Value \"$dir\\Inspectors\\\" -PropertyType ExpandString -Force",
+			"New-ItemProperty -Path '.' -Name 'ScriptPath' -Value \"$dir\\Scripts\\\" -PropertyType ExpandString -Force"
     },
     "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
     "bin": "Fiddler.exe",
