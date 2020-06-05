@@ -17,8 +17,13 @@
     "pre_install": [
         "Expand-MsiArchive \"$dir\\MobaXterm_installer_$version.msi\" \"$dir\" -Removal",
         "Move-Item \"$dir\\Mobatek\\MobaXterm\\MobaXterm.exe\" \"$dir\"",
-        "Remove-Item \"$dir\\Mobatek\" -Recurse"
+        "Remove-Item \"$dir\\Mobatek\" -Recurse",
+        "if (!(Test-Path \"$scoopdir\\persist\\$app\")) { New-Item -ItemType Directory \"$scoopdir\\persist\\$app\" | Out-Null }",
+        "Copy-Item \"$persist_dir\\*\" \"$dir\" -Include 'Custom.mxtpro' -ErrorAction SilentlyContinue"
     ],
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\*\" \"$persist_dir\" -Include 'Custom.mxtpro' -ErrorAction SilentlyContinue -Force"
+    },
     "bin": "MobaXterm.exe",
     "shortcuts": [
         [

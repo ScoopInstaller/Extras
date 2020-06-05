@@ -17,8 +17,12 @@
         "        New-Item \"$dir\\$file\" -Type File | Out-Null",
         "    }",
         "}",
-        "@('MobaXterm backup.zip', 'MobaXterm.ini') | ForEach-Object { PersistsFile $_ }"
+        "@('MobaXterm backup.zip', 'MobaXterm.ini') | ForEach-Object { PersistsFile $_ }",
+        "Copy-Item \"$persist_dir\\*\" \"$dir\" -Include 'Custom.mxtpro' -ErrorAction SilentlyContinue"
     ],
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\*\" \"$persist_dir\" -Include 'Custom.mxtpro' -ErrorAction SilentlyContinue -Force"
+    },
     "persist": [
         "MobaXterm.ini",
         "MobaXterm backup.zip"
@@ -27,7 +31,7 @@
     "shortcuts": [
         [
             "MobaXterm.exe",
-            "MobaXterm Personal"
+            "MobaXterm"
         ]
     ],
     "checkver": {
