@@ -10,7 +10,13 @@
             "installer": {
                 "script": [
                     "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Unins*\" -Force -Recurse"
+                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Unins*\" -Force -Recurse",
+                    "$data = \"$persist_dir\\data\"",
+                    "if (!(Test-Path $data)) {",
+                    "    ensure $data | Out-Null",
+                    "    if (Test-Path \"$env:APPDATA\\terminus\") { Copy-Item \"$env:APPDATA\\terminus\\*\" $data }",
+                    "    else { Set-Content \"$data\\config.yaml\" \"enableAutomaticUpdates: false\" -Encoding Ascii -Force }",
+                    "}"
                 ]
             }
         }
@@ -22,6 +28,7 @@
             "Terminus"
         ]
     ],
+    "persist": "data",
     "checkver": {
         "github": "https://github.com/Eugeny/terminus"
     },
