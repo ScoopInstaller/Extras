@@ -1,27 +1,27 @@
 {
     "version": "5.0",
     "homepage": "https://boltbait.com/pdn/",
-    "description": "BoltBait's Plugin Pack for paint.net",
+    "description": "Collection of paint.net plugins by BoltBait",
     "depends": "paint.net",
     "url": "https://boltbait.com/pdn/BoltBaitPack50.zip",
     "hash": "cc11b9b95d3033b582f4994071479430f4758c9fe403b3ca62b63e31f6514735",
-    "installer": {
-        "script": [
-            "$installerAssembly = [System.Reflection.Assembly]::Load([IO.File]::ReadAllBytes(\"$dir\\BoltBaitPackInstall50.exe\"))",
-            "Remove-Item \"$dir\\BoltBaitPackInstall50.exe\"",
-            "$pluginsFileNames = $installerAssembly.GetManifestResourceNames() | Where-Object { $_.EndsWith('.dll') } | ForEach-Object { $_.Replace('Install.Attachments.', '') }",
-            "$pluginsFileNames | ForEach-Object {",
-            "    $installerAssembly.GetManifestResourceStream('Install.Attachments.' + $_).",
-            "        CopyTo([IO.File]::OpenWrite(",
-            "            \"$(appdir paint.net)\\current\\Effects\\$_\"",
-            "        ))",
-            "}",
-            "$pluginsFileNames | Out-File \"$dir\\plugins.txt\""
-        ]
-    },
+    "pre_install": [
+        "$installerAssembly = [System.Reflection.Assembly]::Load([IO.File]::ReadAllBytes(\"$dir\\BoltBaitPackInstall50.exe\"))",
+        "Remove-Item \"$dir\\BoltBaitPackInstall50.exe\"",
+        "$pluginsFileNames = ($installerAssembly.GetManifestResourceNames() | Where-Object { $_.EndsWith('.dll') }).Replace('Install.Attachments.', '')",
+        "$pluginFolder = Join-Path (appdir 'paint.net' $global) 'current\\Effects'",
+        "$pluginsFileNames | ForEach-Object {",
+        "    $installerAssembly.GetManifestResourceStream('Install.Attachments.' + $_).",
+        "        CopyTo([IO.File]::OpenWrite(",
+        "            (Join-Path \"$pluginFolder\" \"$_\")",
+        "        ))",
+        "}",
+        "$pluginsFileNames | Out-File \"$dir\\plugins.txt\" -Encoding Ascii"
+    ],
     "uninstaller": {
         "script": [
-            "Get-Content \"$dir\\plugins.txt\" | ForEach-Object { Remove-Item \"$(appdir paint.net)\\current\\Effects\\$_\" }"
+            "$pluginFolder = Join-Path (appdir 'paint.net' $global) 'current\\Effects'",
+            "Get-Content \"$dir\\plugins.txt\" | Remove-Item -Path { Join-Path \"$pluginFolder\" \"$_\" } -ErrorAction SilentlyContinue"
         ]
     }
 }
