@@ -1,56 +1,62 @@
 {
     "homepage": "https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/",
     "description": "The official Windows debugger",
-	"version": "10.0.19041.0",
-	"url": "https://go.microsoft.com/fwlink/p/?linkid=2120843#/temp/sdk-setup.exe",
-	"hash": "d53f651370f87484b78622e30dfb1a41920b501e4041035771c0d785561f47d5",
-	"installer": {
-		"script": [
-			"Expand-DarkArchive \"$dir\\sdk-setup.exe\" \"$dir\\temp\"",
-			"$setupSettings = (Select-Xml -Path \"$dir\\temp\\UX\\UserExperienceManifest.xml\" -XPath '/').Node.UserExperienceManifest.Settings",
-			"$version = $setupSettings.ProductName.Split(' ')[-1]",
-			"Write-Output \"Actual version is $version\"",
-			"$downloadRootPointer = $setupSettings.SourceResolution.DownloadRoot",
-			"$downloadRoot = (Invoke-WebRequest -Method Head -Uri $downloadRootPointer -MaximumRedirection 0 -ErrorAction Ignore).BaseResponse.Headers['Location']",
-			"$manifestPayloads = (Select-Xml -Path \"$dir\\temp\\UX\\manifest.xml\" -XPath '/').Node.BurnManifest.Payload",
-			"$windbgPayload = $manifestPayloads | Where-Object { $_.FilePath.Contains(\"X$($architecture.Replace('bit', '')) Debuggers And Tools\") }",
-			"$windbgDownloadPath = $windbgPayload.SourcePath",
-			"$windbgHash = $windbgPayload.Hash",
-			"dl_with_cache $app $version ($downloadRoot + $windbgDownloadPath) \"$dir\\temp\\windbg-setup.msi\"",
-			"if ($windbgHash -ne (Get-FileHash \"$dir\\temp\\windbg-setup.msi\" -Algorithm SHA1).Hash) { error 'Hash mismatch'; break }",
-			"Expand-MsiArchive \"$dir\\temp\\windbg-setup.msi\" \"$dir\"",
-			"Remove-Item -Recurse \"$dir\\temp\""
-		]
-	},
-	"architecture": {
-		"32bit": {
-			"bin": [
-				"Windows Kits/10/Debuggers/x86/windbg.exe",
-				"Windows Kits/10/Debuggers/x86/cdb.exe",
-				"Windows Kits/10/Debuggers/x86/gflags.exe",
-				"Windows Kits/10/Debuggers/x86/symchk.exe"
-			],
-			"shortcuts": [
-				["Windows Kits/10/Debuggers/x86/windbg.exe", "WinDbg"]
-			]
-		},
-		"64bit": {
-			"bin": [
-				"Windows Kits/10/Debuggers/x64/windbg.exe",
-				"Windows Kits/10/Debuggers/x64/cdb.exe",
-				"Windows Kits/10/Debuggers/x64/gflags.exe",
-				"Windows Kits/10/Debuggers/x64/symchk.exe"
-			],
-			"shortcuts": [
-				["Windows Kits/10/Debuggers/x64/windbg.exe", "WinDbg"]
-			]
-		}
-	},
-	"checkver": {
-		"url": "https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk/",
-		"regex": "\\(([\\d.]+)\\)"
-	},
-	"autoupdate": {
-		"url": "https://go.microsoft.com/fwlink/p/?linkid=2120843#/temp/sdk-setup.exe"
-	}
+    "version": "10.0.19041.0",
+    "url": "https://go.microsoft.com/fwlink/p/?linkid=2120843#/temp/sdk-setup.exe",
+    "hash": "d53f651370f87484b78622e30dfb1a41920b501e4041035771c0d785561f47d5",
+    "installer": {
+        "script": [
+            "Expand-DarkArchive \"$dir\\sdk-setup.exe\" \"$dir\\temp\"",
+            "$setupSettings = (Select-Xml -Path \"$dir\\temp\\UX\\UserExperienceManifest.xml\" -XPath '/').Node.UserExperienceManifest.Settings",
+            "$version = $setupSettings.ProductName.Split(' ')[-1]",
+            "Write-Output \"Actual version is $version\"",
+            "$downloadRootPointer = $setupSettings.SourceResolution.DownloadRoot",
+            "$downloadRoot = (Invoke-WebRequest -Method Head -Uri $downloadRootPointer -MaximumRedirection 0 -ErrorAction Ignore).BaseResponse.Headers['Location']",
+            "$manifestPayloads = (Select-Xml -Path \"$dir\\temp\\UX\\manifest.xml\" -XPath '/').Node.BurnManifest.Payload",
+            "$windbgPayload = $manifestPayloads | Where-Object { $_.FilePath.Contains(\"X$($architecture.Replace('bit', '')) Debuggers And Tools\") }",
+            "$windbgDownloadPath = $windbgPayload.SourcePath",
+            "$windbgHash = $windbgPayload.Hash",
+            "dl_with_cache $app $version ($downloadRoot + $windbgDownloadPath) \"$dir\\temp\\windbg-setup.msi\"",
+            "if ($windbgHash -ne (Get-FileHash \"$dir\\temp\\windbg-setup.msi\" -Algorithm SHA1).Hash) { error 'Hash mismatch'; break }",
+            "Expand-MsiArchive \"$dir\\temp\\windbg-setup.msi\" \"$dir\"",
+            "Remove-Item -Recurse \"$dir\\temp\""
+        ]
+    },
+    "architecture": {
+        "32bit": {
+            "bin": [
+                "Windows Kits/10/Debuggers/x86/windbg.exe",
+                "Windows Kits/10/Debuggers/x86/cdb.exe",
+                "Windows Kits/10/Debuggers/x86/gflags.exe",
+                "Windows Kits/10/Debuggers/x86/symchk.exe"
+            ],
+            "shortcuts": [
+                [
+                    "Windows Kits/10/Debuggers/x86/windbg.exe",
+                    "WinDbg"
+                ]
+            ]
+        },
+        "64bit": {
+            "bin": [
+                "Windows Kits/10/Debuggers/x64/windbg.exe",
+                "Windows Kits/10/Debuggers/x64/cdb.exe",
+                "Windows Kits/10/Debuggers/x64/gflags.exe",
+                "Windows Kits/10/Debuggers/x64/symchk.exe"
+            ],
+            "shortcuts": [
+                [
+                    "Windows Kits/10/Debuggers/x64/windbg.exe",
+                    "WinDbg"
+                ]
+            ]
+        }
+    },
+    "checkver": {
+        "url": "https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk/",
+        "regex": "\\(([\\d.]+)\\)"
+    },
+    "autoupdate": {
+        "url": "https://go.microsoft.com/fwlink/p/?linkid=2120843#/temp/sdk-setup.exe"
+    }
 }
