@@ -14,8 +14,12 @@
                     "$data = \"$persist_dir\\data\"",
                     "if (!(Test-Path $data)) {",
                     "    ensure $data | Out-Null",
-                    "    if (Test-Path \"$env:APPDATA\\terminus\") { Copy-Item \"$env:APPDATA\\terminus\\*\" $data }",
-                    "    else { Set-Content \"$data\\config.yaml\" \"enableAutomaticUpdates: false\" -Encoding Ascii -Force }",
+                    "    if (Test-Path \"$env:APPDATA\\terminus\") {",
+                    "        info 'Adopting portable configuration'",
+                    "        Copy-Item \"$env:APPDATA\\terminus\\*\" $data",
+                    "    } else {",
+                    "        Set-Content \"$data\\config.yaml\" 'enableAutomaticUpdates: false' -Encoding Ascii -Force",
+                    "    }",
                     "}"
                 ]
             }
