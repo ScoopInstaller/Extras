@@ -41,7 +41,10 @@
             "}"
         ]
     },
-    "post_install": "if (is_directory \"$dir\\theme.fth\") { Remove-Item \"$dir\\theme.fth\" -Force }",
+    "post_install": [
+        "if (is_directory \"$dir\\theme.fth\") { Remove-Item \"$dir\\theme.fth\" -Force }",
+        "if (Test-Path \"$(appdir foobar2000-encoders $global)\\current\") { New-Item \"$dir\\encoders\" -ItemType Junction -Target \"$(appdir foobar2000-encoders $global)\\current\" | Out-Null }}"
+    ],
     "uninstaller": {
         "script": [
             "Copy-Item \"$dir\\playlists-v*\\*\" \"$persist_dir\\playlists\" -Force  -Recurse",
