@@ -8,10 +8,10 @@
     },
     "url": "https://www.videohelp.com/download/Free_Encoder_Pack-2020-04-17.exe#/dl.7z",
     "hash": "3499b3226d255e479a1a8cb1f4ef71170ab514fbd39c5b3b46e96c845fed9c1c",
-    "depends": "extras/foobar2000",
     "post_install": [
         "Remove-Item \"$dir\\`$PLUGINSDIR\" -Force -Recurse",
-        "New-Item \"$(appdir foobar2000 $global)\\current\\encoders\" -ItemType Junction -Target \"$dir\" | Out-Null"
+        "if(Test-Path \"$(appdir foobar2000 $global)\") {if(!(Test-Path \"$(appdir foobar2000 $global)\\current\\encoders\")) { New-Item \"$(appdir foobar2000 $global)\\current\\encoders\" -ItemType Junction -Target \"$dir\" | Out-Null }}",
+        "if(Test-Path \"$(appdir foobar2000-portable $global)\") {if(!(Test-Path \"$(appdir foobar2000-portable $global)\\current\\encoders\")) { New-Item \"$(appdir foobar2000-portable $global)\\current\\encoders\" -ItemType Junction -Target  \"$dir\" | Out-Null }}"
     ],
     "checkver": {
         "url": "https://www.foobar2000.org/encoderpack",
