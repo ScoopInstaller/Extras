@@ -13,11 +13,19 @@
     "hash": "e189e847cf299d0e5336690428b95ad1b9f3b88d4502bfc67e316502b56af56f",
     "extract_dir": "visualvm_202",
     "pre_install": [
-        "$conf = Get-Content \"$dir\\etc\\visualvm.conf\"",
-        "$conf = $conf -replace '^(visualvm_default_userdir=).*$', \"`$1\"\"$dir\\user\"\"\"",
-        "$conf = $conf -replace '^(visualvm_default_cachedir=).*$', \"`$1\"\"$dir\\cache\"\"\"",
-        "if ((!(Test-Path \"$persist_dir\\etc\")) -and $env:JAVA_HOME -and (Test-Path $env:JAVA_HOME)) { $conf = $conf -replace '^#(visualvm_jdkhome=).*$', \"`$1\"\"$env:JAVA_HOME\"\"\" }",
-        "Set-Content \"$dir\\etc\\visualvm.conf\" -Value $conf -Encoding Ascii"
+        "if (Test-Path \"$persist_dir\\etc\\visualvm.conf\") {",
+        "    Remove-Item -Recurse \"$dir\\etc\"",
+        "    $conf = Get-Content \"$persist_dir\\etc\\visualvm.conf\"",
+        "    $appdir = \"$((Split-Path $dir) -replace '\\\\', '\\\\')\\\\[\\d.]+\"",
+        "    $conf = $conf -replace \"^(visualvm_default_userdir=)`\"$appdir\\\\user`\"$\", \"`$1\"\"$dir\\user`\"\"",
+        "    $conf = $conf -replace \"^(visualvm_default_cachedir=)`\"$appdir\\\\cache`\"$\", \"`$1\"\"$dir\\cache`\"\"",
+        "    Set-Content \"$persist_dir\\etc\\visualvm.conf\" -Value $conf -Encoding Ascii",
+        "} else {",
+        "    $conf = $conf -replace '^(visualvm_default_userdir=).*$', \"`$1\"\"$dir\\user`\"\"",
+        "    $conf = $conf -replace '^(visualvm_default_cachedir=).*$', \"`$1\"\"$dir\\cache`\"\"",
+        "    if ($env:JAVA_HOME -and (Test-Path $env:JAVA_HOME)) { $conf = $conf -replace '^#(visualvm_jdkhome=).*$', \"`$1\"\"$env:JAVA_HOME`\"\" }",
+        "    Set-Content \"$dir\\etc\\visualvm.conf\" -Value $conf -Encoding Ascii",
+        "}"
     ],
     "bin": "bin\\visualvm.exe",
     "shortcuts": [
