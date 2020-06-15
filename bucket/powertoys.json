@@ -3,10 +3,19 @@
     "description": "A set of utilities for power users to tune and streamline their Windows experience for greater productivity.",
     "homepage": "https://github.com/microsoft/PowerToys",
     "license": "MIT",
+    "notes": "Add the PowerRename tool as a context menu item by running: '$dir\\install-context.reg'",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/microsoft/PowerToys/releases/download/v0.18.2/PowerToysSetup-0.18.2-x64.msi",
-            "hash": "dc0e13dfe6bbcff30133a8e49f2c948b332749edba52561a44bc18b54f8b0a85"
+            "url": [
+                "https://github.com/microsoft/PowerToys/releases/download/v0.18.2/PowerToysSetup-0.18.2-x64.msi",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/powertoys/install-context.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/powertoys/uninstall-context.reg"
+            ],
+            "hash": [
+                "dc0e13dfe6bbcff30133a8e49f2c948b332749edba52561a44bc18b54f8b0a85",
+                "0d9f34ccf6d32fd37d1947f004253081e2c0d03f6dd7a28d6b4e6da5014456a4",
+                "ff5d23fa50d0d44accf5b356f76b3f1265b1b42dc8931ec37196c04efdc24306"
+            ]
         }
     },
     "extract_dir": "PowerToys",
@@ -15,6 +24,25 @@
             "PowerToys.exe",
             "PowerToys"
         ]
+    ],
+    "post_install": [
+        "if (Test-Path \"$dir\\install-context.reg\") {",
+        "  $content = Get-Content \"$dir\\install-context.reg\"",
+        "  $content = $content.Replace('$dir', $dir.Replace('\\', '\\\\')))",
+        "  if ($global) {",
+        "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "    $content = $content.Replace('HKEY_CURRENT_USER\\Software\\Classes', 'HKEY_CLASSES_ROOT')",
+        "  }",
+        "  Set-Content -Path \"$dir\\install-context.reg\" -Encoding Ascii $content ",
+        "}",
+        "if (Test-Path \"$dir\\uninstall-context.reg\") {",
+        "  $content = Get-Content \"$dir\\uninstall-context.reg\"",
+        "  if ($global) {",
+        "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "    $content = $content.Replace('HKEY_CURRENT_USER\\Software\\Classes', 'HKEY_CLASSES_ROOT')",
+        "  }",
+        "  Set-Content -Path \"$dir\\uninstall-context.reg\" -Encoding Ascii $content ",
+        "}"
     ],
     "checkver": "github",
     "autoupdate": {
