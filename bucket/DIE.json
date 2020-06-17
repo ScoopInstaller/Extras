@@ -1,0 +1,47 @@
+{
+    "description": "Detect It Easy, or abbreviated \"DIE\" is a program for determining types of files.",
+    "homepage": "https://ntinfo.biz/index.html",
+    "license": "MIT",
+    "version": "2.05",
+    "url": "https://github.com/horsicq/DIE-engine/releases/download/2.05/die_win32_portable_2.05.zip",
+    "hash": "c597381d73a7ce6ad1acc216c5ddd9010cde56c830063eaeee9411974f60963e",
+    "extract_dir": "die_win32_portable/base",
+    "installer": {
+        "script": [
+            "if (Test-Path \"$persist_dir\\die.ini\") { Copy-Item \"$persist_dir\\die.ini\" \"$dir\" -Force }",
+            "if (Test-Path \"$persist_dir\\diec.ini\") { Copy-Item \"$persist_dir\\diec.ini\" \"$dir\" -Force }"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "New-Item \"$persist_dir\" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null",
+            "if (Test-Path \"$dir\\die.ini\") { Copy-Item \"$dir\\die.ini\" \"$persist_dir\" -Force }",
+            "if (Test-Path \"$dir\\diec.ini\") { Copy-Item \"$dir\\diec.ini\" \"$persist_dir\" -Force }"
+        ]
+    },
+    "bin": [
+        "die.exe",
+        "diel.exe",
+        "diec.exe"
+    ],
+    "shortcuts": [
+        [
+            "die.exe",
+            "DIE"
+        ],
+        [
+            "diel.exe",
+            "DIE Lite"
+        ]
+    ],
+    "##": "Persisting db and scripts is desired, but needs https://github.com/lukesampson/scoop/pull/3212 to not miss out on signature updates",
+    "checkver": {
+        "github": "https://github.com/horsicq/DIE-engine"
+    },
+    "autoupdate": {
+        "url": "https://github.com/horsicq/DIE-engine/releases/download/$version/die_win32_portable_$version.zip",
+        "hash": {
+            "mode": "download"
+        }
+    }
+}
