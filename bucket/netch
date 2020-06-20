@@ -1,10 +1,18 @@
 {
-    "description": "Netch is an open source game accelerator.",
     "version": "1.4.9",
+    "description": "Game accelerator",
     "homepage": "https://github.com/NetchX/Netch",
     "license": "MIT",
-    "url": "https://github.com/NetchX/Netch/releases/download/1.4.9/Netch.zip",
-    "hash": "2f9ef62e67bfa1a6ce07e3df79c31e16609ebc87b31f2ec28e65e28ae947407c",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/NetchX/Netch/releases/download/1.4.9/Netch.zip",
+            "hash": "2f9ef62e67bfa1a6ce07e3df79c31e16609ebc87b31f2ec28e65e28ae947407c"
+        }
+    },
+    "pre_install": [
+        "ensure \"$dir\\data\" | Out-Null",
+        "if (!(Test-Path \"$persist_dir\\data\\settings.json\")) { Set-Content \"$dir\\data\\settings.json\" '{ \"CheckUpdateWhenOpened\": false }' -Encoding Ascii -Force }"
+    ],
     "bin": "Netch.exe",
     "shortcuts": [
         [
@@ -13,13 +21,20 @@
         ]
     ],
     "persist": [
+        "data",
+        "logging",
         "mode"
     ],
     "checkver": "github",
     "autoupdate": {
-        "url": "https://github.com/NetchX/Netch/releases/download/$version/Netch.zip",
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/NetchX/Netch/releases/download/$version/Netch.zip"
+            }
+        },
         "hash": {
-            "url": "https://github.com/NetchX/Netch/releases/tag/$version"
+            "url": "https://github.com/NetchX/Netch/releases/tag/$version",
+            "regex": "(?sm)$basename</td.*?$sha256"
         }
     }
 }
