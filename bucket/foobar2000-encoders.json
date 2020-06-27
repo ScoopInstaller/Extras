@@ -10,13 +10,25 @@
     "hash": "3499b3226d255e479a1a8cb1f4ef71170ab514fbd39c5b3b46e96c845fed9c1c",
     "post_install": [
         "Remove-Item \"$dir\\`$PLUGINSDIR\" -Force -Recurse",
-        "if (Test-Path \"$(appdir foobar2000 $global)\") {if(!(Test-Path \"$(appdir foobar2000 $global)\\current\\encoders\")) { New-Item \"$(appdir foobar2000 $global)\\current\\encoders\" -ItemType Junction -Target \"$dir\" | Out-Null }}",
-        "if (Test-Path \"$(appdir foobar2000-portable $global)\") {if(!(Test-Path \"$(appdir foobar2000-portable $global)\\current\\encoders\")) { New-Item \"$(appdir foobar2000-portable $global)\\current\\encoders\" -ItemType Junction -Target  \"$dir\" | Out-Null }}"
+        "if (Test-Path \"$(appdir foobar2000 $global)\") {",
+        "   if (!(Test-Path \"$(appdir foobar2000 $global)\\current\\encoders\")) {",
+        "       New-Item \"$(appdir foobar2000 $global)\\current\\encoders\" -ItemType Junction -Target \"$dir\" | Out-Null",
+        "   }",
+        "}",
+        "if (Test-Path \"$(appdir foobar2000-portable $global)\") {",
+        "   if (!(Test-Path \"$(appdir foobar2000-portable $global)\\current\\encoders\")) {",
+        "       New-Item \"$(appdir foobar2000-portable $global)\\current\\encoders\" -ItemType Junction -Target  \"$dir\" | Out-Null",
+        "   }",
+        "}"
     ],
     "uninstaller": {
         "script":[
-            "if (Test-Path \"$(appdir foobar2000 $global)\\current\\encoders\") { Remove-Item \"$(appdir foobar2000 $global)\\current\\encoders\" -Force -Recurse }",
-            "if (Test-Path \"$(appdir foobar2000-portable $global)\\current\\encoders\") { Remove-Item \"$(appdir foobar2000-portable $global)\\current\\encoders\" -Force -Recurse }"
+            "if (Test-Path \"$(appdir foobar2000 $global)\\current\\encoders\") {",
+            "   Remove-Item \"$(appdir foobar2000 $global)\\current\\encoders\" -Force -Recurse",
+            "}",
+            "if (Test-Path \"$(appdir foobar2000-portable $global)\\current\\encoders\") {",
+            "   Remove-Item \"$(appdir foobar2000-portable $global)\\current\\encoders\" -Force -Recurse",
+            "}"
         ]
     },
     "checkver": {
