@@ -6,14 +6,12 @@
         "identifier": "Freeware",
         "url": "https://www.foobar2000.org/license"
     },
-    "notes": [
-        "WARNING: foobar2000 package is reverting back to non-portable installation.",
-        "If you still want portable version, use foobar2000-portable instead.",
-        "If you want to migrate persisted data to portable version",
-        "please rename $persist_dir to \"foobar2000-portable\"."
-    ],
     "url": "https://www.videohelp.com/download/foobar2000_v1.5.5.exe#/dl.7z",
     "hash": "e5f983c12b2eda9c1e0bc6de95413005b61953be9bd1401398c5ba72713f23fd",
+    "notes": [
+        "WARNING: 'foobar2000' package is reverting back to non-portable installation.",
+        "If you still want portable version, use 'foobar2000-portable' instead."
+    ],
     "bin": "foobar2000.exe",
     "shortcuts": [
         [
@@ -21,12 +19,20 @@
             "Foobar2000"
         ]
     ],
+    "suggest": {
+        "Encoders": "extras/foobar2000-encoders"
+    },
     "installer": {
         "script": [
             "Remove-Item \"$dir\\`$*\", \"$dir\\uninstall.exe\" -Force -Recurse",
             "New-Item \"$dir\\user_profiles_enabled\" -Force | Out-Null"
         ]
     },
+    "post_install": [
+        "if (Test-Path \"$(appdir foobar2000-encoders $global)\\current\") {",
+        "   New-Item \"$dir\\encoders\" -ItemType Junction -Target \"$(appdir foobar2000-encoders $global)\\current\" | Out-Null",
+        "}"
+    ],
     "checkver": {
         "url": "https://www.foobar2000.org/download",
         "regex": "foobar2000_v([\\d.]+)\\."
