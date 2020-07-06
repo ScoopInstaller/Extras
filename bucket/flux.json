@@ -7,9 +7,35 @@
         "url": "https://justgetflux.com/news/pages/eula/"
     },
     "url": "http://justgetflux.com/flux-setup4-118.exe#/dl.7z",
+    "notes": "Run 'flux-add-startup' to add f.lux to startup programs.",
     "hash": "010ff134c76256bff231400f093c81278b274d12766ba7e77092e4f05490ce0e",
     "pre_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
-    "bin": "flux.exe",
+    "installer": {
+        "script": [
+            "$startup = shortcut_folder $global | Select-Object -ExpandProperty Path | Split-Path -Parent | Join-Path -ChildPath 'Startup'",
+            "$current = current_dir $dir",
+            "$cont = @(",
+            "    '$wsShell = New-Object -ComObject WScript.Shell'",
+            "    \"`$wsShell = `$wsShell.CreateShortcut('$startup\\f.lux.lnk')\"",
+            "    \"`$wsShell.TargetPath = '$current\\flux.exe'\"",
+            "    \"`$wsShell.Arguments = '/noshow'\"",
+            "    \"`$wsShell.WorkingDirectory = '$current'\"",
+            "    '$wsShell.Save()'",
+            "    'Write-Host \"f.lux has been added to the startup programs.\"'",
+            "    'Write-Host \"Run `flux-remove-startup` to remove from startup.\"'",
+            ")",
+            "Set-Content \"$dir\\flux-add-startup.ps1\" -Value ($cont -join \"`r`n\") -Encoding Ascii",
+            "Set-Content \"$dir\\flux-remove-startup.ps1\" -Value \"Remove-Item '$startup\\f.lux.lnk' -ErrorAction SilentlyContinue -Force\" -Encoding Ascii"
+        ]
+    },
+    "uninstaller": {
+        "file": "flux-remove-startup.ps1"
+    },
+    "bin": [
+        "flux.exe",
+        "flux-add-startup.ps1",
+        "flux-remove-startup.ps1"
+    ],
     "shortcuts": [
         [
             "flux.exe",
