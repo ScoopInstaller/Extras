@@ -1,39 +1,40 @@
 {
-  "version": "6514223",
-  "description": "Android command line tools",
-  "homepage": "https://developer.android.com/studio#command-tools",
-  "license": {
-    "identifier": "Freeware",
-    "url": "https://developer.android.com/studio/terms.html"
-  },
-  "depends": "adb",
-  "url": "https://dl.google.com/android/repository/commandlinetools-win-6514223_latest.zip",
-  "hash": "408cbc88f1a077521e20574ecc0a3c45d2d2a9e099011bb0493cb22779811cc3",
-  "post_install": [
-    "if (Test-Path \"$(appdir adb $global)\") {",
-    "cmd /c mklink /j \"$dir\\platform-tools\" \"$(appdir adb $global)\\current\\platform-tools\" | out-null",
-    "attrib \"$(appdir adb $global)\\current\\platform-tools\" +R /L",
-    "}"
-  ],
-  "env_add_path": "tools\\bin",
-  "env_set": {
-    "ANDROID_SDK_ROOT": "$dir"
-  },
-  "persist": [
-    ".knownPackages",
-    "build-tools",
-    "emulator",
-    "extras",
-    "licenses",
-    "patcher",
-    "platforms",
-    "sources"
-  ],
-  "checkver": {
-    "url": "https://developer.android.com/studio/",
-    "regex": "commandlinetools-win-(\\d+)"
-  },
-  "autoupdate": {
-    "url": "https://dl.google.com/android/repository/commandlinetools-win-$version_latest.zip"
-  }
+    "version": "6609375",
+    "description": "Android command line tools",
+    "homepage": "https://developer.android.com/studio#command-tools",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://developer.android.com/studio/terms.html"
+    },
+    "url": "https://dl.google.com/android/repository/commandlinetools-win-6609375_latest.zip",
+    "hash": "40bba20275180194bebf89bb58c74d712bb93cc401f36bd2f8f32383acf9826c",
+    "post_install": [
+        "if (Test-Path \"$(appdir adb $global)\") {",
+        "    New-Item \"$dir\\platform-tools\" -ItemType Junction -Target \"$(appdir adb $global)\\current\\platform-tools\" | Out-Null",
+        "}"
+    ],
+    "env_add_path": "tools\\bin",
+    "env_set": {
+        "ANDROID_SDK_ROOT": "$dir"
+    },
+    "persist": [
+        "build-tools",
+        "emulator",
+        "extras",
+        "licenses",
+        "patcher",
+        "platforms",
+        "sources"
+    ],
+    "checkver": {
+        "url": "https://developer.android.com/studio/",
+        "regex": "commandlinetools-win-(\\d+)"
+    },
+    "autoupdate": {
+        "url": "https://dl.google.com/android/repository/commandlinetools-win-$version_latest.zip",
+        "hash": {
+            "url": "https://developer.android.com/studio",
+            "find": "commandlinetools-win(?:.*\\n){3}.*<td>($sha256)"
+        }
+    }
 }
