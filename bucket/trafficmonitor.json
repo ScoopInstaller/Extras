@@ -1,8 +1,9 @@
 {
     "version": "1.78",
-    "description": "TrafficMonitor is a network monitoring suspension window software in Windows platform. It can display the current network speed, CPU and memory usage. It also support the functions of display in the taskbar, change skin and historical traffic statistics.",
+    "description": "Network monitoring suspension window software",
     "homepage": "https://github.com/zhongyang219/TrafficMonitor",
     "license": {
+        "identifier": "Anti 996-License-1.0",
         "url": "https://github.com/zhongyang219/TrafficMonitor/blob/master/LICENSE"
     },
     "architecture": {
@@ -18,16 +19,9 @@
     "extract_dir": "TrafficMonitor",
     "installer": {
         "script": [
-            "if (!(Test-Path \"$persist_dir\\config.ini\")) { Set-Content \"$dir\\config.ini\" @('[general]', 'check_update_when_start = false') }",
-            "Set-Content \"$dir\\global_cfg.ini\" @('[config]', 'portable_mode = true')"
-        ]
-    },
-    "uninstaller": {
-        "script": [
-            "if (!(Test-Path \"$persist_dir\")) {",
-            "   New-Item \"$persist_dir\" -ItemType Directory | Out-Null",
-            "   Copy-Item \"$dir\\config.ini\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force",
-            "}"
+            "if (!(Test-Path \"$persist_dir\\config.ini\")) { Set-Content \"$dir\\config.ini\" @('[general]', 'check_update_when_start = false') -Encoding Ascii }",
+            "if (!(Test-Path \"$persist_dir\\history_traffic.dat\")) { New-Item \"$dir\\history_traffic.dat\" -ItemType File | Out-Null }",
+            "if (!(Test-Path \"$persist_dir\\global_cfg.ini\")) { Set-Content \"$dir\\global_cfg.ini\" @('[config]', 'portable_mode = true') -Encoding Ascii }"
         ]
     },
     "shortcuts": [
@@ -36,7 +30,12 @@
             "TrafficMonitor"
         ]
     ],
-    "persist": "config.ini",
+    "persist": [
+        "skins",
+        "config.ini",
+        "history_traffic.dat",
+        "global_cfg.ini"
+    ],
     "checkver": "github",
     "autoupdate": {
         "architecture": {
