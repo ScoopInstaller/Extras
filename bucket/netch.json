@@ -1,0 +1,40 @@
+{
+    "version": "1.4.11",
+    "description": "Game accelerator",
+    "homepage": "https://github.com/NetchX/Netch",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/NetchX/Netch/releases/download/1.4.11/Netch.zip",
+            "hash": "3ed475e66ef58ae1d269618be788c7bdc156b2e7881ff876c3debf63b8539574"
+        }
+    },
+    "pre_install": [
+        "ensure \"$dir\\data\" | Out-Null",
+        "if (!(Test-Path \"$persist_dir\\data\\settings.json\")) { Set-Content \"$dir\\data\\settings.json\" '{ \"CheckUpdateWhenOpened\": false }' -Encoding Ascii -Force }"
+    ],
+    "bin": "Netch.exe",
+    "shortcuts": [
+        [
+            "Netch.exe",
+            "Netch"
+        ]
+    ],
+    "persist": [
+        "data",
+        "logging",
+        "mode"
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/NetchX/Netch/releases/download/$version/Netch.zip"
+            }
+        },
+        "hash": {
+            "url": "https://github.com/NetchX/Netch/releases/tag/$version",
+            "regex": "(?sm)$basename</td.*?$sha256"
+        }
+    }
+}

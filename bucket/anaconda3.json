@@ -1,12 +1,19 @@
 {
     "version": "2020.02",
     "description": "The most popular Python distribution for data science.",
-    "license": "BSD-3-Clause",
     "homepage": "https://www.anaconda.com/",
-    "checkver": {
-        "url": "https://repo.continuum.io/archive",
-        "re": "Anaconda3-([\\d.]+)-Windows"
+    "license": "BSD-3-Clause",
+    "architecture": {
+        "64bit": {
+            "url": "https://repo.continuum.io/archive/Anaconda3-2020.02-Windows-x86_64.exe",
+            "hash": "83c2f53c7174253adcc2de7d1293a7408c37b295abbbb8feca32cb8428a26158"
+        },
+        "32bit": {
+            "url": "https://repo.continuum.io/archive/Anaconda3-2020.02-Windows-x86.exe",
+            "hash": "d13381d6145c47755b198662af8a5f412836adecdb68627bc297be6738a3bdac"
+        }
     },
+    "pre_install": "Write-Host 'Installing Anaconda 3. This can take up to 30 minutes on an HDD.' -ForegroundColor Magenta",
     "bin": [
         "python.exe",
         "pythonw.exe",
@@ -15,7 +22,6 @@
             "python3"
         ]
     ],
-    "pre_install": "Write-Host 'Installing Anaconda 3. This can take up to 30 minutes on an HDD.' -ForegroundColor Magenta",
     "installer": {
         "args": [
             "/S",
@@ -29,17 +35,11 @@
         "file": "Uninstall-Anaconda3.exe",
         "args": "/S"
     },
-    "persist": "envs",
     "env_add_path": "Scripts",
-    "architecture": {
-        "64bit": {
-            "url": "https://repo.continuum.io/archive/Anaconda3-2020.02-Windows-x86_64.exe",
-            "hash": "83c2f53c7174253adcc2de7d1293a7408c37b295abbbb8feca32cb8428a26158"
-        },
-        "32bit": {
-            "url": "https://repo.continuum.io/archive/Anaconda3-2020.02-Windows-x86.exe",
-            "hash": "d13381d6145c47755b198662af8a5f412836adecdb68627bc297be6738a3bdac"
-        }
+    "persist": "envs",
+    "checkver": {
+        "url": "https://repo.continuum.io/archive",
+        "regex": "Anaconda3-([\\d.]+)-Windows"
     },
     "autoupdate": {
         "architecture": {
@@ -47,14 +47,14 @@
                 "url": "https://repo.continuum.io/archive/Anaconda3-$version-Windows-x86_64.exe",
                 "hash": {
                     "url": "http://docs.anaconda.com/anaconda/install/hashes/Anaconda3-$version-Windows-x86_64.exe-hash/",
-                    "find": "([A-Fa-f\\d]{64})"
+                    "regex": "$sha256"
                 }
             },
             "32bit": {
                 "url": "https://repo.continuum.io/archive/Anaconda3-$version-Windows-x86.exe",
                 "hash": {
                     "url": "http://docs.anaconda.com/anaconda/install/hashes/Anaconda3-$version-Windows-x86.exe-hash/",
-                    "find": "([A-Fa-f\\d]{64})"
+                    "regex": "$sha256"
                 }
             }
         }
