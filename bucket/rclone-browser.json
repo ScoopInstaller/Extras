@@ -1,9 +1,14 @@
 {
     "version": "1.8.0",
-    "description": "A simple GUI for rclone",
+    "description": "A simple rclone GUI",
     "homepage": "https://github.com/kapitainsky/RcloneBrowser",
     "license": "MIT",
-    "depends": "rclone",
+    "suggest": {
+        "rclone": [
+            "rclone",
+            "rclone-beta"
+        ]
+    },
     "architecture": {
         "64bit": {
             "url": "https://github.com/kapitainsky/RcloneBrowser/releases/download/1.8.0/rclone-browser-1.8.0-a0b66c6-windows-64-bit.exe",
@@ -16,13 +21,14 @@
     },
     "innosetup": true,
     "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\tasks.bin\")) { New-Item \"$dir\\tasks.bin\" | Out-Null }",
         "if (Test-Path \"$persist_dir\\RcloneBrowser.ini\") {",
         "   Copy-Item \"$persist_dir\\RcloneBrowser.ini\" \"$dir\"",
         "} else {",
-        "   Set-Content \"$dir\\RcloneBrowser.ini\" @('[Settings]', 'checkRcloneBrowserUpdates=false', 'checkRcloneUpdates=false') -Encoding Ascii",
-        "}",
-        "if (!(Test-Path \"$persist_dir\\tasks.bin\")) {",
-        "   New-Item \"$dir\\tasks.bin\" | Out-Null",
+        "   $forwardPer = \"$persist_dir\\downloads\" -replace '\\\\', '/'",
+        "   Set-Content \"$dir\\RcloneBrowser.ini\" @(",
+        "       '[Settings]', 'checkRcloneBrowserUpdates=false', 'checkRcloneUpdates=false', \"defaultDownloadDir=$forwardPer\"",
+        "   ) -Encoding Ascii",
         "}"
     ],
     "uninstaller": {
@@ -34,10 +40,13 @@
             "Rclone Browser"
         ]
     ],
-    "persist": "tasks.bin",
+    "persist": [
+        "downloads",
+        "tasks.bin"
+    ],
     "checkver": {
-        "url": "https://github.com/kapitainsky/RcloneBrowser/releases/latest",
-        "re": "\\/rclone-browser-(?<version>[\\d.]+)-(?<commit>[a-fA-F0-9]{7})"
+        "github": "https://github.com/kapitainsky/RcloneBrowser",
+        "regex": "/rclone-browser-([\\d.]+)-(?<commit>[a-fA-F0-9]+)-windows"
     },
     "autoupdate": {
         "architecture": {
