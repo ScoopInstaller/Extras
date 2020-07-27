@@ -1,5 +1,5 @@
 {
-    "version": "3.16.224",
+    "version": "3.16.1709",
     "description": "Image viewer to view all common image formats including RAW and psd images",
     "homepage": "https://nomacs.org",
     "license": "GPL-3.0-only",
@@ -9,13 +9,13 @@
             "hash": "b062dd0cfdf59db1b5a8a8afa53fdff20c1f140dda12d31f9ee7f7e50b99a36d"
         }
     },
-    "extract_dir": "nomacs-3.16.224\\bin",
-    "pre_install": "Copy-Item \"$persist_dir\\settings.ini\" \"$dir\" -ErrorAction SilentlyContinue -Force",
+    "extract_dir": "nomacs-3.16.1709",
+    "pre_install": [
+        "ensure \"$persist_dir\" | Out-Null",
+        "Copy-Item \"$persist_dir\\settings.ini\" \"$dir\" -ErrorAction SilentlyContinue -Force"
+    ],
     "uninstaller": {
-        "script": [
-            "if (-not (Test-Path \"$persist_dir\" -Type Container)) { New-Item \"$persist_dir\" -ItemType Directory | Out-Null }",
-            "Copy-Item \"$dir\\settings.ini\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
-        ]
+        "script": "Copy-Item \"$dir\\settings.ini\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
     },
     "bin": "nomacs.exe",
     "shortcuts": [
@@ -24,15 +24,12 @@
             "nomacs"
         ]
     ],
-    "checkver": {
-        "github": "https://github.com/nomacs/nomacs"
-    },
     "autoupdate": {
         "architecture": {
             "64bit": {
                 "url": "https://github.com/nomacs/nomacs/releases/download/$version/nomacs-portable-win.zip"
             }
         },
-        "extract_dir": "nomacs-$version\\bin"
+        "extract_dir": "nomacs-$version"
     }
 }
