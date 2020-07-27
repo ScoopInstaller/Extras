@@ -1,17 +1,37 @@
 {
     "version": "3.1.0",
-    "homepage": "https://www.gitify.io/",
-    "url": "https://github.com/manosim/gitify/releases/download/v3.1.0/Gitify-Setup-3.1.0.exe#/dl.7z",
-    "hash": "0a3ad7e83df6144de129b533314917102e4d7bab2e17338209b99e542a156550",
-    "extract_dir": "$PLUGINSDIR",
-    "pre_install": "Expand-7zipArchive -Path \"$dir\\app-64.7z\" -Removal",
-    "bin": "Gitify.exe",
-    "shortcuts": [["Gitify.exe", "Gitify"]],
+    "description": "GitHub notifications on menu bar",
+    "homepage": "https://www.gitify.io",
     "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/manosim/gitify/releases/download/v3.1.0/Gitify-Setup-3.1.0.exe#/dl.7z",
+            "hash": "sha512:3e53a33456624492b6d7db79274e1a0f73cd32a57ff9d708d603c34a5872f8b366c08ef6162154fbbe36e449c2c5306cb9695c072298a63904dcbd0b16d77a65",
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\" -Removal",
+                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse"
+            ]
+        }
+    },
+    "shortcuts": [
+        [
+            "Gitify.exe",
+            "Gitify"
+        ]
+    ],
     "checkver": {
-      "github": "https://github.com/manosim/gitify"
+        "github": "https://github.com/manosim/gitify"
     },
     "autoupdate": {
-      "url": "https://github.com/manosim/gitify/releases/download/v$version/Gitify-Setup-$version.exe#/dl.7z"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/manosim/gitify/releases/download/v$version/Gitify-Setup-$version.exe#/dl.7z"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512:\\s+$base64"
+        }
     }
+}
 }
