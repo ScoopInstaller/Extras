@@ -16,10 +16,8 @@
     "pre_install": [
         "ensure \"$persist_dir\" | Out-Null",
         "if (Test-Path \"$persist_dir\\Everything.ini\") { Copy-Item \"$persist_dir\\Everything.ini\" \"$dir\" }",
-        "else { & \"$dir\\Everything.exe\" -install-config null }",
-        "'Everything.db','Bookmarks.csv' |% {",
-        "   if (Test-Path \"$persist_dir\\$_\") { Copy-Item \"$persist_dir\\$_\" \"$dir\" }",
-        "}"
+        "else { Invoke-ExternalCommand \"$dir\\Everything.exe\" -Args @('-install-config null') }",
+        "Get-ChildItem \"$persist_dir\\*\" -Include 'Everything.db', 'Bookmarks.csv' | Copy-Item -Destination \"$dir\" -ErrorAction SilentlyContinue"
     ],
     "uninstaller": {
         "script": "Get-ChildItem \"$dir\\*\" -Include 'Everything.ini', 'Everything.db', 'Bookmarks.csv' | Copy-Item -Destination \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
