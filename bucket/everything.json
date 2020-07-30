@@ -1,6 +1,6 @@
 {
     "version": "1.4.1.987",
-    "description": "Locate files and folders by name instantly.",
+    "description": "Locate files and folders by name instantly",
     "homepage": "https://www.voidtools.com",
     "license": "MIT",
     "architecture": {
@@ -14,16 +14,15 @@
         }
     },
     "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\Everything.ini\")) { & \"$dir\\Everything.exe\" -install-config null }",
-        "if (!(Test-Path \"$persist_dir\\Everything.db\")) { New-Item \"$dir\\Everything.db\" | Out-Null }",
-        "if (Test-Path \"$persist_dir\\Bookmarks.csv\") {",
-        "    Copy-Item \"$persist_dir\\Bookmarks.csv\" \"$dir\"",
-        "} else {",
-        "    New-Item \"$dir\\Bookmarks.csv\" | Out-Null",
+        "ensure \"$persist_dir\" | Out-Null",
+        "if (Test-Path \"$persist_dir\\Everything.ini\") { Copy-Item \"$persist_dir\\Everything.ini\" \"$dir\" }",
+        "else { & \"$dir\\Everything.exe\" -install-config null }",
+        "'Everything.db','Bookmarks.csv' |% {",
+        "   if (Test-Path \"$persist_dir\\$_\") { Copy-Item \"$persist_dir\\$_\" \"$dir\" }",
         "}"
     ],
     "uninstaller": {
-        "script": "if (Test-Path \"$dir\\Bookmarks.csv\") { Copy-Item \"$dir\\Bookmarks.csv\" \"$persist_dir\" -Force }"
+        "script": "'Everything.ini','Everything.db','Bookmarks.csv' |% { Copy-Item \"$dir\\$_\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force }"
     },
     "bin": "Everything.exe",
     "shortcuts": [
@@ -31,10 +30,6 @@
             "Everything.exe",
             "Everything"
         ]
-    ],
-    "persist": [
-        "Everything.db",
-        "Everything.ini"
     ],
     "checkver": "Download Everything ([\\d.]+)",
     "autoupdate": {
