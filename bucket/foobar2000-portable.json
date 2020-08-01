@@ -6,6 +6,9 @@
         "identifier": "Freeware",
         "url": "https://www.foobar2000.org/license"
     },
+    "suggest": {
+        "Encoders": "extras/foobar2000-encoders"
+    },
     "url": "https://www.videohelp.com/download/foobar2000_v1.5.5.exe#/dl.7z",
     "hash": "e5f983c12b2eda9c1e0bc6de95413005b61953be9bd1401398c5ba72713f23fd",
     "bin": "foobar2000.exe",
@@ -20,57 +23,40 @@
         "index-data",
         "library",
         ["playlists-v1.4","playlists"],
-        "user-components",
-        "LargeFieldsConfig.txt"
+        "user-components"
     ],
-    "suggest": {
-        "Encoders": "extras/foobar2000-encoders"
+    "installer": {
+        "script": [
+            "Remove-Item \"$dir\\`$*\", \"$dir\\uninstall.exe\" -Force -Recurse",
+            "New-Item \"$dir\\portable_mode_enabled\" -Force | Out-Null",
+            "if (!(Test-Path \"$persist_dir\")) {",
+            "    if (Test-Path \"$env:Appdata\\foobar2000\") {",
+            "        Write-Host \"Importing files from user directory...\" -ForegroundColor Yellow",
+            "        Copy-Item \"$env:Appdata\\foobar2000\\*\" \"$dir\" -Force -Recurse",
+            "        if (is_directory \"$dir\\theme.fth\") {",
+            "            Remove-Item \"$dir\\theme.fth\" -Force -Recurse",
+            "        }",
+            "        if (is_directory \"$dir\\LargeFieldsConfig.txt\") {",
+            "            Remove-Item \"$dir\\LargeFieldsConfig.txt\" -Force -Recurse",
+            "        }",
+            "    }",
+            "}",
+            "else {",
+            "    if (Test-Path \"$persist_dir\\LargeFieldsConfig.txt\") {",
+            "        Copy-Item \"$persist_dir\\LargeFieldsConfig.txt\" \"$dir\" -Force",
+            "    }",
+            "    if (Test-Path \"$persist_dir\\theme.fth\") {",
+            "        Copy-Item \"$persist_dir\\theme.fth\" \"$dir\" -Force",
+            "    }",
+            "}",
+            "$EncodersDir = $(appdir foobar2000-encoders $global)\\current",
+            "if (Test-Path \"$EncodersDir\") {",
+            "    New-Item \"$dir\\encoders\" -ItemType Junction -Target \"$EncodersDir\" | Out-Null",
+            "}"
+        ]
     },
-    "pre_install": [
-        "if (!(Test-Path \"$persist_dir\")) {",
-        "    New-Item \"$persist_dir\\playlists\" -ItemType Directory -Force | Out-Null",
-        "    if (Test-Path \"$env:Appdata\\foobar2000\\playlists-v*\") {",
-        "        Copy-Item \"$env:Appdata\\foobar2000\\playlists-v*\\*\" \"$persist_dir\\playlists\" -Force -Recurse",
-        "    }",
-        "    if (Test-Path \"$env:Appdata\\foobar2000\\configuration\") {",
-        "        Copy-Item \"$env:Appdata\\foobar2000\\configuration\" \"$persist_dir\" -Force -Recurse",
-        "    }",
-        "    if (Test-Path \"$env:Appdata\\foobar2000\\index-data\") {",
-        "        Copy-Item \"$env:Appdata\\foobar2000\\index-data\" \"$persist_dir\" -Force -Recurse",
-        "    }",
-        "    if (Test-Path \"$env:Appdata\\foobar2000\\library\") {",
-        "        Copy-Item \"$env:Appdata\\foobar2000\\library\" \"$persist_dir\" -Force -Recurse",
-        "    }",
-        "    if (Test-Path \"$env:Appdata\\foobar2000\\user-components\") {",
-        "        Copy-Item \"$env:Appdata\\foobar2000\\user-components\" \"$persist_dir\" -Force -Recurse",
-        "    }",
-        "    if (Test-Path \"$env:Appdata\\foobar2000\\LargeFieldsConfig.txt\") {",
-        "        Copy-Item \"$env:Appdata\\foobar2000\\LargeFieldsConfig.txt\" \"$persist_dir\" -Force",
-        "    }",
-        "    if (Test-Path \"$env:Appdata\\foobar2000\\theme.fth\") {",
-        "        Copy-Item \"$env:Appdata\\foobar2000\\theme.fth\" \"$persist_dir\" -Force",
-        "    }",
-        "}"
-    ],
-    "post_install": [
-        "Remove-Item \"$dir\\`$*\", \"$dir\\uninstall.exe\" -Force -Recurse",
-        "New-Item \"$dir\\portable_mode_enabled\" -Force | Out-Null",
-        "if (is_directory \"$persist_dir\\LargeFieldsConfig.txt\") {",
-        "    Remove-Item \"$dir\\LargeFieldsConfig.txt\" -Force -Recurse",
-        "    Remove-Item \"$persist_dir\\LargeFieldsConfig.txt\" -Force -Recurse",
-        "}",
-        "if (Test-Path \"$persist_dir\\theme.fth\") {",
-        "    Copy-Item \"$persist_dir\\theme.fth\" \"$dir\" -Force",
-        "}",
-        "if (Test-Path \"$(appdir foobar2000-encoders $global)\\current\") {",
-        "    New-Item \"$dir\\encoders\" -ItemType Junction -Target \"$(appdir foobar2000-encoders $global)\\current\" | Out-Null",
-        "}"
-    ],
     "uninstaller": {
         "script": [
-            "if (Test-Path \"$persist_dir\\LargeFieldsConfig.txt\") {",
-            "    Remove-Item \"$persist_dir\\LargeFieldsConfig.txt\" -Force",
-            "}",
             "if (Test-Path \"$dir\\LargeFieldsConfig.txt\") {",
             "    Copy-Item \"$dir\\LargeFieldsConfig.txt\" \"$persist_dir\" -Force",
             "}",
