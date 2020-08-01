@@ -5,10 +5,6 @@
     "license": "Apache-2.0",
     "url": "https://github.com/Klocman/Bulk-Crap-Uninstaller/releases/download/v4.16/BCUninstaller_4.16_portable.zip",
     "hash": "d383996cc87a82bbb6c51f775d711c887db6e44687d848b6fb0792fde703d548",
-    "pre_install": "Copy-Item \"$persist_dir\\BCUninstaller.settings\" \"$dir\" -ErrorAction SilentlyContinue -Force",
-    "uninstaller": {
-        "script": "Copy-Item \"$dir\\BCUninstaller.settings\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
-    },
     "bin": [
         "BCUninstaller.exe",
         "BCU-console.exe",
@@ -23,6 +19,24 @@
             "Bulk Crap Uninstaller"
         ]
     ],
+    "persist":[
+        "BCUninstaller.settings"
+    ],
+    "post_install": [
+        "if (is_directory \"$persist_dir\\BCUninstaller.settings\") {",
+        "    Remove-Item \"$persist_dir\\BCUninstaller.settings\" -Force -Recurse",
+        "    Remove-Item \"$dir\\BCUninstaller.settings\" -Force -Recurse",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "if (!(Test-Path \"$persist_dir\\BCUninstaller.settings\")) {",
+            "    if (Test-Path \"$dir\\BCUninstaller.settings\") {",
+            "        Copy-Item \"$dir\\BCUninstaller.settings\" \"$persist_dir\" -Force",
+            "    }",
+            "}"
+        ]
+    },
     "checkver": {
         "github": "https://github.com/Klocman/Bulk-Crap-Uninstaller"
     },
