@@ -1,0 +1,51 @@
+{
+    "version": "0.102.4",
+    "description": "ClamAV is an open source antivirus engine for detecting trojans, viruses, malware & other malicious threats.",
+    "homepage": "https://www.clamav.net/",
+    "license": "GNU General Public License v2",
+    "architecture": {
+        "32bit": {
+            "url": "https://www.clamav.net/downloads/production/clamav-0.102.4-win-x86-portable.zip",
+            "hash": "b564cf32e6c44b39dfd7c9f7719c62f621f40db5ae67f37e2634b92827c0d129"
+        },
+        "64bit": {
+            "url": "https://www.clamav.net/downloads/production/clamav-0.102.4-win-x64-portable.zip",
+            "hash": "fbe8b74d719983b2732f4a5629cf5ca813f5095c1d8d1aea36ef3737f5c78878"
+        }
+    },
+    "bin": [
+        "clambc.exe",
+        "clamconf.exe",
+        "clamd.exe",
+        "clamdscan.exe",
+        "clamscan.exe",
+        "clamsubmit.exe",
+        "freshclam.exe",
+        "sigtool.exe"
+    ],
+    "pre_install": [
+        "Set-Content \"$dir\\clamd.conf\" '#' -Encoding Ascii",
+        "Set-Content \"$dir\\freshclam.conf\" '#' -Encoding Ascii"
+
+    ],
+    "persist": [
+        "conf_examples",
+        "database",
+        "clamd.conf",
+        "freshclam.conf"
+    ],
+    "checkver": {
+        "url": "https://www.clamav.net/downloads",
+        "regex": "<strong>([\\d.]+) </strong>"
+    },
+    "autoupdate": {
+        "architecture": {
+            "32bit": {
+                "url": "https://www.clamav.net/downloads/production/clamav-$version-win-x86-portable.zip"
+            },
+            "64bit": {
+                "url": "https://www.clamav.net/downloads/production/clamav-$version-win-x64-portable.zip"
+            }
+        }
+    }
+}
