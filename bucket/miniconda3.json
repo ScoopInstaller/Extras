@@ -1,12 +1,13 @@
 {
     "version": "4.8.3",
-    "description": "A cross-platform, Python-agnostic binary package manager.",
+    "description": "A cross-platform, Python-agnostic binary package manager",
     "homepage": "https://conda.io/miniconda.html",
     "license": "BSD-3-Clause",
-    "checkver": {
-        "url": "https://repo.continuum.io/miniconda",
-        "re": "Miniconda3-py38_([\\d.]+)-Windows"
-    },
+    "notes": [
+        "Currently conda envs activate and deactivate doesn't work on PowerShell,",
+        "for more information, see: https://github.com/conda/conda/issues/626,",
+        "or just execute: 'conda install -n root -c pscondaenvs pscondaenvs'"
+    ],
     "architecture": {
         "64bit": {
             "url": "https://repo.continuum.io/miniconda/Miniconda3-py38_4.8.3-Windows-x86_64.exe",
@@ -15,20 +16,6 @@
         "32bit": {
             "url": "https://repo.continuum.io/miniconda/Miniconda3-py38_4.8.3-Windows-x86.exe",
             "hash": "md5:99e867dc54d5b3234ab37f29b6344311"
-        }
-    },
-    "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://repo.continuum.io/miniconda/Miniconda3-py38_$version-Windows-x86_64.exe"
-            },
-            "32bit": {
-                "url": "https://repo.continuum.io/miniconda/Miniconda3-py38_$version-Windows-x86.exe"
-            }
-        },
-        "hash": {
-            "url": "$baseurl",
-            "find": "$basename<.*\\s+<.*\\s+<.*\\s+<td>([a-fA-F0-9]{32})</td>"
         }
     },
     "installer": {
@@ -56,11 +43,24 @@
     "persist": "envs",
     "env_add_path": [
         "scripts",
-        "Library/bin"
+        "Library\\bin"
     ],
-    "notes": [
-        "Currently conda envs activate and deactivate doesn't work on PowerShell,",
-        "for more information, see: https://github.com/conda/conda/issues/626,",
-        "or just execute: 'conda install -n root -c pscondaenvs pscondaenvs'"
-    ]
+    "checkver": {
+        "url": "https://repo.continuum.io/miniconda",
+        "regex": "Miniconda3-py38_([\\d.]+)-Windows"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://repo.continuum.io/miniconda/Miniconda3-py38_$version-Windows-x86_64.exe"
+            },
+            "32bit": {
+                "url": "https://repo.continuum.io/miniconda/Miniconda3-py38_$version-Windows-x86.exe"
+            }
+        },
+        "hash": {
+            "url": "$baseurl",
+            "regex": "(?sm)$basename<.*?<td>$md5</td>"
+        }
+    }
 }
