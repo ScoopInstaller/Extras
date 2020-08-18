@@ -19,6 +19,7 @@
         "Remove-Item \"$dir\\Godot_*\"",
         "New-Item \"$dir\\_sc_\" -ItemType \"file\" | Out-Null"
     ],
+    "post_install": "if (((Get-ChildItem \"$persist_dir\\editor_data\" -Force | Select-Object -First 1 | Measure-Object).Count -eq 0) -and ((Get-ChildItem \"$env:APPDATA\\Godot\" -Force | Select-Object -First 1 | Measure-Object).Count -ne 0)) {Copy-Item -Path \"$env:APPDATA\\Godot\\*\" -Destination \"$persist_dir\\editor_data\" -Recurse -Force}",
     "bin": "godot.exe",
     "shortcuts": [
         [
@@ -27,7 +28,6 @@
         ]
     ],
     "persist": "editor_data",
-    "post_install": "if (((Get-ChildItem \"$persist_dir\\editor_data\" -Force | Select-Object -First 1 | Measure-Object).Count -eq 0) -and ((Get-ChildItem \"$env:APPDATA\\Godot\" -Force | Select-Object -First 1 | Measure-Object).Count -ne 0)) {Copy-Item -Path \"$env:APPDATA\\Godot\\*\" -Destination \"$persist_dir\\editor_data\" -Recurse -Force}",
     "checkver": {
         "url": "https://godotengine.org/download",
         "regex": "<h2>Godot <em>([\\d.]+)</em></h2>"
