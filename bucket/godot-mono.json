@@ -1,7 +1,7 @@
 {
     "version": "3.2.2",
     "description": "a feature-packed, cross-platform game engine to create 2D and 3D games from a unified interface.",
-    "homepage": "https://godotengine.org/",
+    "homepage": "https://godotengine.org",
     "license": "MIT",
     "architecture": {
         "64bit": {
@@ -27,9 +27,7 @@
         ]
     ],
     "persist": "editor_data",
-    "post_install": [
-        "if (!(Test-Path \"$persist_dir\\editor_data\\editor_settings-3.tres\") -and (Test-Path \"$Env:AppData\\Godot\\editor_settings-3.tres\")) {Copy-Item -Path \"$Env:AppData\\Godot\\*\" -Destination \"$persist_dir\\editor_data\" -Recurse -Force}"
-    ],
+    "post_install": "if (((Get-ChildItem \"$persist_dir\\editor_data\" -Force | Select-Object -First 1 | Measure-Object).Count -eq 0) -and ((Get-ChildItem \"$env:APPDATA\\Godot\" -Force | Select-Object -First 1 | Measure-Object).Count -ne 0)) {Copy-Item -Path \"$env:APPDATA\\Godot\\*\" -Destination \"$persist_dir\\editor_data\" -Recurse -Force}",
     "checkver": {
         "url": "https://godotengine.org/download",
         "regex": "<h2>Godot <em>([\\d.]+)</em></h2>"
