@@ -1,0 +1,46 @@
+{
+    "version": "3.1.7",
+    "description": "Microsoft .NET Core Desktop Runtime",
+    "homepage": "https://dotnet.microsoft.com/download/dotnet-core",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.microsoft.com/en-us/legal/intellectualproperty/copyright/default.aspx"
+    },
+    "notes": "You can now remove this installer with 'scoop uninstall windowsdesktop-runtime'",
+    "architecture": {
+        "64bit": {
+            "url": "https://dotnetcli.azureedge.net/dotnet/Runtime/3.1.7/windowsdesktop-runtime-3.1.7-win-x64.exe",
+            "hash": "sha512:db998fd0ae309f44382dced73ebbf1b8782cfdcd635d64a8314b18300d232677c666396e161ec0bb31e50774b57dbf770899d4368222659a69eaa60c0182bc6f"
+        },
+        "32bit": {
+            "url": "https://dotnetcli.azureedge.net/dotnet/Runtime/3.1.7/windowsdesktop-runtime-3.1.7-win-x86.exe",
+            "hash": "sha512:c51e02d718a05afaa11e66ef23809518cbe377b4c7595b3b0b232dd809c9cb83729db3b62ee14117cdc521d093bc842a842b683cba276ca34b2d16e0f8d8a826"
+        }
+    },
+    "pre_install": "if (!(is_admin)) { error 'Admin privileges are required.'; break }",
+    "installer": {
+        "script": "Invoke-ExternalCommand \"$dir\\$fname\" -ArgumentList '/install', '/quiet', '/norestart' -RunAs | Out-Null"
+    },
+    "checkver": {
+        "url": "https://dotnetcli.azureedge.net/dotnet/Runtime/Current/latest.version",
+        "regex": "([\\d.]+)$"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://dotnetcli.azureedge.net/dotnet/Runtime/$version/windowsdesktop-runtime-$version-win-x64.exe",
+                "hash": {
+                    "url": "https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-$version-windows-x64-installer",
+                    "regex": "value=\"$sha512\""
+                }
+            },
+            "32bit": {
+                "url": "https://dotnetcli.azureedge.net/dotnet/Runtime/$version/windowsdesktop-runtime-$version-win-x86.exe",
+                "hash": {
+                    "url": "https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-$version-windows-x86-installer",
+                    "regex": "value=\"$sha512\""
+                }
+            }
+        }
+    }
+}
