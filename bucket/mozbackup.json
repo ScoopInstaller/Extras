@@ -3,11 +3,15 @@
     "description": "Create backups of profiles from Mozilla software.",
     "homepage": "http://mozbackup.jasnapaka.com",
     "license": "Freeware",
-        "identifier": "Freeware"
-    },
     "url": "http://mozbackup.jasnapaka.com/files/1.5.1/MozBackup-1.5.1-EN.zip",
-    "hash": "md5:F60407F0CC23CB683BEC7FB2C67C6B05",
+    "hash": "md5:f60407f0cc23cb683bec7fb2c67c6b05",
     "extract_dir": "MozBackup-1.5.1-EN",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\backup.ini\")) {",
+        "    $c = (Get-Content \"$dir\\backup.ini\") -replace '^(backupdir=)$', \"`$1$persist_dir\\backups\"",
+        "    Set-Content \"$dir\\backup.ini\" $c -Encoding Ascii -Force",
+        "}"
+    ],
     "bin": "MozBackup.exe",
     "shortcuts": [
         [
@@ -15,7 +19,10 @@
             "MozBackup"
         ]
     ],
-    "persist": "backup.ini",
+    "persist": [
+        "backups",
+        "backup.ini"
+    ],
     "checkver": {
         "url": "http://mozbackup.jasnapaka.com/changelog.txt",
         "regex": "\\(MozBackup\\s+([\\d.]+)\\)"
