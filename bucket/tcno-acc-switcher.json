@@ -16,6 +16,13 @@
             "extract_dir": "TcNo.Account.Switcher.x32"
         }
     },
+    "pre_install": [
+        "'globals.json', 'Steam\\SteamSettings.json', 'Steam\\SteamVACCache.json', 'Steam\\Tray_Users.json' | ForEach-Object {",
+        "    $cont = if ($_ -like '*Tray_Users*') { '[]' } else { '{}' }",
+        "    if (!(Test-Path \"$persist_dir\\$_\")) { Set-Content \"$dir\\$_\" $cont -Encoding Ascii | Out-Null }",
+        "}",
+        "Remove-Item \"$dir\\TcNo Acc Switcher Updater.exe\""
+    ],
     "bin": "TcNo Account Switcher.exe",
     "shortcuts": [
         [
