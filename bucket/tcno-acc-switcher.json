@@ -17,13 +17,28 @@
                 "        if (! (Test-Path \"$dir\\$f\")) { New-Item \"$dir\\$f\" -ItemType 'File' | Out-Null }",
                 "    }",
                 "}",
-                "CreateFile 'globals.json' '{}'"
+                "CreateFile 'globals.json'",
+                "CreateFile 'Steam\\SteamSettings.json'",
+                "CreateFile 'Steam\\SteamVACCache.json'",
+                "CreateFile 'Steam\\Tray_Users.json'"
             ]
         },
         "32bit": {
             "url": "https://github.com/TcNobo/TcNo-Acc-Switcher/releases/download/3.0.02/TcNo.Account.Switcher.x32.zip",
             "hash": "16c62e3392821f082993a1f5c6bf1c21550351f6f72f7ee6a85d33d84a48f486",
-            "extract_dir": "TcNo.Account.Switcher.x32"
+            "extract_dir": "TcNo.Account.Switcher.x32",
+            "pre_install": [
+                "# Create placeholder files",
+                "function CreateFile([String[]] $file) {",
+                "    foreach ($f in $file) {",
+                "        if (! (Test-Path \"$dir\\$f\")) { New-Item \"$dir\\$f\" -ItemType 'File' | Out-Null }",
+                "    }",
+                "}",
+                "CreateFile 'globals.json'",
+                "CreateFile 'Steam\\SteamSettings.json'",
+                "CreateFile 'Steam\\SteamVACCache.json'",
+                "CreateFile 'Steam\\Tray_Users.json'"
+            ]
         }
     },
     "bin": [
@@ -53,8 +68,8 @@
         "Steam\\Errors",
         "Steam\\images"
     ],
-	"post_install": [
-		"Remove-Item \"$dir\\`$*\", \"$dir\\TcNo Acc Switcher Updater.exe\" -Recurse"
+    "post_install": [
+        "Remove-Item \"$dir\\`$*\", \"$dir\\TcNo Acc Switcher Updater.exe\" -Recurse"
     ],
     "checkver": "github",
     "autoupdate": {
