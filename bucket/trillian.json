@@ -1,0 +1,37 @@
+{
+    "version": "6.3.0.6",
+    "description": "Modern and secure instant messaging",
+    "homepage": "https://www.trillian.im",
+    "license": {
+        "identifier": "Freemium",
+        "url": "https://www.trillian.im/eula/"
+    },
+    "url": "https://www.ceruleanstudios.com/trillian-v6.3.0.6.msi",
+    "hash": "f1ea8e70c5bad9380c95e29cc0f41159504f3c6a2fc38d6005f2c4ae985257f2",
+    "pre_install": [
+        "$file = 'trillian.ini'",
+        "if (!(Test-Path \"$persist_dir\\$file\")) {",
+        "   Write-Host 'File' $file 'does not exists. Creating.' -f Yellow",
+        "   $CONT = @(\"[General]`r`nUse User Directory=0`r`nGlobal Directory=users\\global\\\")",
+        "   Set-Content \"$dir\\$file\" ($CONT -join \"`r`n\") -Encoding Ascii",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "trillian.exe",
+            "Trillian"
+        ]
+    ],
+    "persist": [
+        "trillian.ini",
+        "users"
+    ],
+    "checkver": {
+        "url": "https://www.trillian.im/shared/scripts/news.items.js",
+        "regex": "\"windows\",\\s*([\\d.]+),\\s*([\\d]+)",
+        "replace": "${1}.0.${2}"
+    },
+    "autoupdate": {
+        "url": "https://www.ceruleanstudios.com/trillian-v$version.msi"
+    }
+}
