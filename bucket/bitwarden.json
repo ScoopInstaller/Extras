@@ -14,7 +14,12 @@
         ]
     ],
     "persist": "bitwarden-appdata",
-    "post_install": "if(Test-Path \"$env:Appdata\\Bitwarden\") { Copy-Item \"$env:Appdata\\Bitwarden\\*\" \"$persist_dir\\bitwarden-appdata\" -Recurse -Force }",
+    "post_install": [
+        "if(Test-Path \"$env:Appdata\\Bitwarden\") {",
+        "    Copy-Item \"$env:Appdata\\Bitwarden\\*\" \"$persist_dir\\bitwarden-appdata\" -Recurse -Force",
+        "    Remove-Item \"$env:Appdata\\Bitwarden\" -Recurse",
+        "}"
+    ],
     "checkver": {
         "github": "https://github.com/bitwarden/desktop"
     },
