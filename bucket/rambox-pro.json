@@ -1,28 +1,22 @@
 {
-    "version": "1.3.2",
-    "description": "Tool for organizing web apps into one application with rich features.",
-    "homepage": "https://rambox.pro/",
+    "version": "1.4.0",
+    "description": "Tool for organizing web apps into one application with rich features",
+    "homepage": "https://rambox.pro",
     "license": {
         "identifier": "Proprietary",
         "url": "https://rambox.pro/#eula"
     },
-    "url": "https://github.com/ramboxapp/download/releases/download/v1.3.2/RamboxPro-1.3.2-win.exe#/cosi.7z",
-    "hash": "494249aee7f84c9b4856e43d5a707dcd7e4093f663a6c8150a656754f65476d2",
-    "extract_dir": "$PLUGINSDIR",
-    "pre_install": "Get-ChildItem \"$dir\" -Exclude 'app-64.7z', 'app-32.7z' | Remove-Item -Force -Recurse",
+    "url": "https://github.com/ramboxapp/download/releases/download/v1.4.0/RamboxPro-1.4.0-win.exe#/cosi.7z",
+    "hash": "sha512:cb3ad0a39a1ea111556c24760af7e01b09b03a964da306500601c895272dcece804f5359480b473ad33e2e7ee54e371cee06fb564b7c7c6f6552d53990b9f00d",
     "architecture": {
         "64bit": {
-            "installer": {
-                "script": "Expand-7zipArchive \"$dir\\app-64.7z\""
-            }
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
         },
         "32bit": {
-            "installer": {
-                "script": "Expand-7zipArchive \"$dir\\app-32.7z\""
-            }
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
         }
     },
-    "post_install": "Remove-Item \"$dir\\app-64.7z\", \"$dir\\app-32.7z\"",
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Recurse",
     "shortcuts": [
         [
             "RamboxPro.exe",
@@ -30,7 +24,7 @@
         ]
     ],
     "checkver": {
-        "github": "https://github.com/ramboxapp/download/"
+        "github": "https://github.com/ramboxapp/download"
     },
     "autoupdate": {
         "url": "https://github.com/ramboxapp/download/releases/download/v$version/RamboxPro-$version-win.exe#/cosi.7z",
