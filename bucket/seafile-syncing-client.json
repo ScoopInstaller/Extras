@@ -6,16 +6,22 @@
     "url": "https://download.seadrive.org/seafile-7.0.9-en.msi",
     "hash": "3f837823c23403ad2d5aec29f81028aaf1e86055e2fa45a8b67fcf94f59ddade",
     "extract_dir": "PFiles\\Seafile\\bin",
-    "env_set": {
-        "CCNET_CONF_DIR": "$dir\\ccnetconfdir"
-    },
-    "post_install": "Set-Content \"$dir\\ccnetconfdir\\seafile.ini\" \"$dir\\data\"",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\ccnetconfdir\\seafile.ini\")) {",
+        "    ensure \"$dir\\ccnetconfdir\" | Out-Null",
+        "    $cur = current_dir \"$dir\"",
+        "    Set-Content \"$dir\\ccnetconfdir\\seafile.ini\" \"$cur\\data\" -Encoding Ascii",
+        "}"
+    ],
     "shortcuts": [
         [
             "seafile-applet.exe",
             "Seafile Desktop Syncing Client"
         ]
     ],
+    "env_set": {
+        "CCNET_CONF_DIR": "$dir\\ccnetconfdir"
+    },
     "persist": [
         "data",
         "ccnetconfdir"
