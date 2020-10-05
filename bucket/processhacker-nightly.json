@@ -1,0 +1,54 @@
+{
+    "version": "3.0.3456",
+    "description": "A powerful, multi-purpose tool that helps you monitor system resources, debug software and detect malware.",
+    "license": "GPL-3.0-only",
+    "architecture": {
+        "32bit": {
+            "url": "https://ci.appveyor.com/api/buildjobs/ip6ecd40i8ib1wiu/artifacts/processhacker-3.0.3456-bin.zip",
+            "hash": "f2d7eb21018d8fc9ea461fbca99c264aba9076ddd8ded453654cc286f07f1291",
+            "extract_dir": "32bit"
+        },
+        "64bit": {
+            "url": "https://ci.appveyor.com/api/buildjobs/ip6ecd40i8ib1wiu/artifacts/processhacker-3.0.3456-bin.zip",
+            "hash": "f2d7eb21018d8fc9ea461fbca99c264aba9076ddd8ded453654cc286f07f1291",
+            "extract_dir": "64bit"
+        }
+    },
+    "pre_install": "if (Test-Path \"$persist_dir\\ProcessHacker.exe.settings.xml\") { Copy-Item \"$persist_dir\\ProcessHacker.exe.settings.xml\" \"$dir\" }",
+    "uninstaller": {
+        "script": "if (Test-Path \"$dir\\ProcessHacker.exe.settings.xml\") { Copy-Item \"$dir\\ProcessHacker.exe.settings.xml\" \"$persist_dir\" -Force }"
+    },
+    "checkver": {
+        "url": "https://wj32.org/processhacker/nightly.php?phupdater",
+        "jsonpath": "$.bin_url",
+        "regex": "https://ci.appveyor.com/api/buildjobs/(?<job>[a-z0-9]+)/artifacts/processhacker-([\\d.]+)-bin.zip"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://ci.appveyor.com/api/buildjobs/$matchJob/artifacts/processhacker-$version-bin.zip",
+                "extract_dir": "64bit"
+            },
+            "32bit": {
+                "url": "https://ci.appveyor.com/api/buildjobs/$matchJob/artifacts/processhacker-$version-bin.zip",
+                "extract_dir": "32bit"
+            }
+        },
+        "hash": {
+            "mode": "json",
+            "url": "https://wj32.org/processhacker/nightly.php?phupdater",
+            "jsonpath": "$.bin_hash"
+        }
+    },
+    "homepage": "https://processhacker.sourceforge.io/",
+    "bin": [
+        "processhacker.exe",
+        "peview.exe"
+    ],
+    "shortcuts": [
+        [
+            "processhacker.exe",
+            "Process Hacker"
+        ]
+    ]
+}
