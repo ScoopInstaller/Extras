@@ -5,29 +5,32 @@
     "license": "MIT",
     "url": "https://playnite.link/update/stable/8.1/Playnite81.zip",
     "hash": "9f05d7fab61ba211b8b3cbb1971515dfef8467a00d86c3a386d18d06209b2b6a",
-    "bin": "PlayniteUI.exe",
-    "shortcuts": [
+    "pre_install": "Copy-Item \"$persist_dir\\config.json\" \"$dir\" -ErrorAction SilentlyContinue",
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\config.json\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
+    },
+    "bin": [
         [
-            "PlayniteUI.exe",
+            "Playnite.DesktopApp.exe",
             "Playnite"
         ]
     ],
-    "pre_install": [
-        "if (!(Test-Path \"$dir\\config.json\")) {",
-        "    New-Item -Force -Path \"$dir\" -Name 'config.json' -Value '{}' | Out-Null",
-        "}"
+    "shortcuts": [
+        [
+            "Playnite.DesktopApp.exe",
+            "Playnite"
+        ]
+    ],
+    "persist": [
+        "browsercache",
+        "cache",
+        "ExtensionsData",
+        "library"
     ],
     "checkver": {
         "github": "https://github.com/JosefNemec/Playnite"
     },
     "autoupdate": {
         "url": "https://playnite.link/update/stable/$version/Playnite$cleanVersion.zip"
-    },
-    "persist": [
-        "browsercache",
-        "cache",
-        "ExtensionsData",
-        "library",
-        "config.json"
-    ]
+    }
 }
