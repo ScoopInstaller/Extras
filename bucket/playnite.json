@@ -1,33 +1,36 @@
 {
-    "version": "7.9",
+    "version": "8.3",
     "description": "An open source video game library manager and launcher with support for 3rd party libraries like Steam, GOG, Origin, Battle.net and Uplay. Includes game emulation support, providing one unified interface for your games.",
     "homepage": "https://playnite.link/",
     "license": "MIT",
-    "url": "https://playnite.link/update/stable/7.9/Playnite79.zip",
-    "hash": "18f56dbca04bad3f4893e9b607370e8b8942d28e368e756160187ee3fc5bfa99",
-    "bin": "PlayniteUI.exe",
-    "shortcuts": [
+    "url": "https://playnite.link/update/stable/8.3/Playnite83.zip",
+    "hash": "9d79cf607696ab351aca18167b0cdea70ea3772fb59bd813471743b0feb05ffb",
+    "pre_install": "Copy-Item \"$persist_dir\\config.json\" \"$dir\" -ErrorAction SilentlyContinue",
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\config.json\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
+    },
+    "bin": [
         [
-            "PlayniteUI.exe",
+            "Playnite.DesktopApp.exe",
             "Playnite"
         ]
     ],
-    "pre_install": [
-        "if (!(Test-Path \"$dir\\config.json\")) {",
-        "    New-Item -Force -Path \"$dir\" -Name 'config.json' -Value '{}' | Out-Null",
-        "}"
+    "shortcuts": [
+        [
+            "Playnite.DesktopApp.exe",
+            "Playnite"
+        ]
+    ],
+    "persist": [
+        "browsercache",
+        "cache",
+        "ExtensionsData",
+        "library"
     ],
     "checkver": {
         "github": "https://github.com/JosefNemec/Playnite"
     },
     "autoupdate": {
         "url": "https://playnite.link/update/stable/$version/Playnite$cleanVersion.zip"
-    },
-    "persist": [
-        "browsercache",
-        "cache",
-        "ExtensionsData",
-        "library",
-        "config.json"
-    ]
+    }
 }

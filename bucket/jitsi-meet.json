@@ -1,10 +1,19 @@
 {
-    "version": "2.3.1",
+    "version": "2.4.1",
     "description": "Secure, Simple and Scalable Video Conferences.",
     "homepage": "https://jitsi.org/meet",
     "license": "Apache-2.0",
-    "url": "https://github.com/jitsi/jitsi-meet-electron/releases/download/v2.3.1/jitsi-meet.exe#/dl.7z",
-    "hash": "sha512:bd9ca71d0b7a86a8031fed47ce24358b88b807e9a5ff23c1f303ea73016dce88e409e0e7c54a18d1c55e8e9ed968f912af5238d80ae7a5adcff66ec7a71ec24d",
+    "url": "https://github.com/jitsi/jitsi-meet-electron/releases/download/v2.4.1/jitsi-meet.exe#/dl.7z",
+    "hash": "sha512:cddbc0a16f269ddd87cd0f909f4dc34bb91850a93d0bb6de96830da41a1a0a90ad4e3e1eab9565dc06a33e16419d558460753ed4a7c2da07363e64ec0ed8d22f",
+    "architecture": {
+        "64bit": {
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+        },
+        "32bit": {
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
+        }
+    },
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*.exe\" -Recurse",
     "bin": "Jitsi Meet.exe",
     "shortcuts": [
         [
@@ -12,19 +21,6 @@
             "Jitsi Meet"
         ]
     ],
-    "architecture": {
-        "64bit": {
-            "installer": {
-                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
-            }
-        },
-        "32bit": {
-            "installer": {
-                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
-            }
-        }
-    },
-    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall Jitsi Meet.exe\" -Recurse",
     "checkver": {
         "github": "https://github.com/jitsi/jitsi-meet-electron"
     },
@@ -32,7 +28,7 @@
         "url": "https://github.com/jitsi/jitsi-meet-electron/releases/download/v$version/jitsi-meet.exe#/dl.7z",
         "hash": {
             "url": "$baseurl/latest.yml",
-            "regex": "sha512: $base64"
+            "regex": "sha512:\\s+$base64"
         }
     }
 }
