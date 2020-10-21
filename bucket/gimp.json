@@ -1,10 +1,10 @@
 {
-    "homepage": "https://www.gimp.org/",
-    "license": "GPL-3.0-only",
+    "version": "2.10.20-1",
     "description": "GNU Image Manipulation Program",
-    "version": "2.10.14-3",
-    "url": "https://download.gimp.org/mirror/pub/gimp/v2.10/windows/gimp-2.10.14-setup-3.exe",
-    "hash": "e892450123f00aaa672f31f532ebdccfbba8b444862281cade047f7fcb5aa503",
+    "homepage": "https://www.gimp.org",
+    "license": "GPL-3.0-only",
+    "url": "https://download.gimp.org/mirror/pub/gimp/v2.10/windows/gimp-2.10.20-setup-1.exe",
+    "hash": "430b1a709cd89b5cddb857032a7a5b93199d076ff8cd83ebdd0112330b65ba51",
     "innosetup": true,
     "installer": {
         "script": [
@@ -12,7 +12,7 @@
             "Get-ChildItem -Filter '*.debug' -Recurse | Remove-Item -Recurse",
             "if ($architecture -eq '64bit') {",
             "   Rename-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,1.exe' 'twain.exe'",
-            "   Remove-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,2.exe'",
+            "   Remove-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,*.exe'",
             "   Get-ChildItem -Filter '*,1*' -Recurse | Remove-Item",
             "   Get-ChildItem -Filter '*,*' -Recurse | Rename-Item -NewName { $_.name -Replace ',\\d','' }",
             "   New-Item '32\\etc', '32\\share', 'share\\gimp\\2.0\\fonts' -ItemType 'Directory' | Out-Null",
@@ -41,6 +41,10 @@
         "bin\\gimp-console-2.10.exe",
         [
             "bin\\gimp-console-2.10.exe",
+            "gimp-console"
+        ],
+        [
+            "bin\\gimp-console-2.10.exe",
             "gimp"
         ],
         "bin\\gimptool-2.0.exe",
@@ -57,18 +61,11 @@
     ],
     "persist": [
         "etc\\gimp",
-        "lib\\gimp\\2.0\\plug-ins",
         "share\\gimp"
     ],
     "checkver": {
         "url": "https://www.gimp.org/downloads/",
-        "regex": "gimp-(?<version>[\\d.]+)-setup(?<build>-\\d)?.exe",
+        "regex": "gimp-([\\d.]+)-setup(-\\d)?\\.exe",
         "replace": "${1}${2}"
-    },
-    "autoupdate": {
-        "url": "https://download.gimp.org/mirror/pub/gimp/v$majorVersion.$minorVersion/windows/gimp-$matchVersion-setup$matchBuild.exe",
-        "hash": {
-            "url": "$baseurl/SHA256SUMS"
-        }
     }
 }

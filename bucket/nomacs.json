@@ -1,25 +1,35 @@
 {
+    "version": "3.16.1709",
+    "description": "Image viewer to view all common image formats including RAW and psd images",
     "homepage": "https://nomacs.org",
-    "description": "A free, open source image viewer to view all common image formats including RAW and psd images.",
-    "version": "3.12.1",
     "license": "GPL-3.0-only",
-    "url": "http://download.nomacs.org/portable/nomacs-3.12.1.zip",
-    "hash": "d98b83f405ce58f05f451351044ef2e1e727dc3c61724e42274519db4aa15ccc",
-    "extract_dir": "nomacs-3.12.1\\bin",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/nomacs/nomacs/releases/download/3.16.224/nomacs-portable-win.zip",
+            "hash": "b062dd0cfdf59db1b5a8a8afa53fdff20c1f140dda12d31f9ee7f7e50b99a36d"
+        }
+    },
+    "extract_dir": "nomacs-3.16.1709",
+    "pre_install": [
+        "ensure \"$persist_dir\" | Out-Null",
+        "Copy-Item \"$persist_dir\\settings.ini\" \"$dir\" -ErrorAction SilentlyContinue -Force"
+    ],
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\settings.ini\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
+    },
     "bin": "nomacs.exe",
-    "persist": "settings.ini",
     "shortcuts": [
         [
             "nomacs.exe",
             "nomacs"
         ]
     ],
-    "checkver": {
-        "url": "http://download.nomacs.org/versions/",
-        "re": "nomacs-([\\d.]+).zip"
-    },
     "autoupdate": {
-        "url": "http://download.nomacs.org/portable/nomacs-$version.zip",
-        "extract_dir": "nomacs-$version\\bin"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/nomacs/nomacs/releases/download/$version/nomacs-portable-win.zip"
+            }
+        },
+        "extract_dir": "nomacs-$version"
     }
 }

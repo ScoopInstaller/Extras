@@ -1,20 +1,19 @@
 {
+    "version": "1.18.3",
+    "description": "Test automation framework for use with native, hybrid and mobile web apps.",
     "homepage": "http://appium.io/",
-    "description": "An open source test automation framework for use with native, hybrid and mobile web apps.",
-    "version": "1.16.0",
     "license": "Apache-2.0",
+    "url": "https://github.com/appium/appium-desktop/releases/download/v1.18.3/Appium-windows-1.18.3.exe#/dl.7z",
+    "hash": "9b5ed84e40faceb20a31b5732c532117bbe3a8c974e987ce5b1493140e5e2e79",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/appium/appium-desktop/releases/download/v1.16.0/Appium-windows-1.16.0.exe#/dl.7z",
-            "hash": "sha512:cdc684c7614fd6d14efdcbcf24f3d6e22f4957de426b88cfd9898cce031ee75ca2f8118d4a765681e06e81fa4f4f0da4771e2c776babf802f4df759448260a43",
-            "installer": {
-                "script": [
-                    "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninst*\" -Force -Recurse"
-                ]
-            }
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+        },
+        "32bit": {
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
         }
     },
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninst*\" -Force -Recurse",
     "shortcuts": [
         [
             "Appium.exe",
@@ -25,14 +24,10 @@
         "github": "https://github.com/appium/appium-desktop"
     },
     "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://github.com/appium/appium-desktop/releases/download/v$version/Appium-windows-$version.exe#/dl.7z",
-                "hash": {
-                    "url": "$baseurl/latest.yml",
-                    "find": "sha512:\\s+(.*)"
-                }
-            }
+        "url": "https://github.com/appium/appium-desktop/releases/download/v$version/Appium-windows-$version.exe#/dl.7z",
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512:\\s+$base64"
         }
     }
 }

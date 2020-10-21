@@ -1,28 +1,19 @@
 {
-    "homepage": "http://kicad-pcb.org/",
-    "description": "A Cross Platform and Open Source Electronics Design Automation Suite.",
-    "version": "5.1.5_3",
+    "version": "5.1.7_1",
+    "description": "Electronics Design Automation Suite",
+    "homepage": "https://kicad-pcb.org",
     "license": "GPL-3.0-only",
-    "checkver": {
-        "url": "http://kicad-pcb.org/download/windows/",
-        "re": "kicad-([\\d._]{5,})"
-    },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/KiCad/kicad-winbuilder/releases/download/5.1.5/kicad-5.1.5_3-x86_64.exe#/dl.7z",
-            "hash": "aaa35a9a7b68b226d63cb32eadd352b25025c43efd57c5e5ddee96178ef8f9fa"
+            "url": "https://kicad-downloads.s3.cern.ch/windows/stable/kicad-5.1.7_1-x86_64.exe#/dl.7z",
+            "hash": "6fa571c7ada9f5c7d5aef2c7c962ca4a51ac98ffb6077f8f9026d951f80281bb"
         },
         "32bit": {
-            "url": "https://github.com/KiCad/kicad-winbuilder/releases/download/5.1.5/kicad-5.1.5_3-i686.exe#/dl.7z",
-            "hash": "41ffb0f0f555b3fc98225c7d6bdb257dcc25984287b1b7c466739503a9f9300d"
+            "url": "https://kicad-downloads.s3.cern.ch/windows/stable/kicad-5.1.7_1-i686.exe#/dl.7z",
+            "hash": "0e898c1da50edf6c01f9e303a84b604879a7976ca331b416a4674c0fdb326c41"
         }
     },
-    "env_set": {
-        "KICAD_PTEMPLATES": "$dir\\share\\kicad\\template\\",
-        "KIGITHUB": "https://github.com/KiCad",
-        "KISYS3DMOD": "$dir\\share\\kicad\\modules\\packages3d\\",
-        "KISYSMOD": "$dir\\share\\kicad\\modules\\"
-    },
+    "pre_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse",
     "bin": "bin\\kicad.exe",
     "shortcuts": [
         [
@@ -30,13 +21,22 @@
             "KiCad"
         ]
     ],
+    "env_set": {
+        "KICAD_PTEMPLATES": "$dir\\share\\kicad\\template\\",
+        "KISYS3DMOD": "$dir\\share\\kicad\\modules\\packages3d\\",
+        "KISYSMOD": "$dir\\share\\kicad\\modules\\"
+    },
+    "checkver": {
+        "url": "https://kicad-pcb.org/download/windows/",
+        "regex": "kicad-([\\d._]+)-"
+    },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/KiCad/kicad-winbuilder/releases/download/$matchHead/kicad-$version-x86_64.exe#/dl.7z"
+                "url": "https://kicad-downloads.s3.cern.ch/windows/stable/kicad-$version-x86_64.exe#/dl.7z"
             },
             "32bit": {
-                "url": "https://github.com/KiCad/kicad-winbuilder/releases/download/$matchHead/kicad-$version-i686.exe#/dl.7z"
+                "url": "https://kicad-downloads.s3.cern.ch/windows/stable/kicad-$version-i686.exe#/dl.7z"
             }
         }
     }

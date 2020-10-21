@@ -1,10 +1,17 @@
 {
+    "version": "4.16",
+    "description": "Bulk program uninstaller with advanced automation",
     "homepage": "https://www.bcuninstaller.com/",
-    "description": "Bulk program uninstaller with advanced automation.",
     "license": "Apache-2.0",
-    "version": "4.15",
-    "url": "https://www.fosshub.com/Bulk-Crap-Uninstaller.html/BCUninstaller_4.15_portable.zip",
-    "hash": "50ecb3ccf58ce465f0df6db029b6d214d46cf230046f7d254e7f21bb1a2a5a99",
+    "url": "https://github.com/Klocman/Bulk-Crap-Uninstaller/releases/download/v4.16/BCUninstaller_4.16_portable.zip",
+    "hash": "d383996cc87a82bbb6c51f775d711c887db6e44687d848b6fb0792fde703d548",
+    "pre_install": [
+        "ensure \"$persist_dir\" | Out-Null",
+        "Copy-Item \"$persist_dir\\BCUninstaller.settings\" \"$dir\" -ErrorAction SilentlyContinue"
+    ],
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\BCUninstaller.settings\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
+    },
     "bin": [
         "BCUninstaller.exe",
         "BCU-console.exe",
@@ -19,20 +26,10 @@
             "Bulk Crap Uninstaller"
         ]
     ],
-    "persist": [
-        "BCUninstaller.exe.config",
-        "BCUninstaller.settings"
-    ],
-    "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\BCUninstaller.settings\")) {",
-        "   New-Item \"$dir\\BCUninstaller.settings\" -ItemType File | Out-Null",
-        "}"
-    ],
     "checkver": {
-        "url": "https://www.fosshub.com/Bulk-Crap-Uninstaller.html",
-        "regex": "\"softwareVersion\">([\\d.]+)"
+        "github": "https://github.com/Klocman/Bulk-Crap-Uninstaller"
     },
     "autoupdate": {
-        "url": "https://www.fosshub.com/Bulk-Crap-Uninstaller.html/BCUninstaller_$version_portable.zip"
+        "url": "https://github.com/Klocman/Bulk-Crap-Uninstaller/releases/download/v$version/BCUninstaller_$version_portable.zip"
     }
 }

@@ -1,11 +1,12 @@
 {
-    "homepage": "https://developer.android.com/studio/",
-    "description": "A component for the Android SDK, which includes the complete set of development and debugging tools for Android.",
     "version": "4333796",
+    "description": "A component for the Android SDK, which includes the complete set of development and debugging tools for Android.",
+    "homepage": "https://developer.android.com/studio/",
     "license": {
         "identifier": "Freeware",
         "url": "https://developer.android.com/studio/terms.html"
     },
+    "depends": "adb",
     "url": "https://dl.google.com/android/repository/sdk-tools-windows-4333796.zip",
     "hash": "7e81d69c303e47a4f0e748a6352d85cd0c8fd90a5a95ae4e076b5e5f960d3c7a",
     "bin": [
@@ -17,6 +18,13 @@
         "tools\\mksdcard.exe",
         "tools\\monitor.bat"
     ],
+    "post_install": [
+        "if (Test-Path \"$(appdir adb $global)\") {",
+        "    cmd /c mklink /j \"$dir\\platform-tools\" \"$(appdir adb $global)\\current\\platform-tools\" | out-null",
+        "    attrib \"$(appdir adb $global)\\current\\platform-tools\" +R /L",
+        "}"
+    ],
+    "env_add_path": "tools\\bin",
     "env_set": {
         "ANDROID_HOME": "$dir",
         "PROGUARD_HOME": "$dir\\tools\\proguard"
@@ -29,22 +37,7 @@
         "licenses",
         "patcher",
         "platforms",
-        "sources"
-    ],
-    "env_add_path": "tools\\bin",
-    "depends": "adb",
-    "post_install": [
-        "if (Test-Path \"$(appdir adb $global)\") {",
-        "cmd /c mklink /j \"$dir\\platform-tools\" \"$(appdir adb $global)\\current\\platform-tools\" | out-null",
-        "attrib \"$(appdir adb $global)\\current\\platform-tools\" +R /L",
-        "}"
-    ],
-    "checkver": "repository/sdk-tools-windows-([\\d]+).zip",
-    "autoupdate": {
-        "url": "https://dl.google.com/android/repository/sdk-tools-windows-$version.zip",
-        "hash": {
-            "url": "https://developer.android.com/studio/index.html",
-            "find": "$basename[\\s\\S]+?<td>([0-9a-zA-Z]{64})</td>"
-        }
-    }
+        "sources",
+        "system-images"
+    ]
 }
