@@ -2,24 +2,33 @@
     "version": "0.1",
     "description": "Free Windows Countdown Timer",
     "homepage": "https://dan.hersam.com/software/snaptimer/index.php",
-    "license": "https://dan.hersam.com/software/license.php",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://dan.hersam.com/software/license.php"
+    },
     "url": "https://cdn.hersam.com/software/snaptimer/SnapTimer.zip",
-    "hash": [
-        "md5:C145A92254BBFC5C08F23BD74AA5B073",
-        "sha1:7131F4C79038B8059F8EF16601077F075CFAD2DC"
-    ],
+    "hash": "sha1:7131F4C79038B8059F8EF16601077F075CFAD2DC",
     "extract_dir": "SnapTimer",
+    "pre_install": [
+        "$FILE = 'SnapTimer.ini'",
+        "if (!(Test-Path \"$persist_dir\\$FILE\")) {",
+        "    Write-Host 'No' $FILE 'exists. Creating.' -f Yellow",
+        "    New-Item \"$dir\\$FILE\" -Type File | Out-Null",
+        "}"
+    ],
     "shortcuts": [
         [
             "SnapTimer.exe",
             "SnapTimer"
         ]
     ],
-    "persist": [
-        "SnapTimer.ini"
-    ],
-    "checkver": "<b>Version:</b> ([\\d\\.]+)",
+    "persist": "SnapTimer.ini",
+    "checkver": "<b>Version:</b> ([\\d.]+)",
     "autoupdate": {
-        "url": "https://cdn.hersam.com/software/snaptimer/SnapTimer.zip"
+        "url": "https://cdn.hersam.com/software/snaptimer/SnapTimer.zip",
+        "hash": {
+            "url": "https://dan.hersam.com/software/snaptimer/index.php",
+            "regex": "<b>SHA-1:</b>\\s+$sha1<br>"
+        }
     }
 }
