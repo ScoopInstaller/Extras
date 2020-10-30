@@ -7,13 +7,22 @@
     "hash": "475b2cc7bab0cef1accea83eecb67cd5b9d478ed396e22ba4d10c8c3f86ad227",
     "architecture": {
         "64bit": {
-            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+            "installer": { "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"" }
         },
         "32bit": {
-            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
+            "installer": { "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\"" }
         }
     },
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\data\") -and (Test-Path \"$env:USERPROFILE\\.SwitchHosts\")) {",
+        "    info \"Migrating '$env:USERPROFILE\\.SwitchHosts' to '$persist_dir\\data'\"",
+        "    ensure \"$persist_dir\\data\" | Out-Null",
+        "    Copy-Item \"$env:USERPROFILE\\.SwitchHosts\\*\" \"$persist_dir\\data\" -Recurse -Force",
+        "    Remove-Item \"$env:USERPROFILE\\.SwitchHosts\" -Force -Recurse",
+        "}"
+    ],
     "post_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Force -Recurse",
+    "persist": "data",
     "shortcuts": [
         [
             "SwitchHosts!.exe",
