@@ -32,22 +32,14 @@
             "if (!(Test-Path \"$persist_dir\")) {",
             "    if (Test-Path \"$env:Appdata\\foobar2000\") {",
             "        Write-Host \"Importing files from user directory...\" -ForegroundColor Yellow",
-            "        Copy-Item \"$env:Appdata\\foobar2000\\*\" \"$dir\" -Force -Recurse",
-            "        if (is_directory \"$dir\\theme.fth\") {",
-            "            Remove-Item \"$dir\\theme.fth\" -Force -Recurse",
-            "        }",
-            "        if (is_directory \"$dir\\LargeFieldsConfig.txt\") {",
-            "            Remove-Item \"$dir\\LargeFieldsConfig.txt\" -Force -Recurse",
-            "        }",
+            "        Get-ChildItem -Path \"$env:Appdata\\foobar2000\" | Copy-Item -Destination \"$dir\" -Force -Recurse",
+            "        Get-ChildItem -Path \"$dir\" -Filter \"LargeFieldsConfig.txt\" -Directory | Remove-Item -Force -Recurse",
+            "        Get-ChildItem -Path \"$dir\" -Filter \"theme.fth\" -Directory | Remove-Item -Force -Recurse",
+            "        Write-Host \"Completed\" -ForegroundColor Green",
             "    }",
             "}",
             "else {",
-            "    if (Test-Path \"$persist_dir\\LargeFieldsConfig.txt\") {",
-            "        Copy-Item \"$persist_dir\\LargeFieldsConfig.txt\" \"$dir\" -Force",
-            "    }",
-            "    if (Test-Path \"$persist_dir\\theme.fth\") {",
-            "        Copy-Item \"$persist_dir\\theme.fth\" \"$dir\" -Force",
-            "    }",
+            "    Get-ChildItem -Path \"$persist_dir\" -File | Copy-Item -Destination \"$dir\" -Force",
             "}",
             "$EncodersDir = $(appdir foobar2000-encoders $global)",
             "if (Test-Path \"$EncodersDir\\current\") {",
@@ -57,12 +49,8 @@
     },
     "uninstaller": {
         "script": [
-            "if (Test-Path \"$dir\\LargeFieldsConfig.txt\") {",
-            "    Copy-Item \"$dir\\LargeFieldsConfig.txt\" \"$persist_dir\" -Force",
-            "}",
-            "if (Test-Path \"$dir\\theme.fth\") {",
-            "    Copy-Item \"$dir\\theme.fth\" \"$persist_dir\" -Force",
-            "}"
+            "Get-ChildItem -Path \"$dir\" -Filter \"LargeFieldsConfig.txt\" | Copy-Item -Destination \"$persist_dir\" -Force",
+            "Get-ChildItem -Path \"$dir\" -Filter \"theme.fth\" | Copy-Item -Destination \"$persist_dir\" -Force"
         ]
     },
     "checkver": {
