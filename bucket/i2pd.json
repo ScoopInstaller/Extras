@@ -6,13 +6,20 @@
     "architecture": {
         "64bit": {
             "url": "https://github.com/PurpleI2P/i2pd/releases/download/2.34.0/i2pd_2.34.0_win64_mingw.zip",
-            "hash": "0ae5d933bca5ac21561b1deef755f4cffa58eb9536dc4c9231ebc212b328795a"
+            "hash": "sha512:6e4679eca810ce8cb9bb3b4594ca98ed020f30dd2b8490457e458f03c928c0a3a8826241107e245312ab438bf72c76fbf2d8019331baecacdc87a5914207f1dd"
         },
         "32bit": {
             "url": "https://github.com/PurpleI2P/i2pd/releases/download/2.34.0/i2pd_2.34.0_win32_mingw.zip",
-            "hash": "b22b9a891268b6770b3aef80a1f2780c1e4387f1347b5927ebb04f0e9a965ecc"
+            "hash": "sha512:20c414f4fc652a96dc09a1ab414c180d1ad4b004706ef902272b6df3385947840648c3a9e1e65dea32aa023388ef5ac992f6bb86ce5a3177a6e63330afa65caa"
         }
     },
+    "pre_install": [
+        "Move-Item \"$dir\\contrib\\*\" \"$dir\"",
+        "Remove-Item \"$dir\\contrib\"",
+        "foreach ($name in @('irc-keys.dat', 'ntcp2.keys', 'router.info', 'router.keys')) {",
+        "    if (!(Test-Path \"$persist_dir\\$name\")) { New-Item \"$dir\\$name\" | Out-Null }",
+        "}"
+    ],
     "bin": "i2pd.exe",
     "shortcuts": [
         [
@@ -34,15 +41,6 @@
         "tunnels.d",
         "i2pd.conf",
         "tunnels.conf"
-    ],
-    "pre_install": [
-        "Move-Item \"$dir\\contrib\\*\" \"$dir\"",
-        "Remove-Item \"$dir\\contrib\"",
-        "foreach ($name in @('irc-keys.dat', 'ntcp2.keys', 'router.info', 'router.keys')) {",
-        "    if (!(Test-Path \"$persist_dir\\$name\")) {",
-        "        New-Item -Force -Path \"$dir\" -Name $name | Out-Null",
-        "    }",
-        "}"
     ],
     "checkver": {
         "github": "https://github.com/PurpleI2P/i2pd"
