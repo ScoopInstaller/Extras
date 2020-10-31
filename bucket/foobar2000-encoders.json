@@ -17,11 +17,11 @@
             "Remove-Item \"$dir\\`$PLUGINSDIR\" -Force -Recurse",
             "$FoobarDir = $(appdir foobar2000 $global)",
             "$FoobarPortableDir = $(appdir foobar2000-portable $global)",
-            "if (Test-Path \"$FoobarDir\\current\") {",
+            "if (Test-Path \"$FoobarDir\") {",
             "    Get-ChildItem -Path \"$FoobarDir\\current\" -Filter \"encoders\" | Remove-Item -Force -Recurse",
             "    New-Item \"$FoobarDir\\current\\encoders\" -ItemType Junction -Target \"$dir\" | Out-Null",
             "}",
-            "if (Test-Path \"$FoobarPortableDir\\current\") {",
+            "if (Test-Path \"$FoobarPortableDir\") {",
             "    Get-ChildItem -Path \"$FoobarPortableDir\\current\" -Filter \"encoders\" | Remove-Item -Force -Recurse",
             "    New-Item \"$FoobarPortableDir\\current\\encoders\" -ItemType Junction -Target  \"$dir\" | Out-Null",
             "}"
@@ -31,8 +31,12 @@
         "script":[
             "$FoobarDir = $(appdir foobar2000 $global)",
             "$FoobarPortableDir = $(appdir foobar2000-portable $global)",
-            "Get-ChildItem -Path \"$FoobarDir\\current\" -Filter \"encoders\" | Remove-Item -Force -Recurse",
-            "Get-ChildItem -Path \"$FoobarPortableDir\\current\" -Filter \"encoders\" | Remove-Item -Force -Recurse"
+            "if (Test-Path \"$FoobarDir\") {",
+            "    Get-ChildItem -Path \"$FoobarDir\\current\" -Filter \"encoders\" | Remove-Item -Force -Recurse",
+            "}",
+            "if (Test-Path \"$FoobarPortableDir\") {",
+            "    Get-ChildItem -Path \"$FoobarPortableDir\\current\" -Filter \"encoders\" | Remove-Item -Force -Recurse",
+            "}"
         ]
     },
     "checkver": {
