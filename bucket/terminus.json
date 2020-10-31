@@ -10,13 +10,18 @@
             "pre_install": [
                 "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
                 "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Unins*\" -Force -Recurse"
+            ],
+            "post_install": [
+                "if (Test-Path $env:APPDATA\\terminus) {",
+                "Copy-Item -Path $env:APPDATA\\terminus\\* -Destination \"$persist_dir\\data\" -PassThru",
+                "}"
             ]
         }
     },
     "bin": "Terminus.exe",
 	"persist": [
 		"data"
-	],
+    ],
     "shortcuts": [
         [
             "Terminus.exe",
