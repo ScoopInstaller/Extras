@@ -1,24 +1,46 @@
 {
-    "version": "9.1.2",
-    "description": "Ghidra is a software reverse engineering (SRE) framework.",
-    "homepage": "https://www.nsa.gov/resources/everyone/ghidra/",
-    "license": "Apache-2.0 License",
+    "version": "9.1.2-20200212",
+    "description": "Software reverse engineering (SRE) framework",
+    "homepage": "https://ghidra-sre.org",
+    "license": "Apache-2.0",
+    "suggest": {
+        "JDK": [
+            "java/oraclejdk",
+            "java/openjdk"
+        ]
+    },
     "url": "https://ghidra-sre.org/ghidra_9.1.2_PUBLIC_20200212.zip",
     "hash": "ebe3fa4e1afd7d97650990b27777bb78bd0427e8e70c1d0ee042aeb52decac61",
     "extract_dir": "ghidra_9.1.2_PUBLIC",
-    "bin": [["ghidraRun.bat", "ghidra"]],
-    "shortcuts": [["ghidraRun.bat", "Ghidra", "", "support\\ghidra.ico"]],
+    "bin": [
+        "ghidraRun.bat",
+        [
+            "ghidraRun.bat",
+            "ghidra"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "ghidraRun.bat",
+            "Ghidra",
+            "",
+            "support\\ghidra.ico"
+        ]
+    ],
+    "persist": [
+        "Ghidra\\Extensions",
+        "Ghidra\\patch"
+    ],
     "checkver": {
-        "url": "https://github.com/NationalSecurityAgency/ghidra/releases",
-        "regex": "Ghidra_(?<version>[\\d.]+)_build",
-        "replace": "${version}"
+        "regex": "ghidra_([\\d.]+)_PUBLIC_(\\d+)\\.zip",
+        "replace": "${1}-${2}"
     },
     "autoupdate": {
-        "url": "https://ghidra-sre.org/ghidra_$version_PUBLIC_.zip",
-        "extract_dir": "ghidra_$version_PUBLIC",
+        "url": "https://ghidra-sre.org/ghidra_$matchHead_PUBLIC_$preReleaseVersion.zip",
         "hash": {
-            "url": "https://ghidra-sre.org/releaseNotes_$version.html",
+            "url": "https://ghidra-sre.org/releaseNotes_$matchHead.html",
             "regex": "<code>$sha256</code>"
-        }
+        },
+        "extract_dir": "ghidra_$matchHead_PUBLIC"
     }
 }
