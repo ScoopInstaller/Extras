@@ -1,38 +1,37 @@
 {
     "version": "3.6.8",
-    "description": "Lens is the only IDE you’ll ever need to take control of your Kubernetes clusters.",
-    "homepage": "https://github.com/lensapp/lens",
+    "description": "IDE for Kubernetes clusters",
+    "homepage": "https://k8slens.dev",
     "license": "MIT",
     "url": "https://github.com/lensapp/lens/releases/download/v3.6.8/Lens-Setup-3.6.8.exe#/dl.7z",
-    "hash": "ef2cc1932c6fa94087cf6b3cfeddea7e41aca1fcd73477096842cdb1cb549bca",
-    "bin": "Lens.exe",
+    "hash": "sha512:3cd181d8a26f2a7f53f7571a6e7078454019d889c466362dfefa810087dd557038c403bee9deae8db6a24f0ed2c976d315639c1f923370086758464ecaa48884",
+    "architecture": {
+        "64bit": {
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Recurse"
+            ]
+        },
+        "32bit": {
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Recurse"
+            ]
+        }
+    },
     "shortcuts": [
         [
             "Lens.exe",
             "Lens"
         ]
     ],
-    "extract_dir": "$PLUGINSDIR",
-    "architecture": {
-        "64bit": {
-            "installer": {
-                "script": [
-                    "Get-ChildItem \"$dir\" -Exclude app-64.7z | Remove-Item -Recurse",
-                    "Expand-7zipArchive \"$dir\\app-64.7z\" -Removal"
-                ]
-            }
-        },
-        "32bit": {
-            "installer": {
-                "script": [
-                    "Get-ChildItem \"$dir\" -Exclude app-32.7z | Remove-Item -Recurse",
-                    "Expand-7zipArchive \"$dir\\app-32.7z\" -Removal"
-                ]
-            }
-        }
+    "checkver": {
+        "github": "https://github.com/lensapp/lens"
     },
-    "checkver": "github",
     "autoupdate": {
-        "url": "https://github.com/lensapp/lens/releases/download/v$version/Lens-Setup-$version.exe#/dl.7z"
+        "url": "https://github.com/lensapp/lens/releases/download/v$version/Lens-Setup-$version.exe#/dl.7z",
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512:\\s+$base64"
     }
 }
