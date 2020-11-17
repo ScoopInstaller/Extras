@@ -17,6 +17,15 @@
         }
     },
     "extract_dir": "lib\\net45",
+    "pre_install": [
+        "if (!(Test-Path \"$env:APPDATA\\Zeplin\\prefs.json\")) {",
+        "    ensure \"$env:APPDATA\\Zeplin\" | Out-Null",
+        "    Set-Content \"$env:APPDATA\\Zeplin\\prefs.json\" '{ \"installUpdatesAutomatically\": false }' -Force -Encoding Ascii",
+        "}"
+    ],
+    "uninstaller": {
+        "script": "if ($purge) { Remove-Item \"$env:APPDATA\\Zeplin\" -Force -Recurse }"
+    },
     "bin": "Zeplin.exe",
     "shortcuts": [
         [
