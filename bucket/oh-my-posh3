@@ -1,0 +1,61 @@
+{
+    "version": "3.43.1",
+    "description": "A prompt theme engine for any shell",
+    "homepage": "https://ohmyposh.dev",
+    "license": {
+        "identifier": "GPL-3.0-only",
+        "url": "https://github.com/JanDeDobbeleer/oh-my-posh3/blob/main/COPYING"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/JanDeDobbeleer/oh-my-posh3/releases/download/v3.43.1/posh-windows-amd64.exe#/oh-my-posh.exe",
+            "hash": "97e0e4f0a1e89e0c56ee105ef682280cc5f0853ec4ca52a5aea27a89dfc51b93"
+        }
+    },
+    "bin": [
+        "oh-my-posh.exe",
+        [
+            "oh-my-posh.exe",
+            "omp"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/JanDeDobbeleer/oh-my-posh3"
+    },
+    "persist": "themes",
+    "pre_install": [
+        "if(!(Test-Path \"$persist_dir\\themes\\*.json\")){",
+        "New-Item -Path \"$persist_dir\\themes\" -ItemType Directory -Force | Out-Null",
+        "Invoke-Webrequest https://github.com/JanDeDobbeleer/oh-my-posh3/releases/latest/download/themes.zip -OutFile \"$persist_dir\\themes\\themes.zip\"",
+        "Expand-Archive \"$persist_dir\\themes\\themes.zip\" -DestinationPath \"$persist_dir\\themes\" -Force",
+        "Remove-Item \"$persist_dir\\themes\\themes.zip\"",
+        "}"
+    ],
+    "post_install": [
+        "$logo = @'",
+        "   __  _____ _      ___  ___       ______         _      __",
+        "  / / |  _  | |     |  \\/  |       | ___ \\       | |     \\ \\",
+        " / /  | | | | |__   | .  . |_   _  | |_/ /__  ___| |__    \\ \\",
+        "< <   | | | | '_ \\  | |\\/| | | | | |  __/ _ \\/ __| '_ \\    > >",
+        " \\ \\  \\ \\_/ / | | | | |  | | |_| | | | | (_) \\__ \\ | | |  / /",
+        "  \\_\\  \\___/|_| |_| \\_|  |_/\\__, | \\_|  \\___/|___/_| |_| /_/",
+        "                             __/ |",
+        "                            |___/",
+        "'@",
+        "Write-Host $logo",
+        "Write-Host ''",
+        "Write-Host 'Thanks for installing Oh my Posh.'",
+        "Write-Host 'Have a look at https://ohmyposh.dev/docs/installation for detailed instructions for your shell.'"
+    ],
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/JanDeDobbeleer/oh-my-posh3/releases/download/v$version/posh-windows-amd64.exe#/oh-my-posh.exe",
+                "hash": {
+                    "url": "$url.sha256",
+                    "find": "([a-fA-F0-9]{64})"
+                }
+            }
+        }
+    }
+}
