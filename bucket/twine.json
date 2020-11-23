@@ -1,40 +1,27 @@
 {
     "version": "2.3.9",
-    "description": "Open-source tool for telling interactive, nonlinear stories",
+    "description": "Interactive, nonlinear stories creator",
+    "homepage": "https://twinery.org",
     "license": "GPL-3.0-only",
-    "url": "https://github.com/klembot/twinejs/releases/download/2.3.9/twine_2.3.9_win.exe#dl.7z",
-    "homepage": "https://twinery.org/",
+    "url": "https://github.com/klembot/twinejs/releases/download/2.3.9/twine_2.3.9_win.exe#/dl.7z",
     "hash": "04be3ad8d8b8baa89f05cae4eada88a319a2e7fa61fe203c67fb2314ad65be55",
     "architecture": {
         "64bit": {
-            "installer": {
-                "script": [
-                    "echo 'Installing Twine...'",
-                    "$extractthis = \"$dir\\\"+'$PLUGINSDIR'+\"\\app-64.7z\"",
-                    "$tohere = \"-o\" + \"$dir\\\"+'$PLUGINSDIR'",
-                    "7z x $extractthis $tohere -r",
-                    "rm (\"$dir\\\"+'$PLUGINSDIR'+\"\\app-??.7z\")"
-                ]
-            }
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Recurse"
+            ]
         },
         "32bit": {
-            "installer": {
-                "script": [
-                    "echo 'Installing Twine...'",
-                    "$extractthis = \"$dir\\\"+'$PLUGINSDIR'+\"\\app-32.7z\"",
-                    "$tohere = \"-o\" + \"$dir\\\"+'$PLUGINSDIR'",
-                    "echo $extractthis",
-                    "echo $tohere",
-                    "7z x $extractthis $tohere -r",
-                    "rm (\"$dir\\\"+'$PLUGINSDIR'+\"\\app-??.7z\")"
-                ]
-            }
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Recurse"
+            ]
         }
     },
-    "bin": "$PLUGINSDIR\\twine.exe",
     "shortcuts": [
         [
-            "$PLUGINSDIR\\twine.exe",
+            "twine.exe",
             "Twine"
         ]
     ],
