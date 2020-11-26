@@ -1,8 +1,13 @@
 {
-    "homepage": "https://tortoisesvn.net",
-    "description": "An Apache™ Subversion (SVN)® client, implemented as a Windows shell extension.",
     "version": "1.14.0.28885",
+    "description": "An Apache™ Subversion (SVN)® client, implemented as a Windows shell extension.",
+    "homepage": "https://tortoisesvn.net",
     "license": "GPL-2.0-only",
+    "notes": [
+        "To add TortoiseSVN as a context menu option, run '$dir\\tortoisesvn-install.reg'",
+        "For file associations, run '$dir\\tortoisesvn-install-tools.reg'",
+        "Before uninstalling TortoiseSVN, run '$dir\\tortoisesvn-uninstall.reg' "
+    ],
     "architecture": {
         "64bit": {
             "url": "https://osdn.net/frs/redir.php?m=auto&f=/storage/g/t/to/tortoisesvn/1.14.0/Application/TortoiseSVN-1.14.0.28885-x64-svn-1.14.0.msi",
@@ -14,6 +19,14 @@
         }
     },
     "extract_dir": "Program Files\\TortoiseSVN",
+    "post_install": [
+        "$null, $bucket = find_manifest($app)",
+        "$bucketdir = bucketdir($bucket)",
+        "$escdir = $dir -replace \"\\\\\",\"\\\\\"",
+        "(gc \"$bucketdir\\..\\scripts\\tortoisesvn\\tortoisesvn-install.reg.templ\") | % {$_ -replace \"%TSVNHOME%\",\"$escdir\"} | out-file -enc oem \"$dir\\tortoisesvn-install.reg\"",
+        "(gc \"$bucketdir\\..\\scripts\\tortoisesvn\\tortoisesvn-install-tools.reg.templ\") | % {$_ -replace \"%TSVNHOME%\",\"$escdir\"} | out-file -enc oem \"$dir\\tortoisesvn-install-tools.reg\"",
+        "cp \"$bucketdir\\..\\scripts\\tortoisesvn\\tortoisesvn-uninstall.reg\" \"$dir\""
+    ],
     "bin": [
         "bin\\svn.exe",
         "bin\\svnadmin.exe",
@@ -56,22 +69,9 @@
             "/command:settings"
         ]
     ],
-    "post_install": [
-        "$null, $bucket = find_manifest($app)",
-        "$bucketdir = bucketdir($bucket)",
-        "$escdir = $dir -replace \"\\\\\",\"\\\\\"",
-        "(gc \"$bucketdir\\..\\scripts\\tortoisesvn\\tortoisesvn-install.reg.templ\") | % {$_ -replace \"%TSVNHOME%\",\"$escdir\"} | out-file -enc oem \"$dir\\tortoisesvn-install.reg\"",
-        "(gc \"$bucketdir\\..\\scripts\\tortoisesvn\\tortoisesvn-install-tools.reg.templ\") | % {$_ -replace \"%TSVNHOME%\",\"$escdir\"} | out-file -enc oem \"$dir\\tortoisesvn-install-tools.reg\"",
-        "cp \"$bucketdir\\..\\scripts\\tortoisesvn\\tortoisesvn-uninstall.reg\" \"$dir\""
-    ],
-    "notes": [
-        "To add TortoiseSVN as a context menu option, run '$dir\\tortoisesvn-install.reg'",
-        "For file associations, run '$dir\\tortoisesvn-install-tools.reg'",
-        "Before uninstalling TortoiseSVN, run '$dir\\tortoisesvn-uninstall.reg' "
-    ],
     "checkver": {
         "url": "https://tortoisesvn.net/downloads.html",
-        "re": "tortoisesvn/storage/(?<release>[\\d.]+)/Application/TortoiseSVN-([\\d.]+)-x64-svn-(?<svn>[\\d.]+).msi"
+        "regex": "tortoisesvn/storage/(?<release>[\\d.]+)/Application/TortoiseSVN-([\\d.]+)-x64-svn-(?<svn>[\\d.]+).msi"
     },
     "autoupdate": {
         "architecture": {
