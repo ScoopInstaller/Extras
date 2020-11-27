@@ -6,27 +6,36 @@
         "identifier": "Proprietary",
         "url": "https://www.primatelabs.com/legal/eula-v4.html"
     },
-    "url": "https://cdn.geekbench.com/Geekbench-5.3.1-WindowsSetup.exe#/dl.7z",
-    "hash": "1dd6cb4eb2910e3ebae80846cdae54a6090c455e61112e52ae8797cbad3bcb41",
-    "installer": {
-        "script": [
-            "Move-Item \"$dir\\geekbench ?.exe\" \"$dir\\geekbench_gui.exe\"",
-            "Move-Item \"$dir\\geekbench?.exe\" \"$dir\\geekbench.exe\"",
-            "Remove-Item \"$dir\\Uninstall*\", \"$dir\\$*\" -Recurse"
-        ]
+    "architecture": {
+        "64bit": {
+            "url": "https://cdn.geekbench.com/Geekbench-5.3.1-WindowsSetup.exe",
+            "hash": "1dd6cb4eb2910e3ebae80846cdae54a6090c455e61112e52ae8797cbad3bcb41",
+            "installer": {
+                "script": [
+                    "Expand-7zipArchive \"$dir\\$fname\" -Overwrite Skip -Removal",
+                    "Move-Item \"$dir\\geekbench ?.exe\" \"$dir\\geekbench_gui.exe\"",
+                    "Move-Item \"$dir\\geekbench?.exe\" \"$dir\\geekbench.exe\"",
+                    "Remove-Item \"$dir\\Uninstall*\", \"$dir\\$*\", \"$dir\\geekbench_aarch64.exe\" -Recurse"
+                ]
+            },
+            "bin": "geekbench.exe",
+            "shortcuts": [
+                [
+                    "geekbench_gui.exe",
+                    "GeekBench"
+                ]
+            ]
+        }
     },
-    "bin": "geekbench.exe",
-    "shortcuts": [
-        [
-            "geekbench_gui.exe",
-            "GeekBench"
-        ]
-    ],
     "checkver": {
         "url": "https://www.geekbench.com/download/windows/",
         "regex": "Geekbench-([\\d.]+)-WindowsSetup\\.exe"
     },
     "autoupdate": {
-        "url": "https://cdn.geekbench.com/Geekbench-$version-WindowsSetup.exe#/dl.7z"
+        "architecture": {
+            "64bit": {
+                "url": "https://cdn.geekbench.com/Geekbench-$version-WindowsSetup.exe"
+            }
+        }
     }
 }
