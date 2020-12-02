@@ -1,0 +1,51 @@
+{
+    "version": "1.11",
+    "description": "A lightweight text editor written in Lua",
+    "homepage": "https://github.com/rxi/lite",
+    "license": "MIT License",
+    "url": [
+        "https://github.com/rxi/lite/releases/download/v1.11/lite.zip",
+        "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg#/lite-install-context.reg",
+        "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg#/lite-uninstall-context.reg"
+    ],
+    "hash": [
+        "da3701cf6985bc493cb11b37556325551c7ce8606f5502ff3f15199039835eef",
+        "b65d66860d9ccc18bfb05237b03e06db0d6c574be3d4b946c2a5e6865c08cb28",
+        "df2a5162e72e2518e2b75b4337c8e7b46c136554872af90fa0de1cf6ebef376f"
+    ],
+    "persist": [
+        "data\\plugins",
+        "data\\user"
+    ],
+    "bin": "lite.exe",
+    "shortcuts": [
+        [
+            "lite.exe",
+            "lite"
+        ]
+    ],
+    "post_install": [
+        "if (Test-Path \"$dir\\lite-install-context.reg\") {",
+        "  $codepath = \"$dir\\lite.exe\".Replace('\\', '\\\\')",
+        "  $content = Get-Content \"$dir\\lite-install-context.reg\"",
+        "  $content = $content.Replace('$code', $codepath)",
+        "  $content = $content.Replace('Code', 'Lite')",
+        "  if ($global) {",
+        "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "  }",
+        "  $content | Set-Content -Path \"$dir\\lite-install-context.reg\"",
+        "}",
+        "if (Test-Path \"$dir\\lite-uninstall-context.reg\") {",
+        "  $content = Get-Content \"$dir\\lite-uninstall-context.reg\"",
+        "  $content = $content.Replace('Code', 'Lite')",
+        "  if ($global) {",
+        "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "  }",
+        "  $content | Set-Content -Path \"$dir\\lite-uninstall-context.reg\"",
+        "}"
+    ],
+    "checkver":"github",
+    "autoupdate": {
+        "url": "https://github.com/rxi/lite/releases/download/v$release/lite.zip"
+    }
+}
