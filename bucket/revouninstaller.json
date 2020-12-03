@@ -6,14 +6,40 @@
     "url": "https://www.revouninstaller.com/download-free-portable.php#/dl.zip",
     "hash": "f543d9e0627f4170674310f5759498bc65a08446c3c2693f9771493c9d3063f5",
     "extract_dir": "RevoUninstaller_Portable",
+    "installer": {
+        "script": [
+            "function CreateFile([String] $file, [String] $content = $null) {",
+            "    if (-not (Test-Path \"$persist_dir\\$file\")) {",
+            "        Write-Host 'File' $file 'does not exists. Creating.' -f Yellow",
+            "        Set-Content \"$dir\\$file\" $content -Encoding Ascii",
+            "    }",
+            "}",
+            "CreateFile \"ctrlbars.dat\"",
+            "CreateFile \"un_report.dat\"",
+            "CreateFile \"winapp_report.dat\"",
+            "CreateFile \"settings.ini\""
+        ]
+    },
+    "post_install": "(Get-Content \"$dir\\settings.ini\") -replace 'AU on startup=1','AU on startup=0' | Set-Content \"$dir\\settings.ini\"",
     "shortcuts": [
         [
             "RevoUPort.exe",
             "Revo Uninstaller"
         ]
     ],
+    "persist": [
+        "ctrlbars.dat",
+        "un_report.dat",
+        "winapp_report.dat",
+        "settings.ini"
+    ],
     "checkver": "Version: ([\\d.]+)",
     "autoupdate": {
         "url": "https://www.revouninstaller.com/download-free-portable.php#/dl.zip"
-    }
+    },
+    "notes": [
+        "This app requires admin privileges to run.",
+        "The first time you run the app, close it right away so the app can create config files.",
+        "Then it is highly recommended to disable autoupdate in the app (Options -> Disable autoupdate), or in settings.ini"
+    ]
 }
