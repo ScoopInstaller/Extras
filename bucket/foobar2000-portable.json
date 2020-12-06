@@ -15,41 +15,20 @@
             "Foobar2000"
         ]
     ],
-    "persist": [
-        "configuration",
-        "index-data",
-        "library",
-        "user-components"
-    ],
+    "persist": "profile",
     "installer": {
         "script": [
             "Remove-Item \"$dir\\`$*\", \"$dir\\uninstall.exe\" -Force -Recurse",
-            "New-Item \"$dir\\portable_mode_enabled\" -Force | Out-Null",
-            "if(!(Test-Path \"$persist_dir\\playlists\")) {",
-            "    New-Item \"$persist_dir\\playlists\" -ItemType Directory -Force | Out-Null",
-            "    if (Test-Path \"$env:Appdata\\foobar2000\") {",
-            "        Write-Host -F yellow \"Copying old '$env:Appdata\\foobar2000' to '$persist_dir'\"",
-            "        Copy-Item \"$env:Appdata\\foobar2000\\*\" \"$dir\" -Recurse -Force",
-            "    }",
-            "}",
-            "else {",
-            "    $shortVersion = $version.Split('.')[0, 1] -Join '.'",
-            "    Copy-Item \"$persist_dir\\playlists\" \"$dir\\playlist-v$shortVersion\" -Force -Recurse",
-            "}",
-            "if (Test-Path \"$persist_dir\\theme.fth\") {",
-            "    Copy-Item \"$persist_dir\\theme.fth\" \"$dir\" -Force",
-            "}"
+            "New-Item \"$dir\\portable_mode_enabled\" -Force | Out-Null"
         ]
     },
-    "post_install": "if (is_directory \"$dir\\theme.fth\") { Remove-Item \"$dir\\theme.fth\" -Force }",
-    "uninstaller": {
-        "script": [
-            "Copy-Item \"$dir\\playlists-v*\\*\" \"$persist_dir\\playlists\" -Force  -Recurse",
-            "if (Test-Path \"$dir\\theme.fth\") {",
-            "    Copy-Item \"$dir\\theme.fth\" \"$persist_dir\" -Force",
-            "}"
-        ]
-    },
+    "post_install": [
+        "if(Test-Path \"$persist_dir\\playlists\") {",
+        "    Rename-Item -Path \"$persist_dir\\playlists\" -NewName playlists-v1.4 -Force",
+        "    Get-ChildItem -Exclude \"profile\" -Path \"$persist_dir\" |",
+        "        Move-Item -Destination \"$persist_dir\\profile\" -Force",
+        "}"
+    ],
     "checkver": {
         "url": "https://www.foobar2000.org/download",
         "regex": "foobar2000_v([\\d.]+)\\."
