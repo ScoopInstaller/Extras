@@ -1,22 +1,11 @@
 {
-    "homepage": "https://cdburnerxp.se/",
-    "description": "A free application to burn CDs and DVDs, including Blu-Ray and HD-DVDs.",
+    "version": "4.5.8.7128",
+    "description": "Burns CDs and DVDs, including Blu-Ray and HD-DVDs.",
+    "homepage": "https://cdburnerxp.se",
     "license": {
         "identifier": "Freeware",
         "url": "https://cdburnerxp.se/help/Intro/license"
     },
-    "version": "4.5.8.7128",
-    "persist": "UserSettings.ini",
-    "bin": [
-        "cdbxpp.exe",
-        "cdbxpcmd.exe"
-    ],
-    "shortcuts": [
-        [
-            "cdbxpp.exe",
-            "CDBurnerXP"
-        ]
-    ],
     "architecture": {
         "64bit": {
             "url": "https://download.cdburnerxp.se/portable/CDBurnerXP-x64-4.5.8.7128.zip",
@@ -27,9 +16,29 @@
             "hash": "c3759753ba9301d3b48bf4823c146b41ca6eb103bcab2f7cd943bee85e624647"
         }
     },
+    "pre_install": [
+        "if (-not (Test-Path \"$persist_dir\\UserSettings.ini\")) {",
+        "    Set-Content \"$dir\\UserSettings.ini\" @('[General]', 'UseCustomTempFolder=1', \"CustomTempFolder=$persist_dir\\tmp\", \"RemoveableMediaCache=$persist_dir\\cache\") -Encoding Ascii",
+        "}"
+    ],
+    "bin": [
+        "cdbxpp.exe",
+        "cdbxpcmd.exe"
+    ],
+    "shortcuts": [
+        [
+            "cdbxpp.exe",
+            "CDBurnerXP"
+        ]
+    ],
+    "persist": [
+        "cache",
+        "tmp",
+        "UserSettings.ini"
+    ],
     "checkver": {
-        "url": "https://update.cdburnerxp.se/",
-        "re": "([\\d.]+)|.*"
+        "url": "https://update.cdburnerxp.se",
+        "regex": "^([\\d.]+)\\|"
     },
     "autoupdate": {
         "architecture": {

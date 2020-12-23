@@ -1,36 +1,72 @@
 {
-    "homepage": "https://picotorrent.org",
+    "version": "0.23.0",
     "description": "A tiny, hackable BitTorrent client with low memory usage, high performance and a native user interface.",
+    "homepage": "https://picotorrent.org",
     "license": {
         "identifier": "MIT",
         "url": "https://github.com/picotorrent/picotorrent/blob/master/LICENSE"
     },
-    "version": "0.17.0",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/picotorrent/picotorrent/releases/download/v0.17.0/PicoTorrent-0.17.0-x64.zip",
-            "hash": "de6f29e85a1d4d8141d39c0497023f6924cce1747e9654b6adee341a478d84f2"
+            "url": [
+                "https://github.com/picotorrent/picotorrent/releases/download/v0.23.0/PicoTorrent-0.23.0-x64.zip",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/picotorrent/install-associations.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/picotorrent/uninstall-associations.reg"
+            ],
+            "hash": [
+                "10f13ce6ba8bb4f641040c1bda962dd80d42d93a78b8754daa49b1627a7dfbc3",
+                "c3d72abdd82302bd95fb0d91c9a0a1a2c11f3255347aa71ed4e9a228a944c85e",
+                "df4ebe17b43fef09a5ac3e45e24c55542abbd53c50a57a0dea98b91ea7686c3c"
+            ]
         },
         "32bit": {
-            "url": "https://github.com/picotorrent/picotorrent/releases/download/v0.17.0/PicoTorrent-0.17.0-x86.zip",
-            "hash": "6ab828df2ebc6347e59807b43546b25c12ae4c12eccecb7604da3b482bd0547d"
+            "url": [
+                "https://github.com/picotorrent/picotorrent/releases/download/v0.23.0/PicoTorrent-0.23.0-x86.zip",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/picotorrent/install-associations.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/picotorrent/uninstall-associations.reg"
+            ],
+            "hash": [
+                "026d29fa66d7b61a47edc62e11c386e79a211d6d679ee130428d92e10feb2cf5",
+                "c3d72abdd82302bd95fb0d91c9a0a1a2c11f3255347aa71ed4e9a228a944c85e",
+                "df4ebe17b43fef09a5ac3e45e24c55542abbd53c50a57a0dea98b91ea7686c3c"
+            ]
         }
     },
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\Session.dat\")) { Set-Content \"$dir\\Session.dat\" $null -Encoding Ascii }",
+        "if (!(Test-Path \"$persist_dir\\PicoTorrent.json\")) { Set-Content \"$dir\\PicoTorrent.json\" '{}' -Encoding Ascii }",
+        "if (!(Test-Path \"$persist_dir\\PicoTorrent.sqlite\")) { New-Item \"$dir\\PicoTorrent.sqlite\" | Out-Null }"
+    ],
+    "post_install": [
+        "if (Test-Path \"$dir\\install-associations.reg\") {",
+        "   $picopath = \"$dir\\PicoTorrent.exe\".Replace('\\', '\\\\')",
+        "   $content = Get-Content \"$dir\\install-associations.reg\"",
+        "   $content = $content.Replace('$pico', $picopath)",
+        "   if ($global) {",
+        "       $content = $content.Replace('HKEY_CURRENT_USER\\Software\\Classes', 'HKEY_CLASSES_ROOT')",
+        "   }",
+        "   Set-Content -Path \"$dir\\install-associations.reg\" -Value $content -Encoding Ascii",
+        "}",
+        "if (Test-Path \"$dir\\uninstall-associations.reg\") {",
+        "   $content = Get-Content \"$dir\\uninstall-associations.reg\"",
+        "   if ($global) {",
+        "       $content = $content.Replace('HKEY_CURRENT_USER\\Software\\Classes', 'HKEY_CLASSES_ROOT')",
+        "   }",
+        "   Set-Content -Path \"$dir\\uninstall-associations.reg\" -Value $content -Encoding Ascii",
+        "}"
+    ],
+    "bin": "PicoTorrent.exe",
     "shortcuts": [
         [
             "PicoTorrent.exe",
             "PicoTorrent"
         ]
     ],
-    "bin": "PicoTorrent.exe",
-    "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\Session.dat\")) { Set-Content \"$dir\\Session.dat\" $null -Encoding Ascii }",
-        "if (!(Test-Path \"$persist_dir\\PicoTorrent.json\")) { Set-Content \"$dir\\PicoTorrent.json\" '{}' -Encoding Ascii }"
-    ],
     "persist": [
         "Torrents",
         "Session.dat",
-        "PicoTorrent.json"
+        "PicoTorrent.json",
+        "PicoTorrent.sqlite"
     ],
     "checkver": {
         "github": "https://github.com/picotorrent/picotorrent"

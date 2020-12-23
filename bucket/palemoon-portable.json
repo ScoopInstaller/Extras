@@ -1,18 +1,19 @@
 {
-    "description": "Pale Moon is an Open Source, Mozilla-derived web browser available for Microsoft Windows and Linux, focusing on efficiency and ease of use",
-    "homepage": "https://www.palemoon.org/",
-    "version": "28.7.2",
+    "version": "28.17.0",
+    "description": "Mozilla-derived web browser focusing on efficiency and customization",
+    "homepage": "https://www.palemoon.org",
     "license": "MPL-2.0",
     "architecture": {
         "64bit": {
-            "url": "http://rm-eu.palemoon.org/release/Palemoon-Portable-28.7.2.win64.exe#/palemoon.7z",
-            "hash": "bf27c440becd594d8c1fb5e6b7a2421fcff864e49daaac028197dfdece3a4532"
+            "url": "https://rm-eu.palemoon.org/release/Palemoon-Portable-28.17.0.win64.exe#/palemoon.7z",
+            "hash": "4becc7abf6e5fbfc2151204bbb91be5f91911189cb80898348e7fd17bd0b6df4"
         },
         "32bit": {
-            "url": "http://rm-eu.palemoon.org/release/Palemoon-Portable-28.7.2.win32.exe#/palemoon.7z",
-            "hash": "68373605de3287c696d72b7dcb1cbc2aa598cdb274647ad463f26ea510476109"
+            "url": "https://rm-eu.palemoon.org/release/Palemoon-Portable-28.17.0.win32.exe#/palemoon.7z",
+            "hash": "3e5dea9aaf966429a1326ae5c3264c00b04e2d065f195bf5cbc571ec81fc0c3c"
         }
     },
+    "post_install": "(Get-Content \"$dir\\Palemoon-Portable.ini\") -replace 'ShowSplash=true','ShowSplash=false' | Set-Content \"$dir\\Palemoon-Portable.ini\"",
     "bin": [
         [
             "Palemoon-Portable.exe",
@@ -30,23 +31,22 @@
         "Downloads",
         "User"
     ],
-    "post_install": "(Get-Content \"$dir\\Palemoon-Portable.ini\") -replace 'ShowSplash=true','ShowSplash=false' | Set-Content \"$dir\\Palemoon-Portable.ini\"",
     "checkver": {
         "url": "https://www.palemoon.org/download.shtml",
-        "re": "Hashes for release ([\\d\\.]+)"
+        "regex": "Hashes for release ([\\d.]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "http://rm-eu.palemoon.org/release/Palemoon-Portable-$version.win64.exe#/palemoon.7z"
+                "url": "https://rm-eu.palemoon.org/release/Palemoon-Portable-$version.win64.exe#/palemoon.7z"
             },
             "32bit": {
-                "url": "http://rm-eu.palemoon.org/release/Palemoon-Portable-$version.win32.exe#/palemoon.7z"
+                "url": "https://rm-eu.palemoon.org/release/Palemoon-Portable-$version.win32.exe#/palemoon.7z"
             }
         },
         "hash": {
             "url": "https://www.palemoon.org/download.shtml",
-            "find": "$basename\\s+([a-fA-F\\d]{64})"
+            "regex": "$basename\\s+$sha256"
         }
     }
 }

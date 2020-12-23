@@ -1,0 +1,32 @@
+{
+    "version": "2.0",
+    "description": "Open and convert HWP files in Word as DOCX file.",
+    "homepage": "https://www.microsoft.com/en-us/download/details.aspx?id=49152",
+    "license": "Proprietary",
+    "notes": "MS Word 2016 integration can be manually installed with '$dir\\hwpconverter.msi'",
+    "architecture": {
+        "64bit": {
+            "url": "https://download.microsoft.com/download/1/8/D/18D83826-2F32-4535-8C6A-686149B39DF8/hwpconverter_x64_en-us.exe#dl.7z",
+            "hash": "1a6a69c00a60f0ba44527c345017e4aba309b3e0003ee463721913ab9c6d9302"
+        },
+        "32bit": {
+            "url": "https://download.microsoft.com/download/1/8/D/18D83826-2F32-4535-8C6A-686149B39DF8/hwpconverter_x86_en-us.exe#dl.7z",
+            "hash": "48d599393a0a15b9c81a453bfa2e8db5d546e4cb63045cc382629f4fa35db82e"
+        }
+    },
+    "installer": {
+        "script": [
+            "Expand-MSIArchive \"$dir\\hwpconverter.msi\"",
+            "New-Item \"$dir\\bin\" -ItemType Directory | Out-Null",
+            "Move-Item \"$dir\\System*\\*\" \"$dir\\bin\"",
+            "Move-Item \"$dir\\FILES\\Program Files\\Microsoft Office\\O*\\*\" \"$dir\\bin\"",
+            "'files.cat', 'System*', 'FILES', 'swidtags' | ForEach-Object { Remove-Item \"$dir\\$_\" -Recurse }"
+        ]
+    },
+    "shortcuts": [
+        [
+            "bin\\BATCHHWPCONV.EXE",
+            "HWP Converter"
+        ]
+    ]
+}

@@ -1,14 +1,17 @@
 {
+    "version": "0.18",
+    "description": "Tweaks and hidden settings for power-users for Windows 7/8/8.1/10",
     "homepage": "https://winaero.com/comment.php?comment.news.1836",
     "license": {
         "identifier": "Freeware",
         "url": "https://winaero.com/comment.php?comment.news.1836"
     },
-    "description": "Tweaks and hidden settings for power-users for Windows 7/8/8.1/10",
-    "version": "0.16",
     "url": "https://winaero.com/winaerotweaker.zip",
-    "hash": "ffedf3a94036b07b1efb14b3a3f7319d115fec1d969bd6b0f58d6ef1c35f001f",
-    "pre_install": "Rename-Item (Get-ChildItem \"$dir\" *.exe).FullName setup.exe",
+    "hash": "2afb617f444d801cd39c5c94df3e6dfed265752160c3963082b7b34c5a48449e",
+    "pre_install": [
+        "Remove-Item \"$dir\\SilentSetup.cmd\" -ErrorAction SilentlyContinue",
+        "Get-ChildItem \"$dir\" '*setup.exe' | Rename-Item -NewName 'setup.exe'"
+    ],
     "installer": {
         "file": "setup.exe",
         "args": [
@@ -18,7 +21,6 @@
             "/DIR=\"$dir\""
         ]
     },
-    "post_install": "if (Test-Path \"$dir\\SilentSetup.cmd\") { Remove-Item \"$dir\\SilentSetup.cmd\" }",
     "bin": "WinaeroTweaker.exe",
     "shortcuts": [
         [
@@ -26,7 +28,7 @@
             "Winaero Tweaker"
         ]
     ],
-    "checkver": "change log\\s*</h2>\\s*([\\d\\.]+)",
+    "checkver": "<p>([\\d.]+)\\s+-\\s+",
     "autoupdate": {
         "url": "https://winaero.com/winaerotweaker.zip"
     }

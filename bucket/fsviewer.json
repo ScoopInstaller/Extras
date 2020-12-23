@@ -1,34 +1,30 @@
 {
-    "homepage": "https://www.faststone.org/FSViewerDetail.htm",
+    "version": "7.5",
     "description": "Fast, stable, user-friendly image browser, converter and editor",
-    "version": "7.4",
+    "homepage": "https://www.faststone.org/FSViewerDetail.htm",
     "license": "Unknown",
-    "url": "http://www.faststonesoft.net/DN/FSViewer74.zip",
-    "hash": "8d6bcc90c2eeeae352093a1c5a87c0630cc61f9321bc9bdca0c3efacc932151e",
-    "extract_dir": "FSViewer74",
+    "url": "http://www.faststonesoft.net/DN/FSViewer75.zip",
+    "hash": "cbe75459879bfcb330c26e7ce4378270691f290c1c903bf2993d7eb276ea6441",
+    "extract_dir": "FSViewer75",
+    "pre_install": [
+        "'FSSettings.db', 'HisFolderList.db' | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\$_\") -and !(Test-Path \"$dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "}"
+    ],
     "bin": "FSViewer.exe",
     "shortcuts": [
         [
             "FSViewer.exe",
-            "FSViewer"
+            "FastStone Image Viewer"
         ]
     ],
     "persist": [
         "FSSettings.db",
         "HisFolderList.db"
     ],
-    "pre_install": [
-        "function ensureFile([String] $name) {",
-        "    if (!(Test-Path \"$persist_dir\\$name\") -and !(Test-Path \"$dir\\$name\")) {",
-        "        Add-Content -Path \"$dir\\$name\" -Value $null",
-        "    }",
-        "}",
-        "ensureFile 'FSSettings.db'",
-        "ensureFile 'HisFolderList.db'"
-    ],
     "checkver": {
         "url": "https://www.faststone.org/FSIVDownload.htm",
-        "re": "FastStone Image Viewer ([\\d.]+)"
+        "regex": "FastStone Image Viewer ([\\d.]+)"
     },
     "autoupdate": {
         "url": "http://www.faststonesoft.net/DN/FSViewer$cleanVersion.zip",

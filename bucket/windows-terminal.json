@@ -1,10 +1,13 @@
 {
-    "version": "0.7.3382.0",
+    "version": "1.4.3243.0",
     "description": "The new Windows Terminal, and the original Windows console host - all in the same place!",
     "homepage": "https://github.com/microsoft/terminal",
     "license": "MIT",
-    "url": "https://github.com/microsoft/terminal/releases/download/v0.7.3382.0/Microsoft.WindowsTerminal_0.7.3382.0_8wekyb3d8bbwe.msixbundle#/cosi.7z",
-    "hash": "8998f7c00ad7b9ce66a75c02fd9a830465f54038d22fb6a0744c8de5f46c1ef2",
+    "suggest": {
+        "vcredist": "extras/vcredist2019"
+    },
+    "url": "https://github.com/microsoft/terminal/releases/download/v1.4.3243.0/Microsoft.WindowsTerminal_1.4.3243.0_8wekyb3d8bbwe.msixbundle#/dl.7z",
+    "hash": "9de2891139f922e0a3640ab2894c5c3b2928d9c7855e4d7a63d34c3cc3f31598",
     "architecture": {
         "64bit": {
             "pre_install": "Get-ChildItem \"$dir\" -Exclude '*x64.msix' | Remove-Item -Force -Recurse"
@@ -17,10 +20,14 @@
         "script": [
             "$winVer = [Environment]::OSVersion.Version",
             "if (($winver.Major -lt '10') -or ($winVer.Build -lt 18362)) { error 'At least Windows 10 18362 is required.'; break }",
-            "Get-ChildItem \"$dir\" '*.msix' | Select-Object -ExpandProperty Fullname | Expand-7zipArchive -DestinationPath \"$dir\" -Removal"
+            "Get-ChildItem \"$dir\" '*.msix' | Select-Object -ExpandProperty Fullname | Expand-7zipArchive -DestinationPath \"$dir\" -Removal",
+            "Get-ChildItem \"$dir\\ProfileIcons\" '*.png' | Rename-Item -NewName { $_.Name.Replace('%7B', '{').Replace('%7D', '}') }"
         ]
     },
-    "bin": "WindowsTerminal.exe",
+    "bin": [
+        "WindowsTerminal.exe",
+        "wt.exe"
+    ],
     "shortcuts": [
         [
             "WindowsTerminal.exe",
@@ -28,7 +35,7 @@
         ]
     ],
     "checkver": {
-        "url": "https://github.com/microsoft/terminal/releases",
+        "github": "https://github.com/microsoft/terminal",
         "regex": "WindowsTerminal_([\\d.]+)_8wekyb3d8bbwe\\.msixbundle"
     },
     "autoupdate": {
