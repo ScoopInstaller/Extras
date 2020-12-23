@@ -1,21 +1,29 @@
 {
-    "homepage": "https://www.sql-workbench.eu/",
-    "description": "SQL Workbench/J is a free, DBMS-independent, cross-platform SQL query tool",
+    "version": "127",
+    "description": "DBMS-independent SQL query tool",
+    "homepage": "https://www.sql-workbench.eu",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.sql-workbench.eu/manual/license.html"
     },
-    "version": "125",
-    "url": "https://www.sql-workbench.eu/Workbench-Build125-with-optional-libs.zip",
-    "hash": "sha1:28d757ce65dbab41726ce0bcb11e306334f682a9",
+    "suggest": {
+        "java": [
+            "java/oraclejdk",
+            "java/adopt11-hotspot",
+            "java/adopt14-hotspot"
+        ]
+    },
+    "url": "https://www.sql-workbench.eu/Workbench-Build127-with-optional-libs.zip",
+    "hash": "sha1:674c48476c05884660e5ac9ab571fd2e5b32b906",
+    "pre_install": [
+        "@('sqlwbconsole64.ini', 'sqlwbconsole.ini', 'SQLWorkbench64.ini', 'SQLWorkbench.ini') | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "}"
+    ],
+    "post_install": "if ((Test-Path \"$dir\\ext.original\")) { Copy-Item \"$dir\\ext.original\\*\" -Destination \"$persist_dir\\ext\" }",
+    "bin": "sqlwbconsole.cmd",
     "architecture": {
         "64bit": {
-            "bin": [
-                [
-                    "sqlwbconsole64.exe",
-                    "sqlwbconsole"
-                ]
-            ],
             "shortcuts": [
                 [
                     "SQLWorkbench64.exe",
@@ -24,12 +32,6 @@
             ]
         },
         "32bit": {
-            "bin": [
-                [
-                    "sqlwbconsole.exe",
-                    "sqlwbconsole"
-                ]
-            ],
             "shortcuts": [
                 [
                     "SQLWorkbench.exe",
@@ -45,21 +47,15 @@
         "SQLWorkbench64.ini",
         "SQLWorkbench.ini"
     ],
-    "pre_install": [
-        "@('sqlwbconsole64.ini', 'sqlwbconsole.ini', 'SQLWorkbench64.ini', 'SQLWorkbench.ini') | ForEach-Object {",
-        "    if(!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" -Type File | Out-Null }",
-        "}"
-    ],
-    "post_install": "if((Test-Path \"$dir\\ext.original\")) { Copy-Item \"$dir\\ext.original\\*\" -Destination \"$persist_dir\\ext\" }",
     "checkver": {
         "url": "https://www.sql-workbench.eu/downloads.html",
-        "re": "Current stable release: Build (\\d+)"
+        "regex": "Current stable release: Build (\\d+)"
     },
     "autoupdate": {
         "url": "https://www.sql-workbench.eu/Workbench-Build$version-with-optional-libs.zip",
         "hash": {
             "url": "$url.sha1",
-            "find": "^$sha1"
+            "regex": "^$sha1"
         }
     }
 }

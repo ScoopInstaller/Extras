@@ -1,0 +1,41 @@
+{
+    "version": "1.3.11",
+    "description": "An advanced GUI torrent file creator with batch functionality",
+    "homepage": "https://github.com/kz26/dottorrent-gui",
+    "license": "GPL-3.0-only",
+    "suggest": {
+        "Microsoft Visual C++ Redistibutable 2015": "extras/vcredist2015"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/kz26/dottorrent-gui/releases/download/v1.3.11/dottorrent-gui-1.3.11-win64.rar",
+            "hash": "4c40e001f4159c44007d6beaf3cfcd3b03fa9c6603fe8093ec754914beb00dda"
+        }
+    },
+    "extract_dir": "dottorrent-gui",
+    "pre_install": [
+        "ensure \"$persist_dir\" | Out-Null",
+        "if (Test-Path \"$persist_dir\\dottorrent-gui.ini\") {",
+        "    Copy-Item \"$persist_dir\\dottorrent-gui.ini\" \"$dir\"",
+        "} else {",
+        "    New-Item \"$dir\\dottorrent-gui.ini\" | Out-Null",
+        "}"
+    ],
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\dottorrent-gui.ini\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
+    },
+    "shortcuts": [
+        [
+            "dottorrent-gui.exe",
+            "dottorrent-gui"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/kz26/dottorrent-gui/releases/download/v$version/dottorrent-gui-$version-win64.rar"
+            }
+        }
+    }
+}
