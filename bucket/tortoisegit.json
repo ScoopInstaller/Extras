@@ -1,0 +1,68 @@
+{
+    "version": "2.11",
+    "description": "A Windows Shell Interface to Git",
+    "homepage": "https://tortoisegit.org",
+    "license": "GPL-2.0-only",
+    "notes": [
+        "To add TortoiseGit as a context menu option, run '$dir\\tortoisegit-install.reg'",
+        "For file associations, run '$dir\\tortoisegit-install-tools.reg'",
+        "Before uninstalling TortoiseGit, run '$dir\\tortoisegit-uninstall.reg' "
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://download.tortoisegit.org/tgit/2.11.0.0/TortoiseGit-2.11.0.0-64bit.msi",
+            "hash": "8a2576ec68e60f0cef7b0a9581e9018b954f265faf5fce1d7df97814ab36bf3a"
+        },
+        "32bit": {
+            "url": "https://download.tortoisegit.org/tgit/2.11.0.0/TortoiseGit-2.11.0.0-32bit.msi",
+            "hash": "d8fd909c660b68d3e240b4237c2dc8fa31beeb9cc1197ef2e65fcf092aaecf6c"
+        }
+    },
+    "extract_dir": "Program Files\\TortoiseGit",
+    "post_install": [
+        "$null, $bucket = find_manifest($app)",
+        "$bucketdir = bucketdir($bucket)",
+        "$escdir = $dir -replace \"\\\\\",\"\\\\\"",
+        "(gc \"$bucketdir\\..\\scripts\\tortoisegit\\tortoisegit-install.reg.templ\") | % {$_ -replace \"%TGITHOME%\",\"$escdir\"} | out-file -enc oem \"$dir\\tortoisegit-install.reg\"",
+        "(gc \"$bucketdir\\..\\scripts\\tortoisegit\\tortoisegit-install-tools.reg.templ\") | % {$_ -replace \"%TGITHOME%\",\"$escdir\"} | out-file -enc oem \"$dir\\tortoisegit-install-tools.reg\"",
+        "cp \"$bucketdir\\..\\scripts\\tortoisegit\\tortoisegit-uninstall.reg\" \"$dir\""
+    ],
+    "shortcuts": [
+        [
+            "bin\\TortoiseGitIDiff.exe",
+            "TortoiseGitIDiff"
+        ],
+        [
+            "bin\\TortoiseGitMerge.exe",
+            "TortoiseGitMerge"
+        ],
+        [
+            "bin\\TortoiseGitProc.exe",
+            "TortoiseGit",
+            "/command:rtfm"
+        ],
+        [
+            "bin\\TortoiseGitBlame.exe",
+            "TortoiseGitBlame"
+        ],
+        [
+            "bin\\TortoiseGitProc.exe",
+            "TortoiseGit Settings",
+            "/command:settings"
+        ]
+    ],
+    "checkver": {
+        "url": "https://download.tortoisegit.org/tgit",
+        "regex": "diricon diricon-folder\"><\/span><\/td><td><a href=(?<release>[\\d.]+)\/ >"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download.tortoisegit.org/tgit/$matchRelease/TortoiseGit-$matchRelease-64bit.msi"
+            },
+            "32bit": {
+                "url": "https://download.tortoisegit.org/tgit/$matchRelease/TortoiseGit-$matchRelease-32bit.msi"
+            }
+        }
+    }
+}
