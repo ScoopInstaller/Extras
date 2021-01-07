@@ -1,0 +1,64 @@
+{
+    "version": "1.5.6.5797",
+    "description": "Fork of Media Player Classic containing additional features and bug fixes.",
+    "homepage": "https://sourceforge.net/projects/mpcbe/",
+    "license": "GPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://downloads.sourceforge.net/project/mpcbe/MPC-BE/Nightly%20Builds%20%28from%20svn%20trunk%29/1.5.6%20%28build%205797%29%20beta/MPC-BE.1.5.6.5797.x64.7z",
+            "hash": "sha1:63e0fc0273a856d563839708031b4e6a4e5b1b4d",
+            "extract_dir": "MPC-BE.1.5.6.5797.x64",
+            "bin": [
+                "mpc-be64.exe",
+                [
+                    "mpc-be64.exe",
+                    "mpc-be"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "mpc-be64.exe",
+                    "MPC-BE"
+                ]
+            ]
+        },
+        "32bit": {
+            "url": "https://downloads.sourceforge.net/project/mpcbe/MPC-BE/Nightly%20Builds%20%28from%20svn%20trunk%29/1.5.6%20%28build%205797%29%20beta/MPC-BE.1.5.6.5797.x86.7z",
+            "hash": "sha1:4f715839834584a45f1934fefedaedbbffe4d61b",
+            "extract_dir": "MPC-BE.1.5.6.5797.x86",
+            "bin": "mpc-be.exe",
+            "shortcuts": [
+                [
+                    "mpc-be.exe",
+                    "MPC-BE"
+                ]
+            ]
+        }
+    },
+    "pre_install": [
+        "@('mpc-be64.ini', 'mpc-be.ini', 'Default.mpcpl') | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "}"
+    ],
+    "persist": [
+        "mpc-be64.ini",
+        "mpc-be.ini",
+        "Default.mpcpl"
+    ],
+    "checkver": {
+        "url": "https://sourceforge.net/projects/mpcbe/rss?path=/MPC-BE/Nightly%20Builds%20%28from%20svn%20trunk%29",
+        "regex": "MPC-BE\\.([\\d.]+)\\.x86\\.7z"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://downloads.sourceforge.net/project/mpcbe/MPC-BE/Nightly%20Builds%20%28from%20svn%20trunk%29/$matchHead/MPC-BE.$version.x64.7z",
+                "extract_dir": "MPC-BE.$version.x64"
+            },
+            "32bit": {
+                "url": "https://downloads.sourceforge.net/project/mpcbe/MPC-BE/Nightly%20Builds%20%28from%20svn%20trunk%29/$matchHead/MPC-BE.$version.x86.7z",
+                "extract_dir": "MPC-BE.$version.x86"
+            }
+        }
+    }
+}
