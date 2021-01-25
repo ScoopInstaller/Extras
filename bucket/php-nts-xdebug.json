@@ -23,8 +23,9 @@
     "post_install": [
         "$phpconfd = \"$persist_dir\\..\\php-nts\\cli\\conf.d\"",
         "$ini = \"zend_extension=$dir\\php_xdebug.dll`n[xdebug]`nxdebug.remote_enable=on`nxdebug.remote_autostart=on`nxdebug.remote_connect_back=on\"",
-        "if(!(Test-Path \"$phpconfd\\xdebug.ini\")) {",
-        "    Write-Output \"Enabling extension $(Convert-Path $phpconfd)\\xdebug.ini\"",
+        "if (!(Test-Path \"$phpconfd\\xdebug.ini\")) {",
+        "    ensure $phpconfd | Out-Null",
+        "    Write-Output \"Enabling extension '$phpconfd\\xdebug.ini'\"",
         "    Add-Content -Value $ini -Path \"$phpconfd\\xdebug.ini\"",
         "} else {",
         "    Write-Host -f Yellow \"PHP was not installed through scoop, you have to activate php_xdebug.dll manually! Add the following:`n\"",
