@@ -1,0 +1,37 @@
+{
+    "version": "0.7.9",
+    "homepage": "https://github.com/SaifAqqad/AHK_MicMute",
+    "description": "Control your microphone using keyboard/mouse shortcuts",
+    "license": "Unlicense",
+    "checkver": "github",
+    "url": "https://github.com/SaifAqqad/AHK_MicMute/releases/download/0.7.9/MicMute.exe",
+    "hash": "5f0e6b5717b0697c50e8a9a6d68e830ffa6aeff331211211eacec9249f2b1726",
+    "autoupdate": {
+        "url": "https://github.com/SaifAqqad/AHK_MicMute/releases/download/$version/MicMute.exe"
+    },
+    "pre_install": [
+        "function ensureFile([String] $name) {",
+        "    if (!(Test-Path \"$persist_dir\\$name\") -and !(Test-Path \"$dir\\$name\")) {",
+        "        Add-Content -Path \"$dir\\$name\" -Value $null",
+        "    }",
+        "}",
+        "ensureFile 'config.json'"
+    ],
+    "persist": [
+        "config.json"
+    ],
+    "uninstaller": {
+        "script": [
+            "$FileName = \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\MicMute.lnk\"",
+            "if (Test-Path $FileName) {",
+            "   Remove-Item $FileName",
+            "}"
+        ]
+    },
+    "shortcuts": [
+        [
+            "MicMute.exe",
+            "MicMute"
+        ]
+    ]
+}
