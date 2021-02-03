@@ -1,0 +1,29 @@
+{
+    "version": "1.8.7",
+    "description": "7-Zip plugin for the leading-edge compression methods; zstd, Brotli, LZ4, LZ5, Lizard, and Fast LZMA2.",
+    "homepage": "https://www.tc4shell.com/en/7zip/modern7z/",
+    "license": "Unknown",
+    "depends": "7zip",
+    "url": "https://www.tc4shell.com/binary/Modern7z.zip",
+    "hash": "b62da3482d72753047b14f3c74ac65249a4d777d56b327b2e971faad3eeb94fc",
+    "installer": {
+        "script": [
+            "if (-not (Test-Path \"$scoopdir\\persist\\7zip\\Codecs\")) {",
+            "    New-Item \"$scoopdir\\persist\\7zip\\Codecs\" -ItemType Directory",
+            "    New-Item \"$(appdir 7zip)\\current\\Codecs\" -Value \"$scoopdir\\persist\\7zip\\Codecs\" -ItemType Junction",
+            "}",
+            "Copy-Item \"$dir\\$($architecture.Substring(0, 2))\\*\" \"$scoopdir\\persist\\7zip\\Codecs\" -Recurse"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "foreach ($path in (Get-ChildItem \"$dir\\$($architecture.Substring(0, 2))\")) {",
+            "    Remove-Item \"$scoopdir\\persist\\7zip\\Codecs\\$($path.Name)\" -Recurse",
+            "}"
+        ]
+    },
+    "checkver": "Plugin version: ([\\d.]+)",
+    "autoupdate": {
+        "url": "https://www.tc4shell.com/binary/Modern7z.zip"
+    }
+}
