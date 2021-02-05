@@ -4,47 +4,65 @@
     "homepage": "https://www.wireshark.org/",
     "license": "GPL-2.0-or-later",
     "notes": [
-        "WinPcap was replaced by Npcap.",
-        "Run 'scoop install nmap' (from a elevated shell) to install 'Npcap' automatically,",
-        "or run 'scoop install nmap-portable' and then install the 'npcap-oem.exe' from the 'nmap-portable' directory manually."
+        "Install npcap manually from the 'wireshark' directory.",
+        "$dir\\npcap-1.10.exe",
+        "Install USBPcap manually from the 'wireshark' directory.",
+        "$dir\\USBPcapSetup-1.5.4.0.exe"
     ],
-    "suggest": {
-        "Nmap (includes Npcap)": "nmap"
+    "architecture": {
+        "64bit": {
+            "url": "https://1.eu.dl.wireshark.org/win64/all-versions/Wireshark-win64-3.4.3.exe#/dl.7z",
+            "hash": "3bb02427d9c29d7fc04bf011f2e4ebd4f23ebe68f275f51d4ae36ee167b6cb03"
+        },
+        "32bit": {
+            "url": "https://1.eu.dl.wireshark.org/win32/all-versions/Wireshark-win32-3.4.3.exe#/dl.7z",
+            "hash": "6f99517f1e3c35be1de40ab9d333e6b3f053a60b7622798b171fef9e0da33c95"
+        }
     },
-    "url": "https://1.eu.dl.wireshark.org/win32/all-versions/WiresharkPortable_3.4.3.paf.exe#/dl.7z",
-    "hash": "e14e92708d99c691f8647cb23b8e43e6fc6ffdf2a417f0044684e94ea156b041",
+    "pre_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\vcredist_x64*\", \"$dir\\uninstall*\" -Recurse",
     "bin": [
-        "App\\Wireshark\\capinfos.exe",
-        "App\\Wireshark\\captype.exe",
-        "App\\Wireshark\\dumpcap.exe",
-        "App\\Wireshark\\editcap.exe",
-        "App\\Wireshark\\mergecap.exe",
-        "App\\Wireshark\\randpkt.exe",
-        "App\\Wireshark\\rawshark.exe",
-        "App\\Wireshark\\reordercap.exe",
-        "App\\Wireshark\\text2pcap.exe",
-        "App\\Wireshark\\tshark.exe",
-        [
-            "WiresharkPortable.exe",
-            "Wireshark"
-        ]
+        "capinfos.exe",
+        "dumpcap.exe",
+        "editcap.exe",
+        "mergecap.exe",
+        "randpkt.exe",
+        "rawshark.exe",
+        "reordercap.exe",
+        "text2pcap.exe",
+        "tshark.exe",
+        "Wireshark.exe"
     ],
     "shortcuts": [
         [
-            "WiresharkPortable.exe",
+            "Wireshark.exe",
             "Wireshark"
         ]
     ],
+    "env_set": {
+        "WIRESHARK_CONFIG_DIR": "$dir\\Data",
+        "WIRESHARK_DATA_DIR": "$dir\\Data"
+    },
     "persist": "Data",
     "checkver": {
         "url": "https://www.wireshark.org/update/0/Wireshark/0.0.0/Windows/x86/en-US/stable.xml",
         "regex": "Version ([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://1.eu.dl.wireshark.org/win32/all-versions/WiresharkPortable_$version.paf.exe#/dl.7z",
-        "hash": {
-            "url": "https://www.wireshark.org/download/SIGNATURES-$version.txt",
-            "regex": "SHA256\\($basename\\)=$sha256"
+        "architecture": {
+            "64bit": {
+                "url": "https://1.eu.dl.wireshark.org/win64/all-versions/Wireshark-win64-$version.exe#/dl.7z",
+                "hash": {
+                    "url": "https://www.wireshark.org/download/SIGNATURES-$version.txt",
+                    "regex": "SHA256\\($basename\\)=$sha256"
+                }
+            },
+            "32bit": {
+                "url": "https://1.eu.dl.wireshark.org/win32/all-versions/Wireshark-win32-$version.exe#/dl.7z",
+                "hash": {
+                    "url": "https://www.wireshark.org/download/SIGNATURES-$version.txt",
+                    "regex": "SHA256\\($basename\\)=$sha256"
+                }
+            }
         }
     }
 }
