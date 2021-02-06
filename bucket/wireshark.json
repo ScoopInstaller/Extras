@@ -4,10 +4,11 @@
     "homepage": "https://www.wireshark.org/",
     "license": "GPL-2.0-or-later",
     "notes": [
-        "Install npcap manually from the 'wireshark' directory.",
-        "$dir\\npcap-1.10.exe",
-        "Install USBPcap manually from the 'wireshark' directory.",
-        "$dir\\USBPcapSetup-1.5.4.0.exe"
+        "Wireshark requires the installation of Npcap. Do it manually from the 'wireshark' directory.",
+        "$dir\\npcap-installer.exe",
+        "",
+        "You can also install USBPcap from the 'wireshark' directory if you need the USB packets capture funcionality.",
+        "$dir\\USBPcapSetup-installer.exe"
     ],
     "architecture": {
         "64bit": {
@@ -19,7 +20,13 @@
             "hash": "6f99517f1e3c35be1de40ab9d333e6b3f053a60b7622798b171fef9e0da33c95"
         }
     },
-    "pre_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\vcredist_x64*\", \"$dir\\uninstall*\" -Recurse",
+    "installer": {
+        "script": [
+            "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\vcredist_x*\", \"$dir\\uninstall.exe\" -Recurse",
+            "Get-ChildItem \"$dir\\npcap-*.exe\" | Rename-Item -NewName 'npcap-installer.exe'",
+            "Get-ChildItem \"$dir\\USBPcapSetup-*.exe\" | Rename-Item -NewName 'USBPcapSetup-installer.exe'"
+        ]
+    },
     "bin": [
         "capinfos.exe",
         "dumpcap.exe",
