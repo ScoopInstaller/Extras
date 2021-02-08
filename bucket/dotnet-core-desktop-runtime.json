@@ -1,0 +1,42 @@
+{
+    "version": "3.1.11",
+    "description": "Microsoft .NET Core Desktop Runtime",
+    "homepage": "https://dotnet.microsoft.com/download/dotnet-core",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.microsoft.com/en-us/legal/intellectualproperty/copyright/default.aspx"
+    },
+    "notes": "You can now remove this installer with 'scoop uninstall dotnet-core-desktop-runtime'",
+    "architecture": {
+        "64bit": {
+            "url": "https://dotnetcli.azureedge.net/dotnet/Runtime/3.1.11/windowsdesktop-runtime-3.1.11-win-x64.exe",
+            "hash": "sha512:ad4c1fe410ddc3c97444882a4515d42829e428e0f8218b4d5edc67a6f6efa7b7629a736cf6ae52e56882f0707a9222180be5715d3f79a4ed39687404a5adfd5c"
+        },
+        "32bit": {
+            "url": "https://dotnetcli.azureedge.net/dotnet/Runtime/3.1.11/windowsdesktop-runtime-3.1.11-win-x86.exe",
+            "hash": "sha512:56b4aa80199e5e0bdc7ebea7ba812a0331b052d725d531194daba541307d50adb2e551eaab101882ff55959e4727ee213618d86642b9b84a33a36269d49fb778"
+        }
+    },
+    "pre_install": "if (!(is_admin)) { error 'Admin privileges are required.'; break }",
+    "installer": {
+        "script": "Invoke-ExternalCommand \"$dir\\$fname\" -ArgumentList '/install', '/quiet', '/norestart' -RunAs | Out-Null"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://dotnetcli.azureedge.net/dotnet/Runtime/$version/windowsdesktop-runtime-$version-win-x64.exe",
+                "hash": {
+                    "url": "https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-$version-windows-x64-installer",
+                    "regex": "value=\"$sha512\""
+                }
+            },
+            "32bit": {
+                "url": "https://dotnetcli.azureedge.net/dotnet/Runtime/$version/windowsdesktop-runtime-$version-win-x86.exe",
+                "hash": {
+                    "url": "https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-$version-windows-x86-installer",
+                    "regex": "value=\"$sha512\""
+                }
+            }
+        }
+    }
+}
