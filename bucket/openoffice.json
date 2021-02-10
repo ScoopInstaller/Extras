@@ -6,7 +6,9 @@
     "url": "https://archive.apache.org/dist/openoffice/4.1.9/binaries/en-GB/Apache_OpenOffice_4.1.9_Win_x86_install_en-GB.exe#/dl.7z",
     "hash": "sha512:06301fcf7a96034ee0413f1a73138bdad3a27e50060a0a5a21b49db0e985fe4537c1590cf4e3c9be2b7df7ab805e43fd3d76a95de010edd06d96c473fbe1201e",
     "pre_install": [
-        "(Get-ChildItem \"$dir\" 'openoffic*.msi').FullName | Expand-MsiArchive -DestinationPath \"$dir\\App\" -ExtractDir 'OpenOffice 4'",
+        "$splat = @{ 'DestinationPath' = \"$dir\\App\" }",
+        "if (get_config 'MSIEXTRACT_USE_LESSMSI' $false) { $splat.Add('ExtractDir', 'OpenOffice 4') }",
+        "(Get-ChildItem \"$dir\" 'openoffic*.msi').FullName | Expand-MsiArchive @splat",
         "Get-ChildItem \"$dir\" -Exclude 'App' | Remove-Item -Recurse",
         "Move-Item \"$dir\\App\\*\" \"$dir\" -Force",
         "Remove-Item \"$dir\\App\" -Recurse"
