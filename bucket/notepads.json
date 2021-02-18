@@ -1,0 +1,36 @@
+{
+    "version": "1.4.2.0",
+    "description": "A modern, lightweight text editor with a minimalist design",
+    "homepage": "https://www.notepadsapp.com/",
+    "license": "MIT",
+    "url": "https://github.com/JasonStein/Notepads/releases/download/v1.4.2.0/Notepads_1.4.2.0_x86_x64.msixbundle#/dl.7z",
+    "hash": "49fa4694226f39e7647201905fee522760cab88c9cbc0e4329615a2abe91f555",
+    "architecture": {
+        "64bit": {
+            "pre_install": "Get-ChildItem \"$dir\" -Exclude '*x64.msix' | Remove-Item -Force -Recurse"
+        },
+        "32bit": {
+            "pre_install": "Get-ChildItem \"$dir\" -Exclude '*x86.msix' | Remove-Item -Force -Recurse"
+        }
+    },
+    "installer": {
+        "script": [
+            "$winVer = [Environment]::OSVersion.Version",
+            "if (($winver.Major -lt '10') -or ($winVer.Build -lt 18362)) { throw 'At least Windows 10 18362 is required.' }",
+            "Get-ChildItem \"$dir\" '*.msix' | Select-Object -ExpandProperty Fullname | Expand-7zipArchive -DestinationPath \"$dir\" -Removal",
+        ]
+    },
+    "bin": [
+        "Notepads.exe"
+    ],
+    "shortcuts": [
+        [
+            "Notepads.exe",
+            "Notepads"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "url": "https://github.com/JasonStein/Notepads/releases/download/v$version/Notepads_$version_x86_x64.msixbundle#/dl.7z"
+    }
+}
