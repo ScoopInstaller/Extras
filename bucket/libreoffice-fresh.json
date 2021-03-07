@@ -8,15 +8,23 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/7.1.0.3/win/x86_64/LibreOffice_7.1.0.3_Win_x64.msi",
+            "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/7.1.0.3/win/x86_64/LibreOffice_7.1.0.3_Win_x64.msi#/dl.ism",
             "hash": "5ddb51955849dc4fe39933047c1b65d044ec5b01ff88e8b81e0a15d8de638aed"
         },
         "32bit": {
-            "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/7.1.0.3/win/x86/LibreOffice_7.1.0.3_Win_x86.msi",
+            "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/7.1.0.3/win/x86/LibreOffice_7.1.0.3_Win_x86.msi#/dl.ism",
             "hash": "258bae103cc76b01b943814c25fd37d1373c2b2e23a1f6c92d268510e708ed5f"
         }
     },
-    "extract_dir": "LibreOffice",
+    "pre_install": [
+        "$_args = @{",
+        "    'Path' = \"$dir\\$fname\"",
+        "    'DestinationPath' = \"$dir\"",
+        "    'Removal' = $true",
+        "}",
+        "if (get_config 'MSIEXTRACT_USE_LESSMSI' $true) { $_args.Add('ExtractDir', 'LibreOffice') }",
+        "Expand-MsiArchive @_args"
+    ],
     "shortcuts": [
         [
             "program\\sbase.exe",
@@ -50,10 +58,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/$version/win/x86_64/LibreOffice_$version_Win_x64.msi"
+                "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/$version/win/x86_64/LibreOffice_$version_Win_x64.msi#/dl.ism"
             },
             "32bit": {
-                "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/$version/win/x86/LibreOffice_$version_Win_x86.msi"
+                "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/$version/win/x86/LibreOffice_$version_Win_x86.msi#/dl.ism"
             }
         },
         "hash": {
