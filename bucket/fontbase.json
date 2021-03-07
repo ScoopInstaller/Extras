@@ -10,12 +10,10 @@
         "64bit": {
             "url": "https://releases.fontba.se/win/FontBase-2.14.0.exe#/dl.7z",
             "hash": "sha512:75c23a54c32fe76eb98508860d5eceefe239441417d1d3b3bbe01556182cf1f20cc0351a78e185252024dcfac948d9d6cb038d7243d570e603c1bdc649d740aa",
-            "installer": {
-                "script": [
-                    "Expand-7ZipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\uninstall*\" -Recurse"
-                ]
-            }
+            "pre_install": [
+                "Expand-7ZipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$*\", \"$dir\\uninstall*\" -Recurse"
+            ]
         }
     },
     "shortcuts": [
@@ -26,13 +24,17 @@
     ],
     "checkver": {
         "url": "https://fontba.se/updates",
-        "regex": "<h1>([\\d.]+)<"
+        "regex": "([\\d.]+)</a"
     },
     "autoupdate": {
-        "url": "https://releases.fontba.se/win/FontBase-$version.exe#/dl.7z",
-        "hash": {
-            "url": "$baseurl/latest.yml",
-            "regex": "sha512:\\s+$base64"
+        "architecture": {
+            "64bit": {
+                "url": "https://releases.fontba.se/win/FontBase-$version.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "sha512:\\s+$base64"
+                }
+            }
         }
     }
 }
