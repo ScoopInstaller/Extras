@@ -1,0 +1,54 @@
+{
+    "version": "2.0.5",
+    "description": "obs-studio plugin to add virtualcam in MS Teams",
+    "notes": [
+        "During the (un)install, it is required to (un)register the directshow virtualsource library with elevated privileges:",
+        "- To register : regsvr32 \"$env:userprofile\\scoop\\apps\\obs-studio\\current\\bin\\64bit\\obs-virtualsource.dll\"",
+        "- To unregister : regsvr32 /u \"$env:userprofile\\scoop\\apps\\obs-studio\\current\\bin\\64bit\\obs-virtualsource.dll\""
+    ],
+    "homepage": "https://github.com/Fenrirthviti/obs-virtual-cam",
+    "license": "GPL-2.0-only",
+    "depends": "extras/obs-studio",
+    "url": "https://github.com/Fenrirthviti/obs-virtual-cam/releases/download/2.0.5/OBS-Virtualcam-2.0.5-Windows.zip",
+    "hash": "c33f1c884c33bea15e9254a4cab5f1b66403e2d2f2767562b8726e58b05d38fc",
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": [
+                    "Copy-Item \"$dir\\bin\\64bit\\obs-virtualsource.*\" \"$(appdir obs-studio $global)\\current\\bin\\64bit\"",
+                    "Copy-Item \"$dir\\obs-plugins\\64bit\\obs-virtualoutput.*\" \"$(appdir obs-studio $global)\\current\\obs-plugins\\64bit\"",
+                    "Copy-Item -Path \"$dir\\data\\obs-plugins\\*\" \"$(appdir obs-studio $global)\\current\\data\\obs-plugins\" -Recurse"
+                ]
+            },
+            "uninstaller": {
+                "script": [
+                    "Remove-Item \"$(appdir obs-studio $global)\\current\\bin\\64bit\\obs-virtualsource.*\"",
+                    "Remove-Item \"$(appdir obs-studio $global)\\current\\obs-plugins\\64bit\\obs-virtualoutput.*\"",
+                    "Remove-Item -Path \"$(appdir obs-studio $global)\\current\\data\\obs-plugins\\obs-virtualoutput\" -Recurse"
+                ]
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": [
+                    "Copy-Item \"$dir\\bin\\32bit\\obs-virtualsource.*\" \"$(appdir obs-studio $global)\\current\\bin\\32bit\"",
+                    "Copy-Item \"$dir\\obs-plugins\\32bit\\obs-virtualoutput.*\" \"$(appdir obs-studio $global)\\current\\obs-plugins\\32bit\"",
+                    "Copy-Item -Path \"$dir\\data\\obs-plugins\\*\" \"$(appdir obs-studio $global)\\current\\data\\obs-plugins\" -Recurse"
+                ]
+            },
+            "uninstaller": {
+                "script": [
+                    "Remove-Item \"$(appdir obs-studio $global)\\current\\bin\\32bit\\obs-virtualsource.*\"",
+                    "Remove-Item \"$(appdir obs-studio $global)\\current\\obs-plugins\\32bit\\obs-virtualoutput.*\"",
+                    "Remove-Item -Path \"$(appdir obs-studio $global)\\current\\data\\obs-plugins\\obs-virtualoutput\" -Recurse"
+                ]
+            }
+        }
+    },
+    "checkver": {
+        "github": "https://github.com/Fenrirthviti/obs-virtual-cam"
+    },
+    "autoupdate": {
+        "url": "https://github.com/Fenrirthviti/obs-virtual-cam/releases/download/$version/OBS-Virtualcam-$version-Windows.zip"
+    }
+}
