@@ -1,23 +1,37 @@
 {
-    "version": "0.9.98",
-    "description": "A file and directory diff and merge tool",
-    "homepage": "http://kdiff3.sourceforge.net/",
+    "version": "1.8.5",
+    "description": "Utility for comparing and merging files and directories",
+    "homepage": "https://invent.kde.org/sdk/kdiff3",
     "license": "GPL-2.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://downloads.sourceforge.net/project/kdiff3/kdiff3/0.9.98/KDiff3-64bit-Setup_0.9.98-2.exe#/dl.7z",
-            "hash": "sha1:4b7358aec8de6a3e719065fce37dd966c92ed3d4"
-        },
-        "32bit": {
-            "url": "https://downloads.sourceforge.net/project/kdiff3/kdiff3/0.9.98/KDiff3-32bit-Setup_0.9.98-3.exe#/dl.7z",
-            "hash": "sha1:9d7ec4fb0e2b83a321cb77ce47c86fd42fc8ec2b"
+            "url": "https://download.kde.org/stable/kdiff3/kdiff3-1.8.5-windows-64-cl.exe#/dl.7z",
+            "hash": "c0be76353161af622154993ed464a168a5cda38639deca76befe50f48e348ef5"
         }
     },
-    "bin": "kdiff3.exe",
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\kdiff3*.7z\" -Removal",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\uninst*\", \"$dir\\7za.exe\" -Recurse"
+    ],
+    "bin": "bin\\kdiff3.exe",
     "shortcuts": [
         [
-            "kdiff3.exe",
+            "bin\\kdiff3.exe",
             "KDiff3"
         ]
-    ]
+    ],
+    "checkver": {
+        "url": "https://download.kde.org/stable/kdiff3/?C=M;O=D",
+        "regex": "kdiff3-(([\\d.]+))-windows-64"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download.kde.org/stable/kdiff3/kdiff3-$version-windows-64-cl.exe#/dl.7z"
+            }
+        },
+        "hash": {
+            "url": "$url.sha256"
+        }
+    }
 }
