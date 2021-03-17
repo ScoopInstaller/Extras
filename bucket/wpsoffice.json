@@ -9,8 +9,11 @@
     "url": "https://wdl1.pcfg.cache.wpscdn.com/wpsdl/wpsoffice/download/11.2.0.10017/WPSOffice_11.2.0.10017.exe",
     "hash": "f8786a89d97de1edaaf7c1ea84a0d77ae26a7212c38292993e9d4220d37111c1",
     "pre_install": [
-        "Expand-7zipArchive \"$dir\\$fname\" -Switches '-t#'",
-        "Remove-Item \"$dir\\*\" -Exclude '4.7z' -Recurse",
+        "Expand-7zipArchive \"$dir\\$fname\"",
+        "Expand-7zipArchive \"$dir\\`$_11_\\`$EXEFILE\" -Switches '-t#'",
+        "Move-Item \"$dir\\`$_11_\\*.7z\" \"$dir\"",
+        "Remove-Item \"$dir\\*\" -Exclude '4.7z', '2.7z' -Recurse",
+        "Expand-7zipArchive \"$dir\\2.7z\" -ExtractDir 'CONTROL\\office6' -Removal",
         "Expand-7zipArchive \"$dir\\4.7z\" -ExtractDir 'office6' -Removal"
     ],
     "bin": "wpsoffice.exe",
