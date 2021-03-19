@@ -1,41 +1,25 @@
 {
-    "version": "2.4.10",
+    "version": "2.5.1",
     "description": "A flexible virtual private network (VPN) solution to secure data communications.",
     "homepage": "https://openvpn.net",
     "license": "GPL-2.0-only",
-    "suggest": {
-        "openssl": "openssl"
+    "architecture": {
+        "64bit": {
+            "url": "https://swupdate.openvpn.org/community/releases/OpenVPN-2.5.1-I601-amd64.msi",
+            "hash": "1af6bf5fcc4d92419d43b528000cda8b18881a676275746b2261c75943b8b974"
+        },
+        "32bit": {
+            "url": "https://swupdate.openvpn.org/community/releases/OpenVPN-2.5.1-I601-x86.msi",
+            "hash": "e0b9638885675bdbf9c4cdebfe9979e17d092d7f860097fb7e0a5adb2ba3f9bc"
+        }
     },
-    "url": "https://swupdate.openvpn.org/community/releases/openvpn-install-2.4.10-I601-Win10.exe",
-    "hash": "83c987df1c2320001aef74fcd3d42de4b8ca7fda4f39b6f585357805a9d43a29",
     "pre_install": [
         "if ([Environment]::OSVersion.Version.Major -lt 10) { error 'Windows 10 is required since version 2.4.8. Use \"versions/openvpn-w7\" instead'; break }",
         "if (-not (is_admin)) { throw 'Administrator privileges are needed for installation' }"
     ],
-    "installer": {
-        "args": [
-            "/S",
-            "/SELECT_OPENVPN=1",
-            "/SELECT_SHORTCUTS=0",
-            "/SELECT_SERVICE=1",
-            "/SELECT_TAP=1",
-            "/SELECT_OPENVPNGUI=1",
-            "/SELECT_ASSOCIATIONS=1",
-            "/SELECT_OPENSSL_UTILITIES=0",
-            "/SELECT_EASYRSA=1",
-            "/SELECT_PATH=0",
-            "/SELECT_OPENSSLDLLS=1",
-            "/SELECT_LZODLLS=1",
-            "/SELECT_PKCS11DLLS=1",
-            "/SELECT_LAUNCH=0",
-            "/D=$dir"
-        ]
-    },
-    "uninstaller": {
-        "script": [
-            "if (-not (is_admin)) { throw 'Admin privileges are needed.' }",
-            "Invoke-ExternalCommand -FilePath \"$dir\\Uninstall.exe\" -ArgumentList '/S' | Out-Null"
-        ]
+    "msi": {
+        "code": "{E5931AF4-2A8F-48A5-AFC8-CE9B79C4B19D}",
+        "silent": false
     },
     "bin": "bin\\openvpn.exe",
     "shortcuts": [
@@ -47,9 +31,16 @@
     "persist": "config",
     "checkver": {
         "url": "https://openvpn.net/index.php/open-source/downloads.html",
-        "regex": "openvpn-install-([\\d.]+)-I601-Win10\\.exe"
+        "regex": "OpenVPN-([\\d.]+)-I601-amd64\\.msi"
     },
     "autoupdate": {
-        "url": "https://swupdate.openvpn.org/community/releases/openvpn-install-$version-I601-Win10.exe"
+        "architecture": {
+            "64bit": {
+                "url": "https://swupdate.openvpn.org/community/releases/OpenVPN-$version-I601-amd64.msi"
+            },
+            "32bit": {
+                "url": "https://swupdate.openvpn.org/community/releases/OpenVPN-$version-I601-x86.msi"
+            }
+        }
     }
 }
