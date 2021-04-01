@@ -1,23 +1,18 @@
 {
     "version": "0.0.16",
-    "description": "Logseq is a privacy-first, open-source(frontend now, backend later) platform for knowledge sharing and management.",
+    "description": "A privacy-first platform for knowledge sharing and management.",
     "homepage": "https://logseq.com/",
     "license": {
-        "identifier": "GNU Affero General Public License v3.0",
+        "identifier": "AGPL-3.0-only",
         "url": "https://github.com/logseq/logseq/blob/master/LICENSE.md"
     },
-    "notes": "We don't persist your Logseq data, they are still storaged in \"%APPDATA%\\Logseq\".",
     "url": "https://github.com/logseq/logseq/releases/download/0.0.16/logseq-win-x64-0.0.16.exe#/dl.7z",
     "hash": "bf1dc4e7b8219724926b77fd8b4cfdb3a1483ac0a3120020d7297096881e88be",
-    "installer": {
-        "script": [
-            "$nupkg = (Get-ChildItem \"$dir\" 'logseq-*-full.nupkg' | Select-Object -First 1).FullName",
-            "Expand-7ZipArchive \"$nupkg\" \"$dir\" -Removal",
-            "$dotnet = (Get-ChildItem \"$dir\\lib\" 'net*' | Select-Object -First 1).FullName",
-            "Move-Item \"$dotnet\\*\" \"$dir\""
-        ]
-    },
-    "post_install": "Remove-Item \"$dir\\lib\",\"$dir\\_rels\" -Recurse -Force",
+    "pre_install": [
+            "Expand-7ZipArchive \"$dir\\logseq-*-full.nupkg\" \"$dir\" -Removal", 
+            "Move-Item \"$dir\\lib\\net45\\*\" \"$dir\"",
+            "Remove-Item \"$dir\\*.gif\", \"$dir\\_rels\" , \"$dir\\lib\", \"$dir\\package\", \"$dir\\*.xml\"  -Recurse"
+    ],
     "shortcuts": [
         [
             "Logseq.exe",
