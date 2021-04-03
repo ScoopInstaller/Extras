@@ -9,6 +9,16 @@
     "url": "https://d2td7dqidlhjx7.cloudfront.net/prod/global/windows/Amazon+WorkSpaces.msi",
     "hash": "604e40ed03883e1d740367fbcc4da9c21fc88fe26f9df7aca4ed0a25c0b1ac2e",
     "extract_dir": "[ApplicationFolderName]",
+    "pre_install": [
+        "#disable the autoupdate of amazon-workspaces client.",
+        "$configFile = \"$dir\\workspaces.dll.config\"",
+        "If (Test-Path -Path $configFile) {",
+        "   [xml]$xml = Get-Content -path $configFile",
+        "   $key = $xml.SelectNodes(\"(//configuration/appSettings/add[@key='UpdateUrl'])[1]\")",
+        "   $key[0].Value = ''",
+        "   $xml.Save($configFile)",
+        "}"
+    ],
     "shortcuts": [
         [
             "workspaces.exe",
@@ -21,15 +31,5 @@
     },
     "autoupdate": {
         "url": "https://d2td7dqidlhjx7.cloudfront.net/prod/global/windows/Amazon+WorkSpaces.msi"
-    },
-    "post_install": [
-        "#disable the autoupdate of amazon-workspaces client.",
-        "$configFile = \"$dir\\workspaces.dll.config\"",
-        "If (Test-Path -Path $configFile) {",
-        "   [xml]$xml = Get-Content -path $configFile",
-        "   $key = $xml.SelectNodes(\"(//configuration/appSettings/add[@key='UpdateUrl'])[1]\")",
-        "   $key[0].Value = ''",
-        "   $xml.Save($configFile)",
-        "}"
-    ]
+    }
 }
