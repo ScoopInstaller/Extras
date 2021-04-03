@@ -1,10 +1,10 @@
 {
-    "version": "4.3.0.0",
+    "version": "4.4.0.0",
     "description": "A secure socks5 proxy, designed to protect your Internet traffic.",
     "homepage": "https://github.com/shadowsocks/shadowsocks-windows",
     "license": "GPL-3.0-only",
-    "url": "https://github.com/shadowsocks/shadowsocks-windows/releases/download/4.3.0.0/Shadowsocks-4.3.0.0.zip",
-    "hash": "sha512:0154a548cd317252e7ff350ce2e0bb8bd85b25163b86ffb70cb605b211074438de514a804d18a550225e066c6ea93702a81e457feddd8f2fe8b5ca33e53c37db",
+    "url": "https://github.com/shadowsocks/shadowsocks-windows/releases/download/4.4.0.0/Shadowsocks-4.4.0.185.zip",
+    "hash": "sha512:36aaa0a2cc396aada47358b70264415c7d966956829b6ce5c31e690db10a5a576420195d6d823bcc7f53ee80f2358e882dc9bd6f1e5be33dcc74f1bfdc2e794e",
     "pre_install": [
         "function CreateFile ($name, $value = $null) {",
         "    if (!(Test-Path \"$persist_dir\\$name\")) {",
@@ -27,12 +27,15 @@
         "pac.txt",
         "user-rule.txt"
     ],
-    "checkver": "github",
+    "checkver": {
+        "url": "https://api.github.com/repos/shadowsocks/shadowsocks-windows/releases/latest",
+        "regex": "(?s)\"tag_name\":\"([\\d.]+)\".+Shadowsocks-(?<main>[\\d.]+)\\.(?<build>\\d+).zip"
+    },
     "autoupdate": {
-        "url": "https://github.com/shadowsocks/shadowsocks-windows/releases/download/$version/Shadowsocks-$version.zip",
+        "url": "https://github.com/shadowsocks/shadowsocks-windows/releases/download/$version/Shadowsocks-$matchMain.$matchBuild.zip",
         "hash": {
-            "url": "https://github.com/shadowsocks/shadowsocks-windows/releases/tag/$version",
-            "regex": "(?sm)$basename.*?$sha512"
+            "url": "$url.hash",
+            "regex": "$sha512"
         }
     }
 }
