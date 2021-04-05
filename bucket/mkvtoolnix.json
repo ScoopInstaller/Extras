@@ -15,19 +15,15 @@
     },
     "extract_dir": "mkvtoolnix",
     "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\mkvtoolnix-gui.ini\")) {",
-        "    Set-Content \"$dir\\mkvtoolnix-gui.ini\" @('[settings]', 'updates\\checkForUpdates=false') -Encoding Ascii",
-        "} else {",
+        "if (Test-Path \"$persist_dir\\mkvtoolnix-gui.ini\") {",
         "    # Persist mkvtoolnix-gui.ini manully because symlink doesn't work.",
         "    Copy-Item \"$persist_dir\\mkvtoolnix-gui.ini\" \"$dir\"",
+        "} else {",
+        "    Set-Content \"$dir\\mkvtoolnix-gui.ini\" @('[settings]', 'updates\\checkForUpdates=false') -Encoding Ascii",
         "}"
     ],
     "uninstaller": {
-        "script": [
-            "if (Test-Path \"$dir\\mkvtoolnix-gui.ini\") {",
-            "    Copy-Item \"$dir\\mkvtoolnix-gui.ini\" \"$persist_dir\" -Force",
-            "}"
-        ]
+        "script": "Copy-Item \"$dir\\mkvtoolnix-gui.ini\" \"$persist_dir\" -ErrorAction 'SilentlyContinue' -Force"
     },
     "bin": [
         "mkvextract.exe",
@@ -46,7 +42,7 @@
         "cache",
         "jobQueue"
     ],
-    "checkver": "Released v([\\d.]+)",
+    "checkver": "Released v?([\\d.]+)",
     "autoupdate": {
         "architecture": {
             "64bit": {
