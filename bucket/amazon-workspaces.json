@@ -1,5 +1,5 @@
 {
-    "version": "3.1.4",
+    "version": "3.1.6.2064",
     "description": "Client for Amazon workspaces service",
     "homepage": "https://clients.amazonworkspaces.com",
     "license": {
@@ -7,13 +7,14 @@
         "url": "https://clients.amazonworkspaces.com/app-terms.html"
     },
     "url": "https://d2td7dqidlhjx7.cloudfront.net/prod/global/windows/Amazon+WorkSpaces.msi",
-    "hash": "604e40ed03883e1d740367fbcc4da9c21fc88fe26f9df7aca4ed0a25c0b1ac2e",
+    "hash": "163fa99b95bf986a101743650c313e5afb895bbd019d12a0c5610c1032511b47",
     "extract_dir": "[ApplicationFolderName]",
     "pre_install": [
-        "#disable the autoupdate of amazon-workspaces client.",
+        "# Disable the autoupdate of amazon-workspaces client",
         "$configFile = \"$dir\\workspaces.dll.config\"",
-        "If (Test-Path -Path $configFile) {",
-        "   [xml]$xml = Get-Content -path $configFile",
+        "Copy-Item $configFile \"${configFile}Ahoj\"",
+        "if (Test-Path -LiteralPath $configFile) {",
+        "   [xml]$xml = Get-Content -LiteralPath $configFile",
         "   $key = $xml.SelectSingleNode(\"(//configuration/appSettings/add[@key='UpdateUrl'])[1]\")",
         "   $key.Value = ''",
         "   $xml.Save($configFile)",
