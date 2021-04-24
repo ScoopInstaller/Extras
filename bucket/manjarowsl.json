@@ -1,0 +1,62 @@
+{
+    "##": "'rootfs' must be a 'real' directory (at least on Windows 10 RS4)",
+    "version": "20210401",
+    "description": "Install Manjaro as a WSL Instance",
+    "homepage": "https://github.com/sileshn/ManjaroWSL",
+    "license": "MIT",
+    "notes": "Even when you are logging in as 'root', some operations (like service command) require Windows administrator privileges",
+    "url": "https://github.com/sileshn/ManjaroWSL/releases/download/20210401/Manjaro.zip",
+    "hash": "371bb6d08ca665f4a33ab579207a6ae235022968cf3b3eee7fb1c2eb0164e4da",
+    "post_install": [
+        "$installable = $true",
+        "$user = [Security.Principal.WindowsIdentity]::GetCurrent() -as [Security.Principal.WindowsPrincipal]",
+        "$permission = Get-Acl $persist_dir | Select-Object -ExpandProperty Access | Where-Object {",
+        "    ($user.IsInRole($_.IdentityReference)) -and `",
+        "    ($_.FileSystemRights.ToString() -eq 'FullControl') -and `",
+        "    ($_.InheritanceFlags -band 3) -and `",
+        "    ($_.PropagationFlags.ToString() -ne 'NoPropagateInherit')",
+        "}",
+        "if ($null -eq $permission) {",
+        "   warn 'Full Control access to the scoop directory is necessary to install WSL distribution.'",
+        "   warn 'Change directory security and reinstall ManjaroWSL.'",
+        "   $installable = $false",
+        "}",
+        "if ($null -eq (Get-Command 'wslconfig' -ErrorAction SilentlyContinue)) {",
+        "    warn 'WSL appears not to be enabled!'",
+        "    warn 'Run ''Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux'''",
+        "    warn 'from an elevated PowerShell. Restart your computer when prompted and reinstall ManjaroWSL.'",
+        "    $installable = $false",
+        "}",
+        "if ($installable) {",
+        "    $installable = !(Invoke-ExternalCommand \"$dir\\Manjaro.exe\" 'isregd')",
+        "}",
+        "if ($installable) {",
+        "    warn 'DO NOT KILL THE PROCESS. Installation is still running!'",
+        "    Copy-Item \"$dir\\Manjaro.exe\" \"$persist_dir\\data\\Manjaro.exe\"",
+        "    $res = Invoke-ExternalCommand \"$persist_dir\\data\\Manjaro.exe\" 'install', \"$dir\\rootfs.tar.gz\"",
+        "    Remove-Item \"$persist_dir\\data\\Manjaro.exe\" -Force",
+        "    if(!$res) { error 'ManjaroWsl installation failed!'; return }",
+        "}",
+        "Remove-Item \"$dir\\rootfs.tar.gz\" -Force"
+    ],
+    "uninstaller": {
+        "script": [
+            "if ($cmd -ne 'uninstall') { return }",
+            "$res = Invoke-ExternalCommand \"$dir\\Manjaro.exe\" 'isregd'",
+            "if(!$res) { error 'ManjaroWsl is not registered!'; return }",
+            "Invoke-ExternalCommand \"$dir\\Manjaro.exe\" 'clean', '-y' | Out-Null"
+        ]
+    },
+    "bin": "Manjaro.exe",
+    "shortcuts": [
+        [
+            "Manjaro.exe",
+            "Manjaro"
+        ]
+    ],
+    "persist": "data",
+    "checkver": "github",
+    "autoupdate": {
+        "url": "https://github.com/sileshn/ManjaroWSL/releases/download/$version/Manjaro.zip"
+    }
+}
