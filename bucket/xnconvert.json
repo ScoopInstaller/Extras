@@ -21,12 +21,14 @@
         "if (Test-Path \"$persist_dir\\xnconvert.ini\") {",
         "    Copy-Item \"$persist_dir\\xnconvert.ini\" \"$dir\"",
         "} else {",
-        "    ensure \"$persist_dir\" | Out-Null",
         "    Set-Content \"$dir\\xnconvert.ini\" '[Start]', 'updater=0' -Encoding Ascii",
         "}"
     ],
     "uninstaller": {
-        "script": "Copy-Item \"$dir\\xnconvert.ini\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
+        "script": [
+            "ensure \"$persist_dir\" | Out-Null",
+            "Copy-Item \"$dir\\xnconvert.ini\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
+        ]
     },
     "bin": "XnConvert.exe",
     "shortcuts": [
