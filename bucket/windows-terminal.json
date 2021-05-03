@@ -6,14 +6,23 @@
     "suggest": {
         "vcredist": "extras/vcredist2019"
     },
-    "url": "https://github.com/microsoft/terminal/releases/download/v1.7.1091.0/Microsoft.WindowsTerminal_1.7.1091.0_8wekyb3d8bbwe.msixbundle#/dl.7z",
-    "hash": "dd47f7d3773528dc9a8e31d52a08f4a8d9ee58d4388090bc892546fffbd90d29",
+    "notes": "Add Windows Terminal as a context menu option by running: \"$dir\\windows-terminal-install-context.reg\"",
+    "url": [
+        "https://github.com/microsoft/terminal/releases/download/v1.7.1091.0/Microsoft.WindowsTerminal_1.7.1091.0_8wekyb3d8bbwe.msixbundle#/dl.7z",
+        "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/windows-terminal/install-context.reg",
+        "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/windows-terminal/uninstall-context.reg"
+    ],
+    "hash": [
+        "dd47f7d3773528dc9a8e31d52a08f4a8d9ee58d4388090bc892546fffbd90d29",
+        "c884727f55c91e200906f3d7f5d4ae84c09e9498113a247c20fcdac6811a21a2",
+        "022c5333ecbfe1183f27933f23f9a94ded1a7cac4d33f870bd1d30dd95b26db9"
+    ],
     "architecture": {
         "64bit": {
-            "pre_install": "Get-ChildItem \"$dir\" -Exclude '*x64.msix' | Remove-Item -Force -Recurse"
+            "pre_install": "Get-ChildItem \"$dir\" -Exclude '*x64.msix', 'install-context.reg', 'uninstall-context.reg' | Remove-Item -Force -Recurse"
         },
         "32bit": {
-            "pre_install": "Get-ChildItem \"$dir\" -Exclude '*x86.msix' | Remove-Item -Force -Recurse"
+            "pre_install": "Get-ChildItem \"$dir\" -Exclude '*x86.msix', 'install-context.reg', 'uninstall-context.reg' | Remove-Item -Force -Recurse"
         }
     },
     "installer": {
@@ -33,6 +42,26 @@
             "WindowsTerminal.exe",
             "Windows Terminal"
         ]
+    ],
+    "post_install": [
+        "$file = \"$dir\\install-context.reg\"",
+        "if (Test-Path $file) {",
+        "  Rename-Item $file -NewName \"windows-terminal-install-context.reg\"",
+        "  $file = \"$dir\\windows-terminal-install-context.reg\"",
+        "  $wtpath = \"$dir\\WindowsTerminal.exe\".Replace('\\', '\\\\')",
+        "  $content = Get-Content $file",
+        "  $content = $content.Replace('$wt', $wtpath)",
+        "  if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "  $content | Set-Content -Path $file",
+        "}",
+        "$file = \"$dir\\uninstall-context.reg\"",
+        "if (Test-Path $file) {",
+        "  Rename-Item $file -NewName \"windows-terminal-uninstall-context.reg\"",
+        "  $file = \"$dir\\windows-terminal-uninstall-context.reg\"",
+        "  $content = Get-Content $file",
+        "  if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "  $content | Set-Content -Path $file",
+        "}"
     ],
     "checkver": "github",
     "autoupdate": {
