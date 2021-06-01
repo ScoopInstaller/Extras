@@ -1,0 +1,55 @@
+{
+    "version": "6.4.0",
+    "description": "Collaborative tool for designs' and styleguides' handoff with specs, assets and code snippets",
+    "homepage": "https://zeplin.io",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://zeplin.io/terms"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://pkg.zeplin.io/windows/latestv2/x64/Zeplin-6.4.0-full.nupkg",
+            "hash": "sha1:f4a047c1b4eaf037dcd4345e846a7d873683f069"
+        },
+        "32bit": {
+            "url": "https://pkg.zeplin.io/windows/latestv2/ia32/Zeplin-6.4.0-full.nupkg",
+            "hash": "sha1:b8132b2661e0a76eb21eaf6d01a4f648ff410a88"
+        }
+    },
+    "extract_dir": "lib\\net45",
+    "pre_install": [
+        "if (!(Test-Path \"$env:APPDATA\\Zeplin\\prefs.json\")) {",
+        "    ensure \"$env:APPDATA\\Zeplin\" | Out-Null",
+        "    Set-Content \"$env:APPDATA\\Zeplin\\prefs.json\" '{ \"installUpdatesAutomatically\": false }' -Force -Encoding Ascii",
+        "}"
+    ],
+    "uninstaller": {
+        "script": "if ($purge) { Remove-Item \"$env:APPDATA\\Zeplin\" -Force -Recurse }"
+    },
+    "bin": "Zeplin.exe",
+    "shortcuts": [
+        [
+            "Zeplin.exe",
+            "Zeplin"
+        ]
+    ],
+    "checkver": {
+        "url": "https://pkg.zeplin.io/windows/latestv2/x64/RELEASES",
+        "regex": "Zeplin-([\\d.]+)-full",
+        "reverse": true
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://pkg.zeplin.io/windows/latestv2/x64/Zeplin-$version-full.nupkg"
+            },
+            "32bit": {
+                "url": "https://pkg.zeplin.io/windows/latestv2/ia32/Zeplin-$version-full.nupkg"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/RELEASES",
+            "regex": "$sha1\\s+$basename"
+        }
+    }
+}

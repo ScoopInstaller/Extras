@@ -1,33 +1,29 @@
 {
-    "version": "51.0.0",
+    "version": "57.0.0",
     "description": "A set of tools to create, alter and inspect Matroska files.",
     "homepage": "https://mkvtoolnix.download",
     "license": "GPL-2.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://mkvtoolnix.download/windows/releases/51.0.0/mkvtoolnix-64-bit-51.0.0.7z",
-            "hash": "sha512:b3a77d23c0a9ca2949725c8f928bcb93fb84df5839c5a04bc867a8a9d3bddf091ea051f49174a7596895c7d97fd7fb740b8c1af788cba51c098c8732edd4e8ae"
+            "url": "https://mkvtoolnix.download/windows/releases/57.0.0/mkvtoolnix-64-bit-57.0.0.7z",
+            "hash": "sha512:454b830fe73fc4cd6e0106f4405c98bdd2c5005bfe53ab41e2e0fc545021ee0fd0ee4bf219051b0d297ca7a1af6ee228f3a489e6476c639f1be68a4c7ef97bcf"
         },
         "32bit": {
-            "url": "https://mkvtoolnix.download/windows/releases/51.0.0/mkvtoolnix-32-bit-51.0.0.7z",
-            "hash": "sha512:8a24f519ac3c187f7e7082ac90ecc68b89c75de96802c8157b2ec7e50126067f5e4dc4936c7c6e3069c33b0513746c349559e9d16ca8c9a6016030df0b107c6c"
+            "url": "https://mkvtoolnix.download/windows/releases/57.0.0/mkvtoolnix-32-bit-57.0.0.7z",
+            "hash": "sha512:8a392cc0ec6be61ec700d19e7eafe15a4759234f06076a0b2d75233a801df400bba11524793f1f5b332bc7ba665f15d94037197f0f6ca48e13881c2551f5556c"
         }
     },
     "extract_dir": "mkvtoolnix",
     "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\mkvtoolnix-gui.ini\")) {",
-        "    Set-Content \"$dir\\mkvtoolnix-gui.ini\" @('[settings]', 'updates\\checkForUpdates=false') -Encoding Ascii",
-        "} else {",
+        "if (Test-Path \"$persist_dir\\mkvtoolnix-gui.ini\") {",
         "    # Persist mkvtoolnix-gui.ini manully because symlink doesn't work.",
         "    Copy-Item \"$persist_dir\\mkvtoolnix-gui.ini\" \"$dir\"",
+        "} else {",
+        "    Set-Content \"$dir\\mkvtoolnix-gui.ini\" @('[settings]', 'updates\\checkForUpdates=false') -Encoding Ascii",
         "}"
     ],
     "uninstaller": {
-        "script": [
-            "if (Test-Path \"$dir\\mkvtoolnix-gui.ini\") {",
-            "    Copy-Item \"$dir\\mkvtoolnix-gui.ini\" \"$persist_dir\" -Force",
-            "}"
-        ]
+        "script": "Copy-Item \"$dir\\mkvtoolnix-gui.ini\" \"$persist_dir\" -ErrorAction 'SilentlyContinue' -Force"
     },
     "bin": [
         "mkvextract.exe",
@@ -46,7 +42,7 @@
         "cache",
         "jobQueue"
     ],
-    "checkver": "Released v([\\d.]+)",
+    "checkver": "Released v?([\\d.]+)",
     "autoupdate": {
         "architecture": {
             "64bit": {

@@ -1,5 +1,5 @@
 {
-    "version": "1.7.0",
+    "version": "2.1.2",
     "description": "A command-line utility that pipes video streams from various services into a video player.",
     "homepage": "https://streamlink.github.io/",
     "license": "BSD-2-Clause",
@@ -10,26 +10,15 @@
             "ffmpeg-nightly"
         ]
     },
-    "url": "https://github.com/streamlink/streamlink/releases/download/1.7.0/streamlink-1.7.0.exe#/dl.7z",
-    "hash": "53ac811db80cb561fd336a9bf6575758a805125c1fb362b707c47a26e4367fc1",
+    "url": "https://github.com/streamlink/streamlink/releases/download/2.1.2/streamlink-2.1.2.exe#/dl.7z",
+    "hash": "3c27d90cfe1dd862cc56538e97efc686c2b9ece431fda3d6cd81163284ac2016",
     "pre_install": [
-        "\"#!`\"$dir\\Python\\python.exe`\"\" | Set-Content \"$dir\\bin\\python.txt\" -Encoding Ascii",
-        "\"#!`\"$dir\\Python\\pythonw.exe`\"\" | Set-Content \"$dir\\bin\\pythonw.txt\" -Encoding Ascii",
-        "if ((Get-Command Get-Content).Parameters.ContainsKey('AsByteStream')) {",
-        "    Write-host 'here' -f magenta",
-        "    $byte = @{ 'AsByteStream' = $true }",
-        "} else {",
-        "    $byte = @{ 'Encoding' = 'Byte' }",
-        "}",
-        "Get-Content @byte -Path \"$dir\\bin\\launcher_exe.dat\", \"$dir\\bin\\python.txt\", \"$dir\\bin\\streamlink-append.zip\" | Set-Content @byte -Path \"$dir\\bin\\streamlink.exe\"",
-        "Get-Content @byte -Path \"$dir\\bin\\launcher_noconsole_exe.dat\", \"$dir\\bin\\pythonw.txt\", \"$dir\\bin\\streamlinkw-append-noconsole.zip\" | Set-Content @byte \"$dir\\bin\\streamlinkw.exe\"",
-        "",
         "if (!(Test-Path \"$env:APPDATA\\streamlink\\streamlinkrc\")) {",
-        "    Write-Host 'Copying default ''streamlinkrc'' to ''%APPDATA%\\streamlink\\streamlinkrc'''",
+        "    info 'Copying default ''streamlinkrc'' to ''%APPDATA%\\streamlink\\streamlinkrc'''",
         "    ensure \"$env:APPDATA\\streamlink\" | Out-Null",
         "    Copy-Item \"$dir\\`$APPDATA\\streamlink\\streamlinkrc\" \"$env:APPDATA\\streamlink\\streamlinkrc\"",
         "}",
-        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\`$APPDATA\", \"$dir\\ffmpeg\", \"$dir\\uninstall.exe\" -Recurse"
+        "Remove-Item \"$dir\\`$*\", \"$dir\\ffmpeg\", \"$dir\\uninstall.exe\" -Recurse"
     ],
     "uninstaller": {
         "script": "if ($purge) { Remove-Item \"$env:APPDATA\\streamlink\" -Recurse}"
