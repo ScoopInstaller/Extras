@@ -1,0 +1,64 @@
+{
+    "version": "1.8.0",
+    "description": "A simple rclone GUI",
+    "homepage": "https://github.com/kapitainsky/RcloneBrowser",
+    "license": "MIT",
+    "suggest": {
+        "rclone": [
+            "rclone",
+            "rclone-beta"
+        ]
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/kapitainsky/RcloneBrowser/releases/download/1.8.0/rclone-browser-1.8.0-a0b66c6-windows-64-bit.exe",
+            "hash": "sha512:1d465a5417f57ed3c203464ccebf3badef7217ad2bb8766ad5c08827082dd6ed1a4e9b3cdfa12ba71d53e0846ea4f3d123b18bfc414952c909676daca0442a0b"
+        },
+        "32bit": {
+            "url": "https://github.com/kapitainsky/RcloneBrowser/releases/download/1.8.0/rclone-browser-1.8.0-a0b66c6-windows-32-bit.exe",
+            "hash": "sha512:fdce63684ba687ae30e9f25c39fbbc7f875c49667eedeaaa9e59a25a1febcff928465a293c81721f648dce8569241a2a938ae16d5462cdd2c366a1ba13c1ee1b"
+        }
+    },
+    "innosetup": true,
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\tasks.bin\")) { New-Item \"$dir\\tasks.bin\" | Out-Null }",
+        "if (Test-Path \"$persist_dir\\RcloneBrowser.ini\") {",
+        "   Copy-Item \"$persist_dir\\RcloneBrowser.ini\" \"$dir\"",
+        "} else {",
+        "   $forwardPer = \"$persist_dir\\downloads\" -replace '\\\\', '/'",
+        "   Set-Content \"$dir\\RcloneBrowser.ini\" @(",
+        "       '[Settings]', 'checkRcloneBrowserUpdates=false', 'checkRcloneUpdates=false', \"defaultDownloadDir=$forwardPer\"",
+        "   ) -Encoding Ascii",
+        "}"
+    ],
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\RcloneBrowser.ini\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
+    },
+    "shortcuts": [
+        [
+            "RcloneBrowser.exe",
+            "Rclone Browser"
+        ]
+    ],
+    "persist": [
+        "downloads",
+        "tasks.bin"
+    ],
+    "checkver": {
+        "github": "https://github.com/kapitainsky/RcloneBrowser",
+        "regex": "/rclone-browser-([\\d.]+)-(?<commit>[a-fA-F0-9]+)-windows"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/kapitainsky/RcloneBrowser/releases/download/$version/rclone-browser-$version-$matchCommit-windows-64-bit.exe"
+            },
+            "32bit": {
+                "url": "https://github.com/kapitainsky/RcloneBrowser/releases/download/$version/rclone-browser-$version-$matchCommit-windows-32-bit.exe"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/sha512sum.txt.asc"
+        }
+    }
+}

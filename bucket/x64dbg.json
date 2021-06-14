@@ -1,55 +1,50 @@
 {
+    "version": "2021-06-12_12-51",
+    "description": "x64/x32 debugger",
     "homepage": "https://x64dbg.com/",
-    "description": "An open-source x64/x32 debugger for windows.",
     "license": "GPL-3.0-only",
-    "version": "2020-02-11_01-07",
-    "url": "https://github.com/x64dbg/x64dbg/releases/download/snapshot/snapshot_2020-02-11_01-07.zip",
-    "hash": "f06e9e630eb1994ae011178c2076ce1b627ef4793ac5af1a1fa650f703159cee",
+    "url": "https://github.com/x64dbg/x64dbg/releases/download/snapshot/snapshot_2021-06-12_12-51.zip",
+    "hash": "16358ab72ca59f80c4975a67f06b55db954d20d5d5c18e6c4f6fd02b6123bb51",
+    "pre_install": [
+        "'release\\x96dbg.ini', 'release\\x32\\x32dbg.ini', 'release\\x64\\x64dbg.ini' | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "}"
+    ],
     "bin": [
-        "release/x96dbg.exe",
-        "release/x32/x32dbg.exe",
-        "release/x64/x64dbg.exe"
+        "release\\x96dbg.exe",
+        "release\\x32\\x32dbg.exe",
+        "release\\x64\\x64dbg.exe"
     ],
     "shortcuts": [
         [
-            "release/x96dbg.exe",
+            "release\\x96dbg.exe",
             "x96dbg"
         ],
         [
-            "release/x32/x32dbg.exe",
+            "release\\x32\\x32dbg.exe",
             "x32dbg"
         ],
         [
-            "release/x64/x64dbg.exe",
+            "release\\x64\\x64dbg.exe",
             "x64dbg"
         ]
     ],
-    "pre_install": [
-        "function ensureFile([String] $name) {",
-        "    if (!(Test-Path \"$persist_dir\\$name\") -and !(Test-Path \"$dir\\$name\")) {",
-        "        Add-Content -Path \"$dir\\$name\" -Value $null",
-        "    }",
-        "}",
-        "ensureFile 'release\\x96dbg.ini'",
-        "ensureFile 'release\\x32\\x32dbg.ini'",
-        "ensureFile 'release\\x64\\x64dbg.ini'"
-    ],
     "persist": [
-        "release/x96dbg.ini",
-        "release/x32/x32dbg.ini",
-        "release/x32/memdumps",
-        "release/x32/garbage",
-        "release/x32/db",
-        "release/x32/plugins",
-        "release/x64/x64dbg.ini",
-        "release/x64/memdumps",
-        "release/x64/garbage",
-        "release/x64/db",
-        "release/x64/plugins"
+        "release\\x96dbg.ini",
+        "release\\x32\\x32dbg.ini",
+        "release\\x32\\memdumps",
+        "release\\x32\\garbage",
+        "release\\x32\\db",
+        "release\\x32\\plugins",
+        "release\\x64\\x64dbg.ini",
+        "release\\x64\\memdumps",
+        "release\\x64\\garbage",
+        "release\\x64\\db",
+        "release\\x64\\plugins"
     ],
     "checkver": {
         "github": "https://github.com/x64dbg/x64dbg",
-        "re": "snapshot_([\\d]*-[\\d]+-[\\d]+_[\\d]+-[\\d]+)"
+        "regex": "snapshot_([\\d-_]+)"
     },
     "autoupdate": {
         "url": "https://github.com/x64dbg/x64dbg/releases/download/snapshot/snapshot_$version.zip"

@@ -5,17 +5,18 @@
     "license": "Unknown",
     "url": "https://github.com/White-Tiger/T-Clock/releases/download/v2.4.4%23492-rc/T-Clock.7z",
     "hash": "22aa3e68767de4f55939d9ec698eedac5ccdc13e6c9c73c8c18d9fa4b3a0a272",
-    "installer": {
-        "script": [
-            "if (-not (Test-Path \"$persist_dir\\T-Clock.ini\")) {",
-            "    New-Item \"$dir\\T-Clock.ini\" -ItemType File | Out-Null",
-            "} else {",
-            "    Copy-Item \"$persist_dir\\T-Clock.ini\" \"$dir\"",
-            "}"
-        ]
-    },
+    "pre_install": [
+        "if (Test-Path \"$persist_dir\\T-Clock.ini\") {",
+        "    Copy-Item \"$persist_dir\\T-Clock.ini\" \"$dir\"",
+        "} else {",
+        "    New-Item \"$dir\\T-Clock.ini\" | Out-Null",
+        "}"
+    ],
     "uninstaller": {
-        "script": "if (Test-Path \"$dir\\T-Clock.ini\") { Copy-Item \"$dir\\T-Clock.ini\" \"$persist_dir\" }"
+        "script": [
+            "ensure \"$persist_dir\" | Out-Null",
+            "Copy-Item \"$dir\\T-Clock.ini\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
+        ]
     },
     "architecture": {
         "64bit": {

@@ -1,35 +1,54 @@
 {
-    "homepage": "https://github.com/zhongyang219/TrafficMonitor",
-    "description": "TrafficMonitor is a network monitoring suspension window software in Windows platform. It can display the current network speed, CPU and memory usage. It also support the functions of display in the taskbar, change skin and historical traffic statistics.",
+    "version": "1.80.3",
+    "description": "Network monitoring suspension window software in Windows platform. It can display the current network speed, CPU and memory usage. It also support the functions of display in the taskbar, change skin and historical traffic statistics.",
+    "homepage": "https://github.com/zhongyang219/TrafficMonitor/blob/master/README_en-us.md",
     "license": "MIT",
-    "version": "1.77",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.77/TrafficMonitor_V1.77_x64.7z",
-            "hash": "3ecbb52a939301544b293a05bdd39f76c3329604221f6660824f8150d0be493a"
+            "url": "https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.80.3/TrafficMonitor_V1.80.3_x64.zip",
+            "hash": "47b12bf9b918949c6c2acb3ac211712a94b0b1cb94746db8572f4180bf9e0b42"
         },
         "32bit": {
-            "url": "https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.77/TrafficMonitor_V1.77_x86.7z",
-            "hash": "3973d2db7b9869ecbe40a0c6b12fbad3155f40a14dbf11dbb4aac975b3831487"
+            "url": "https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.80.3/TrafficMonitor_V1.80.3_x86.zip",
+            "hash": "038391f4f423eb10a961e7b181a70f25f6f61e2864ff88746c77416d8b0dd659"
         }
     },
     "extract_dir": "TrafficMonitor",
+    "pre_install": [
+        "    # Portable migration",
+        "if (!(Test-Path \"$persist_dir\") -and (Test-Path \"$env:APPDATA\\TrafficMonitor\\config.ini\")) {",
+        "    ensure \"$persist_dir\" | Out-Null",
+        "    Copy-Item \"$env:APPDATA\\TrafficMonitor\\*\" \"$persist_dir\"",
+        "    Rename-Item \"$env:APPDATA\\TrafficMonitor\" 'TrafficMonitor.old'",
+        "}",
+        "",
+        "if (!(Test-Path \"$persist_dir\\config.ini\")) { Set-Content \"$dir\\config.ini\" @('[general]', 'check_update_when_start = false') -Encoding Ascii }",
+        "if (!(Test-Path \"$persist_dir\\global_cfg.ini\")) { Set-Content \"$dir\\global_cfg.ini\" @('[config]', 'portable_mode = true') -Encoding Ascii }",
+        "if (!(Test-Path \"$persist_dir\\history_traffic.dat\")) { New-Item \"$dir\\history_traffic.dat\" | Out-Null }"
+    ],
     "bin": "TrafficMonitor.exe",
-    "checkver": "github",
-    "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://github.com/zhongyang219/TrafficMonitor/releases/download/V$version/TrafficMonitor_V$version_x64.7z"
-            },
-            "32bit": {
-                "url": "https://github.com/zhongyang219/TrafficMonitor/releases/download/V$version/TrafficMonitor_V$version_x86.7z"
-            }
-        }
-    },
     "shortcuts": [
         [
             "TrafficMonitor.exe",
             "TrafficMonitor"
         ]
-    ]
+    ],
+    "persist": [
+        "config.ini",
+        "global_cfg.ini",
+        "history_traffic.dat"
+    ],
+    "checkver": {
+        "github": "https://github.com/zhongyang219/TrafficMonitor"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/zhongyang219/TrafficMonitor/releases/download/V$version/TrafficMonitor_V$version_x64.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/zhongyang219/TrafficMonitor/releases/download/V$version/TrafficMonitor_V$version_x86.zip"
+            }
+        }
+    }
 }

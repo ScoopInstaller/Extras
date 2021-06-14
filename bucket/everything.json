@@ -1,29 +1,25 @@
 {
-    "version": "1.4.1.935",
+    "version": "1.4.1.1009",
     "description": "Locate files and folders by name instantly.",
     "homepage": "https://www.voidtools.com",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://www.voidtools.com/Everything-1.4.1.935.x64.zip",
-            "hash": "e6e4524d55745d55e1672893304257c45f106bbe63718a8e6568e8cfd63ba571"
+            "url": "https://www.voidtools.com/Everything-1.4.1.1009.x64.zip",
+            "hash": "f61b601acba59d61fb0631a654e48a564db34e279b6f2cc45e20a42ce9d9c466"
         },
         "32bit": {
-            "url": "https://www.voidtools.com/Everything-1.4.1.935.x86.zip",
-            "hash": "b0a5c0854a4ed33e0f3f10a0c58db434486f554d260cfdbe15c2aa2fa4bd67c5"
+            "url": "https://www.voidtools.com/Everything-1.4.1.1009.x86.zip",
+            "hash": "3ada0479c4d55b185a33f7700d7ace8cd85cdceb8ddb610e062cfe04558275ca"
         }
     },
     "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\Everything.ini\")) { & \"$dir\\Everything.exe\" -install-config null }",
-        "if (!(Test-Path \"$persist_dir\\Everything.db\")) { New-Item \"$dir\\Everything.db\" | Out-Null }",
-        "if (Test-Path \"$persist_dir\\Bookmarks.csv\") {",
-        "    Copy-Item \"$persist_dir\\Bookmarks.csv\" \"$dir\"",
-        "} else {",
-        "    New-Item \"$dir\\Bookmarks.csv\" | Out-Null",
-        "}"
+        "ensure \"$persist_dir\" | Out-Null",
+        "if (!(Test-Path \"$persist_dir\\Everything.ini\")) { Invoke-ExternalCommand \"$dir\\Everything.exe\" -Args @('-install-config null') | Out-Null }",
+        "Get-ChildItem \"$persist_dir\\*\" -Include 'Everything.db', 'Bookmarks.csv', 'Everything.ini' | Copy-Item -Destination \"$dir\" -ErrorAction SilentlyContinue"
     ],
     "uninstaller": {
-        "script": "if (Test-Path \"$dir\\Bookmarks.csv\") { Copy-Item \"$dir\\Bookmarks.csv\" \"$persist_dir\" -Force }"
+        "script": "Get-ChildItem \"$dir\\*\" -Include 'Everything.ini', 'Everything.db', 'Bookmarks.csv' | Copy-Item -Destination \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
     },
     "bin": "Everything.exe",
     "shortcuts": [
@@ -31,10 +27,6 @@
             "Everything.exe",
             "Everything"
         ]
-    ],
-    "persist": [
-        "Everything.db",
-        "Everything.ini"
     ],
     "checkver": "Download Everything ([\\d.]+)",
     "autoupdate": {

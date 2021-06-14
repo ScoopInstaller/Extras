@@ -1,18 +1,23 @@
 {
-    "homepage": "https://www.geekbench.com/",
+    "version": "5.4.1",
     "description": "CPU/GPU benchmark software",
-    "version": "5.1.0",
+    "homepage": "https://www.geekbench.com/",
     "license": {
         "identifier": "Proprietary",
-        "url": "https://www.primatelabs.com/legal/eula-v4.html"
+        "url": "https://www.primatelabs.com/legal/eula-v5.html"
     },
-    "url": "https://cdn.geekbench.com/Geekbench-5.1.0-WindowsSetup.exe#/dl.7z",
-    "hash": "be745178f70ccae7fdef2b87ba660922a489ad21513b5501197ccb53c6d93f77",
+    "architecture": {
+        "64bit": {
+            "url": "https://cdn.geekbench.com/Geekbench-5.4.1-WindowsSetup.exe",
+            "hash": "0eec12ad0cf91a4f9cb28f8e39b82357ed86b501ce44386ed90a4e7d02e6294a"
+        }
+    },
     "installer": {
         "script": [
+            "Expand-7zipArchive \"$dir\\$fname\" -Overwrite 'Skip' -Removal",
             "Move-Item \"$dir\\geekbench ?.exe\" \"$dir\\geekbench_gui.exe\"",
             "Move-Item \"$dir\\geekbench?.exe\" \"$dir\\geekbench.exe\"",
-            "Remove-Item \"$dir\\Uninstall*\", \"$dir\\$*\" -Recurse"
+            "Remove-Item \"$dir\\$*\", \"$dir\\geekbench_aarch64.exe\", \"$dir\\Uninstall*\" -Recurse"
         ]
     },
     "bin": "geekbench.exe",
@@ -24,9 +29,13 @@
     ],
     "checkver": {
         "url": "https://www.geekbench.com/download/windows/",
-        "regex": "Geekbench-([\\d.]+)-WindowsSetup.exe"
+        "regex": "Geekbench-([\\d.]+)-WindowsSetup\\.exe"
     },
     "autoupdate": {
-        "url": "https://cdn.geekbench.com/Geekbench-$version-WindowsSetup.exe#/dl.7z"
+        "architecture": {
+            "64bit": {
+                "url": "https://cdn.geekbench.com/Geekbench-$version-WindowsSetup.exe"
+            }
+        }
     }
 }

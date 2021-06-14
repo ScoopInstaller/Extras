@@ -1,11 +1,19 @@
 {
-    "version": "1.4.15",
-    "description": "Multi-platform transparent client-side encryption of your files in the cloud.",
+    "version": "1.5.16",
+    "description": "Multi-platform transparent client-side encryption of files in the cloud",
     "homepage": "https://cryptomator.org",
     "license": "GPL-3.0-only",
-    "url": "https://github.com/cryptomator/cryptomator/releases/download/1.4.15/Cryptomator-1.4.15-x64.exe",
-    "hash": "e7618f0eba90012370d9ebc98e01496d5069728441e40d312aaab9316dc6a740",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/cryptomator/cryptomator/releases/download/1.5.16/Cryptomator-1.5.16-x64.exe",
+            "hash": "be9efe5d615e9009b3fe7b4b20724cf7a08401d9d8cc9008187f58b03b7a3b47"
+        }
+    },
     "innosetup": true,
+    "post_install": [
+        "# change appdata settings folder",
+        "(Get-Content \"$dir\\app\\Cryptomator.cfg\" -Encoding ASCII).replace('~/AppData/Roaming/Cryptomator', './data') | Set-Content \"$dir\\app\\Cryptomator.cfg\" -Encoding ASCII"
+    ],
     "bin": "Cryptomator.exe",
     "shortcuts": [
         [
@@ -13,18 +21,19 @@
             "Cryptomator"
         ]
     ],
+    "persist": "data",
     "checkver": {
-        "github": "https://github.com/cryptomator/cryptomator"
+        "url": "https://github.com/cryptomator/cryptomator/releases",
+        "regex": "Cryptomator-([\\d.]+)-x64\\.exe"
     },
     "autoupdate": {
-        "url": "https://github.com/cryptomator/cryptomator/releases/download/$version/Cryptomator-$version-x64.exe",
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/cryptomator/cryptomator/releases/download/$version/Cryptomator-$version-x64.exe"
+            }
+        },
         "hash": {
             "url": "https://dl.bintray.com/cryptomator/cryptomator/$version/Cryptomator-$version-x64.exe.sha256"
         }
-    },
-    "persist": "data",
-    "post_install": [
-        "# change appdata settings folder",
-        "(Get-Content \"$dir\\app\\Cryptomator.cfg\" -Encoding ASCII).replace('~/AppData/Roaming/Cryptomator', '../data') | Set-Content \"$dir\\app\\Cryptomator.cfg\" -Encoding ASCII"
-    ]
+    }
 }

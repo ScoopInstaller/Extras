@@ -1,26 +1,27 @@
 {
+    "version": "7.16",
+    "description": "Yet another typical ZIP archiver",
     "homepage": "http://www.bandisoft.com/bandizip/",
-    "description": "Yet another typical ZIP archiver.",
     "license": {
         "identifier": "Freeware",
         "url": "https://en.bandisoft.com/bandizip/eula/"
     },
-    "version": "6.26",
+    "url": "https://dl.bandisoft.com/bandizip.std/BANDIZIP-PORTABLE.ZIP",
+    "hash": "d67b32824968455698e1db9778d04c3fc26286ad7a6e2528f1d2aa2a33e0310a",
     "architecture": {
         "64bit": {
-            "url": "https://dl.bandisoft.com/bandizip/BANDIZIP-PORTABLE-GL-64BIT.ZIP",
-            "hash": "199407d999ca869b4febbad3194466308c525de3a568d92529ebcfbe602e10db"
+            "pre_install": "Rename-Item \"$dir\\Bandizip.x64.exe\" 'Bandizip.exe'"
         },
         "32bit": {
-            "url": "https://dl.bandisoft.com/bandizip/BANDIZIP-PORTABLE-GL-32BIT.ZIP",
-            "hash": "4ebca9171df246747e95ac7dde96ff7455d99d7b0110d8847f478eabc6b514ad"
+            "pre_install": "Rename-Item \"$dir\\Bandizip.x86.exe\" 'Bandizip.exe'"
         }
     },
-    "persist": "Bandizip.ini",
-    "pre_install": [
-        "Get-ChildItem \"$dir\\Bandizip*.exe\" | Rename-Item -NewName \"$dir\\Bandizip.exe\"",
-        "If(!(Test-Path \"$dir\\Bandizip.ini\")) { Set-Content \"$dir\\Bandizip.ini\" -Value $null }"
-    ],
+    "installer": {
+        "script": [
+            "Get-ChildItem \"$dir\\Bandizip.x*.exe\" | Remove-Item",
+            "if (!(Test-Path \"$persist_dir\\Bandizip.ini\")) { New-Item \"$dir\\Bandizip.ini\" | Out-Null }"
+        ]
+    },
     "bin": "Bandizip.exe",
     "shortcuts": [
         [
@@ -28,18 +29,12 @@
             "Bandizip"
         ]
     ],
+    "persist": "Bandizip.ini",
     "checkver": {
         "url": "https://en.bandisoft.com/bandizip/history/",
-        "re": "<font[^>]+>v([\\d.]+)<"
+        "regex": "v([\\d.]+)</font"
     },
     "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://dl.bandisoft.com/bandizip/BANDIZIP-PORTABLE-GL-64BIT.ZIP"
-            },
-            "32bit": {
-                "url": "https://dl.bandisoft.com/bandizip/BANDIZIP-PORTABLE-GL-32BIT.ZIP"
-            }
-        }
+        "url": "https://dl.bandisoft.com/bandizip.std/BANDIZIP-PORTABLE.ZIP"
     }
 }

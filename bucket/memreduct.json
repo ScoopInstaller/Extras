@@ -13,14 +13,7 @@
             "extract_dir": "memreduct\\32"
         }
     },
-    "pre_install": [
-        "$file = 'memreduct.ini'",
-        "if (-not (Test-Path \"$persist_dir\\$file\")) {",
-        "    Write-Host 'File' $file 'does not exists. Creating.' -f Yellow",
-        "    $CONT = @('[memreduct]', 'CheckUpdates=false')",
-        "    Set-Content \"$dir\\$file\" ($CONT -join \"`r`n\") -Encoding Ascii",
-        "}"
-    ],
+    "pre_install": "if (!(Test-Path \"$persist_dir\\memreduct.ini\")) { Set-Content \"$dir\\memreduct.ini\" '[memreduct]', 'CheckUpdates=false' -Encoding Ascii }",
     "bin": "memreduct.exe",
     "shortcuts": [
         [
@@ -29,7 +22,7 @@
         ]
     ],
     "persist": "memreduct.ini",
-    "checkver": "softwareVersion\">([\\d\\.]+)",
+    "checkver": "softwareVersion\">([\\d.]+)",
     "autoupdate": {
         "url": "https://github.com/henrypp/memreduct/releases/download/v.$version/memreduct-$version-bin.zip",
         "hash": {

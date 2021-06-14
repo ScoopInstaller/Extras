@@ -1,16 +1,18 @@
 {
-    "homepage": "https://www.stunnel.org",
-    "version": "5.56",
-    "license": "GPL-2.0-or-later",
+    "version": "5.59",
     "description": "A multiplatform GNU/GPL-licensed proxy encrypting arbitrary TCP connections with SSL/TLS",
+    "homepage": "https://www.stunnel.org",
+    "license": "GPL-2.0-or-later",
+    "notes": [
+        "For Windows 32bit, use 'stunnel549' instead",
+        "Run 'stunnel -install' in the directory where a configured stunnel.conf is located (eg C:\\ProgramData\\scoop\\persist\\stunnel\\config) to create a native Windows service."
+    ],
     "architecture": {
         "64bit": {
-            "url": "https://www.stunnel.org/downloads/archive/5.x/stunnel-5.56-win64-installer.exe#/dl.7z",
-            "hash": "e9d7dea3976219f0fc89cfb4f645f47b1291ebec8ce55cff46dbbfbb2e9b4084"
+            "url": "https://www.stunnel.org/downloads/archive/5.x/stunnel-5.59-win64-installer.exe#/dl.7z",
+            "hash": "c45fa3f70ecf0628d1f5985f2c11fedfc989bbc64db857def82ca7ee602fd8e0"
         }
     },
-    "bin": "bin\\stunnel.exe",
-    "persist": "config",
     "uninstaller": {
         "script": [
             "stunnel -stop -quiet",
@@ -18,22 +20,20 @@
             "stunnel -exit -quiet"
         ]
     },
+    "bin": "bin\\stunnel.exe",
+    "persist": "config",
     "checkver": {
         "url": "https://www.stunnel.org/downloads.html",
-        "re": "stunnel-(.+?)-win64"
+        "regex": "stunnel-([\\d.]+)-win64"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://www.stunnel.org/downloads/archive/$majorVersion.x/stunnel-$version-win64-installer.exe#/dl.7z",
-                "hash": {
-                    "url": "$url.sha256"
-                }
+                "url": "https://www.stunnel.org/downloads/archive/$majorVersion.x/stunnel-$version-win64-installer.exe#/dl.7z"
             }
+        },
+        "hash": {
+            "url": "$url.sha256"
         }
-    },
-    "notes": [
-        "For Windows 32bit, use \"stunnel549\" instead",
-        "Run \"stunnel -install\" in the directory where a configured stunnel.conf is located (eg C:\\ProgramData\\scoop\\persist\\stunnel\\config) to create a native Windows service. Please note that as of version 5.50 Stunnel is a 64 bit application."
-    ]
+    }
 }

@@ -1,33 +1,37 @@
 {
-    "homepage": "https://playnite.link/",
-    "description": "An open source video game library manager and launcher with support for 3rd party libraries like Steam, GOG, Origin, Battle.net and Uplay. Includes game emulation support, providing one unified interface for your games.",
+    "version": "8.11",
+    "description": "Video game library manager and launcher with support for 3rd party libraries like Steam, GOG, Origin, Battle.net, ...",
+    "homepage": "https://playnite.link",
     "license": "MIT",
-    "version": "6.5",
-    "url": "https://playnite.link/update/stable/6.5/Playnite65.zip",
-    "hash": "8640186b5462b52e44654449f503d8b1f8b7520943a75523604d07576532cefb",
-    "bin": "PlayniteUI.exe",
-    "shortcuts": [
+    "url": "https://playnite.link/update/stable/8.11/Playnite811.zip",
+    "hash": "ce97454a98bafc3921750e0f1fe9f85ae60ffe57dab6f0c2333ae5de8efc2eac",
+    "pre_install": "Copy-Item \"$persist_dir\\config.json\" \"$dir\" -ErrorAction SilentlyContinue",
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\config.json\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
+    },
+    "bin": [
         [
-            "PlayniteUI.exe",
+            "Playnite.DesktopApp.exe",
             "Playnite"
         ]
     ],
-    "pre_install": [
-        "if (!(Test-Path \"$dir\\config.json\")) {",
-        "    New-Item -Force -Path \"$dir\" -Name 'config.json' -Value '{}' | Out-Null",
-        "}"
+    "shortcuts": [
+        [
+            "Playnite.DesktopApp.exe",
+            "Playnite"
+        ]
     ],
-    "checkver": {
-        "github": "https://github.com/JosefNemec/Playnite"
-    },
-    "autoupdate": {
-        "url": "https://playnite.link/update/stable/$version/Playnite$cleanVersion.zip"
-    },
     "persist": [
         "browsercache",
         "cache",
         "ExtensionsData",
-        "library",
-        "config.json"
-    ]
+        "library"
+    ],
+    "checkver": {
+        "url": "https://playnite.link/download.html",
+        "regex": "/download/([\\d.]+)/Playnite"
+    },
+    "autoupdate": {
+        "url": "https://playnite.link/update/stable/$version/Playnite$cleanVersion.zip"
+    }
 }

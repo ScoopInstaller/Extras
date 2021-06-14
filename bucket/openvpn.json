@@ -1,16 +1,16 @@
 {
-    "version": "2.4.8",
+    "version": "2.4.11",
     "description": "A flexible virtual private network (VPN) solution to secure data communications.",
     "homepage": "https://openvpn.net",
     "license": "GPL-2.0-only",
     "suggest": {
         "openssl": "openssl"
     },
-    "url": "https://swupdate.openvpn.org/community/releases/openvpn-install-2.4.8-I602-Win10.exe",
-    "hash": "d8f861de1519c680c4e506b4e08b4d80db7c385a4ccc2fcc56e2278d41c1cabe",
+    "url": "https://swupdate.openvpn.org/community/releases/openvpn-install-2.4.11-I601-Win10.exe",
+    "hash": "80929213848ba2c1f8810648a82ef2961f63231030e920ea4c3ec43c1cb2b7eb",
     "pre_install": [
         "if ([Environment]::OSVersion.Version.Major -lt 10) { error 'Windows 10 is required since version 2.4.8. Use \"versions/openvpn-w7\" instead'; break }",
-        "if (-not (is_admin)) { error 'Administrator privileges are needed for installation'; break }"
+        "if (-not (is_admin)) { throw 'Administrator privileges are needed for installation' }"
     ],
     "installer": {
         "args": [
@@ -33,7 +33,7 @@
     },
     "uninstaller": {
         "script": [
-            "if (-not (is_admin)) { error 'Admin privileges are needed.'; break }",
+            "if (-not (is_admin)) { throw 'Admin privileges are needed.' }",
             "Invoke-ExternalCommand -FilePath \"$dir\\Uninstall.exe\" -ArgumentList '/S' | Out-Null"
         ]
     },
@@ -47,9 +47,9 @@
     "persist": "config",
     "checkver": {
         "url": "https://openvpn.net/index.php/open-source/downloads.html",
-        "regex": "openvpn-install-([\\d.]+)-I602-Win10.exe"
+        "regex": "openvpn-install-([\\d.]+)-I601-Win10\\.exe"
     },
     "autoupdate": {
-        "url": "https://swupdate.openvpn.org/community/releases/openvpn-install-$version-I602-Win10.exe"
+        "url": "https://swupdate.openvpn.org/community/releases/openvpn-install-$version-I601-Win10.exe"
     }
 }

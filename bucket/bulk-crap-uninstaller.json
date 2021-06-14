@@ -1,10 +1,25 @@
 {
+    "version": "5.0",
+    "description": "Bulk program uninstaller with advanced automation",
     "homepage": "https://www.bcuninstaller.com/",
-    "description": "Bulk program uninstaller with advanced automation.",
     "license": "Apache-2.0",
-    "version": "4.16",
-    "url": "https://www.fosshub.com/Bulk-Crap-Uninstaller.html/BCUninstaller_4.16_portable.zip",
-    "hash": "d383996cc87a82bbb6c51f775d711c887db6e44687d848b6fb0792fde703d548",
+    "url": "https://www.fosshub.com/Bulk-Crap-Uninstaller.html/BCUninstaller_5.0_portable.7z",
+    "hash": "6f60c425c7cdbe6086bda1c1dcf69a7d6f7f63e33d2f67a62cd1780ff023f6ca",
+    "architecture": {
+        "64bit": {
+            "extract_dir": "win-x64"
+        },
+        "32bit": {
+            "extract_dir": "win-x86"
+        }
+    },
+    "pre_install": [
+        "ensure \"$persist_dir\" | Out-Null",
+        "Copy-Item \"$persist_dir\\BCUninstaller.settings\" \"$dir\" -ErrorAction 'SilentlyContinue'"
+    ],
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\BCUninstaller.settings\" \"$persist_dir\" -ErrorAction 'SilentlyContinue' -Force"
+    },
     "bin": [
         "BCUninstaller.exe",
         "BCU-console.exe",
@@ -19,20 +34,10 @@
             "Bulk Crap Uninstaller"
         ]
     ],
-    "persist": [
-        "BCUninstaller.exe.config",
-        "BCUninstaller.settings"
-    ],
-    "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\BCUninstaller.settings\")) {",
-        "   New-Item \"$dir\\BCUninstaller.settings\" -ItemType File | Out-Null",
-        "}"
-    ],
     "checkver": {
-        "url": "https://www.fosshub.com/Bulk-Crap-Uninstaller.html",
-        "regex": "\"softwareVersion\">([\\d.]+)"
+        "github": "https://github.com/Klocman/Bulk-Crap-Uninstaller"
     },
     "autoupdate": {
-        "url": "https://www.fosshub.com/Bulk-Crap-Uninstaller.html/BCUninstaller_$version_portable.zip"
+        "url": "https://www.fosshub.com/Bulk-Crap-Uninstaller.html/BCUninstaller_$version_portable.7z"
     }
 }

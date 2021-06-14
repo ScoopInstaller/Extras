@@ -1,18 +1,25 @@
 {
-    "version": "2.29.0",
+    "version": "2.38.0",
     "description": "End-to-End encrypted and anonymous Internet",
     "homepage": "https://i2pd.website",
     "license": "BSD-3-Clause",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/PurpleI2P/i2pd/releases/download/2.29.0/i2pd_2.29.0_win64_mingw.zip",
-            "hash": "6f8b9900bf5216d8a9e7dba8028678f848ed63de395adb23577de3c7e75c8436"
+            "url": "https://github.com/PurpleI2P/i2pd/releases/download/2.38.0/i2pd_2.38.0_win64_mingw.zip",
+            "hash": "577c998af4e4b7eec7397c62a01a6900e6b41876ec903a3a4d612e2e01605d61"
         },
         "32bit": {
-            "url": "https://github.com/PurpleI2P/i2pd/releases/download/2.29.0/i2pd_2.29.0_win32_mingw.zip",
-            "hash": "67b5209174681935596adac1ca11d3bf660abefbc27003414d4f7e6d39b248ba"
+            "url": "https://github.com/PurpleI2P/i2pd/releases/download/2.38.0/i2pd_2.38.0_win32_mingw.zip",
+            "hash": "eb7fec66304834600d7888e72d0e8400c290c2ee23968cafdc1983ffe8076a0a"
         }
     },
+    "pre_install": [
+        "Move-Item \"$dir\\contrib\\*\" \"$dir\"",
+        "Remove-Item \"$dir\\contrib\"",
+        "foreach ($name in @('irc-keys.dat', 'ntcp2.keys', 'router.info', 'router.keys')) {",
+        "    if (!(Test-Path \"$persist_dir\\$name\")) { New-Item \"$dir\\$name\" | Out-Null }",
+        "}"
+    ],
     "bin": "i2pd.exe",
     "shortcuts": [
         [
@@ -34,15 +41,6 @@
         "tunnels.d",
         "i2pd.conf",
         "tunnels.conf"
-    ],
-    "pre_install": [
-        "Move-Item \"$dir\\contrib\\*\" \"$dir\"",
-        "Remove-Item \"$dir\\contrib\"",
-        "foreach ($name in @('irc-keys.dat', 'ntcp2.keys', 'router.info', 'router.keys')) {",
-        "    if (!(Test-Path \"$persist_dir\\$name\")) {",
-        "        New-Item -Force -Path \"$dir\" -Name $name | Out-Null",
-        "    }",
-        "}"
     ],
     "checkver": {
         "github": "https://github.com/PurpleI2P/i2pd"

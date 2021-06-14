@@ -1,12 +1,20 @@
 {
-    "version": "14.1.0.0",
-    "description": "Create video thumbnails.",
+    "version": "15.3.0.0",
+    "description": "Video thumbnails creator",
     "homepage": "http://www.suu-design.com/projects_vtm.html",
     "license": "Proprietary",
-    "url": "http://www.suu-design.com/Files/VTM/4357589528/VideoThumbnailsMaker_Setup.zip",
-    "hash": "f7d5be6303244e368584bb2b392f8aeb949f1f4ed3d524e6344ef30151a3920e",
+    "architecture": {
+        "64bit": {
+            "url": "http://www.suu-design.com/Files/VTM/9163913798/VideoThumbnailsMaker_64bit_Setup.zip",
+            "hash": "1ba02c06f23517166e84c231ca2c6293f0b979f047c25520b51892dbce6b6e99"
+        },
+        "32bit": {
+            "url": "http://www.suu-design.com/Files/VTM/6872499294/VideoThumbnailsMaker_32bit_Setup.zip",
+            "hash": "7be6bcca10756e5bc81d3be7b6fd45087b6a75531916026e1c49fe5dfa753048"
+        }
+    },
     "pre_install": [
-        "Expand-7zipArchive \"$dir\\VideoThumbnailsMaker_Setup.exe\" -Removal",
+        "Expand-7zipArchive \"$dir\\VideoThumbnailsMaker*_Setup.exe\" -Removal",
         "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall.exe\" -Force -Recurse"
     ],
     "bin": "VideoThumbnailsMaker.exe",
@@ -18,9 +26,16 @@
     ],
     "checkver": {
         "url": "http://www.suu-design.com/downloads.html",
-        "regex": "(?sm)Video Thumbnails Maker</strong>.+v([\\d.]+).+/(?<fileid>\\d+)/VideoThumbnailsMaker_Setup\\.zip"
+        "regex": "(?sm)v([\\d.]+).*?/(?<fileid64>\\d+)/VideoThumbnailsMaker_64bit_Setup\\.zip.*?/(?<fileid32>\\d+)/VideoThumbnailsMaker_32"
     },
     "autoupdate": {
-        "url": "http://www.suu-design.com/Files/VTM/$matchFileid/VideoThumbnailsMaker_Setup.zip"
+        "architecture": {
+            "64bit": {
+                "url": "http://www.suu-design.com/Files/VTM/$matchFileid64/VideoThumbnailsMaker_64bit_Setup.zip"
+            },
+            "32bit": {
+                "url": "http://www.suu-design.com/Files/VTM/$matchFileid32/VideoThumbnailsMaker_32bit_Setup.zip"
+            }
+        }
     }
 }

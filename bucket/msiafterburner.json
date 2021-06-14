@@ -1,50 +1,46 @@
 {
-    "##": "Renaming the downloaded zip to 'sourceforge.net.zip' is a hack for the referer header. See dl()-function in \\lib\\install.ps1",
-    "homepage": "https://www.msi.com/page/afterburner",
+    "version": "4.6.4.16094",
     "description": "Overclocking utility for graphics cards. Main features include GPU/Shader/Memory clock adjustment, advanced fan speed and GPU voltage control.",
+    "homepage": "https://www.msi.com/page/afterburner",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.msi.com/page/website-terms-of-use"
     },
-    "version": "4.6.1",
-    "url": "https://download-eu2.guru3d.com/afterburner/%5BGuru3D.com%5D-MSIAfterburnerSetup461Build15561.zip#/sourceforge.net.zip",
-    "hash": "4e59da5b73c5f290408851fea6e48b3b37dd6b089ae5598b3ccee43ea11fe603",
+    "notes": [
+        "The 'RivaTuner Statistics Server' has been moved to it's own manifest.",
+        "To install it run 'scoop install extras/rtss'.",
+        "Profiles will be migrated automatically."
+    ],
     "suggest": {
         "Visual C++ Redist 2008": "extras/vcredist2008",
         "RivaTuner Statistics Server": "extras/rtss",
         "MSI Kombustor": "extras/msikombustor",
         "FurMark": "extras/furmark"
     },
-    "persist": "Profiles",
-    "bin": "MSIAfterburner.exe",
+    "url": "https://download.msi.com/uti_exe/vga/MSIAfterburnerSetup.zip?__token__=exp=zzzz~acl=/*~zzzzzzzz#/dl.zip",
+    "hash": "e71a5b2dd4bf010c6742f8138ba3f6500082c46baf940ba950fe50213d9579e8",
     "pre_install": [
         "Expand-7zipArchive \"$dir\\MSIAfterburnerSetup*.exe\" -Removal",
-        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall.exe.nsis\", \"$dir\\Redist\" -Recurse"
+        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\", \"$dir\\Redist\" -Recurse"
     ],
     "post_install": [
-        "if(Test-Path \"$persist_dir\\AB_Profiles\") {",
+        "if (Test-Path \"$persist_dir\\AB_Profiles\") {",
         "    warn 'Migrating Afterburner profiles...'",
-        "    Move-Item -Path \"$persist_dir\\AB_Profiles\\*\" -Destination \"$persist_dir\\Profiles\\\"",
+        "    Move-Item \"$persist_dir\\AB_Profiles\\*\" \"$persist_dir\\Profiles\\\"",
         "    Remove-Item \"$persist_dir\\AB_Profiles\" -Recurse",
         "}"
     ],
+    "bin": "MSIAfterburner.exe",
     "shortcuts": [
         [
             "MSIAfterburner.exe",
             "MSI Afterburner"
         ]
     ],
+    "persist": "Profiles",
     "checkver": {
         "url": "https://www.guru3d.com/files-details/msi-afterburner-beta-download.html",
-        "regex": "Download ([\\d.]+) Stable/Final",
+        "regex": ">Download\\s+([\\d.]+)\\s+Stable\\s+\\(Final",
         "reverse": true
-    },
-    "autoupdate": {
-        "url": "https://download-eu2.guru3d.com/afterburner/%5BGuru3D.com%5D-MSIAfterburnerSetup$cleanVersion.zip#/sourceforge.net.zip"
-    },
-    "notes": [
-        "The 'RivaTuner Statistics Server' has been moved to it's own package.",
-        "To install it run 'scoop install extras/rtss'.",
-        "Your profiles will be migrated automatically."
-    ]
+    }
 }

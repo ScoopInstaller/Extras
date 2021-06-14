@@ -1,10 +1,22 @@
 {
+    "version": "5.81.8895",
+    "description": "Number-one tool for cleaning PC",
     "homepage": "https://www.ccleaner.com/ccleaner",
-    "version": "5.63.7540",
     "license": "Freeware",
-    "description": "Number-one tool for cleaning your PC.",
-    "url": "https://download.ccleaner.com/portable/ccsetup563.zip",
-    "hash": "ff83bfc0077b993a72473d8f3e62b163773a4e4018fd0ba104d821647c029646",
+    "url": "https://download.ccleaner.com/portable/ccsetup581.zip",
+    "hash": "2f76efd3327f3e1a6d35d4fe2f45e1077655e875f0438d1b3c1eef2c6a06b203",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\ccleaner.ini\")) {",
+        "   Set-Content \"$dir\\ccleaner.ini\" @('[Options]', 'UpdateAuto=0', 'UpdateNotify=0', 'UpdateCheck=0', 'HelpImproveCCleaner=0') -Encoding ASCII",
+        "}",
+        "'winapp.ini', 'winreg.ini', 'winsys.ini' | ForEach-Object {",
+        "   if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "}",
+        "Copy-Item \"$persist_dir\\*\" \"$dir\" -Include 'branding.dll', 'CCleaner.dat' -ErrorAction SilentlyContinue"
+    ],
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\*\" \"$persist_dir\" -Include 'branding.dll', 'CCleaner.dat' -ErrorAction SilentlyContinue -Force"
+    },
     "architecture": {
         "64bit": {
             "bin": [
@@ -30,14 +42,6 @@
             ]
         }
     },
-    "pre_install": [
-        "if(!(Test-Path \"$persist_dir\\ccleaner.ini\")) {",
-        "   Set-Content \"$dir\\ccleaner.ini\" (@('[Options]', 'UpdateAuto=0', 'UpdateNotify=0', 'UpdateCheck=0', 'HelpImproveCCleaner=0') -join \"`r`n\") -Encoding ASCII",
-        "}",
-        "'winapp.ini', 'winreg.ini', 'winsys.ini' | ForEach-Object {",
-        "   if(!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
-        "}"
-    ],
     "persist": [
         "ccleaner.ini",
         "winapp.ini",

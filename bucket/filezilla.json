@@ -1,23 +1,44 @@
 {
-    "version": "3.46.3",
+    "version": "3.54.1",
     "description": "Fast and reliable cross-platform FTP, FTPS and SFTP client with lots of useful features and an intuitive graphical user interface.",
     "homepage": "https://filezilla-project.org/",
     "license": "GPL-2.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://download.filezilla-project.org/client/FileZilla_3.46.3_win64.zip",
-            "hash": "sha512:86fb928d39a947a7d06853be94de0ecf5cabc888c1f0216859912cca9d615b97c8eb8c7574d1acdabcda82b80d3cbf76cc79497ea864184ca9e891d1df960eaa"
+            "url": "https://download.filezilla-project.org/client/FileZilla_3.54.1_win64.zip",
+            "hash": "sha512:09992c5ede0ae2c5a5b784576d05925f05464b7b452297d9400fbf97b0c1c7446ccd09274f532b03b458e1d2037605f878fc9700fcc0721e5c61c13f94944cc8"
         },
         "32bit": {
-            "url": "https://download.filezilla-project.org/client/FileZilla_3.46.3_win32.zip",
-            "hash": "sha512:324d9e9fdc6289652f80c9d001348576dde9af8c0a1169d0aaa454dd2078c9795c9baee3676743a96e239099ff982fd6ddbfa880a20b4f1f2a55078ec212697f"
+            "url": "https://download.filezilla-project.org/client/FileZilla_3.54.1_win32.zip",
+            "hash": "sha512:074b3819fed624715b7dbe4a890f77b9df795f746419788b0b561920dd45adbf8eb8d8eadd84e7dc030ab3d486508da717e3db4ce21dc5f8773937c7e54dd782"
         }
     },
-    "extract_dir": "FileZilla-3.46.3",
+    "extract_dir": "FileZilla-3.54.1",
     "pre_install": [
-        "$file = 'fzdefaults.xml'",
-        "if (-not (Test-Path \"$persist_dir\\$file\")) {",
-        "    Copy-Item \"$dir\\docs\\fzdefaults.xml.example\" \"$dir\\fzdefaults.xml\"",
+        "@'",
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>",
+        "<FileZilla3>",
+        "  <Settings>",
+        "    <Setting name=\"Config Location\">config</Setting>",
+        "    <Setting name=\"Disable update check\">1</Setting>",
+        "  </Settings>",
+        "</FileZilla3>",
+        "'@ | Out-File \"$dir\\fzdefaults.xml\" -Encoding Ascii",
+        "",
+        "$oldfzdefault = \"$persist_dir\\fzdefaults.xml\"",
+        "if (Test-Path \"$oldfzdefault\") {",
+        "    Write-Host 'Adopting new persist configuration...' -f Yellow",
+        "    $oldConfigDir = \"$((Get-Item \"$persist_dir\").PSDrive.Root)filezilla\"",
+        "    $newConfigDir = \"$persist_dir\\config\"",
+        "    if (Test-Path \"$oldConfigDir\") {",
+        "        Write-Host \"Moving existing configuration from '$oldConfigDir' to '$newConfigDir'\" -f Yellow",
+        "        if (Test-Path \"$newConfigDir\") {",
+        "            Move-Item \"$oldConfigDir\\*\" \"$newConfigDir\"",
+        "        } else { ",
+        "            Move-Item \"$oldConfigDir\" \"$newConfigDir\"",
+        "        }",
+        "    }",
+        "    Rename-Item \"$oldfzdefault\" \"fzdefaults.xml.bak\"",
         "}"
     ],
     "bin": "filezilla.exe",
@@ -27,10 +48,10 @@
             "FileZilla"
         ]
     ],
-    "persist": "fzdefaults.xml",
+    "persist": "config",
     "checkver": {
         "url": "https://filezilla-project.org/download.php?show_all=1",
-        "re": "The latest stable version of FileZilla Client is ([\\d.]+)"
+        "regex": "The latest stable version of FileZilla Client is ([\\d.]+)"
     },
     "autoupdate": {
         "architecture": {

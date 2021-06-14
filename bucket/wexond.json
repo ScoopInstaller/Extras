@@ -1,23 +1,18 @@
 {
-    "homepage": "https://wexond.net/",
-    "version": "3.1.0",
-    "license": "GPL-3.0-or-later",
-    "description": "A privacy-focused, extensible and beautiful web browser.",
-    "url": "https://github.com/wexond/wexond/releases/download/v3.1.0/wexond-setup-3.1.0.exe#/dl.7z",
-    "hash": "sha512:d1d3f89b0e5f14200249a540a5345f548a8192a10e317d7176ea589fe6579fff3150343add35a21f2d2acbd5c7c957fcbc45aebc6c555885154c45d061c288c5",
+    "version": "5.2.0",
+    "description": "A privacy-focused, extensible and beautiful web browser",
+    "homepage": "https://wexond.net",
+    "license": "GPL-3.0-only",
     "architecture": {
         "64bit": {
-            "installer": {
-                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
-            }
+            "url": "https://github.com/wexond/desktop/releases/download/v5.2.0/wexond-5.2.0-x64.nsis.7z",
+            "hash": "sha512:44731e1cb28aeb575f449e40ebe6ef7471626af821a83c4e955252b8c584fdab3eaf7ae50c13974dff27adbdc17568811ced3ba8c05e09186fe6b9e4aca53c53"
         },
         "32bit": {
-            "installer": {
-                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
-            }
+            "url": "https://github.com/wexond/desktop/releases/download/v5.2.0/wexond-5.2.0-ia32.nsis.7z",
+            "hash": "sha512:69d55ba942ddaeca853c35d8f5614e1be978d4523dff2240261cbf9b5211a4313d4011d5e7d64d19627a215554110b667190ca07f5f279b6aadcb9c979a33ffc"
         }
     },
-    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse",
     "shortcuts": [
         [
             "Wexond.exe",
@@ -25,13 +20,24 @@
         ]
     ],
     "checkver": {
-        "github": "https://github.com/wexond/wexond"
+        "github": "https://github.com/wexond/desktop"
     },
     "autoupdate": {
-        "url": "https://github.com/wexond/wexond/releases/download/v$version/wexond-setup-$version.exe#/dl.7z",
-        "hash": {
-            "url": "$baseurl/latest.yml",
-            "regex": "sha512: $base64"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/wexond/desktop/releases/download/v$version/wexond-$version-x64.nsis.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "(?sm)x64:.*?sha512:\\s+$base64.*?path:\\s+$basename"
+                }
+            },
+            "32bit": {
+                "url": "https://github.com/wexond/desktop/releases/download/v$version/wexond-$version-ia32.nsis.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "(?sm)ia32:.*?sha512:\\s+$base64.*?path:\\s+$basename"
+                }
+            }
         }
     }
 }

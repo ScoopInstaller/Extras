@@ -1,11 +1,22 @@
 {
-    "version": "1.0.11.5",
+    "version": "1.6.1",
+    "description": "A Tumblr Backup Application",
     "homepage": "https://github.com/TumblThreeApp/TumblThree",
-    "description": "A Tumblr Backup Application.",
     "license": "MIT",
-    "url": "https://github.com/TumblThreeApp/TumblThree/releases/download/v1.0.11.5/TumblThree-v1.0.11.5-Application.zip",
-    "hash": "6381a1661628359b23944286e0346a17f8869254953d6a10b595653b7c3450cc",
-    "extract_dir": "TumbleThree",
+    "suggest": {
+        "vcredist": "extras/vcredist2015"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/TumblThreeApp/TumblThree/releases/download/v1.6.1/TumblThree-v1.6.1-x64-Application.zip",
+            "hash": "e1738df8732dcd367d033c99c0bd28e2b7b34303156c8804967eeaa8941f61bc"
+        },
+        "32bit": {
+            "url": "https://github.com/TumblThreeApp/TumblThree/releases/download/v1.6.1/TumblThree-v1.6.1-x86-Application.zip",
+            "hash": "fc047e1962d67ec8edfc5c9344f6361cbf616197179ea332fe4b369d28ecd505"
+        }
+    },
+    "extract_dir": "TumblThree",
     "pre_install": [
         "foreach ($name in @('Cookies.json', 'Manager.json', 'Queuelist.json')) {",
         "    if (!(Test-Path \"$persist_dir\\$name\")) { New-Item \"$dir\\$name\" | Out-Null }",
@@ -25,8 +36,18 @@
         "Queuelist.json",
         "Settings.json"
     ],
-    "checkver": "github",
+    "checkver": {
+        "github": "https://github.com/TumblThreeApp/TumblThree",
+        "regex": "/TumblThree-v([\\d.]+)-x\\d+"
+    },
     "autoupdate": {
-        "url": "https://github.com/TumblThreeApp/TumblThree/releases/download/v$version/TumblThree-v$version-Application.zip"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/TumblThreeApp/TumblThree/releases/download/v$matchHead/TumblThree-v$version-x64-Application.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/TumblThreeApp/TumblThree/releases/download/v$matchHead/TumblThree-v$version-x86-Application.zip"
+            }
+        }
     }
 }

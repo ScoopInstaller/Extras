@@ -1,13 +1,13 @@
 {
+    "version": "127.5",
+    "description": "DBMS-independent, cross-platform SQL query tool",
     "homepage": "https://www.sql-workbench.eu/",
-    "description": "SQL Workbench/J is a free, DBMS-independent, cross-platform SQL query tool",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.sql-workbench.eu/manual/license.html"
     },
-    "version": "125.5",
-    "url": "https://www.sql-workbench.eu/Workbench-Build125.5-with-optional-libs.zip",
-    "hash": "sha1:9558841b129bc83a50e6d8b7262fbffd8a8f6c7e",
+    "url": "https://www.sql-workbench.eu/Workbench-Build127.5-with-optional-libs.zip",
+    "hash": "sha1:b64c718e95c9fbe7ba1cd84b447df35c8c74482a",
     "architecture": {
         "64bit": {
             "shortcuts": [
@@ -26,6 +26,12 @@
             ]
         }
     },
+    "pre_install": [
+        "@('sqlwbconsole64.ini', 'sqlwbconsole.ini', 'SQLWorkbench64.ini', 'SQLWorkbench.ini') | ForEach-Object {",
+        "    if(!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" -Type File | Out-Null }",
+        "}"
+    ],
+    "post_install": "if((Test-Path \"$dir\\ext.original\")) { Copy-Item \"$dir\\ext.original\\*\" -Destination \"$persist_dir\\ext\" }",
     "bin": "sqlwbconsole.cmd",
     "persist": [
         "ext",
@@ -34,21 +40,15 @@
         "SQLWorkbench64.ini",
         "SQLWorkbench.ini"
     ],
-    "pre_install": [
-        "@('sqlwbconsole64.ini', 'sqlwbconsole.ini', 'SQLWorkbench64.ini', 'SQLWorkbench.ini') | ForEach-Object {",
-        "    if(!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" -Type File | Out-Null }",
-        "}"
-    ],
-    "post_install": "if((Test-Path \"$dir\\ext.original\")) { Copy-Item \"$dir\\ext.original\\*\" -Destination \"$persist_dir\\ext\" }",
     "checkver": {
         "url": "https://www.sql-workbench.eu/dev-download.html",
-        "re": "Current dev-build: (\\d+\\.\\d+)"
+        "regex": "Current dev-build: ([\\d.]+)"
     },
     "autoupdate": {
         "url": "https://www.sql-workbench.eu/Workbench-Build$version-with-optional-libs.zip",
         "hash": {
             "url": "$url.sha1",
-            "find": "^$sha1"
+            "regex": "^$sha1"
         }
     }
 }
