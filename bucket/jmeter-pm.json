@@ -1,34 +1,33 @@
 {
-    "version": "1.3",
-    "description": "The idea of JMeter Plugins Manager is simple: instead of installing various plugins manually, it will do it for you through nice UI. No need to mess with JARs anymore.",
-    "homepage": "https://jmeter-plugins.org/",
+    "version": "1.6",
+    "description": "JMeter Plugins Manager",
+    "homepage": "https://jmeter-plugins.org",
     "license": "Apache-2.0",
     "depends": "jmeter",
-    "url": "http://search.maven.org/remotecontent?filepath=kg/apc/jmeter-plugins-manager/1.3/jmeter-plugins-manager-1.3.jar",
-    "hash": "482b8a9cd82a69ef1b633fc4235bfa9bee96894f663e5085df7061410d6ab99a",
-    "installer": {
-        "script": "Copy-Item \"$dir\\jmeter-plugins-manager-$version.jar\" -Destination \"$(appdir jmeter $global)\\current\\lib\\ext\""
-    },
+    "url": "https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-manager/1.6/jmeter-plugins-manager-1.6.jar",
+    "hash": "sha1:0aecac04ea779c70c74a0fbdc542c994ab199c75",
+    "pre_install": "Copy-Item \"$dir\\jmeter-plugins-manager-$version.jar\" -Destination \"$(appdir 'jmeter' $global)\\current\\lib\\ext\"",
     "uninstaller": {
         "script": [
             "$jmeter_pm = \"$(appdir jmeter $global)\\current\\lib\\ext\\jmeter-plugins-manager-$version.jar\"",
-            "if(Test-Path $jmeter_pm) {",
+            "if (Test-Path $jmeter_pm) {",
             "   Write-Host 'Found jmeter-pm installed for jmeter. Path:' -ForegroundColor DarkYellow",
             "   Write-Host $jmeter_pm -ForegroundColor DarkYellow",
             "   Remove-Item \"$jmeter_pm\" -Force",
             "   Write-Host 'If you have plugins installed with Plugin Manager, you have to remove them manually.' -ForegroundColor DarkYellow",
-            "}",
-            "else {",
-            "   Write-Host 'Couldn''t found jmeter-pm installed for any scoop-managed jmeter, probably because you already uninstalled jmeter.' -ForegroundColor DarkYellow",
+            "} else {",
+            "   warn 'Couldn''t found jmeter-pm installed for any scoop-managed jmeter, probably because you already uninstalled jmeter.'",
             "}"
         ]
     },
     "checkver": {
-        "github": "https://github.com/undera/jmeter-plugins",
-        "regex": "Release\\s+(\\d+)\\.(\\d+)",
-        "replace": "${1}.${2}"
+        "url": "https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-manager/maven-metadata.xml",
+        "xpath": "/metadata/versioning/latest"
     },
     "autoupdate": {
-        "url": "http://search.maven.org/remotecontent?filepath=kg/apc/jmeter-plugins-manager/$version/jmeter-plugins-manager-$version.jar"
+        "url": "https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-manager/$version/jmeter-plugins-manager-$version.jar",
+        "hash": {
+            "url": "$url.sha1"
+        }
     }
 }

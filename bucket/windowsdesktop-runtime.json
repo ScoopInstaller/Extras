@@ -1,7 +1,7 @@
 {
-    "version": "3.1.10",
-    "description": "Microsoft .NET Core Desktop Runtime",
-    "homepage": "https://dotnet.microsoft.com/download/dotnet-core",
+    "version": "5.0.6",
+    "description": "Microsoft .NET 5.0 Desktop Runtime",
+    "homepage": "https://dotnet.microsoft.com/download/dotnet",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.microsoft.com/en-us/legal/intellectualproperty/copyright/default.aspx"
@@ -9,33 +9,29 @@
     "notes": "You can now remove this installer with 'scoop uninstall windowsdesktop-runtime'",
     "architecture": {
         "64bit": {
-            "url": "https://dotnetcli.azureedge.net/dotnet/Runtime/3.1.10/windowsdesktop-runtime-3.1.10-win-x64.exe",
-            "hash": "sha512:14a7d97fb258bee024cff3585492ed43c3ec6ac823b50980ddde8241a8bca3e578c38ca28e461630d38c180bd72323e1fcb0ee2e6e65ef9bfc8481df7beef142"
+            "url": "https://dotnetcli.blob.core.windows.net/dotnet/WindowsDesktop/5.0.6/windowsdesktop-runtime-5.0.6-win-x64.exe",
+            "hash": "795a3c1ca13717baa09f2cb09024a4a64c79037e4fb5f286069b53ff08284311"
         },
         "32bit": {
-            "url": "https://dotnetcli.azureedge.net/dotnet/Runtime/3.1.10/windowsdesktop-runtime-3.1.10-win-x86.exe",
-            "hash": "sha512:1697e69644a1df46922e440c1ea16e583660f79f3b9b109b493a24835ae543ea6180c5167d6dbe89d8dd8991f865dba717525e333e4a2f32319733afa6a320b5"
+            "url": "https://dotnetcli.blob.core.windows.net/dotnet/WindowsDesktop/5.0.6/windowsdesktop-runtime-5.0.6-win-x86.exe",
+            "hash": "ef874fe436367347a1b9bee8e60cd5d0e3c58056f78787a66f206f4fdc49825b"
         }
     },
-    "pre_install": "if (!(is_admin)) { error 'Admin privileges are required.'; break }",
+    "pre_install": "if (!(is_admin)) { throw 'Admin privileges are required.' }",
     "installer": {
         "script": "Invoke-ExternalCommand \"$dir\\$fname\" -ArgumentList '/install', '/quiet', '/norestart' -RunAs | Out-Null"
+    },
+    "checkver": {
+        "url": "https://dotnetcli.blob.core.windows.net/dotnet/WindowsDesktop/Current/latest.version",
+        "regex": "([\\d.]+)$"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://dotnetcli.azureedge.net/dotnet/Runtime/$version/windowsdesktop-runtime-$version-win-x64.exe",
-                "hash": {
-                    "url": "https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-$version-windows-x64-installer",
-                    "regex": "value=\"$sha512\""
-                }
+                "url": "https://dotnetcli.blob.core.windows.net/dotnet/WindowsDesktop/$version/windowsdesktop-runtime-$version-win-x64.exe"
             },
             "32bit": {
-                "url": "https://dotnetcli.azureedge.net/dotnet/Runtime/$version/windowsdesktop-runtime-$version-win-x86.exe",
-                "hash": {
-                    "url": "https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-$version-windows-x86-installer",
-                    "regex": "value=\"$sha512\""
-                }
+                "url": "https://dotnetcli.blob.core.windows.net/dotnet/WindowsDesktop/$version/windowsdesktop-runtime-$version-win-x86.exe"
             }
         }
     }

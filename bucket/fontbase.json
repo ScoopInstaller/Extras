@@ -1,5 +1,5 @@
 {
-    "version": "2.13.2",
+    "version": "2.16.0",
     "description": "Font manager",
     "homepage": "https://fontba.se",
     "license": {
@@ -8,14 +8,12 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://releases.fontba.se/win/FontBase-2.13.2.exe#/dl.7z",
-            "hash": "sha512:feb9deeeed023ff2cd284f167db5565917eee716fba2fe85d145016630a96a3614337a780826a13cc307a04dc5691be794f24192245870dd57d02a4e6e0702c9",
-            "installer": {
-                "script": [
-                    "Expand-7ZipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\uninstall*\" -Recurse"
-                ]
-            }
+            "url": "https://releases.fontba.se/win/FontBase-2.16.0.exe#/dl.7z",
+            "hash": "sha512:5ac5578ef0b21c00741dd928a7f83b03daa397e15a52e22bb0c7e2be4f65bbd9b93584366beb86251a815ec887c595776e5df5b7fd835313f8beaf7781020fb6",
+            "pre_install": [
+                "Expand-7ZipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$*\", \"$dir\\uninstall*\" -Recurse"
+            ]
         }
     },
     "shortcuts": [
@@ -26,13 +24,17 @@
     ],
     "checkver": {
         "url": "https://fontba.se/updates",
-        "regex": "<h1>([\\d.]+)<"
+        "regex": "([\\d.]+)</a"
     },
     "autoupdate": {
-        "url": "https://releases.fontba.se/win/FontBase-$version.exe#/dl.7z",
-        "hash": {
-            "url": "$baseurl/latest.yml",
-            "regex": "sha512:\\s+$base64"
+        "architecture": {
+            "64bit": {
+                "url": "https://releases.fontba.se/win/FontBase-$version.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "sha512:\\s+$base64"
+                }
+            }
         }
     }
 }

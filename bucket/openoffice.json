@@ -1,12 +1,14 @@
 {
-    "version": "4.1.8",
+    "version": "4.1.10",
     "description": "Office software suite for word processing, spreadsheets, presentations, graphics, databases and more",
     "homepage": "https://www.openoffice.org",
     "license": "Apache-2.0",
-    "url": "https://archive.apache.org/dist/openoffice/4.1.8/binaries/en-GB/Apache_OpenOffice_4.1.8_Win_x86_install_en-GB.exe#/dl.7z",
-    "hash": "sha512:20919707396da1e4e48d7137ea4450d60aa0f0e00d5261f60be020511e6fbd06dc1eb94b91bd62aead8604bd7b5626da343c43f64d4458e221e92e09e76f8c7d",
+    "url": "https://archive.apache.org/dist/openoffice/4.1.10/binaries/en-GB/Apache_OpenOffice_4.1.10_Win_x86_install_en-GB.exe#/dl.7z",
+    "hash": "sha512:32405ea990fbb040c57a25a091e5ed44231b499653feeb21210dbc1e56c79eefbacacfbccaa4f42a576dc0ffca197ff760388d6522d1851bb79557b95d87b77c",
     "pre_install": [
-        "(Get-ChildItem \"$dir\" 'openoffic*.msi').FullName | Expand-MsiArchive -DestinationPath \"$dir\\App\" -ExtractDir 'OpenOffice 4'",
+        "$splat = @{ 'DestinationPath' = \"$dir\\App\" }",
+        "if (get_config 'MSIEXTRACT_USE_LESSMSI' $false) { $splat.Add('ExtractDir', 'OpenOffice 4') }",
+        "(Get-ChildItem \"$dir\" 'openoffic*.msi').FullName | Expand-MsiArchive @splat",
         "Get-ChildItem \"$dir\" -Exclude 'App' | Remove-Item -Recurse",
         "Move-Item \"$dir\\App\\*\" \"$dir\" -Force",
         "Remove-Item \"$dir\\App\" -Recurse"

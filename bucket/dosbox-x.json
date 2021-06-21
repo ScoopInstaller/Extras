@@ -1,18 +1,21 @@
 {
-    "version": "0.83.8",
+    "version": "0.83.14",
     "description": "Fork of DOSBox, an Intel x86-based PC emulator, complete with sound, graphics, mouse, joystick, modem, etc.",
-    "homepage": "http://dosbox-x.com",
+    "homepage": "https://dosbox-x.com",
     "license": "GPL-2.0-or-later",
-    "url": "https://github.com/joncampbell123/dosbox-x/releases/download/dosbox-x-v0.83.8/dosbox-x-vsbuild-win-20201130195706.zip",
-    "hash": "53a326f668f58310d03942663f397441802a963c6db37f32ce4ec8ebd7151863",
     "architecture": {
         "64bit": {
+            "url": "https://github.com/joncampbell123/dosbox-x/releases/download/dosbox-x-v0.83.14/dosbox-x-vsbuild-win64-20210601022229.zip",
+            "hash": "91d0f368acd330e514da2d98355fb4aaba967f1fe17f6a70b1029a38001f9ed3",
             "extract_dir": "bin\\x64\\Release SDL2"
         },
         "32bit": {
+            "url": "https://github.com/joncampbell123/dosbox-x/releases/download/dosbox-x-v0.83.14/dosbox-x-vsbuild-win32-20210601022229.zip",
+            "hash": "515918bc7642d7cf5dc1f92a1138b2b2aed5b3d1500ef0553377573a14512e76",
             "extract_dir": "bin\\Win32\\Release SDL2"
         }
     },
+    "pre_install": "if (!(Test-Path \"$persist_dir\\dosbox.conf\")) { Copy-Item \"$dir\\dosbox-x.reference.conf\" \"$dir\\dosbox.conf\" }",
     "bin": "dosbox-x.exe",
     "shortcuts": [
         [
@@ -20,17 +23,19 @@
             "DOSBox-X"
         ]
     ],
-    "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\dosbox.conf\")) {",
-        "   Copy-Item \"$dir\\dosbox-x.reference.conf\" \"$dir\\dosbox.conf\"",
-        "}"
-    ],
     "persist": "dosbox.conf",
     "checkver": {
-        "github": "https://github.com/joncampbell123/dosbox-x/",
-        "regex": "download/dosbox-x-v([\\d.]+)/dosbox-x-vsbuild-win-(?<release>[\\d-]+)"
+        "github": "https://github.com/joncampbell123/dosbox-x",
+        "regex": "download/dosbox-x-v([\\d.]+)/dosbox-x-vsbuild-win64-(?<release>[\\d-]+)"
     },
     "autoupdate": {
-        "url": "https://github.com/joncampbell123/dosbox-x/releases/download/dosbox-x-v$version/dosbox-x-vsbuild-win-$matchRelease.zip"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/joncampbell123/dosbox-x/releases/download/dosbox-x-v$version/dosbox-x-vsbuild-win64-$matchRelease.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/joncampbell123/dosbox-x/releases/download/dosbox-x-v$version/dosbox-x-vsbuild-win32-$matchRelease.zip"
+            }
+        }
     }
 }

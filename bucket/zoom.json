@@ -1,13 +1,21 @@
 {
-    "version": "5.4.3",
+    "version": "5.6.7.1016",
     "description": "Video and audio conferencing, chat, and webinars",
     "homepage": "https://zoom.us",
     "license": {
         "identifier": "Proprietary",
         "url": "https://zoom.us/terms"
     },
-    "url": "https://zoom.us/client/latest/ZoomInstaller.exe#/dl.7z",
-    "hash": "f2f4acda6482f58b83f27c8696ce13dfe7fe7d47fbee0239aa1cc754230272a7",
+    "architecture": {
+        "64bit": {
+            "url": "https://zoom.us/client/5.6.7.1016/ZoomInstaller.exe?archType=x64#/dl.7z",
+            "hash": "122fa62b791d067e06e22f151139d6f80788086def234683203a7ff2ba1b4fa8"
+        },
+        "32bit": {
+            "url": "https://zoom.us/client/5.6.7.1016/ZoomInstaller.exe?archType=x86#/dl.7z",
+            "hash": "b46cee9a4421e140aec3e5085e04a5d3c963ca5f3d31c9b08108989f40c30d74"
+        }
+    },
     "pre_install": [
         "Expand-7zipArchive \"$dir\\Zoom.msi\" -Removal",
         "Remove-Item \"$dir\\Install*\""
@@ -21,9 +29,17 @@
     ],
     "checkver": {
         "url": "https://support.zoom.us/hc/en-us/articles/201361953-New-Updates-for-Windows",
-        "regex": "[;>]([\\d.]+)\\s+\\(\\d+"
+        "regex": "version\\s*([\\d.]+)\\s+\\((\\d+)\\)",
+        "replace": "$1.$2"
     },
     "autoupdate": {
-        "url": "https://zoom.us/client/latest/ZoomInstaller.exe#/dl.7z"
+        "architecture": {
+            "64bit": {
+                "url": "https://zoom.us/client/$version/ZoomInstaller.exe?archType=x64#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://zoom.us/client/$version/ZoomInstaller.exe?archType=x86#/dl.7z"
+            }
+        }
     }
 }
