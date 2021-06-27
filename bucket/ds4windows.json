@@ -1,25 +1,51 @@
 {
+    "version": "3.0.10",
+    "description": "Allows to get the best experience while using a DualShock 4 on PC.",
     "homepage": "https://ryochan7.github.io/ds4windows-site/",
-    "description": "Portable program that allows you to get the best experience while using a DualShock 4 on your PC.",
-    "version": "1.6.8",
+    "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/Ryochan7/DS4Windows/releases/download/v1.6.8/DS4Windows_1.6.8_x64.zip",
-            "hash": "2099af1583ce657ee0795a62f4d9c0483ada4d53d852be46ed204d75d3b777bc"
+            "url": "https://github.com/Ryochan7/DS4Windows/releases/download/v3.0.10/DS4Windows_3.0.10_x64.zip",
+            "hash": "81d0e13141e9b4bc6b331dff7345ae86db612224ba4fab0e8d1ea29e6259a22f"
         },
         "32bit": {
-            "url": "https://github.com/Ryochan7/DS4Windows/releases/download/v1.6.8/DS4Windows_1.6.8_x86.zip",
-            "hash": "d3cdb3d71961e19c445a17d0ccce1fc3c53c20e83ab908fa9d54a04a40b9476a"
+            "url": "https://github.com/Ryochan7/DS4Windows/releases/download/v3.0.10/DS4Windows_3.0.10_x86.zip",
+            "hash": "04fcc3a8dcbac9cd258168dab3ea28e104b40e36f5e69d5e1cc8486dca0533e2"
         }
     },
-    "bin": "DS4Windows.exe",
     "extract_dir": "DS4Windows",
-    "post_install": "If (Test-Path \"$dir\\DS4Updater.exe\") { Remove-Item \"$dir\\DS4Updater.exe\" -Force }",
+    "pre_install": [
+        "$conf = @(",
+        "    @{'Profiles.xml' = '<?xml version=\"1.0\" encoding=\"utf-8\"?><Profile><CheckWhen>0</CheckWhen></Profile>' }",
+        "    @{'Auto Profiles.xml' = '<?xml version=\"1.0\" encoding=\"utf-8\"?><Programs />' }",
+        "    @{'Actions.xml' = @'",
+        "<?xml version=\"1.0\" encoding=\"utf-8\"?>",
+        "<Actions>",
+        "    <Action Name=\"Disconnect Controller\">",
+        "        <Trigger>PS/Options</Trigger>",
+        "        <Type>DisconnectBT</Type>",
+        "        <Details>0</Details>",
+        "    </Action>",
+        "</Actions>",
+        "'@ }",
+        ")",
+        "foreach ($k in $conf.Keys) {",
+        "    if (-not (Test-Path \"$persist_dir\\$k\")) { Set-Content \"$dir\\$k\" $conf.$k -Encoding Ascii }",
+        "}",
+        "if (Test-Path \"$dir\\DS4Updater.exe\") { Remove-Item \"$dir\\DS4Updater.exe\" -Force }"
+    ],
+    "bin": "DS4Windows.exe",
     "shortcuts": [
         [
             "DS4Windows.exe",
             "DS4Windows"
         ]
+    ],
+    "persist": [
+        "Profiles",
+        "Actions.xml",
+        "Auto Profiles.xml",
+        "Profiles.xml"
     ],
     "checkver": {
         "github": "https://github.com/Ryochan7/DS4Windows"

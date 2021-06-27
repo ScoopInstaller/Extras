@@ -1,29 +1,50 @@
 {
-    "homepage": "http://www.imageglass.org/",
-    "description": "A lightweight, versatile image viewer.",
+    "version": "8.2.6.6",
+    "description": "A lightweight, versatile image viewer",
+    "homepage": "https://imageglass.org",
     "license": "GPL-3.0-only",
-    "version": "6.0.12.29",
-    "url": "https://github.com/d2phap/ImageGlass/releases/download/6.0.12.29/ImageGlass_6.0.12.29.zip",
-    "hash": "b7eb755c4966c66f26387d7f859b180001b619966f469d4315fd3ecae45bc542",
-    "extract_dir": "ImageGlass_6.0.12.29",
-    "persist": "igconfig.xml",
+    "notes": "If this app doesn't work maybe you need to clean '$dir\\igconfig.xml'.",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/d2phap/ImageGlass/releases/download/8.2.6.6/ImageGlass_8.2.6.6_x64.zip",
+            "hash": "sha1:e06c8e33db158b9b2d5ef67f9dcf89388f201cc3",
+            "extract_dir": "ImageGlass_8.2.6.6_x64"
+        }
+    },
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\igconfig.xml\")) {",
+        "    Add-Content \"$dir\\igconfig.xml\" '<ImageGlass><Configuration><Info/><Content><Item key=\"AutoUpdate\" value=\"0\" /></Content></Configuration></ImageGlass>' -Encoding Ascii",
+        "}"
+    ],
     "bin": [
-        [
-            "ImageGlass.exe",
-            "imageglass"
-        ]
+        "ImageGlass.exe",
+        "igcmd.exe",
+        "igcmdWin10.exe",
+        "igtasks.exe"
     ],
     "shortcuts": [
         [
             "ImageGlass.exe",
-            "imageglass"
+            "ImageGlass"
         ]
     ],
+    "persist": [
+        "Themes",
+        "igconfig.xml"
+    ],
     "checkver": {
-        "github": "https://github.com/d2phap/ImageGlass/"
+        "github": "https://github.com/d2phap/ImageGlass"
     },
     "autoupdate": {
-        "url": "https://github.com/d2phap/ImageGlass/releases/download/$version/ImageGlass_$version.zip",
-        "extract_dir": "ImageGlass_$version"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/d2phap/ImageGlass/releases/download/$version/ImageGlass_$version_x64.zip",
+                "hash": {
+                    "url": "https://imageglass.org/download",
+                    "regex": "(?sm)Download portable x64 version.*?$sha1"
+                },
+                "extract_dir": "ImageGlass_$version_x64"
+            }
+        }
     }
 }

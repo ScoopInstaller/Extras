@@ -1,27 +1,34 @@
 {
-    "homepage": "https://www.voidtools.com/",
+    "version": "1.4.1.1009",
+    "description": "Locate files and folders by name instantly.",
+    "homepage": "https://www.voidtools.com",
     "license": "MIT",
-    "version": "1.4.1.932",
     "architecture": {
         "64bit": {
-            "url": "https://www.voidtools.com/Everything-1.4.1.932.x64.zip",
-            "hash": "fc2a63ef170a416059a413c9148bbdc853127bb4a186253c9911ed1fe68b4e6b"
+            "url": "https://www.voidtools.com/Everything-1.4.1.1009.x64.zip",
+            "hash": "f61b601acba59d61fb0631a654e48a564db34e279b6f2cc45e20a42ce9d9c466"
         },
         "32bit": {
-            "url": "https://www.voidtools.com/Everything-1.4.1.932.x86.zip",
-            "hash": "13861e5dc0aee329aefe272539d68dd80109e5ca0cbbfdd558775a1b0f132888"
+            "url": "https://www.voidtools.com/Everything-1.4.1.1009.x86.zip",
+            "hash": "3ada0479c4d55b185a33f7700d7ace8cd85cdceb8ddb610e062cfe04558275ca"
         }
     },
-    "bin": "Everything.exe",
-    "checkver": "Download Everything ([\\d.]+)",
-    "persist": [
-        "Everything.ini",
-        "Everything.db"
-    ],
     "pre_install": [
-        "if(!(test-path \"$dir\\Everything.ini\")) { & \"$dir\\Everything.exe\" -install-config null }",
-        "if(!(test-path \"$dir\\Everything.db\")) { Add-Content \"$dir\\Everything.db\" $null }"
+        "ensure \"$persist_dir\" | Out-Null",
+        "if (!(Test-Path \"$persist_dir\\Everything.ini\")) { Invoke-ExternalCommand \"$dir\\Everything.exe\" -Args @('-install-config null') | Out-Null }",
+        "Get-ChildItem \"$persist_dir\\*\" -Include 'Everything.db', 'Bookmarks.csv', 'Everything.ini' | Copy-Item -Destination \"$dir\" -ErrorAction SilentlyContinue"
     ],
+    "uninstaller": {
+        "script": "Get-ChildItem \"$dir\\*\" -Include 'Everything.ini', 'Everything.db', 'Bookmarks.csv' | Copy-Item -Destination \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
+    },
+    "bin": "Everything.exe",
+    "shortcuts": [
+        [
+            "Everything.exe",
+            "Everything"
+        ]
+    ],
+    "checkver": "Download Everything ([\\d.]+)",
     "autoupdate": {
         "architecture": {
             "64bit": {
@@ -32,13 +39,7 @@
             }
         },
         "hash": {
-            "url": "https://www.voidtools.com/Everything-$version.sha256"
+            "url": "$baseurl/Everything-$version.sha256"
         }
-    },
-    "shortcuts": [
-        [
-            "Everything.exe",
-            "Everything"
-        ]
-    ]
+    }
 }

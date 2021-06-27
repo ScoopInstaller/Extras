@@ -1,0 +1,46 @@
+{
+    "version": "1.20.8804",
+    "description": "Toolbox App. A control panel for all JetBrains tools.",
+    "homepage": "https://www.jetbrains.com/toolbox/",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.jetbrains.com/legal/"
+    },
+    "notes": [
+        "By default all your tools are installed into '$dir\\apps' folder and are persisted.",
+        "This could be changed inside settings menu."
+    ],
+    "url": "https://download.jetbrains.com/toolbox/jetbrains-toolbox-1.20.8804.exe#/dl.7z",
+    "hash": "72e3fae148d5108d204f1c8f28a8dcc11628c458537e19038340a5d0786917b9",
+    "post_install": [
+        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall.exe\" -Recurse",
+        "$config = \"$env:LOCALAPPDATA\\JetBrains\\Toolbox\\.settings.json\"",
+        "if (-not (Test-Path $config)) {",
+        "    $settings = @{",
+        "        'autostart' = $false",
+        "        'install_location' = \"$dir\"",
+        "        'update' = @{'install_automatically' = $false}",
+        "    }",
+        "    New-Item $config -Type File -Force | Out-Null",
+        "    Set-Content $config ($settings | ConvertToPrettyJson) -Encoding ASCII -Force",
+        "}"
+    ],
+    "bin": "jetbrains-toolbox.exe",
+    "shortcuts": [
+        [
+            "jetbrains-toolbox.exe",
+            "JetBrains Toolbox"
+        ]
+    ],
+    "persist": "apps",
+    "checkver": {
+        "url": "https://data.services.jetbrains.com/products/releases?code=TBA&latest=true&type=release",
+        "jsonpath": "$.TBA..build"
+    },
+    "autoupdate": {
+        "url": "https://download.jetbrains.com/toolbox/jetbrains-toolbox-$version.exe#/dl.7z",
+        "hash": {
+            "url": "$url.sha256"
+        }
+    }
+}

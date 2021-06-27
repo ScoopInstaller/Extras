@@ -1,36 +1,72 @@
 {
-    "homepage": "https://www.sublimetext.com/3",
-    "version": "3176",
+    "version": "4-4107",
+    "description": "A sophisticated text editor for code, markup and prose",
+    "homepage": "https://www.sublimetext.com",
+    "license": {
+        "identifier": "Shareware",
+        "url": "https://www.sublimetext.com/eula"
+    },
+    "notes": "Add Sublime Text as a context menu option by running: \"reg import '$dir\\install-context.reg'\"",
     "architecture": {
         "64bit": {
-            "url": "https://download.sublimetext.com/Sublime%20Text%20Build%203176%20x64.zip",
-            "hash": "5d1fdd06c0c21054ec384827b6ed6455b9a7e05c58a9f3716159904bcd382911"
+            "url": [
+                "https://download.sublimetext.com/sublime_text_build_4107_x64.zip",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/sublime-text/install-context.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/sublime-text/uninstall-context.reg"
+            ],
+            "hash": [
+                "5cca7325f109cc321b15f74f277e4909b9664d87687b6c5adaa706e14dc90447",
+                "45914fc3b299e90d9e3c5c84a4c3747c942918462e8b18348ec43383b87ed810",
+                "0253faa4f5e35be203aefa838594965e43aa97129e305d1b8ee1811098e0ae85"
+            ]
         },
         "32bit": {
-            "url": "https://download.sublimetext.com/Sublime%20Text%20Build%203176.zip",
-            "hash": "f35a2d4d93e77e4104a75dcabee051f8c29f6c746fd7c937b07f2ce192b92c27"
+            "url": [
+                "https://download.sublimetext.com/sublime_text_build_4107.zip",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/sublime-text/install-context.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/sublime-text/uninstall-context.reg"
+            ],
+            "hash": [
+                "382b2a2034a8cb70fb0d0d91fb986799c3fdd3af0f19a9169618b0199a9a153c",
+                "45914fc3b299e90d9e3c5c84a4c3747c942918462e8b18348ec43383b87ed810",
+                "0253faa4f5e35be203aefa838594965e43aa97129e305d1b8ee1811098e0ae85"
+            ]
         }
     },
+    "post_install": [
+        "$file = \"$dir\\install-context.reg\"",
+        "if (Test-Path $file) {",
+        "    $sublimepath = \"$dir\\sublime_text.exe\".Replace('\\', '\\\\')",
+        "    $content = (Get-Content $file).Replace('$sublime', $sublimepath)",
+        "    if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "    Set-Content $file $content -Encoding Ascii -Force",
+        "}",
+        "$file = \"$dir\\uninstall-context.reg\"",
+        "if ((Test-Path $file) -and $global) {",
+        "    (Get-Content $file).Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') | Set-Content -Path $file -Encoding Ascii -Force",
+        "}"
+    ],
     "bin": "subl.exe",
-    "persist": "Data",
-    "notes": "Sublime Text may be downloaded and evaluated for free, however a license must be purchased for continued use. There is currently no enforced time limit for the evaluation. For more information please see https://www.sublimetext.com/3",
     "shortcuts": [
         [
             "sublime_text.exe",
-            "Sublime Text 3"
+            "Sublime Text 4"
         ]
     ],
+    "persist": "Data",
     "checkver": {
-        "url": "https://www.sublimetext.com/3",
-        "re": "Version:</i>\\sBuild\\s([\\d]+)</p>"
+        "url": "https://www.sublimetext.com/updates/4/stable_update_check",
+        "jsonpath": "$.latest_version",
+        "regex": "((\\d)\\d+)",
+        "replace": "$2-$1"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.sublimetext.com/Sublime%20Text%20Build%20$version%20x64.zip"
+                "url": "https://download.sublimetext.com/sublime_text_build_$preReleaseVersion_x64.zip"
             },
             "32bit": {
-                "url": "https://download.sublimetext.com/Sublime%20Text%20Build%20$version.zip"
+                "url": "https://download.sublimetext.com/sublime_text_build_$preReleaseVersion.zip"
             }
         }
     }

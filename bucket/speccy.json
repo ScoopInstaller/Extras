@@ -1,8 +1,10 @@
 {
-    "homepage": "https://www.piriform.com/speccy",
-    "version": "1.32.740",
-    "url": "https://www.piriform.com/speccy/download/portable/downloadfile#/dl.7z",
-    "hash": "1a662d847f16850658216634eda7c98ce06b0c861017de16e8dc8ff12a412abe",
+    "version": "1.32.744",
+    "description": "Fast, lightweight, advanced system information tool for your PC.",
+    "homepage": "https://www.ccleaner.com/speccy",
+    "license": "Freeware",
+    "url": "https://download.ccleaner.com/spsetup132.exe#/dl.7z",
+    "hash": "1356cae1349d3a46692bcafeb9d275150d21ba024cc995d3d9368d906b41ac0a",
     "architecture": {
         "64bit": {
             "bin": [
@@ -28,11 +30,12 @@
             ]
         }
     },
-    "checkver": {
-        "url": "https://www.piriform.com/speccy/download",
-        "re": "Latest version: <b>(\\d+\\.\\d+\\.\\d+)</b>"
-    },
-    "autoupdate": {
-        "url": "https://www.piriform.com/speccy/download/portable/downloadfile#/dl.7z"
-    }
+    "pre_install": [
+        "Set-Content \"$dir\\portable.dat\" '#PORTABLE#' -Encoding ASCII",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\uninst.exe\" -Recurse -Force",
+        "if(!(Test-Path \"$persist_dir\\Speccy.ini\")) {",
+        "   Set-Content \"$dir\\Speccy.ini\" (@('[Software\\Piriform\\Speccy]', 'NeedUpdate=0') -join \"`r`n\") -Encoding ASCII",
+        "}"
+    ],
+    "persist": "Speccy.ini"
 }

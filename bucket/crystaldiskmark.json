@@ -1,10 +1,15 @@
 {
+    "version": "8.0.2",
+    "description": "Disk benchmark",
     "homepage": "https://osdn.net/projects/crystaldiskmark/",
-    "description": "CrystalDiskMark is a disk benchmark software.",
-    "version": "6.0.2",
     "license": "BSD-3-Clause",
-    "url": "https://osdn.net/frs/redir.php?m=dotsrc&f=crystaldiskmark/68624/CrystalDiskMark6_0_2.zip",
-    "hash": "md5:a2a6ed95804ed885e1e82d25cb4a5ea2",
+    "url": "https://free.nchc.org.tw/osdn//crystaldiskmark/75252/CrystalDiskMark8_0_2.zip",
+    "hash": "7ba04afd8f8aefd8f499e9b442b96d8981b29e9d84045edd9a736db46d6be5a5",
+    "pre_install": [
+        "'64', '32' | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\DiskMark$_.ini\")) { New-Item \"$dir\\DiskMark$_.ini\" | Out-Null }",
+        "}"
+    ],
     "architecture": {
         "64bit": {
             "bin": [
@@ -39,18 +44,12 @@
         "DiskMark32.ini",
         "DiskMark64.ini"
     ],
-    "pre_install": [
-        "if(!(Test-Path \"$dir/DiskMark64.ini\")) { Add-Content \"$dir/DiskMark64.ini\" $null }",
-        "if(!(Test-Path \"$dir/DiskMark32.ini\")) { Add-Content \"$dir/DiskMark32.ini\" $null }"
-    ],
-    "checkver": {
-        "re": "<a href=\"/projects/crystaldiskmark/releases/(?<release>[\\d]*)\">CrystalDiskMark ([\\d+\\.*]+)</a>"
-    },
+    "checkver": "releases/(?<release>\\d+)\">CrystalDiskMark\\s+([\\w.]+)<",
     "autoupdate": {
-        "url": "https://osdn.net/frs/redir.php?m=dotsrc&f=crystaldiskmark/$matchRelease/CrystalDiskMark$underscoreVersion.zip",
+        "url": "https://free.nchc.org.tw/osdn//crystaldiskmark/$matchRelease/CrystalDiskMark$underscoreVersion.zip",
         "hash": {
             "url": "https://osdn.net/projects/crystaldiskmark/downloads/$matchRelease/CrystalDiskMark$underscoreVersion.zip/",
-            "regex": "<dt>MD5</dt>\\n[\\t ]*<dd>([0-9a-fA-F]{32})</dd>"
+            "regex": "<dd>$sha256</dd>"
         }
     }
 }

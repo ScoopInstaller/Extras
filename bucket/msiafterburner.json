@@ -1,48 +1,46 @@
 {
-    "homepage": "https://www.msi.com/page/afterburner",
+    "version": "4.6.4.16094",
     "description": "Overclocking utility for graphics cards. Main features include GPU/Shader/Memory clock adjustment, advanced fan speed and GPU voltage control.",
-    "license": "Freeware",
-    "version": "4.5.0",
-    "extract_dir": "4.5.0",
-    "url": "http://download.msi.com/uti_exe/vga/MSIAfterburnerSetup.zip#/MSIAfterburnerSetup450.7z",
-    "hash": "87363d88a71279c6bbc91bf1779b85d5f0c31f858ae9cc920f9b9537d7e10c10",
-    "persist": [
-        [
-            "Profiles",
-            "AB_Profiles"
-        ],
-        [
-            "RTSS/Profiles",
-            "RTSS_Profiles"
-        ]
+    "homepage": "https://www.msi.com/page/afterburner",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.msi.com/page/website-terms-of-use"
+    },
+    "notes": [
+        "The 'RivaTuner Statistics Server' has been moved to it's own manifest.",
+        "To install it run 'scoop install extras/rtss'.",
+        "Profiles will be migrated automatically."
     ],
-    "bin": [
-        "RTSS/RTSS.exe",
-        "MSIAfterburner.exe"
-    ],
+    "suggest": {
+        "Visual C++ Redist 2008": "extras/vcredist2008",
+        "RivaTuner Statistics Server": "extras/rtss",
+        "MSI Kombustor": "extras/msikombustor",
+        "FurMark": "extras/furmark"
+    },
+    "url": "https://download.msi.com/uti_exe/vga/MSIAfterburnerSetup.zip?__token__=exp=zzzz~acl=/*~zzzzzzzz#/dl.zip",
+    "hash": "e71a5b2dd4bf010c6742f8138ba3f6500082c46baf940ba950fe50213d9579e8",
     "pre_install": [
-        "extract_7zip \"$dir\\MSIAfterburnerSetup*.exe\" \"$dir\"",
-        "extract_7zip \"$dir\\Redist\\RTSSSetup.exe\" \"$dir\\RTSS\"",
-        "Get-ChildItem $dir -Recurse -Include @('MSIAfterburnerSetup*.exe', '$PLUGINSDIR', 'Uninstall.exe.nsis', '$R0') | Remove-Item -Recurse",
-        "Move-Item $dir/RTSS/RTSSHooks.dll.copy $dir/RTSS/RTSSHooks.dll",
-        "Move-Item $dir/RTSS/RTSSHooks64.dll.copy $dir/RTSS/RTSSHooks64.dll"
+        "Expand-7zipArchive \"$dir\\MSIAfterburnerSetup*.exe\" -Removal",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\", \"$dir\\Redist\" -Recurse"
     ],
+    "post_install": [
+        "if (Test-Path \"$persist_dir\\AB_Profiles\") {",
+        "    warn 'Migrating Afterburner profiles...'",
+        "    Move-Item \"$persist_dir\\AB_Profiles\\*\" \"$persist_dir\\Profiles\\\"",
+        "    Remove-Item \"$persist_dir\\AB_Profiles\" -Recurse",
+        "}"
+    ],
+    "bin": "MSIAfterburner.exe",
     "shortcuts": [
         [
             "MSIAfterburner.exe",
             "MSI Afterburner"
-        ],
-        [
-            "RTSS/RTSS.exe",
-            "RivaTuner Statistics Server"
         ]
     ],
+    "persist": "Profiles",
     "checkver": {
-        "url": "http://event.msi.com/afterburner/Update.txt",
-        "re": "ProductBetaVersion\\s+=\\s+0.*\\nProductVersion\\s+=\\s+([\\d\\.]+)"
-    },
-    "autoupdate": {
-        "url": "http://download.msi.com/uti_exe/vga/MSIAfterburnerSetup.zip#/MSIAfterburnerSetup$cleanVersion.7z",
-        "extract_dir": "$version"
+        "url": "https://www.guru3d.com/files-details/msi-afterburner-beta-download.html",
+        "regex": ">Download\\s+([\\d.]+)\\s+Stable\\s+\\(Final",
+        "reverse": true
     }
 }

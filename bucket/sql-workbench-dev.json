@@ -1,21 +1,15 @@
 {
+    "version": "127.5",
+    "description": "DBMS-independent, cross-platform SQL query tool",
     "homepage": "https://www.sql-workbench.eu/",
-    "description": "SQL Workbench/J is a free, DBMS-independent, cross-platform SQL query tool",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.sql-workbench.eu/manual/license.html"
     },
-    "version": "124.2",
-    "url": "https://www.sql-workbench.eu/Workbench-Build124.2-with-optional-libs.zip",
-    "hash": "53aeb1ab9dbe773947197bd3f784a8277d2f208b970bbe0cf1657b3ca674d2ae",
+    "url": "https://www.sql-workbench.eu/Workbench-Build127.5-with-optional-libs.zip",
+    "hash": "sha1:b64c718e95c9fbe7ba1cd84b447df35c8c74482a",
     "architecture": {
         "64bit": {
-            "bin": [
-                [
-                    "sqlwbconsole64.exe",
-                    "sqlwbconsole"
-                ]
-            ],
             "shortcuts": [
                 [
                     "SQLWorkbench64.exe",
@@ -24,12 +18,6 @@
             ]
         },
         "32bit": {
-            "bin": [
-                [
-                    "sqlwbconsole.exe",
-                    "sqlwbconsole"
-                ]
-            ],
             "shortcuts": [
                 [
                     "SQLWorkbench.exe",
@@ -38,11 +26,29 @@
             ]
         }
     },
+    "pre_install": [
+        "@('sqlwbconsole64.ini', 'sqlwbconsole.ini', 'SQLWorkbench64.ini', 'SQLWorkbench.ini') | ForEach-Object {",
+        "    if(!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" -Type File | Out-Null }",
+        "}"
+    ],
+    "post_install": "if((Test-Path \"$dir\\ext.original\")) { Copy-Item \"$dir\\ext.original\\*\" -Destination \"$persist_dir\\ext\" }",
+    "bin": "sqlwbconsole.cmd",
+    "persist": [
+        "ext",
+        "sqlwbconsole64.ini",
+        "sqlwbconsole.ini",
+        "SQLWorkbench64.ini",
+        "SQLWorkbench.ini"
+    ],
     "checkver": {
         "url": "https://www.sql-workbench.eu/dev-download.html",
-        "re": "Current dev-build: (\\d+\\.\\d+)"
+        "regex": "Current dev-build: ([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://www.sql-workbench.eu/Workbench-Build$version-with-optional-libs.zip"
+        "url": "https://www.sql-workbench.eu/Workbench-Build$version-with-optional-libs.zip",
+        "hash": {
+            "url": "$url.sha1",
+            "regex": "^$sha1"
+        }
     }
 }

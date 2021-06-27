@@ -1,25 +1,35 @@
 {
+    "version": "4.9.9",
+    "description": "Visualizer for deep learning and machine learning models",
     "homepage": "https://github.com/lutzroeder/Netron",
-    "description": "Visualizer for deep learning and machine learning models.",
-    "version": "2.8.5",
     "license": "MIT",
-    "url": "https://github.com/lutzroeder/netron/releases/download/v2.8.5/Netron-Setup-2.8.5.exe/#dl.7z",
-    "hash": "sha512:071110e1c35eab5ed11f2e280e837e8c56125e3520ca12a7296ec836f1c2b2004f64322035e21d97fb62c832d7144315a51dff3240d888e3fe83e0eefc7df8aa",
-    "pre_install": "extract_7zip \"$dir\\`$PLUGINSDIR\\app-*.7z\" \"$dir\"",
-    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
-    "bin": "netron.exe",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/lutzroeder/netron/releases/download/v4.9.9/Netron-Setup-4.9.9.exe#/dl.7z",
+            "hash": "sha512:6ed30d95ed09ddd3c929851bd0c37d34a7f97e1c83f1496b97a6b3fd92992ef34c224995ccdb97ded608849545e25e93c716afdfdfab90dce804fada4cffdd9b",
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$*\" -Force -Recurse"
+            ]
+        }
+    },
+    "bin": "Netron.exe",
     "shortcuts": [
         [
-            "netron.exe",
+            "Netron.exe",
             "Netron"
         ]
     ],
     "checkver": "github",
     "autoupdate": {
-        "url": "https://github.com/lutzroeder/netron/releases/download/v$version/Netron-Setup-$version.exe/#dl.7z",
-        "hash": {
-            "url": "$baseurl/latest.yml",
-            "find": "sha512:\\s+(.*)"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/lutzroeder/netron/releases/download/v$version/Netron-Setup-$version.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "sha512:\\s+$base64"
+                }
+            }
         }
     }
 }

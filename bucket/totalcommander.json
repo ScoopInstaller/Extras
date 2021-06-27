@@ -1,12 +1,12 @@
 {
-    "version": "9.21a",
-    "license": "Shareware",
-    "homepage": "https://www.ghisler.com",
+    "version": "10.00",
     "description": "Total Commander is a Shareware file manager for Windows® 95/98/ME/NT/2000/XP/Vista/7/8/8.1/10, and Windows® 3.1.",
+    "homepage": "https://www.ghisler.com",
+    "license": "Shareware",
     "architecture": {
         "64bit": {
-            "url": "http://totalcommander.ch/win/tcmd921ax64.exe",
-            "hash": "6b978d580701b04c734ad2645a9393b2611b50f78bd9af62c0bb8f3d5b355326",
+            "url": "http://totalcommander.ch/win/tcmd1000x64.exe",
+            "hash": "c14ac3e7a9976959151fd656168b5cf51b757c88d215f6766e00a9c604976738",
             "bin": "TOTALCMD64.EXE",
             "shortcuts": [
                 [
@@ -16,8 +16,8 @@
             ]
         },
         "32bit": {
-            "url": "http://totalcommander.ch/win/tcmd921ax32.exe",
-            "hash": "0ff8a8aff38fc06b536522b4752560d9bc3f60781d0cf93afba201e59b2149a8",
+            "url": "http://totalcommander.ch/win/tcmd1000x32.exe",
+            "hash": "7a96608325f48e7498a7da52eb52fdf353749e6cfa8b3353cf19b55d55b4695e",
             "bin": "TOTALCMD.EXE",
             "shortcuts": [
                 [
@@ -28,8 +28,8 @@
         }
     },
     "pre_install": [
-        "extract_7zip \"$dir\\$fname\" \"$dir\\_tmp\" $false",
-        "extract_7zip \"$dir\\_tmp\\INSTALL.CAB\" \"$dir\" $true",
+        "Expand-7zipArchive \"$dir\\$fname\" \"$dir\\_tmp\"",
+        "Expand-7zipArchive \"$dir\\_tmp\\INSTALL.CAB\" \"$dir\" -Removal",
         "Move-Item \"$dir\\e\\*\" \"$dir\"",
         "Remove-Item -Recurse \"$dir\\d\", \"$dir\\e\", \"$dir\\_tmp\", \"$dir\\$fname\"",
         "\"[Configuration]`r`nUseIniInProgramDir=7\" | Out-File -Encoding ASCII \"$dir\\wincmd.ini\"",
@@ -45,7 +45,7 @@
     ],
     "checkver": {
         "url": "https://www.ghisler.com/download.htm",
-        "re": "Download version\\s+([\\d\\.\\a-z]+) of Total Commander"
+        "regex": "Download\\s+version\\s+([\\w.]+) of Total Commander"
     },
     "autoupdate": {
         "architecture": {

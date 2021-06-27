@@ -1,21 +1,30 @@
 {
+    "version": "3.0.8",
+    "description": "A CLI utility to build and manage a PKI CA",
     "homepage": "https://openvpn.net/easyrsa.html",
-    "version": "3.0.5",
-    "license": "GPL-2.0",
-    "url": "https://github.com/OpenVPN/easy-rsa/releases/download/v3.0.5/EasyRSA-Windows-3.0.5.zip",
-    "hash": "99c414ab79d6df0d971d1878ffcfb1fba9216d6460aa7c78731daafa5a02104f",
-    "extract_dir": "EasyRSA-3.0.5",
+    "license": "GPL-2.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/OpenVPN/easy-rsa/releases/download/v3.0.8/EasyRSA-3.0.8-win64.zip",
+            "hash": "e5e5ec857b9221535aed53fd7a8b92f990ccfa1cdbd0f926207980b2721d828d"
+        },
+        "32bit": {
+            "url": "https://github.com/OpenVPN/easy-rsa/releases/download/v3.0.8/EasyRSA-3.0.8-win32.zip",
+            "hash": "a39b7b42f499a54891215d5723ee573b7c94d0ceb06aed7c7295f2b0ff1fe639"
+        }
+    },
+    "extract_dir": "EasyRSA-3.0.8",
     "post_install": [
         "@\"",
-        "setup_path=\"$($dir -replace \"\\\\\", \"/\")\"",
+        "setup_path=\"$($dir -replace '\\\\', '/')\"",
         "export EASYRSA=\"`${setup_path}\"",
         "export EASYRSA_PKI=\"`${setup_path}/keys/pki\"",
         "export PATH=\"`${setup_path};`${setup_path}/bin;`${PATH}\"",
         "export HOME=\"`${setup_path}\"",
         "export ENV=\"/disable-env\"",
         "`${setup_path}/easyrsa $*",
-        "\"@ | out-file -en oem $dir\\easyrsa-wrapper.sh",
-        "if (!(Test-Path -Path \"$dir\\keys\\pki\")) { easyrsa init-pki }"
+        "\"@ | Out-File \"$dir\\easyrsa-wrapper.sh\" -Encoding Ascii",
+        "if (!(Test-Path \"$dir\\keys\\pki\")) { easyrsa init-pki }"
     ],
     "bin": [
         [
@@ -29,7 +38,14 @@
         "github": "https://github.com/OpenVPN/easy-rsa"
     },
     "autoupdate": {
-        "url": "https://github.com/OpenVPN/easy-rsa/releases/download/v$version/EasyRSA-Windows-$version.zip",
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/OpenVPN/easy-rsa/releases/download/v$version/EasyRSA-$version-win64.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/OpenVPN/easy-rsa/releases/download/v$version/EasyRSA-$version-win32.zip"
+            }
+        },
         "extract_dir": "EasyRSA-$version"
     }
 }

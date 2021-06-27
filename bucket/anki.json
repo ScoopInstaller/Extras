@@ -1,18 +1,30 @@
 {
-    "homepage": "https://apps.ankiweb.net/",
+    "version": "2.1.44",
+    "description": "Powerful and intelligent flash cards",
+    "homepage": "https://apps.ankiweb.net",
     "license": "AGPL-3.0-only",
-    "description": "Powerful, intelligent flash cards. Remembering things just became much easier.",
-    "version": "2.1.8",
-    "url": "https://apps.ankiweb.net/downloads/current/anki-2.1.8-windows.exe#/dl.7z",
-    "hash": "e7fa6e306644873ee3e8b826ebb5373f9bd879d6059fb7218446be243580dbc9",
-    "persist": "data",
-    "bin": [
-        [
-            "anki.cmd",
-            "anki"
-        ]
+    "suggest": {
+        "vcredist": "extras/vcredist2008"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/ankitects/anki/releases/download/2.1.44/anki-2.1.44-windows.exe#/dl.7z",
+            "hash": "0d71b91cd82416a6f5b02142ed54290f3689abe0261b0ba8406110dd93421be5"
+        }
+    },
+    "pre_install": [
+        "@(",
+        "    '@echo off'",
+        "    'SET _allParams=\"%*\"'",
+        "    'IF /i %_allParams:-b =%==%_allParams% ('",
+        "    \"    start `\"anki`\" /D `\"%~dp0`\" `\"%~dp0anki.exe`\" -b `\"$persist_dir\\data`\" %*\"",
+        "    ') ELSE ('",
+        "    '    start \"anki\" /D \"%~dp0\" \"%~dp0anki.exe\" %*'",
+        "    ')'",
+        ") | Set-Content \"$dir\\anki.cmd\" -Encoding ASCII",
+        "Remove-Item \"$dir\\`$*\" -Recurse"
     ],
-    "pre_install": "\"@echo off`nSET _allParams=`\"%*`\"`nIF /i %_allParams:-b =%==%_allParams% (`n    start `\"anki`\" /D `\"%~dp0`\" `\"%~dp0anki.exe`\" -b `\"$persist_dir\\data`\" %*`n) ELSE (`n    start `\"anki`\" /D `\"%~dp0`\" `\"%~dp0anki.exe`\" %*`n)\" | out-file \"$dir\\anki.cmd\" -encoding oem",
+    "bin": "anki.cmd",
     "shortcuts": [
         [
             "anki.cmd",
@@ -21,17 +33,19 @@
             "anki.exe"
         ]
     ],
-    "suggest": {
-        "vcredist": "extras/vcredist2008"
-    },
+    "persist": "data",
     "checkver": {
-        "url": "https://apps.ankiweb.net/docs/changes.html",
-        "re": "Changes in ([\\d.]+)"
+        "url": "https://github.com/ankitects/anki/releases",
+        "regex": "anki-([\\d.]+)-windows\\.exe"
     },
     "autoupdate": {
-        "url": "https://apps.ankiweb.net/downloads/current/anki-$version-windows.exe#/dl.7z",
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/ankitects/anki/releases/download/$version/anki-$version-windows.exe#/dl.7z"
+            }
+        },
         "hash": {
-            "url": "https://apps.ankiweb.net/downloads/current/anki-$version-checksums.txt"
+            "url": "$baseurl/anki-$version-checksums.txt"
         }
     }
 }

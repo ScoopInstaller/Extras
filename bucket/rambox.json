@@ -1,21 +1,19 @@
 {
-    "version": "0.6.3",
-    "description": "Free and Open Source messaging and emailing app that combines common web applications into one.",
-    "homepage": "http://rambox.pro/",
-    "license": {
-        "identifier": "GPL-3.0-only",
-        "url": "https://github.com/ramboxapp/community-edition/blob/master/LICENSE"
-    },
+    "version": "0.7.7",
+    "description": "Messaging and emailing app that combines common web applications into one.",
+    "homepage": "https://rambox.pro/",
+    "license": "GPL-3.0-or-later",
+    "url": "https://github.com/ramboxapp/community-edition/releases/download/0.7.7/Rambox-0.7.7-win.exe#/dl.7z",
+    "hash": "sha512:0d834bb71a5142427be4cb391636dbd916487da2e7bb7a718938da5ef0e193092f3adfc9b8403bce042da05c8679c765845919d5195a31d9cc32c08a33d91842",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/ramboxapp/community-edition/releases/download/0.6.3/Rambox-0.6.3-win-x64.zip",
-            "hash": "75e81fd83c4deb27b238d17176a67bfa344f4e25e37c6e4955d1f7b19dc30e81"
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
         },
         "32bit": {
-            "url": "https://github.com/ramboxapp/community-edition/releases/download/0.6.3/Rambox-0.6.3-win-ia32.zip",
-            "hash": "6233cf5593c9612af6f0788e9a23cf7daf504994182494214f592711a50d12c1"
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
         }
     },
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse",
     "bin": "Rambox.exe",
     "shortcuts": [
         [
@@ -24,16 +22,13 @@
         ]
     ],
     "checkver": {
-        "github": "https://github.com/ramboxapp/community-edition/"
+        "github": "https://github.com/ramboxapp/community-edition"
     },
     "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://github.com/ramboxapp/community-edition/releases/download/$version/Rambox-$version-win-x64.zip"
-            },
-            "32bit": {
-                "url": "https://github.com/ramboxapp/community-edition/releases/download/$version/Rambox-$version-win-ia32.zip"
-            }
+        "url": "https://github.com/ramboxapp/community-edition/releases/download/$version/Rambox-$version-win.exe#/dl.7z",
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512: $base64"
         }
     }
 }

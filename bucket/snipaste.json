@@ -1,6 +1,11 @@
 {
-    "homepage": "https://www.snipaste.com/",
     "version": "1.16.2",
+    "description": "A snipping tool, which allows you to pin the screenshot back onto the screen.",
+    "homepage": "https://www.snipaste.com/",
+    "license": "Unknown",
+    "suggest": {
+        "vcredist": "extras/vcredist2015"
+    },
     "architecture": {
         "64bit": {
             "url": "https://bitbucket.org/liule/snipaste/downloads/Snipaste-1.16.2-x64.zip",
@@ -11,21 +16,19 @@
             "hash": "sha1:c198dfa47010e6591e51299d985d7411e80d1f54"
         }
     },
-    "pre_install": "if(!(test-path \"$dir\\config.ini\")) { write-host \"\" | out-file -encoding oem \"$dir\\config.ini\" }",
-    "persist": [
-        "history",
-        "config.ini"
-    ],
-    "suggest": {
-        "vcredist": "extras/vcredist2015"
-    },
+    "pre_install": "if (!(Test-Path \"$persist_dir\\config.ini\")) { Set-Content \"$dir\\config.ini\" '' -Encoding ASCII }",
+    "bin": "Snipaste.exe",
     "shortcuts": [
         [
             "Snipaste.exe",
             "Snipaste"
         ]
     ],
-    "checkver": "Desktop ([\\.0-9]+)",
+    "persist": [
+        "history",
+        "config.ini"
+    ],
+    "checkver": "(?sm)Desktop.*?>v([\\d.]+) [^B]",
     "autoupdate": {
         "architecture": {
             "64bit": {

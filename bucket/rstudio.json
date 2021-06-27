@@ -1,34 +1,45 @@
 {
-    "version": "1.1.463",
+    "version": "1.4.1717",
+    "description": "An IDE for R, which includes a console, syntax-highlighting editor that supports direct code execution, as well as tools for plotting, history, debugging and workspace management.",
+    "homepage": "https://www.rstudio.com/products/rstudio/",
     "license": "AGPL-3.0-only",
-    "homepage": "https://www.rstudio.com/",
-    "url": "https://download1.rstudio.org/RStudio-1.1.463.zip",
-    "hash": "d0b1d8805b0db25d43435a2fcfefb4e6561add51f55be805e799b51d8bfa8114",
+    "notes": "For 32bit, please install 'versions/rstudio11",
     "depends": "r",
-    "bin": "bin/rstudio.exe",
+    "architecture": {
+        "64bit": {
+            "url": "https://download1.rstudio.org/desktop/windows/RStudio-1.4.1717.zip",
+            "hash": "84b1dc1a29ee18e66886b1d3bae23ceda790570932a44157687bb364aee53d4d",
+            "post_install": [
+                "if (!(Test-Path \"$env:Appdata\\RStudio\")) {",
+                "    New-Item \"$env:Appdata\\RStudio\" -ItemType Directory -Force | Out-Null",
+                "    @(",
+                "        '[General]'",
+                "        \"RBinDir=`\"$(appdir r $global)\\current\\bin\\x64`\"\".Replace('\\', '/')",
+                "    ) | Add-Content -Path \"$env:Appdata\\RStudio\\desktop.ini\" -Encoding UTF8 -Force",
+                "}"
+            ]
+        }
+    },
+    "bin": "bin\\rstudio.exe",
     "shortcuts": [
         [
-            "bin/rstudio.exe",
+            "bin\\rstudio.exe",
             "R Studio"
         ]
     ],
-    "post_install": [
-        "$rstudio=$env:APPDATA+'/RStudio'",
-        "if (-not (Test-Path $rstudio)) {",
-        "    mkdir $rstudio | Out-Null",
-        "    $rbin = 'RBinDir=' + $scoopdir.Replace('\\','/') + '/apps/r/current/bin/'",
-        "    if($architecture.Equals('64bit')) { $rbin+='x64'} else { $rbin+='i386'}",
-        "    $rstudioini = $rstudio+'/desktop.ini'",
-        "    $enc = New-Object Text.UTF8Encoding $False",
-        "    [IO.File]::WriteAllLines($rstudioini, ('[General]', $rbin), $enc)",
-        "    Write-Host Configuration written to $rstudioini",
-        "}"
-    ],
     "checkver": {
         "url": "https://www.rstudio.com/products/rstudio/download/",
-        "re": "RStudio-([\\d.]+).zip"
+        "regex": ">RStudio Desktop ([\\d.]+)<"
     },
     "autoupdate": {
-        "url": "https://download1.rstudio.org/RStudio-$version.zip"
+        "architecture": {
+            "64bit": {
+                "url": "https://download1.rstudio.org/desktop/windows/RStudio-$version.zip",
+                "hash": {
+                    "url": "https://www.rstudio.com/products/rstudio/download/",
+                    "regex": "(?s)$basename.*?$sha256"
+                }
+            }
+        }
     }
 }

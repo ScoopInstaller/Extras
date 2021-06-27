@@ -1,25 +1,69 @@
 {
+    "version": "6.13.13",
+    "description": "The .NET programmer’s playground",
     "homepage": "https://www.linqpad.net",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.linqpad.net/eula.txt"
     },
-    "url": "http://download.linqpad.net/public/LINQPad5.zip",
-    "version": "nightly",
-    "bin": [
-        [
-            "linqpad.exe",
-            "linqpad"
-        ],
-        [
-            "lprun.exe",
-            "lprun"
-        ]
+    "suggest": {
+        ".Net SDK": "dotnet-sdk"
+    },
+    "url": "http://download.linqpad.net/public/LINQPad6.zip",
+    "hash": "a189dd4fcfb65ec70d2fdd77d98d00f4bdc4b2c26d69e3c22f63259e79d773f1",
+    "pre_install": [
+        "$major = $version -split '\\.' | Select-Object -First 1",
+        "Get-ChildItem \"$dir\" 'l*.exe' | ForEach-Object {",
+        "         # $1 is needed to not remove character",
+        "    $newName = $_.Basename -replace \"([^8])$major\", '$1'",
+        "    Rename-Item $_.Fullname ($newName + $_.Extension)",
+        "}"
     ],
-    "shortcuts": [
-        [
-            "linqpad.exe",
-            "LINQPad 5"
-        ]
-    ]
+    "architecture": {
+        "64bit": {
+            "bin": [
+                "lprun.exe",
+                "linqpad.exe",
+                "lprun-x86.exe",
+                "linqpad-x86.exe"
+            ],
+            "shortcuts": [
+                [
+                    "linqpad.exe",
+                    "LINQPad"
+                ],
+                [
+                    "linqpad-x86.exe",
+                    "LINQPad x86"
+                ]
+            ]
+        },
+        "32bit": {
+            "bin": [
+                "lprun-x86.exe",
+                "linqpad-x86.exe",
+                [
+                    "lprun-x86.exe",
+                    "lprun"
+                ],
+                [
+                    "linqpad-x86.exe",
+                    "linqpad"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "linqpad-x86.exe",
+                    "LINQPad"
+                ]
+            ]
+        }
+    },
+    "checkver": {
+        "url": "https://www.linqpad.net/Download.aspx",
+        "regex": ">([\\d.]+)</span></td>"
+    },
+    "autoupdate": {
+        "url": "http://download.linqpad.net/public/LINQPad$majorVersion.zip"
+    }
 }

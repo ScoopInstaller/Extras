@@ -1,35 +1,32 @@
 {
+    "version": "2.2.0",
+    "description": "A command-line utility that pipes video streams from various services into a video player.",
     "homepage": "https://streamlink.github.io/",
-    "version": "1.0.0",
     "license": "BSD-2-Clause",
-    "url": "https://github.com/streamlink/streamlink/releases/download/1.0.0/streamlink-1.0.0.exe#/dl.7z",
-    "hash": "af6b201638deb7dbf97b4a8bbc0cf951baa3a9e21f12612b0511d9b3a0aab8f0",
     "notes": "Streamlink settings can be changed in '%APPDATA%\\streamlink\\streamlinkrc'",
-    "bin": "bin\\streamlink.exe",
-    "post_install": [
-        "If(!(Test-Path \"$env:APPDATA\\streamlink\\streamlinkrc\")) {",
-        "    Write-Host \"Copying default 'streamlinkrc' to '%APPDATA%\\streamlink\\streamlinkrc'\"",
-        "    New-Item -Force -Type directory -Path \"$env:APPDATA\\streamlink\" | Out-Null",
-        "    Copy-Item \"$dir\\`$APPDATA\\streamlink\\streamlinkrc\" \"$env:APPDATA\\streamlink\\streamlinkrc\"",
-        "}",
-        "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
-        "Remove-Item \"$dir\\ffmpeg\" -Recurse",
-        "Remove-Item \"$dir\\uninstall.exe\""
-    ],
-    "pre_install": [
-        "\"#!`\"$dir\\Python\\python.exe`\"\" | Set-Content \"$dir\\bin\\python.txt\"",
-        "if((Get-Command Get-Content).parameters.ContainsKey('AsByteStream')) {",
-        "   Get-Content -AsByteStream \"$dir\\bin\\launcher_exe.dat\",\"$dir\\bin\\python.txt\",\"$dir\\bin\\streamlink-append.zip\" | Set-Content -AsByteStream \"$dir\\bin\\streamlink.exe\"",
-        "} else {",
-        "   Get-Content -Encoding byte \"$dir\\bin\\launcher_exe.dat\",\"$dir\\bin\\python.txt\",\"$dir\\bin\\streamlink-append.zip\" | Set-Content -Encoding byte \"$dir\\bin\\streamlink.exe\"",
-        "}"
-    ],
     "suggest": {
         "FFmpeg": [
             "ffmpeg",
             "ffmpeg-nightly"
         ]
     },
+    "url": "https://github.com/streamlink/streamlink/releases/download/2.2.0/streamlink-2.2.0.exe#/dl.7z",
+    "hash": "ca6b9664ae56892ae6a003bac8778a1458978e6457411ca4d17e2da26c2a0b53",
+    "pre_install": [
+        "if (!(Test-Path \"$env:APPDATA\\streamlink\\streamlinkrc\")) {",
+        "    info 'Copying default ''streamlinkrc'' to ''%APPDATA%\\streamlink\\streamlinkrc'''",
+        "    ensure \"$env:APPDATA\\streamlink\" | Out-Null",
+        "    Copy-Item \"$dir\\`$APPDATA\\streamlink\\streamlinkrc\" \"$env:APPDATA\\streamlink\\streamlinkrc\"",
+        "}",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\ffmpeg\", \"$dir\\uninstall.exe\" -Recurse"
+    ],
+    "uninstaller": {
+        "script": "if ($purge) { Remove-Item \"$env:APPDATA\\streamlink\" -Recurse}"
+    },
+    "bin": [
+        "bin\\streamlink.exe",
+        "bin\\streamlinkw.exe"
+    ],
     "checkver": {
         "github": "https://github.com/streamlink/streamlink"
     },

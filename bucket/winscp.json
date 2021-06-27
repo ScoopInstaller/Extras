@@ -1,28 +1,35 @@
 {
+    "version": "5.19",
+    "description": "Copy files between a local computer and remote servers using FTP, FTPS, SCP, SFTP, WebDAV or S3 file transfer protocols.",
     "homepage": "https://winscp.net",
     "license": "GPL-3.0-or-later",
-    "version": "5.13.7",
-    "url": "https://downloads.sourceforge.net/project/winscp/WinSCP/5.13.7/WinSCP-5.13.7-Portable.zip",
-    "hash": "sha1:cf3f1bb19fa42be5ef3148988232a51f56e67cc9",
-    "bin": "WinSCP.exe",
-    "persist": "winscp.ini",
+    "url": "https://downloads.sourceforge.net/project/winscp/WinSCP/5.19/WinSCP-5.19-Portable.zip",
+    "hash": "402cc101d69009e1f4b4decc6104e0560bce81e4ca66287876c7c3a5462fe9f0",
     "pre_install": [
         "if (!(Test-Path \"$persist_dir\\winscp.ini\")) {",
-        "    new-item \"$dir\\winscp.ini\" -type file | out-null",
-        "    write-output \"[Configuration\\Interface]`r`nRandomSeedFile=.\\winscp.rnd\" | Out-File -encoding \"ASCII\" \"$dir\\winscp.ini\"",
+        "    @(",
+        "        '[Configuration\\Interface]'",
+        "        'RandomSeedFile=.\\winscp.rnd'",
+        "    ) | Add-Content -Path \"$dir\\winscp.ini\" -Encoding ASCII -Force",
         "}"
     ],
-    "checkver": {
-        "url": "https://winscp.net/eng/downloads.php",
-        "re": "WinSCP-([\\d.]+)-Portable\\.zip"
-    },
-    "autoupdate": {
-        "url": "https://downloads.sourceforge.net/project/winscp/WinSCP/$version/WinSCP-$version-Portable.zip"
-    },
+    "bin": "WinSCP.exe",
     "shortcuts": [
         [
             "WinSCP.exe",
             "WinSCP"
         ]
-    ]
+    ],
+    "persist": "winscp.ini",
+    "checkver": {
+        "url": "https://winscp.net/eng/downloads.php",
+        "regex": "WinSCP-([\\d.]+)-Portable\\.zip"
+    },
+    "autoupdate": {
+        "url": "https://downloads.sourceforge.net/project/winscp/WinSCP/$version/WinSCP-$version-Portable.zip",
+        "hash": {
+            "url": "https://winscp.net/download/WinSCP-$version-ReadMe.txt",
+            "regex": "(?sm)$basename.*?SHA-256: $sha256"
+        }
+    }
 }

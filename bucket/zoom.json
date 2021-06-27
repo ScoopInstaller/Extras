@@ -1,0 +1,45 @@
+{
+    "version": "5.7.0.522",
+    "description": "Video and audio conferencing, chat, and webinars",
+    "homepage": "https://zoom.us",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://zoom.us/terms"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://zoom.us/client/5.7.0.522/ZoomInstaller.exe?archType=x64#/dl.7z",
+            "hash": "261cbee1ba79763f2e8797883ec554060b8a746e8ce64d5361b5bfdaa5c9c948"
+        },
+        "32bit": {
+            "url": "https://zoom.us/client/5.7.0.522/ZoomInstaller.exe?archType=x86#/dl.7z",
+            "hash": "735644a1a7c5e71484737db0f5b379c6494bde920297f786fcc1f05f65a0425e"
+        }
+    },
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\Zoom.msi\" -Removal",
+        "Remove-Item \"$dir\\Install*\""
+    ],
+    "bin": "Zoom.exe",
+    "shortcuts": [
+        [
+            "Zoom.exe",
+            "Zoom"
+        ]
+    ],
+    "checkver": {
+        "url": "https://support.zoom.us/hc/en-us/articles/201361953-New-Updates-for-Windows",
+        "regex": "version\\s*([\\d.]+)\\s+\\((\\d+)\\)",
+        "replace": "$1.$2"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://zoom.us/client/$version/ZoomInstaller.exe?archType=x64#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://zoom.us/client/$version/ZoomInstaller.exe?archType=x86#/dl.7z"
+            }
+        }
+    }
+}

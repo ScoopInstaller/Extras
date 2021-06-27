@@ -1,0 +1,37 @@
+{
+    "version": "2.4.0",
+    "description": "HashCheck Shell Extension for Windows with added SHA2, SHA3, and multithreading.",
+    "homepage": "https://github.com/gurnec/HashCheck",
+    "license": "BSD-3-Clause",
+    "notes": "Before uninstallation, please close Explorer (or other files management tool, e.g., Total Commander) windows where you've used HashCheck from.",
+    "depends": "sudo",
+    "url": "https://github.com/gurnec/HashCheck/releases/download/v2.4.0/HashCheckSetup-v2.4.0.exe",
+    "hash": "2d6067f00bbb93526d146d2228a46dc4851f0fa866e69250279c6b2f00b8f1b7",
+    "installer": {
+        "script": [
+            "Expand-7zipArchive -Path \"$dir\\$fname\" -Removal -Overwrite 'Rename'",
+            "Rename-Item \"$dir\\`$0_1\" 'HashCheck32.dll' -Force",
+            "Rename-Item \"$dir\\`$0\" 'HashCheck64.dll' -Force",
+            "if ($architecture -eq '64bit') {",
+            "   sudo \"$env:COMSPEC\" /c \"regsvr32 /s \"$dir\\HashCheck64.dll\"\"",
+            "}",
+            "sudo \"$env:COMSPEC\" /c \"regsvr32 /s \"$dir\\HashCheck32.dll\"\"",
+            "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse -Force"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "if ($architecture -eq '64bit') {",
+            "   sudo \"$env:COMSPEC\" /c \"regsvr32 /u /s \"$dir\\HashCheck64.dll\"\"",
+            "}",
+            "sudo \"$env:COMSPEC\" /c \"regsvr32 /u /s \"$dir\\HashCheck32.dll\"\""
+        ]
+    },
+    "checkver": "github",
+    "autoupdate": {
+        "url": "https://github.com/gurnec/HashCheck/releases/download/v$version/HashCheckSetup-v$version.exe",
+        "hash": {
+            "url": "$url.sha256"
+        }
+    }
+}

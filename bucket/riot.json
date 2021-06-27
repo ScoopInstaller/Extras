@@ -1,58 +1,21 @@
 {
-    "homepage": "https://riot.im/",
-    "description": "Riot is a decentralised, encrypted chat & collaboration powered by matrix.org. It has group chat, integrations, voip & video calling, bridge networks, end to end encryption, file transfer. Lots of rooms already exist in Matrix, linked to existing networks (Slack, IRC, Gitter etc) or independent.",
+    "version": "1.6.8",
+    "description": "A decentralised, encrypted chat & collaboration powered by matrix.org",
+    "homepage": "https://about.riot.im",
     "license": "Apache-2.0",
-    "version": "0.17.9",
+    "notes": "Riot was rebranded into Element. Install 'extras/element' instead.",
     "architecture": {
         "64bit": {
-            "url": "https://riot.im/download/desktop/install/win32/x64/Riot%20Setup%200.17.9.exe#/dl.7z",
-            "hash": "4217eba6de6998abb4f14f8aa2b3b07e148b99602f7cf4e7bc0d9f7ecde4e988"
-        },
-        "32bit": {
-            "url": "https://riot.im/download/desktop/install/win32/ia32/Riot%20Setup%200.17.9-ia32.exe#/dl.7z",
-            "hash": "562914c277a1881a288c9b49700e378aef9566309184433e043e998aa3bb31ca"
+            "url": "https://packages.riot.im/desktop/update/win32/x64/riot-desktop-1.6.8-full.nupkg",
+            "hash": "sha1:7e2513449463198149652b465595a439fd0eacf5"
         }
     },
-    "persist": [
-        "resources\\webapp\\config.json",
-        "data"
-    ],
+    "extract_dir": "lib\\net45",
     "bin": "riot.exe",
-    "pre_install": [
-        "extract_7zip \"$dir\\riot-web-*-full.nupkg\" \"$dir\\temp\"",
-        "Copy-Item \"$dir\\temp\\lib\\net45\\*\" \"$dir\" -Recurse -Force",
-        "Remove-Item \"$dir\\riot-web-*-full.nupkg\"",
-        "Remove-Item \"$dir\\temp\" -Recurse -Force",
-        "Remove-Item \"$dir\\background.gif\"",
-        "Remove-Item \"$dir\\RELEASES\"",
-        "Remove-Item \"$dir\\Update.exe\"",
-        "cmd /c mklink /J \"$env:APPDATA\\riot\" \"$persist_dir\\data\""
-    ],
-    "uninstaller": {
-        "script": [
-            "if ((Get-Item -Path \"$env:APPDATA\\riot\" -Force).LinkType -eq \"Junction\") {",
-            "   Remove-Item \"$env:APPDATA\\riot\" -Force -Recurse",
-            "}"
-        ]
-    },
     "shortcuts": [
         [
             "riot.exe",
             "Riot"
         ]
-    ],
-    "checkver": {
-        "url": "https://riot.im/desktop.html",
-        "re": ">v([\\d.]+)<"
-    },
-    "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://riot.im/download/desktop/install/win32/x64/Riot%20Setup%20$version.exe#/dl.7z"
-            },
-            "32bit": {
-                "url": "https://riot.im/download/desktop/install/win32/ia32/Riot%20Setup%20$version-ia32.exe#/dl.7z"
-            }
-        }
-    }
+    ]
 }

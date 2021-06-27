@@ -1,13 +1,16 @@
 {
-    "version": "11.1",
+    "version": "21.2",
     "description": "Enhanced terminal for Windows with X11 server, tabbed SSH client, network tools and much more.",
     "homepage": "https://mobaxterm.mobatek.net/",
-    "url": "https://download.mobatek.net/1112019010310554/MobaXterm_Portable_v11.1.zip",
-    "hash": "58780fddeb152efca0e191f8f4dc7111f41bb4857c101aaf7d8b6d8cdb1960c0",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://mobaxterm.mobatek.net/license.html"
+    },
+    "url": "https://download.mobatek.net/2122021051924233/MobaXterm_Portable_v21.2.zip",
+    "hash": "91f80537f12c2ad34a5eba99a285c149781c6d35a144a965ce3aea8a9bc6868c",
     "pre_install": [
         "    # Rename executable",
-        "$ex = (Get-ChildItem \"$dir\" 'mobaxterm*.exe')[0]",
-        "Rename-Item \"$dir\\$ex\" \"$dir\\MobaXterm.exe\"",
+        "Get-ChildItem \"$dir\" 'mobaxterm*.exe' | Select-Object -First 1 | Rename-Item -NewName 'MobaXterm.exe'",
         "    # Create files for persisting",
         "function PersistsFile([String] $file) {",
         "    if (!(Test-Path \"$persist_dir\\$file\")) {",
@@ -16,10 +19,6 @@
         "}",
         "@('MobaXterm backup.zip', 'MobaXterm.ini') | ForEach-Object { PersistsFile $_ }"
     ],
-    "persist": [
-        "MobaXterm.ini",
-        "MobaXterm backup.zip"
-    ],
     "bin": "MobaXterm.exe",
     "shortcuts": [
         [
@@ -27,9 +26,13 @@
             "MobaXterm Personal"
         ]
     ],
+    "persist": [
+        "MobaXterm.ini",
+        "MobaXterm backup.zip"
+    ],
     "checkver": {
         "url": "https://mobaxterm.mobatek.net/download-home-edition.html",
-        "regex": "//download.mobatek.net/(?<random>[\\d]+)/MobaXterm_Portable_v([\\d\\.]+)\\.zip"
+        "regex": "//download.mobatek.net/(?<random>[\\d]+)/MobaXterm_Portable_v([\\d.]+)\\.zip"
     },
     "autoupdate": {
         "url": "https://download.mobatek.net/$matchRandom/MobaXterm_Portable_v$version.zip"

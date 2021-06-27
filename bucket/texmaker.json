@@ -1,31 +1,54 @@
 {
-    "homepage": "http://www.xm1math.net/texmaker/",
-    "version": "5.0.3",
-    "url": "http://www.xm1math.net/texmaker/assets/files/texmakerwin64usb.zip",
-    "hash": "64da399a78e17e995cdcb4439ccddb3e25e290ead99e0b1d53eb7faf607f1916",
+    "version": "5.0.4",
+    "description": "A free, modern and cross-platform LaTeX editor that integrates many tools needed to develop documents with LaTeX.",
+    "homepage": "https://www.xm1math.net/texmaker/",
+    "license": "GPL-2.0-only",
+    "suggest": {
+        "MiKTeX": "latex"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://www.xm1math.net/texmaker/assets/files/texmakerwin64usb.zip",
+            "hash": "md5:e61d3896676a6c03a8e515a9a6ab889f"
+        }
+    },
     "extract_dir": "texmakerwin64usb",
-    "pre_install": [
-        "if(!(test-path \"$dir\\texmaker.ini\")) { write-host \"\" | out-file -encoding oem \"$dir\\texmaker.ini\" }",
-        "if(!(test-path \"$dir\\texmakerapp.ini\")) { write-host \"\" | out-file -encoding oem \"$dir\\texmakerapp.ini\" }"
-    ],
-    "persist": [
-        "texmaker.ini",
-        "texmakerapp.ini"
-    ],
+    "installer": {
+        "script": [
+            "foreach ($file in @('texmaker.ini', 'texmakerapp.ini')){",
+            "    if(!(Test-Path \"$persist_dir\\$file\")) {",
+            "        New-Item \"$persist_dir\\$file\" -Force | Out-Null",
+            "    }",
+            "    Copy-Item \"$persist_dir\\$file\" \"$dir\\$file\" -Force",
+            "}"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "foreach ($file in @('texmaker.ini', 'texmakerapp.ini')){",
+            "    Copy-Item \"$dir\\$file\" \"$persist_dir\\$file\" -Force",
+            "}"
+        ]
+    },
     "shortcuts": [
         [
             "texmaker.exe",
             "Texmaker"
         ]
     ],
-    "suggest": {
-        "MiKTeX": "latex"
-    },
     "checkver": {
-        "url": "http://www.xm1math.net/texmaker/version.txt",
-        "re": "([\\d.]+)"
+        "url": "https://www.xm1math.net/texmaker/version.txt",
+        "regex": "([\\d.]+)"
     },
     "autoupdate": {
-        "url": "http://www.xm1math.net/texmaker/assets/files/texmakerwin64usb.zip"
+        "architecture": {
+            "64bit": {
+                "url": "https://www.xm1math.net/texmaker/assets/files/texmakerwin64usb.zip"
+            }
+        },
+        "hash": {
+            "url": "https://www.xm1math.net/texmaker/download.html",
+            "regex": "(?sm)$basename.*?md5 sum\\s+:\\s+$md5"
+        }
     }
 }

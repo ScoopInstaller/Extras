@@ -1,27 +1,22 @@
 {
-    "version": "5.0.0-beta.24",
+    "version": "5.7.0",
     "description": "Messaging app for services like WhatsApp, Slack, Messenger and many more.",
-    "homepage": "http://meetfranz.com",
-    "license": {
-        "identifier": "Apache-2.0"
-    },
-    "url": "https://github.com/meetfranz/franz/releases/download/v5.0.0-beta.24/franz-setup-5.0.0-beta.24.exe#/dl.7z",
-    "hash": "sha512:adce345049f9d03f25ebe808f3274d844aacb9ddb621132ed16a78df5e086a2a47b544a4e7f254c1b3e99419947a3cd574fc40d7d8f4f3593cc2e58d729d0516",
-    "extract_dir": "\\$PLUGINSDIR",
-    "pre_install": "Get-ChildItem \"$dir\" -Exclude 'app-64.7z', 'app-32.7z' | Remove-Item -Force -Recurse",
+    "homepage": "https://meetfranz.com",
+    "license": "Apache-2.0",
+    "url": "https://github.com/meetfranz/franz/releases/download/v5.7.0/franz-setup-5.7.0.exe#/dl.7z",
+    "hash": "sha512:a6a570ab1b80991e7721ea7b90d255091cca297b7f6fb2d16c51a2706e7af1b71d2be0851684688f2a8bf8d9c73c45168ed7d236d5e036d0bd4257c44884444a",
     "architecture": {
         "64bit": {
             "installer": {
-                "script": "extract_7zip \"$dir\\app-64.7z\" \"$dir\""
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
             }
         },
         "32bit": {
             "installer": {
-                "script": "extract_7zip \"$dir\\app-32.7z\" \"$dir\""
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
             }
         }
     },
-    "post_install": "Remove-Item \"$dir\\app-64.7z\", \"$dir\\app-32.7z\"",
     "bin": "Franz.exe",
     "shortcuts": [
         [
@@ -29,15 +24,15 @@
             "Franz"
         ]
     ],
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse",
     "checkver": {
-        "url": "https://github.com/meetfranz/franz/releases",
-        "regex": "tag/v([\\w\\.-]+)"
+        "github": "https://github.com/meetfranz/franz"
     },
     "autoupdate": {
         "url": "https://github.com/meetfranz/franz/releases/download/v$version/franz-setup-$version.exe#/dl.7z",
         "hash": {
             "url": "$baseurl/latest.yml",
-            "find": "sha512:\\s+(.*)"
+            "regex": "sha512:\\s+$base64"
         }
     }
 }

@@ -1,27 +1,27 @@
 {
-    "version": "4.1.5",
-    "description": "Image and photo editing software.",
-    "homepage": "https://www.getpaint.net/",
+    "version": "4.2.16",
+    "description": "Image and photo editor",
+    "homepage": "https://www.getpaint.net",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.getpaint.net/license.html"
     },
     "notes": ".NET 4.7.1 is required https://www.microsoft.com/en-us/download/details.aspx?id=56115",
-    "url": "https://www.dotpdn.com/files/paint.net.4.1.5.install.zip",
-    "hash": "1100483028b5d4a933f2b9be6edb51a42085c25a01a58c04c2b9e913f1bb4df9",
+    "url": "https://www.dotpdn.com/files/paint.net.4.2.16.install.zip",
+    "hash": "fe70191873a1f3b26d01d35dee60a364a0a7da4e69ac70f7495ef8666c32e8e5",
     "pre_install": [
-        "extract_7zip \"$dir\\paint.net.$version.install.exe\" \"$dir\\tmp\" $true",
+        "Expand-7zipArchive \"$dir\\paint.net.$version.install.exe\" \"$dir\\tmp\" -Removal",
         "Set-Content \"$dir\\PaintDotNet.AppSettings.json\" '{}' -Encoding Ascii"
     ],
     "architecture": {
         "64bit": {
             "installer": {
-                "script": "extract_msi \"$dir\\tmp\\PaintDotNet_x64.msi\" \"$dir\""
+                "script": "Expand-MsiArchive \"$dir\\tmp\\PaintDotNet_x64.msi\" \"$dir\""
             }
         },
         "32bit": {
             "installer": {
-                "script": "extract_msi \"$dir\\tmp\\PaintDotNet_x86.msi\" \"$dir\""
+                "script": "Expand-MsiArchive \"$dir\\tmp\\PaintDotNet_x86.msi\" \"$dir\""
             }
         }
     },
@@ -34,19 +34,20 @@
         "[void]$config.configuration.appSettings.appendChild($elem)",
         "$config.Save(\"$dir\\PaintDotNet.exe.config\")"
     ],
-    "persist": [
-        "PaintDotNet.AppSettings.json",
-        "Effects",
-        "FileTypes",
-        "Shapes"
-    ],
+    "bin": "paintdotnet.exe",
     "shortcuts": [
         [
             "PaintDotNet.exe",
             "paint.net"
         ]
     ],
-    "checkver": "paint\\.net\\s+([\\d\\.]+)",
+    "persist": [
+        "PaintDotNet.AppSettings.json",
+        "Effects",
+        "FileTypes",
+        "Shapes"
+    ],
+    "checkver": "paint\\.net\\s+([\\d.]+)",
     "autoupdate": {
         "url": "https://www.dotpdn.com/files/paint.net.$version.install.zip"
     }

@@ -1,27 +1,19 @@
 {
-    "homepage": "http://kicad-pcb.org/",
-    "version": "5.0.2_1",
+    "version": "5.1.10_1",
+    "description": "Electronics Design Automation Suite",
+    "homepage": "https://www.kicad.org",
     "license": "GPL-3.0-only",
-    "checkver": {
-        "url": "http://kicad-pcb.org/download/windows/",
-        "re": "kicad-([\\d._]{5,})"
-    },
     "architecture": {
         "64bit": {
-            "url": "http://downloads.kicad-pcb.org/windows/stable/kicad-5.0.2_1-x86_64.exe#/kicad-setup.7z",
-            "hash": "3931c930aa25a09d13e18742733c7b4874c814f5d811c010b056c5c3b9352c80"
+            "url": "https://kicad-downloads.s3.cern.ch/windows/stable/kicad-5.1.10_1-x86_64.exe#/dl.7z",
+            "hash": "ca734c9df2ac9711d85d841debc4e284eb1b529de5b2217096cfd0a10d8843c0"
         },
         "32bit": {
-            "url": "http://downloads.kicad-pcb.org/windows/stable/kicad-5.0.2_1-i686.exe#/kicad-setup.7z",
-            "hash": "fab44234d6fa91b43c460e2ede5e9cf292c11f0f3a0618f429452155678ff337"
+            "url": "https://kicad-downloads.s3.cern.ch/windows/stable/kicad-5.1.10_1-i686.exe#/dl.7z",
+            "hash": "705c4b72898a979209dc63ee6c469f45abef44ca813c0beccd86a75d47ef5183"
         }
     },
-    "env_set": {
-        "KICAD_PTEMPLATES": "$dir\\share\\kicad\\template\\",
-        "KIGITHUB": "https://github.com/KiCad",
-        "KISYS3DMOD": "$dir\\share\\kicad\\modules\\packages3d\\",
-        "KISYSMOD": "$dir\\share\\kicad\\modules\\"
-    },
+    "pre_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse",
     "bin": "bin\\kicad.exe",
     "shortcuts": [
         [
@@ -29,13 +21,22 @@
             "KiCad"
         ]
     ],
+    "env_set": {
+        "KICAD_PTEMPLATES": "$dir\\share\\kicad\\template\\",
+        "KISYS3DMOD": "$dir\\share\\kicad\\modules\\packages3d\\",
+        "KISYSMOD": "$dir\\share\\kicad\\modules\\"
+    },
+    "checkver": {
+        "url": "https://www.kicad.org/download/windows/",
+        "regex": "kicad-([\\d._]+)-"
+    },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "http://downloads.kicad-pcb.org/windows/stable/kicad-$version-x86_64.exe#/kicad-setup.7z"
+                "url": "https://kicad-downloads.s3.cern.ch/windows/stable/kicad-$version-x86_64.exe#/dl.7z"
             },
             "32bit": {
-                "url": "http://downloads.kicad-pcb.org/windows/stable/kicad-$version-i686.exe#/kicad-setup.7z"
+                "url": "https://kicad-downloads.s3.cern.ch/windows/stable/kicad-$version-i686.exe#/dl.7z"
             }
         }
     }

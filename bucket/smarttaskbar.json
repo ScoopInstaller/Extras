@@ -1,0 +1,46 @@
+{
+    "version": "1.1.9",
+    "description": "Automatically switch the display state of the Windows Taskbar",
+    "homepage": "https://github.com/ChanpleCai/SmartTaskbar",
+    "license": "MIT",
+    "notes": "Run 'smarttaskbar-add-startup' to add SmartTaskbar to startup programs.",
+    "url": "https://github.com/ChanpleCai/SmartTaskbar/releases/download/v1.1.9/SmartTaskbar_Setup.exe",
+    "hash": "1084517972e7031f8f3ed4612dad572a91b81a3bfb5a4c5eb0703dc588a0b382",
+    "innosetup": true,
+    "installer": {
+        "script": [
+            "$startup = shortcut_folder $global | Select-Object -ExpandProperty Path | Split-Path -Parent | Join-Path -ChildPath 'Startup'",
+            "$current = current_dir $dir",
+            "$cont = @(",
+            "    '$wsShell = New-Object -ComObject WScript.Shell'",
+            "    \"`$wsShell = `$wsShell.CreateShortcut('$startup\\SmartTaskbar.lnk')\"",
+            "    \"`$wsShell.TargetPath = '$current\\SmartTaskbar.exe'\"",
+            "    \"`$wsShell.WorkingDirectory = '$current'\"",
+            "    '$wsShell.Save()'",
+            "    'Write-Host \"SmartTaskbar has been added to the startup programs.\"'",
+            "    'Write-Host \"Run `smarttaskbar-remove-startup` to remove from startup.\"'",
+            ")",
+            "Set-Content \"$dir\\smarttaskbar-add-startup.ps1\" -Value ($cont -join \"`r`n\") -Encoding Ascii",
+            "Set-Content \"$dir\\smarttaskbar-remove-startup.ps1\" -Value \"Remove-Item '$startup\\SmartTaskbar.lnk' -ErrorAction SilentlyContinue -Force\" -Encoding Ascii"
+        ]
+    },
+    "uninstaller": {
+        "file": "smarttaskbar-remove-startup.ps1"
+    },
+    "bin": [
+        "SmartTaskbar.exe",
+        "smarttaskbar-add-startup.ps1",
+        "smarttaskbar-remove-startup.ps1"
+    ],
+    "persist": "SmartTaskbar.exe.config",
+    "shortcuts": [
+        [
+            "SmartTaskbar.exe",
+            "SmartTaskbar"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "url": "https://github.com/ChanpleCai/SmartTaskbar/releases/download/v$version/SmartTaskbar_Setup.exe"
+    }
+}

@@ -1,27 +1,39 @@
 {
-    "version": "0.12.3",
+    "version": "0.28.0",
+    "description": "Nteract and create with data, words, and visuals.",
+    "homepage": "https://nteract.io",
     "license": "BSD-3-Clause",
-    "url": "https://github.com/nteract/nteract/releases/download/v0.12.3/nteract-0.12.3-win.zip#/dl.7z",
-    "homepage": "https://nteract.io/",
-    "hash": "9319d5343cf34ca5b9cd5fa47e0931182f71a1dce24736cba13511731a79375d",
+    "notes": "Instructions for downloading more kernels can be found at: https://nteract.io/kernels",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/nteract/nteract/releases/download/v0.28.0/nteract-setup-0.28.0.exe#/dl.7z",
+            "hash": "sha512:de11016857e658bea32dcd23d34169005b05d673db18caf2a266a3295c43949a071abf0a3c2a6142d5eb4d2d590918b0e44976e05bbf9a3a0b54ca15b47d99a0",
+            "installer": {
+                "script": [
+                    "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse",
+                    "info 'Installing Python3 kernel...'",
+                    "python3 -m pip install ipykernel",
+                    "python3 -m ipykernel install --user"
+                ]
+            }
+        }
+    },
     "bin": "nteract.exe",
-    "depends": "python",
-    "post_install": [
-        "Write-Host 'Installing Python3 kernel...' -Foreground Magenta",
-        "python3 -m pip install ipykernel",
-        "python3 -m ipykernel install --user"
-    ],
-    "checkver": {
-        "github": "https://github.com/nteract/nteract"
-    },
-    "autoupdate": {
-        "url": "https://github.com/nteract/nteract/releases/download/v$version/nteract-$version-win.zip#/dl.7z"
-    },
     "shortcuts": [
         [
             "nteract.exe",
             "nteract"
         ]
     ],
-    "notes": "Instructions for downloading more kernels can be found at: https://nteract.io/kernels"
+    "checkver": {
+        "github": "https://github.com/nteract/nteract"
+    },
+    "autoupdate": {
+        "url": "https://github.com/nteract/nteract/releases/download/v$version/nteract-setup-$version.exe#/dl.7z",
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512: $base64"
+        }
+    }
 }

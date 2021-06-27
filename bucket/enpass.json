@@ -1,10 +1,37 @@
 {
-    "homepage": "https://www.enpass.io/",
-    "version": "6.0.4.281",
-    "url": "https://dl.enpass.io/stable/windows/package/EnpassPackage-6.0.4.281.zip",
-    "hash": "36d3f0041700fbeb55f62c9c05cbb8c4cf825af022a355a668bf9202b22a66eb",
+    "version": "6.6.2.827",
+    "description": "A cross-platform password management app to securely store passwords and other credentials in a virtual vault locked with a master password.",
+    "homepage": "https://www.enpass.io",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.enpass.io/legal/"
+    },
+    "url": "https://dl.enpass.io/stable/windows/setup/6.6.2.827/Enpass-setup.exe",
+    "hash": "2a44694184c0e869927681c9a4cd7561bce7f54fa802c7e9f5f307c6521f5562",
+    "installer": {
+        "script": [
+            "Expand-DarkArchive \"$dir\\$fname\" \"$dir\\tmp\" -Removal",
+            "Expand-MsiArchive \"$dir\\tmp\\AttachedContainer\\Enpass.msi\" \"$dir\" -ExtractDir 'PFiles\\Enpass'",
+            "Remove-Item \"$dir\\tmp\" -Recurse"
+        ]
+    },
+    "post_install": [
+        "$cmd = '\"' + \"$(appdir enpass $global)\\current\\Enpass.exe\" + '\" \"%1\"'",
+        "$parent = \"HKCU:Software\\Classes\"",
+        "",
+        "foreach ($urlh in @('enpass', 'enpassauth', 'enpasscard', 'enpassstart')) {",
+        "    $RKey = \"$parent\\$urlh\"",
+        "    New-Item $RKey -Force | Out-Null",
+        "    Set-Item $RKey \"URL:$urlh Protocol\" -Force | Out-Null",
+        "    New-ItemProperty $RKey 'URL Protocol' -Force | Out-Null",
+        "    New-Item \"$RKey\\shell\\open\\command\" -Force | Out-Null",
+        "    Set-Item \"$RKey\\shell\\open\\command\" $cmd -Force | Out-Null",
+        "}"
+    ],
+    "uninstaller": {
+        "script": "@('enpass', 'enpassauth', 'enpasscard', 'enpassstart') | ForEach-Object { Remove-Item \"HKCU:Software\\Classes\\$_\" -Force -Recurse -ErrorAction Ignore }"
+    },
     "bin": "Enpass.exe",
-    "pre_install": "extract_7zip \"$dir\\Enpass_*_Setup.exe\" \"$dir\"",
     "shortcuts": [
         [
             "Enpass.exe",
@@ -12,10 +39,10 @@
         ]
     ],
     "checkver": {
-        "url": "https://dl.sinew.in/windows/package/appcast.xml",
-        "re": "EnpassPackage-([\\d.]+).zip"
+        "url": "https://www.enpass.io/downloads/",
+        "regex": "windows/setup/([\\d.]+)/Enpass"
     },
     "autoupdate": {
-        "url": "https://dl.enpass.io/stable/windows/package/EnpassPackage-$version.zip"
+        "url": "https://dl.enpass.io/stable/windows/setup/$version/Enpass-setup.exe"
     }
 }
