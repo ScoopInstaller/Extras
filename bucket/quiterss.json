@@ -1,28 +1,41 @@
 {
+    "version": "0.19.4",
+    "description": "RSS/Atom news feeds reader",
     "homepage": "https://quiterss.org/en",
     "license": "GPL-3.0-only",
-    "version": "0.18.12",
-    "url": "https://quiterss.org/files/0.18.12/QuiteRSS-0.18.12.zip",
-    "hash": "md5:d4a081c57a5dc3b537f6cb3a932369d4",
-    "extract_dir": "QuiteRSS-0.18.12",
+    "url": "https://quiterss.org/files/0.19.4_/QuiteRSS-0.19.4.zip",
+    "hash": "md5:84e44cac789dea9dbf3746130c0ea02b",
+    "extract_dir": "QuiteRSS-0.19.4",
+    "pre_install": [
+        "$conf = 'feeds.db', 'QuiteRss.ini'",
+        "ensure \"$persist_dir\" | Out-Null",
+        "foreach ($_ in $conf) {",
+        "    if (Test-Path \"$persist_dir\\$_\" -Type Container) { Remove-Item \"$persist_dir\\$_\" -Recurse }",
+        "    if ($_ -eq 'feeds.db') { continue }",
+        "    if (-not (Test-Path \"$persist_dir\\$_\")) {",
+        "        Set-Content \"$dir\\$_\" '[Settings]', 'updateCheckEnabled=false' -Encoding Ascii",
+        "    }",
+        "}",
+        "Copy-Item \"$persist_dir\\*\" \"$dir\" -Include $conf -ErrorAction SilentlyContinue"
+    ],
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\*\" \"$persist_dir\" -Include 'feeds.db', 'QuiteRss.ini' -ErrorAction SilentlyContinue -Force"
+    },
     "shortcuts": [
         [
             "QuiteRSS.exe",
             "QuiteRSS"
         ]
     ],
-    "persist": [
-        "QuiteRss.ini",
-        "feeds.db"
-    ],
     "checkver": {
-        "github": "https://github.com/QuiteRSS/quiterss"
+        "url": "https://quiterss.org/en/download",
+        "regex": "QuiteRSS\\s+([\\d.]+)\\s+Portable"
     },
     "autoupdate": {
-        "url": "https://quiterss.org/files/$version/QuiteRSS-$version.zip",
-        "extract_dir": "QuiteRSS-$version",
+        "url": "https://quiterss.org/files/$version_/QuiteRSS-$version.zip",
         "hash": {
             "url": "$baseurl/QuiteRSS-$version.md5"
-        }
+        },
+        "extract_dir": "QuiteRSS-$version"
     }
 }

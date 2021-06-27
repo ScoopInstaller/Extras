@@ -1,16 +1,15 @@
 {
-    "homepage": "https://github.com/getlantern/lantern",
-    "description": "Lantern is an HTTP/HTTPS proxy, comprised of a desktop/mobile application and a server ecosystem.",
-    "version": "5.2.7",
+    "##": "Removing checkver/autoupdate since the installer cannot be properly extracted after version 5.5.6.",
+    "version": "5.5.6",
+    "description": "HTTP/HTTPS proxy",
+    "homepage": "https://getlantern.org",
     "license": "Apache-2.0",
-    "url": "https://github.com/getlantern/lantern-binaries/raw/master/lantern-installer.exe#/dl.7z",
-    "hash": "236d73ac69a137bc8bc7837822d4366adc8aeb09bcf1344335fb8e391eb87cf5",
-    "installer": {
-        "script": [
-            "Remove-Item -Recurse -Force \"$dir\\`$PLUGINSDIR\"",
-            "Remove-Item \"$dir\\uninstall.exe.nsis\""
-        ]
-    },
+    "url": "https://raw.githubusercontent.com/getlantern/lantern-binaries/master/lantern-installer-5.5.6.exe#/dl.7z",
+    "hash": "edd9ccba5ad0cf0262baade11bf3b0c300a96f1638553d46baaae4de7d208cfb",
+    "pre_install": [
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\uninstall.exe.nsis\" -Recurse",
+        "if (!(Test-Path \"$persist_dir\\settings.yaml\")) { New-Item \"$dir\\settings.yaml\" | Out-Null }"
+    ],
     "bin": "lantern.exe",
     "shortcuts": [
         [
@@ -20,17 +19,5 @@
             "lantern.ico"
         ]
     ],
-    "pre_install": [
-        "if (!(Test-Path \"$dir\\settings.yaml\")) {",
-        "   New-Item -Force -Path \"$dir\\settings.yaml\" -ItemType file -Value $null | Out-Null",
-        "}"
-    ],
-    "persist": "settings.yaml",
-    "checkver": "github",
-    "autoupdate": {
-        "url": "https://github.com/getlantern/lantern-binaries/raw/master/lantern-installer.exe#/dl.7z",
-        "hash": {
-            "url": "$url.sha256"
-        }
-    }
+    "persist": "settings.yaml"
 }

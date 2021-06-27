@@ -1,11 +1,26 @@
 {
-    "homepage": "https://cdburnerxp.se/",
+    "version": "4.5.8.7128",
+    "description": "Burns CDs and DVDs, including Blu-Ray and HD-DVDs.",
+    "homepage": "https://cdburnerxp.se",
     "license": {
         "identifier": "Freeware",
         "url": "https://cdburnerxp.se/help/Intro/license"
     },
-    "version": "4.5.8.7041",
-    "persist": "UserSettings.ini",
+    "architecture": {
+        "64bit": {
+            "url": "https://download.cdburnerxp.se/portable/CDBurnerXP-x64-4.5.8.7128.zip",
+            "hash": "9d45a76026b3d1dff9397fcda2dd81c60af8a2d105103f6e021a581e9b492d8f"
+        },
+        "32bit": {
+            "url": "https://download.cdburnerxp.se/portable/CDBurnerXP-4.5.8.7128.zip",
+            "hash": "c3759753ba9301d3b48bf4823c146b41ca6eb103bcab2f7cd943bee85e624647"
+        }
+    },
+    "pre_install": [
+        "if (-not (Test-Path \"$persist_dir\\UserSettings.ini\")) {",
+        "    Set-Content \"$dir\\UserSettings.ini\" @('[General]', 'UseCustomTempFolder=1', \"CustomTempFolder=$persist_dir\\tmp\", \"RemoveableMediaCache=$persist_dir\\cache\") -Encoding Ascii",
+        "}"
+    ],
     "bin": [
         "cdbxpp.exe",
         "cdbxpcmd.exe"
@@ -16,19 +31,14 @@
             "CDBurnerXP"
         ]
     ],
-    "architecture": {
-        "64bit": {
-            "url": "https://download.cdburnerxp.se/portable/CDBurnerXP-x64-4.5.8.7041.zip",
-            "hash": "3eb076061386bdfe3f4ed35e038b123a024acc22f6426d6e205391b51e566e3f"
-        },
-        "32bit": {
-            "url": "https://download.cdburnerxp.se/portable/CDBurnerXP-4.5.8.7041.zip",
-            "hash": "aad05d5b7ad16c32ee14c1f140b19af648c47178cc0f570bcdb8b42e80358f0b"
-        }
-    },
+    "persist": [
+        "cache",
+        "tmp",
+        "UserSettings.ini"
+    ],
     "checkver": {
-        "url": "https://update.cdburnerxp.se/",
-        "re": "([\\d.]+)|.*"
+        "url": "https://update.cdburnerxp.se",
+        "regex": "^([\\d.]+)\\|"
     },
     "autoupdate": {
         "architecture": {

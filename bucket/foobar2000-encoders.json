@@ -1,25 +1,20 @@
 {
-    "version": "2018-10-19",
+    "version": "2021-01-26",
+    "description": "This pack includes every natively supported free encoder binary for use with the Converter foobar2000 component.",
+    "homepage": "https://www.foobar2000.org/encoderpack",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.foobar2000.org/license"
     },
-    "homepage": "https://www.foobar2000.org/encoderpack",
-    "url": "https://www.videohelp.com/download/Free_Encoder_Pack_2018-10-19.exe",
-    "hash": "3cb1cdc5416a63c2de99fe27d343566dc78ca91ebbb9d51fed1ad7a8b9ffa28d",
     "depends": "extras/foobar2000",
-    "installer": {
-        "args": [
-            "/S",
-            "/D=$dir"
-        ]
-    },
-    "post_install": "Copy-Item \"$dir\\encoders\" $(versiondir 'foobar2000' 'current' $global) -Recurse -Force",
-    "checkver": {
-        "url": "https://www.foobar2000.org/encoderpack",
-        "re": "Free_Encoder_Pack_([\\d-]+)\\.exe"
-    },
+    "url": "https://www.videohelp.com/download/Free_Encoder_Pack-2021-01-26.exe#/dl.7z",
+    "hash": "4d03269052a7075a27c7aa5d31db898278775c9dae7c2186c016685ad07738f1",
+    "post_install": [
+        "Remove-Item \"$dir\\`$PLUGINSDIR\" -Force -Recurse",
+        "New-Item \"$(appdir foobar2000 $global)\\current\\encoders\" -ItemType Junction -Target \"$dir\" | Out-Null"
+    ],
+    "checkver": "Free_Encoder_Pack-([\\d-]+)\\.exe",
     "autoupdate": {
-        "url": "https://www.videohelp.com/download/Free_Encoder_Pack_$version.exe"
+        "url": "https://www.videohelp.com/download/Free_Encoder_Pack-$version.exe#/dl.7z"
     }
 }

@@ -1,9 +1,19 @@
 {
-    "version": "4.1.3.1",
+    "version": "4.4.0.185",
+    "description": "A secure socks5 proxy, designed to protect your Internet traffic.",
     "homepage": "https://github.com/shadowsocks/shadowsocks-windows",
     "license": "GPL-3.0-only",
-    "url": "https://github.com/shadowsocks/shadowsocks-windows/releases/download/4.1.3.1/Shadowsocks-4.1.3.1.zip",
-    "hash": "b6d55d6536ff5e827c393516158924d228cfc2de2d127e302537e0f4abf1f98f",
+    "url": "https://github.com/shadowsocks/shadowsocks-windows/releases/download/4.4.0.0/Shadowsocks-4.4.0.185.zip",
+    "hash": "sha512:36aaa0a2cc396aada47358b70264415c7d966956829b6ce5c31e690db10a5a576420195d6d823bcc7f53ee80f2358e882dc9bd6f1e5be33dcc74f1bfdc2e794e",
+    "pre_install": [
+        "function CreateFile ($name, $value = $null) {",
+        "    if (!(Test-Path \"$persist_dir\\$name\")) {",
+        "        Set-Content \"$dir\\$name\" $value -Encoding Ascii",
+        "    }",
+        "}",
+        "'gui-config.json', 'statistics-config.json' | ForEach-Object { CreateFile $_ '{}' }",
+        "'pac.txt', 'user-rule.txt' | ForEach-Object { CreateFile $_ }"
+    ],
     "bin": "Shadowsocks.exe",
     "shortcuts": [
         [
@@ -13,19 +23,19 @@
     ],
     "persist": [
         "gui-config.json",
+        "statistics-config.json",
         "pac.txt",
         "user-rule.txt"
     ],
-    "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\gui-config.json\")) {",
-        "   Write-Host -ForegroundColor Red \"Create empty config file for shadowsocks\"",
-        "   New-Item -Force -Path \"$persist_dir\\gui-config.json\" -ItemType file -Value \"{}\" | Out-Null",
-        "}"
-    ],
     "checkver": {
-        "github": "https://github.com/shadowsocks/shadowsocks-windows"
+        "github": "https://github.com/shadowsocks/shadowsocks-windows",
+        "regex": "Shadowsocks-([\\d.]+)\\.zip"
     },
     "autoupdate": {
-        "url": "https://github.com/shadowsocks/shadowsocks-windows/releases/download/$version/Shadowsocks-$version.zip"
+        "url": "https://github.com/shadowsocks/shadowsocks-windows/releases/download/$matchHead.0/Shadowsocks-$version.zip",
+        "hash": {
+            "url": "$url.hash",
+            "regex": "$sha512"
+        }
     }
 }

@@ -1,0 +1,43 @@
+{
+    "version": "5.5.1.0.799",
+    "description": "Records music broadcasted by Internet radio stations.",
+    "homepage": "https://streamwriter.org/en/",
+    "license": "GPL-3.0-or-later",
+    "url": "https://streamwriter.org/en/downloads/3/#/dl.zip",
+    "hash": "7f8c6e46a8e9c0c6dbbfa4178f57d7fce3a24af491a54901f8e64af0a1be1318",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\streamwriter_settings.ini\")) {",
+        "    $cur = current_dir \"$dir\"",
+        "    @\"",
+        "[Settings]",
+        "AutoUpdate=0",
+        "Dir=$cur\\Music",
+        "DirAuto=$cur\\Music",
+        "\"@ | Set-Content -LiteralPath \"$dir\\streamwriter_settings.ini\" -Encoding Ascii",
+        "}",
+        "if (Test-Path \"$persist_dir\\streamwriter_data.dat\") {",
+        "    Copy-Item \"$persist_dir\\streamwriter_data.dat\" \"$dir\"",
+        "}"
+    ],
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\streamwriter_data.dat\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
+    },
+    "bin": "streamwriter.exe",
+    "shortcuts": [
+        [
+            "streamwriter.exe",
+            "streamWriter"
+        ]
+    ],
+    "persist": [
+        "Music",
+        "streamwriter_settings.ini"
+    ],
+    "checkver": {
+        "regex": "(?sm)streamwriter,\\srev\\.\\s(\\d+).*?Current version:\\s([\\d.]+)",
+        "replace": "${2}.${1}"
+    },
+    "autoupdate": {
+        "url": "https://streamwriter.org/en/downloads/3/#/dl.zip"
+    }
+}

@@ -1,0 +1,42 @@
+{
+    "##": "TODO: There will be an option for portable mode in the near future. See #3424 for details.",
+    "version": "4.1.2.170",
+    "description": "Relational database explorer",
+    "homepage": "https://tableplus.com",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://tableplus.com/blog/2018/01/license-agreement.html"
+    },
+    "url": "https://download.tableplus.com/windows/4.1.2/TablePlusSetup.exe",
+    "hash": "b595d4d62e1f448d9c29e5c48c024e5dbab2c2df5a2b0e5ea9f826ae30964e5d",
+    "innosetup": true,
+    "architecture": {
+        "64bit": {
+            "pre_install": [
+                "Get-ChildItem \"$dir\" '*,2.*' | Rename-Item -NewName { $_.FullName -replace ',2\\.', '.' }",
+                "Remove-Item \"$dir\\*,1.*\""
+            ]
+        },
+        "32bit": {
+            "pre_install": [
+                "Get-ChildItem \"$dir\" '*,1.*' | Rename-Item -NewName { $_.FullName -replace ',1\\.', '.' }",
+                "Remove-Item \"$dir\\*,2.*\""
+            ]
+        }
+    },
+    "bin": "TablePlus.exe",
+    "shortcuts": [
+        [
+            "TablePlus.exe",
+            "TablePlus"
+        ]
+    ],
+    "checkver": {
+        "url": "https://tableplus.com/win/version.xml?sign=&version=x64",
+        "regex": "sparkle:version=\"(?<build>\\d+)\"\\s+sparkle:shortVersionString=\"([\\d.]+)\"",
+        "replace": "$1.${build}"
+    },
+    "autoupdate": {
+        "url": "https://download.tableplus.com/windows/$matchHead/TablePlusSetup.exe"
+    }
+}

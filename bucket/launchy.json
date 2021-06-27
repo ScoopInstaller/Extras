@@ -1,17 +1,25 @@
 {
+    "version": "2.10.79",
+    "description": "A smart search launcher for installed programs or files.",
     "homepage": "https://openningia.github.io/Launchy",
-    "version": "2.9.66",
+    "license": "Unknown",
     "architecture": {
         "64bit": {
-            "url": "https://dl.bintray.com/openningia/Launchy/Launchy_Setup_x64-2.9.66.exe",
-            "hash": "3cb6da4b37c7c3fc922bb49959c2ed19023b377b09280875dd79b4e6170a32f8"
+            "url": "https://github.com/OpenNingia/Launchy/releases/download/launchy-v2.10.79/Launchy_Setup_x64-2.10.79.exe",
+            "hash": "d14b2cc5ce7aba75e0189d7047e805b07d469cb92efc0f21c2f2f67177e0b17a"
         },
         "32bit": {
-            "url": "https://dl.bintray.com/openningia/Launchy/Launchy_Setup-2.9.66.exe",
-            "hash": "223a21915011399e74566b12cb00fd61893b8e724c86f9fb34c016d3326dee66"
+            "url": "https://github.com/OpenNingia/Launchy/releases/download/launchy-v2.10.79/Launchy_Setup-2.10.79.exe",
+            "hash": "866c8fe490f710886fe17852bc8a1cdf4cbf51844d8306a9520db7e7bf6d3d04"
         }
     },
     "innosetup": true,
+    "installer": {
+        "script": "if (Test-Path \"$persist_dir\\launchy.ini\") { Copy-Item \"$persist_dir\\launchy.ini\" \"$dir\" -Force }"
+    },
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\launchy.ini\" \"$persist_dir\" -Force"
+    },
     "bin": "Launchy.exe",
     "shortcuts": [
         [
@@ -21,24 +29,20 @@
     ],
     "persist": [
         "history.db",
-        "launchy.db",
-        "launchy.ini"
+        "launchy.db"
     ],
     "checkver": {
-        "url": "https://api.bintray.com/packages/openningia/Launchy/LaunchyInstaller",
-        "jp": "$.latest_version"
+        "github": "https://github.com/OpenNingia/Launchy",
+        "regex": "tag/launchy-v([\\d.]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://dl.bintray.com/openningia/Launchy/Launchy_Setup_x64-$version.exe"
+                "url": "https://github.com/OpenNingia/Launchy/releases/download/launchy-v$version/Launchy_Setup_x64-$version.exe"
             },
             "32bit": {
-                "url": "https://dl.bintray.com/openningia/Launchy/Launchy_Setup-$version.exe"
+                "url": "https://github.com/OpenNingia/Launchy/releases/download/launchy-v$version/Launchy_Setup-$version.exe"
             }
-        },
-        "hash": {
-            "url": "$url.sha256"
         }
     }
 }

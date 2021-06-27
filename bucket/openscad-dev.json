@@ -1,0 +1,42 @@
+{
+    "version": "2020.04.23",
+    "description": "The Programmers Solid 3D CAD Modeller",
+    "homepage": "https://www.openscad.org/",
+    "license": "GPL-2.0-or-later",
+    "architecture": {
+        "64bit": {
+            "url": "https://files.openscad.org/snapshots/OpenSCAD-2020.04.23.ci4929-x86-64.zip",
+            "hash": "6228a593b9f375d3f295e167e1ed8611449647d387d01cc1ae5a5f44b513703b",
+            "extract_dir": "openscad-2020.04.23.ci4929"
+        },
+        "32bit": {
+            "url": "https://files.openscad.org/snapshots/OpenSCAD-2020.04.23.ci4930-x86-32.zip",
+            "hash": "aad2fd6b9b3bed51e3ef391aa980d626861fc896d8fe05dad588036c710d049b",
+            "extract_dir": "openscad-2020.04.23.ci4930"
+        }
+    },
+    "post_install": [
+        "# OpenSCAD can't be started from a symlinked directory. See: https://github.com/openscad/openscad/issues/1309",
+        "startmenu_shortcut \"$original_dir\\openscad.exe\" 'OpenSCAD Snapshot'",
+        "shim \"$original_dir\\openscad.exe\" $false 'openscad-dev'"
+    ],
+    "checkver": {
+        "url": "https://www.openscad.org/inc/win_snapshot_links.js",
+        "regex": "(?sm)'OpenSCAD-([\\d.]+)'.*/OpenSCAD-(?<version32>[\\w.]+)-x86-32.*/OpenSCAD-(?<version64>[\\w.]+)-x86-64"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://files.openscad.org/snapshots/OpenSCAD-$matchVersion64-x86-64.zip",
+                "extract_dir": "openscad-$matchVersion64"
+            },
+            "32bit": {
+                "url": "https://files.openscad.org/snapshots/OpenSCAD-$matchVersion32-x86-32.zip",
+                "extract_dir": "openscad-$matchVersion32"
+            }
+        },
+        "hash": {
+            "url": "$url.sha256"
+        }
+    }
+}

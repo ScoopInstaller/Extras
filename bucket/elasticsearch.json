@@ -1,56 +1,52 @@
 {
+    "version": "7.13.2",
+    "description": "Distributed, RESTful Search Engine",
     "homepage": "https://www.elastic.co/products/elasticsearch",
-    "version": "6.6.0",
-    "url": "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.6.0.zip",
-    "hash": "sha512:0689de542961cecdf9cbd9976418c6de555d2fb816cac66e3998b8236a9ad9a0e8cbfa5a9b6e858073b5507c0e6dc77af724f9490c343a47fe14243be0e51807",
-    "extract_dir": "elasticsearch-6.6.0",
+    "license": {
+        "identifier": "Freeware|Apache-2.0",
+        "url": "https://github.com/elastic/elasticsearch/blob/master/LICENSE.txt"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.13.2-windows-x86_64.zip",
+            "hash": "sha512:c6c89df741208d5750cd9381ff757879b6e901c07fcb4fea07b37077ea06446a7a64d60401e322dd186392f81e32a83b79b7ffc1864127516183b131c309de29"
+        }
+    },
+    "extract_dir": "elasticsearch-7.13.2",
+    "pre_install": [
+        "    # Overwrite SCRIPT because elasticsearch-env.bat doesn't care if SCRIPT or ES_HOME are already set ...",
+        "$file = \"$dir\\bin\\elasticsearch-env.bat\"",
+        "$cont = (Get-Content \"$file\") -replace 'set SCRIPT=%0', \"set SCRIPT=$file\"",
+        "Set-Content \"$file\" ($cont -join \"`r`n\") -Encoding ASCII",
+        "    # use persistent data/logs directory",
+        "$file = \"$dir\\config\\elasticsearch.yml\"",
+        "$cont = (Get-Content \"$file\") -replace '#path.data:.*$', \"path.data: $persist_dir\\data\"",
+        "$cont = $cont -replace '#path.logs:.*$', \"path.logs: $persist_dir\\logs\"",
+        "Set-Content \"$file\" ($cont -join \"`r`n\") -Encoding ASCII"
+    ],
     "bin": [
-        [
-            "bin\\elasticsearch.bat",
-            "elasticsearch"
-        ],
-        [
-            "bin\\elasticsearch-keystore.bat",
-            "elasticsearch-keystore"
-        ],
-        [
-            "bin\\elasticsearch-plugin.bat",
-            "elasticsearch-plugin"
-        ],
-        [
-            "bin\\elasticsearch-service.bat",
-            "elasticsearch-service"
-        ],
-        [
-            "bin\\elasticsearch-translog.bat",
-            "elasticsearch-translog"
-        ]
+        "bin\\elasticsearch.bat",
+        "bin\\elasticsearch-keystore.bat",
+        "bin\\elasticsearch-plugin.bat",
+        "bin\\elasticsearch-service.bat"
     ],
     "persist": [
         "config",
         "plugins"
     ],
-    "post_install": [
-        "# we have to overwrite SCRIPT because elasticsearch-env.bat doesn't care if SCRIPT or ES_HOME are already set ...",
-        "(gc \"$original_dir\\bin\\elasticsearch-env.bat\") | % { $_ -replace 'set SCRIPT=%0', \"set SCRIPT=$original_dir\\bin\\elasticsearch.bat\" } | sc \"$original_dir\\bin\\elasticsearch-env.bat\"",
-        "# use persistent data/logs directory",
-        "(gc \"$dir\\config\\elasticsearch.yml\") | % { $_ -replace '#path.data: /path/to/data', \"path.data: $persist_dir\\data\" } | % { $_ -replace '#path.logs: /path/to/logs', \"path.logs: $persist_dir\\logs\" } | sc \"$dir\\config\\elasticsearch.yml\""
-    ],
-    "suggest": {
-        "JDK": [
-            "java/oraclejdk",
-            "java/openjdk"
-        ]
-    },
     "checkver": {
-        "url": "https://www.elastic.co/downloads/past-releases",
-        "re": "elasticsearch-([\\d.]+).zip"
+        "url": "https://www.elastic.co/downloads/elasticsearch",
+        "regex": "elasticsearch-([\\d.]+)-windows"
     },
     "autoupdate": {
-        "url": "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-$version.zip",
-        "extract_dir": "elasticsearch-$version",
+        "architecture": {
+            "64bit": {
+                "url": "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-$version-windows-x86_64.zip"
+            }
+        },
         "hash": {
             "url": "$url.sha512"
-        }
+        },
+        "extract_dir": "elasticsearch-$version"
     }
 }

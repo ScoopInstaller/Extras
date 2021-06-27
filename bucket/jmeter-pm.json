@@ -1,0 +1,33 @@
+{
+    "version": "1.6",
+    "description": "JMeter Plugins Manager",
+    "homepage": "https://jmeter-plugins.org",
+    "license": "Apache-2.0",
+    "depends": "jmeter",
+    "url": "https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-manager/1.6/jmeter-plugins-manager-1.6.jar",
+    "hash": "sha1:0aecac04ea779c70c74a0fbdc542c994ab199c75",
+    "pre_install": "Copy-Item \"$dir\\jmeter-plugins-manager-$version.jar\" -Destination \"$(appdir 'jmeter' $global)\\current\\lib\\ext\"",
+    "uninstaller": {
+        "script": [
+            "$jmeter_pm = \"$(appdir jmeter $global)\\current\\lib\\ext\\jmeter-plugins-manager-$version.jar\"",
+            "if (Test-Path $jmeter_pm) {",
+            "   Write-Host 'Found jmeter-pm installed for jmeter. Path:' -ForegroundColor DarkYellow",
+            "   Write-Host $jmeter_pm -ForegroundColor DarkYellow",
+            "   Remove-Item \"$jmeter_pm\" -Force",
+            "   Write-Host 'If you have plugins installed with Plugin Manager, you have to remove them manually.' -ForegroundColor DarkYellow",
+            "} else {",
+            "   warn 'Couldn''t found jmeter-pm installed for any scoop-managed jmeter, probably because you already uninstalled jmeter.'",
+            "}"
+        ]
+    },
+    "checkver": {
+        "url": "https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-manager/maven-metadata.xml",
+        "xpath": "/metadata/versioning/latest"
+    },
+    "autoupdate": {
+        "url": "https://repo1.maven.org/maven2/kg/apc/jmeter-plugins-manager/$version/jmeter-plugins-manager-$version.jar",
+        "hash": {
+            "url": "$url.sha1"
+        }
+    }
+}

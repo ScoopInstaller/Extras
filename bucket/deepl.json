@@ -1,0 +1,56 @@
+{
+    "version": "2.5.1",
+    "description": "An online translator",
+    "homepage": "https://www.deepl.com/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.deepl.com/pro-license.html#free"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://www.deepl.com/windows/download/x64/2_5_1/DeepL-2.5.1-full.nupkg",
+            "hash": "sha1:f327a5f8f7b60a62bd0b0679d1dcd23a506380f8"
+        },
+        "32bit": {
+            "url": "https://www.deepl.com/windows/download/x86/2_5_1/DeepL-2.5.1-full.nupkg",
+            "hash": "sha1:e274c78e440bd5b3d93fbb3867add44091e0898f"
+        }
+    },
+    "pre_install": [
+        "$null = New-Item \"$dir\\DeepL\" -Type Directory -Force",
+        "$null = New-Item \"$dir\\DeepL\\packages\" -Type Directory -Force",
+        "Move-Item \"$dir\\net45\" \"$dir\\DeepL\\app-$version\"",
+        "Move-Item \"$dir\\DeepL\\app-$version\\DeepL_ExecutionStub.exe\" \"$dir\\DeepL\\DeepL.exe\"",
+        "\"0000000000000000000000000000000000000000 DeepL-$version-full.nupkg 1\" | Set-Content \"$dir\\DeepL\\packages\\RELEASES\""
+    ],
+    "extract_dir": "lib",
+    "bin": "DeepL\\DeepL.exe",
+    "shortcuts": [
+        [
+            "DeepL\\DeepL.exe",
+            "DeepL"
+        ]
+    ],
+    "checkver": {
+        "url": "https://appdownload.deepl.com/windows/x64/RELEASES",
+        "regex": "DeepL-([\\d.]+)-full.nupkg"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://www.deepl.com/windows/download/x64/$underscoreVersion/DeepL-$version-full.nupkg",
+                "hash": {
+                    "url": "https://appdownload.deepl.com/windows/x64/RELEASES",
+                    "regex": "^$sha1 https"
+                }
+            },
+            "32bit": {
+                "url": "https://www.deepl.com/windows/download/x86/$underscoreVersion/DeepL-$version-full.nupkg",
+                "hash": {
+                    "url": "https://appdownload.deepl.com/windows/x86/RELEASES",
+                    "regex": "^$sha1 https"
+                }
+            }
+        }
+    }
+}

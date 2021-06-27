@@ -1,12 +1,34 @@
 {
+    "##": "Multiple components under various open source licenses. Included HTTPS Everywhere extension is the strictest.",
+    "version": "10.0.18",
     "description": "Web browser that connects to the internet via the Tor anonymity network",
     "homepage": "https://www.torproject.org/",
-    "version": "8.0.5",
-    "##": "Multiple components under various open source licenses. Included HTTPS Everywhere extension is the strictest.",
     "license": "GPL-3.0-or-later",
-    "url": "https://dist.torproject.org/torbrowser/8.0.5/torbrowser-install-8.0.5_en-US.exe#/dl.7z",
-    "hash": "860fdd06e4ea8dd4c46f221676251f5cc528676d4e256559ee3831a5f97492f1",
-    "extract_dir": "Browser",
+    "architecture": {
+        "64bit": {
+            "url": "https://dist.torproject.org/torbrowser/10.0.18/torbrowser-install-win64-10.0.18_en-US.exe",
+            "hash": "f9c16870a6427bb91cea34828d57b86d0a9ea1eea58b5e86ea734ae8469149c5"
+        },
+        "32bit": {
+            "url": "https://dist.torproject.org/torbrowser/10.0.18/torbrowser-install-10.0.18_en-US.exe",
+            "hash": "2617293110df48ab1d878a418f9ffa9468a7f31c13170487226dcce593da7dfe"
+        }
+    },
+    "installer": {
+        "script": [
+            "Start-Process \"$dir\\$fname\" \"/S /D=$dir\" -PassThru -NoNewWindow | Wait-Process",
+            "movedir \"$dir\\Browser\" \"$dir\" | Out-Null",
+            "Remove-Item \"$dir\\$fname\", \"$dir\\*.lnk\" -Force",
+            "# Persisting profile breaks Tor-Launcher and makes it fallback to config files in Tor folder: move them there",
+            "movedir \"$dir\\TorBrowser\\Data\\Tor\" \"$dir\\TorBrowser\\Tor\" | Out-Null",
+            "# Update extensions in persisted profile",
+            "movedir \"$dir\\TorBrowser\\Data\\Browser\\profile.default\" \"$persist_dir\\TorBrowser\\Data\\Browser\\profile.default\" | Out-Null"
+        ]
+    },
+    "persist": [
+        "TorBrowser\\Data\\Browser\\profile.default",
+        "TorBrowser\\Tor\\torrc"
+    ],
     "bin": [
         [
             "firefox.exe",
@@ -20,13 +42,20 @@
         ]
     ],
     "checkver": {
-        "url": "https://www.torproject.org/download/download.html.en",
-        "re": "torbrowser/([0-9]+(\\.[0-9]+)*)/torbrowser-install-\\1_en-US.exe"
+        "url": "https://www.torproject.org/download/",
+        "regex": "torbrowser/([\\d.]+)/torbrowser-install-win64"
     },
     "autoupdate": {
-        "url": "https://dist.torproject.org/torbrowser/$version/torbrowser-install-$version_en-US.exe#/dl.7z",
+        "architecture": {
+            "64bit": {
+                "url": "https://dist.torproject.org/torbrowser/$version/torbrowser-install-win64-$version_en-US.exe"
+            },
+            "32bit": {
+                "url": "https://dist.torproject.org/torbrowser/$version/torbrowser-install-$version_en-US.exe"
+            }
+        },
         "hash": {
-            "url": "https://dist.torproject.org/torbrowser/$version/sha256sums-signed-build.txt"
+            "url": "$baseurl/sha256sums-signed-build.txt"
         }
     }
 }

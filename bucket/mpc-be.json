@@ -1,11 +1,13 @@
 {
+    "version": "1.5.8.6302",
+    "description": "Fork of Media Player Classic containing additional features and bug fixes.",
     "homepage": "https://sourceforge.net/projects/mpcbe/",
-    "version": "1.5.2",
     "license": "GPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://downloads.sourceforge.net/project/mpcbe/MPC-BE/Release%20builds/1.5.2/MPC-BE.1.5.2.x64.7z",
-            "hash": "sha1:711e665c9ded1d555e4a6e3fd41eab5d9fe92b21",
+            "url": "https://downloads.sourceforge.net/project/mpcbe/MPC-BE/Release%20builds/1.5.8/MPC-BE.1.5.8.6302.x64.7z",
+            "hash": "395051c47dd381d0e585690700ff6a93c374cbce204ec70f1087abcf98f0d314",
+            "extract_dir": "MPC-BE.1.5.8.6302.x64",
             "bin": [
                 "mpc-be64.exe",
                 [
@@ -16,13 +18,14 @@
             "shortcuts": [
                 [
                     "mpc-be64.exe",
-                    "MPC-BE x64"
+                    "MPC-BE"
                 ]
             ]
         },
         "32bit": {
-            "url": "https://downloads.sourceforge.net/project/mpcbe/MPC-BE/Release%20builds/1.5.2/MPC-BE.1.5.2.x86.7z",
-            "hash": "sha1:d643756829d83dcf22b70e7d3c0cd8e51c45d599",
+            "url": "https://downloads.sourceforge.net/project/mpcbe/MPC-BE/Release%20builds/1.5.8/MPC-BE.1.5.8.6302.x86.7z",
+            "hash": "sha1:7813270f4d45721d4f653ebd20c6d5696e3f492f",
+            "extract_dir": "MPC-BE.1.5.8.6302.x86",
             "bin": "mpc-be.exe",
             "shortcuts": [
                 [
@@ -33,21 +36,28 @@
         }
     },
     "pre_install": [
-        "$fold = (Get-ChildItem \"$dir\" 'MPC-BE*')[0]",
-        "Move-Item \"$dir\\$fold\\*\" $dir",
-        "Remove-Item \"$dir\\$fold\" -Force -Recurse"
+        "@('mpc-be64.ini', 'mpc-be.ini', 'Default.mpcpl') | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "}"
+    ],
+    "persist": [
+        "mpc-be64.ini",
+        "mpc-be.ini",
+        "Default.mpcpl"
     ],
     "checkver": {
-        "url": "https://sourceforge.net/projects/mpcbe/files/MPC-BE/Release%20builds/",
-        "regex": "title=\"([\\d\\.]+)\"\\s+class=\"folder"
+        "url": "https://sourceforge.net/projects/mpcbe/rss?path=/MPC-BE/Release%20builds",
+        "regex": "MPC-BE\\.([\\d.]+)\\.x86\\.7z"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://downloads.sourceforge.net/project/mpcbe/MPC-BE/Release%20builds/$version/MPC-BE.$version.x64.7z"
+                "url": "https://downloads.sourceforge.net/project/mpcbe/MPC-BE/Release%20builds/$matchHead/MPC-BE.$version.x64.7z",
+                "extract_dir": "MPC-BE.$version.x64"
             },
             "32bit": {
-                "url": "https://downloads.sourceforge.net/project/mpcbe/MPC-BE/Release%20builds/$version/MPC-BE.$version.x86.7z"
+                "url": "https://downloads.sourceforge.net/project/mpcbe/MPC-BE/Release%20builds/$matchHead/MPC-BE.$version.x86.7z",
+                "extract_dir": "MPC-BE.$version.x86"
             }
         }
     }

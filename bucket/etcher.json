@@ -1,43 +1,37 @@
 {
-    "homepage": "https://etcher.io/",
+    "version": "1.5.120",
+    "description": "Flash OS images to SD cards & USB drives, safely and easily.",
+    "homepage": "https://www.balena.io/etcher/",
     "license": "Apache-2.0",
-    "version": "1.4.9",
+    "url": "https://github.com/balena-io/etcher/releases/download/v1.5.120/balenaEtcher-Setup-1.5.120.exe#/dl.7z",
+    "hash": "sha512:f2a61523c4d89ecfab38c1a8c26ee9c847c627288843a09b27d30178ee610fac411528be4a189372b2eae378c9adc3625b19bb5dbeed1a81582447d8a3be77f5",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/balena-io/etcher/releases/download/v1.4.9/balenaEtcher-Setup-1.4.9-x64.exe#/dl.7z",
-            "hash": "24b6d0d174dfa5883ed313f7546d1df36794d3fe9eb0d7397ab96d6f82af2a96"
+            "installer": {
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR/app-64.7z\" \"$dir\""
+            }
         },
         "32bit": {
-            "url": "https://github.com/balena-io/etcher/releases/download/v1.4.9/balenaEtcher-Setup-1.4.9-x86.exe#/dl.7z",
-            "hash": "6d76bb4f37298080ab66376184bedb670e59c3570623dd36253dc2a1074a486b"
+            "installer": {
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR/app-32.7z\" \"$dir\""
+            }
         }
     },
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse",
     "shortcuts": [
         [
             "balenaEtcher.exe",
             "Etcher"
-        ],
-        [
-            "balenaEtcher.exe",
-            "balenaEtcher"
         ]
     ],
     "checkver": {
         "github": "https://github.com/balena-io/etcher"
     },
-    "pre_install": "extract_7zip \"$dir\\`$PLUGINSDIR\\app-*.7z\" \"$dir\"",
-    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
     "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://github.com/balena-io/etcher/releases/download/v$version/balenaEtcher-Setup-$version-x64.exe#/dl.7z"
-            },
-            "32bit": {
-                "url": "https://github.com/balena-io/etcher/releases/download/v$version/balenaEtcher-Setup-$version-x86.exe#/dl.7z"
-            }
-        },
+        "url": "https://github.com/balena-io/etcher/releases/download/v$version/balenaEtcher-Setup-$version.exe#/dl.7z",
         "hash": {
-            "url": "https://github.com/balena-io/etcher/releases/download/v$version/SHASUMS256.txt"
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512: $base64"
         }
     }
 }

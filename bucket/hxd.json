@@ -1,52 +1,50 @@
 {
+    "version": "2.5.0.0",
+    "description": "Hex and Disk Editor",
     "homepage": "https://mh-nexus.de/en/hxd/",
-    "version": "2.2.0.0",
     "license": {
         "identifier": "Freeware",
         "url": "https://mh-nexus.de/en/hxd/license.php"
     },
-    "innosetup": false,
+    "url": "https://mh-nexus.de/downloads/HxDPortableSetup.zip",
+    "hash": "sha512:156aa7184501e2de21d1205651d800d1524ede8006c31cd97f2cff20002524d69d28c2d0d6bdd6d0cacf171ecb9a2ce90f96d115596ba4a3512533cc4a27ac30",
     "architecture": {
         "64bit": {
-            "url": "https://mh-nexus.de/downloads/HxDSetup.zip",
-            "hash": "5907528f313805cd7278589d00b9bdb05ffbc48ecbbb029725b137a2cc1ec67d",
-            "pre_install": [
-                "$manifest.innosetup = $true",
-                "unpack_inno \"HxDSetup.exe\" $manifest $dir",
-                "rename-item \"$dir\\HxD64,3.exe\" \"$dir\\HxD.exe\"",
-                "remove-item \"$dir\\HxD*,*.exe\""
-            ]
+            "installer": {
+                "script": [
+                    "Expand-InnoArchive \"$dir\\HxDPortableSetup.exe\" -Removal",
+                    "Rename-Item \"$dir\\HxD64,3.exe\" \"$dir\\HxD.exe\"",
+                    "Remove-Item \"$dir\\*,*\" -Force"
+                ]
+            }
         },
         "32bit": {
-            "url": "https://mh-nexus.de/downloads/HxDSetup.zip",
-            "hash": "5907528f313805cd7278589d00b9bdb05ffbc48ecbbb029725b137a2cc1ec67d",
-            "pre_install": [
-                "$manifest.innosetup = $true",
-                "unpack_inno \"HxDSetup.exe\" $manifest $dir",
-                "rename-item \"$dir\\HxD32,3.exe\" \"$dir\\HxD.exe\"",
-                "remove-item \"$dir\\HxD*,*.exe\""
-            ]
+            "installer": {
+                "script": [
+                    "Expand-InnoArchive \"$dir\\HxDPortableSetup.exe\" -Removal",
+                    "Rename-Item \"$dir\\HxD32,3.exe\" \"$dir\\HxD.exe\"",
+                    "Remove-Item \"$dir\\*,*\" -Force"
+                ]
+            }
         }
     },
-    "depends": "innounp",
-    "persist": "Settings",
-    "bin": [
-        [
-            "HxD.exe",
-            "HxD"
-        ]
-    ],
+    "bin": "HxD.exe",
     "shortcuts": [
         [
             "HxD.exe",
             "HxD"
         ]
     ],
+    "persist": "Settings",
     "checkver": {
         "url": "https://mh-nexus.de/en/hxd/changelog.php",
-        "re": "v_([\\d.]+)"
+        "regex": "v_([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://mh-nexus.de/downloads/HxDSetup.zip"
+        "url": "https://mh-nexus.de/downloads/HxDPortableSetup.zip",
+        "hash": {
+            "url": "https://mh-nexus.de/en/downloads.php?product=HxD20#",
+            "regex": "(?sm)$basename.*?$sha512"
+        }
     }
 }

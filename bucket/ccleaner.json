@@ -1,8 +1,22 @@
 {
-    "homepage": "https://www.piriform.com/ccleaner",
-    "version": "5.52.6967",
-    "url": "https://download.ccleaner.com/slim/ccsetup552_slim.exe#/dl.7z",
-    "hash": "af58c8965f958425baf88da0848da5b0d42fb3e12bf76d79aed230df4366b2fc",
+    "version": "5.82.8950",
+    "description": "Number-one tool for cleaning PC",
+    "homepage": "https://www.ccleaner.com/ccleaner",
+    "license": "Freeware",
+    "url": "https://download.ccleaner.com/portable/ccsetup582.zip",
+    "hash": "a75d424c7734c36ac03e3fda4c3e793f3efaf7ca00c2c35a1009801b6826be2c",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\ccleaner.ini\")) {",
+        "   Set-Content \"$dir\\ccleaner.ini\" @('[Options]', 'UpdateAuto=0', 'UpdateNotify=0', 'UpdateCheck=0', 'HelpImproveCCleaner=0') -Encoding ASCII",
+        "}",
+        "'winapp.ini', 'winreg.ini', 'winsys.ini' | ForEach-Object {",
+        "   if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "}",
+        "Copy-Item \"$persist_dir\\*\" \"$dir\" -Include 'branding.dll', 'CCleaner.dat' -ErrorAction SilentlyContinue"
+    ],
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\*\" \"$persist_dir\" -Include 'branding.dll', 'CCleaner.dat' -ErrorAction SilentlyContinue -Force"
+    },
     "architecture": {
         "64bit": {
             "bin": [
@@ -28,20 +42,17 @@
             ]
         }
     },
-    "persist": "ccleaner.ini",
-    "pre_install": [
-        "if(!(test-path \"$dir\\ccleaner.ini\")) { Add-Content \"$dir\\ccleaner.ini\" \"[Options]`nHelpImproveCCleaner=0\" }",
-        "if(!(test-path \"$dir\\portable.dat\")) { Add-Content \"$dir\\portable.dat\" \"#PORTABLE#\" }",
-        "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
-        "Remove-Item \"$dir\\`$_75_\" -Recurse",
-        "Remove-Item \"$dir\\uninst.exe\"",
-        "Remove-Item \"$dir\\CCUpdate.exe\""
+    "persist": [
+        "ccleaner.ini",
+        "winapp.ini",
+        "winreg.ini",
+        "winsys.ini"
     ],
     "checkver": {
-        "url": "https://www.piriform.com/ccleaner/download",
-        "re": "<strong>v([\\d.]+)</strong>"
+        "url": "https://www.ccleaner.com/ccleaner/version-history",
+        "regex": ">v([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://download.ccleaner.com/slim/ccsetup$majorVersion$minorVersion_slim.exe#/dl.7z"
+        "url": "https://download.ccleaner.com/portable/ccsetup$majorVersion$minorVersion.zip"
     }
 }

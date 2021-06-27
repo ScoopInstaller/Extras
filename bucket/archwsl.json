@@ -1,16 +1,46 @@
 {
-    "homepage": "https://github.com/yuk7/ArchWSL/",
+    "##": "'rootfs' must be a 'real' directory (at least on Windows 10 RS4)",
+    "version": "20.11.25.0",
     "description": "Install ArchLinux as a WSL Instance",
+    "homepage": "https://github.com/yuk7/ArchWSL",
+    "license": "MIT",
     "notes": "Even when you are logging in as 'root', some operations (like service command) require Windows administrator privileges",
-    "version": "19010200",
-    "url": "https://github.com/yuk7/ArchWSL/releases/download/19010200/Arch.zip",
-    "hash": "29f0152a50f3a8cc2a864450ae68b83c0168c1d48b4169369fcc4afea4c1fbf8",
-    "checkver": {
-        "url": "https://api.github.com/repos/yuk7/ArchWSL/releases/latest",
-        "jp": "$.tag_name"
-    },
-    "autoupdate": {
-        "url": "https://github.com/yuk7/ArchWSL/releases/download/$version/Arch.zip"
+    "url": "https://github.com/yuk7/ArchWSL/releases/download/20.11.25.0/Arch.zip",
+    "hash": "ea18ffed6df189b33b4d558c2fdf6e0391ad5829397984306036046de5a59494",
+    "post_install": [
+        "$installable = $true",
+        "$user = [Security.Principal.WindowsIdentity]::GetCurrent() -as [Security.Principal.WindowsPrincipal]",
+        "$permission = Get-Acl $persist_dir | Select-Object -ExpandProperty Access | Where-Object {",
+        "    ($user.IsInRole($_.IdentityReference)) -and `",
+        "    ($_.FileSystemRights.ToString() -eq 'FullControl') -and `",
+        "    ($_.InheritanceFlags -band 3) -and `",
+        "    ($_.PropagationFlags.ToString() -ne 'NoPropagateInherit')",
+        "}",
+        "if ($null -eq $permission) {",
+        "   warn 'Full Control access to the scoop directory is necessary to install WSL distribution.'",
+        "   warn 'Change directory security and reinstall ArchWSL.'",
+        "   $installable = $false",
+        "}",
+        "if ($null -eq (Get-Command 'wslconfig' -ErrorAction SilentlyContinue)) {",
+        "    warn 'WSL appears not to be enabled!'",
+        "    warn 'Run ''Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux'''",
+        "    warn 'from an elevated PowerShell. Restart your computer when prompted and reinstall ArchWSL.'",
+        "    $installable = $false",
+        "}",
+        "if ($installable) {",
+        "    Copy-Item \"$dir\\Arch.exe\" \"$persist_dir\\data\\Arch.exe\"",
+        "    $res = Invoke-ExternalCommand \"$persist_dir\\data\\Arch.exe\" 'install', \"$dir\\rootfs.tar.gz\"",
+        "    Remove-Item \"$persist_dir\\data\\Arch.exe\" -Force",
+        "    if(!$res) { error 'ArchWsl installation failed!'; return }",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "if ($cmd -ne 'uninstall') { return }",
+            "$res = Invoke-ExternalCommand \"$dir\\Arch.exe\" 'isregd'",
+            "if(!$res) { error 'ArchWsl is not registered!'; return }",
+            "Invoke-ExternalCommand \"$dir\\Arch.exe\" 'clean', '-y' | Out-Null"
+        ]
     },
     "bin": "Arch.exe",
     "shortcuts": [
@@ -19,54 +49,9 @@
             "Arch Linux"
         ]
     ],
-    "##": "'rootfs' must be a 'real' directory (at least on Windows 10 RS4)",
     "persist": "data",
-    "post_install": [
-        "$installable = $true",
-        "$user = [Security.Principal.WindowsIdentity]::GetCurrent() -as [Security.Principal.WindowsPrincipal]",
-        "$permission = Get-Acl $dir | select -ExpandProperty Access | where {",
-        "    ($user.IsInRole($_.IdentityReference)) -and `",
-        "    ($_.FileSystemRights.ToString() -eq 'FullControl') -and `",
-        "    # 3 = ([Security.AccessControl.InheritanceFlags]::ContainerInherit -bor ObjectInherit)",
-        "    ($_.InheritanceFlags -band 3) -and `",
-        "    ($_.PropagationFlags.ToString() -ne 'NoPropagateInherit')",
-        "}",
-        "if ($null -eq $permission) {",
-        "   warn \"Full Control access to the scoop directory is necessary to install WSL distribution.\"",
-        "   warn \"Change directory security and reinstall ArchWSL.\"",
-        "   $installable = $false",
-        "}",
-        "if ($null -eq (Get-Command wslconfig -ErrorAction SilentlyContinue)) {",
-        "    warn \"WSL appears not to be enabled!\"",
-        "    warn \"Run 'Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux'\"",
-        "    warn \"from an elevated PowerShell. Restart your computer when prompted and reinstall ArchWSL.\"",
-        "    $installable = $false",
-        "}",
-        "if ($installable) {",
-        "    \"`$si = New-Object System.Diagnostics.ProcessStartInfo '$dir\\Arch.exe' -Property @{ UseShellExecute = `$false; RedirectStandardInput = `$true }",
-        "    `$p = [System.Diagnostics.Process]::Start(`$si)",
-        "    `$p.StandardInput.Write('y')",
-        "    `$p.WaitForExit()",
-        "    `$lx_uid = & '$dir\\Arch.exe' get --lxuid",
-        "    if(!`$lx_uid) { error 'ArchWsl is not installed!'; return }",
-        "    Set-ItemProperty -Path ('HKCU:Software\\Microsoft\\Windows\\CurrentVersion\\Lxss\\' + `$lx_uid) -Name BasePath -Value '$persist_dir\\data'",
-        "    if (Test-Path ('$persist_dir' + '\\data\\rootfs')) {",
-        "        Remove-Item -Recurse -Path '$dir\\rootfs'",
-        "    } else {",
-        "        Move-Item -Path '$dir\\rootfs' -Destination '$persist_dir\\data\\rootfs'",
-        "    }",
-        "    Remove-Item -Recurse -Path '$dir\\temp'",
-        "    \" | Set-Content \"$dir\\install.ps1\"",
-        "    & \"$dir\\install.ps1\"",
-        "}"
-    ],
-    "uninstaller": {
-        "script": [
-            "$lx_uid = & \"$dir\\Arch.exe\" get --lxuid",
-            "if(!$lx_uid) { error 'ArchWsl is not registered!'; return }",
-            "Set-ItemProperty -Path \"HKCU:Software\\Microsoft\\Windows\\CurrentVersion\\Lxss\\$lx_uid\" -Name BasePath -Value $dir",
-            "New-Item -ItemType Directory -Path \"$dir\\rootfs\" | Out-Null",
-            "'y' | & \"$dir\\Arch.exe\" clean"
-        ]
+    "checkver": "github",
+    "autoupdate": {
+        "url": "https://github.com/yuk7/ArchWSL/releases/download/$version/Arch.zip"
     }
 }

@@ -1,14 +1,23 @@
 {
-    "homepage": "https://rainmeter.net/",
-    "version": "4.2.0.3111",
+    "version": "4.3.1",
+    "description": "A desktop customization tool",
+    "homepage": "https://www.rainmeter.net",
     "license": "GPL-2.0-only",
+    "url": "https://builds.rainmeter.net/Rainmeter-4.3.1.exe",
+    "hash": "eb8f0390f4919c5a2a16b0ff9d5c181ded835acbec12e60984bc9bbc3a1f2ef9",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/rainmeter/rainmeter/releases/download/v4.2.0.3111/Rainmeter-4.2.exe#/Rainmeter.7z",
-            "hash": "5ab964f7eea7864ca6ec97229d2dad184f85565ebc72b990189ab5cfeda0fca2"
+            "installer": {
+                "script": "Expand-7zipArchive -Overwrite All \"$dir\\$fname\" -Removal"
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": "Expand-7zipArchive -Overwrite Skip \"$dir\\$fname\" -Removal"
+            }
         }
     },
-    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse; Remove-Item \"$dir\\uninst.exe.nsis\"",
+    "post_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse",
     "bin": [
         "Rainmeter.exe",
         "SkinInstaller.exe"
@@ -19,14 +28,8 @@
             "Rainmeter"
         ]
     ],
-    "checkver": {
-        "github": "https://github.com/rainmeter/rainmeter"
-    },
+    "checkver": "([\\d.]+) Final Release",
     "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://github.com/rainmeter/rainmeter/releases/download/v$version/Rainmeter-$majorVersion.$minorVersion.exe#/Rainmeter.7z"
-            }
-        }
+        "url": "https://builds.rainmeter.net/Rainmeter-$version.exe"
     }
 }

@@ -1,0 +1,38 @@
+{
+    "version": "1.8.15",
+    "description": "Arduino IDE",
+    "homepage": "https://www.arduino.cc",
+    "license": "GPL-2.0-or-later",
+    "url": "https://downloads.arduino.cc/arduino-1.8.15-windows.zip",
+    "hash": "sha512:9248f01f95eecc65697a5ec60f4bfa10a1b8a5cbd21791a9aad94720bcd04dd7fdf22535bb0c5683ec707db1ef9ca480fa45e4ae4ad1ee2e2743ee22f2a7f2b9",
+    "extract_dir": "arduino-1.8.15",
+    "pre_install": [
+        "'arduino\\avr\\platform.local.txt', 'arduino\\avr\\boards.local.txt', 'platform.local.txt' | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\hardware\\$_\")) { New-Item \"$dir\\hardware\\$_\" | Out-Null }",
+        "}"
+    ],
+    "bin": "arduino.exe",
+    "shortcuts": [
+        [
+            "arduino.exe",
+            "Arduino"
+        ]
+    ],
+    "persist": [
+        "portable",
+        "hardware\\platform.local.txt",
+        "hardware\\arduino\\avr\\platform.local.txt",
+        "hardware\\arduino\\avr\\boards.local.txt"
+    ],
+    "checkver": {
+        "url": "https://www.arduino.cc/en/software",
+        "regex": "Arduino IDE ([\\d.]+)<"
+    },
+    "autoupdate": {
+        "url": "https://downloads.arduino.cc/arduino-$version-windows.zip",
+        "hash": {
+            "url": "$baseurl/arduino-$version.sha512sum.txt"
+        },
+        "extract_dir": "arduino-$version"
+    }
+}

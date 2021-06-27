@@ -1,0 +1,79 @@
+{
+    "version": "0.6.2-9.2",
+    "description": "Mathematics software system",
+    "homepage": "https://www.sagemath.org",
+    "license": "GPL-2.0-or-later",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/sagemath/sage-windows/releases/download/0.6.2-9.2/SageMath-9.2-Installer-v0.6.2.exe",
+            "hash": "9b924682e3f73ea9a3d4e3c0839ece36af99ea1f5802de98397f8182a0a02fd3"
+        }
+    },
+    "innosetup": true,
+    "installer": {
+        "script": [
+            "$CONT = @(",
+            "    '$exedir = \"$PSScriptRoot\\runtime\\bin\"'",
+            "    '$cwd_unix = (& \"$exedir\\cygpath.exe\" -- (Get-Location).Path)'",
+            "    '$args_unix = ($args | ForEach-Object { & \"$exedir\\cygpath.exe\" -- $_ })'",
+            "    '$args_unix_quoted = ($args_unix | ForEach-Object { \"''$_''\" })',",
+            "    '& \"$exedir\\bash.exe\" --login -c \"cd ''$cwd_unix'' && /opt/sagemath-*/sage $args_unix_quoted\"'",
+            ")",
+            "Set-Content $dir\\sagemath.ps1 $CONT -Encoding ASCII",
+            "@('etc\\fstab.d', 'dev\\shm', 'dev\\mqueue', 'home\\sage') | ForEach-Object {",
+            "    New-Item \"$dir\\runtime\\$_\" -Force -Type Directory | Out-Null",
+            "}",
+            "Get-Content \"$dir\\runtime\\etc\\symlinks.lst\" | ForEach-Object {",
+            "    (Get-Item \"$dir\\runtime\\$_\").Attributes = 'System'",
+            "}"
+        ]
+    },
+    "bin": [
+        "sagemath.ps1",
+        [
+            "sagemath.ps1",
+            "sage"
+        ],
+        [
+            "sagemath.ps1",
+            "sagemath-shell",
+            "-sh"
+        ],
+        [
+            "sagemath.ps1",
+            "sagemath-notebook",
+            "--notebook"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "runtime\\bin\\mintty.exe",
+            "SageMath",
+            "-t 'SageMath' /bin/bash --login -c '/opt/sagemath-*/sage'",
+            "sagemath.ico"
+        ],
+        [
+            "runtime\\bin\\mintty.exe",
+            "SageMath Shell",
+            "-t 'SageMath Shell' /bin/bash --login -c '/opt/sagemath-*/sage -sh'",
+            "sagemath.ico"
+        ],
+        [
+            "runtime\\bin\\mintty.exe",
+            "SageMath Notebook",
+            "-t \"SageMath Notebook\" /bin/bash --login -c \"/opt/sagemath-*/sage --notebook\"",
+            "sagemath.ico"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/sagemath/sage-windows",
+        "regex": "tag/([\\d-.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/sagemath/sage-windows/releases/download/$version/SageMath-$preReleaseVersion-Installer-v$matchHead.exe"
+            }
+        }
+    }
+}

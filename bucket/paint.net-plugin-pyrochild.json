@@ -1,0 +1,20 @@
+{
+    "version": "2020-11-21",
+    "description": "Collection of paint.net plugins by pyrochild",
+    "homepage": "https://forums.getpaint.net/topic/7291-pyrochild-plugins",
+    "license": "MIT",
+    "depends": "paint.net",
+    "url": "https://forums.getpaint.net/applications/core/interface/file/attachment.php?id=18335#/dl.zip",
+    "hash": "88261fd6eb2ebf89924aab93083d9890ef43bdb468bf6e342e355494423cf6f5",
+    "pre_install": [
+        "$pluginFolder = Join-Path (appdir 'paint.net' $global) 'current\\Effects'",
+        "Copy-Item \"$dir\\*.dll\" $pluginFolder -Force",
+        "(Get-ChildItem \"$dir\\*.dll\").Name | Out-File \"$dir\\plugins.txt\" -Encoding Ascii"
+    ],
+    "uninstaller": {
+        "script": [
+            "$pluginFolder = Join-Path (appdir 'paint.net' $global) 'current\\Effects'",
+            "Get-Content \"$dir\\plugins.txt\" | Remove-Item -Path { Join-Path \"$pluginFolder\" \"$_\" } -ErrorAction SilentlyContinue"
+        ]
+    }
+}

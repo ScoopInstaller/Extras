@@ -1,0 +1,55 @@
+{
+    "version": "1.10.3.732",
+    "description": "Device drivers installer and updater.",
+    "homepage": "https://www.snappy-driver-installer.org",
+    "license": "GPL-3.0-or-later",
+    "url": "https://snappy-driver-installer.org/downloads/SDIO_1.10.3.732.zip",
+    "hash": "3ce44263585b0d0c8deb90ce1d3e6b1df1330007ff42886ad069bd5634196c22",
+    "extract_dir": "SDIO_1.10.3.732",
+    "architecture": {
+        "64bit": {
+            "pre_install": [
+                "Move-Item \"$dir\\SDIO_x64_*.exe\" \"$dir\\SDIO.exe\"",
+                "Remove-Item \"$dir\\SDIO_*exe\""
+            ]
+        },
+        "32bit": {
+            "pre_install": [
+                "Remove-Item \"$dir\\SDIO_x64_*exe\"",
+                "Move-Item \"$dir\\SDIO_*.exe\" \"$dir\\SDIO.exe\""
+            ]
+        }
+    },
+    "installer": {
+        "script": "if (-not (Test-Path \"$persist_dir\\sdi.cfg\")) { New-Item \"$dir\\sdi.cfg\" | Out-Null }"
+    },
+    "bin": [
+        "SDIO.exe",
+        [
+            "del_old_driverpacks.bat",
+            "SDIO_del_old_driverpacks.bat"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "SDIO.exe",
+            "Snappy Driver Installer Origin"
+        ]
+    ],
+    "persist": [
+        "drivers",
+        "indexes",
+        "logs",
+        "scripts",
+        "update",
+        "sdi.cfg"
+    ],
+    "checkver": {
+        "url": "https://www.snappy-driver-installer.org/download-page/",
+        "regex": "SDIO_([\\d.]+)\\.zip"
+    },
+    "autoupdate": {
+        "url": "https://snappy-driver-installer.org/downloads/SDIO_$version.zip",
+        "extract_dir": "SDIO_$version"
+    }
+}

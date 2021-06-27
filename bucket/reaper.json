@@ -1,6 +1,22 @@
 {
-    "version": "5.965",
+    "version": "6.29",
+    "description": "Digital Audio Workstation",
     "homepage": "https://www.reaper.fm",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.reaper.fm/dist-agreement.php"
+    },
+    "notes": "The portable version of Reaper does not include ReWire.",
+    "architecture": {
+        "64bit": {
+            "url": "https://www.reaper.fm/files/6.x/reaper629_x64-install.exe#/dl.7z",
+            "hash": "1042190df292b86860ecd24210d60b4ef678598c1f0860c6ebab115da99bc128"
+        },
+        "32bit": {
+            "url": "https://www.reaper.fm/files/6.x/reaper629-install.exe#/dl.7z",
+            "hash": "f4dbb222663d30a8753397ff0ca6a813f1c3af4e41c3843b92213ee26ed60023"
+        }
+    },
     "bin": [
         "reaper.exe",
         "reamote.exe"
@@ -12,33 +28,18 @@
         ],
         [
             "reamote.exe",
-            "Reamote"
+            "ReaMote"
         ]
     ],
     "installer": {
         "script": [
-            "# Copy out installation files",
             "Move-Item \"$dir\\`$INSTDIR`$_8_\\*\" -Destination \"$dir\"",
-            "",
-            "# Remove unused folders",
-            "Remove-Item \"$dir\\`$INSTDIR`$_8_\" -Recurse",
-            "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
-            "Remove-Item \"$dir\\`$COMMONFILES64\" -Recurse"
+            "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse -Force"
         ]
-    },
-    "architecture": {
-        "64bit": {
-            "url": "https://www.reaper.fm/files/5.x/reaper5965_x64-install.exe#/dl.7z",
-            "hash": "6a749d156dfc75e3aef61c6440aba6b5748ddb38137fe11b8da2d3903eac44b4"
-        },
-        "32bit": {
-            "url": "https://www.reaper.fm/files/5.x/reaper5965-install.exe#/dl.7z",
-            "hash": "21032d98a89b2ec4dd514945595d76553f75e1404ec75083e05080a42c4e0575"
-        }
     },
     "checkver": {
         "url": "https://www.reaper.fm/download.php",
-        "re": "Version (\\d+\\.\\d+)"
+        "regex": "Version ([\\d.]+)"
     },
     "autoupdate": {
         "architecture": {
@@ -49,6 +50,5 @@
                 "url": "https://www.reaper.fm/files/$majorVersion.x/reaper$cleanVersion-install.exe#/dl.7z"
             }
         }
-    },
-    "notes": "The portable version of Reaper does not include ReWire."
+    }
 }

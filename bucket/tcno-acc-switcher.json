@@ -1,0 +1,53 @@
+{
+    "version": "3.0.02",
+    "description": "A super fast account switcher for Steam",
+    "homepage": "https://github.com/TcNobo/TcNo-Acc-Switcher",
+    "license": "GPL-3.0-only,LGPL-2.1-only,...",
+    "notes": ".NET Framework 4.8 is required.",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/TcNobo/TcNo-Acc-Switcher/releases/download/3.0.02/TcNo.Account.Switcher.x64.zip",
+            "hash": "42d17824569d311451e78cf5f12333f1c6af2dc9080b68c5226c741e4e2aa1e4",
+            "extract_dir": "TcNo.Account.Switcher.x64"
+        },
+        "32bit": {
+            "url": "https://github.com/TcNobo/TcNo-Acc-Switcher/releases/download/3.0.02/TcNo.Account.Switcher.x32.zip",
+            "hash": "16c62e3392821f082993a1f5c6bf1c21550351f6f72f7ee6a85d33d84a48f486",
+            "extract_dir": "TcNo.Account.Switcher.x32"
+        }
+    },
+    "pre_install": [
+        "'globals.json', 'Steam\\SteamSettings.json', 'Steam\\SteamVACCache.json', 'Steam\\Tray_Users.json' | ForEach-Object {",
+        "    $cont = if ($_ -like '*Tray_Users*') { '[]' } else { '{}' }",
+        "    if (!(Test-Path \"$persist_dir\\$_\")) { Set-Content \"$dir\\$_\" $cont -Encoding Ascii | Out-Null }",
+        "}",
+        "Remove-Item \"$dir\\TcNo Acc Switcher Updater.exe\""
+    ],
+    "bin": "TcNo Account Switcher.exe",
+    "shortcuts": [
+        [
+            "TcNo Account Switcher.exe",
+            "TcNo Account Switcher"
+        ]
+    ],
+    "persist": [
+        "Errors",
+        "globals.json",
+        "Steam\\SteamSettings.json",
+        "Steam\\SteamVACCache.json",
+        "Steam\\Tray_Users.json",
+        "Steam\\Errors",
+        "Steam\\images"
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/TcNobo/TcNo-Acc-Switcher/releases/download/$version/TcNo.Account.Switcher.x64.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/TcNobo/TcNo-Acc-Switcher/releases/download/$version/TcNo.Account.Switcher.x32.zip"
+            }
+        }
+    }
+}

@@ -1,0 +1,56 @@
+{
+    "version": "92.0.4515.51",
+    "description": "Fast, secure, and free web browser, built for the modern web.",
+    "homepage": "https://www.google.com/chrome/beta",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.google.com/chrome/privacy/eula_text.html"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://dl.google.com/release2/chrome/AJObBxwBJxJUBSsMijgzz9g_92.0.4515.51/92.0.4515.51_chrome_installer.exe#/dl.7z",
+            "hash": "a4c795f91b0cee94dba6608184fc5b46eb6dfd6f7e66f3b40f719fdae853eb35"
+        },
+        "32bit": {
+            "url": "https://dl.google.com/release2/chrome/AJcveZgWCja2aG7GFElqDrU_92.0.4515.51/92.0.4515.51_chrome_installer.exe#/dl.7z",
+            "hash": "db546fff83c31f333bd776a8778383bea57fce5cc0278112a48b3e18a76d728c"
+        }
+    },
+    "installer": {
+        "script": "Expand-7zipArchive \"$dir\\chrome.7z\" -ExtractDir 'Chrome-bin' -Removal"
+    },
+    "bin": [
+        [
+            "chrome.exe",
+            "chrome-beta"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "chrome.exe",
+            "Google Chrome (Beta)"
+        ]
+    ],
+    "checkver": {
+        "url": "https://chrome-dl.com/api/chrome.min.xml",
+        "regex": "(?sm)<beta32><version>(?<version>[\\d.]+)</version>.+release2/chrome/(?<32>[\\w-]+)_.+<beta64>.+release2/chrome/(?<64>[\\w-]+)_.+</beta64>"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://dl.google.com/release2/chrome/$match64_$version/$version_chrome_installer.exe#/dl.7z",
+                "hash": {
+                    "url": "https://chrome-dl.com/api/chrome.min.xml",
+                    "xpath": "/chromechecker/beta64[version='$version']/sha256"
+                }
+            },
+            "32bit": {
+                "url": "https://dl.google.com/release2/chrome/$match32_$version/$version_chrome_installer.exe#/dl.7z",
+                "hash": {
+                    "url": "https://chrome-dl.com/api/chrome.min.xml",
+                    "xpath": "/chromechecker/beta32[version='$version']/sha256"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,56 @@
+{
+    "version": "8.0.0",
+    "description": "A free file archiver utility, based on Open Source technologies",
+    "homepage": "https://www.peazip.org",
+    "license": "LGPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://dotsrc.dl.osdn.net/osdn/peazip/75298/peazip_portable-8.0.0.WIN64.zip",
+            "hash": "8f059ee8fc9caaaf752c8cc9d3dc274dc99bae8d3bd891524a0c45acd3f018bc",
+            "extract_dir": "peazip_portable-8.0.0.WIN64"
+        },
+        "32bit": {
+            "url": "https://dotsrc.dl.osdn.net/osdn/peazip/75298/peazip_portable-8.0.0.WINDOWS.zip",
+            "hash": "c51bb457a1ac2705128a4bf5a75e0e028737edf4b1d2c1014f91507f20dad7d1",
+            "extract_dir": "peazip_portable-8.0.0.WINDOWS"
+        }
+    },
+    "pre_install": [
+        "if(!(Test-Path \"$persist_dir\\res\\bookmarks.txt\")) { New-Item \"$dir\\res\\bookmarks.txt\" | Out-Null }",
+        "if(!(Test-Path \"$persist_dir\\res\\custedit.txt\")) { New-Item \"$dir\\res\\custedit.txt\" | Out-Null }"
+    ],
+    "bin": "peazip.exe",
+    "shortcuts": [
+        [
+            "peazip.exe",
+            "PeaZip"
+        ]
+    ],
+    "persist": [
+        "res\\altconf.txt",
+        "res\\bookmarks.txt",
+        "res\\conf.txt",
+        "res\\conf-lastgood.txt",
+        "res\\custedit.txt"
+    ],
+    "checkver": {
+        "url": "https://osdn.net/projects/peazip/",
+        "regex": "<a href=\"/projects/peazip/releases/(?<release>[\\d]*)\">peazip ([\\d.]+)</a>"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://dotsrc.dl.osdn.net/osdn/peazip/$matchRelease/peazip_portable-$version.WIN64.zip",
+                "extract_dir": "peazip_portable-$version.WIN64"
+            },
+            "32bit": {
+                "url": "https://dotsrc.dl.osdn.net/osdn/peazip/$matchRelease/peazip_portable-$version.WINDOWS.zip",
+                "extract_dir": "peazip_portable-$version.WINDOWS"
+            }
+        },
+        "hash": {
+            "url": "https://osdn.net/projects/peazip/downloads/$matchRelease/$basename",
+            "regex": "(?sm)SHA256.*?$sha256"
+        }
+    }
+}

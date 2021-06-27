@@ -1,0 +1,36 @@
+{
+    "##": "Rename to #/dl.7z cannot be used as download is not stripping rename and fosshub cannot handle it",
+    "version": "2.32",
+    "description": "Lossless audio editor and recorder for MP3 files.",
+    "homepage": "http://mpesch3.de",
+    "license": "Freeware",
+    "url": "https://www.fosshub.com/mp3DirectCut.html/mp3DC232.exe",
+    "hash": "md5:d907ee8d75a404b87e585bc192aff71c",
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\$fname\" -Removal",
+            "if (-not (Test-Path \"$persist_dir\\mp3DirectCut.ini\")) {",
+            "    Set-Content \"$dir\\mp3DirectCut.ini\" @('[mp3DirectCut]', \"version=$version\") -Encoding Ascii",
+            "} else {",
+            "    (Get-Content \"$persist_dir\\mp3DirectCut.ini\") -replace 'version=.+', \"version=$version\" | Set-Content \"$persist_dir\\mp3DirectCut.ini\" -Encoding Ascii",
+            "}",
+            "New-Item \"$dir\\mp3DClocal.ini\" | Out-Null"
+        ]
+    },
+    "bin": "mp3DirectCut.exe",
+    "shortcuts": [
+        [
+            "mp3DirectCut.exe",
+            "mp3DirectCut"
+        ]
+    ],
+    "persist": "mp3DirectCut.ini",
+    "checkver": "Version ([\\d.]+)",
+    "autoupdate": {
+        "url": "https://www.fosshub.com/mp3DirectCut.html/mp3DC$cleanVersion.exe",
+        "hash": {
+            "url": "http://mpesch3.de",
+            "regex": "checksum:\\s*$md5"
+        }
+    }
+}

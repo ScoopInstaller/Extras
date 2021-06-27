@@ -1,25 +1,25 @@
 {
-    "version": "3.1.2",
-    "description": "Free PDF, eBook reader.",
-    "homepage": "https://www.sumatrapdfreader.org",
+    "version": "3.2",
+    "description": "PDF and eBook reader",
+    "homepage": "https://www.sumatrapdfreader.org/free-pdf-reader",
     "license": "GPL-3.0-only,BSD-2-Clause",
     "architecture": {
         "64bit": {
-            "url": "https://www.sumatrapdfreader.org/dl/SumatraPDF-3.1.2-64.zip",
-            "hash": "3c07b3fe267251d32a17f67ed5070018d69c8436df33e6db3ce757889b734676"
+            "url": "https://kjkpubsf.sfo2.digitaloceanspaces.com/software/sumatrapdf/rel/SumatraPDF-3.2-64.zip",
+            "hash": "19a210f0fb0bebd9338ab4148a5c710d3e8ea8e57576c1052ecc351972ffa93c"
         },
         "32bit": {
-            "url": "https://www.sumatrapdfreader.org/dl/SumatraPDF-3.1.2.zip",
-            "hash": "4cac356d04f999c7134d32122c3a031f8e7d1f1d09424a00b9f19b8c05b652f1"
+            "url": "https://kjkpubsf.sfo2.digitaloceanspaces.com/software/sumatrapdf/rel/SumatraPDF-3.2.zip",
+            "hash": "7262ef7611bc47a6b5027fda0000b0ba1de22211432885c3425b5a5a1ee4d441"
         }
     },
     "pre_install": [
         "$file = 'SumatraPDF-settings.txt'",
-        "if (-not (Test-Path \"$persist_dir\\$file\")) {",
+        "if (!(Test-Path \"$persist_dir\\$file\")) {",
         "    Write-Host 'File' $file 'does not exists. Creating.' -f Yellow",
-        "    $CONT = @('CheckForUpdates = false')",
-        "    Set-Content \"$dir\\$file\" ($CONT -join \"`r`n\") -Encoding Ascii",
-        "}"
+        "    Set-Content \"$dir\\$file\" 'CheckForUpdates = false' -Encoding Ascii",
+        "}",
+        "Get-ChildItem \"$dir\\SumatraPDF-*.exe\" | Rename-Item -NewName 'SumatraPDF.exe'"
     ],
     "bin": "SumatraPDF.exe",
     "shortcuts": [
@@ -28,18 +28,21 @@
             "SumatraPDF"
         ]
     ],
-    "persist": "SumatraPDF-settings.txt",
+    "persist": [
+        "SumatraPDF-settings.txt",
+        "sumatrapdfcache"
+    ],
     "checkver": {
-        "url": "https://www.sumatrapdfreader.org/news.html",
-        "regex": "([\\d\\.]+)\\s+\\(\\d+"
+        "url": "https://www.sumatrapdfreader.org/docs/Version-history",
+        "regex": "([\\d.]+)\\s+\\(\\d+"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://www.sumatrapdfreader.org/dl/SumatraPDF-$version-64.zip"
+                "url": "https://kjkpubsf.sfo2.digitaloceanspaces.com/software/sumatrapdf/rel/SumatraPDF-$version-64.zip"
             },
             "32bit": {
-                "url": "https://www.sumatrapdfreader.org/dl/SumatraPDF-$version.zip"
+                "url": "https://kjkpubsf.sfo2.digitaloceanspaces.com/software/sumatrapdf/rel/SumatraPDF-$version.zip"
             }
         }
     }

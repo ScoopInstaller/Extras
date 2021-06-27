@@ -1,0 +1,42 @@
+{
+    "version": "7.7.20050.1",
+    "description": "Photo mosaic picture maker",
+    "homepage": "https://fmedda.com/en/home",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://fmedda.com/en/licensing"
+    },
+    "url": "https://fmedda.com/ext/download/Foto-Mosaik-Edda-Portable.zip",
+    "hash": "217c5bb647500a8330064cbb8e177ce88a72acd7bb30288d493adc20ce9f21b0",
+    "extract_dir": "Foto-Mosaik-Edda-Portable",
+    "pre_install": [
+        "[xml]$xml = Get-Content \"$dir\\Rapid-Mosaic.exe.config\"",
+        "$xml.SelectSingleNode(\"/configuration/appSettings/add[@key='LocalizationLanguageId']\").value = 'en'",
+        "$xml.Save(\"$dir\\Rapid-Mosaic.exe.config\")",
+        "[xml]$xml = Get-Content \"$dir\\Data\\settings.config\"",
+        "$xml.SelectSingleNode('/Settings/ProgramConfig/ProgramConfig/CheckForUpdates').InnerText = 'false'",
+        "$xml.Save(\"$dir\\Data\\settings.config\")"
+    ],
+    "bin": [
+        "Foto-Mosaik-Edda.exe",
+        "Rapid-Mosaic.exe"
+    ],
+    "shortcuts": [
+        [
+            "Foto-Mosaik-Edda.exe",
+            "Foto-Mosaik-Edda"
+        ],
+        [
+            "Rapid-Mosaic.exe",
+            "Rapid-Mosaic"
+        ]
+    ],
+    "persist": "Data",
+    "checkver": {
+        "url": "https://fmedda.com/en/download",
+        "regex": "Version:</td>\\s+<td>([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://fmedda.com/ext/download/Foto-Mosaik-Edda-Portable.zip"
+    }
+}

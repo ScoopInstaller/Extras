@@ -1,0 +1,37 @@
+{
+    "version": "3.0.2",
+    "description": "Real time Markdown editor for bloggers",
+    "homepage": "https://wordmarkapp.com",
+    "license": "Unknown",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/wordmark/wordmark/releases/download/v3.0.2/wordmark3-setup-3.0.2.exe#/dl.7z",
+            "hash": "sha512:ab501f3ffe09dcada93dd5fb78927e8650dc1fbf755b9766b392fc80e0b32f7dbf6ddefc33b2f4e8f66e27e23dba026784bfc82f82237751b235330a85399052",
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse"
+            ]
+        }
+    },
+    "shortcuts": [
+        [
+            "wordmark3.exe",
+            "WordMark"
+        ]
+    ],
+    "checkver": {
+        "url": "https://api.github.com/repos/wordmark/wordmark/releases",
+        "jsonpath": "$[0].name"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/wordmark/wordmark/releases/download/v$version/wordmark3-setup-$version.exe#/dl.7z"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512: $base64"
+        }
+    }
+}

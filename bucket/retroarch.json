@@ -1,58 +1,63 @@
 {
-    "version": "1.7.6",
+    "version": "1.9.5",
+    "description": "Frontend for emulators, game engines and media players.",
+    "homepage": "https://www.retroarch.com/",
     "license": "GPL-3.0-only",
-    "homepage": "http://www.retroarch.com/",
     "architecture": {
         "64bit": {
-            "url": "https://buildbot.libretro.com/stable/1.7.6/windows/x86_64/RetroArch.7z",
-            "hash": "89179d3087ec4e1b9ae7fdbe43078fa92c1f96765e874856826c9313734fd9e3"
+            "url": "https://buildbot.libretro.com/stable/1.9.5/windows/x86_64/RetroArch.7z",
+            "hash": "d1566824d4d534713755e7cf6267e921efb21bf37a4134629f56ad614bd15464",
+            "extract_dir": "RetroArch-Win64"
         },
         "32bit": {
-            "url": "https://buildbot.libretro.com/stable/1.7.6/windows/x86/RetroArch.7z",
-            "hash": "3819a35873c958a0abdabcf2363f2298654dfff91f7a6a0206ba555053cb0cbd"
+            "url": "https://buildbot.libretro.com/stable/1.9.5/windows/x86/RetroArch.7z",
+            "hash": "8507ebcb1c404625d892c3dc16a272bc06c66e61a480a589a1fab45dd573d964",
+            "extract_dir": "RetroArch-Win32"
         }
     },
-    "bin": [
-        [
-            "retroarch.exe",
-            "retroarch"
-        ]
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\retroarch.cfg\")) { Move-Item \"$dir\\retroarch.default.cfg\" \"$dir\\retroarch.cfg\" }",
+        "'favorites', 'history' | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\content_$_.lpl\")) { New-Item \"$dir\\content_$_.lpl\" | Out-Null }",
+        "}"
     ],
+    "bin": "retroarch.exe",
     "shortcuts": [
         [
             "retroarch.exe",
             "RetroArch"
         ]
     ],
-    "pre_install": [
-        "if(!(Test-Path(\"$dir\\retroarch.cfg\"))) {",
-        "New-Item \"$dir\\retroarch.cfg\" -type file | Out-Null",
-        "}"
-    ],
     "persist": [
-        "assets",
+        "assets\\wallpapers",
         "cores",
+        "cheats",
+        "config",
         "playlists",
         "records",
+        "recordings",
         "saves",
         "screenshots",
-        "shaders",
+        "shaders\\presets",
         "states",
         "system",
         "thumbnails",
+        "content_favorites.lpl",
+        "content_history.lpl",
         "retroarch.cfg"
     ],
     "checkver": {
-        "url": "http://www.retroarch.com/?page=platforms",
-        "re": "The current stable version is: ([\\d.]+)"
+        "url": "https://www.retroarch.com/?page=platforms",
+        "regex": "The current stable version is: (?<main>[\\d.]+)(\\s*\\((\\w+)\\))?",
+        "replace": "${3}${2}"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://buildbot.libretro.com/stable/$version/windows/x86_64/RetroArch.7z"
+                "url": "https://buildbot.libretro.com/stable/$matchMain/windows/x86_64/RetroArch.7z"
             },
             "32bit": {
-                "url": "https://buildbot.libretro.com/stable/$version/windows/x86/RetroArch.7z"
+                "url": "https://buildbot.libretro.com/stable/$matchMain/windows/x86/RetroArch.7z"
             }
         }
     }

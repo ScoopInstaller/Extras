@@ -1,9 +1,17 @@
 {
-    "version": "2.4.6-I602",
-    "homepage": "https://openvpn.net/",
+    "version": "2.4.10",
+    "description": "A flexible virtual private network (VPN) solution to secure data communications.",
+    "homepage": "https://openvpn.net",
     "license": "GPL-2.0-only",
-    "url": "https://swupdate.openvpn.org/community/releases/openvpn-install-2.4.6-I602.exe",
-    "hash": "7397af1128c35a0e44bb104caa3cdad77b5be7c5106c8933a810771f99256800",
+    "suggest": {
+        "openssl": "openssl"
+    },
+    "url": "https://swupdate.openvpn.org/community/releases/openvpn-install-2.4.10-I601-Win10.exe",
+    "hash": "83c987df1c2320001aef74fcd3d42de4b8ca7fda4f39b6f585357805a9d43a29",
+    "pre_install": [
+        "if ([Environment]::OSVersion.Version.Major -lt 10) { error 'Windows 10 is required since version 2.4.8. Use \"versions/openvpn-w7\" instead'; break }",
+        "if (-not (is_admin)) { throw 'Administrator privileges are needed for installation' }"
+    ],
     "installer": {
         "args": [
             "/S",
@@ -24,25 +32,24 @@
         ]
     },
     "uninstaller": {
-        "file": "Uninstall.exe",
-        "args": "/S"
+        "script": [
+            "if (-not (is_admin)) { throw 'Admin privileges are needed.' }",
+            "Invoke-ExternalCommand -FilePath \"$dir\\Uninstall.exe\" -ArgumentList '/S' | Out-Null"
+        ]
     },
+    "bin": "bin\\openvpn.exe",
     "shortcuts": [
         [
-            "bin/openvpn-gui.exe",
+            "bin\\openvpn-gui.exe",
             "OpenVPN GUI"
         ]
     ],
+    "persist": "config",
     "checkver": {
         "url": "https://openvpn.net/index.php/open-source/downloads.html",
-        "re": "openvpn-install-([\\d.]+-[\\w]+).exe"
+        "regex": "openvpn-install-([\\d.]+)-I601-Win10\\.exe"
     },
     "autoupdate": {
-        "url": "https://swupdate.openvpn.org/community/releases/openvpn-install-$version.exe"
-    },
-    "suggest": {
-        "openssl": "openssl"
-    },
-    "persist": "config",
-    "bin": "bin/openvpn.exe"
+        "url": "https://swupdate.openvpn.org/community/releases/openvpn-install-$version-I601-Win10.exe"
+    }
 }

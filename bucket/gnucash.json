@@ -1,18 +1,41 @@
 {
-    "homepage": "https://www.gnucash.org/",
+    "version": "4.5",
     "description": "Personal and small-business financial-accounting software",
+    "homepage": "https://www.gnucash.org/",
     "license": "GPL-2.0-or-later",
-    "version": "3.2",
-    "url": "https://downloads.sourceforge.net/project/gnucash/gnucash%20%28stable%29/3.2/gnucash-3.2.setup.exe#/gnucash-setup.exe",
-    "hash": "0e06acfe7a9746eacf5282ba27919625b51c3d51fd548e6a529f78ff759ed70f",
+    "url": "https://github.com/Gnucash/gnucash/releases/download/4.5/gnucash-4.5.setup.exe",
+    "hash": "dc0f48cc6a606bf0e7780777dbef34dc8fd5a0eb8014ce79042cbada0f171839",
     "innosetup": true,
+    "architecture": {
+        "64bit": {
+            "pre_install": [
+                "Get-ChildItem \"$dir\\*,2.*\" -Recurse | Rename-Item -NewName { $_.FullName -replace ',2\\.', '.' }",
+                "Get-ChildItem \"$dir\\*,1.*\" -Recurse | Remove-Item"
+            ]
+        },
+        "32bit": {
+            "pre_install": [
+                "Get-ChildItem \"$dir\\*,1.*\" -Recurse | Rename-Item -NewName { $_.FullName -replace ',1\\.', '.' }",
+                "Get-ChildItem \"$dir\\*,2.*\" -Recurse | Remove-Item"
+            ]
+        }
+    },
+    "bin": "bin\\gnucash.exe",
     "shortcuts": [
         [
-            "bin/gnucash.exe",
+            "bin\\gnucash.exe",
             "GnuCash"
         ]
     ],
+    "checkver": {
+        "github": "https://github.com/Gnucash/gnucash",
+        "regex": "download/([\\w.]+)"
+    },
     "autoupdate": {
-        "url": "https://downloads.sourceforge.net/project/gnucash/gnucash%20%28stable%29/$version/gnucash-$version-setup.exe#/gnucash-setup.exe"
+        "url": "https://github.com/Gnucash/gnucash/releases/download/$version/gnucash-$matchHead.setup.exe",
+        "hash": {
+            "url": "https://github.com/Gnucash/gnucash/releases/tag/$version",
+            "regex": "$sha256.*?$basename"
+        }
     }
 }

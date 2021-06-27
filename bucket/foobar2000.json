@@ -1,12 +1,20 @@
 {
-    "version": "1.4.2",
+    "version": "1.6.6",
+    "description": "An advanced freeware audio player for the Windows platform.",
+    "homepage": "https://www.foobar2000.org/",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.foobar2000.org/license"
     },
-    "homepage": "https://www.foobar2000.org/",
-    "url": "https://www.videohelp.com/download/foobar2000_v1.4.2.exe",
-    "hash": "75fe64252e33a357e2e62f5fb712d3c38da8206aa1ec88b794e297f6088fce40",
+    "notes": [
+        "WARNING: foobar2000 package is reverting back to non-portable installation.",
+        "If you still want portable version, use foobar2000-portable instead.",
+        "If you want to migrate persisted data to portable version",
+        "please rename $persist_dir to \"foobar2000-portable\"."
+    ],
+    "url": "https://www.videohelp.com/download/foobar2000_v1.6.6.exe#/dl.7z",
+    "hash": "c71e28a4b510793ac100ca0343a58ca7a97cd108e95863b5296762ad6e77355d",
+    "bin": "foobar2000.exe",
     "shortcuts": [
         [
             "foobar2000.exe",
@@ -14,20 +22,16 @@
         ]
     ],
     "installer": {
-        "args": [
-            "/S",
-            "/D=$dir"
+        "script": [
+            "Remove-Item \"$dir\\`$*\", \"$dir\\uninstall.exe\" -Force -Recurse",
+            "New-Item \"$dir\\user_profiles_enabled\" -Force | Out-Null"
         ]
-    },
-    "uninstaller": {
-        "file": "uninstall.exe",
-        "args": "/S"
     },
     "checkver": {
         "url": "https://www.foobar2000.org/download",
-        "re": "foobar2000_v([\\d\\.]+)\\."
+        "regex": "foobar2000_v([\\d.]+)\\."
     },
     "autoupdate": {
-        "url": "https://www.videohelp.com/download/foobar2000_v$version.exe"
+        "url": "https://www.videohelp.com/download/foobar2000_v$version.exe#/dl.7z"
     }
 }

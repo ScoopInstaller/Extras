@@ -1,28 +1,23 @@
 {
+    "version": "4.0.2312.33",
+    "description": "An innovatively designed web browser, based on Blink, for users in Vivaldi.net community that replaced departed My Opera.",
     "homepage": "https://vivaldi.com/",
-    "description": "An innovatively designed web browser, based on Blink, for users in Vivaldi.net community that replaced departed My Opera",
-    "version": "2.2.1388.37",
-    "license": {
-        "identifier": "freeware,BSD",
-        "url": "https://vivaldi.com/privacy/vivaldi-end-user-license-agreement/"
-    },
+    "license": "BSD-3-Clause",
     "architecture": {
         "64bit": {
-            "url": "https://downloads.vivaldi.com/stable/Vivaldi.2.2.1388.37.x64.exe#/dl.7z",
-            "hash": "9a9fa3694a8ba737a66f983e2738ca9ca0689bd2d94d902bd2914b5893dce4a1"
+            "url": "https://downloads.vivaldi.com/stable/Vivaldi.4.0.2312.33.x64.exe#/dl.7z",
+            "hash": "0f519eb0900763ba5d081a1320309b8589ed5a09b25245612ae02310caf7f4f9"
         },
         "32bit": {
-            "url": "https://downloads.vivaldi.com/stable/Vivaldi.2.2.1388.37.exe#/dl.7z",
-            "hash": "39ee714132f9b2e8e90ad4377de2563dbf91a893a9db5e2df2d4ac57674801ec"
+            "url": "https://downloads.vivaldi.com/stable/Vivaldi.4.0.2312.33.exe#/dl.7z",
+            "hash": "f37c64a852a47c48ca2fb1d857c2cd73d6f6018fbb9b8e2e6c09debb023b792d"
         }
     },
     "installer": {
         "script": [
-            "extract_7zip \"$dir\\vivaldi.7z\" \"$dir\"",
-            "Move-Item \"$dir\\Vivaldi-bin\" \"$dir\\Application\"",
-            "Remove-Item \"$dir\\vivaldi.7z\"",
+            "Expand-7zipArchive \"$dir\\vivaldi.7z\" -DestinationPath \"$dir\\Application\" -ExtractDir 'Vivaldi-bin' -Removal",
             "Remove-Item \"$dir\\Application\\update_notifier.exe\"",
-            "Write-Output \"// Vivaldi Standalone\" | Set-Content \"$dir\\Application\\stp.viv\""
+            "Set-Content \"$dir\\Application\\stp.viv\" '// Vivaldi Standalone' -Encoding ASCII"
         ]
     },
     "bin": "Application\\vivaldi.exe",
@@ -35,7 +30,7 @@
     "persist": "User Data",
     "checkver": {
         "url": "https://vivaldi.com/download/",
-        "re": "Vivaldi\\.([\\d.]+)\\.exe"
+        "regex": "Vivaldi\\.([\\d.]+)\\.exe"
     },
     "autoupdate": {
         "architecture": {

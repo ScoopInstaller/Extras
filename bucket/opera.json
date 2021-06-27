@@ -1,58 +1,55 @@
 {
-    "version": "58.0.3135.53",
+    "version": "77.0.4054.90",
     "description": "Fast, secure, easy-to-use browser.",
     "homepage": "https://www.opera.com/",
-    "license": "Freeware",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.opera.com/eula/computers"
+    },
     "architecture": {
         "64bit": {
-            "url": "https://download1.operacdn.com/pub/opera/desktop/58.0.3135.53/win/Opera_58.0.3135.53_Setup_x64.exe",
-            "hash": "a4bba92da6975f249ce33e1e476a1d7c567912c2c5b7b2eca2296d67c47c6562"
+            "url": "https://download1.operacdn.com/pub/opera/desktop/77.0.4054.90/win/Opera_77.0.4054.90_Setup_x64.exe#/dl.7z",
+            "hash": "e9d93df522f5397de5fa33e97282a1c49eaeef99cb042be23ec4a0184c4caa17"
         },
         "32bit": {
-            "url": "https://download1.operacdn.com/pub/opera/desktop/58.0.3135.53/win/Opera_58.0.3135.53_Setup.exe",
-            "hash": "fc7d8f0f42fc2ed5807cb9410518bc59c4490f61504e09899c521879def6872b"
+            "url": "https://download1.operacdn.com/pub/opera/desktop/77.0.4054.90/win/Opera_77.0.4054.90_Setup.exe#/dl.7z",
+            "hash": "691a5681789e9caca474eaecf24e116906908b468e3147de39614d6efa628a31"
         }
     },
     "installer": {
-        "args": [
-            "/silent",
-            "/installfolder=\"$dir\"",
-            "/copyonly=1",
-            "/desktopshortcut=0",
-            "/startmenushortcut=0",
-            "/quicklaunchshortcut=0",
-            "/enable-stats=0",
-            "/enable-installer-stats=0",
-            "/launchbrowser=0"
+        "script": [
+            "Remove-Item -Path \"$dir\\*_list\" -Force",
+            "Move-Item -Path \"$dir\\*\" -Destination \"$dir\\$version\" -Exclude 'Assets', 'launcher*', 'Resources.pri' -ErrorAction Ignore",
+            "if (!(Test-Path \"$dir\\$version\\localization\")) {",
+            "   New-Item -Path \"$dir\\$version\\localization\" -ItemType Directory | Out-Null",
+            "   Move-Item -Path \"$dir\\$version\\*.pak\" -Destination \"$dir\\$version\\localization\" -Exclude 'opera*' -ErrorAction Ignore",
+            "}",
+            "Set-Content -Path \"$dir\\installer_prefs.json\" -Value (@{ 'autoupdate'= $false; 'enable_stats' = $false; 'single_profile' = $true } | ConvertTo-Json) -Encoding ASCII"
         ]
     },
-    "uninstaller": {
-        "file": "launcher.exe",
-        "args": [
-            "/uninstall",
-            "/silent"
-        ]
-    },
-    "persist": "profile",
     "shortcuts": [
         [
             "launcher.exe",
             "Opera"
         ]
     ],
+    "persist": "profile",
     "checkver": {
         "url": "http://get.opera.com/ftp/pub/opera/desktop/",
-        "regex": "([\\d+\\.]+)/",
+        "regex": "([\\d.]+)/",
         "reverse": true
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download1.operacdn.com/pub/opera/desktop/$version/win/Opera_$version_Setup_x64.exe"
+                "url": "https://download1.operacdn.com/pub/opera/desktop/$version/win/Opera_$version_Setup_x64.exe#/dl.7z"
             },
             "32bit": {
-                "url": "https://download1.operacdn.com/pub/opera/desktop/$version/win/Opera_$version_Setup.exe"
+                "url": "https://download1.operacdn.com/pub/opera/desktop/$version/win/Opera_$version_Setup.exe#/dl.7z"
             }
+        },
+        "hash": {
+            "url": "$url.sha256sum"
         }
     }
 }

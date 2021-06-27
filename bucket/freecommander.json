@@ -1,17 +1,18 @@
 {
+    "version": "2021.840",
+    "description": "Easy-to-use file manager.",
     "homepage": "https://freecommander.com",
-    "description": "FreeCommander is an easy-to-use alternative to the standard windows file manager",
     "license": {
         "identifier": "Freeware",
         "url": "https://freecommander.com/en/license/"
     },
-    "version": "2019",
     "url": "https://freecommander.com/downloads/FreeCommanderXE-32-public_portable.zip",
-    "checkver": {
-        "url": "https://freecommander.com/en/downloads/",
-        "re": "FreeCommander XE ([\\d.]+) Build ([\\d.]+) 32-bit public"
-    },
-    "hash": "sha1:B3510525B918307667B8D9AA58D65F903D4E5319",
+    "hash": "sha1:2f96746ec79a8f233c679e58599fa29877be8bbc",
+    "pre_install": [
+        "if(!(Test-Path \"$persist_dir\\fcStart.ini\")) {",
+        "    Set-Content \"$dir\\fcStart.ini\" @('[Start]', 'freeCommanderIniDir=%FcSrcPath%') -Encoding ASCII",
+        "}"
+    ],
     "bin": "freecommander.exe",
     "shortcuts": [
         [
@@ -19,11 +20,20 @@
             "Free Commander"
         ]
     ],
+    "persist": [
+        "Settings",
+        "fcStart.ini"
+    ],
+    "checkver": {
+        "url": "https://freecommander.com/en/downloads-portable/",
+        "regex": "FreeCommander XE ([\\d.]+) Build ([\\d.a-z]+) portable ZIP",
+        "replace": "${1}.${2}"
+    },
     "autoupdate": {
         "url": "https://freecommander.com/downloads/FreeCommanderXE-32-public_portable.zip",
         "hash": {
-            "url": "https://freecommander.com/en/downloads/",
-            "find": "(?:$basename).*\\(SHA1:\\s+([a-fA-F0-9]{40})"
+            "url": "https://freecommander.com/en/downloads-portable/",
+            "regex": "$basename.*?SHA1:\\s+$sha1"
         }
     }
 }

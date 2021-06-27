@@ -1,30 +1,33 @@
 {
-    "homepage": "https://keepassxc.org/",
-    "version": "2.3.4",
+    "version": "2.6.6",
+    "description": "Community fork of KeePass",
+    "homepage": "https://keepassxc.org",
     "license": "GPL-2.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/keepassxreboot/keepassxc/releases/download/2.3.4/KeePassXC-2.3.4-Win64-Portable.zip",
-            "hash": "616f24e9f5fecbf2601224a45c62b7d46063b5f2b629db37e1ca16977799ab06",
-            "extract_dir": "KeePassXC-2.3.4-Win64"
+            "url": "https://github.com/keepassxreboot/keepassxc/releases/download/2.6.6/KeePassXC-2.6.6-Win64-Portable.zip",
+            "hash": "45a4cd19f02ad617808aa814fac2ed61b59eff467d8c464d94ba5304d7ccabc0",
+            "extract_dir": "KeePassXC-2.6.6-Win64"
         },
         "32bit": {
-            "url": "https://github.com/keepassxreboot/keepassxc/releases/download/2.3.4/KeePassXC-2.3.4-Win32-Portable.zip",
-            "hash": "d3998b99a9a51de563d1505ad0257b016f91565bec293382325402e4cfd2e733",
-            "extract_dir": "KeePassXC-2.3.4-Win32"
+            "url": "https://github.com/keepassxreboot/keepassxc/releases/download/2.6.6/KeePassXC-2.6.6-Win32-Portable.zip",
+            "hash": "afa03c371d55b113322438c53ec217e6ca1bf750bf72881126b93e23e85f83fb",
+            "extract_dir": "KeePassXC-2.6.6-Win32"
         }
     },
+    "post_install": "if (Test-Path \"$persist_dir\\keepassxc.ini\") { Move-Item \"$persist_dir\\keepassxc.ini\" \"$dir\\config\" -Force }",
     "bin": [
         "KeePassXC.exe",
-        "keepassxc-cli.exe"
+        "keepassxc-cli.exe",
+        "keepassxc-proxy.exe"
     ],
-    "persist": "keepassxc.ini",
     "shortcuts": [
         [
             "KeePassXC.exe",
             "KeePassXC"
         ]
     ],
+    "persist": "config",
     "checkver": {
         "github": "https://github.com/keepassxreboot/keepassxc"
     },
@@ -32,20 +35,15 @@
         "architecture": {
             "64bit": {
                 "url": "https://github.com/keepassxreboot/keepassxc/releases/download/$version/KeePassXC-$version-Win64-Portable.zip",
-                "extract_dir": "KeePassXC-$version-Win64",
-                "hash": {
-                    "find": "([a-fA-F0-9]+)\\s+\\*?(?:KeePassXC-([\\d.]+)-Win64(-Portable)?.zip)",
-                    "url": "$url.DIGEST"
-                }
+                "extract_dir": "KeePassXC-$version-Win64"
             },
             "32bit": {
                 "url": "https://github.com/keepassxreboot/keepassxc/releases/download/$version/KeePassXC-$version-Win32-Portable.zip",
-                "extract_dir": "KeePassXC-$version-Win32",
-                "hash": {
-                    "find": "([a-fA-F0-9]+)\\s+\\*?(?:KeePassXC-([\\d.]+)-Win32(-Portable)?.zip)",
-                    "url": "$url.DIGEST"
-                }
+                "extract_dir": "KeePassXC-$version-Win32"
             }
+        },
+        "hash": {
+            "url": "$url.DIGEST"
         }
     }
 }

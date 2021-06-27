@@ -1,24 +1,25 @@
 {
-    "homepage": "https://abstractspoon.weebly.com/",
+    "version": "8.0.22",
     "description": "This free (for life) Windows desktop application offers an effective and flexible way to stay on top of your daily tasks.",
+    "homepage": "https://www.abstractspoon.com",
     "license": {
         "identifier": "EPL-1.0",
         "url": "https://opensource.org/licenses/eclipse-1.0.php"
     },
-    "version": "7.2.4.1",
+    "suggest": {
+        "vcredist": "vcredist2010"
+    },
     "url": "http://abstractspoon.pbwiki.com/f/todolist_exe.zip",
-    "hash": "f3ca4e83fd6ffc6edd1c950cbd9607b0b3588947edb27d01e57ab081d5646de9",
+    "hash": "e6550cc247898d6c76c5cfacb71dff7616192ce365ec726e1219c9ecabf52e78",
     "pre_install": [
-        "$app_ini = \"ToDoList.ini\"",
-        "if(!(Test-Path \"$persist_dir\\$app_ini\")) { ",
-        "    Write-Host \"No '$app_ini' exists. Creating.\" -f Yellow",
-        "    New-Item \"$dir\\$app_ini\" -ItemType \"file\" | Out-Null",
+        "function persistFile ([String] $name) {",
+        "    if (!(Test-Path \"$persist_dir\\$name\")) { ",
+        "        Write-Host \"No '$name' exists. Creating.\" -f Yellow",
+        "        New-Item \"$dir\\$name\" -ItemType File | Out-Null",
+        "    }",
         "}",
-        "$trans_editor_ini = \"TDLTransEdit.ini\"",
-        "if(!(Test-Path \"$persist_dir\\$trans_editor_ini\")) { ",
-        "    Write-Host \"No '$trans_editor_ini' exists. Creating.\" -f Yellow",
-        "    New-Item \"$dir\\$trans_editor_ini\" -ItemType \"file\" | Out-Null",
-        "}"
+        "persistFile 'ToDoList.ini'",
+        "persistFile 'TDLTransEdit.ini'"
     ],
     "bin": [
         "ToDoList.exe",
@@ -41,7 +42,7 @@
     ],
     "checkver": {
         "url": "https://www.abstractspoon.com/todolist_update_new.txt",
-        "regex": "EXE_VERSION:\\s+([\\d\\.]+)"
+        "regex": "EXE_VERSION:\\s+([\\d.]+)"
     },
     "autoupdate": {
         "url": "http://abstractspoon.pbwiki.com/f/todolist_exe.zip"

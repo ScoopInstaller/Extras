@@ -1,47 +1,47 @@
 {
-    "homepage": "https://flutter.io/",
-    "version": "1.0.0",
-    "license": "https://github.com/flutter/flutter/blob/master/LICENSE",
-    "url": [
-        "https://storage.googleapis.com/flutter_infra/releases/stable/windows/flutter_windows_v1.0.0-stable.zip",
-        "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/flutter-dev-setup.ps1"
-    ],
-    "extract_dir": "flutter",
-    "hash": [
-        "043a10041cced00e6dc8734711188bfe3ad51de38f582ec41f073599f3cf0e31",
-        "bbd8dd269dd70d97e0224025281e55b7e2e32364d5c47e082ca7f45e33d1a613"
-    ],
+    "version": "2.2.1",
+    "description": "Google’s mobile app SDK for crafting high-quality native interfaces on iOS and Android",
+    "homepage": "https://flutter.dev",
+    "license": "BSD-3-Clause",
     "depends": [
         "android-sdk",
-        "java/oraclejdk8"
+        "java/adopt8-hotspot"
     ],
-    "description": "Flutter is Google’s mobile app SDK for crafting high-quality native interfaces on iOS and Android in record time. This is the beta version, since Flutter wasn't officially 'released' yet.",
-    "env_add_path": "bin\\cache\\dart-sdk",
-    "bin": [
-        "bin\\flutter.bat",
-        "flutter-dev-setup.ps1"
-    ],
-    "post_install": [
-        "flutter-dev-setup.ps1",
-        "Write-Host Some licenses need to be accepted before developing. We recommend you do so by running 'flutter doctor --android-licenses'. -ForegroundColor Yellow",
-        "flutter doctor"
-    ],
-    "checkver": {
-        "url": "https://github.com/flutter/flutter/wiki/Changelog",
-        "re": "Changes [\\s\\w]+ (?:v)?([\\d.]+)"
-    },
-    "autoupdate": {
-        "url": "https://storage.googleapis.com/flutter_infra/releases/stable/windows/flutter_windows_v$version-stable.zip"
-    },
     "suggest": {
         "Visual Studio Code with Flutter Extension": [
             "vscode",
             "vscode-portable"
         ]
     },
-    "notes": [
-        "Flutter has been successfully installed and put in your PATH.",
-        "If using Visual Studio Code, don't forget to install the Flutter Extension!",
-        "Then connect an Android Phone and start coding :-)"
-    ]
+    "url": [
+        "https://storage.googleapis.com/flutter_infra/releases/stable/windows/flutter_windows_2.2.1-stable.zip",
+        "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/flutter-dev-setup.ps1"
+    ],
+    "hash": [
+        "e2c6184fd01338031214c611ad27235d314ecb03a065426a85098a527925a671",
+        "bbd8dd269dd70d97e0224025281e55b7e2e32364d5c47e082ca7f45e33d1a613"
+    ],
+    "extract_dir": "flutter",
+    "post_install": [
+        "flutter-dev-setup.ps1",
+        "Write-Host 'Some licenses need to be accepted before developing. It is recommended to do by running ''flutter doctor --android-licenses''.' -ForegroundColor Yellow",
+        "flutter doctor"
+    ],
+    "bin": [
+        "bin\\flutter.bat",
+        "flutter-dev-setup.ps1"
+    ],
+    "env_add_path": "bin\\cache\\dart-sdk\\bin",
+    "checkver": {
+        "url": "https://storage.googleapis.com/flutter_infra/releases/releases_windows.json",
+        "regex": "windows_(v?[\\d.]+)(?<delim>[-+]?)(?<build>[\\w.]*)-stable",
+        "replace": "$1${delim}${build}"
+    },
+    "autoupdate": {
+        "url": "https://storage.googleapis.com/flutter_infra/releases/stable/windows/flutter_windows_$matchHead$matchDelim$matchBuild-stable.zip",
+        "hash": {
+            "url": "https://storage.googleapis.com/flutter_infra/releases/releases_windows.json",
+            "jsonpath": "$.releases[?(@.archive =~ /.*flutter_windows_$matchHead$matchDelim$matchBuild-stable.zip/)].sha256"
+        }
+    }
 }
