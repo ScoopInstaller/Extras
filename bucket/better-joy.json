@@ -1,11 +1,27 @@
 {
     "version": "6.4b",
-    "description": "Allows the Nintendo Switch Pro Controller, Joycons and SNES controller to be used with CEMU, Citra, Dolphin, Yuzu and as generic XInput",
+    "description": "Allows to use the Nintendo Switch Pro Controller, Joycons and SNES controller in various emulators or as generic XInput",
     "homepage": "https://github.com/Davidobot/BetterJoy",
     "license": "MIT",
-    "notes": "Please install the drivers in the folder: $dir\\Drivers",
-    "url": "https://github.com/Davidobot/BetterJoy/releases/download/v6.4b/BetterJoy_v6.4b.zip",
-    "hash": "8a9212b02eaa2fa016b5e33c11bb1530621d74a3faad43ba9427419943154e8d",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Davidobot/BetterJoy/releases/download/v6.4b/BetterJoy_v6.4b.zip",
+            "hash": "8a9212b02eaa2fa016b5e33c11bb1530621d74a3faad43ba9427419943154e8d"
+        }
+    },
+    "pre_install": [
+        "'BetterJoyForCemu.exe.config', '3rdPartyControllers', 'settings' | ForEach-Object {",
+        "    Copy-Item \"$persist_dir\\$_\" \"$dir\" -ErrorAction 'SilentlyContinue' -Force",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "ensure \"$persist_dir\" | Out-Null",
+            "'BetterJoyForCemu.exe.config', '3rdPartyControllers', 'settings' | ForEach-Object {",
+            "    Copy-Item \"$dir\\$_\" \"$persist_dir\" -ErrorAction 'SilentlyContinue' -Force",
+            "}"
+        ]
+    },
     "shortcuts": [
         [
             "BetterJoyForCemu.exe",
@@ -14,9 +30,13 @@
     ],
     "checkver": {
         "github": "https://github.com/Davidobot/BetterJoy",
-        "regex": "\/releases\/tag\/(?:v|V)?([\\d.]+\\w)"
+        "regex": "download/v([\\w.]+)/"
     },
     "autoupdate": {
-        "url": "https://github.com/Davidobot/BetterJoy/releases/download/v$version/BetterJoy_v$version.zip"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Davidobot/BetterJoy/releases/download/v$version/BetterJoy_v$version.zip"
+            }
+        }
     }
 }
