@@ -1,0 +1,108 @@
+{
+    "version": "3.9.6",
+    "description": "A programming language that lets you work quickly and integrate systems more effectively. Includes py Python Launcher and updates registry automatically for it.",
+    "homepage": "https://www.python.org/",
+    "license": "Python-2.0",
+    "architecture": {
+        "64bit": {
+            "url": [
+                "https://www.python.org/ftp/python/3.9.6/python-3.9.6-amd64.exe#/setup.exe",
+                "https://raw.githubusercontent.com/ScoopInstaller/Main/master/scripts/python/install-pep-514.reg",
+                "https://raw.githubusercontent.com/ScoopInstaller/Main/master/scripts/python/uninstall-pep-514.reg"
+            ],
+            "hash": [
+                "md5:ac25cf79f710bf31601ed067ccd07deb",
+                "5d9d7a604c057e67973e1d4b3b488ae20a0e5ee5496d03b5cf091410e33e39ed",
+                "d9309423b693ed63aea6b1fbfc0c34f16842cdca22a1b3edef283b87567a53b9"
+            ]
+        },
+        "32bit": {
+            "url": [
+                "https://www.python.org/ftp/python/3.9.6/python-3.9.6.exe#/setup.exe",
+                "https://raw.githubusercontent.com/ScoopInstaller/Main/master/scripts/python/install-pep-514.reg",
+                "https://raw.githubusercontent.com/ScoopInstaller/Main/master/scripts/python/uninstall-pep-514.reg"
+            ],
+            "hash": [
+                "md5:90987973d91d4e2cddb86c4e0a54ba7e",
+                "5d9d7a604c057e67973e1d4b3b488ae20a0e5ee5496d03b5cf091410e33e39ed",
+                "d9309423b693ed63aea6b1fbfc0c34f16842cdca22a1b3edef283b87567a53b9"
+            ]
+        }
+    },
+    "pre_install": [
+        "$py_root = \"$dir\".Replace('\\', '\\\\')",
+        "'install-pep-514.reg', 'uninstall-pep-514.reg' | ForEach-Object {",
+        "    $py_version = ($version -split '\\.')[0..1] -join '.'",
+        "    $content = Get-Content \"$dir\\$_\"",
+        "    $content = $content.Replace('$py_root', $py_root)",
+        "    $content = $content.Replace('$py_version', $py_version)",
+        "    if ($global) {",
+        "       $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "    }",
+        "    Set-Content \"$dir\\$_\" $content -Encoding Ascii",
+        "}"
+    ],
+    "installer": {
+        "script": [
+            "Expand-DarkArchive \"$dir\\setup.exe\" \"$dir\\_tmp\"",
+            "@('path.msi', 'pip.msi') | ForEach-Object {",
+            "    Remove-Item \"$dir\\_tmp\\AttachedContainer\\$_\"",
+            "}",
+            "(Get-ChildItem \"$dir\\_tmp\\AttachedContainer\\*.msi\").FullName | ForEach-Object { Expand-MsiArchive $_ \"$dir\" }",
+            "Remove-Item \"$dir\\_tmp\", \"$dir\\setup.exe\" -Force -Recurse",
+            "& \"$dir\\python.exe\" -E -s -m ensurepip -U --default-pip | Out-Null",
+            "if ($global) {",
+            "    $pathext = (env 'PATHEXT' $true) -replace ';.PYW?', ''",
+            "    env 'PATHEXT' $true \"$pathext;.PY;.PYW\"",
+            "}"
+        ]
+    },
+    "post_install": [
+        "reg import install-pep-514.reg"
+    ],
+    "uninstaller": {
+        "script": [
+            "if ($global) {",
+            "    $pathext = (env 'PATHEXT' $true) -replace ';.PYW?', ''",
+            "    env 'PATHEXT' $true \"$pathext\"",
+            "}",
+            "reg import uninstall-pep-514.reg"
+        ]
+    },
+    "bin": [
+        "py.exe",
+        "python.exe",
+        "pythonw.exe",
+        [
+            "python.exe",
+            "python3"
+        ],
+        "Lib\\idlelib\\idle.bat",
+        [
+            "Lib\\idlelib\\idle.bat",
+            "idle3"
+        ]
+    ],
+    "env_add_path": [
+        "Scripts",
+        "."
+    ],
+    "checkver": {
+        "url": "https://www.python.org/downloads/windows/",
+        "regex": "Latest Python 3 Release - Python ([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://www.python.org/ftp/python/$version/python-$version-amd64.exe#/setup.exe"
+            },
+            "32bit": {
+                "url": "https://www.python.org/ftp/python/$version/python-$version.exe#/setup.exe"
+            }
+        },
+        "hash": {
+            "url": "https://www.python.org/downloads/release/python-$cleanVersion/",
+            "regex": "(?sm)$basename.*?$md5"
+        }
+    }
+}
