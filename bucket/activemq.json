@@ -2,58 +2,42 @@
     "version": "5.16.2",
     "description": "Multi-protocol and Java-based message broker",
     "homepage": "https://activemq.apache.org",
-    "license": {
-        "identifier": "Apache-2.0",
-        "url": "https://activemq.apache.org/what-is-the-license"
-    },
-    "notes": [
-        "Apache ActiveMQ installed as 'ActiveMQ' service.",
-        "Open 'Services (services.msc)' to configure ActiveMQ startup type."
-    ],
-    "url": "https://downloads.apache.org//activemq/5.16.2/apache-activemq-5.16.2-bin.zip",
+    "license": "Apache-2.0",
+    "notes": "Install service manually via '$dir\\bin\\winXX\\InstallService.bat'",
+    "url": "https://downloads.apache.org/activemq/5.16.2/apache-activemq-5.16.2-bin.zip",
     "hash": "sha512:a3ca616b89d32faa73f7e3d31fe3d1d6cf789f711da3b87df14f74f102072eadfe03218d051ac76808785143782c6e60ee0ef74f0fb097affb5cd138bb1365cb",
-    "extract_to": "tmp",
-    "pre_install": "if (-not (is_admin)) { throw 'Administrator privileges are needed for installation' }",
-    "installer": {
-        "script": [
-            "(Get-ChildItem -Directory \"$dir\\tmp\").FullName | % { Move-Item \"$_\\*\" \"$dir\" }",
-            "Remove-Item -Recurse \"$dir\\tmp\""
-        ]
+    "extract_dir": "apache-activemq-5.16.2",
+    "architecture": {
+        "64bit": {
+            "bin": [
+                [
+                    "bin\\win64\\activemq.bat",
+                    "apache-activemq"
+                ]
+            ]
+        },
+        "32bit": {
+            "bin": [
+                [
+                    "bin\\win32\\activemq.bat",
+                    "apache-activemq"
+                ]
+            ]
+        }
     },
-    "post_install": [
-        "if ($architecture -eq \"64bit\") {",
-        "   cmd.exe /c \"$dir\\bin\\win64\\InstallService.bat\"",
-        "} else {",
-        "   cmd.exe /c \"$dir\\bin\\win32\\InstallService.bat\"",
-        "}"
-    ],
-    "uninstaller": {
-        "script": [
-            "if ($architecture -eq \"64bit\") {",
-            "   cmd.exe /c \"$dir\\bin\\win64\\UninstallService.bat\"",
-            "} else {",
-            "   cmd.exe /c \"$dir\\bin\\win32\\UninstallService.bat\"",
-            "}"
-        ]
-    },
-    "bin": [
-        [
-            "bin\\activemq.bat",
-            "activemq"
-        ],
-        [
-            "bin\\activemq-admin.bat",
-            "activemq-admin"
-        ]
+    "persist": [
+        "conf",
+        "data"
     ],
     "checkver": {
         "url": "https://activemq.apache.org/components/classic/download",
         "regex": "apache-activemq-([\\d.]+)\\-bin.zip"
     },
     "autoupdate": {
-        "url": "https://downloads.apache.org//activemq/$version/apache-activemq-$version-bin.zip",
+        "url": "https://downloads.apache.org/activemq/$version/apache-activemq-$version-bin.zip",
         "hash": {
             "url": "$url.sha512"
-        }
+        },
+        "extract_dir": "apache-activemq-$version"
     }
 }
