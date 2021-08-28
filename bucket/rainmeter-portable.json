@@ -1,30 +1,30 @@
 {
-    "version": "4.3.1",
+    "version": "4.5.0.3518",
     "description": "A desktop customization tool",
     "homepage": "https://www.rainmeter.net",
     "license": "GPL-2.0-only",
-    "url": "https://builds.rainmeter.net/Rainmeter-4.3.1.exe",
-    "hash": "eb8f0390f4919c5a2a16b0ff9d5c181ded835acbec12e60984bc9bbc3a1f2ef9",
+    "url": "https://github.com/rainmeter/rainmeter/releases/download/v4.5.0.3518/Rainmeter-4.5.0.exe",
+    "hash": "e501fd184ffe7186b133df8302e97f19b21d8c225326eb7f7ece6c5d049453e6",
     "architecture": {
         "64bit": {
             "installer": {
-                "script": "Expand-7zipArchive -Overwrite All \"$dir\\$fname\" -Removal"
+                "script": "Expand-7zipArchive -Overwrite 'All' \"$dir\\$fname\" -Removal"
             }
         },
         "32bit": {
             "installer": {
-                "script": "Expand-7zipArchive -Overwrite Skip \"$dir\\$fname\" -Removal"
+                "script": "Expand-7zipArchive -Overwrite 'Skip' \"$dir\\$fname\" -Removal"
             }
         }
     },
     "pre_install": [
         "@('Rainmeter.ini', 'Rainmeter.data', 'Rainmeter.stats') | ForEach-Object {",
-        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" -Type File | Out-Null }",
+        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" -Type 'File' | Out-Null }",
         "}"
     ],
     "post_install": [
         "    # Makes default welcome skins appear on new installation.",
-        "if(!(Get-Content \"$dir\\Rainmeter.ini\")) {",
+        "if (!(Get-Content \"$dir\\Rainmeter.ini\")) {",
         "    @('Layouts\\illustro default\\Rainmeter.ini', 'Skins', 'Layouts') | ForEach-Object {",
         "        Copy-Item \"$dir\\Defaults\\$_\" \"$persist_dir\" -Force -Recurse | Out-Null",
         "    }",
@@ -34,7 +34,7 @@
         "    Copy-Item \"$dir\\Plugins.original\\*\" \"$persist_dir\\Plugins\" -Force -Recurse",
         "    Remove-Item \"$dir\\Plugins.original\" -Force -Recurse | Out-Null",
         "}",
-        "@('$PLUGINSDIR', 'uninst.exe.nsis') | ForEach-Object { Remove-Item \"$dir\\$_\" -Force -Recurse }"
+        "Remove-Item \"$dir\\`$*\", \"$dir\\uninst*\" -Recurse"
     ],
     "bin": [
         "Rainmeter.exe",
@@ -54,8 +54,10 @@
         "Skins",
         "Plugins"
     ],
-    "checkver": "([\\d.]+) Final Release",
+    "checkver": {
+        "github": "https://github.com/rainmeter/rainmeter"
+    },
     "autoupdate": {
-        "url": "https://builds.rainmeter.net/Rainmeter-$version.exe"
+        "url": "https://github.com/rainmeter/rainmeter/releases/download/v$version/Rainmeter-$matchHead.exe"
     }
 }
