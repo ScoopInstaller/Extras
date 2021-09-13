@@ -1,28 +1,20 @@
 {
-    "version": "6.30",
-    "description": "AIDA64 is a system information, diagnostics, and auditing application.",
+    "version": "6.33.5700",
+    "description": "System information, diagnostics, and auditing application",
     "homepage": "https://www.aida64.com",
     "license": {
         "identifier": "Shareware",
         "url": "https://www.aida64.com/licensing"
     },
-    "url": "http://download.aida64.com/aida64extreme630.zip",
-    "hash": "d4ed0c868f74b2eb1143727ae1f0ac80a93ff84f62ff63e811bf91114a8a36f8",
-    "installer": {
-        "script": [
-            "$FILE = 'aida64.ini'",
-            "if (!(Test-Path \"$persist_dir\\$FILE\")) {",
-            "    Write-Host 'No' $FILE 'exists. Creating.' -f Yellow",
-            "    $CONT = @('[Generic]', '', 'NoRegistry=1', 'NetUpdateFreq=0')",
-            "    Set-Content \"$dir\\$FILE\" ($CONT -join \"`r`n\") -Encoding Ascii",
-            "}",
-            "$FILE = 'pkey.txt'",
-            "if (!(Test-Path \"$persist_dir\\$FILE\")) {",
-            "    Write-Host 'No' $FILE 'exists. Creating.' -f Yellow",
-            "    New-Item \"$dir\\$FILE\" -Type File",
-            "}"
-        ]
-    },
+    "url": "http://download.aida64.com/aida64extreme633.zip",
+    "hash": "2468ae1b4212a5b28f504b7a1c082875cbabfd5663adc639b28c33d26972ac78",
+    "pre_install": [
+        "$FILE = 'aida64.ini'",
+        "if (!(Test-Path \"$persist_dir\\$FILE\")) {",
+        "    Set-Content \"$dir\\$FILE\" @('[Generic]', '', 'NoRegistry=1', 'NetUpdateFreq=0') -Encoding Ascii",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\pkey.txt\")) { New-Item \"$dir\\pkey.txt\" | Out-Null }"
+    ],
     "persist": [
         "pkey.txt",
         "aida64.ini"
@@ -34,10 +26,10 @@
         ]
     ],
     "checkver": {
-        "url": "https://www.techpowerup.com/download/aida64-extreme/",
-        "regex": "AIDA64 Extreme v([\\d.]*)"
+        "url": "https://www.aida64.com/downloads/latesta64xe",
+        "regex": "Version:\\s+([\\d.]+)"
     },
     "autoupdate": {
-        "url": "http://download.aida64.com/aida64extreme$cleanVersion.zip"
+        "url": "http://download.aida64.com/aida64extreme$majorVersion$minorVersion.zip"
     }
 }

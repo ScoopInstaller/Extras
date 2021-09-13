@@ -1,29 +1,29 @@
 {
-    "version": "1.6.4.1",
-    "description": "Continuously adjusts gamma, transitioning the display color temperature from cold blue to warm yellow.",
+    "version": "2.3.3",
+    "description": "Computer screen gamma adjuster based on the current time",
     "homepage": "https://github.com/Tyrrrz/LightBulb",
     "license": "GPL-3.0-or-later",
-    "notes": "If the gamma doesn't change under 6600K, run '$dir\\Manual_Gamma_Registry_Fix.reg'.",
-    "url": "https://github.com/Tyrrrz/LightBulb/releases/download/1.6.4.1/LightBulb-Portable.zip",
-    "hash": "15ba9a6a9c890da8a787dc7af041349b66e179821ab7a28dc115f80c458853c4",
-    "pre_install": "if (!(Test-Path \"$persist_dir\\Configuration.dat\")) { Set-Content \"$dir\\Configuration.dat\" -Value '{}' -Encoding Ascii | Out-Null }",
-    "bin": [
+    "suggest": {
+        ".Net Core": "windowsdesktop-runtime"
+    },
+    "url": "https://github.com/Tyrrrz/LightBulb/releases/download/2.3.3/LightBulb.zip",
+    "hash": "e99f115946b6a000148f60cc6cbeb17007fd5b22680b4878c202b87501610739",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\Settings.json\")) {",
+        "    if (Test-Path \"$persist_dir\\Configuration.dat\") { warn 'Configuration from version 1 is not compatile with version 2!' }",
+        "    Set-Content \"$dir\\Settings.json\" -Value '{ \"IsAutoUpdateEnabled\": false }' -Encoding Ascii",
+        "}"
+    ],
+    "bin": "LightBulb.exe",
+    "shortcuts": [
         [
-            "LightBulb_Portable.bat",
+            "LightBulb.exe",
             "LightBulb"
         ]
     ],
-    "shortcuts": [
-        [
-            "LightBulb_Portable.bat",
-            "LightBulb",
-            "",
-            "LightBulb.exe"
-        ]
-    ],
-    "persist": "Configuration.dat",
+    "persist": "Settings.json",
     "checkver": "github",
     "autoupdate": {
-        "url": "https://github.com/Tyrrrz/LightBulb/releases/download/$version/LightBulb-Portable.zip"
+        "url": "https://github.com/Tyrrrz/LightBulb/releases/download/$version/LightBulb.zip"
     }
 }
