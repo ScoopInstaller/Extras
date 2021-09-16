@@ -16,14 +16,19 @@
             "hash": "5b71c1109d8cacc3763ba4dd470d6ec5f426c69a4b675121d1557e9b54e2c0db"
         }
     },
-    "pre_install": "if (!(Test-Path \"$dir\\CoreTemp.ini\")) { New-Item \"$dir\\CoreTemp.ini\" | Out-Null }",
+    "pre_install": "if (Test-Path \"$persist_dir\\CoreTemp.ini\") { Copy-Item \"$persist_dir\\CoreTemp.ini\" \"$dir\" -Force | Out-Null }",
+    "uninstaller": {
+        "script": [
+            "if (!(Test-Path \"$persist_dir\")) { New-Item \"$persist_dir\" -ItemType Directory | Out-Null }",
+            "Copy-Item \"$dir\\CoreTemp.ini\" \"$persist_dir\" -Force | Out-Null"
+        ]
+    },
     "shortcuts": [
         [
             "Core Temp.exe",
             "Core Temp"
         ]
     ],
-    "persist": "CoreTemp.ini",
     "checkver": {
         "url": "https://www.alcpu.com/CoreTemp/history.html",
         "regex": "Version ([\\d.]+)"
