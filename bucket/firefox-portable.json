@@ -3,14 +3,31 @@
     "description": "Popular open source web browser",
     "homepage": "https://www.mozilla.org/firefox/",
     "license": "MPL-2.0",
+    "notes": "Set Firefox as default browser by running: \"$dir\\firefox-install.reg\"",
     "architecture": {
         "64bit": {
-            "url": "https://archive.mozilla.org/pub/firefox/releases/92.0/win64/en-US/Firefox%20Setup%2092.0.exe#/dl.7z",
-            "hash": "sha512:ca0855eddfd4c9d0d0116f8993fb3a1e947cd7d91b391d7913fbe36b91f238a5025fcb7129234a7dc07763540d33b5233b592737574db7999f29df2c5c21cf0f"
+            "url": [
+                "https://archive.mozilla.org/pub/firefox/releases/92.0/win64/en-US/Firefox%20Setup%2092.0.exe#/dl.7z",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/firefox-portable/firefox-install.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/firefox-portable/firefox-uninstall.reg"
+            ],
+            "hash": [
+                "sha512:ca0855eddfd4c9d0d0116f8993fb3a1e947cd7d91b391d7913fbe36b91f238a5025fcb7129234a7dc07763540d33b5233b592737574db7999f29df2c5c21cf0f",
+                "c0b563af7c12f36de84c651450301d715549e0c51c44167bbb350cbc69ec4cf8",
+                "ee27bd6a0096cc191f04699901b95d78d65d245974ea72d73ef6d9f4bcd72641"
+            ]
         },
         "32bit": {
-            "url": "https://archive.mozilla.org/pub/firefox/releases/92.0/win32/en-US/Firefox%20Setup%2092.0.exe#/dl.7z",
-            "hash": "sha512:c8b1e8ca9e617fc9b79bb126de36a8f1f7b2eee288b6cca7ca375ad77c3b836f97d213a0582234953d2b7fdf22f36c091ae30dcf39cbb690d98a748f9c756e97"
+            "url": [
+                "https://archive.mozilla.org/pub/firefox/releases/92.0/win32/en-US/Firefox%20Setup%2092.0.exe#/dl.7z",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/firefox-portable/firefox-install.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/firefox-portable/firefox-uninstall.reg"
+            ],
+            "hash": [
+                "sha512:c8b1e8ca9e617fc9b79bb126de36a8f1f7b2eee288b6cca7ca375ad77c3b836f97d213a0582234953d2b7fdf22f36c091ae30dcf39cbb690d98a748f9c756e97",
+                "c0b563af7c12f36de84c651450301d715549e0c51c44167bbb350cbc69ec4cf8",
+                "ee27bd6a0096cc191f04699901b95d78d65d245974ea72d73ef6d9f4bcd72641"
+            ]
         }
     },
     "extract_dir": "core",
@@ -20,6 +37,28 @@
             "firefox",
             "-profile \"$dir\\profile\""
         ]
+    ],
+    "post_install": [
+        "if (Test-Path \"$dir\\firefox-install.reg\") {",
+        "  $fpath = \"$dir\".Replace('\\', '\\\\')",
+        "  $content = Get-Content \"$dir\\firefox-install.reg\"",
+        "  $content = $content.Replace('<path>', $fpath)",
+        "  if ($global) {",
+        "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "  }",
+        "  $content | Set-Content -Path \"$dir\\vscode-install-context.reg\"",
+        "  $content | Set-Content -Path \"$dir\\firefox-install.reg\"",
+        "}",
+        "if (Test-Path \"$dir\\firefox-uninstall.reg\") {",
+        "  $fpath = \"$dir\".Replace('\\', '\\\\')",
+        "  $content = Get-Content \"$dir\\firefox-uninstall.reg\"",
+        "  $content = $content.Replace('<path>', $fpath)",
+        "  if ($global) {",
+        "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "  }",
+        "  $content | Set-Content -Path \"$dir\\vscode-uninstall-context.reg\"",
+        "  $content | Set-Content -Path \"$dir\\firefox-uninstall.reg\"",
+        "}"
     ],
     "shortcuts": [
         [
