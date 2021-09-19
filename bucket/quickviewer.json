@@ -1,0 +1,53 @@
+{
+    "version": "1.1.8",
+    "description": "An image/comic viewer",
+    "homepage": "https://kanryu.github.io/quickviewer/",
+    "license": "GPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/kanryu/quickviewer/releases/download/v1.1.8/QuickViewer-portable-1.1.8-x64.zip",
+            "hash": "9120d45470a5b3eadcd8c6dbeed391b642b5815563773a1bae724d44f24bfc3d",
+            "extract_dir": "QuickViewer-portable-1.1.8-x64"
+        },
+        "32bit": {
+            "url": "https://github.com/kanryu/quickviewer/releases/download/v1.1.8/QuickViewer-portable-1.1.8-x86.zip",
+            "hash": "6c0024f131585c07e2d20b45b150eb113dfd2874e6b1ad2917ad0a6cbbf97f3c",
+            "extract_dir": "QuickViewer-portable-1.1.8-x86"
+        }
+    },
+    "installer": {
+        "script": [
+            "foreach ($file in @('progress.ini', 'quickviewer.ini')) {",
+            "    if (!(Test-Path \"$persist_dir\\$file\")) {",
+            "        New-Item \"$persist_dir\\$file\" -Force | Out-Null",
+            "    }",
+            "    Copy-Item \"$persist_dir\\$file\" \"$dir\\$file\" -Force",
+            "}"
+        ]
+    },
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\*\" \"$persist_dir\" -Include 'progress.ini', 'quickviewer.ini' -Force"
+    },
+    "bin": "QuickViewer.exe",
+    "shortcuts": [
+        [
+            "QuickViewer.exe",
+            "QuickViewer"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/kanryu/quickviewer"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/kanryu/quickviewer/releases/download/v$version/QuickViewer-portable-$version-x64.zip",
+                "extract_dir": "QuickViewer-portable-$version-x64"
+            },
+            "32bit": {
+                "url": "https://github.com/kanryu/quickviewer/releases/download/v$version/QuickViewer-portable-$version-x86.zip",
+                "extract_dir": "QuickViewer-portable-$version-x86"
+            }
+        }
+    }
+}

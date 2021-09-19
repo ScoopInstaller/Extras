@@ -1,22 +1,40 @@
 {
-    "homepage": "https://www.audacityteam.org/",
-    "version": "2.3.2",
-    "url": "https://fossies.org/windows/misc/audacity-2.3.2.zip",
-    "hash": "7edd522506274df9fff2839182988c210a7c2187295942b963eb81ea094cd4ad",
-    "bin": "audacity.exe",
+    "version": "3.0.3",
+    "description": "An easy-to-use, multi-track audio editor and recorder",
+    "homepage": "https://www.audacityteam.org",
+    "license": "GPL-2.0-or-later",
+    "architecture": {
+        "64bit": {
+            "url": "https://fossies.org/windows/misc/audacity-win-3.0.3-64bit.zip",
+            "hash": "272b5671bcf116eae8cf1e7488dfdf7195c377b7f012c7fbf2184f21fd9cd928",
+            "extract_dir": "audacity-win-3.0.3-64bit"
+        }
+    },
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\Portable Settings\\audacity.cfg\")) {",
+        "    ensure \"$dir\\Portable Settings\" | Out-Null",
+        "    Set-Content \"$dir\\Portable Settings\\audacity.cfg\" '[Update]', 'DefaultUpdatesChecking=0' -Encoding Ascii",
+        "}"
+    ],
+    "bin": "Audacity.exe",
     "shortcuts": [
         [
-            "audacity.exe",
+            "Audacity.exe",
             "Audacity"
         ]
     ],
     "persist": "Portable Settings",
     "checkver": {
         "url": "https://fossies.org/windows/misc/",
-        "re": "<B>audacity-([\\d.]+).zip</B>"
+        "regex": "[Aa]udacity-win-([\\d.]+)-64bit\\.zip\""
     },
     "autoupdate": {
-        "url": "https://fossies.org/windows/misc/audacity-$version.zip",
+        "architecture": {
+            "64bit": {
+                "url": "https://fossies.org/windows/misc/audacity-win-$version-64bit.zip",
+                "extract_dir": "audacity-win-$version-64bit"
+            }
+        },
         "hash": {
             "url": "$url_fossies.sha256"
         }

@@ -1,0 +1,55 @@
+{
+    "version": "78.0.4093.214",
+    "description": "Gaming counterpart of Opera web browser",
+    "homepage": "https://www.opera.com/gx",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.opera.com/eula/computers"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://download3.operacdn.com/pub/opera_gx/78.0.4093.214/win/Opera_GX_78.0.4093.214_Setup_x64.exe#/dl.7z",
+            "hash": "3628106a513bcd16fb216c95140d2f328622ab6551269b499cc2e82e05ea2ebb"
+        },
+        "32bit": {
+            "url": "https://download3.operacdn.com/pub/opera_gx/78.0.4093.214/win/Opera_GX_78.0.4093.214_Setup.exe#/dl.7z",
+            "hash": "e383d93664b62f8891255e4b030650c880d9020c91ec44a97f2df12798ac0a46"
+        }
+    },
+    "installer": {
+        "script": [
+            "Remove-Item \"$dir\\*_list\" -Force",
+            "Move-Item \"$dir\\*\" \"$dir\\$version\" -Exclude 'Assets', 'launcher*', 'Resources.pri' -ErrorAction Ignore",
+            "if (-not (Test-Path \"$dir\\$version\\localization\")) {",
+            "   New-Item -Path \"$dir\\$version\\localization\" -ItemType Directory | Out-Null",
+            "   Move-Item -Path \"$dir\\$version\\*.pak\" -Destination \"$dir\\$version\\localization\" -Exclude 'opera*' -ErrorAction Ignore",
+            "}",
+            "@{ 'autoupdate'= $false; 'enable_stats' = $false; 'single_profile' = $true } | ConvertTo-Json -Depth 20 | Out-File \"$dir\\installer_prefs.json\" -Encoding ASCII"
+        ]
+    },
+    "shortcuts": [
+        [
+            "launcher.exe",
+            "Opera GX"
+        ]
+    ],
+    "persist": "profile",
+    "checkver": {
+        "url": "https://get.opera.com/ftp/pub/opera_gx/",
+        "regex": "([\\d.]+)/",
+        "reverse": true
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download3.operacdn.com/pub/opera_gx/$version/win/Opera_GX_$version_Setup_x64.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://download3.operacdn.com/pub/opera_gx/$version/win/Opera_GX_$version_Setup.exe#/dl.7z"
+            }
+        },
+        "hash": {
+            "url": "$url.sha256sum"
+        }
+    }
+}

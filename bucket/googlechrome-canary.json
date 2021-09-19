@@ -1,24 +1,23 @@
 {
-    "version": "77.0.3852.0",
+    "version": "93.0.4536.0",
     "description": "Fast, secure, and free web browser, built for the modern web.",
     "homepage": "https://www.google.com/chrome/canary",
-    "license": "Freeware",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.google.com/chrome/privacy/eula_text.html"
+    },
     "architecture": {
         "64bit": {
-            "url": "https://dl.google.com/release2/chrome/FNVOtL7BWes_77.0.3852.0/77.0.3852.0_chrome_installer.exe#/dl.7z",
-            "hash": "fbb4d3fa84f0eaeab726ef617bce5e8b71a51b7877ae2daddb01166d05d5f71f"
+            "url": "https://dl.google.com/release2/chrome/AMpFpIwZMrz-7OIwzgl3HVY_93.0.4536.0/93.0.4536.0_chrome_installer.exe#/dl.7z",
+            "hash": "4e377f8ab02a3190a0733d828c90dc4282ced7c6a2ce7a18f0fd288110c804cb"
         },
         "32bit": {
-            "url": "https://dl.google.com/release2/chrome/AJqsN6wbFbdf_77.0.3852.0/77.0.3852.0_chrome_installer.exe#/dl.7z",
-            "hash": "a7ade3e56b9f92ce15873f59b86c0042fa4b6e3490d38619e8b5fce67bb3df4d"
+            "url": "https://dl.google.com/release2/chrome/AN_e7nTATyit6qV0BL1kT5o_93.0.4536.0/93.0.4536.0_chrome_installer.exe#/dl.7z",
+            "hash": "2688d45864c0c560b2b12b25270f44e0a34f111cf93fd5b30bfac1598205d376"
         }
     },
     "installer": {
-        "script": [
-            "Expand-7zipArchive \"$dir\\chrome.7z\" \"$dir\" -Removal",
-            "Move-Item \"$dir\\Chrome-bin\\*\" \"$dir\"",
-            "Remove-Item \"$dir\\Chrome-bin\" -Force -Recurse"
-        ]
+        "script": "Expand-7zipArchive \"$dir\\chrome.7z\" -ExtractDir 'Chrome-bin' -Removal"
     },
     "bin": [
         [
@@ -32,23 +31,19 @@
             "Google Chrome (Canary)"
         ]
     ],
-    "checkver": {
-        "url": "https://lab.skk.moe/chrome/api/chrome.min.xml",
-        "regex": "(?sm)<canary32><version>(?<version>[\\d.]+)</version>.+release2/chrome/(?<32>[\\w-]+)_.+<canary64>.+release2/chrome/(?<64>[\\w-]+)_.+</canary64>"
-    },
     "autoupdate": {
         "architecture": {
             "64bit": {
                 "url": "https://dl.google.com/release2/chrome/$match64_$version/$version_chrome_installer.exe#/dl.7z",
                 "hash": {
-                    "url": "https://lab.skk.moe/chrome/api/chrome.min.xml",
+                    "url": "https://chrome-dl.com/api/chrome.min.xml",
                     "xpath": "/chromechecker/canary64[version='$version']/sha256"
                 }
             },
             "32bit": {
                 "url": "https://dl.google.com/release2/chrome/$match32_$version/$version_chrome_installer.exe#/dl.7z",
                 "hash": {
-                    "url": "https://lab.skk.moe/chrome/api/chrome.min.xml",
+                    "url": "https://chrome-dl.com/api/chrome.min.xml",
                     "xpath": "/chromechecker/canary32[version='$version']/sha256"
                 }
             }

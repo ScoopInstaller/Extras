@@ -1,39 +1,29 @@
 {
+    "version": "3.4.2",
+    "description": "Delete files blocked by something you do not know.",
     "homepage": "https://lockhunter.com/index.htm",
-    "version": "3.2.3",
-    "description": "a foolproof file unlocker",
-    "license": "Freeware",
-    "url": "https://lockhunter.com/exe/lockhuntersetup_3-2-3.exe",
-    "hash": "59e7051cb079be49ac2bb4dd44cbdb6d4e11b6466d779465c7d1a3ca59272663",
+    "license": "Unknown",
+    "url": "https://lockhunter.com/assets/exe/lockhuntersetup_3-4-2.exe",
+    "hash": "ceccb8a91ff02b64ec45c0718f292759ce6f49cb7a8dff934111e69a454e3778",
+    "innosetup": true,
     "architecture": {
         "64bit": {
-            "pre_install": "rename-item \"$dir\\LockHunter,1.exe\" \"$dir\\lockhunter.exe\""
+            "pre_install": "Get-ChildItem \"$dir\" '*,1.*' | Rename-Item -Path { $_.Fullname } -NewName { $_.Basename.TrimEnd(',1') + $_.Extension }"
         },
         "32bit": {
-            "pre_install": "rename-item \"$dir\\LockHunter,2.exe\" \"$dir\\lockhunter.exe\""
+            "pre_install": "Get-ChildItem \"$dir\" '*,2.*' | Rename-Item -Path { $_.Fullname } -NewName { $_.Basename.TrimEnd(',2') + $_.Extension }"
         }
     },
-    "post_install": "remove-item \"$dir\\LockHunter*,*.exe\"",
-    "innosetup": true,
-    "checkver": {
-        "url": "https://lockhunter.com/download.htm",
-        "re": "Version: ([\\d\\.]+)"
-    },
-    "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://lockhunter.com/exe/lockhuntersetup_$dashVersion.exe"
-            },
-            "32bit": {
-                "url": "https://lockhunter.com/exe/lockhuntersetup_$dashVersion.exe"
-            }
-        }
-    },
+    "post_install": "Remove-Item \"$dir\\*,*.*\"",
     "bin": "lockhunter.exe",
     "shortcuts": [
         [
             "lockhunter.exe",
             "LockHunter"
         ]
-    ]
+    ],
+    "checkver": "Version:\\s+([\\d.]+)",
+    "autoupdate": {
+        "url": "https://lockhunter.com/assets/exe/lockhuntersetup_$dashVersion.exe"
+    }
 }

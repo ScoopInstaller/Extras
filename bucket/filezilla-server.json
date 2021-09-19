@@ -1,0 +1,56 @@
+{
+    "version": "0.9.60.2",
+    "description": "Open-source FTP server software",
+    "homepage": "https://filezilla-project.org/",
+    "license": "GPL-2.0-or-later",
+    "notes": "Run 'filezilla_server' as Admin to configure FileZilla Server.",
+    "url": "https://download.filezilla-project.org/server/FileZilla_Server-0_9_60_2.exe#/dl.7z",
+    "hash": "sha512:0e0a92f3693d31d09341354ce212f42e1941743cf5f49bffe58b0c05cbc04865470e96c145ae0ffeea060a86d618da2a7de78a38946a9c3a2dcb956d0f2b3cfa",
+    "installer": {
+        "script": [
+            "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\source\", \"$dir\\`$R1\", \"$dir\\Uninstall.exe.nsis\" -Recurse",
+            "if(!(Test-Path \"$dir\\FileZilla Server.xml\")) {Set-Content \"$dir\\FileZilla Server.xml\" $null}"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "taskkill /F /IM 'FileZilla Server Interface.exe' /FI 'status eq running' | Out-Null",
+            "Start-Process 'cmd' -ArgumentList @('/c', 'net', 'stop', '\"Filezilla Server\"') -Verb RunAs -Wait | Out-Null",
+            "Start-Process 'cmd' -ArgumentList @('/c', 'sc', 'delete', '\"Filezilla Server\"') -Verb RunAs -Wait | Out-Null"
+        ]
+    },
+    "bin": [
+        "FileZilla Server.exe",
+        [
+            "FileZilla Server.exe",
+            "filezilla_server"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "FileZilla Server Interface.exe",
+            "FileZilla Server Interface"
+        ],
+        [
+            "FileZilla Server.exe",
+            "Start FileZilla Server",
+            "/start"
+        ],
+        [
+            "FileZilla Server.exe",
+            "Stop FileZilla Server",
+            "/stop"
+        ]
+    ],
+    "persist": "FileZilla Server.xml",
+    "checkver": {
+        "url": "https://filezilla-project.org/download.php?show_all=1&type=server",
+        "regex": "The latest stable version of FileZilla Server is ([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://download.filezilla-project.org/server/FileZilla_Server-$underscoreVersion.exe#/dl.7z",
+        "hash": {
+            "url": "$url.sha512"
+        }
+    }
+}

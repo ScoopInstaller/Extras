@@ -1,0 +1,44 @@
+{
+    "version": "1.3.0",
+    "description": "A software oscilloscope and signal analysis toolset",
+    "homepage": "https://wiki.analog.com/university/tools/m2k/scopy",
+    "license": "GPL-3.0-only",
+    "url": "https://github.com/analogdevicesinc/scopy/releases/download/v1.3.0/scopy-v1.3.0-Windows-setup.exe",
+    "hash": "390455c790f333d7019b247452b13495d7514d3600319035eea10d796aa9f3af",
+    "innosetup": true,
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": [
+                    "Get-ChildItem \"$dir\" '*,1*' -Recurse | Remove-Item -Force",
+                    "Get-ChildItem \"$dir\" '*,2*' -Recurse | ForEach-Object { Rename-Item $_.Fullname ($_.Name -Replace ',2') }"
+                ]
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": [
+                    "Get-ChildItem \"$dir\" '*,2*' -Recurse | Remove-Item -Force",
+                    "Get-ChildItem \"$dir\" '*,1*' -Recurse | ForEach-Object { Rename-Item $_.Fullname ($_.Name -Replace ',1') }"
+                ]
+            }
+        }
+    },
+    "bin": "Scopy.exe",
+    "shortcuts": [
+        [
+            "Scopy.exe",
+            "Scopy"
+        ]
+    ],
+    "env_set": {
+        "SCOPY_PYTHONPATH": "$dir\\python3.7;$dir\\python3.7\\plat-win;$dir\\python3.7\\lib-dynload;$dir\\python3.7\\site-packages"
+    },
+    "checkver": {
+        "github": "https://github.com/analogdevicesinc/scopy",
+        "regex": "scopy-v([\\d.]+)-Windows"
+    },
+    "autoupdate": {
+        "url": "https://github.com/analogdevicesinc/scopy/releases/download/v$version/scopy-v$version-Windows-setup.exe"
+    }
+}

@@ -1,25 +1,19 @@
 {
-    "homepage": "https://joplin.cozic.net/",
-    "description": "A note taking and to-do application with synchronization capabilities.",
+    "version": "2.3.5",
+    "description": "A note taking and to-do application with synchronization capabilities",
+    "homepage": "https://joplinapp.org",
     "license": "MIT",
-    "version": "1.0.161",
-    "url": "https://github.com/laurent22/joplin/releases/download/v1.0.161/Joplin-Setup-1.0.161.exe#/dl.7z",
-    "hash": "sha512:ae13e3e00cc5e1be5de17e4d6e9b49bcf5805ed4f3720ae0e2495a0c54556641be68170f51cb3f9d2419fd2b147efd75bccf3d81345769f651cb58afbd6f786d",
-    "extract_dir": "$PLUGINSDIR",
-    "pre_install": "Get-ChildItem \"$dir\" -Exclude 'app-64.7z', 'app-32.7z' | Remove-Item -Force -Recurse",
+    "url": "https://github.com/laurent22/joplin/releases/download/v2.3.5/Joplin-Setup-2.3.5.exe#/dl.7z",
+    "hash": "sha512:0d5f1686408e6d0eb025a016eb550fba6072a8d50d15e13a8b7b147f5e62b5610903d38d6785ee4943fe3fab017463793409c337edc177ce5f753abdfa8a7c0e",
     "architecture": {
         "64bit": {
-            "installer": {
-                "script": "Expand-7zipArchive \"$dir\\app-64.7z\" \"$dir\""
-            }
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
         },
         "32bit": {
-            "installer": {
-                "script": "Expand-7zipArchive \"$dir\\app-32.7z\" \"$dir\""
-            }
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
         }
     },
-    "post_install": "Remove-Item \"$dir\\app-64.7z\", \"$dir\\app-32.7z\"",
+    "post_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Recurse",
     "bin": "Joplin.exe",
     "shortcuts": [
         [
@@ -34,7 +28,7 @@
         "url": "https://github.com/laurent22/joplin/releases/download/v$version/Joplin-Setup-$version.exe#/dl.7z",
         "hash": {
             "url": "$baseurl/latest.yml",
-            "find": "sha512:\\s+(.*)"
+            "regex": "sha512:\\s+$base64"
         }
     }
 }

@@ -1,0 +1,65 @@
+{
+    "version": "3.7.0",
+    "description": "A high-quality tool for creating stunning three-dimensional graphics.",
+    "homepage": "https://www.povray.org/",
+    "license": "AGPL-3.0-or-later",
+    "url": [
+        "https://www.povray.org/ftp/pub/povray/Official/povwin-3.7-agpl3-setup.exe",
+        "https://www.povray.org/download/povwin-3.7-editor.exe"
+    ],
+    "hash": [
+        "2b1331641b6f96113c2dba951be80d99eb548639480399cabb5e3a60dce5bdc8",
+        "9265f0d3337f956ae42c1bc19b475182c3c5e543e96df2287450afb9738b6030"
+    ],
+    "installer": {
+        "script": [
+            "if (!(Test-Path \"$persist_dir\\userdocs\")) {",
+            "   Expand-7zipArchive -Path \"$dir\\*-setup.exe\" -DestinationPath \"$dir\\userdocs\" -ExtractDir '$_15_'",
+            "}",
+            "Expand-7zipArchive -Path \"$dir\\*-setup.exe\" -ExtractDir '$_14_' -Removal",
+            "Expand-7zipArchive -Path \"$dir\\*-editor.exe\" -DestinationPath \"$dir\\bin\" -ExtractDir '$_12_' -Removal",
+            "Remove-Item \"$dir\\`$*\" -Recurse -Force"
+        ]
+    },
+    "post_install": "pvengine /QINSTALL \"$dir\" \"$dir\\userdocs\"",
+    "architecture": {
+        "64bit": {
+            "bin": [
+                "bin\\pvengine64.exe",
+                [
+                    "bin\\pvengine64.exe",
+                    "pvengine"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "bin\\pvengine64.exe",
+                    "POV-Ray"
+                ]
+            ]
+        },
+        "32bit": {
+            "bin": [
+                "bin\\pvengine32-sse2.exe",
+                [
+                    "bin\\pvengine32-sse2.exe",
+                    "pvengine"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "bin\\pvengine32-sse2.exe",
+                    "POV-Ray"
+                ]
+            ]
+        }
+    },
+    "persist": "userdocs",
+    "checkver": {
+        "url": "https://www.povray.org/download/",
+        "regex": "Download POV-Ray ([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://www.povray.org/ftp/pub/povray/Official/povwin-$majorVersion.$minorVersion-agpl3-setup.exe"
+    }
+}

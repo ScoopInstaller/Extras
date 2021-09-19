@@ -1,23 +1,19 @@
 {
-    "version": "2.15.3",
-    "description": "Desktop application for Rocket.Chat using Electron.",
-    "homepage": "https://rocket.chat/",
+    "version": "3.5.4",
+    "description": "Desktop application for Rocket.Chat using Electron",
+    "homepage": "https://rocket.chat",
     "license": "MIT",
-    "url": "https://github.com/RocketChat/Rocket.Chat.Electron/releases/download/2.15.3/rocketchat-setup-2.15.3.exe#/dl.7z",
-    "hash": "sha512:0911bf2e108e4e9a41504855501fea1b03179b7788f916146c2d40f2e6b7f632b970810f5830aa3cb9c2ec1b270b97ca11ec99b378d5fde663080cab11290226",
+    "url": "https://github.com/RocketChat/Rocket.Chat.Electron/releases/download/3.5.4/rocketchat-setup-3.5.4.exe#/dl.7z",
+    "hash": "sha512:fc5f1dc1398edc9d054237207e724ad7dabf99503d09dd671e812ddc434545c0c535614946af20e85be66a02439ef23d87f2d1adeff8165f634ea8b76d1bbb04",
     "architecture": {
         "64bit": {
-            "installer": {
-                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
-            }
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
         },
         "32bit": {
-            "installer": {
-                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
-            }
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
         }
     },
-    "post_install": "Remove-Item -Recurse \"$dir\\`$PLUGINSDIR\\\"",
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*exe\" -Recurse",
     "bin": [
         [
             "Rocket.Chat.exe",
@@ -37,7 +33,7 @@
         "url": "https://github.com/RocketChat/Rocket.Chat.Electron/releases/download/$version/rocketchat-setup-$version.exe#/dl.7z",
         "hash": {
             "url": "$baseurl/latest.yml",
-            "find": "sha512:\\s(.+)"
+            "regex": "sha512:\\s+$base64"
         }
     }
 }

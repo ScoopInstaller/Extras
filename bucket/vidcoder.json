@@ -1,0 +1,41 @@
+{
+    "version": "5.21",
+    "description": "DVD/Blu-ray ripping and video transcoding tool that uses HandBrake as its encoding engine.",
+    "homepage": "https://vidcoder.net",
+    "license": "GPL-2.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/RandomEngy/VidCoder/releases/download/v5.21/VidCoder-5.21-Portable.exe#/dl.7z",
+            "hash": "ecd2480b62a01ad10088937ef1018e85e55548e2689edf38e0d1374246ef7611"
+        }
+    },
+    "pre_install": [
+        "$config = [xml](Get-Content \"$dir\\VidCoder.exe.config\")",
+        "$elem = $config.CreateElement('add')",
+        "$elem.SetAttribute('key', 'SettingsDirectory')",
+        "$elem.SetAttribute('value', \"$persist_dir\\home\")",
+        "$config.configuration.appSettings.appendChild($elem) | Out-Null",
+        "$config.Save(\"$dir\\VidCoder.exe.config\")"
+    ],
+    "persist": [
+        "home",
+        "VidCoder.exe.config"
+    ],
+    "bin": "VidCoderCLI.exe",
+    "shortcuts": [
+        [
+            "VidCoder.exe",
+            "VidCoder"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/RandomEngy/VidCoder"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/RandomEngy/VidCoder/releases/download/v$version/VidCoder-$version-Portable.exe#/dl.7z"
+            }
+        }
+    }
+}

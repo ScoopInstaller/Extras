@@ -1,0 +1,38 @@
+{
+    "version": "5.0.10",
+    "description": "Microsoft .NET 5.0 Desktop Runtime",
+    "homepage": "https://dotnet.microsoft.com/download/dotnet",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.microsoft.com/en-us/legal/intellectualproperty/copyright/default.aspx"
+    },
+    "notes": "You can now remove this installer with 'scoop uninstall windowsdesktop-runtime'",
+    "architecture": {
+        "64bit": {
+            "url": "https://dotnetcli.blob.core.windows.net/dotnet/WindowsDesktop/5.0.10/windowsdesktop-runtime-5.0.10-win-x64.exe",
+            "hash": "de2b5b94a4ee7d9f6144a44395cd53f49e77e5ce786e4167e4ad86e373113d7f"
+        },
+        "32bit": {
+            "url": "https://dotnetcli.blob.core.windows.net/dotnet/WindowsDesktop/5.0.10/windowsdesktop-runtime-5.0.10-win-x86.exe",
+            "hash": "932aa09d36603d1b8d1957a0b606d13505e5627b4d5deb9e12edd001b14258d1"
+        }
+    },
+    "pre_install": "if (!(is_admin)) { throw 'Admin privileges are required.' }",
+    "installer": {
+        "script": "Invoke-ExternalCommand \"$dir\\$fname\" -ArgumentList '/install', '/quiet', '/norestart' -RunAs | Out-Null"
+    },
+    "checkver": {
+        "url": "https://dotnetcli.blob.core.windows.net/dotnet/WindowsDesktop/Current/latest.version",
+        "regex": "([\\d.]+)$"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://dotnetcli.blob.core.windows.net/dotnet/WindowsDesktop/$version/windowsdesktop-runtime-$version-win-x64.exe"
+            },
+            "32bit": {
+                "url": "https://dotnetcli.blob.core.windows.net/dotnet/WindowsDesktop/$version/windowsdesktop-runtime-$version-win-x86.exe"
+            }
+        }
+    }
+}
