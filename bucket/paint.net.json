@@ -1,5 +1,5 @@
 {
-    "version": "4.2.16",
+    "version": "4.3.1",
     "description": "Image and photo editor",
     "homepage": "https://www.getpaint.net",
     "license": {
@@ -7,32 +7,30 @@
         "url": "https://www.getpaint.net/license.html"
     },
     "notes": ".NET 4.7.2 is required",
-    "url": "https://www.dotpdn.com/files/paint.net.4.2.16.install.zip",
-    "hash": "fe70191873a1f3b26d01d35dee60a364a0a7da4e69ac70f7495ef8666c32e8e5",
-    "pre_install": [
-        "Expand-7zipArchive \"$dir\\paint.net.$version.install.exe\" \"$dir\\tmp\" -Removal",
-        "Set-Content \"$dir\\PaintDotNet.AppSettings.json\" '{}' -Encoding Ascii"
-    ],
     "architecture": {
         "64bit": {
-            "installer": {
-                "script": "Expand-MsiArchive \"$dir\\tmp\\PaintDotNet_x64.msi\" \"$dir\""
-            }
+            "url": "https://github.com/paintdotnet/release/releases/download/v4.3.1/paint.net.4.3.1.install.x64.zip",
+            "hash": "6ddfcda55aa8a47b576f344e14bba2630e5e774a6df8817a75f56a0710e9707c"
         },
         "32bit": {
-            "installer": {
-                "script": "Expand-MsiArchive \"$dir\\tmp\\PaintDotNet_x86.msi\" \"$dir\""
-            }
+            "url": "https://github.com/paintdotnet/release/releases/download/v4.3.1/paint.net.4.3.1.install.x86.zip",
+            "hash": "8228b32d26e2240657fabd80c75d69e1903b6b8c27ca7eef47f698f0338715b7"
         }
     },
-    "post_install": [
-        "Remove-Item \"$dir\\tmp\", \"$dir\\Paint*.msi\" -Recurse -Force",
-        "$config = [xml](Get-Content \"$dir\\PaintDotNet.exe.config\")",
-        "$elem = $config.CreateElement('add')",
-        "$elem.SetAttribute('key', 'PaintDotNet.EnablePortableMode')",
-        "$elem.SetAttribute('value', 'true')",
-        "[void]$config.configuration.appSettings.appendChild($elem)",
-        "$config.Save(\"$dir\\PaintDotNet.exe.config\")"
+    "pre_install": [
+        "$_arch = $fname -replace '.*\\.install\\.(x\\d+)\\..*', '$1'",
+        "$_extract = if ($_arch -eq 'x64') { '64' } else { '' }",
+        "Expand-7zipArchive \"$dir\\$($fname -replace '.zip$').exe\" \"$dir\\tmp\" -Removal",
+        "Expand-MsiArchive \"$dir\\tmp\\${_arch}\\PaintDotNet_${_arch}.msi\" \"$dir\" -ExtractDir \"ProgramFiles${_extract}Folder\\paint.net\"",
+        "Remove-Item \"$dir\\tmp\" -Recurse -Force",
+        "",
+        "#Set-Content \"$dir\\PaintDotNet.AppSettings.json\" '{}' -Encoding Ascii",
+        "#$config = [xml](Get-Content \"$dir\\PaintDotNet.exe.config\")",
+        "#$elem = $config.CreateElement('add')",
+        "#$elem.SetAttribute('key', 'PaintDotNet.EnablePortableMode')",
+        "#$elem.SetAttribute('value', 'true')",
+        "#[void]$config.configuration.appSettings.appendChild($elem)",
+        "#$config.Save(\"$dir\\PaintDotNet.exe.config\")"
     ],
     "bin": "paintdotnet.exe",
     "shortcuts": [
@@ -49,6 +47,13 @@
     ],
     "checkver": "paint\\.net\\s+([\\d.]+)",
     "autoupdate": {
-        "url": "https://www.dotpdn.com/files/paint.net.$version.install.zip"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/paintdotnet/release/releases/download/v$version/paint.net.$version.install.x64.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/paintdotnet/release/releases/download/v$version/paint.net.$version.install.x86.zip"
+            }
+        }
     }
 }
