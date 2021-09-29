@@ -6,17 +6,46 @@
     "notes": "The following page explains how to add explorer context menu entries for notepad++. https://npp-user-manual.org/docs/shell-extension",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.1.5/npp.8.1.5.portable.x64.zip",
-            "hash": "d760536df2fb80b575379b06243b7635f18d862a897dd680b21cad857cddf6b4"
+            "url": [
+                "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.1.5/npp.8.1.5.portable.x64.zip",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/notepadplusplus/install-context.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/notepadplusplus/uninstall-context.reg"
+            ],
+            "hash": [
+                "d760536df2fb80b575379b06243b7635f18d862a897dd680b21cad857cddf6b4",
+                "954a037646a785f5a83cd0e16b0347fe0912930fdc7b05e7ea965cc163e99682",
+                "c213a7d3cbbf0c52405606302b3c6253e050c24318a97f2f998e44a6bfac2df6"
+            ]
         },
         "32bit": {
-            "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.1.5/npp.8.1.5.portable.zip",
-            "hash": "dcb6d304cbfd932ccb8c1953acd14731b8cf722fe820f5e0cf3f4c4515935028"
+            "url": [
+                "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.1.5/npp.8.1.5.portable.zip",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/notepadplusplus/install-context.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/notepadplusplus/uninstall-context.reg"
+            ],
+            "hash": [
+                "dcb6d304cbfd932ccb8c1953acd14731b8cf722fe820f5e0cf3f4c4515935028",
+                "954a037646a785f5a83cd0e16b0347fe0912930fdc7b05e7ea965cc163e99682",
+                "c213a7d3cbbf0c52405606302b3c6253e050c24318a97f2f998e44a6bfac2df6"
+            ]
         }
     },
     "pre_install": [
         "if (!(Test-Path \"$persist_dir\\session.xml\")) { New-Item \"$dir\\session.xml\" -Force | Out-Null }",
         "if (!(Test-Path \"$persist_dir\\userDefineLang.xml\")) { New-Item \"$dir\\userDefineLang.xml\" -Force | Out-Null }"
+    ],
+    "post_install": [
+        "$file = \"$dir\\install-context.reg\"",
+        "if (Test-Path $file) {",
+        "    $notepadpluspluspath = \"$dir\\notepad++.exe\".Replace('\\', '\\\\')",
+        "    $content = (Get-Content $file).Replace('$notepadplusplus', $notepadpluspluspath)",
+        "    if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "    Set-Content $file $content -Encoding Ascii -Force",
+        "}",
+        "$file = \"$dir\\uninstall-context.reg\"",
+        "if ((Test-Path $file) -and $global) {",
+        "    (Get-Content $file).Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') | Set-Content -Path $file -Encoding Ascii -Force",
+        "}"
     ],
     "bin": "notepad++.exe",
     "shortcuts": [
