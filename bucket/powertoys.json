@@ -1,19 +1,49 @@
 {
-    "version": "0.21.1",
+    "version": "0.45.0",
     "description": "A set of utilities for power users to tune and streamline their Windows experience for greater productivity.",
     "homepage": "https://github.com/microsoft/PowerToys",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/microsoft/PowerToys/releases/download/v0.21.1/PowerToysSetup-0.21.1-x64.msi",
-            "hash": "ef63a70fc1c4b718410d3129d1691ab3814b4f7d1cea402e6507b0133ca2f09c"
+            "url": "https://github.com/microsoft/PowerToys/releases/download/v0.45.0/PowerToysSetup-0.45.0-x64.exe",
+            "hash": "bc1c7eda2eb80f3780c27467fef65c774e2008da908a4ca5c7c2ad87750735df",
+            "pre_install": [
+                "$dotnet_exists = (Get-Command dotnet -ErrorAction SilentlyContinue)",
+                "if (($null -eq $dotnet_exists) -eq $false) {",
+                "    $dotnet_runtime = (dotnet --list-runtimes)",
+                "    if (($null -eq $dotnet_runtime) -eq $false) {",
+                "        echo \".NET Core exists\"",
+                "    } else {",
+                "        echo \".NET Core doesn't exist, installing...\"",
+                "        &powershell -NoProfile -ExecutionPolicy unrestricted -Command \"[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; &([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing 'https://dot.net/v1/dotnet-install.ps1'))) -Runtime dotnet\"",
+                "    }",
+                "} else {",
+                "echo \".NET Core doesn't exist, installing...\"",
+                "&powershell -NoProfile -ExecutionPolicy unrestricted -Command \"[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; &([scriptblock]::Create((Invoke-WebRequest -UseBasicParsing 'https://dot.net/v1/dotnet-install.ps1'))) -Runtime dotnet\"",
+                "}"
+            ],
+            "installer": {
+                "args": "--silent --no_start_pt --skip_dotnet_install --install_dir \"$dir\""
+            },
+            "uninstaller": {
+                "script": "Invoke-ExternalCommand \"C:\\Windows\\System32\\msiexec.exe\" -ArgumentList @('/X\"{B3A4E585-5157-49AE-98FA-234D2E1BDD75}\" /quiet') -RunAs | Out-Null"
+            }
         }
     },
-    "extract_dir": "PowerToys",
     "shortcuts": [
         [
             "PowerToys.exe",
             "PowerToys"
         ]
-    ]
+    ],
+    "checkver": {
+        "github": "https://github.com/microsoft/PowerToys"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/microsoft/PowerToys/releases/download/v$version/PowerToysSetup-$version-x64.exe"
+            }
+        }
+    }
 }
