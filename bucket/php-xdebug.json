@@ -1,52 +1,53 @@
 {
-    "homepage": "https://xdebug.org/",
+    "version": "3.1.0-8.0",
     "description": "An extension for PHP to assist with debugging and development. (Thread Safe)",
+    "homepage": "https://xdebug.org/",
     "license": {
         "identifier": "Xdebug-1.01",
         "url": "https://xdebug.org/license.php"
     },
-    "version": "2.9.3-7.4",
+    "notes": [
+        "Xdebug is already enabled if PHP was installed through scoop!",
+        "Otherwise add '$dir\\php_xdebug.dll' to your php.ini"
+    ],
     "architecture": {
         "64bit": {
-            "url": "https://xdebug.org/files/php_xdebug-2.9.3-7.4-vc15-x86_64.dll#/php_xdebug.dll",
-            "hash": "8394d590df482f5c98f5bcc6347219b3f6d901ee8d5124f8e2f037bf536319cc"
+            "url": "https://xdebug.org/files/php_xdebug-3.1.0-8.0-vs16-x86_64.dll#/php_xdebug.dll",
+            "hash": "a26af6b4c0e7c130c38c7ea2f07b842e8db32a585e5e85ca9d504de0a2205910"
         },
         "32bit": {
-            "url": "https://xdebug.org/files/php_xdebug-2.9.3-7.4-vc15.dll#/php_xdebug.dll",
-            "hash": "3d633adc7f8eb9dfcc03467f58ed9c8ebac6a53f7b91d89685ef54bacd1e9777"
+            "url": "https://xdebug.org/files/php_xdebug-3.1.0-8.0-vs16.dll#/php_xdebug.dll",
+            "hash": "19aac76a0e1b219ad332104d5d730be4e70d604b73fcefc44d835b2d9b1426f0"
         }
     },
     "post_install": [
         "$phpconfd = \"$persist_dir\\..\\php\\cli\\conf.d\"",
         "$ini = \"zend_extension=$dir\\php_xdebug.dll`n[xdebug]`nxdebug.remote_enable=on`nxdebug.remote_autostart=on`nxdebug.remote_connect_back=on\"",
-        "if(!(test-path $phpconfd\\xdebug.ini)) {",
-        "    Write-Output \"Enabling extension $(Convert-Path $phpconfd)\\xdebug.ini\"",
+        "if (!(Test-Path \"$phpconfd\\xdebug.ini\")) {",
+        "    ensure $phpconfd | Out-Null",
+        "    Write-Output \"Enabling extension '$phpconfd\\xdebug.ini'\"",
         "    Add-Content -Value $ini -Path \"$phpconfd\\xdebug.ini\"",
         "} else {",
         "    Write-Host -f Yellow \"PHP was not installed through scoop, you have to activate php_xdebug.dll manually! Add the following:`n\"",
         "    Write-Host -f Cyan \"$ini`n`n\"",
         "}"
     ],
-    "notes": [
-        "Xdebug is already enabled if PHP was installed through scoop!",
-        "Otherwise add '$dir\\php_xdebug.dll' to your php.ini"
-    ],
     "checkver": {
         "url": "https://xdebug.org/download.php",
-        "re": "php_xdebug-([\\d.]+-7.4)-vc15-x86_64.dll"
+        "regex": "php_xdebug-([\\d.]+-8\\.0)-vs16-x86_64\\.dll"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://xdebug.org/files/php_xdebug-$version-vc15-x86_64.dll#/php_xdebug.dll"
+                "url": "https://xdebug.org/files/php_xdebug-$version-vs16-x86_64.dll#/php_xdebug.dll"
             },
             "32bit": {
-                "url": "https://xdebug.org/files/php_xdebug-$version-vc15.dll#/php_xdebug.dll"
+                "url": "https://xdebug.org/files/php_xdebug-$version-vs16.dll#/php_xdebug.dll"
             }
         },
         "hash": {
             "url": "https://xdebug.org/download.php",
-            "regex": "$basename.+?([a-fA-F0-9]{64})"
+            "regex": "$sha256\"\\s*href=.*?$basename"
         }
     }
 }

@@ -1,38 +1,40 @@
 {
-    "homepage": "https://www.henrypp.org/product/simplewall",
+    "version": "3.5.1",
     "description": "Simple tool to configure Windows Filtering Platform (WFP) which can configure network activity on your computer.",
+    "homepage": "https://www.henrypp.org/product/simplewall",
     "license": "GPL-3.0-only",
-    "version": "3.1.1",
-    "url": "https://github.com/henrypp/simplewall/releases/download/v.3.1.1/simplewall-3.1.1-bin.zip#/dl.7z",
-    "hash": "dbb4ea37784546eed023af98beb48d2128620e582bd06ad1691250a9d2e8b7ef",
+    "url": "https://github.com/henrypp/simplewall/releases/download/v.3.5.1/simplewall-3.5.1-bin.zip",
+    "hash": "16fdf4f8ba0a33bc4c8f28d21e17498369c09551be04d0a834d7bd0d5596d4a6",
     "architecture": {
         "64bit": {
-            "extract_dir": "simplewall/64"
+            "extract_dir": "simplewall\\64"
         },
         "32bit": {
-            "extract_dir": "simplewall/32"
+            "extract_dir": "simplewall\\32"
         }
     },
-    "bin": [
-        [
-            "simplewall.exe",
-            "simplewall"
-        ]
+    "pre_install": [
+        "'simplewall.ini', 'profile.xml' | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "}"
     ],
+    "bin": "simplewall.exe",
     "shortcuts": [
         [
             "simplewall.exe",
             "simplewall"
         ]
     ],
-    "persist": "simplewall.ini",
-    "pre_install": "if(!(test-path \"$dir\\simplewall.ini\")) { Add-Content \"$dir\\simplewall.ini\" $null }",
+    "persist": [
+        "simplewall.ini",
+        "profile.xml"
+    ],
     "checkver": {
         "github": "https://github.com/henrypp/simplewall",
-        "re": "simplewall-([\\d.]+)-bin.zip"
+        "regex": "simplewall-([\\d.]+)-bin\\.zip"
     },
     "autoupdate": {
-        "url": "https://github.com/henrypp/simplewall/releases/download/v.$version/simplewall-$version-bin.zip#/dl.7z",
+        "url": "https://github.com/henrypp/simplewall/releases/download/v.$version/simplewall-$version-bin.zip",
         "hash": {
             "url": "$baseurl/simplewall-$version.sha256"
         }

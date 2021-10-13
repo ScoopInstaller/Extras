@@ -1,15 +1,29 @@
 {
-    "homepage": "https://mega.nz/",
-    "description": "Easy automated synchronisation between your computer and your MEGA account",
+    "##": [
+        "http://g.static.mega.co.nz/eupd/wsync64/v.txt?SCOOPVERCH",
+        "https://github.com/meganz/MEGAsync/blob/58d3ed7f4a10d08b0fa908639a65deac6a6bde1b/src/MEGAUpdater/Preferences.h#L9",
+        "https://github.com/meganz/MEGAsync/blob/58d3ed7f4a10d08b0fa908639a65deac6a6bde1b/src/MEGASync/control/UpdateTask.cpp#L93-L111"
+    ],
+    "version": "4.5.3.0",
+    "description": "Client for automated synchronization between local folder and MEGA cloud",
+    "homepage": "https://mega.nz",
     "license": {
         "identifier": "Freeware",
         "url": "https://github.com/meganz/MEGAsync/blob/master/LICENCE.md"
     },
-    "version": "4.3.1.0",
-    "url": "https://mega.nz/MEGAsyncSetup.exe#/dl.7z",
-    "hash": "60989e83bc0afbcfa9f313c19edd7b7948a8c1dccb8c31332b9d6b1967823675",
+    "architecture": {
+        "64bit": {
+            "url": "https://mega.nz/MEGAsyncSetup64.exe#/dl.7z",
+            "hash": "936c7ec152344ff4e617c4adb0233ff2d352d77ecac28700721e2419982bafc2"
+        },
+        "32bit": {
+            "url": "https://mega.nz/MEGAsyncSetup32.exe#/dl.7z",
+            "hash": "c4851f7d8488a44cf5a710d55365837301560cc7309d710018acc79999440804"
+        }
+    },
+    "pre_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Megaupdater.exe\", \"$dir\\uninst*\" -Recurse",
     "uninstaller": {
-        "script": "taskkill /F /IM MEGAsync.exe /FI 'status eq running'"
+        "script": "shortcut_folder $global | Split-Path | Join-Path -ChildPath 'MEGAsync' | Remove-Item -ErrorAction 'SilentlyContinue' -Force -Recurse"
     },
     "bin": "MEGAsync.exe",
     "shortcuts": [
@@ -20,8 +34,5 @@
     ],
     "checkver": {
         "github": "https://github.com/meganz/MEGAsync"
-    },
-    "autoupdate": {
-        "url": "https://mega.nz/MEGAsyncSetup.exe#/dl.7z"
     }
 }

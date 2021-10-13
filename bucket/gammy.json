@@ -1,11 +1,24 @@
 {
-    "version": "0.9.55",
-    "description": "Adaptive screen brightness tool.",
+    "version": "0.9.64",
+    "description": "Adaptive screen brightness tool",
     "homepage": "https://getgammy.com",
     "license": "GPL-3.0-only",
-    "url": "https://github.com/Fushko/gammy/releases/download/v0.9.55/gammy.v0.9.55.zip",
-    "hash": "aea0944232c95d8ab647f5987bf952d7d40214d59ccdb1db8628b7c39b9ced18",
-    "extract_dir": "gammy v0.9.55",
+    "suggest": {
+        "Microsoft Visual C++ Redistributable 2017": "extras/vcredist2017"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Fushko/gammy/releases/download/v0.9.64/gammy_v0.9.64.zip",
+            "hash": "aa152ad1b143fc68f6ffae6ab3aaffd85ff22bfdfb59144ef0e5ca98b0bc6553"
+        }
+    },
+    "extract_dir": "gammy_v0.9.64",
+    "pre_install": [
+        "if (Test-Path \"$persist_dir\\gammysettings.cfg\") {",
+        "    warn 'Application's configuration was renamed and changed. Previous configuration will not work'",
+        "    Rename-Item \"$persist_dir\\gammysettings.cfg\" 'gammysettings.cfg.old'",
+        "}"
+    ],
     "bin": "gammy.exe",
     "shortcuts": [
         [
@@ -13,15 +26,17 @@
             "Gammy"
         ]
     ],
-    "suggest": {
-        "Microsoft Visual C++ Redistributable 2017": "extras/vcredist2017"
-    },
+    "persist": "gammyconf.txt",
     "checkver": {
         "url": "https://getgammy.com/downloads.html",
-        "regex": "v([\\d.]+)\\.zip"
+        "regex": "/gammy_v([\\d.]+)\\.zip"
     },
     "autoupdate": {
-        "url": "https://github.com/Fushko/gammy/releases/download/v$version/gammy.v$version.zip",
-        "extract_dir": "gammy v$version"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Fushko/gammy/releases/download/v$version/gammy_v$version.zip"
+            }
+        },
+        "extract_dir": "gammy_v$version"
     }
 }
