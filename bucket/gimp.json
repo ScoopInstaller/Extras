@@ -1,10 +1,10 @@
 {
-    "version": "2.10.20-1",
+    "version": "2.10.28",
     "description": "GNU Image Manipulation Program",
     "homepage": "https://www.gimp.org",
     "license": "GPL-3.0-only",
-    "url": "https://download.gimp.org/mirror/pub/gimp/v2.10/windows/gimp-2.10.20-setup-1.exe",
-    "hash": "430b1a709cd89b5cddb857032a7a5b93199d076ff8cd83ebdd0112330b65ba51",
+    "url": "https://download.gimp.org/mirror/pub/gimp/v2.10/windows/gimp-2.10.28-setup.exe",
+    "hash": "2c2e081ce541682be1abdd8bc6df13768ad9482d68000b4a7a60c764d6cec74e",
     "innosetup": true,
     "installer": {
         "script": [
@@ -65,7 +65,18 @@
     ],
     "checkver": {
         "url": "https://www.gimp.org/downloads/",
-        "regex": "gimp-([\\d.]+)-setup(-\\d)?\\.exe",
-        "replace": "${1}${2}"
+        "regex": "gimp-(?<version>[\\d.]+)-setup(?<build>-\\d)?\\.exe",
+        "replace": "${version}${build}"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download.gimp.org/mirror/pub/gimp/v2.10/windows/gimp-$version-setup$build.exe",
+                "hash": {
+                    "url": "https://www.gimp.org/downloads/",
+                    "xpath": "//h3[text()='Hash Sum']/following-sibling::p/kbd/text()"
+                }
+            }
+        }
     }
 }
