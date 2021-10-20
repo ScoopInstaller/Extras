@@ -11,7 +11,7 @@
     },
     "extract_dir": "Cryptomator",
     "post_install": [
-        "# change appdata settings folder",
+        "    # Change appdata settings folder",
         "(Get-Content \"$dir\\app\\Cryptomator.cfg\" -Encoding ASCII).replace('~/AppData/Roaming/Cryptomator', './data') | Set-Content \"$dir\\app\\Cryptomator.cfg\" -Encoding ASCII"
     ],
     "bin": "Cryptomator.exe",
@@ -24,13 +24,17 @@
     "persist": "data",
     "checkver": {
         "url": "https://github.com/cryptomator/cryptomator/releases",
-        "regex": "Cryptomator-([\\d.]+)-x64\\.exe"
+        "regex": "Cryptomator-([\\d.]+)-x64\\.msi"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
                 "url": "https://github.com/cryptomator/cryptomator/releases/download/$version/Cryptomator-$version-x64.msi"
             }
+        },
+        "hash": {
+            "url": "https://github.com/cryptomator/cryptomator/releases/tag/$version",
+            "regex": "$sha256\\s*\\./$basename"
         }
     }
 }
