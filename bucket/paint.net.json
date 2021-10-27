@@ -1,5 +1,5 @@
 {
-    "version": "4.2.16",
+    "version": "4.3.2",
     "description": "Image and photo editor",
     "homepage": "https://www.getpaint.net",
     "license": {
@@ -7,33 +7,16 @@
         "url": "https://www.getpaint.net/license.html"
     },
     "notes": ".NET 4.7.1 is required https://www.microsoft.com/en-us/download/details.aspx?id=56115",
-    "url": "https://www.dotpdn.com/files/paint.net.4.2.16.install.zip",
-    "hash": "fe70191873a1f3b26d01d35dee60a364a0a7da4e69ac70f7495ef8666c32e8e5",
-    "pre_install": [
-        "Expand-7zipArchive \"$dir\\paint.net.$version.install.exe\" \"$dir\\tmp\" -Removal",
-        "Set-Content \"$dir\\PaintDotNet.AppSettings.json\" '{}' -Encoding Ascii"
-    ],
     "architecture": {
         "64bit": {
-            "installer": {
-                "script": "Expand-MsiArchive \"$dir\\tmp\\PaintDotNet_x64.msi\" \"$dir\""
-            }
+		"url": "https://github.com/paintdotnet/release/releases/download/v4.3.2/paint.net.4.3.2.portable.x64.zip",
+		"hash": "8eb7d18f4d9e74136c26d96a825404199a75803cce2694eeea6757a315789b03"
         },
         "32bit": {
-            "installer": {
-                "script": "Expand-MsiArchive \"$dir\\tmp\\PaintDotNet_x86.msi\" \"$dir\""
-            }
+	    "url": "https://github.com/paintdotnet/release/releases/download/v4.3.2/paint.net.4.3.2.portable.x86.zip",
+            "hash": "823a63e4d392a1dfc164e132906cb2873e5ed0026bfcc2298a213f83b2f0c5c2"
         }
     },
-    "post_install": [
-        "Remove-Item \"$dir\\tmp\", \"$dir\\Paint*.msi\" -Recurse -Force",
-        "$config = [xml](Get-Content \"$dir\\PaintDotNet.exe.config\")",
-        "$elem = $config.CreateElement('add')",
-        "$elem.SetAttribute('key', 'PaintDotNet.EnablePortableMode')",
-        "$elem.SetAttribute('value', 'true')",
-        "[void]$config.configuration.appSettings.appendChild($elem)",
-        "$config.Save(\"$dir\\PaintDotNet.exe.config\")"
-    ],
     "bin": "paintdotnet.exe",
     "shortcuts": [
         [
@@ -47,5 +30,15 @@
         "FileTypes",
         "Shapes"
     ],
-    "checkver": "paint\\.net\\s+([\\d.]+)"
+    "checkver": {
+       "github" : "https://github.com/paintdotnet/release/"
+        },
+    "autoupdate": {
+        "64bit": {
+           "url": "https://github.com/paintdotnet/release/releases/download/v$version/paint.net.$version.portable.x64.zip"
+        },
+        "32bit": {
+           "url": "https://github.com/paintdotnet/release/releases/download/v$version/paint.net.$version.portable.x86.zip"
+        }
+    }
 }
