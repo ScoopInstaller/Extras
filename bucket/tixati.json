@@ -1,0 +1,54 @@
+{
+    "version": "2.85",
+    "description": "BitTorrent client with advanced features",
+    "homepage": "https://tixati.com",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.tixati.com/tixati_eula.txt"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://download1.tixati.com/download/tixati-2.85-1.win64-install.exe#/dl.7z",
+            "hash": "cea0d7a8390f4954ded8d159406f991f1f2492c417fe55a4bacd48ed81a69c30"
+        },
+        "32bit": {
+            "url": "https://download1.tixati.com/download/tixati-2.85-1.win32-install.exe#/dl.7z",
+            "hash": "a7ad2da4778e88b231c5b5411310eef81b97e17488d2d68dda2a489b07d1cf0e"
+        }
+    },
+    "installer": {
+        "script": [
+            "New-Item \"$dir\\tixati_portable_mode.txt\" | Out-Null",
+            "Move-Item \"$dir\\*~\" \"$dir\\tixati.exe\"",
+            "if (Test-Path \"$persist_dir\") { Copy-Item \"$persist_dir\\*\" \"$dir\" -Force }"
+        ]
+    },
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\*.dat\" \"$persist_dir\" -Force"
+    },
+    "bin": "tixati.exe",
+    "shortcuts": [
+        [
+            "tixati.exe",
+            "Tixati"
+        ]
+    ],
+    "persist": [
+        "downloads",
+        "incomplete-pieces"
+    ],
+    "checkver": {
+        "url": "https://www.tixati.com/download",
+        "regex": "Download Tixati v([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download1.tixati.com/download/tixati-$version-1.win64-install.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://download1.tixati.com/download/tixati-$version-1.win32-install.exe#/dl.7z"
+            }
+        }
+    }
+}

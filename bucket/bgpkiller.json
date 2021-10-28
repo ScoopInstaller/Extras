@@ -1,0 +1,51 @@
+{
+    "version": "0.9.6.0",
+    "description": "Ad blocker for Avira AntiVirus",
+    "homepage": "http://bgpkiller.weebly.com",
+    "license": "Freeware",
+    "notes": "Run 'bgpkiller-add-startup' to add BGPKiller to startup programs.",
+    "url": "http://bgpkiller.weebly.com/uploads/4/1/2/2/41220059/bgpkiller_setup_v0.9.6.0.exe",
+    "hash": "7e3191dd359ee2347586a54bf337c8cec5fb752e11a48f3c5716fc610ea5ca54",
+    "innosetup": true,
+    "installer": {
+        "script": [
+            "$startup = shortcut_folder $global | Select-Object -ExpandProperty Path | Split-Path -Parent | Join-Path -ChildPath 'Startup'",
+            "$current = current_dir $dir",
+            "$cont = @(",
+            "    '$wsShell = New-Object -ComObject WScript.Shell'",
+            "    \"`$wsShell = `$wsShell.CreateShortcut('$startup\\BGPKiller.lnk')\"",
+            "    \"`$wsShell.TargetPath = '$current\\BGPKiller.exe'\"",
+            "    \"`$wsShell.WorkingDirectory = '$current'\"",
+            "    '$wsShell.Save()'",
+            "    'Write-Host \"BGPKiller has been added to the startup programs.\"'",
+            "    'Write-Host \"Run bgpkiller-remove-startup to remove from startup.\"'",
+            ")",
+            "Set-Content \"$dir\\bgpkiller-add-startup.ps1\" -Value ($cont -join \"`r`n\") -Encoding Ascii",
+            "Set-Content \"$dir\\bgpkiller-remove-startup.ps1\" -Value \"Remove-Item '$startup\\BGPKiller.lnk' -ErrorAction SilentlyContinue -Force\" -Encoding Ascii"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "& \"$dir\\bgpkiller-remove-startup.ps1\"",
+            "taskkill /F /IM bgpkiller.exe /FI 'status eq running'"
+        ]
+    },
+    "bin": [
+        "bgpkiller.exe",
+        "bgpkiller-add-startup.ps1",
+        "bgpkiller-remove-startup.ps1"
+    ],
+    "shortcuts": [
+        [
+            "bgpkiller.exe",
+            "BGPKiller"
+        ]
+    ],
+    "checkver": {
+        "url": "http://bgpkiller.weebly.com/download.html",
+        "regex": "bgpkiller_setup_v([\\d.]+).exe"
+    },
+    "autoupdate": {
+        "url": "http://bgpkiller.weebly.com/uploads/4/1/2/2/41220059/bgpkiller_setup_v$version.exe"
+    }
+}

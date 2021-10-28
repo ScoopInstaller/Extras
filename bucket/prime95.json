@@ -1,44 +1,45 @@
 {
-    "homepage": "https://www.mersenne.org/download/",
+    "version": "30.3b6",
     "description": "Free Mersenne Prime Search Software",
+    "homepage": "https://www.mersenne.org/download/",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.mersenne.org/legal/#EULA"
     },
-    "version": "29.8b3",
-    "bin": "prime95.exe",
     "architecture": {
         "64bit": {
-            "url": "https://www.mersenne.org/ftp_root/gimps/p95v298b3.win64.zip",
-            "hash": "ca54dbb436abaf9a5d7a425323d2767bb580135d1f63846aa356893399d8a656"
+            "url": "https://www.mersenne.org/ftp_root/gimps/p95v303b6.win64.zip",
+            "hash": "533eda6a585cd047b3d41fba85bd52798ad6f4d8572b25a5f01ffdaae11509da"
         },
         "32bit": {
-            "url": "https://www.mersenne.org/ftp_root/gimps/p95v298b3.win32.zip",
-            "hash": "af8bb419a5fbfed2d56d37dbcfda9d7a36d9095ed43df9893d5fb56ed11c2e9a"
+            "url": "https://www.mersenne.org/ftp_root/gimps/p95v298b6.win32.zip",
+            "hash": "cdd32b4c358869d3f588ae430bc67d9e88a5a69506002f864adac3c477c9202a"
         }
     },
+    "bin": "prime95.exe",
     "shortcuts": [
         [
             "prime95.exe",
             "Prime95"
         ]
     ],
-    "checkver": {
-        "url": "https://www.mersenne.org/download/",
-        "regex": "Windows:\\s+64-bit</td><td>([^<]+)</td>"
-    },
+    "checkver": "Windows:\\s+64-bit\\D+(?<version>[\\w.]+).*href=\"https?://www.mersenne.org/ftp_root/gimps/(?<file64>[^.]+).win64.zip\".*Windows:\\s+32-bit\\D+(?<version32>[\\w.]+).*href=\"https?://www.mersenne.org/ftp_root/gimps/(?<file32>[^.]+).win32.zip\"",
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://www.mersenne.org/ftp_root/gimps/p95v$cleanVersion.win64.zip"
+                "url": "https://www.mersenne.org/ftp_root/gimps/$matchFile64.win64.zip",
+                "hash": {
+                    "url": "https://www.mersenne.org/download/",
+                    "regex": "\\.win64\\.zip.*?SHA256:.*?$sha256"
+                }
             },
             "32bit": {
-                "url": "https://www.mersenne.org/ftp_root/gimps/p95v$cleanVersion.win32.zip"
+                "url": "https://www.mersenne.org/ftp_root/gimps/$matchFile32.win32.zip",
+                "hash": {
+                    "url": "https://www.mersenne.org/download/",
+                    "regex": "\\.win32\\.zip.*?SHA256:.*?$sha256"
+                }
             }
-        },
-        "hash": {
-            "url": "https://www.mersenne.org/download/",
-            "find": "$basename[^>]+>[^>]+>[^>]+>[^>]+>SHA256:<br>([^<]+)"
         }
     }
 }

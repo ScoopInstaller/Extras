@@ -1,20 +1,19 @@
 {
+    "version": "1.21.0",
+    "description": "Test automation framework for use with native, hybrid and mobile web apps.",
     "homepage": "http://appium.io/",
-    "description": "An open source test automation framework for use with native, hybrid and mobile web apps.",
-    "version": "1.14.0",
     "license": "Apache-2.0",
+    "url": "https://github.com/appium/appium-desktop/releases/download/v1.21.0/Appium-windows-1.21.0.exe#/dl.7z",
+    "hash": "sha512:f3b255759a3d05ab0e338f071ed1706c39e3282a708e3c6843e4c9444ccb44fa16926c7fc1286d67b23c10b6b2e1568f3ff54dcd0eead051192282691f0a0598",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/appium/appium-desktop/releases/download/v1.14.0/Appium-windows-1.14.0.exe#/dl.7z",
-            "hash": "sha512:a75c9b56b7ae2d1d03073aa91d420a430be276cbf21c340f295deeb575aa0c07b3dc2e36c1c73742967351e7743b79a1cfc787bf239b2a4b3c839bff9b0b57c2",
-            "installer": {
-                "script": [
-                    "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninst*\" -Force -Recurse"
-                ]
-            }
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+        },
+        "32bit": {
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
         }
     },
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninst*\" -Force -Recurse",
     "shortcuts": [
         [
             "Appium.exe",
@@ -23,16 +22,5 @@
     ],
     "checkver": {
         "github": "https://github.com/appium/appium-desktop"
-    },
-    "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://github.com/appium/appium-desktop/releases/download/v$version/Appium-windows-$version.exe#/dl.7z",
-                "hash": {
-                    "url": "$baseurl/latest.yml",
-                    "find": "sha512:\\s+(.*)"
-                }
-            }
-        }
     }
 }

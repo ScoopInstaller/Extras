@@ -1,14 +1,27 @@
 {
-    "homepage": "https://www.ccleaner.com/defraggler",
     "version": "2.22.995",
-    "url": "https://www.piriform.com/defraggler/download/portable/downloadfile#/dl.7z",
-    "hash": "2edfa974fc2e8e34c0b8c152077da9c3a4ab28cad81a4ced463f0cf6634a0f01",
+    "description": "Speed up your PC with quick & easy defragmentation.",
+    "homepage": "https://www.ccleaner.com/defraggler",
+    "license": "Freeware",
+    "url": "https://download.ccleaner.com/dfsetup222.exe#/dl.7z",
+    "hash": "167b7192937b39e657def16ffb0fdbbab326f007747505d5c8785811d6b03ab8",
+    "pre_install": [
+        "Set-Content \"$dir\\portable.dat\" '#PORTABLE#' -Encoding Ascii",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\uninst.exe\" -Recurse -Force",
+        "if (!(Test-Path \"$persist_dir\\Defraggler.ini\")) {",
+        "   Set-Content \"$dir\\Defraggler.ini\" @('[Software\\Piriform\\Defraggler]', 'UpdateCheck=0') -Encoding Ascii",
+        "}"
+    ],
     "architecture": {
         "64bit": {
             "bin": [
                 [
                     "Defraggler64.exe",
                     "Defraggler"
+                ],
+                [
+                    "df64.exe",
+                    "df"
                 ]
             ],
             "shortcuts": [
@@ -19,7 +32,10 @@
             ]
         },
         "32bit": {
-            "bin": "Defraggler.exe",
+            "bin": [
+                "Defraggler.exe",
+                "df.exe"
+            ],
             "shortcuts": [
                 [
                     "Defraggler.exe",
@@ -28,11 +44,12 @@
             ]
         }
     },
+    "persist": "Defraggler.ini",
     "checkver": {
-        "url": "https://www.piriform.com/defraggler/download",
-        "re": "<strong>\\s*v([\\d.]+)</strong>"
+        "url": "https://www.ccleaner.com/defraggler/version-history",
+        "regex": ">v([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://www.piriform.com/defraggler/download/portable/downloadfile#/dl.7z"
+        "url": "https://download.ccleaner.com/dfsetup$majorVersion$minorVersion.exe#/dl.7z"
     }
 }

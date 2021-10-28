@@ -1,24 +1,18 @@
 {
-    "version": "7.2.0",
-    "description": "Open Source, Distributed, RESTful Search Engine.",
+    "version": "7.15.1",
+    "description": "Distributed, RESTful Search Engine",
     "homepage": "https://www.elastic.co/products/elasticsearch",
     "license": {
-        "identifier": "Proprietary",
-        "url": "https://github.com/elastic/elasticsearch/blob/7.0/licenses/ELASTIC-LICENSE.txt"
+        "identifier": "Freeware|Apache-2.0",
+        "url": "https://github.com/elastic/elasticsearch/blob/master/LICENSE.txt"
     },
-    "url": "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.2.0-windows-x86_64.zip",
-    "hash": "sha512:e5d170c17d393551caa0330535f253ae105e4b24c53cce4f185f1c49c48c84ed0be3750075febb0434f52dc6b26e995027dd64641f4552cb1119388467689d5e",
-    "extract_dir": "elasticsearch-7.2.0",
-    "bin": [
-        "bin\\elasticsearch.bat",
-        "bin\\elasticsearch-keystore.bat",
-        "bin\\elasticsearch-plugin.bat",
-        "bin\\elasticsearch-service.bat"
-    ],
-    "persist": [
-        "config",
-        "plugins"
-    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.15.1-windows-x86_64.zip",
+            "hash": "sha512:accd3a90519bc7fdc8c2b33071e5b67b1527c3b8162c71abe3c76a7b94bbf11774c5a050105ad62080042908f559370820d3762fef8e33258606a3c1f446c2b5"
+        }
+    },
+    "extract_dir": "elasticsearch-7.15.1",
     "pre_install": [
         "    # Overwrite SCRIPT because elasticsearch-env.bat doesn't care if SCRIPT or ES_HOME are already set ...",
         "$file = \"$dir\\bin\\elasticsearch-env.bat\"",
@@ -30,12 +24,26 @@
         "$cont = $cont -replace '#path.logs:.*$', \"path.logs: $persist_dir\\logs\"",
         "Set-Content \"$file\" ($cont -join \"`r`n\") -Encoding ASCII"
     ],
+    "bin": [
+        "bin\\elasticsearch.bat",
+        "bin\\elasticsearch-keystore.bat",
+        "bin\\elasticsearch-plugin.bat",
+        "bin\\elasticsearch-service.bat"
+    ],
+    "persist": [
+        "config",
+        "plugins"
+    ],
     "checkver": {
         "url": "https://www.elastic.co/downloads/elasticsearch",
-        "regex": "elasticsearch-([\\d\\.]+)-windows"
+        "regex": "elasticsearch-([\\d.]+)-windows"
     },
     "autoupdate": {
-        "url": "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-$version-windows-x86_64.zip",
+        "architecture": {
+            "64bit": {
+                "url": "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-$version-windows-x86_64.zip"
+            }
+        },
         "hash": {
             "url": "$url.sha512"
         },

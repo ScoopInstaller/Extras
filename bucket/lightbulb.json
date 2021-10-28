@@ -1,45 +1,29 @@
 {
-    "version": "1.6.4.1",
-    "description": "A program that reduces eyestrain produced by staring at a computer screen when working late hours",
+    "version": "2.3.3",
+    "description": "Computer screen gamma adjuster based on the current time",
     "homepage": "https://github.com/Tyrrrz/LightBulb",
-    "license": {
-        "identifier": "GPL-3.0-only",
-        "url": "https://github.com/Tyrrrz/LightBulb/blob/master/License.txt"
+    "license": "GPL-3.0-or-later",
+    "suggest": {
+        ".Net Core": "windowsdesktop-runtime"
     },
-    "notes": [
-        ".NET Framework version 4.5.2 or higher is required to run this program.",
-        "If the gamma doesn't change under 6600K, run the Manual_Gamma_Registry_Fix.reg registry key in the program's directory (scoop/apps/lightbulb/current).",
-        "Don't run LightBulb.exe when you're in that folder. Use the file LightBulb_Portable.bat or the created shortcut to run this program."
-    ],
-    "url": "https://github.com/Tyrrrz/LightBulb/releases/download/1.6.4.1/LightBulb-Portable.zip",
-    "hash": "15ba9a6a9c890da8a787dc7af041349b66e179821ab7a28dc115f80c458853c4",
+    "url": "https://github.com/Tyrrrz/LightBulb/releases/download/2.3.3/LightBulb.zip",
+    "hash": "e99f115946b6a000148f60cc6cbeb17007fd5b22680b4878c202b87501610739",
     "pre_install": [
-        "#Create placeholder file",
-        "function CreateFile([String] $file, [String] $content = $null) {",
-        "    if(!(Test-Path \"$persist_dir\\$file\")) {",
-        "        Write-Host \"Create placeholder for $file\"",
-        "        New-Item -Force -Path \"$persist_dir\\$file\" -ItemType file -Value $content | Out-Null",
-        "    }",
-        "}",
-        "CreateFile 'Configuration.dat' '{}'"
+        "if (!(Test-Path \"$persist_dir\\Settings.json\")) {",
+        "    if (Test-Path \"$persist_dir\\Configuration.dat\") { warn 'Configuration from version 1 is not compatile with version 2!' }",
+        "    Set-Content \"$dir\\Settings.json\" -Value '{ \"IsAutoUpdateEnabled\": false }' -Encoding Ascii",
+        "}"
     ],
-    "persist": "Configuration.dat",
-    "bin": [
+    "bin": "LightBulb.exe",
+    "shortcuts": [
         [
-            "LightBulb_Portable.bat",
+            "LightBulb.exe",
             "LightBulb"
         ]
     ],
-    "shortcuts": [
-        [
-            "LightBulb_Portable.bat",
-            "LightBulb",
-            "",
-            "LightBulb.exe"
-        ]
-    ],
+    "persist": "Settings.json",
     "checkver": "github",
     "autoupdate": {
-        "url": "https://github.com/Tyrrrz/LightBulb/releases/download/$version/LightBulb-Portable.zip"
+        "url": "https://github.com/Tyrrrz/LightBulb/releases/download/$version/LightBulb.zip"
     }
 }

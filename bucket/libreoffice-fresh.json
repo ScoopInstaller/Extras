@@ -1,6 +1,6 @@
 {
-    "version": "6.2.5.2",
-    "description": "Powerful office suite.",
+    "version": "7.2.2.2",
+    "description": "Powerful office suite",
     "homepage": "https://libreoffice.org/",
     "license": "MPL-2.0",
     "suggest": {
@@ -8,14 +8,23 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/6.2.5.2/win/x86_64/LibreOffice_6.2.5.2_Win_x64.msi",
-            "hash": "9b01f6f382dbb31367e12cfb0ad4c684546f00edb20054eeac121e7e036a5389"
+            "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/7.2.2.2/win/x86_64/LibreOffice_7.2.2.2_Win_x64.msi#/dl.ism",
+            "hash": "422e733813bd853f37ef7731d75e554e73d3230c78b9bd58e39c0a8c2b6a45d0"
         },
         "32bit": {
-            "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/6.2.5.2/win/x86/LibreOffice_6.2.5.2_Win_x86.msi",
-            "hash": "717fb9e17a3feb8af1662e668b919db86fab343303b78f88c7859003056ee010"
+            "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/7.2.2.2/win/x86/LibreOffice_7.2.2.2_Win_x86.msi#/dl.ism",
+            "hash": "4486203b94812a7f4da62111bfbfed46dccf6402be036a5f8efebf76635f46d2"
         }
     },
+    "pre_install": [
+        "$_args = @{",
+        "    'Path' = \"$dir\\$fname\"",
+        "    'DestinationPath' = \"$dir\"",
+        "    'Removal' = $true",
+        "}",
+        "if (get_config 'MSIEXTRACT_USE_LESSMSI' $false) { $_args.Add('ExtractDir', 'LibreOffice') }",
+        "Expand-MsiArchive @_args"
+    ],
     "shortcuts": [
         [
             "program\\sbase.exe",
@@ -44,19 +53,19 @@
     ],
     "checkver": {
         "url": "https://www.libreoffice.org/download/download/",
-        "regex": "libreoffice-([\\d\\.]+)\\.tar\\.xz"
+        "regex": "libreoffice-([\\d.]+)\\.tar\\.xz"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/$version/win/x86_64/LibreOffice_$version_Win_x64.msi"
+                "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/$version/win/x86_64/LibreOffice_$version_Win_x64.msi#/dl.ism"
             },
             "32bit": {
-                "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/$version/win/x86/LibreOffice_$version_Win_x86.msi"
+                "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/$version/win/x86/LibreOffice_$version_Win_x86.msi#/dl.ism"
             }
         },
         "hash": {
-            "mode": "metalink"
+            "url": "$url.sha256"
         }
     }
 }

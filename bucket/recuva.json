@@ -1,8 +1,10 @@
 {
-    "homepage": "https://www.ccleaner.com/recuva",
     "version": "1.53.1087",
-    "url": "https://www.piriform.com/recuva/download/portable/downloadfile#/dl.7z",
-    "hash": "997a082fb03fcdf272d58c25aba488a136cf115a1e1b53930339fb5ef95bf91f",
+    "description": "Recover your deleted files quickly and easily.",
+    "homepage": "https://www.ccleaner.com/recuva",
+    "license": "Freeware",
+    "url": "https://download.ccleaner.com/rcsetup153.exe#/dl.7z",
+    "hash": "189a868b9a175a3c303aed14688f33848a19e439d7b333dc5ae24853daee0870",
     "architecture": {
         "64bit": {
             "bin": [
@@ -19,10 +21,7 @@
             ]
         },
         "32bit": {
-            "bin": [
-                "recuva.exe",
-                "Recuva"
-            ],
+            "bin": "recuva.exe",
             "shortcuts": [
                 [
                     "recuva.exe",
@@ -31,11 +30,19 @@
             ]
         }
     },
+    "pre_install": [
+        "Set-Content \"$dir\\portable.dat\" '#PORTABLE#' -Encoding ASCII",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\uninst.exe\" -Recurse -Force",
+        "if(!(Test-Path \"$persist_dir\\recuva.ini\")) {",
+        "   Set-Content \"$dir\\recuva.ini\" (@('[Software\\Piriform\\Recuva]', 'UpdateCheck=0') -join \"`r`n\") -Encoding ASCII",
+        "}"
+    ],
+    "persist": "recuva.ini",
     "checkver": {
-        "url": "https://www.piriform.com/recuva/download",
-        "re": "<strong>\\s*v([\\d.]+)</strong>"
+        "url": "https://www.ccleaner.com/recuva/version-history",
+        "regex": ">v([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://www.piriform.com/recuva/download/portable/downloadfile#/dl.7z"
+        "url": "https://download.ccleaner.com/rcsetup$majorVersion$minorVersion.exe#/dl.7z"
     }
 }
