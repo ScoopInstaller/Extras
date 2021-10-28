@@ -1,15 +1,26 @@
 {
-    "version": "0.18.1",
+    "version": "0.47.1",
     "description": "A set of utilities for power users to tune and streamline their Windows experience for greater productivity.",
     "homepage": "https://github.com/microsoft/PowerToys",
     "license": "MIT",
+    "notes": "To run this application, you must install .Net Core: https://dotnet.microsoft.com/download",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/microsoft/PowerToys/releases/download/v0.18.1/PowerToysSetup-0.18.1-x64.msi",
-            "hash": "83b2f088f6a0ef7066ba8303ad51e2a270123fe127991486b715ac55f84da19b"
+            "url": "https://github.com/microsoft/PowerToys/releases/download/v0.47.1/PowerToysSetup-0.47.1-x64.exe",
+            "hash": "e49b5aa3a5d6e215a66e7c325d21220c6b3846e4659eb90ed71ca9c430c5154f"
         }
     },
-    "extract_dir": "PowerToys",
+    "installer": {
+        "script": [
+            "$_pwd_ = $pwd",
+            "Set-Location $dir",
+            "$_exe_ = Get-ChildItem PowerToys*.exe",
+            "Start-Process $_exe_ --extract_msi -Wait; Set-Location $_pwd_",
+            "$_msi_ = Get-ChildItem -Path $dir\\PowerToys*.msi",
+            "Expand-MsiArchive $_msi_ $dir -ExtractDir 'PowerToys'",
+            "Remove-Item $_exe_, $_msi_ -Force"
+        ]
+    },
     "shortcuts": [
         [
             "PowerToys.exe",
@@ -18,10 +29,6 @@
     ],
     "checkver": "github",
     "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://github.com/microsoft/PowerToys/releases/download/v$version/PowerToysSetup-$version-x64.msi"
-            }
-        }
+        "url": "https://github.com/microsoft/PowerToys/releases/download/v$version/PowerToysSetup-$version-x64.exe"
     }
 }

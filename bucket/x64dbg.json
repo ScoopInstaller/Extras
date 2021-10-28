@@ -1,19 +1,14 @@
 {
-    "version": "2020-06-03_11-59",
+    "version": "2021-10-25_12-11",
     "description": "x64/x32 debugger",
     "homepage": "https://x64dbg.com/",
     "license": "GPL-3.0-only",
-    "url": "https://github.com/x64dbg/x64dbg/releases/download/snapshot/snapshot_2020-06-03_11-59.zip",
-    "hash": "a3f6a628c81e8cf9fb0c9aabda4bdb6b7196825288990537a3e50ba3d87a3c69",
+    "url": "https://github.com/x64dbg/x64dbg/releases/download/snapshot/snapshot_2021-10-25_12-11.zip",
+    "hash": "d1b331853e325101d3a10f9a0a3f7f1273bc30eec98303973526bfa775337f2b",
     "pre_install": [
-        "function ensureFile([String] $name) {",
-        "    if (!(Test-Path \"$persist_dir\\$name\") -and !(Test-Path \"$dir\\$name\")) {",
-        "        Add-Content -Path \"$dir\\$name\" -Value $null",
-        "    }",
-        "}",
-        "ensureFile 'release\\x96dbg.ini'",
-        "ensureFile 'release\\x32\\x32dbg.ini'",
-        "ensureFile 'release\\x64\\x64dbg.ini'"
+        "'release\\x96dbg.ini', 'release\\x32\\x32dbg.ini', 'release\\x64\\x64dbg.ini' | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "}"
     ],
     "bin": [
         "release\\x96dbg.exe",

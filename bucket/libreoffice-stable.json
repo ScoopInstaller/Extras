@@ -1,20 +1,24 @@
 {
-    "version": "6.4.3",
-    "description": "Powerful office suite.",
+    "version": "7.2.1",
+    "description": "Powerful office suite",
     "homepage": "https://libreoffice.org/",
     "license": "MPL-2.0",
-    "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/6.4.3.2/portable/LibreOfficePortable_6.4.3_MultilingualStandard.paf.exe#/dl.7z",
-    "hash": "ce89a42ae3143101a836ca096810f46aadcfaba8c8b9ddd32bcba7e2901f8823",
+    "suggest": {
+        "vcredist": "extras/vcredist2015"
+    },
+    "url": "https://downloadarchive.documentfoundation.org/libreoffice/old/7.2.1.2/portable/LibreOfficePortable_7.2.1_MultilingualStandard.paf.exe#/dl.7z",
+    "hash": "51ff5cde6eb849b36b6f645babfb3b8d16b3eabf88a29e6e075da4bde9119a7f",
     "pre_install": [
         "if (!(Test-Path \"$persist_dir\\Data\\settings\")) {",
         "    New-Item \"$dir\\Data\\settings\\LibreOfficePortableSettings.ini\" -Value \"[LibreOfficePortableSettings]`nInvalidPackageWarningShown=$version.0\" -Force | Out-Null",
-        "    if (Test-Path \"$Env:AppData\\LibreOffice\") {",
-        "        Write-Host -F yellow \"Copying old '$Env:AppData\\LibreOffice' to '$persist_dir\\Data\\settings'\"",
-        "        Get-Item \"$Env:AppData\\LibreOffice\\*\\*\" | Copy-Item -Destination \"$dir\\Data\\settings\" -Recurse -Force",
+        "    if (Test-Path \"$env:AppData\\LibreOffice\") {",
+        "        info \"Copying old '$env:AppData\\LibreOffice' to '$persist_dir\\Data\\settings'\"",
+        "        Get-Item \"$env:AppData\\LibreOffice\\*\\*\" | Copy-Item -Destination \"$dir\\Data\\settings\" -Recurse -Force",
+        "    } else {",
+        "        Copy-Item \"$dir\\App\\DefaultData\\*\" \"$dir\\Data\" -Recurse -Force",
         "    }",
-        "    else { Copy-Item \"$dir\\App\\DefaultData\\*\" \"$dir\\Data\" -Recurse -Force }",
         "}",
-        "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse -Force"
+        "Remove-Item \"$dir\\`$*\" -Recurse -Force"
     ],
     "shortcuts": [
         [
@@ -56,8 +60,5 @@
         "hash": {
             "url": "$url.sha256"
         }
-    },
-    "suggest": {
-        "vcredist": "extras/vcredist2015"
     }
 }

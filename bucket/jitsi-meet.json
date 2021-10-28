@@ -1,10 +1,19 @@
 {
-    "version": "2.1.1",
+    "version": "2.9.1",
     "description": "Secure, Simple and Scalable Video Conferences.",
-    "license": "Apache-2.0",
     "homepage": "https://jitsi.org/meet",
-    "url": "https://github.com/jitsi/jitsi-meet-electron/releases/download/v2.1.1/jitsi-meet.exe#/dl.7z",
-    "hash": "sha512:d2cc4ff95bcb65469aa5dce08d2fae58623d348286273f6f6578b6348550a579d0ccf5253ad4873e5b603e19f1f95d25589503f46242215270790bd85cb24a81",
+    "license": "Apache-2.0",
+    "url": "https://github.com/jitsi/jitsi-meet-electron/releases/download/v2.9.1/jitsi-meet.exe#/dl.7z",
+    "hash": "sha512:b703213e730b76244c3fa2612aeef4b0978c4f9c33f60a612bba0ac0e1f867b5abde65475d0ac42a54e610f9172414aac2006d91b8a67e9c8e5ba7babd69768d",
+    "architecture": {
+        "64bit": {
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+        },
+        "32bit": {
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
+        }
+    },
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*.exe\" -Recurse",
     "bin": "Jitsi Meet.exe",
     "shortcuts": [
         [
@@ -12,19 +21,6 @@
             "Jitsi Meet"
         ]
     ],
-    "architecture": {
-        "64bit": {
-            "installer": {
-                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
-            }
-        },
-        "32bit": {
-            "installer": {
-                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
-            }
-        }
-    },
-    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall Jitsi Meet.exe\" -Recurse",
     "checkver": {
         "github": "https://github.com/jitsi/jitsi-meet-electron"
     },
@@ -32,7 +28,7 @@
         "url": "https://github.com/jitsi/jitsi-meet-electron/releases/download/v$version/jitsi-meet.exe#/dl.7z",
         "hash": {
             "url": "$baseurl/latest.yml",
-            "regex": "sha512: $base64"
+            "regex": "sha512:\\s+$base64"
         }
     }
 }
