@@ -15,10 +15,15 @@
     },
     "extract_dir": "XnViewMP",
     "pre_install": [
-        "if (!(Test-Path \"$env:APPDATA\\XnViewMP\\xnview.ini\")) {",
-        "    New-Item \"$env:APPDATA\\XnViewMP\\xnview.ini\" -Force | Out-Null",
+        "if (Test-Path \"$persist_dir\\xnview.ini\") {",
+        "    Copy-Item \"$persist_dir\\xnview.ini\" \"$dir\"",
+        "} else {",
+        "    New-Item \"$dir\\xnview.ini\" | Out-Null",
         "}"
     ],
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\xnview.ini\" \"$persist_dir\" -Force"
+    },
     "bin": "xnviewmp.exe",
     "shortcuts": [
         [
