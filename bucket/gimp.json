@@ -3,8 +3,12 @@
     "description": "GNU Image Manipulation Program",
     "homepage": "https://www.gimp.org",
     "license": "GPL-3.0-only",
-    "url": "https://download.gimp.org/mirror/pub/gimp/v2.10/windows/gimp-2.10.28-setup.exe",
-    "hash": "2c2e081ce541682be1abdd8bc6df13768ad9482d68000b4a7a60c764d6cec74e",
+    "architecture": {
+        "64bit": {
+            "url": "https://download.gimp.org/mirror/pub/gimp/v2.10/windows/gimp-2.10.28-setup.exe",
+            "hash": "2c2e081ce541682be1abdd8bc6df13768ad9482d68000b4a7a60c764d6cec74e"
+        }
+    },
     "innosetup": true,
     "installer": {
         "script": [
@@ -65,16 +69,15 @@
     ],
     "checkver": {
         "url": "https://www.gimp.org/downloads/",
-        "regex": "gimp-(?<version>[\\d.]+)-setup(?<build>-\\d)?\\.exe",
-        "replace": "${version}${build}"
+        "regex": "gimp-(?<major>\\d+).(?<minor>\\d+).(?<patch>\\d+)-setup(?<build>-\\d)?\\.exe",
+        "replace": "${major}.${minor}.${patch}${build}"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.gimp.org/mirror/pub/gimp/v2.10/windows/gimp-$version-setup$build.exe",
+                "url": "https://download.gimp.org/mirror/pub/gimp/v$matchMajor.$matchMinor/windows/gimp-$matchMajor.$matchMinor.$matchPatch-setup$matchBuild.exe",
                 "hash": {
-                    "url": "https://www.gimp.org/downloads/",
-                    "xpath": "//h3[text()='Hash Sum']/following-sibling::p/kbd/text()"
+                    "url": "$baseurl/SHA256SUMS"
                 }
             }
         }
