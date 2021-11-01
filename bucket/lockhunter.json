@@ -3,8 +3,17 @@
     "description": "Delete files blocked by something you do not know.",
     "homepage": "https://lockhunter.com/index.htm",
     "license": "Unknown",
-    "url": "https://lockhunter.com/assets/exe/lockhuntersetup_3-4-3.exe",
-    "hash": "2c0d52dca3e5ce9cfc8062cb72c7235e3c6ff650242fcb7d46a892d602dd3dd1",
+    "depends": "sudo",
+    "url": [
+        "https://lockhunter.com/assets/exe/lockhuntersetup_3-4-3.exe",
+        "https://raw.githubusercontent.com/phanirithvij2000/Extras/lockhunter-shellex/scripts/lockhunter/install-context.reg",
+        "https://raw.githubusercontent.com/phanirithvij2000/Extras/lockhunter-shellex/scripts/lockhunter/uninstall-context.reg"
+    ],
+    "hash": [
+        "2c0d52dca3e5ce9cfc8062cb72c7235e3c6ff650242fcb7d46a892d602dd3dd1",
+        "049a1207f1ca58c93e3880363a7ed9320c0ee68303a659fb3a4ed9299bd7737d",
+        "38443a27b65dda6554a8470261064bc312b202ed81c356ef363b10b089aa5790"
+    ],
     "innosetup": true,
     "architecture": {
         "64bit": {
@@ -14,7 +23,46 @@
             "pre_install": "Get-ChildItem \"$dir\" '*,2.*' | Rename-Item -Path { $_.Fullname } -NewName { $_.Basename.TrimEnd(',2') + $_.Extension }"
         }
     },
-    "post_install": "Remove-Item \"$dir\\*,*.*\"",
+    "post_install": [
+        "$lhshelldll = \"$dir\\LHShellExt32.dll\".Replace('\\', '\\\\')",
+        "if (Test-Path \"$dir\\install-context.reg\") {",
+        "   if ($architecture -eq '64bit') {",
+        "       $lhshelldll = \"$dir\\LHShellExt64.dll\".Replace('\\', '\\\\')",
+        "   }",
+        "   $content = Get-Content \"$dir\\install-context.reg\"",
+        "   $content = $content.Replace('$LHShellExtdll', $lhshelldll)",
+        "   if ($global) {",
+        "       $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "   }",
+        "   $content | Set-Content -Path \"$dir\\install-context.reg\"",
+        "}",
+        "if (Test-Path \"$dir\\uninstall-context.reg\") {",
+        "   $content = Get-Content \"$dir\\uninstall-context.reg\"",
+        "   if ($global) {",
+        "       $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "   }",
+        "   $content | Set-Content -Path \"$dir\\uninstall-context.reg\"",
+        "}",
+        "if ($global) {",
+        "   sudo \"$env:COMSPEC\" /c \"regsvr32 /s \"$lhshelldll\"",
+        "} else {",
+        "   regsvr32 /s \"$lhshelldll\"",
+        "}",
+        "Remove-Item \"$dir\\*,*.*\""
+    ],
+    "uninstaller": {
+        "script": [
+            "$lhshelldll = \"$dir\\LHShellExt32.dll\".Replace('\\', '\\\\')",
+            "if ($architecture -eq '64bit') {",
+            "   $lhshelldll = \"$dir\\LHShellExt64.dll\".Replace('\\', '\\\\')",
+            "}",
+            "if ($global) {",
+            "   sudo \"$env:COMSPEC\" /c \"regsvr32 /u /s \"$lhshelldll\"\"",
+            "} else {",
+            "   regsvr32 /u /s \"$lhshelldll\"",
+            "}"
+        ]
+    },
     "bin": "lockhunter.exe",
     "shortcuts": [
         [
