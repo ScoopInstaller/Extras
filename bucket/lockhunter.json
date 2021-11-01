@@ -2,18 +2,10 @@
     "version": "3.4.3",
     "description": "Delete files blocked by something you do not know.",
     "homepage": "https://lockhunter.com/index.htm",
-    "license": "Unknown",
+    "license": "Freeware",
     "depends": "sudo",
-    "url": [
-        "https://lockhunter.com/assets/exe/lockhuntersetup_3-4-3.exe",
-        "https://raw.githubusercontent.com/phanirithvij2000/Extras/lockhunter-shellex/scripts/lockhunter/install-context.reg",
-        "https://raw.githubusercontent.com/phanirithvij2000/Extras/lockhunter-shellex/scripts/lockhunter/uninstall-context.reg"
-    ],
-    "hash": [
-        "2c0d52dca3e5ce9cfc8062cb72c7235e3c6ff650242fcb7d46a892d602dd3dd1",
-        "049a1207f1ca58c93e3880363a7ed9320c0ee68303a659fb3a4ed9299bd7737d",
-        "38443a27b65dda6554a8470261064bc312b202ed81c356ef363b10b089aa5790"
-    ],
+    "url": "https://lockhunter.com/assets/exe/lockhuntersetup_3-4-3.exe",
+    "hash": "2c0d52dca3e5ce9cfc8062cb72c7235e3c6ff650242fcb7d46a892d602dd3dd1",
     "innosetup": true,
     "architecture": {
         "64bit": {
@@ -24,6 +16,16 @@
         }
     },
     "post_install": [
+        "Invoke-WebRequest https://raw.githubusercontent.com/phanirithvij2000/Extras/lockhunter-shellex/scripts/lockhunter/install-context.reg -OutFile \"$dir\\install-context.reg\"",
+        "if (!(Get-FileHash \"$dir\\install-context.reg\").Hash -eq \"049a1207f1ca58c93e3880363a7ed9320c0ee68303a659fb3a4ed9299bd7737d\") {",
+        "   Write-Host \"sha256 hash check failed\"",
+        "   Exit",
+        "}",
+        "Invoke-WebRequest https://raw.githubusercontent.com/phanirithvij2000/Extras/lockhunter-shellex/scripts/lockhunter/uninstall-context.reg -OutFile \"$dir\\uninstall-context.reg\"",
+        "if (!(Get-FileHash \"$dir\\uninstall-context.reg\").Hash -eq \"38443a27b65dda6554a8470261064bc312b202ed81c356ef363b10b089aa5790\") {",
+        "   Write-Host \"sha256 hash check failed\"",
+        "   Exit",
+        "}",
         "$lhshelldll = \"$dir\\LHShellExt32.dll\".Replace('\\', '\\\\')",
         "if (Test-Path \"$dir\\install-context.reg\") {",
         "   if ($architecture -eq '64bit') {",
