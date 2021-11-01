@@ -7,32 +7,34 @@
     "architecture": {
         "64bit": {
             "url": [
-                "https://github.com/stefankueng/grepWin/releases/download/2.0.8/grepWin-2.0.8-x64.msi",
+                "https://github.com/stefankueng/grepWin/releases/download/2.0.8/grepWin-x64-2.0.8_portable.zip",
                 "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/grepwin-install-context.reg",
                 "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/grepwin-uninstall-context.reg"
             ],
             "hash": [
-                "df3fddcb1182fab8af28094a1513b40418d8736165c981be716a4f337c492176",
+                "dc25398de9262dd0602a0cc08450e9255770441ac0faf5f9fff88a68401752ac",
                 "76f0765033f107a2ac8216903b95bd603e2b38caa65b81a7e1307302a17b91dc",
                 "b75f5e44cf46d806b4027a44cb7c99bf33e69fe1aa592ee32dcc162b0b8792f2"
-            ]
+            ],
+			"pre_install": "Rename-Item \"$dir\\grepWin-x64-${version}_portable.exe\" 'grepWin.exe'"
         },
         "32bit": {
             "url": [
-                "https://github.com/stefankueng/grepWin/releases/download/2.0.8/grepWin-2.0.8.msi",
+                "https://github.com/stefankueng/grepWin/releases/download/2.0.8/grepWin-2.0.8_portable.zip",
                 "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/grepwin-install-context.reg",
                 "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/grepwin-uninstall-context.reg"
             ],
             "hash": [
-                "476cec24fae48c15229c1ccd0760387734404ffad77470159b3fcad77409214e",
+                "c11d0353f323cb451bf4c2522b4c62edd1ddd216b26ab2b440cd9092669ac3c7",
                 "76f0765033f107a2ac8216903b95bd603e2b38caa65b81a7e1307302a17b91dc",
                 "b75f5e44cf46d806b4027a44cb7c99bf33e69fe1aa592ee32dcc162b0b8792f2"
-            ]
+            ],
+			"pre_install": "Rename-Item \"$dir\\grepWin-${version}_portable.exe\" 'grepWin.exe'"
         }
     },
     "installer": {
         "script": [
-            "$app_path = \"$dir\\PFiles\\grepWin\\grepWin.exe\".Replace('\\', '\\\\')",
+            "$app_path = \"$dir\\grepWin.exe\".Replace('\\', '\\\\')",
             "$reg_content = (Get-Content \"$dir\\grepwin-install-context.reg\")",
             "$reg_content = $reg_content.replace('$app_path', $app_path)",
             "Set-Content \"$dir\\grepwin-install-context.reg\" $reg_content -Encoding ASCII",
@@ -44,12 +46,13 @@
     "uninstaller": {
         "script": "reg import \"$dir\\grepwin-uninstall-context.reg\""
     },
-    "bin": "PFiles/grepWin/grepWin.exe",
+    "bin": "grepWin.exe",
     "persist": "grepwin.ini",
     "shortcuts": [
         [
-            "PFiles/grepWin/grepWin.exe",
-            "grepWin"
+            "grepWin.exe",
+            "grepWin",
+			"/portable"
         ]
     ],
     "checkver": {
@@ -58,10 +61,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/stefankueng/grepWin/releases/download/$version/grepWin-$version-x64.msi"
+                "url": "https://github.com/stefankueng/grepWin/releases/download/$version/grepWin-x64-$version_portable.zip"
             },
             "32bit": {
-                "url": "https://github.com/stefankueng/grepWin/releases/download/$version/grepWin-$version.msi"
+                "url": "https://github.com/stefankueng/grepWin/releases/download/$version/grepWin-$version_portable.zip"
             }
         }
     }
