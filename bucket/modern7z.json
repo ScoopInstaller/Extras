@@ -12,13 +12,19 @@
             "    New-Item \"$scoopdir\\persist\\7zip\\Codecs\" -ItemType Directory",
             "    New-Item \"$(appdir 7zip)\\current\\Codecs\" -Value \"$scoopdir\\persist\\7zip\\Codecs\" -ItemType Junction",
             "}",
-            "Copy-Item \"$dir\\$($architecture.Substring(0, 2))\\*\" \"$scoopdir\\persist\\7zip\\Codecs\" -Recurse"
+            "foreach ($path in (Get-ChildItem \"$dir\\$($architecture.Substring(0, 2))\")) {",
+            "    if (Test-Path $path -PathType Leaf) {",
+            "        New-Item \"$scoopdir\\persist\\7zip\\Codecs\\$($path.Name)\" -Value $path -ItemType HardLink > $null",
+            "    } elseif (Test-Path $path -PathType Container) {",
+            "        New-Item \"$scoopdir\\persist\\7zip\\Codecs\\$($path.Name)\" -Value $path -ItemType Junction > $null",
+            "    }",
+            "}"
         ]
     },
     "uninstaller": {
         "script": [
             "foreach ($path in (Get-ChildItem \"$dir\\$($architecture.Substring(0, 2))\")) {",
-            "    Remove-Item \"$scoopdir\\persist\\7zip\\Codecs\\$($path.Name)\" -Recurse",
+            "    Remove-Item \"$scoopdir\\persist\\7zip\\Codecs\\$($path.Name)\"",
             "}"
         ]
     },
