@@ -27,12 +27,15 @@
         "    warn 'from an elevated PowerShell. Restart your computer when prompted and reinstall ArchWSL.'",
         "    $installable = $false",
         "}",
+        "$installable = $installable -and !(Invoke-ExternalCommand \"$dir\\Manjaro.exe\" 'isregd')",
         "if ($installable) {",
+        "    warn 'DO NOT KILL THE PROCESS. Installation is still running!'",
         "    Copy-Item \"$dir\\Arch.exe\" \"$persist_dir\\data\\Arch.exe\"",
         "    $res = Invoke-ExternalCommand \"$persist_dir\\data\\Arch.exe\" 'install', \"$dir\\rootfs.tar.gz\"",
         "    Remove-Item \"$persist_dir\\data\\Arch.exe\" -Force",
         "    if(!$res) { error 'ArchWsl installation failed!'; return }",
-        "}"
+        "}",
+        "Remove-Item \"$dir\\rootfs.tar.gz\" -Force"
     ],
     "uninstaller": {
         "script": [
