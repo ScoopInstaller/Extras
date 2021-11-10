@@ -37,22 +37,24 @@
     ],
     "persist": "User Data",
     "checkver": {
-        "github": "https://github.com/macchrome/winchrome",
-        "regex": "v([\\d.]+)-r(?<build>\\d+)-Win64"
+        "github": "https://github.com/macchrome/winchrome/",
+        "regex": "/v(?<chromeVersion>[\\d.]+)-r(?<build>[\\d]+)-Win64/ungoogled-chromium-[\\d.]+(?<end>-\\d)_Win(32|64)\\.7z",
+        "replace": "${chromeVersion}-r${build}${end}",
+        "reverse": true
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/macchrome/winchrome/releases/download/v$version-r$matchBuild-Win64/ungoogled-chromium-$version-2_Win64.7z",
-                "extract_dir": "ungoogled-chromium-$version-2_Win64"
+                "url": "https://github.com/macchrome/winchrome/releases/download/v$matchChromeversion-r$matchBuild-Win64/ungoogled-chromium-$matchChromeversion$matchEnd_Win64.7z",
+                "extract_dir": "ungoogled-chromium-$matchChromeversion$matchEnd_Win64"
             },
             "32bit": {
-                "url": "https://github.com/macchrome/winchrome/releases/download/v$version-r$matchBuild-Win64/Ungoogled-Chromium-$version-2_Win32.7z",
-                "extract_dir": "Ungoogled-Chromium-$version-2_Win32"
+                "url": "https://github.com/macchrome/winchrome/releases/download/v$matchChromeversion-r$matchBuild-Win64/ungoogled-chromium-$matchChromeversion$matchEnd_Win32.7z",
+                "extract_dir": "ungoogled-chromium-$matchChromeversion$matchEnd_Win32"
             }
         },
         "hash": {
-            "url": "https://github.com/macchrome/winchrome/releases/v$version-r$matchBuild-Win64",
+            "url": "https://github.com/macchrome/winchrome/releases/tag/v$matchChromeversion-r$matchBuild-Win64",
             "regex": "(?s)$basename.*?$sha1"
         }
     }
