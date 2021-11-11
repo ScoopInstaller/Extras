@@ -29,7 +29,8 @@
             "$pyenv = Get-Content 'lib\\gimp\\2.0\\environ\\pygimp.env' -Raw",
             "$pyenv + '__COMPAT_LAYER=HIGHDPIAWARE' | Set-Content 'lib\\gimp\\2.0\\environ\\pygimp.env'",
             "$pyint = Get-Content 'lib\\gimp\\2.0\\interpreters\\pygimp.interp' -Raw",
-            "$pyint = ($pyint -Replace '/mingw32', \"$dir\\bin\") -Replace 'py::python2', 'py::python'",
+            "$pyint = $pyint -Replace '(python|python2)=(.*)', \"`$1=$dir\\bin\\pythonw.exe\"",
+            "$pyint = $pyint -Replace 'py::python2', 'py::python'",
             "$pyint | Set-Content 'lib\\gimp\\2.0\\interpreters\\pygimp.interp'",
             "Pop-Location"
         ]
