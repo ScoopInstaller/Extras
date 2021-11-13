@@ -10,30 +10,30 @@
         "Visual Studio Code now supports Portable Mode! Please move the following directories:",
         "From \"$env:USERPROFILE\\.vscode\\extensions\" to \"$env:USERPROFILE\\scoop\\persist\\vscode-portable\\data\\extensions\"",
         "From \"$env:APPDATA\\Code\" to \"$env:USERPROFILE\\scoop\\persist\\vscode-portable\\data\\user-data\"",
-        "Add Visual Studio Code as a context menu option by running: \"$dir\\vscode-install-context.reg\""
+        "Add Visual Studio Code as a context menu option by running: \"$dir\\install-context.reg\""
     ],
     "architecture": {
         "64bit": {
             "url": [
                 "https://update.code.visualstudio.com/1.62.2/win32-x64-archive/stable#/dl.7z",
-                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg",
-                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg"
+                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/vscode/install-context.reg",
+                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/vscode/uninstall-context.reg"
             ],
             "hash": [
                 "4c33fccd278adff1776209c7d08e7456eb3db34c5e72b2c95f30e176112c3ae1",
-                "b65d66860d9ccc18bfb05237b03e06db0d6c574be3d4b946c2a5e6865c08cb28",
+                "1aa372dac91b3ab8f3c794d4bb5afad1d8a3905fc745759cd567e6bc4dcd5798",
                 "df2a5162e72e2518e2b75b4337c8e7b46c136554872af90fa0de1cf6ebef376f"
             ]
         },
         "32bit": {
             "url": [
                 "https://update.code.visualstudio.com/1.62.2/win32-archive/stable#/dl.7z",
-                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg",
-                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg"
+                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/vscode-install-context.reg",
+                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/vscode-uninstall-context.reg"
             ],
             "hash": [
                 "13452721bbe2b0382fc81539215645f512e3278db9529fb33b2bd87f8a248c58",
-                "b65d66860d9ccc18bfb05237b03e06db0d6c574be3d4b946c2a5e6865c08cb28",
+                "1aa372dac91b3ab8f3c794d4bb5afad1d8a3905fc745759cd567e6bc4dcd5798",
                 "df2a5162e72e2518e2b75b4337c8e7b46c136554872af90fa0de1cf6ebef376f"
             ]
         }
@@ -51,21 +51,21 @@
         ]
     ],
     "post_install": [
-        "if (Test-Path \"$dir\\vscode-install-context.reg\") {",
+        "if (Test-Path \"$dir\\install-context.reg\") {",
         "  $codepath = \"$dir\\Code.exe\".Replace('\\', '\\\\')",
-        "  $content = Get-Content \"$dir\\vscode-install-context.reg\"",
+        "  $content = Get-Content \"$dir\\install-context.reg\"",
         "  $content = $content.Replace('$code', $codepath)",
         "  if ($global) {",
         "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
         "  }",
-        "  $content | Set-Content -Path \"$dir\\vscode-install-context.reg\"",
+        "  $content | Set-Content -Path \"$dir\\install-context.reg\"",
         "}",
-        "if (Test-Path \"$dir\\vscode-uninstall-context.reg\") {",
-        "  $content = Get-Content \"$dir\\vscode-uninstall-context.reg\"",
+        "if (Test-Path \"$dir\\uninstall-context.reg\") {",
+        "  $content = Get-Content \"$dir\\uninstall-context.reg\"",
         "  if ($global) {",
         "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
         "  }",
-        "  $content | Set-Content -Path \"$dir\\vscode-uninstall-context.reg\"",
+        "  $content | Set-Content -Path \"$dir\\uninstall-context.reg\"",
         "}"
     ],
     "persist": "data",
