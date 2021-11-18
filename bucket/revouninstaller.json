@@ -7,12 +7,14 @@
     "hash": "1637c4f962b33ffc509a367927342a7858ba8e09b8802e09fe589323e5dd0652",
     "extract_dir": "RevoUninstaller_Portable",
     "pre_install": [
-        "'ctrlbars.dat', 'un_report.dat', 'settings.ini', 'winapp_report.dat' | ForEach-Object {",
+        "'ctrlbars.dat', 'un_report.dat', 'winapp_report.dat' | ForEach-Object {",
         "    if (!(Test-Path \"$persist_dir\\$_\")) {",
-        "        Set-Content \"$dir\\$_\" $content -Encoding Ascii",
+        "        New-Item \"$dir\\$_\" | Out-Null",
         "    }",
         "}",
-        "(Get-Content \"$dir\\settings.ini\") -replace 'AU on startup=1','AU on startup=0' | Set-Content \"$dir\\settings.ini\""
+        "if (!(Test-Path \"$persist_dir\\settings.ini\")) {",
+        "    Set-Content \"$dir\\settings.ini\" \"`r`n[General\\]`r`nAU on startup=0\" -Encoding ascii -NoNewline | Out-Null",
+        "}"
     ],
     "shortcuts": [
         [
