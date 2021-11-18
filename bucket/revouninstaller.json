@@ -8,26 +8,30 @@
     "extract_dir": "RevoUninstaller_Portable",
     "pre_install": [
         "'ctrlbars.dat', 'un_report.dat', 'winapp_report.dat' | ForEach-Object {",
-        "    if (!(Test-Path \"$persist_dir\\$_\")) {",
-        "        New-Item \"$dir\\$_\" | Out-Null",
+        "    if (Test-Path \"$persist_dir\\$_\") {",
+        "        Copy-Item \"$persist_dir\\$_\" \"$dir\" -Force | Out-Null",
         "    }",
         "}",
         "if (!(Test-Path \"$persist_dir\\settings.ini\")) {",
         "    Set-Content \"$dir\\settings.ini\" \"`r`n[General\\]`r`nAU on startup=0\" -Encoding ascii -NoNewline | Out-Null",
         "}"
     ],
+    "uninstaller": {
+        "script": [
+            "'ctrlbars.dat', 'un_report.dat', 'winapp_report.dat' | ForEach-Object {",
+            "    if (Test-Path \"$dir\\$_\") {",
+            "        Copy-Item \"$dir\\$_\" \"$persist_dir\" -Force | Out-Null",
+            "    }",
+            "}"
+        ]
+    },
     "shortcuts": [
         [
             "RevoUPort.exe",
             "Revo Uninstaller"
         ]
     ],
-    "persist": [
-        "ctrlbars.dat",
-        "un_report.dat",
-        "settings.ini",
-        "winapp_report.dat"
-    ],
+    "persist": "settings.ini",
     "checkver": "Version: ([\\d.]+)",
     "autoupdate": {
         "url": "https://www.revouninstaller.com/download-free-portable.php#/dl.zip"
