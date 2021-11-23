@@ -6,11 +6,15 @@
         "identifier": "Freeware",
         "url": "https://scratch.mit.edu/info/faq"
     },
-    "url": "https://downloads.scratch.mit.edu/desktop/Scratch%203.27.0%20Setup.exe#/dl.7z",
+    "depends": "extras/winrar-helper",
+    "url": "https://downloads.scratch.mit.edu/desktop/Scratch%203.27.0%20Setup.exe#/setup.exe",
     "hash": "343135e697db089a7ce6e8736950c4693b418d7cbc41151e33a45cac4ecc89db",
     "pre_install": [
-        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\"",
-        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Recurse"
+        "$Args = @\"",
+        "x -IBCK \"$dir\\setup.exe\" \"$dir\"",
+        "\"@",
+        "Start-Process -Wait \"$(appdir winrar-helper $global)\\current\\winrar.exe\" -NoNewWindow -ArgumentList $Args",
+        "Remove-Item \"$dir\\setup.exe\""
     ],
     "shortcuts": [
         [
@@ -23,6 +27,6 @@
         "regex": "refs/tags/v([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://downloads.scratch.mit.edu/desktop/Scratch%20$version%20Setup.exe#/dl.7z"
+        "url": "https://downloads.scratch.mit.edu/desktop/Scratch%20$version%20Setup.exe#/setup.exe"
     }
 }
