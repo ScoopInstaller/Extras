@@ -1,12 +1,18 @@
 {
-    "homepage": "https://github.com/ipfs-shipyard/ipfs-desktop",
-    "version": "0.10.4",
+    "version": "0.17.0",
     "description": "A desktop client for IPFS.",
+    "homepage": "https://github.com/ipfs-shipyard/ipfs-desktop",
     "license": "MIT",
-    "url": "https://github.com/ipfs-shipyard/ipfs-desktop/releases/download/v0.10.4/ipfs-desktop-setup-0.10.4.exe#/dl.7z",
-    "hash": "sha512:0ffa0651c91a89d8fbf2962abae69e7051d0f83ca1b448117749c37bfe58c8c24c1a1235bab9053a4dc079b732badf6e8de42ae19d9f5b68d2822ff16b62c16e",
-    "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/ipfs-shipyard/ipfs-desktop/releases/download/v0.17.0/ipfs-desktop-setup-0.17.0.exe#/dl.7z",
+            "hash": "sha512:2bf639e57e26b489cf47ee4b2ccf61e05c911993e7de4144269ee4c760ef4b8f84b94d6bd549040b1fe8e0ee89656b7917ffff6526b7ad7665fa70d2f3d61532",
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse"
+            ]
+        }
+    },
     "shortcuts": [
         [
             "IPFS Desktop.exe",
@@ -15,10 +21,14 @@
     ],
     "checkver": "github",
     "autoupdate": {
-        "url": "https://github.com/ipfs-shipyard/ipfs-desktop/releases/download/v$version/ipfs-desktop-setup-$version.exe#/dl.7z",
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/ipfs-shipyard/ipfs-desktop/releases/download/v$version/ipfs-desktop-setup-$version.exe#/dl.7z"
+            }
+        },
         "hash": {
             "url": "$baseurl/latest.yml",
-            "find": "sha512:\\s+(.*)"
+            "regex": "sha512:\\s+$base64"
         }
     }
 }

@@ -1,0 +1,44 @@
+{
+    "version": "3.9.0.0",
+    "description": "Open with++ context menu shell extension",
+    "homepage": "https://github.com/stax76/OpenWithPlusPlus",
+    "license": "MIT",
+    "notes": ".Net framework 4.8 is required",
+    "suggest": {
+        "vcredist": "vcredist2019"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/stax76/OpenWithPlusPlus/releases/download/v3.9/OpenWithPP-3.9.0.0.7z",
+            "hash": "ae83e25fa88671d4762381d0095ea97d161edd1d47fd0dfe5b472a1d6c50c02e"
+        }
+    },
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\settings\")) {",
+        "    $p = \"$persist_dir\\settings\"",
+        "    ensure \"HKCU:\\SOFTWARE\\OpenWithPP\" | Out-Null",
+        "    New-ItemProperty -Path \"HKCU:\\SOFTWARE\\OpenWithPP\" -Name 'SettingsDir' -Value $p -Type 'String' -Force | Out-Null",
+        "}"
+    ],
+    "uninstaller": {
+        "script": "if ($purge) { Remove-Item \"HKCU:\\SOFTWARE\\OpenWithPP\" -ErrorAction 'SilentlyContinue' -Force -Recurse }"
+    },
+    "shortcuts": [
+        [
+            "OpenWithPPGUI.exe",
+            "OpenWith++"
+        ]
+    ],
+    "persist": "settings",
+    "checkver": {
+        "github": "https://github.com/stax76/OpenWithPlusPlus",
+        "regex": "OpenWithPP-([\\d.]+)\\.7z"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/stax76/OpenWithPlusPlus/releases/download/v$majorVersion.$minorVersion/OpenWithPP-$version.7z"
+            }
+        }
+    }
+}

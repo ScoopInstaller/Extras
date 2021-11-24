@@ -1,11 +1,24 @@
 {
+    "version": "1.6.2.2",
     "description": "Real-time 3D visualization of space",
     "homepage": "https://celestia.space",
-    "version": "1.6.1",
     "license": "GPL-2.0-or-later",
-    "url": "https://celestia.space/cc/celestia-win-161#celestia-161.exe",
-    "hash": "e7b9945e6aca5f5696d3c3be030963faef4c4991cd184222c7a4afbd72b5fd26",
+    "url": "https://github.com/CelestiaProject/Celestia/releases/download/1.6.2.2/celestia-1.6.2.2-win.exe",
+    "hash": "e4773efa942a145300a26dce2f7d66ad9e2f2785d55a3bef2ffd6060d2573564",
     "innosetup": true,
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": "Get-ChildItem \"$dir\" '*,1.*' -Recurse | Rename-Item -NewName { $_.FullName -replace ',1\\.', '.' }"
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": "Get-ChildItem \"$dir\" '*,2.*' -Recurse | Rename-Item -NewName { $_.FullName -replace ',2\\.', '.' }"
+            }
+        }
+    },
+    "post_install": "Get-ChildItem \"$dir\\*,[12].*\" -Recurse | Remove-Item -Force -Recurse",
     "bin": "celestia.exe",
     "shortcuts": [
         [
@@ -14,10 +27,9 @@
         ]
     ],
     "checkver": {
-        "url": "https://raw.githubusercontent.com/CelestiaProject/Celestia/master/README.md",
-        "regex": "Release-v([\\d.]+)-"
+        "github": "https://github.com/CelestiaProject/Celestia"
     },
     "autoupdate": {
-        "url": "https://celestia.space/cc/celestia-win-$cleanVersion#celestia-$cleanVersion.exe"
+        "url": "https://github.com/CelestiaProject/Celestia/releases/download/$version/celestia-$version-win.exe"
     }
 }

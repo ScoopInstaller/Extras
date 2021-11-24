@@ -1,35 +1,35 @@
 {
-    "homepage": "https://github.com/VSCodium/vscodium",
-    "version": "1.43.2",
-    "license": "MIT",
+    "version": "1.62.3",
     "description": "Binary releases of VS Code without MS branding/telemetry/licensing.",
+    "homepage": "https://github.com/VSCodium/vscodium",
+    "license": "MIT",
+    "notes": "Add VSCodium as a context menu option by running: \"$dir\\install-context.reg\"",
     "architecture": {
         "64bit": {
             "url": [
-                "https://github.com/VSCodium/vscodium/releases/download/1.43.2/VSCodium-win32-x64-1.43.2.zip",
-                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg#/vscodium-install-context.reg",
-                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg#/vscodium-uninstall-context.reg"
+                "https://github.com/VSCodium/vscodium/releases/download/1.62.3/VSCodium-win32-x64-1.62.3.zip",
+                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/vscode/install-context.reg",
+                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/vscode/uninstall-context.reg"
             ],
             "hash": [
-                "9963612d81025fda616d7b5cfc6477de660cad525a646213684275b66e653dce",
-                "b65d66860d9ccc18bfb05237b03e06db0d6c574be3d4b946c2a5e6865c08cb28",
+                "6cc6cf92b3c2afe5157a35f22535a724717caee6bc38c49e2a4cf5de924dc419",
+                "8ef94c82319b69754bdae0099af266d184d179a37af8b8beb11334c6ab639752",
                 "df2a5162e72e2518e2b75b4337c8e7b46c136554872af90fa0de1cf6ebef376f"
             ]
         },
         "32bit": {
             "url": [
-                "https://github.com/VSCodium/vscodium/releases/download/1.43.2/VSCodium-win32-ia32-1.43.2.zip",
-                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg#/vscodium-install-context.reg",
-                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg#/vscodium-uninstall-context.reg"
+                "https://github.com/VSCodium/vscodium/releases/download/1.62.3/VSCodium-win32-ia32-1.62.3.zip",
+                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/vscode/install-context.reg",
+                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/vscode/uninstall-context.reg"
             ],
             "hash": [
-                "795354c17b08f058568734eff7f82f86b2d15e639eed37b81ad9651a9baf881e",
-                "b65d66860d9ccc18bfb05237b03e06db0d6c574be3d4b946c2a5e6865c08cb28",
+                "0ee47b077f63231c025045e4af1178236eda6655cfac74049bac33bcfa972975",
+                "8ef94c82319b69754bdae0099af266d184d179a37af8b8beb11334c6ab639752",
                 "df2a5162e72e2518e2b75b4337c8e7b46c136554872af90fa0de1cf6ebef376f"
             ]
         }
     },
-    "notes": "Add VSCodium as a context menu option by running: \"$dir\\vscodium-install-context.reg\"",
     "bin": "bin\\codium.cmd",
     "shortcuts": [
         [
@@ -38,9 +38,9 @@
         ]
     ],
     "post_install": [
-        "if (Test-Path \"$dir\\vscodium-install-context.reg\") {",
+        "if (Test-Path \"$dir\\install-context.reg\") {",
         "  $codepath = \"$dir\\VSCodium.exe\".Replace('\\', '\\\\')",
-        "  $content = Get-Content \"$dir\\vscodium-install-context.reg\"",
+        "  $content = Get-Content \"$dir\\install-context.reg\"",
         "  $content = $content.Replace('$code', $codepath)",
         "  $content = $content.Replace('Code', 'VSCodium')",
         "  if ($global) {",
@@ -48,13 +48,13 @@
         "  }",
         "  $content | Set-Content -Path \"$dir\\vscodium-install-context.reg\"",
         "}",
-        "if (Test-Path \"$dir\\vscodium-uninstall-context.reg\") {",
-        "  $content = Get-Content \"$dir\\vscodium-uninstall-context.reg\"",
+        "if (Test-Path \"$dir\\uninstall-context.reg\") {",
+        "  $content = Get-Content \"$dir\\uninstall-context.reg\"",
         "  $content = $content.Replace('Code', 'VSCodium')",
         "  if ($global) {",
         "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
         "  }",
-        "  $content | Set-Content -Path \"$dir\\vscodium-uninstall-context.reg\"",
+        "  $content | Set-Content -Path \"$dir\\uninstall-context.reg\"",
         "}"
     ],
     "checkver": "github",

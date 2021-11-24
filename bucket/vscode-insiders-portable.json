@@ -1,30 +1,33 @@
 {
-    "homepage": "https://code.visualstudio.com/",
-    "description": "Visual Studio Code is a lightweight but powerful source code editor (Insiders, Portable Edition).",
     "version": "nightly",
+    "description": "Visual Studio Code is a lightweight but powerful source code editor (Insiders, Portable Edition).",
+    "homepage": "https://code.visualstudio.com/",
     "license": {
         "identifier": "Freeware",
         "url": "https://code.visualstudio.com/License/"
     },
     "notes": [
         "Visual Studio Code now supports Portable Mode! Please move the following directories:",
-        "From \"$env:USERPROFILE\\.vscode-insiders\\extensions\" to \"$env:USERPROFILE\\scoop\\persist\\vscode-insiders\\data\\extensions\"",
-        "From \"$env:APPDATA\\Code - Insiders\" to \"$env:USERPROFILE\\scoop\\persist\\vscode-insiders\\data\\user-data\"",
+        "From \"$env:USERPROFILE\\.vscode-insiders\\extensions\" to \"$env:SCOOP\\persist\\vscode-insiders-portable\\data\\extensions\"",
+        "From \"$env:APPDATA\\Code - Insiders\" to \"$env:SCOOP\\persist\\vscode-insiders-portable\\data\\user-data\"",
         "Add Visual Studio Code as a context menu option by running: \"$dir\\vscode-install-context.reg\""
     ],
-    "bin": [
-        [
-            "bin\\code-insiders.cmd",
-            "code-insiders"
-        ]
-    ],
-    "shortcuts": [
-        [
-            "Code - Insiders.exe",
-            "Visual Studio Code - Insiders"
-        ]
-    ],
-    "persist": "data",
+    "architecture": {
+        "64bit": {
+            "url": [
+                "https://update.code.visualstudio.com/latest/win32-x64-archive/insider#/dl.7z",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg"
+            ]
+        },
+        "32bit": {
+            "url": [
+                "https://update.code.visualstudio.com/latest/win32-archive/insider#/dl.7z",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg"
+            ]
+        }
+    },
     "post_install": [
         "if (Test-Path \"$dir\\vscode-install-context.reg\") {",
         "  $codepath = \"$dir\\Code - Insiders.exe\".Replace('\\', '\\\\')",
@@ -45,20 +48,12 @@
         "  $content | Set-Content -Path \"$dir\\vscode-uninstall-context.reg\"",
         "}"
     ],
-    "architecture": {
-        "64bit": {
-            "url": [
-                "https://vscode-update.azurewebsites.net/latest/win32-x64-archive/insider#/dl.7z",
-                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg",
-                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg"
-            ]
-        },
-        "32bit": {
-            "url": [
-                "https://vscode-update.azurewebsites.net/latest/win32-archive/insider#/dl.7z",
-                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg",
-                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg"
-            ]
-        }
-    }
+    "bin": "bin\\code-insiders.cmd",
+    "shortcuts": [
+        [
+            "Code - Insiders.exe",
+            "Visual Studio Code - Insiders"
+        ]
+    ],
+    "persist": "data"
 }
