@@ -10,6 +10,11 @@
             "pre_install": [
                 "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
                 "Remove-Item \"$dir\\`$*\", \"$dir\\Unins*\" -Force -Recurse"
+            ],
+            "post_install": [
+                "if (Test-Path $env:APPDATA\\Tabby) {",
+                "    Copy-Item -Path $env:APPDATA\\Tabby\\* -Destination \"$persist_dir\\data\" -PassThru",
+                "}"
             ]
         }
     },
@@ -20,6 +25,7 @@
             "Tabby"
         ]
     ],
+    "persist": "data",
     "checkver": {
         "github": "https://github.com/Eugeny/tabby"
     },
