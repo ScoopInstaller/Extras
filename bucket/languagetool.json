@@ -1,36 +1,47 @@
 {
-    "version": "5.5",
-    "description": "Grammar, Style and Spell Checker for +25 languages",
-    "homepage": "https://languagetool.org/",
-    "license": "LGPL-2.1-or-later",
-    "suggest": {
-        "Java": [
-            "oraclejdk",
-            "adopt8-hotspot-jre"
-        ]
+    "version": "1.0.4",
+    "description": "Grammar, style and spell checker for +25 languages.",
+    "homepage": "https://languagetool.org/windows",
+    "license": {
+        "identifier": "LGPL-2.1-or-later",
+        "url": "https://github.com/languagetool-org/languagetool/blob/master/COPYING.txt"
     },
-    "url": "https://languagetool.org/download/LanguageTool-5.5.zip",
-    "hash": "18d16d103f1e59b125a1f48ff9d3c23051f21a80b2ca64a1da305d576245f90d",
-    "extract_dir": "LanguageTool-5.5",
-    "pre_install": "Set-Content \"$dir\\languagetool.bat\" '@start javaw.exe -jar \"%~dp0\\languagetool.jar\" %*' -Encoding Ascii",
-    "bin": [
-        "languagetool.bat",
-        "languagetool-commandline.jar",
-        "languagetool-server.jar"
-    ],
+    "url": "https://languagetool.org/download/windows-app/LanguageTool-1.0.4.exe#/dl.7z",
+    "hash": "sha512:0e963003f89f0f76f2dd2641b206459c0a95ff943cb4f4271ecca43dbeecbe7523903044840bf16771473f59064444a36bc7ce1cce86b1765b8f2d742c0791be",
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": [
+                    "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse"
+                ]
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": [
+                    "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\"",
+                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse"
+                ]
+            }
+        }
+    },
     "shortcuts": [
         [
-            "languagetool.bat",
+            "LanguageTool.exe",
             "LanguageTool"
         ]
     ],
     "checkver": {
-        "url": "https://languagetool.org/download/",
-        "regex": "LanguageTool-([\\d.]+)\\.zip",
-        "reverse": true
+        "url": "https://languagetool.org/download/windows-app/latest.yml",
+        "regex": "version: ([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://languagetool.org/download/LanguageTool-$version.zip",
-        "extract_dir": "LanguageTool-$version"
-    }
+        "url": "https://languagetool.org/download/windows-app/LanguageTool-$version.exe#/dl.7z",
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512:\\s+$base64"
+        }
+    },
+	"notes": "LanguageTool is a standalone electron app now. If you want to keep using the java version install 'extras/languagetool-java' instead."
 }
