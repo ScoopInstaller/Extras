@@ -6,41 +6,41 @@
         "identifier": "Freeware",
         "url": "https://code.visualstudio.com/License/"
     },
-    "notes": "Add Visual Studio Code as a context menu option by running: \"$dir\\vscode-install-context.reg\"",
+    "notes": "Add Visual Studio Code as a context menu option by running: \"$dir\\install-context.reg\"",
     "architecture": {
         "64bit": {
             "url": [
                 "https://update.code.visualstudio.com/latest/win32-x64-archive/insider#/dl.7z",
-                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg",
-                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg"
+                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/vscode/install-context.reg",
+                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/vscode/uninstall-context.reg"
             ]
         },
         "32bit": {
             "url": [
                 "https://update.code.visualstudio.com/latest/win32-archive/insider#/dl.7z",
-                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg",
-                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg"
+                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/vscode/install-context.reg",
+                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/vscode/uninstall-context.reg"
             ]
         }
     },
     "post_install": [
-        "if (Test-Path \"$dir\\vscode-install-context.reg\") {",
+        "if (Test-Path \"$dir\\install-context.reg\") {",
         "  $codepath = \"$dir\\Code - Insiders.exe\".Replace('\\', '\\\\')",
-        "  $content = Get-Content \"$dir\\vscode-install-context.reg\"",
+        "  $content = Get-Content \"$dir\\install-context.reg\"",
         "  $content = $content.Replace('$code', $codepath)",
         "  $content = $content.Replace('&Code', 'Code &Insiders')",
         "  if ($global) {",
         "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
         "  }",
-        "  $content | Set-Content -Path \"$dir\\vscode-install-context.reg\"",
+        "  $content | Set-Content -Path \"$dir\\install-context.reg\"",
         "}",
-        "if (Test-Path \"$dir\\vscode-uninstall-context.reg\") {",
-        "  $content = Get-Content \"$dir\\vscode-uninstall-context.reg\"",
+        "if (Test-Path \"$dir\\uninstall-context.reg\") {",
+        "  $content = Get-Content \"$dir\\uninstall-context.reg\"",
         "  $content = $content.Replace('&Code', 'Code &Insiders')",
         "  if ($global) {",
         "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
         "  }",
-        "  $content | Set-Content -Path \"$dir\\vscode-uninstall-context.reg\"",
+        "  $content | Set-Content -Path \"$dir\\uninstall-context.reg\"",
         "}"
     ],
     "bin": "bin\\code-insiders.cmd",
