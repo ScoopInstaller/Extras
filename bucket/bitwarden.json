@@ -1,35 +1,44 @@
 {
-    "homepage": "https://bitwarden.com/",
-    "description": "Open source password management solutions for individuals, teams, and business organizations.",
+    "version": "1.29.1",
+    "description": "Password management solutions for individuals, teams, and business organizations",
+    "homepage": "https://bitwarden.com",
     "license": "GPL-3.0-or-later",
-    "version": "1.14.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/bitwarden/desktop/releases/download/v1.29.1/bitwarden-1.29.1-x64.nsis.7z",
+            "hash": "sha512:56606960c95572b607ab4d21a5b7f09fa9ea7cea830cd0e77fbb662fa32508d836094ee61c592a8fbd4e295291948a59af9f44f041b5e97b49829ea704dace38"
+        },
+        "32bit": {
+            "url": "https://github.com/bitwarden/desktop/releases/download/v1.29.1/bitwarden-1.29.1-ia32.nsis.7z",
+            "hash": "sha512:8eb42a71ac02515b6fb812a47e1465aecc9d856f5ee40a541817fb2bf9335f3e52b08074cd18f29f8114677a9d46b8120e064631ef5005b6a266a3f52df30d28"
+        }
+    },
     "bin": "Bitwarden.exe",
+    "post_install": "Remove-Item \"$dir\\resources\\app-update.yml\"",
     "shortcuts": [
         [
             "Bitwarden.exe",
             "Bitwarden"
         ]
     ],
-    "architecture": {
-        "64bit": {
-            "url": "https://github.com/bitwarden/desktop/releases/download/v1.14.0/bitwarden-1.14.0-x64.nsis.7z",
-            "hash": "f53b9cf0ac7aab74c5283d184024d1a89645ffa920906cfe0e1df6894f10493b"
-        },
-        "32bit": {
-            "url": "https://github.com/bitwarden/desktop/releases/download/v1.14.0/bitwarden-1.14.0-ia32.nsis.7z",
-            "hash": "d79f0d8b35c9a05074b385a3ac224d8399f36cc993ae8045cc0ac7faef8c0345"
-        }
-    },
     "checkver": {
         "github": "https://github.com/bitwarden/desktop"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/bitwarden/desktop/releases/download/v$version/bitwarden-$version-x64.nsis.7z"
+                "url": "https://github.com/bitwarden/desktop/releases/download/v$version/bitwarden-$version-x64.nsis.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "(?sm)x64.*?$base64"
+                }
             },
             "32bit": {
-                "url": "https://github.com/bitwarden/desktop/releases/download/v$version/bitwarden-$version-ia32.nsis.7z"
+                "url": "https://github.com/bitwarden/desktop/releases/download/v$version/bitwarden-$version-ia32.nsis.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "(?sm)ia32.*?$base64"
+                }
             }
         }
     }

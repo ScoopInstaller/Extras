@@ -1,25 +1,26 @@
 {
-    "homepage": "https://www.lazarus-ide.org",
-    "version": "2.0.2",
+    "version": "2.0.12",
     "description": "A Delphi compatible cross-platform IDE for Rapid Application Development.",
+    "homepage": "https://www.lazarus-ide.org",
     "license": {
         "identifier": "GPL-2.0-or-later | FPC-modified-LGPL-2.0-or-later",
         "url": "http://wiki.lazarus.freepascal.org/licensing"
     },
     "architecture": {
         "64bit": {
-            "url": "https://downloads.sourceforge.net/project/lazarus/Lazarus%20Windows%2064%20bits/Lazarus%202.0.2/lazarus-2.0.2-fpc-3.0.4-win64.exe",
-            "hash": "815300cb216cb6714eccb820a652aab63d9b21f120d5ed7b2dcfd1a3f547c02b"
+            "url": "https://downloads.sourceforge.net/project/lazarus/Lazarus%20Windows%2064%20bits/Lazarus%202.0.12/lazarus-2.0.12-fpc-3.2.0-win64.exe",
+            "hash": "303971550ae5370bdad4e5dac673ef3c8f9b438f3b7010d255b9772f89629314"
         },
         "32bit": {
-            "url": "https://downloads.sourceforge.net/project/lazarus/Lazarus%20Windows%2032%20bits/Lazarus%202.0.2/lazarus-2.0.2-fpc-3.0.4-win32.exe",
-            "hash": "db3c8f93b18914774af5d9815f84cc44011c12fa07597399abf5e7d9edd5501e"
+            "url": "https://downloads.sourceforge.net/project/lazarus/Lazarus%20Windows%2032%20bits/Lazarus%202.0.12/lazarus-2.0.12-fpc-3.2.0-win32.exe",
+            "hash": "f2fdaa7d412625aff08b38d7f4073ccbf8724db6c4e5678181cfdf92de697f8b"
         }
     },
     "innosetup": true,
     "post_install": [
-        "$fpcdir = \"$dir\\fpc\\\" + ($fname -replace '.*fpc-([\\d.]+)-.*', '$1')",
-        "& \"$fpcdir\\bin\\x86_64-win64\\fpcmkcfg.exe\" -d \"basepath=$fpcdir\" -o \"$fpcdir\\bin\\x86_64-win64\\fpc.cfg\""
+        "$fpcdir = \"$dir\\fpc\\\" + ($fname -replace '.*fpc-([\\d.]+)-.*', '$1');",
+        "$fpcarch=$(if ($fname -match '.*fpc-([\\d.]+)-win64') {'x86_64-win64'} else {'i386-win32'});",
+        "& \"$fpcdir\\bin\\$fpcarch\\fpcmkcfg.exe\" -d \"basepath=$fpcdir\" -o \"$fpcdir\\bin\\$fpcarch\\fpc.cfg\""
     ],
     "shortcuts": [
         [
@@ -32,7 +33,7 @@
             "--debug"
         ]
     ],
-    "checkver": "lazarus-([\\d.]+)-fpc-(?<fpc>[\\d.]+)-win64.exe",
+    "checkver": "lazarus-([\\d.]+)-fpc-(?<fpc>[\\d.]+)-win(64|32)\\.exe",
     "autoupdate": {
         "architecture": {
             "64bit": {

@@ -1,0 +1,41 @@
+{
+    "version": "3.1.16",
+    "description": "GNU Privacy Guard for Windows is encryption software for files and emails.",
+    "homepage": "https://www.gpg4win.org",
+    "license": "GPL-2.0-or-later",
+    "depends": "gpg",
+    "url": "https://files.gpg4win.org/gpg4win-3.1.16.exe#/dl.7z",
+    "hash": "c499213ff3e14e93c3b245546994cc0e654ec267b40a188788665ae8f4e9f5ad",
+    "post_install": [
+        "Remove-Item \"$dir\\`$*\", \"$dir\\gpg4win-uninstall.exe.nsis\" -Force -Recurse",
+        "@(",
+        "    '[KDE]'",
+        "    'KDEHOME=home/kleopatra'",
+        "    '[XDG]'",
+        "    'XDG_DATA_HOME=home/kleopatra'",
+        "    'XDG_CONFIG_HOME=home/kleopatra'",
+        ") | Set-Content \"$dir\\bin\\kde.conf\" -Encoding ASCII"
+    ],
+    "shortcuts": [
+        [
+            "bin\\gpa.exe",
+            "GPA"
+        ],
+        [
+            "bin\\Kleopatra.exe",
+            "Kleopatra"
+        ]
+    ],
+    "env_add_path": "bin",
+    "persist": "home",
+    "checkver": {
+        "url": "https://www.gpg4win.org/get-gpg4win.html",
+        "regex": "Download Gpg4win ([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://files.gpg4win.org/gpg4win-$version.exe#/dl.7z",
+        "hash": {
+            "url": "$url.sha256"
+        }
+    }
+}

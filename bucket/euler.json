@@ -1,21 +1,19 @@
 {
-    "homepage": "http://euler-math-toolbox.de",
-    "version": "2019-06-27",
-    "license": "GPL-3.0-or-later",
+    "version": "2021-04-30",
     "description": "A powerful math program combining numerical and symbolic tools (using the computer algebra system Maxima).",
+    "homepage": "http://euler-math-toolbox.de",
+    "license": "GPL-3.0-or-later",
+    "suggest": {
+        "JDK": [
+            "java/oraclejdk",
+            "java/openjdk"
+        ],
+        "POV-Ray": "extras/pov-ray"
+    },
     "architecture": {
         "64bit": {
-            "url": "https://downloads.sourceforge.net/project/eumat/Installer/EulerSetup-64_2019-06-27.exe",
-            "hash": "sha1:dd83403978788848c9178b309d3c4d85bb56ad7d",
-            "installer": {
-                "script": [
-                    "Expand-InnoArchive -Path \"$dir\\$fname\"",
-                    "Expand-InnoArchive -Path \"$dir\\$fname\" -ExtractDir '{sys}' -Removal",
-                    "if (!(Test-Path \"$persist_dir\\.euler.profile\")) {",
-                    "   New-Item -Path \"$dir\\.euler.profile\" -ItemType 'File' | Out-Null",
-                    "}"
-                ]
-            },
+            "url": "https://downloads.sourceforge.net/project/eumat/Installer/EulerSetup-64_2021-04-30.exe",
+            "hash": "sha1:104f53064783c6545338894faa7605c56dbfcfd5",
             "bin": [
                 "euler64.exe",
                 [
@@ -31,23 +29,28 @@
             ]
         }
     },
+    "installer": {
+        "script": [
+            "Expand-InnoArchive -Path \"$dir\\$fname\"",
+            "Expand-InnoArchive -Path \"$dir\\$fname\" -ExtractDir '{sys}' -Removal",
+            "if (!(Test-Path \"$persist_dir\\.euler.profile\")) {",
+            "   New-Item -Path \"$dir\\.euler.profile\" -ItemType 'File' | Out-Null",
+            "}"
+        ]
+    },
     "persist": [
         "Euler Files",
         ".euler.profile"
     ],
-    "checkver": "Version ([\\d-]+)",
+    "checkver": {
+        "url": "https://sourceforge.net/projects/eumat/rss?path=/Installer",
+        "regex": "EulerSetup-64_([\\d-]+)\\.exe"
+    },
     "autoupdate": {
         "architecture": {
             "64bit": {
                 "url": "https://downloads.sourceforge.net/project/eumat/Installer/EulerSetup-64_$version.exe"
             }
         }
-    },
-    "suggest": {
-        "JDK": [
-            "java/oraclejdk",
-            "java/openjdk"
-        ],
-        "POV-Ray": "extras/pov-ray"
     }
 }

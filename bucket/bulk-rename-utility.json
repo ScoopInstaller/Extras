@@ -1,0 +1,39 @@
+{
+    "version": "3.4.3.0",
+    "description": "File renaming software for Windows.",
+    "homepage": "https://www.bulkrenameutility.co.uk",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.bulkrenameutility.co.uk/License.php"
+    },
+    "url": "https://www.s3.tgrmn.com/bru/BRU_setup_3.4.3.0.exe",
+    "hash": "md5:6bdaad46b8fa80c7edd944d455e2deb2",
+    "innosetup": true,
+    "architecture": {
+        "64bit": {
+            "pre_install": "Get-ChildItem \"$dir\\*,2.*\" -Recurse | Rename-Item -NewName { $_.FullName -replace ',2\\.', '.' }"
+        },
+        "32bit": {
+            "pre_install": "Get-ChildItem \"$dir\\*,1.*\" -Recurse | Rename-Item -NewName { $_.FullName -replace ',1\\.', '.' }"
+        }
+    },
+    "post_install": "Get-ChildItem \"$dir\\*,[0-9].*\" -Recurse | Remove-Item",
+    "shortcuts": [
+        [
+            "Bulk Rename Utility.exe",
+            "Bulk Rename Utility"
+        ]
+    ],
+    "persist": "Bulk Rename Utility.ini",
+    "checkver": {
+        "url": "https://www.bulkrenameutility.co.uk/Download.php",
+        "regex": "version\\s+([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://www.s3.tgrmn.com/bru/BRU_setup_$version.exe",
+        "hash": {
+            "url": "https://www.bulkrenameutility.co.uk/Download.php",
+            "regex": "$md5"
+        }
+    }
+}

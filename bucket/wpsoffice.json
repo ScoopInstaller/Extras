@@ -1,0 +1,31 @@
+{
+    "version": "11.2.0.10382",
+    "description": "Complete office suite",
+    "homepage": "https://www.wps.com",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.wps.com/eula"
+    },
+    "url": "https://wdl1.pcfg.cache.wpscdn.com/wpsdl/wpsoffice/download/11.2.0.10382/500.998/WPSOffice_11.2.0.10382.exe",
+    "hash": "9c9dbf830da566f5416b2b29470c731daaf3c26bab2f927be3df8b8e3f13bab5",
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\$fname\" -Switches '-t#'",
+        "Remove-Item \"$dir\\*\" -Exclude '4.7z', '2.7z' -Recurse",
+        "Expand-7zipArchive \"$dir\\2.7z\" -ExtractDir 'CONTROL\\office6' -Removal",
+        "Expand-7zipArchive \"$dir\\4.7z\" -ExtractDir 'office6' -Removal"
+    ],
+    "bin": "wpsoffice.exe",
+    "shortcuts": [
+        [
+            "wpsoffice.exe",
+            "WPS Office"
+        ]
+    ],
+    "checkver": {
+        "url": "https://whatsnew.wps.com/",
+        "regex": "Latest.*?>WPS Office\\s+V([\\d.]+)</"
+    },
+    "autoupdate": {
+        "url": "https://wdl1.pcfg.cache.wpscdn.com/wpsdl/wpsoffice/download/$version/500.998/WPSOffice_$version.exe"
+    }
+}

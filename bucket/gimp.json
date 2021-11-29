@@ -1,33 +1,69 @@
 {
-    "homepage": "https://www.gimp.org/",
-    "description": "The Free & Open Source Image Editor.",
+    "version": "2.10.28",
+    "description": "GNU Image Manipulation Program",
+    "homepage": "https://www.gimp.org",
     "license": "GPL-3.0-only",
-    "version": "2.10.12",
-    "url": "https://download.gimp.org/mirror/pub/gimp/v2.10/windows/gimp-2.10.12-setup.exe",
-    "hash": "40bf733beb554e0a5f5ab5b82e75c035eefd715b00cc0eaf1cd57ba8a7e2ab6f",
+    "url": "https://download.gimp.org/mirror/pub/gimp/v2.10/windows/gimp-2.10.28-setup.exe",
+    "hash": "2c2e081ce541682be1abdd8bc6df13768ad9482d68000b4a7a60c764d6cec74e",
+    "innosetup": true,
     "installer": {
-        "args": [
-            "/VERYSILENT",
-            "/NORESTART",
-            "/DIR=\"$dir\""
+        "script": [
+            "Push-Location \"$dir\"",
+            "Get-ChildItem -Filter '*.debug' -Recurse | Remove-Item -Recurse",
+            "if ($architecture -eq '64bit') {",
+            "   Rename-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,3.exe' 'twain.exe'",
+            "   Remove-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,1.exe'",
+            "   Get-ChildItem -Filter '*,1*' -Recurse | Rename-Item -NewName { $_.name -Replace ',\\d','' }",
+            "   Get-ChildItem -Filter '*,*' -Recurse | Remove-Item",
+            "} else {",
+            "   Rename-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,1.exe' 'twain.exe'",
+            "   Remove-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,3.exe'",
+            "   Get-ChildItem -Filter '*,1*' -Recurse | Remove-Item",
+            "   Get-ChildItem -Filter '*,*' -Recurse | Rename-Item -NewName { $_.name -Replace ',\\d','' }",
+            "}",
+            "$defpath = \"`nPATH=`${gimp_installation_dir}\\bin`n\"",
+            "$defenv = Get-Content 'lib\\gimp\\2.0\\environ\\default.env' -Raw",
+            "$defenv += $defpath",
+            "$defenv += \"PYTHONPATH=`${gimp_installation_dir}\\lib\\gimp\\2.0\\python;`${gimp_plug_in_dir}\\plug-ins\\python-console\"",
+            "$defenv | Set-Content 'lib\\gimp\\2.0\\environ\\default.env'",
+            "$pyenv = Get-Content 'lib\\gimp\\2.0\\environ\\pygimp.env' -Raw",
+            "$pyenv + '__COMPAT_LAYER=HIGHDPIAWARE' | Set-Content 'lib\\gimp\\2.0\\environ\\pygimp.env'",
+            "$pyint = Get-Content 'lib\\gimp\\2.0\\interpreters\\pygimp.interp' -Raw",
+            "$pyint = $pyint -Replace '(python|python2)=(.*)', \"`$1=$dir\\bin\\pythonw.exe\"",
+            "$pyint = $pyint -Replace 'py::python2', 'py::python'",
+            "$pyint | Set-Content 'lib\\gimp\\2.0\\interpreters\\pygimp.interp'",
+            "Pop-Location"
         ]
     },
-    "uninstaller": {
-        "file": "uninst\\unins000.exe",
-        "args": "/VERYSILENT"
-    },
     "bin": [
+        "bin\\gimp-console-2.10.exe",
+        [
+            "bin\\gimp-console-2.10.exe",
+            "gimp-console"
+        ],
+        [
+            "bin\\gimp-console-2.10.exe",
+            "gimp"
+        ],
+        "bin\\gimptool-2.0.exe",
+        [
+            "bin\\gimptool-2.0.exe",
+            "gimptool"
+        ]
+    ],
+    "shortcuts": [
         [
             "bin\\gimp-2.10.exe",
-            "gimp"
+            "GIMP"
         ]
     ],
     "checkver": {
         "url": "https://www.gimp.org/downloads/",
-        "re": "gimp-(?<version>[\\d.]+)-setup(?<build>-\\d)?.exe"
+        "regex": "gimp-(?<version>[\\d.]+)-setup(?<build>-\\d)?\\.exe",
+        "replace": "${version}${build}"
     },
     "autoupdate": {
-        "url": "https://download.gimp.org/mirror/pub/gimp/v$majorVersion.$minorVersion/windows/gimp-$version-setup$matchBuild.exe",
+        "url": "https://download.gimp.org/mirror/pub/gimp/v$majorVersion.$minorVersion/windows/gimp-$matchHead-setup$matchTail.exe",
         "hash": {
             "url": "$baseurl/SHA256SUMS"
         }

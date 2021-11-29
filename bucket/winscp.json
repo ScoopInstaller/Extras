@@ -1,29 +1,35 @@
 {
-    "homepage": "https://winscp.net",
+    "version": "5.19.5",
     "description": "Copy files between a local computer and remote servers using FTP, FTPS, SCP, SFTP, WebDAV or S3 file transfer protocols.",
+    "homepage": "https://winscp.net",
     "license": "GPL-3.0-or-later",
-    "version": "5.15.3",
-    "url": "https://downloads.sourceforge.net/project/winscp/WinSCP/5.15.3/WinSCP-5.15.3-Portable.zip",
-    "hash": "sha1:9195aedc60d995b9a8cd6ebf7b7a0e19d2625463",
-    "bin": "WinSCP.exe",
-    "persist": "winscp.ini",
+    "url": "https://downloads.sourceforge.net/project/winscp/WinSCP/5.19.5/WinSCP-5.19.5-Portable.zip",
+    "hash": "43f8578fdf19fa27bcec858356f41357714b9cab31ae6661023983a7978fdbf4",
     "pre_install": [
         "if (!(Test-Path \"$persist_dir\\winscp.ini\")) {",
-        "    new-item \"$dir\\winscp.ini\" -type file | out-null",
-        "    write-output \"[Configuration\\Interface]`r`nRandomSeedFile=.\\winscp.rnd\" | Out-File -encoding \"ASCII\" \"$dir\\winscp.ini\"",
+        "    @(",
+        "        '[Configuration\\Interface]'",
+        "        'RandomSeedFile=.\\winscp.rnd'",
+        "    ) | Add-Content -Path \"$dir\\winscp.ini\" -Encoding ASCII -Force",
         "}"
     ],
-    "checkver": {
-        "url": "https://winscp.net/eng/downloads.php",
-        "re": "WinSCP-([\\d.]+)-Portable\\.zip"
-    },
-    "autoupdate": {
-        "url": "https://downloads.sourceforge.net/project/winscp/WinSCP/$version/WinSCP-$version-Portable.zip"
-    },
+    "bin": "WinSCP.exe",
     "shortcuts": [
         [
             "WinSCP.exe",
             "WinSCP"
         ]
-    ]
+    ],
+    "persist": "winscp.ini",
+    "checkver": {
+        "url": "https://winscp.net/eng/downloads.php",
+        "regex": "WinSCP-([\\d.]+)-Portable\\.zip"
+    },
+    "autoupdate": {
+        "url": "https://downloads.sourceforge.net/project/winscp/WinSCP/$version/WinSCP-$version-Portable.zip",
+        "hash": {
+            "url": "https://winscp.net/download/WinSCP-$version-ReadMe.txt",
+            "regex": "(?sm)$basename.*?SHA-256: $sha256"
+        }
+    }
 }
