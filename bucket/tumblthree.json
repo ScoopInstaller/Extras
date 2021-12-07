@@ -1,11 +1,21 @@
 {
-    "version": "1.0.11.8",
-    "description": "A Tumblr Backup Application.",
+    "version": "2.4.4",
+    "description": "A Tumblr Backup Application",
     "homepage": "https://github.com/TumblThreeApp/TumblThree",
     "license": "MIT",
-    "url": "https://github.com/TumblThreeApp/TumblThree/releases/download/v1.0.11.8/TumblThree-v1.0.11.8-Application.zip",
-    "hash": "41fea3b990fe2b297238c130a7191ae1904ca0f5f6557592873ba1d78b284801",
-    "extract_dir": "TumblThree",
+    "suggest": {
+        "vcredist": "extras/vcredist2015"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/TumblThreeApp/TumblThree/releases/download/v2.4.4/TumblThree-v2.4.4-x64-Application.zip",
+            "hash": "29943aa7a95e82cf23b3efedf76a1a8104b261bb5a1a2b164d5902d310e49977"
+        },
+        "32bit": {
+            "url": "https://github.com/TumblThreeApp/TumblThree/releases/download/v2.4.4/TumblThree-v2.4.4-x86-Application.zip",
+            "hash": "34fdef225886e328ba6c1a61f5d5b497b82c2fe9a230901a1b902607eb04129a"
+        }
+    },
     "pre_install": [
         "foreach ($name in @('Cookies.json', 'Manager.json', 'Queuelist.json')) {",
         "    if (!(Test-Path \"$persist_dir\\$name\")) { New-Item \"$dir\\$name\" | Out-Null }",
@@ -25,8 +35,18 @@
         "Queuelist.json",
         "Settings.json"
     ],
-    "checkver": "github",
+    "checkver": {
+        "github": "https://github.com/TumblThreeApp/TumblThree",
+        "regex": "/TumblThree-v([\\d.]+)-x\\d+"
+    },
     "autoupdate": {
-        "url": "https://github.com/TumblThreeApp/TumblThree/releases/download/v$version/TumblThree-v$version-Application.zip"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/TumblThreeApp/TumblThree/releases/download/v$matchHead/TumblThree-v$version-x64-Application.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/TumblThreeApp/TumblThree/releases/download/v$matchHead/TumblThree-v$version-x86-Application.zip"
+            }
+        }
     }
 }

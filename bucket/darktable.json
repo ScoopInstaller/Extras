@@ -1,14 +1,16 @@
 {
-    "version": "2.4.4",
-    "description": "A virtual lighttable and darkroom for photographers",
-    "homepage": "https://www.darktable.org/",
+    "version": "3.6.1",
+    "description": "Photography workflow application and raw developer. A virtual lighttable and darkroom for photographers.",
+    "homepage": "https://www.darktable.org",
     "license": "GPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/darktable-org/darktable/releases/download/release-2.4.4/darktable-2.4.4-win64.zip",
-            "hash": "5dba3423b0889c69f723e378564e084878b20baf3996c349bfc9736bed815067",
-            "extract_dir": "darktable-2.4.4-win64"
+            "url": "https://github.com/darktable-org/darktable/releases/download/release-3.6.1/darktable-3.6.1-win64.exe",
+            "hash": "34b4c1748ffe7ac66c3c79ad474b86a7aaa01ba296f8cd21929fe8024ebf3262"
         }
+    },
+    "installer": {
+        "script": "$Env:__COMPAT_LAYER='RunAsInvoker'; Invoke-Expression \"$dir\\$fname /S /D=$dir | Out-Null \" "
     },
     "bin": "bin\\darktable.exe",
     "shortcuts": [
@@ -16,5 +18,19 @@
             "bin\\darktable.exe",
             "darktable"
         ]
-    ]
+    ],
+    "checkver": {
+        "github": "https://github.com/darktable-org/darktable",
+        "regex": "/darktable-([\\d.]+)-win64"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/darktable-org/darktable/releases/download/release-$matchHead/darktable-$version-win64.exe",
+                "hash": {
+                    "url": "https://github.com/darktable-org/darktable/releases/tag/release-$matchHead"
+                }
+            }
+        }
+    }
 }

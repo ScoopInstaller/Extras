@@ -1,19 +1,23 @@
 {
-    "version": "0.96.5",
-    "description": "Photo viewer, image resizer & batch converter.",
+    "version": "0.99.4",
+    "description": "Photo viewer, image resizer & batch converter",
     "homepage": "https://www.xnview.com/en/xnviewmp/",
     "license": "Freeware|Proprietary",
     "architecture": {
         "64bit": {
             "url": "https://download.xnview.com/XnViewMP-win-x64.zip",
-            "hash": "3745d58a1a337ef5108497f6f09257193cb6008b1b6578535d5726f9bff6315a"
+            "hash": "95697e3e242adea7aa1c07905b907aff11e0ccb806259900a88221b5342322fe"
         },
         "32bit": {
             "url": "https://download.xnview.com/XnViewMP-win.zip",
-            "hash": "00025e31c4d7187132c0881d5e458309f942f8404c9d43bfb4d31b343b5cf8df"
+            "hash": "fe16b6eae044639a3c006665740dc0f92134a45b653e3614e6acbbda4450b576"
         }
     },
     "extract_dir": "XnViewMP",
+    "pre_install": "New-Item \"$persist_dir\\xnview.ini\" -ErrorAction SilentlyContinue",
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\xnview.ini\" \"$persist_dir\\\" -Force"
+    },
     "bin": "xnviewmp.exe",
     "shortcuts": [
         [
@@ -21,10 +25,7 @@
             "XnViewMP"
         ]
     ],
-    "pre_install": [
-        "if (!(Test-Path \"$env:APPDATA\\XnViewMP\\xnview.ini\")) {",
-        "    New-Item -Force -Path \"$env:APPDATA\\XnViewMP\" -Name \"xnview.ini\" -ItemType file | Out-Null}"
-    ],
+    "persist": "xnview.ini",
     "checkver": "Download <strong>XnView MP ([\\d.]+)",
     "autoupdate": {
         "architecture": {

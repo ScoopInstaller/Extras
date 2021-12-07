@@ -1,18 +1,18 @@
 {
-    "version": "4.1.7",
+    "version": "4.1.11",
     "description": "Office software suite for word processing, spreadsheets, presentations, graphics, databases and more",
     "homepage": "https://www.openoffice.org",
     "license": "Apache-2.0",
-    "url": "https://archive.apache.org/dist/openoffice/4.1.7/binaries/en-GB/Apache_OpenOffice_4.1.7_Win_x86_install_en-GB.exe#/dl.7z",
-    "hash": "sha512:f245545b5c3d434dc0407aee4e807dad5d552dcb156b0367d5314ae83a2257180e8f1ef28d76116cf90582767093e2180063ea0fcd20ce72541337826b145850",
-    "installer": {
-        "script": [
-            "(Get-ChildItem \"$dir\" 'openoffic*.msi').FullName | Expand-MsiArchive -DestinationPath \"$dir\\App\"",
-            "Get-ChildItem \"$dir\" -Exclude 'App' | Remove-Item -Recurse",
-            "Move-Item \"$dir\\App\\*\" \"$dir\" -Force",
-            "Remove-Item \"$dir\\App\" -Recurse"
-        ]
-    },
+    "url": "https://archive.apache.org/dist/openoffice/4.1.11/binaries/en-GB/Apache_OpenOffice_4.1.11_Win_x86_install_en-GB.exe#/dl.7z",
+    "hash": "sha512:1f307529519b8e91f4f103bddc55b324f3c742152f493fd938f1b25338ff9d91fbe9fc49ef559027823cff81433690846d609b2698b806fc1625911eab39c4a7",
+    "pre_install": [
+        "$splat = @{ 'DestinationPath' = \"$dir\\App\" }",
+        "if (get_config 'MSIEXTRACT_USE_LESSMSI' $false) { $splat.Add('ExtractDir', 'OpenOffice 4') }",
+        "(Get-ChildItem \"$dir\" 'openoffic*.msi').FullName | Expand-MsiArchive @splat",
+        "Get-ChildItem \"$dir\" -Exclude 'App' | Remove-Item -Recurse",
+        "Move-Item \"$dir\\App\\*\" \"$dir\" -Force",
+        "Remove-Item \"$dir\\App\" -Recurse"
+    ],
     "shortcuts": [
         [
             "program\\soffice.exe",
