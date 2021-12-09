@@ -14,9 +14,20 @@
         }
     },
     "extract_dir": "XnViewMP",
-    "pre_install": "New-Item \"$persist_dir\\xnview.ini\" -ErrorAction SilentlyContinue",
+    "pre_install": [
+        "# --- If xnview.ini exists as a folder, then remove it ---",
+        "if (Test-Path \"$persist_dir\\xnview.ini\" -PathType Container) {",
+        "    Remove-Item \"$persist_dir\\xnview.ini\" -Force -Recurse",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\xnview.ini\")) {",
+        "   New-Item \"$dir\\xnview.ini\" -ItemType File | Out-Null",
+        "}"
+    ],
     "uninstaller": {
-        "script": "Copy-Item \"$dir\\xnview.ini\" \"$persist_dir\\\" -Force"
+        "script": [
+            "# Manually copy because Xnview overwrites hardlink with a regular file, which breaks persist",
+            "if ((Test-Path \"$dir\\xnview.ini\") -and !(Get-Item \"$dir\\xnview.ini\").LinkType -and (Test-Path $persist_dir)) { Copy-Item \"$dir\\xnview.ini\" $persist_dir -Force }"
+        ]
     },
     "bin": "xnviewmp.exe",
     "shortcuts": [
