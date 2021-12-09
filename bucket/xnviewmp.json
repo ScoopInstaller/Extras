@@ -15,8 +15,12 @@
     },
     "extract_dir": "XnViewMP",
     "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\xnview.ini\") -or !(Get-Item \"$persist_dir\\xnview.ini\").Length) {",
-        "   New-Item \"$persist_dir\\xnview.ini\" -ItemType File -Force | Out-Null",
+        "# --- If xnview.ini exists as a folder, then remove it ---",
+        "if (Test-Path \"$persist_dir\\xnview.ini\" -PathType Container) {",
+        "    Remove-Item \"$persist_dir\\xnview.ini\" -Force -Recurse",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\xnview.ini\")) {",
+        "   New-Item \"$dir\\xnview.ini\" -ItemType File | Out-Null",
         "}"
     ],
     "uninstaller": {
