@@ -24,7 +24,10 @@
         "}"
     ],
     "uninstaller": {
-        "script": "if ((Test-Path \"$dir\\xnview.ini\") -and !(Get-Item \"$dir\\xnview.ini\").LinkType -and (Test-Path $persist_dir)) { Copy-Item \"$dir\\xnview.ini\" $persist_dir -Force }"
+        "script": [
+            "# Manually copy because Xnview overwrites hardlink with a regular file, which breaks persist",
+            "if ((Test-Path \"$dir\\xnview.ini\") -and !(Get-Item \"$dir\\xnview.ini\").LinkType -and (Test-Path $persist_dir)) { Copy-Item \"$dir\\xnview.ini\" $persist_dir -Force }"
+        ]
     },
     "bin": "xnviewmp.exe",
     "shortcuts": [
