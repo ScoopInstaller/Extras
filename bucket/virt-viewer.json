@@ -1,0 +1,35 @@
+{
+    "version": "10.0-1.0",
+    "description": "The virtual machine console viewer",
+    "homepage": "https://virt-manager.org",
+    "license": "GPL-3.0-or-later",
+    "architecture": {
+        "64bit": {
+            "url": "https://virt-manager.org/download/sources/virt-viewer/virt-viewer-x64-10.0-1.0.msi",
+            "hash": "f50c13602060184b3e2db5f5822ff1860ac2eec39660578774008892e3516166"
+        },
+        "32bit": {
+            "url": "https://virt-manager.org/download/sources/virt-viewer/virt-viewer-x86-10.0-1.0.msi",
+            "hash": "ada7d13136f8ec2cf574071aa0bc1c1b8cf14ee62614b0728cdce5a46b080934"
+        }
+    },
+    "pre_install": [
+        "$virtdir = (Get-ChildItem \"$dir\\Virt*\" | Select-Object -First 1).FullName",
+        "Move-Item \"$virtdir\\*\" \"$dir\\\"",
+        "Remove-Item \"$virtdir\""
+    ],
+    "bin": [
+        "bin\\virt-viewer.exe",
+        "bin\\remote-viewer.exe"
+    ],
+    "shortcuts": [
+        [
+            "bin\\remote-viewer.exe",
+            "Remote Viewer"
+        ]
+    ],
+    "checkver": {
+        "url": "https://virt-manager.org/download/",
+        "regex": "virt-viewer-x64-([\\d.-]+)\\.msi"
+    }
+}
