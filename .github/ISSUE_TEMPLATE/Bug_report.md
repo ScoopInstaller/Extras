@@ -40,3 +40,10 @@ labels: "bug"
 **PowerShell version:** [output of `"$($PSVersionTable.PSVersion)"`]
 
 **Additional software:** [(optional) e.g. ConEmu, Git]
+
+#### Scoop Configuration
+<!-- Can be found in  ~/.config/scoop/config.json -->
+
+```json
+//# Your configuration here
+```
