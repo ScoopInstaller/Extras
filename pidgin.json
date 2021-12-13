@@ -1,23 +1,19 @@
 {
+    "version": "2.14.8",
+    "description": "Universal instant messaging program supporting AIM, ICQ, Google Talk, Jabber/XMPP, MSN Messenger, Yahoo!, Bonjour, Gadu-Gadu, IRC, MXit, Novell GroupWise Messenger, Lotus Sametime, SILC, SIMPLE, MySpaceIM, and Zephyr",
     "homepage": "https://pidgin.im/",
-    "description": "Pidgin IM - A universal instant messaging (IM) program. Pidgin is an instant messaging program which lets you log in to accounts on multiple chat networks simultaneously. It runs on Windows, Linux, and other UNIX operating systems. Pidgin is compatible with the following chat networks out of the box: AIM, ICQ, Google Talk, Jabber/XMPP, MSN Messenger, Yahoo!, Bonjour, Gadu-Gadu, IRC, MXit, Novell GroupWise Messenger, Lotus Sametime, SILC, SIMPLE, MySpaceIM, and Zephyr. It is written in C and makes heavy use of GLib and GTK+.",
-    "version": "2.11.0",
     "license": "GPL-2.0-or-later",
-    "url": [
-        "https://downloads.sourceforge.net/project/pidgin/Pidgin/2.11.0/pidgin-2.11.0-offline.exe#/dl.7z"
-    ],
-    "hash": [
-        "sha1:58a83bfbf91cee8f6fc2025fab481c7a34d6f245"
-    ],
+    "url": "https://downloads.sourceforge.net/project/pidgin/Pidgin/2.14.8/pidgin-2.14.8-offline.exe#/dl.7z",
+    "hash": "b237de10d4fe5d44eabe97a7640d2a74b4d722a7cb2376cf5df2be632eda3f51",
     "env_set": {
-        "PURPLEHOME": "$dir",
-        "PIDGINLANG": "en"
+        "PURPLEHOME": "$dir"
     },
     "persist": ".purple",
     "bin": "pidgin.exe",
-    "pre_install": "extract_7zip \"$dir\\`$PLUGINSDIR\\gtk.zip\" \"$dir\"",
-    "post_install": [
-        "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse"
+    "pre_install": [
+        "if ($env:PIDGINLANG -eq $null) {$env:PIDGINLANG = 'en'}",
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\gtk.zip\" \"$dir\"",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\",\"$dir\\pidgin-uninst.exe.nsis\" -Recurse"
     ],
     "shortcuts": [
         [
@@ -27,9 +23,12 @@
     ],
     "checkver": {
         "url": "https://sourceforge.net/projects/pidgin/files/Pidgin/",
-        "re": ">([\\d.]+)<"
+        "regex": "files/Pidgin/([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://downloads.sourceforge.net/project/pidgin/Pidgin/$version/pidgin-$version-offline.exe#/dl.7z"
+        "url": "https://downloads.sourceforge.net/project/pidgin/Pidgin/$version/pidgin-$version-offline.exe#/dl.7z",
+        "hash": {
+            "url": "$url.sha256sum"
+        }
     }
 }
