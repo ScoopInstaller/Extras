@@ -13,6 +13,18 @@
             "hash": "59E7B350810CFBDFAD2AAA572F8235DF0C1D4A96E7289FE4210A48DC040E98AF"
         }
     },
+    "pre_install": [
+        "# Turn off Auto Update",
+        "if (!(Test-Path \"$persist_dir\\userdata\\settings.json\")) {",
+        "    if (!(Test-Path \"$dir\\userdata\")) {",
+        "       (New-Item -Type directory \"$dir\\userdata\") | Out-Null",
+        "    }",
+        "    $json = @{}",
+        "    $data = @{\"AutoCheckLatestVersion\" = $false}",
+        "    $json.Add(\"update\",$data)",
+        "    $json | ConvertTo-Json | Out-File \"$dir\\userdata\\settings.json\" -Encoding ascii",
+        "}"
+    ],
     "bin": "fmd.exe",
     "shortcuts": [
         [
