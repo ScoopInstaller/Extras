@@ -1,24 +1,34 @@
 {
-    "version": "0.98.2",
+    "version": "0.99.6",
     "description": "Photo viewer, image resizer & batch converter",
     "homepage": "https://www.xnview.com/en/xnviewmp/",
     "license": "Freeware|Proprietary",
     "architecture": {
         "64bit": {
             "url": "https://download.xnview.com/XnViewMP-win-x64.zip",
-            "hash": "82554a5742b203493356aa5d5363a06892da492d7edf9bf95cdd75acfaaf4fcd"
+            "hash": "7491ad0664f6e24d75e44c56e4b4e0d12fb4e2f951e2e4ae252a8366651cdacb"
         },
         "32bit": {
             "url": "https://download.xnview.com/XnViewMP-win.zip",
-            "hash": "d3c9da0fefec6e00011f35de8e655d36db24824435165fb30b8b2720be932b4f"
+            "hash": "2271a9727fedeb2506f9430ea5e40152d6e4dd6ac6d2801d1705aaa315cb9596"
         }
     },
     "extract_dir": "XnViewMP",
     "pre_install": [
-        "if (!(Test-Path \"$env:APPDATA\\XnViewMP\\xnview.ini\")) {",
-        "    New-Item \"$env:APPDATA\\XnViewMP\\xnview.ini\" -Force | Out-Null",
+        "# --- If xnview.ini exists as a folder, then remove it ---",
+        "if (Test-Path \"$persist_dir\\xnview.ini\" -PathType Container) {",
+        "    Remove-Item \"$persist_dir\\xnview.ini\" -Force -Recurse",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\xnview.ini\")) {",
+        "   New-Item \"$dir\\xnview.ini\" -ItemType File | Out-Null",
         "}"
     ],
+    "uninstaller": {
+        "script": [
+            "# Manually copy because Xnview overwrites hardlink with a regular file, which breaks persist",
+            "if ((Test-Path \"$dir\\xnview.ini\") -and !(Get-Item \"$dir\\xnview.ini\").LinkType -and (Test-Path $persist_dir)) { Copy-Item \"$dir\\xnview.ini\" $persist_dir -Force }"
+        ]
+    },
     "bin": "xnviewmp.exe",
     "shortcuts": [
         [
@@ -26,6 +36,7 @@
             "XnViewMP"
         ]
     ],
+    "persist": "xnview.ini",
     "checkver": "Download <strong>XnView MP ([\\d.]+)",
     "autoupdate": {
         "architecture": {

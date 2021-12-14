@@ -1,0 +1,50 @@
+{
+    "version": "1.95",
+    "description": "A fast, powerful and free batch image converter",
+    "homepage": "https://www.xnview.com/en/xnconvert/",
+    "license": "Freeware",
+    "architecture": {
+        "64bit": {
+            "url": "https://download.xnview.com/XnConvert-win-x64.zip",
+            "hash": "cc7dddb49456a94c84d5c28dbfc0fd0816fe8533a5de35137eb637fb699b2716"
+        },
+        "32bit": {
+            "url": "https://download.xnview.com/XnConvert-win.zip",
+            "hash": "b15535ec293875bafcd2d893571d7b477f4e65ec6349129f186f3455ecd6adca"
+        }
+    },
+    "extract_dir": "XnConvert",
+    "pre_install": [
+        "if (Test-Path \"$persist_dir\\xnconvert.ini\") {",
+        "    Copy-Item \"$persist_dir\\xnconvert.ini\" \"$dir\"",
+        "} else {",
+        "    Set-Content \"$dir\\xnconvert.ini\" '[Start]', 'updater=0' -Encoding Ascii",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "xnconvert.exe",
+            "XnConvert"
+        ]
+    ],
+    "uninstaller": {
+        "script": [
+            "ensure \"$persist_dir\" | Out-Null",
+            "Copy-Item \"$dir\\xnconvert.ini\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
+        ]
+    },
+    "checkver": ">XnConvert ([\\d.]+)\\s*</",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download.xnview.com/XnConvert-win-x64.zip"
+            },
+            "32bit": {
+                "url": "https://download.xnview.com/XnConvert-win.zip"
+            }
+        }
+    },
+    "suggest": {
+        "vcredist": "vcredist2019"
+    }
+}
