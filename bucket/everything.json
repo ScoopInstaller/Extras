@@ -3,23 +3,47 @@
     "description": "Locate files and folders by name instantly.",
     "homepage": "https://www.voidtools.com",
     "license": "MIT",
+    "notes": "Run '$dir\\install-context.reg' to add Everything to right-click context menu.",
     "architecture": {
         "64bit": {
-            "url": "https://www.voidtools.com/Everything-1.4.1.1009.x64.zip",
-            "hash": "f61b601acba59d61fb0631a654e48a564db34e279b6f2cc45e20a42ce9d9c466"
+            "url": [
+                "https://www.voidtools.com/Everything-1.4.1.1009.x64.zip",
+                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/everything/install-context.reg",
+                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/everything/uninstall-context.reg"
+            ],
+            "hash": [
+                "f61b601acba59d61fb0631a654e48a564db34e279b6f2cc45e20a42ce9d9c466",
+                "50241e5e130614e87a160413077db53e44e2b9a6ea5b07fe203766c5826564bc",
+                "971a3011d32793846ea9f7326dc91b942e715f8564fd40a1aa011be65cb52c40"
+            ]
         },
         "32bit": {
-            "url": "https://www.voidtools.com/Everything-1.4.1.1009.x86.zip",
-            "hash": "3ada0479c4d55b185a33f7700d7ace8cd85cdceb8ddb610e062cfe04558275ca"
+            "url": [
+                "https://www.voidtools.com/Everything-1.4.1.1009.x86.zip",
+                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/everything/install-context.reg",
+                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/everything/uninstall-context.reg"
+            ],
+            "hash": [
+                "3ada0479c4d55b185a33f7700d7ace8cd85cdceb8ddb610e062cfe04558275ca",
+                "50241e5e130614e87a160413077db53e44e2b9a6ea5b07fe203766c5826564bc",
+                "971a3011d32793846ea9f7326dc91b942e715f8564fd40a1aa011be65cb52c40"
+            ]
         }
     },
     "pre_install": [
         "ensure \"$persist_dir\" | Out-Null",
         "if (!(Test-Path \"$persist_dir\\Everything.ini\")) { Invoke-ExternalCommand \"$dir\\Everything.exe\" -Args @('-install-config null') | Out-Null }",
-        "Get-ChildItem \"$persist_dir\\*\" -Include 'Everything.db', 'Bookmarks.csv', 'Everything.ini' | Copy-Item -Destination \"$dir\" -ErrorAction SilentlyContinue"
+        "Get-ChildItem \"$persist_dir\\*\" -Include 'Everything.db', 'Bookmarks.csv', 'Everything.ini' | Copy-Item -Destination \"$dir\" -ErrorAction SilentlyContinue",
+        "$app_path = \"$dir\\Everything.exe\".Replace('\\', '\\\\')",
+        "$reg_content = (Get-Content \"$dir\\install-context.reg\")",
+        "$reg_content = $reg_content.replace('$app_path', $app_path)",
+        "Set-Content \"$dir\\install-context.reg\" $reg_content -Encoding ASCII"
     ],
     "uninstaller": {
-        "script": "Get-ChildItem \"$dir\\*\" -Include 'Everything.ini', 'Everything.db', 'Bookmarks.csv' | Copy-Item -Destination \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
+        "script": [
+            "Get-ChildItem \"$dir\\*\" -Include 'Everything.ini', 'Everything.db', 'Bookmarks.csv' | Copy-Item -Destination \"$persist_dir\" -ErrorAction SilentlyContinue -Force",
+            "reg import \"$dir\\uninstall-context.reg\""
+        ]
     },
     "bin": "Everything.exe",
     "shortcuts": [
