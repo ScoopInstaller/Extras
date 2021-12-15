@@ -4,47 +4,72 @@
     "homepage": "https://www.wireshark.org/",
     "license": "GPL-2.0-or-later",
     "notes": [
-        "WinPcap was replaced by Npcap.",
-        "Run 'scoop install nmap' (from a elevated shell) to install 'Npcap' automatically,",
-        "or run 'scoop install nmap-portable' and then install the 'npcap-oem.exe' from the 'nmap-portable' directory manually."
+        "Wireshark requires the installation of Npcap. Do it manually from the 'wireshark' directory.",
+        "$dir\\npcap-installer.exe",
+        "",
+        "You can also install USBPcap from the 'wireshark' directory if you need the USB packets capture funcionality.",
+        "$dir\\USBPcapSetup-installer.exe"
     ],
-    "suggest": {
-        "Nmap (includes Npcap)": "nmap"
+    "architecture": {
+        "64bit": {
+            "url": "https://1.eu.dl.wireshark.org/win64/all-versions/Wireshark-win64-3.6.0.exe#/dl.7z",
+            "hash": "8ffa9f2c7943d1e8ed8020d7d08c8015ec649c3e3af901808a9ec858564cd255"
+        },
+        "32bit": {
+            "url": "https://1.eu.dl.wireshark.org/win32/all-versions/Wireshark-win32-3.6.0.exe#/dl.7z",
+            "hash": "798462bc710d4560e24ed408f2861efe22e9e4ea87d16271b192d7524239fd23"
+        }
     },
-    "url": "https://1.eu.dl.wireshark.org/win32/all-versions/WiresharkPortable32_3.6.0.paf.exe#/dl.7z",
-    "hash": "0dbeaa8d882dc50a839c5c33cea2cffce1f606d5ff38999d5186d1e89ac0ee0e",
-    "bin": [
-        "App\\Wireshark\\capinfos.exe",
-        "App\\Wireshark\\captype.exe",
-        "App\\Wireshark\\dumpcap.exe",
-        "App\\Wireshark\\editcap.exe",
-        "App\\Wireshark\\mergecap.exe",
-        "App\\Wireshark\\randpkt.exe",
-        "App\\Wireshark\\rawshark.exe",
-        "App\\Wireshark\\reordercap.exe",
-        "App\\Wireshark\\text2pcap.exe",
-        "App\\Wireshark\\tshark.exe",
-        [
-            "WiresharkPortable32.exe",
-            "Wireshark"
+    "installer": {
+        "script": [
+            "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\vcredist_x*\", \"$dir\\uninstall.exe\" -Recurse",
+            "Get-ChildItem \"$dir\\npcap-*.exe\" | Rename-Item -NewName 'npcap-installer.exe'",
+            "Get-ChildItem \"$dir\\USBPcapSetup-*.exe\" | Rename-Item -NewName 'USBPcapSetup-installer.exe'"
         ]
+    },
+    "bin": [
+        "capinfos.exe",
+        "dumpcap.exe",
+        "editcap.exe",
+        "mergecap.exe",
+        "randpkt.exe",
+        "rawshark.exe",
+        "reordercap.exe",
+        "text2pcap.exe",
+        "tshark.exe",
+        "Wireshark.exe"
     ],
     "shortcuts": [
         [
-            "WiresharkPortable32.exe",
+            "Wireshark.exe",
             "Wireshark"
         ]
     ],
+    "env_set": {
+        "WIRESHARK_CONFIG_DIR": "$dir\\Data",
+        "WIRESHARK_DATA_DIR": "$dir\\Data"
+    },
     "persist": "Data",
     "checkver": {
         "url": "https://www.wireshark.org/update/0/Wireshark/0.0.0/Windows/x86/en-US/stable.xml",
         "regex": "Version ([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://1.eu.dl.wireshark.org/win32/all-versions/WiresharkPortable32_$version.paf.exe#/dl.7z",
-        "hash": {
-            "url": "https://www.wireshark.org/download/SIGNATURES-$version.txt",
-            "regex": "SHA256\\($basename\\)=$sha256"
+        "architecture": {
+            "64bit": {
+                "url": "https://1.eu.dl.wireshark.org/win64/all-versions/Wireshark-win64-$version.exe#/dl.7z",
+                "hash": {
+                    "url": "https://www.wireshark.org/download/SIGNATURES-$version.txt",
+                    "regex": "SHA256\\($basename\\)=$sha256"
+                }
+            },
+            "32bit": {
+                "url": "https://1.eu.dl.wireshark.org/win32/all-versions/Wireshark-win32-$version.exe#/dl.7z",
+                "hash": {
+                    "url": "https://www.wireshark.org/download/SIGNATURES-$version.txt",
+                    "regex": "SHA256\\($basename\\)=$sha256"
+                }
+            }
         }
     }
 }
