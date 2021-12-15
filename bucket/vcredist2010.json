@@ -16,7 +16,12 @@
         "1df24320ae1b974a42fc37f852d962c0e2f0e62bb339585fc862bb15d5a5d216"
     ],
     "post_install": [
-        "Invoke-ExternalCommand -FilePath \"$dir\\vcredist_x64.exe\" -ArgumentList '/fo', '/quiet', '/norestart' -RunAs | Out-Null",
-        "Invoke-ExternalCommand -FilePath \"$dir\\vcredist_x86.exe\" -ArgumentList '/fo', '/quiet', '/norestart' -RunAs | Out-Null"
+        "# For error codes, see https://docs.microsoft.com/en-us/windows/win32/msi/error-codes",
+        "$ec = @{",
+        "    1638 = 'This product is already installed';",
+        "    3010 = 'A restart is required to complete the installation';",
+        "}",
+        "Invoke-ExternalCommand -FilePath \"$dir\\vcredist_x64.exe\" -ArgumentList '/fo', '/quiet', '/norestart' -ContinueExitCodes $ec -RunAs | Out-Null",
+        "Invoke-ExternalCommand -FilePath \"$dir\\vcredist_x86.exe\" -ArgumentList '/fo', '/quiet', '/norestart' -ContinueExitCodes $ec -RunAs | Out-Null"
     ]
 }
