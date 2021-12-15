@@ -4,3 +4,8 @@ The "extras" bucket for [Scoop](http://scoop.sh), for anything that doesn't fit 
 
 To make it easier to install apps from this bucket, run
     `scoop bucket add extras`
+
+## contributing
+For documentation on how to add packages to the Extras bucket see [the Wiki](https://github.com/ScoopInstaller/Scoop/wiki) from main [Scoop](https://github.com/ScoopInstaller/Scoop) project, particularly: 
+* [Creating an app manifest](https://github.com/ScoopInstaller/Scoop/wiki/Creating-an-app-manifest)
+* [App Manifests](https://github.com/ScoopInstaller/Scoop/wiki/App-Manifests)
