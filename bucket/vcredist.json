@@ -1,5 +1,5 @@
 {
-    "version": "14.28.29914.0",
+    "version": "14.31.30818.0",
     "description": "Microsoft Visual C++ Redistributables bundle for all major versions",
     "homepage": "https://www.visualstudio.com/downloads/",
     "license": {
@@ -15,15 +15,20 @@
         "vcredist2013"
     ],
     "url": [
-        "https://download.visualstudio.microsoft.com/download/pr/85d47aa9-69ae-4162-8300-e6b7e4bf3cf3/52B196BBE9016488C735E7B41805B651261FFA5D7AA86EB6A1D0095BE83687B2/VC_redist.x64.exe",
-        "https://download.visualstudio.microsoft.com/download/pr/85d47aa9-69ae-4162-8300-e6b7e4bf3cf3/14563755AC24A874241935EF2C22C5FCE973ACB001F99E524145113B2DC638C1/VC_redist.x86.exe"
+        "https://download.visualstudio.microsoft.com/download/pr/ad322fe0-1435-4fa2-9ea4-c6208b41e7d8/66E0B36ACE18FFFF26EC93035CD1D16DA7294D1A9179FC494F1A6DA3F1AE5183/VC_redist.x64.exe",
+        "https://download.visualstudio.microsoft.com/download/pr/d139d1c2-d4a4-4c00-8696-1bb5fdb2827d/C15D42AB8FF9816782869B6F7C50A8D6C542EF9E555E6EA500CE9C3C09CF8138/VC_redist.x86.exe"
     ],
     "hash": [
-        "52b196bbe9016488c735e7b41805b651261ffa5d7aa86eb6a1d0095be83687b2",
-        "14563755ac24a874241935ef2c22c5fce973acb001f99e524145113b2dc638c1"
+        "66e0b36ace18ffff26ec93035cd1d16da7294d1a9179fc494f1a6da3f1ae5183",
+        "c15d42ab8ff9816782869b6f7c50a8d6c542ef9e555e6ea500ce9c3c09cf8138"
     ],
     "post_install": [
-        "Invoke-ExternalCommand -FilePath \"$dir\\vc_redist.x64.exe\" -ArgumentList '/fo', '/quiet', '/norestart' -RunAs | Out-Null",
-        "Invoke-ExternalCommand -FilePath \"$dir\\vc_redist.x86.exe\" -ArgumentList '/fo', '/quiet', '/norestart' -RunAs | Out-Null"
+        "# For error codes, see https://docs.microsoft.com/en-us/windows/win32/msi/error-codes",
+        "$ec = @{",
+        "    1638 = 'This product is already installed';",
+        "    3010 = 'A restart is required to complete the installation';",
+        "}",
+        "Invoke-ExternalCommand -FilePath \"$dir\\vc_redist.x64.exe\" -ArgumentList '/fo', '/quiet', '/norestart' -ContinueExitCodes $ec -RunAs | Out-Null",
+        "Invoke-ExternalCommand -FilePath \"$dir\\vc_redist.x86.exe\" -ArgumentList '/fo', '/quiet', '/norestart' -ContinueExitCodes $ec -RunAs | Out-Null"
     ]
 }
