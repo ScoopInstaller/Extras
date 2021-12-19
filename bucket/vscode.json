@@ -6,31 +6,18 @@
         "identifier": "Freeware",
         "url": "https://code.visualstudio.com/License/"
     },
-    "notes": "Add Visual Studio Code as a context menu option by running: \"$dir\\install-context.reg\"",
+    "notes": [
+        "Add Visual Studio Code as a context menu option by running: '$dir\\install-context.reg'",
+        "For file associations, run '$dir\\install-associations.reg'"
+    ],
     "architecture": {
         "64bit": {
-            "url": [
-                "https://update.code.visualstudio.com/1.63.2/win32-x64-archive/stable#/dl.7z",
-                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/vscode/install-context.reg",
-                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/vscode/uninstall-context.reg"
-            ],
-            "hash": [
-                "5d3c75fe622afd170871a1357820e49c89a06c5684e51f7994e4be622b07d9fe",
-                "8ef94c82319b69754bdae0099af266d184d179a37af8b8beb11334c6ab639752",
-                "df2a5162e72e2518e2b75b4337c8e7b46c136554872af90fa0de1cf6ebef376f"
-            ]
+            "url": "https://update.code.visualstudio.com/1.63.2/win32-x64-archive/stable#/dl.7z",
+            "hash": "5d3c75fe622afd170871a1357820e49c89a06c5684e51f7994e4be622b07d9fe"
         },
         "32bit": {
-            "url": [
-                "https://update.code.visualstudio.com/1.63.2/win32-archive/stable#/dl.7z",
-                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/vscode/install-context.reg",
-                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/vscode/uninstall-context.reg"
-            ],
-            "hash": [
-                "8199f4c65a765e2cf405d8fbe4a0cd54d3cbbe0c2ff46b4785028d962fe1f455",
-                "8ef94c82319b69754bdae0099af266d184d179a37af8b8beb11334c6ab639752",
-                "df2a5162e72e2518e2b75b4337c8e7b46c136554872af90fa0de1cf6ebef376f"
-            ]
+            "url": "https://update.code.visualstudio.com/1.63.2/win32-archive/stable#/dl.7z",
+            "hash": "8199f4c65a765e2cf405d8fbe4a0cd54d3cbbe0c2ff46b4785028d962fe1f455"
         }
     },
     "env_add_path": "bin",
@@ -41,21 +28,18 @@
         ]
     ],
     "post_install": [
-        "if (Test-Path \"$dir\\install-context.reg\") {",
-        "  $codepath = \"$dir\\Code.exe\".Replace('\\', '\\\\')",
-        "  $content = Get-Content \"$dir\\install-context.reg\"",
-        "  $content = $content.Replace('$code', $codepath)",
-        "  if ($global) {",
-        "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "$dirpath = \"$dir\".Replace('\\', '\\\\')",
+        "$exepath = \"$dir\\Code.exe\".Replace('\\', '\\\\')",
+        "'install-associations', 'uninstall-associations', 'install-context', 'uninstall-context' | ForEach-Object {",
+        "  if (Test-Path \"$bucketsdir\\extras\\scripts\\vscode\\$_.reg\") {",
+        "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\vscode\\$_.reg\"",
+        "    $content = $content.Replace('$codedir', $dirpath)",
+        "    $content = $content.Replace('$code', $exepath)",
+        "    if ($global) {",
+        "      $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "    }",
+        "    $content | Set-Content -Path \"$dir\\$_.reg\"",
         "  }",
-        "  $content | Set-Content -Path \"$dir\\install-context.reg\"",
-        "}",
-        "if (Test-Path \"$dir\\uninstall-context.reg\") {",
-        "  $content = Get-Content \"$dir\\uninstall-context.reg\"",
-        "  if ($global) {",
-        "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
-        "  }",
-        "  $content | Set-Content -Path \"$dir\\uninstall-context.reg\"",
         "}"
     ],
     "checkver": {
