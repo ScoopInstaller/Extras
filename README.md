@@ -1,4 +1,4 @@
-# Scoop Extras
+# Scoop Extras [![Excavator](https://github.com/ScoopInstaller/Extras/actions/workflows/excavator.yml/badge.svg)](https://github.com/ScoopInstaller/Extras/actions/workflows/excavator.yml)
 
 Extra manifests for [Scoop](https://scoop.sh), the Windows command-line installer. For manifests that don't fit the [Main criteria](https://github.com/ScoopInstaller/Scoop/wiki/Criteria-for-including-apps-in-the-main-bucket).
 
