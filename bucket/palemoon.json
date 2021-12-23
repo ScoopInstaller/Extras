@@ -13,7 +13,13 @@
             "hash": "f7b2e634be362656260423897c157b45e1066741025370f74ef0d407df3e79cb"
         }
     },
-    "post_install": "(Get-Content \"$dir\\Palemoon-Portable.ini\") -replace 'ShowSplash=true','ShowSplash=false' | Set-Content \"$dir\\Palemoon-Portable.ini\"",
+    "post_install": [
+        "(Get-Content \"$dir\\Palemoon-Portable.ini\") -replace 'ShowSplash=true','ShowSplash=false' | Set-Content \"$dir\\Palemoon-Portable.ini\"",
+        "if (!(Test-Path \"$dir\\User\\Palemoon\\Profiles\") -and (Test-Path \"$env:AppData\\Moonchild Productions\\Pale Moon\\Profiles\")) {",
+        "    mkdir \"$dir\\User\\Palemoon\" -ErrorAction SilentlyContinue",
+        "    Copy-Item \"$env:AppData\\Moonchild Productions\\Pale Moon\\Profiles\" \"$dir\\User\\Palemoon\" -Recurse",
+        "}"
+    ],
     "bin": [
         [
             "Palemoon-Portable.exe",

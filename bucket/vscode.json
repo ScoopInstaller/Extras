@@ -7,9 +7,6 @@
         "url": "https://code.visualstudio.com/License/"
     },
     "notes": [
-        "Visual Studio Code now supports Portable Mode! Please move the following directories:",
-        "From \"$env:USERPROFILE\\.vscode\\extensions\" to \"$env:USERPROFILE\\scoop\\persist\\vscode\\data\\extensions\"",
-        "From \"$env:APPDATA\\Code\" to \"$env:USERPROFILE\\scoop\\persist\\vscode\\data\\user-data\"",
         "Add Visual Studio Code as a context menu option by running: '$dir\\install-context.reg'",
         "For file associations, run '$dir\\install-associations.reg'"
     ],
@@ -43,6 +40,12 @@
         "    }",
         "    $content | Set-Content -Path \"$dir\\$_.reg\"",
         "  }",
+        "}",
+        "if (!(Test-Path \"$dir\\data\\extensions\") -and (Test-Path \"$env:USERPROFILE\\.vscode\\extensions\")) {",
+        "    Copy-Item \"$env:USERPROFILE\\.vscode\\extensions\" \"$dir\\data\" -Recurse",
+        "}",
+        "if (!(Test-Path \"$dir\\data\\user-data\") -and (Test-Path \"$env:AppData\\Code\")) {",
+        "    Copy-Item \"$env:AppData\\Code\" \"$dir\\data\\user-data\" -Recurse",
         "}"
     ],
     "persist": "data",

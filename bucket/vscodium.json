@@ -4,9 +4,6 @@
     "homepage": "https://github.com/VSCodium/vscodium",
     "license": "MIT",
     "notes": [
-        "VSCodium now supports Portable Mode! Please move the following directories:",
-        "From \"$env:USERPROFILE\\.vscode-oss\\extensions\" to \"$env:USERPROFILE\\scoop\\persist\\vscodium\\data\\extensions\"",
-        "From \"$env:APPDATA\\VSCodium\" to \"$env:USERPROFILE\\scoop\\persist\\vscodium\\data\\user-data\"",
         "Add VSCodium as a context menu option by running: '$dir\\install-context.reg'",
         "For file associations, run '$dir\\install-associations.reg'"
     ],
@@ -41,6 +38,12 @@
         "    }",
         "    $content | Set-Content -Path \"$dir\\$_.reg\"",
         "  }",
+        "}",
+        "if (!(Test-Path \"$dir\\data\\extensions\") -and (Test-Path \"$env:USERPROFILE\\.vscode-oss\\extensions\")) {",
+        "    Copy-Item \"$env:USERPROFILE\\.vscode-oss\\extensions\" \"$dir\\data\" -Recurse",
+        "}",
+        "if (!(Test-Path \"$dir\\data\\user-data\") -and (Test-Path \"$env:AppData\\VSCodium\")) {",
+        "    Copy-Item \"$env:AppData\\VSCodium\" \"$dir\\data\\user-data\" -Recurse",
         "}"
     ],
     "persist": "data",
