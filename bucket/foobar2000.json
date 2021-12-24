@@ -22,10 +22,14 @@
         ]
     },
     "post_install": [
-        "if(Test-Path \"$persist_dir\\playlists\") {",
+        "if (Test-Path \"$persist_dir\\playlists\") {",
         "    Rename-Item -Path \"$persist_dir\\playlists\" -NewName playlists-v1.4 -Force",
         "    Get-ChildItem -Exclude \"profile\" -Path \"$persist_dir\" |",
         "        Move-Item -Destination \"$persist_dir\\profile\" -Force",
+        "}",
+        "if (!(Test-Path \"$dir\\profile\\*\") -and (Test-Path \"$env:AppData\\foobar2000\")) {",
+        "    info '[Portable Mode]: Copying user data...'",
+        "    Copy-Item \"$env:AppData\\foobar2000\\*\" \"$dir\\profile\" -Recurse",
         "}"
     ],
     "persist": "profile",
