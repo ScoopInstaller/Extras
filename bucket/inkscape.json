@@ -1,19 +1,20 @@
 {
-    "version": "1.1",
+    "version": "1.1.1",
     "description": "Professional vector graphics editor",
     "homepage": "https://inkscape.org",
     "license": "GPL-3.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://media.inkscape.org/dl/resources/file/inkscape-1.1-x64.7z",
-            "hash": "0538bc76fb962c7aa99f2f757dfc0bf3eee986e06ec73605e8a62750e3e2ccd2"
+            "url": "https://inkscape.org/en/gallery/item/29349/inkscape-1.1.1_2021-09-20_3bf5ae0d25-x64.7z",
+            "hash": "e54263167cd0745c5613cd692aadc4b31e2054b69029ab6618982cae64be4d63",
+            "extract_dir": "idir"
         },
         "32bit": {
-            "url": "https://media.inkscape.org/dl/resources/file/inkscape-1.1-x86.7z",
-            "hash": "22ca6feb4f2c130663fd79a5edd7ca8412b9628fa31ab8bef11b68dd85ebcacc"
+            "url": "https://inkscape.org/en/gallery/item/29417/InkscapePortable_1.1.1.paf.exe#/dl.7z",
+            "hash": "657ea0d03a9b2fe5e2d3259bf7c802c2eb37e7c5a04e83d4005dacec0d508399",
+            "extract_dir": "App\\Inkscape"
         }
     },
-    "extract_dir": "inkscape",
     "bin": [
         "bin\\inkscape.com",
         "bin\\inkview.com"
@@ -25,20 +26,25 @@
         ]
     ],
     "checkver": {
-        "url": "https://inkscape.org/release",
-        "regex": ">Inkscape\\s+([\\d.]+)</"
+        "script": [
+            "$redirUrl = [System.Net.HttpWebRequest]::Create('https://inkscape.org/en/release').GetResponse().ResponseUri.AbsoluteUri",
+            "$version = $redirUrl -split '\\/(inkscape-)?' | Select-Object -last 1 -skip 1",
+            "$32bit_dl = Invoke-WebRequest ($redirUrl + '/windows/32-bit/portable-app/dl/') -UseBasicParsing",
+            "$64bit_dl = Invoke-WebRequest ($redirUrl + '/windows/64-bit/compressed-7z/dl/') -UseBasicParsing",
+            "$32bit_url = $32bit_dl.links | Where-Object href -match '\\.exe$' | Select-Object -first 1 -expand href",
+            "$64bit_url = $64bit_dl.links | Where-Object href -match '\\.7z$' | Select-Object -first 1 -expand href",
+            "Write-Output $version $32bit_url $64bit_url"
+        ],
+        "regex": "(?<version>[\\d.]+)\\s(?<win32biturl>.+)\\s(?<win64biturl>.+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://media.inkscape.org/dl/resources/file/inkscape-$version-x64.7z"
+                "url": "https://inkscape.org/en$matchWin64biturl"
             },
             "32bit": {
-                "url": "https://media.inkscape.org/dl/resources/file/inkscape-$version-x86.7z"
+                "url": "https://inkscape.org/en$matchWin32biturl#/dl.7z"
             }
-        },
-        "hash": {
-            "url": "https://media.inkscape.org/media/resources/sigs/$basename.sha256"
         }
     }
 }
