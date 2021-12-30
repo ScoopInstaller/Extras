@@ -6,6 +6,7 @@
         "identifier": "Shareware",
         "url": "https://www.scootersoftware.com/index.php?zz=kb_licensev4"
     },
+    "notes": "Add Beyond Compare as a context menu option by running: '$dir\\install-context.reg'",
     "architecture": {
         "64bit": {
             "url": "https://www.scootersoftware.com/BCompare-4.4.1.26165_x64.msi",
@@ -27,6 +28,20 @@
             "BCClipboard.exe",
             "Clipboard Compare"
         ]
+    ],
+    "post_install": [
+        "$dir_escaped = \"$dir\".Replace('\\', '\\\\')",
+        "\"install-context-$architecture\", \"uninstall-context\" | ForEach-Object {",
+        "  if (Test-Path \"$bucketsdir\\extras\\scripts\\beyondcompare\\$_.reg\") {",
+        "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\beyondcompare\\$_.reg\"",
+        "    $content = $content.Replace('$install_dir', $dir_escaped)",
+        "    if ($global) {",
+        "      $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "    }",
+        "    $outfile_no_arch = $_.Replace(\"-$architecture\", \"\")",
+        "    $content | Set-Content -Path \"$dir\\$outfile_no_arch.reg\"",
+        "  }",
+        "}"
     ],
     "checkver": {
         "url": "https://www.scootersoftware.com/download.php?zz=kb_dl4_winalternate",
