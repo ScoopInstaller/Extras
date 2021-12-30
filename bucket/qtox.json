@@ -14,6 +14,20 @@
         }
     },
     "extract_dir": "bin",
+    "installer": {
+        "script": [
+            "if (!(Test-Path \"$persist_dir\\qtox.ini\")) {",
+            "    Set-Content \"$dir\\qtox.ini\" @('[Advanced]', 'makeToxPortable=true', '[%General]', 'checkUpdates=false') -Encoding ASCII -Force",
+            "    if (Test-Path \"$env:AppData\\tox\") {",
+            "        Copy-Item \"$env:AppData\\tox\\*\" \"$dir\" -Recurse -Exclude '*qtox.ini' -ErrorAction SilentlyContinue",
+            "    }",
+            "} else { Move-Item \"$persist_dir\\*\" \"$dir\" -Include '*.ini', '*.db', '*.tox' }"
+        ]
+    },
+    "uninstaller": {
+        "script": "Move-Item \"$dir\\*\" \"$persist_dir\" -Include '*.ini', '*.db', '*.tox'"
+    },
+    "persist": "avatars",
     "bin": "qtox.exe",
     "shortcuts": [
         [

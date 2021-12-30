@@ -6,12 +6,6 @@
         "identifier": "Freeware",
         "url": "https://www.foobar2000.org/license"
     },
-    "notes": [
-        "WARNING: foobar2000 package is reverting back to non-portable installation.",
-        "If you still want portable version, use foobar2000-portable instead.",
-        "If you want to migrate persisted data to portable version",
-        "please rename $persist_dir to \"foobar2000-portable\"."
-    ],
     "url": "https://www.videohelp.com/download/foobar2000_v1.6.8.exe#/dl.7z",
     "hash": "679ecdb3304e2fcefb7b5e087fba527e3a5921fcdbc24b4093bee05ab0fec7a0",
     "bin": "foobar2000.exe",
@@ -24,9 +18,21 @@
     "installer": {
         "script": [
             "Remove-Item \"$dir\\`$*\", \"$dir\\uninstall.exe\" -Force -Recurse",
-            "New-Item \"$dir\\user_profiles_enabled\" -Force | Out-Null"
+            "New-Item \"$dir\\portable_mode_enabled\" -Force | Out-Null"
         ]
     },
+    "post_install": [
+        "if (Test-Path \"$persist_dir\\playlists\") {",
+        "    Rename-Item -Path \"$persist_dir\\playlists\" -NewName playlists-v1.4 -Force",
+        "    Get-ChildItem -Exclude \"profile\" -Path \"$persist_dir\" |",
+        "        Move-Item -Destination \"$persist_dir\\profile\" -Force",
+        "}",
+        "if (!(Test-Path \"$dir\\profile\\*\") -and (Test-Path \"$env:AppData\\foobar2000\")) {",
+        "    info '[Portable Mode]: Copying user data...'",
+        "    Copy-Item \"$env:AppData\\foobar2000\\*\" \"$dir\\profile\" -Recurse",
+        "}"
+    ],
+    "persist": "profile",
     "checkver": {
         "url": "https://www.foobar2000.org/download",
         "regex": "foobar2000_v([\\d.]+)\\."
