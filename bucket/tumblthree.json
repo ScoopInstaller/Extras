@@ -1,11 +1,21 @@
 {
-    "version": "1.0.11.2",
+    "version": "2.4.6",
+    "description": "A Tumblr Backup Application",
     "homepage": "https://github.com/TumblThreeApp/TumblThree",
-    "description": "A Tumblr Backup Application.",
     "license": "MIT",
-    "url": "https://github.com/TumblThreeApp/TumblThree/releases/download/v1.0.11.2/TumblThree-v1.0.11.2-Application.zip",
-    "hash": "a8904ec0a536dc092e792d6c3e721d9df85bac2c9a66dccdd769ae21ae212f35",
-    "extract_dir": "TumbleThree",
+    "suggest": {
+        "vcredist": "extras/vcredist2015"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/TumblThreeApp/TumblThree/releases/download/v2.4.6/TumblThree-v2.4.6-x64-Application.zip",
+            "hash": "648c43b093aa30c8151e7e63d2eb8a18288631000075a1ecb1dfe0295588abcc"
+        },
+        "32bit": {
+            "url": "https://github.com/TumblThreeApp/TumblThree/releases/download/v2.4.6/TumblThree-v2.4.6-x86-Application.zip",
+            "hash": "e05958c7f6ae04b7772303f8a38f0cbd72e03a0fb004a5de94e305083c32e762"
+        }
+    },
     "pre_install": [
         "foreach ($name in @('Cookies.json', 'Manager.json', 'Queuelist.json')) {",
         "    if (!(Test-Path \"$persist_dir\\$name\")) { New-Item \"$dir\\$name\" | Out-Null }",
@@ -25,8 +35,18 @@
         "Queuelist.json",
         "Settings.json"
     ],
-    "checkver": "github",
+    "checkver": {
+        "github": "https://github.com/TumblThreeApp/TumblThree",
+        "regex": "/TumblThree-v([\\d.]+)-x\\d+"
+    },
     "autoupdate": {
-        "url": "https://github.com/TumblThreeApp/TumblThree/releases/download/v$version/TumblThree-v$version-Application.zip"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/TumblThreeApp/TumblThree/releases/download/v$matchHead/TumblThree-v$version-x64-Application.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/TumblThreeApp/TumblThree/releases/download/v$matchHead/TumblThree-v$version-x86-Application.zip"
+            }
+        }
     }
 }

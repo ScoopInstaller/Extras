@@ -1,42 +1,33 @@
 {
-    "homepage": "https://streamlink.github.io/",
+    "version": "3.0.3",
     "description": "A command-line utility that pipes video streams from various services into a video player.",
-    "version": "1.3.1",
+    "homepage": "https://streamlink.github.io/",
     "license": "BSD-2-Clause",
-    "url": "https://github.com/streamlink/streamlink/releases/download/1.3.1/streamlink-1.3.1.exe#/dl.7z",
-    "hash": "df5077031c4649c956ef0f483edce9fc5006c07065f37d5d611aa5146b882cb0",
-    "notes": "Streamlink settings can be changed in '%APPDATA%\\streamlink\\streamlinkrc'",
-    "bin": [
-        "bin\\streamlink.exe",
-        "bin\\streamlinkw.exe"
-    ],
-    "post_install": [
-        "If(!(Test-Path \"$env:APPDATA\\streamlink\\streamlinkrc\")) {",
-        "    Write-Host \"Copying default 'streamlinkrc' to '%APPDATA%\\streamlink\\streamlinkrc'\"",
-        "    New-Item -Force -Type directory -Path \"$env:APPDATA\\streamlink\" | Out-Null",
-        "    Copy-Item \"$dir\\`$APPDATA\\streamlink\\streamlinkrc\" \"$env:APPDATA\\streamlink\\streamlinkrc\"",
-        "}",
-        "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
-        "Remove-Item \"$dir\\ffmpeg\" -Recurse",
-        "Remove-Item \"$dir\\uninstall.exe\""
-    ],
-    "pre_install": [
-        "\"#!`\"$dir\\Python\\python.exe`\"\" | Set-Content \"$dir\\bin\\python.txt\"",
-        "\"#!`\"$dir\\Python\\pythonw.exe`\"\" | Set-Content \"$dir\\bin\\pythonw.txt\"",
-        "if((Get-Command Get-Content).parameters.ContainsKey('AsByteStream')) {",
-        "   Get-Content -AsByteStream \"$dir\\bin\\launcher_exe.dat\",\"$dir\\bin\\python.txt\",\"$dir\\bin\\streamlink-append.zip\" | Set-Content -AsByteStream \"$dir\\bin\\streamlink.exe\"",
-        "   Get-Content -AsByteStream \"$dir\\bin\\launcher_noconsole_exe.dat\",\"$dir\\bin\\pythonw.txt\",\"$dir\\bin\\streamlinkw-append-noconsole.zip\" | Set-Content -AsByteStream \"$dir\\bin\\streamlinkw.exe\"",
-        "} else {",
-        "   Get-Content -Encoding byte \"$dir\\bin\\launcher_exe.dat\",\"$dir\\bin\\python.txt\",\"$dir\\bin\\streamlink-append.zip\" | Set-Content -Encoding byte \"$dir\\bin\\streamlink.exe\"",
-        "   Get-Content -Encoding byte \"$dir\\bin\\launcher_noconsole_exe.dat\",\"$dir\\bin\\pythonw.txt\",\"$dir\\bin\\streamlinkw-append-noconsole.zip\" | Set-Content -Encoding byte \"$dir\\bin\\streamlinkw.exe\"",
-        "}"
-    ],
+    "notes": "Streamlink settings can be changed in '%APPDATA%\\streamlink\\config'",
     "suggest": {
         "FFmpeg": [
             "ffmpeg",
             "ffmpeg-nightly"
-        ]
+        ],
+        "VLC Player": "extras/vlc"
     },
+    "url": "https://github.com/streamlink/streamlink/releases/download/3.0.3/streamlink-3.0.3.exe#/dl.7z",
+    "hash": "f6de6fcf2aa2bf532d18782ec1e9421b173bd627fc0e6faf8427807289483d37",
+    "pre_install": [
+        "if (!(Test-Path \"$env:APPDATA\\streamlink\\config\")) {",
+        "    info 'Copying default ''config'' to ''%APPDATA%\\streamlink\\config'''",
+        "    ensure \"$env:APPDATA\\streamlink\" | Out-Null",
+        "    Copy-Item \"$dir\\`$APPDATA\\streamlink\\config\" \"$env:APPDATA\\streamlink\\config\"",
+        "}",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\ffmpeg\", \"$dir\\uninstall.exe\" -Recurse"
+    ],
+    "uninstaller": {
+        "script": "if ($purge) { Remove-Item \"$env:APPDATA\\streamlink\" -Recurse}"
+    },
+    "bin": [
+        "bin\\streamlink.exe",
+        "bin\\streamlinkw.exe"
+    ],
     "checkver": {
         "github": "https://github.com/streamlink/streamlink"
     },

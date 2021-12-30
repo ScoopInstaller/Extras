@@ -1,29 +1,34 @@
 {
+    "version": "14.31.30919.0",
+    "description": "Microsoft Visual C++ Redistributables bundle for all major versions",
     "homepage": "https://www.visualstudio.com/downloads/",
-    "description": "Microsoft Visual C++ Redistributable for Visual Studio 2005/2008/2010/2012/2013/2015-2019.",
-    "version": "14.24.28127.4",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.microsoft.com/en-us/legal/intellectualproperty/copyright/default.aspx"
     },
-    "url": [
-        "https://download.visualstudio.microsoft.com/download/pr/3b070396-b7fb-4eee-aa8b-102a23c3e4f4/40EA2955391C9EAE3E35619C4C24B5AAF3D17AEAA6D09424EE9672AA9372AEED/VC_redist.x64.exe",
-        "https://download.visualstudio.microsoft.com/download/pr/9307e627-aaac-42cb-a32a-a39e166ee8cb/E59AE3E886BD4571A811FE31A47959AE5C40D87C583F786816C60440252CD7EC/VC_redist.x86.exe"
-    ],
-    "hash": [
-        "40ea2955391c9eae3e35619c4c24b5aaf3d17aeaa6d09424ee9672aa9372aeed",
-        "e59ae3e886bd4571a811fe31a47959ae5c40d87c583f786816c60440252cd7ec"
-    ],
-    "post_install": [
-        "Invoke-ExternalCommand -FilePath \"$dir\\vc_redist.x64.exe\" -ArgumentList \"/fo /quiet /norestart\" -RunAs | Out-Null",
-        "Invoke-ExternalCommand -FilePath \"$dir\\vc_redist.x86.exe\" -ArgumentList \"/fo /quiet /norestart\" -RunAs | Out-Null"
-    ],
-    "notes": "You can now remove all vcredist installers with 'scoop uninstall vcredist vcredist2005 vcredist2008 vcredist2010 vcredist2012 vcredist2013'",
+    "notes": "You can now remove all vcredist installers with 'scoop uninstall vcredist2005 vcredist2008 vcredist2010 vcredist2012 vcredist2013 vcredist'",
     "depends": [
         "vcredist2005",
         "vcredist2008",
         "vcredist2010",
         "vcredist2012",
         "vcredist2013"
+    ],
+    "url": [
+        "https://download.visualstudio.microsoft.com/download/pr/8c1c2dbb-0856-4dc3-b863-b16c637bc245/C527CE426B8D25CB7D4F577476E984C73E84AAAC3E84730BC118A4E0E0FA3CB0/VC_redist.x64.exe",
+        "https://download.visualstudio.microsoft.com/download/pr/8c1c2dbb-0856-4dc3-b863-b16c637bc245/E55681B9E07A58F7143E5AB5941F45DE0B485E0C9933B0CB6B702D3921F48527/VC_redist.x86.exe"
+    ],
+    "hash": [
+        "c527ce426b8d25cb7d4f577476e984c73e84aaac3e84730bc118a4e0e0fa3cb0",
+        "e55681b9e07a58f7143e5ab5941f45de0b485e0c9933b0cb6b702d3921f48527"
+    ],
+    "post_install": [
+        "# For error codes, see https://docs.microsoft.com/en-us/windows/win32/msi/error-codes",
+        "$ec = @{",
+        "    1638 = 'This product is already installed';",
+        "    3010 = 'A restart is required to complete the installation';",
+        "}",
+        "Invoke-ExternalCommand -FilePath \"$dir\\vc_redist.x64.exe\" -ArgumentList '/fo', '/quiet', '/norestart' -ContinueExitCodes $ec -RunAs | Out-Null",
+        "Invoke-ExternalCommand -FilePath \"$dir\\vc_redist.x86.exe\" -ArgumentList '/fo', '/quiet', '/norestart' -ContinueExitCodes $ec -RunAs | Out-Null"
     ]
 }

@@ -1,0 +1,58 @@
+{
+    "version": "5.9.0.2481",
+    "description": "Video and audio conferencing, chat, and webinars",
+    "homepage": "https://zoom.us",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://zoom.us/terms"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://zoom.us/client/5.9.0.2481/ZoomInstaller.exe?archType=x64#/dl.7z",
+            "hash": "4ce8d159a76a8f23ae2a89ab8ccea163b8deb7ccee78d7cd0203f3b007ecfc40"
+        },
+        "32bit": {
+            "url": "https://zoom.us/client/5.9.0.2481/ZoomInstaller.exe?archType=x86#/dl.7z",
+            "hash": "01f9169902165cbc1e6cfa46be600d5ffd14308796e8e04ec8a9e4630979d70c"
+        }
+    },
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\Zoom.msi\" -Removal",
+        "Remove-Item \"$dir\\Install*\""
+    ],
+    "post_install": [
+        "Write-Host \"Registering zoommtg:// protocol handler\"",
+        "$regpath = \"HKCU:\\SOFTWARE\\Classes\\zoommtg\"",
+        "New-Item -Path $regpath -Value \"Zoom (Application Name)\" -Force | Out-Null",
+        "New-ItemProperty -Path $regpath -Name \"URL Protocol\" -PropertyType String -Force | Out-Null",
+        "New-Item -Path \"$regpath\\shell\\open\\command\" -Value \"`\"$dir\\Zoom.exe`\" --url=`\"%1`\"\" -Force| Out-Null"
+    ],
+    "uninstaller": {
+        "script": [
+            "Write-Host \"Unregistering zoommtg:// protocol handler\"",
+            "Remove-Item \"HKCU:\\SOFTWARE\\Classes\\zoommtg\" -Recurse -Force"
+        ]
+    },
+    "bin": "Zoom.exe",
+    "shortcuts": [
+        [
+            "Zoom.exe",
+            "Zoom"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.zoom.us/download",
+        "regex": "Version\\s*([\\d.]+)\\s+\\((\\d+)\\)",
+        "replace": "$1.$2"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://zoom.us/client/$version/ZoomInstaller.exe?archType=x64#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://zoom.us/client/$version/ZoomInstaller.exe?archType=x86#/dl.7z"
+            }
+        }
+    }
+}

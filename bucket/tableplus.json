@@ -1,26 +1,26 @@
 {
     "##": "TODO: There will be an option for portable mode in the near future. See #3424 for details.",
-    "version": "3.1.8.114",
+    "version": "4.8.6.186",
     "description": "Relational database explorer",
     "homepage": "https://tableplus.com",
     "license": {
         "identifier": "Proprietary",
         "url": "https://tableplus.com/blog/2018/01/license-agreement.html"
     },
-    "url": "https://s3.amazonaws.com/tableplus-win-builds/114/TablePlusSetup.exe",
-    "hash": "ef6b7a39a06657aa6b942adf4e4713bc29755252112f59d6c2104a99181b16cd",
+    "url": "https://download.tableplus.com/windows/4.8.6/TablePlusSetup.exe",
+    "hash": "7aa7f6bf8ff724c4135f967f1bc51198e97acf9af94d2fbfae944ab0f1305797",
     "innosetup": true,
     "architecture": {
-        "32bit": {
-            "pre_install": [
-                "Get-ChildItem \"$dir\" '*,1.*' | Rename-Item -NewName { $_.FullName -replace ',1\\.', '.' }",
-                "Remove-Item \"$dir\\*,2.*\""
-            ]
-        },
         "64bit": {
             "pre_install": [
                 "Get-ChildItem \"$dir\" '*,2.*' | Rename-Item -NewName { $_.FullName -replace ',2\\.', '.' }",
                 "Remove-Item \"$dir\\*,1.*\""
+            ]
+        },
+        "32bit": {
+            "pre_install": [
+                "Get-ChildItem \"$dir\" '*,1.*' | Rename-Item -NewName { $_.FullName -replace ',1\\.', '.' }",
+                "Remove-Item \"$dir\\*,2.*\""
             ]
         }
     },
@@ -34,9 +34,9 @@
     "checkver": {
         "url": "https://tableplus.com/win/version.xml?sign=&version=x64",
         "regex": "sparkle:version=\"(?<build>\\d+)\"\\s+sparkle:shortVersionString=\"([\\d.]+)\"",
-        "replace": "${1}.${build}"
+        "replace": "$1.${build}"
     },
     "autoupdate": {
-        "url": "https://s3.amazonaws.com/tableplus-win-builds/$buildVersion/TablePlusSetup.exe"
+        "url": "https://download.tableplus.com/windows/$matchHead/TablePlusSetup.exe"
     }
 }

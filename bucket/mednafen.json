@@ -1,0 +1,47 @@
+{
+    "version": "1.27.1",
+    "description": "Various systems emulator",
+    "homepage": "https://mednafen.github.io/",
+    "license": "GPL-2.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://mednafen.github.io/releases/files/mednafen-1.27.1-win64.zip",
+            "hash": "578c49ce2d8a36af9103113d5d6cf97139c59f89450db5a1ea0c7a3ada895458"
+        },
+        "32bit": {
+            "url": "https://mednafen.github.io/releases/files/mednafen-1.27.1-win32.zip",
+            "hash": "a0f4dd4e66b056f756aa7d181714507cfefa526332ccc371e6665ec1617b306b"
+        }
+    },
+    "pre_install": "if (-not (Test-Path \"$persist_dir\\mednafen.cfg\")) { New-Item \"$dir\\mednafen.cfg\" | Out-Null }",
+    "bin": "mednafen.exe",
+    "persist": [
+        "cheats",
+        "firmware",
+        "mcm",
+        "mcs",
+        "palettes",
+        "pgconfig",
+        "sav",
+        "snaps",
+        "mednafen.cfg"
+    ],
+    "checkver": {
+        "url": "https://mednafen.github.io/documentation/ChangeLog.txt",
+        "regex": "--\\s+([\\d.]+):\\s+--"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://mednafen.github.io/releases/files/mednafen-$version-win64.zip"
+            },
+            "32bit": {
+                "url": "https://mednafen.github.io/releases/files/mednafen-$version-win32.zip"
+            }
+        },
+        "hash": {
+            "url": "https://mednafen.github.io/",
+            "regex": "(?sm)$basename.*?SHA-256:\\s*$sha256"
+        }
+    }
+}

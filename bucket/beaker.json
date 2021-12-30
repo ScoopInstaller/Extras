@@ -1,35 +1,43 @@
 {
-    "version": "0.8.8",
+    "version": "1.1.0",
     "description": "An experimental peer-to-peer Web browser",
-    "homepage": "https://beakerbrowser.com/",
+    "homepage": "https://beakerbrowser.com",
     "license": "MIT",
-    "url": "https://github.com/beakerbrowser/beaker/releases/download/0.8.8/beaker-browser-setup-0.8.8.exe#/dl.7z",
-    "hash": "6662842f36e3d4e5e52aa8ca209d6727850a97831980214ed749829409a2d886",
-    "bin": "Beaker Browser.exe",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/beakerbrowser/beaker/releases/download/1.1.0/beaker-browser-setup-1.1.0.exe#/dl.7z",
+            "hash": "sha512:cc2517aeb56afbd4df488dcfb886f248d159b78a505aaf676e51bf16abf4352d0b6bf9d91fa602b016ae0f29a930efded6025471d0dbb9e1dc193ca6a7e5fd3e",
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$*\", \"$dir\\Unintall*\" -Recurse"
+            ]
+        }
+    },
+    "bin": [
+        "Beaker Browser.exe",
+        [
+            "Beaker Browser.exe",
+            "beaker"
+        ]
+    ],
     "shortcuts": [
         [
             "Beaker Browser.exe",
             "Beaker Browser"
         ]
     ],
-    "architecture": {
-        "64bit": {
-            "installer": {
-                "script": [
-                    "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-                    "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse"
-                ]
-            }
-        }
-    },
     "checkver": {
         "github": "https://github.com/beakerbrowser/beaker"
     },
     "autoupdate": {
-        "url": "https://github.com/beakerbrowser/beaker/releases/download/$version/beaker-browser-setup-$version.exe#/dl.7z",
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/beakerbrowser/beaker/releases/download/$version/beaker-browser-setup-$version.exe#/dl.7z"
+            }
+        },
         "hash": {
             "url": "$baseurl/latest.yml",
-            "regex": "sha512: $base64"
+            "regex": "sha512:\\s+$base64"
         }
     }
 }

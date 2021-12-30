@@ -1,21 +1,50 @@
 {
-    "homepage": "https://notepad-plus-plus.org",
+    "version": "8.1.9.3",
     "description": "A free source code editor and Notepad replacement that supports several languages.",
-    "version": "7.8.4",
+    "homepage": "https://notepad-plus-plus.org",
     "license": "GPL-2.0-only",
+    "notes": "Add Notepad++ as a context menu option by running: reg import \"$dir\\install-context.reg\"",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v7.8.4/npp.7.8.4.bin.x64.7z",
-            "hash": "5e2658a49404fc1b23a0fc3915b283ac190f9f6da2e86a49708602b77e50595d"
+            "url": [
+                "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.1.9.3/npp.8.1.9.3.portable.x64.zip",
+                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/notepadplusplus/install-context.reg",
+                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/notepadplusplus/uninstall-context.reg"
+            ],
+            "hash": [
+                "b40d988338a996b18b5aa3139f293a66789bf7dcbd636a01f2bdb84c1a8abe6b",
+                "2957865501223f2167a7da51196157a1138c8ad09819ad536beef5b97b19cf13",
+                "601a517c9be3b341e46692035130d094ed1613f55e78cb61d86dff774947d0e0"
+            ]
         },
         "32bit": {
-            "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v7.8.4/npp.7.8.4.bin.7z",
-            "hash": "421dca4dcfb9ca8ae81bf51bd5c64d1432229ec89708efb3664a3603617824e2"
+            "url": [
+                "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.1.9.3/npp.8.1.9.3.portable.zip",
+                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/notepadplusplus/install-context.reg",
+                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/notepadplusplus/uninstall-context.reg"
+            ],
+            "hash": [
+                "26b55be7d3a50eae14ddfa5826763104886afac8ee11fdbf2547a3841e46c3bd",
+                "2957865501223f2167a7da51196157a1138c8ad09819ad536beef5b97b19cf13",
+                "601a517c9be3b341e46692035130d094ed1613f55e78cb61d86dff774947d0e0"
+            ]
         }
     },
     "pre_install": [
         "if (!(Test-Path \"$persist_dir\\session.xml\")) { New-Item \"$dir\\session.xml\" -Force | Out-Null }",
-        "if (!(Test-Path \"$persist_dir\\userDefineLang.xml\")) { New-Item \"$dir\\userDefineLang.xml\" -Force | Out-Null }"
+        "if (!(Test-Path \"$persist_dir\\userDefineLang.xml\")) { New-Item \"$dir\\userDefineLang.xml\" -Force | Out-Null }",
+        "if (!(Test-Path \"$persist_dir\\nativeLang.xml\")) { New-Item \"$dir\\nativeLang.xml\" -Force | Out-Null }",
+        "$file = \"$dir\\install-context.reg\"",
+        "if (Test-Path $file) {",
+        "    $nppPath = \"$dir\\notepad++.exe\".Replace('\\', '\\\\')",
+        "    $content = (Get-Content $file).Replace('$npp', $nppPath)",
+        "    if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "    Set-Content $file $content -Encoding Ascii -Force",
+        "}",
+        "$file = \"$dir\\uninstall-context.reg\"",
+        "if ((Test-Path $file) -and $global) {",
+        "    (Get-Content $file).Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') | Set-Content -Path $file -Encoding Ascii -Force",
+        "}"
     ],
     "bin": "notepad++.exe",
     "shortcuts": [
@@ -31,7 +60,9 @@
         "themes",
         "userDefineLangs",
         "config.xml",
+        "nativeLang.xml",
         "session.xml",
+        "shortcuts.xml",
         "userDefineLang.xml"
     ],
     "checkver": {
@@ -40,15 +71,14 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v$version/npp.$version.bin.x64.7z"
+                "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v$version/npp.$version.portable.x64.zip"
             },
             "32bit": {
-                "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v$version/npp.$version.bin.7z"
+                "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v$version/npp.$version.portable.zip"
             }
         },
         "hash": {
             "url": "$baseurl/npp.$version.checksums.sha256"
         }
-    },
-    "notes": "The following page explains how to add explorer context menu entries for notepad++. https://npp-user-manual.org/docs/shell-extension"
+    }
 }

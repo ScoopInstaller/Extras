@@ -1,51 +1,58 @@
 {
-    "version": "2019.3.3",
-    "description": "A lightweight and intelligent IDE for front-end development and server-side JavaScript.",
+    "version": "2021.3-213.5744.224",
+    "description": "Cross-Platform IDE for JavaScript by JetBrains.",
     "homepage": "https://www.jetbrains.com/webstorm/",
     "license": {
-        "identifier": "Shareware",
-        "url": "https://www.jetbrains.com/legal/agreements/user.html"
+        "identifier": "Proprietary",
+        "url": "https://www.jetbrains.com/store/license.html"
     },
-    "url": "https://download.jetbrains.com/webstorm/WebStorm-2019.3.3.exe#/dl.7z",
-    "hash": "c58ea4eaf9937be13fe2092856e1116b79131d0741d1c2cb48891b6ea4cbadff",
+    "url": "https://download.jetbrains.com/webstorm/WebStorm-2021.3.exe#/dl.7z",
+    "hash": "3919c790d9c0b92b9b2f03e6b86ff86af0c1ad77708de25e69186b128d19617a",
+    "extract_to": "IDE",
+    "installer": {
+        "script": [
+            "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" $dir $persist_dir",
+            "Remove-Item \"$dir\\IDE\\`$*\" -Force -Recurse"
+        ]
+    },
     "architecture": {
         "64bit": {
             "bin": [
                 [
-                    "bin\\webstorm64.exe",
+                    "IDE\\bin\\webstorm64.exe",
                     "webstorm"
                 ]
             ],
             "shortcuts": [
                 [
-                    "bin\\webstorm64.exe",
-                    "JetBrains WebStorm"
+                    "IDE\\bin\\webstorm64.exe",
+                    "JetBrains\\WebStorm"
                 ]
             ]
         },
         "32bit": {
-            "bin": [
-                [
-                    "bin\\webstorm.exe",
-                    "webstorm"
-                ]
-            ],
+            "bin": "IDE\\bin\\webstorm.exe",
             "shortcuts": [
                 [
-                    "bin\\webstorm.exe",
-                    "JetBrains WebStorm"
+                    "IDE\\bin\\webstorm.exe",
+                    "JetBrains\\WebStorm"
                 ]
             ]
         }
     },
+    "persist": [
+        "IDE\\bin\\idea.properties",
+        "profile"
+    ],
     "checkver": {
-        "url": "https://data.services.jetbrains.com/products/releases?code=WS&latest=true&type=release",
-        "jp": "$..version"
+        "url": "https://data.services.jetbrains.com/products/releases?code=WS&latest=true&platform=zip&type=release",
+        "regex": "version\":\"(?<ver>[\\d.]+)\".*\"build\":\"(?<build>[\\d.]+)\"",
+        "replace": "${ver}-${build}"
     },
     "autoupdate": {
-        "url": "https://download.jetbrains.com/webstorm/WebStorm-$version.exe#/dl.7z",
+        "url": "https://download.jetbrains.com/webstorm/WebStorm-$matchHead.exe#/dl.7z",
         "hash": {
-            "url": "https://download.jetbrains.com/webstorm/WebStorm-$version.exe.sha256"
+            "url": "$url.sha256"
         }
     }
 }

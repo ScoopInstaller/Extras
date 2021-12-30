@@ -1,18 +1,26 @@
 {
+    "version": "1.63.2",
+    "description": "Lightweight but powerful source code editor",
     "homepage": "https://code.visualstudio.com/",
-    "version": "1.42.1",
-    "description": "Visual Studio Code is a lightweight but powerful source code editor.",
     "license": {
         "identifier": "Freeware",
         "url": "https://code.visualstudio.com/License/"
     },
-    "notes": "Add Visual Studio Code as a context menu option by running: \"$dir\\vscode-install-context.reg\"",
-    "bin": [
-        [
-            "bin\\code.cmd",
-            "code"
-        ]
+    "notes": [
+        "Add Visual Studio Code as a context menu option by running: '$dir\\install-context.reg'",
+        "For file associations, run '$dir\\install-associations.reg'"
     ],
+    "architecture": {
+        "64bit": {
+            "url": "https://update.code.visualstudio.com/1.63.2/win32-x64-archive/stable#/dl.7z",
+            "hash": "5d3c75fe622afd170871a1357820e49c89a06c5684e51f7994e4be622b07d9fe"
+        },
+        "32bit": {
+            "url": "https://update.code.visualstudio.com/1.63.2/win32-archive/stable#/dl.7z",
+            "hash": "8199f4c65a765e2cf405d8fbe4a0cd54d3cbbe0c2ff46b4785028d962fe1f455"
+        }
+    },
+    "env_add_path": "bin",
     "shortcuts": [
         [
             "code.exe",
@@ -20,67 +28,38 @@
         ]
     ],
     "post_install": [
-        "if (Test-Path \"$dir\\vscode-install-context.reg\") {",
-        "  $codepath = \"$dir\\Code.exe\".Replace('\\', '\\\\')",
-        "  $content = Get-Content \"$dir\\vscode-install-context.reg\"",
-        "  $content = $content.Replace('$code', $codepath)",
-        "  if ($global) {",
-        "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "$dirpath = \"$dir\".Replace('\\', '\\\\')",
+        "$exepath = \"$dir\\Code.exe\".Replace('\\', '\\\\')",
+        "'install-associations', 'uninstall-associations', 'install-context', 'uninstall-context' | ForEach-Object {",
+        "  if (Test-Path \"$bucketsdir\\extras\\scripts\\vscode\\$_.reg\") {",
+        "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\vscode\\$_.reg\"",
+        "    $content = $content.Replace('$codedir', $dirpath)",
+        "    $content = $content.Replace('$code', $exepath)",
+        "    if ($global) {",
+        "      $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "    }",
+        "    $content | Set-Content -Path \"$dir\\$_.reg\"",
         "  }",
-        "  $content | Set-Content -Path \"$dir\\vscode-install-context.reg\"",
-        "}",
-        "if (Test-Path \"$dir\\vscode-uninstall-context.reg\") {",
-        "  $content = Get-Content \"$dir\\vscode-uninstall-context.reg\"",
-        "  if ($global) {",
-        "    $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
-        "  }",
-        "  $content | Set-Content -Path \"$dir\\vscode-uninstall-context.reg\"",
         "}"
     ],
     "checkver": {
         "url": "https://code.visualstudio.com/sha?build=stable",
-        "jp": "$.products[?(@.platform.os == 'win32-x64-archive')].name"
-    },
-    "architecture": {
-        "64bit": {
-            "url": [
-                "https://vscode-update.azurewebsites.net/1.42.1/win32-x64-archive/stable#/dl.7z",
-                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg",
-                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg"
-            ],
-            "hash": [
-                "b559feec06d7073f74314f0e4778fe30455f0cc25dfeca4d9d3664f4db64abc3",
-                "b65d66860d9ccc18bfb05237b03e06db0d6c574be3d4b946c2a5e6865c08cb28",
-                "df2a5162e72e2518e2b75b4337c8e7b46c136554872af90fa0de1cf6ebef376f"
-            ]
-        },
-        "32bit": {
-            "url": [
-                "https://vscode-update.azurewebsites.net/1.42.1/win32-archive/stable#/dl.7z",
-                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-install-context.reg",
-                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/vscode-uninstall-context.reg"
-            ],
-            "hash": [
-                "7aa14b85dd459296656c16d293b5f3d0ac22673ab42bb1c89ebc8fbbee59b304",
-                "b65d66860d9ccc18bfb05237b03e06db0d6c574be3d4b946c2a5e6865c08cb28",
-                "df2a5162e72e2518e2b75b4337c8e7b46c136554872af90fa0de1cf6ebef376f"
-            ]
-        }
+        "jsonpath": "$.products[?(@.platform.os == 'win32-x64-archive')].name"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://vscode-update.azurewebsites.net/$version/win32-x64-archive/stable#/dl.7z",
+                "url": "https://update.code.visualstudio.com/$version/win32-x64-archive/stable#/dl.7z",
                 "hash": {
                     "url": "https://code.visualstudio.com/sha?build=stable",
-                    "jp": "$.products[?(@.platform.os == 'win32-x64-archive')].sha256hash"
+                    "jsonpath": "$.products[?(@.platform.os == 'win32-x64-archive')].sha256hash"
                 }
             },
             "32bit": {
-                "url": "https://vscode-update.azurewebsites.net/$version/win32-archive/stable#/dl.7z",
+                "url": "https://update.code.visualstudio.com/$version/win32-archive/stable#/dl.7z",
                 "hash": {
                     "url": "https://code.visualstudio.com/sha?build=stable",
-                    "jp": "$.products[?(@.platform.os == 'win32-archive')].sha256hash"
+                    "jsonpath": "$.products[?(@.platform.os == 'win32-archive')].sha256hash"
                 }
             }
         }

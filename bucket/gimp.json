@@ -1,30 +1,27 @@
 {
-    "homepage": "https://www.gimp.org/",
-    "license": "GPL-3.0-only",
+    "version": "2.10.30",
     "description": "GNU Image Manipulation Program",
-    "version": "2.10.14-3",
-    "url": "https://download.gimp.org/mirror/pub/gimp/v2.10/windows/gimp-2.10.14-setup-3.exe",
-    "hash": "e892450123f00aaa672f31f532ebdccfbba8b444862281cade047f7fcb5aa503",
+    "homepage": "https://www.gimp.org",
+    "license": "GPL-3.0-only",
+    "url": "https://download.gimp.org/mirror/pub/gimp/v2.10/windows/gimp-2.10.30-setup.exe",
+    "hash": "5b8db574966d2427fa02202b591173905f64806559e37fbdca4654e55b568c8e",
     "innosetup": true,
     "installer": {
         "script": [
             "Push-Location \"$dir\"",
             "Get-ChildItem -Filter '*.debug' -Recurse | Remove-Item -Recurse",
             "if ($architecture -eq '64bit') {",
+            "   Rename-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,3.exe' 'twain.exe'",
+            "   Remove-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,1.exe'",
+            "   Get-ChildItem -Filter '*,1*' -Recurse | Rename-Item -NewName { $_.name -Replace ',\\d','' }",
+            "   Get-ChildItem -Filter '*,*' -Recurse | Remove-Item",
+            "} else {",
             "   Rename-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,1.exe' 'twain.exe'",
-            "   Remove-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,2.exe'",
+            "   Remove-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,3.exe'",
             "   Get-ChildItem -Filter '*,1*' -Recurse | Remove-Item",
             "   Get-ChildItem -Filter '*,*' -Recurse | Rename-Item -NewName { $_.name -Replace ',\\d','' }",
-            "   New-Item '32\\etc', '32\\share', 'share\\gimp\\2.0\\fonts' -ItemType 'Directory' | Out-Null",
-            "   Copy-Item 'etc\\fonts', 'etc\\gtk-2.0' '32\\etc' -Recurse",
-            "   Copy-Item 'share\\themes' '32\\share' -Recurse",
-            "   $defpath = \"`nPATH=`${gimp_installation_dir}\\bin;`${gimp_installation_dir}\\32\\bin`n\"",
-            "} else {",
-            "   Get-ChildItem -Filter '*,1*' -Recurse | Rename-Item -NewName { $_.name -Replace ',1','' }",
-            "   Get-ChildItem -Filter '*,*' -Recurse | Remove-Item",
-            "   movedir \"$dir\\32\" \"$dir\" | Out-Null",
-            "   $defpath = \"`nPATH=`${gimp_installation_dir}\\bin`n\"",
             "}",
+            "$defpath = \"`nPATH=`${gimp_installation_dir}\\bin`n\"",
             "$defenv = Get-Content 'lib\\gimp\\2.0\\environ\\default.env' -Raw",
             "$defenv += $defpath",
             "$defenv += \"PYTHONPATH=`${gimp_installation_dir}\\lib\\gimp\\2.0\\python;`${gimp_plug_in_dir}\\plug-ins\\python-console\"",
@@ -32,13 +29,18 @@
             "$pyenv = Get-Content 'lib\\gimp\\2.0\\environ\\pygimp.env' -Raw",
             "$pyenv + '__COMPAT_LAYER=HIGHDPIAWARE' | Set-Content 'lib\\gimp\\2.0\\environ\\pygimp.env'",
             "$pyint = Get-Content 'lib\\gimp\\2.0\\interpreters\\pygimp.interp' -Raw",
-            "$pyint = ($pyint -Replace '/mingw32', \"$dir\\bin\") -Replace 'py::python2', 'py::python'",
+            "$pyint = $pyint -Replace '(python|python2)=(.*)', \"`$1=$dir\\bin\\pythonw.exe\"",
+            "$pyint = $pyint -Replace 'py::python2', 'py::python'",
             "$pyint | Set-Content 'lib\\gimp\\2.0\\interpreters\\pygimp.interp'",
             "Pop-Location"
         ]
     },
     "bin": [
         "bin\\gimp-console-2.10.exe",
+        [
+            "bin\\gimp-console-2.10.exe",
+            "gimp-console"
+        ],
         [
             "bin\\gimp-console-2.10.exe",
             "gimp"
@@ -55,18 +57,13 @@
             "GIMP"
         ]
     ],
-    "persist": [
-        "etc\\gimp",
-        "lib\\gimp\\2.0\\plug-ins",
-        "share\\gimp"
-    ],
     "checkver": {
         "url": "https://www.gimp.org/downloads/",
-        "regex": "gimp-(?<version>[\\d.]+)-setup(?<build>-\\d)?.exe",
-        "replace": "${1}${2}"
+        "regex": "gimp-(?<version>[\\d.]+)-setup(?<build>-\\d)?\\.exe",
+        "replace": "${version}${build}"
     },
     "autoupdate": {
-        "url": "https://download.gimp.org/mirror/pub/gimp/v$majorVersion.$minorVersion/windows/gimp-$matchVersion-setup$matchBuild.exe",
+        "url": "https://download.gimp.org/mirror/pub/gimp/v$majorVersion.$minorVersion/windows/gimp-$matchHead-setup$matchTail.exe",
         "hash": {
             "url": "$baseurl/SHA256SUMS"
         }

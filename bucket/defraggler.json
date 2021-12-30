@@ -1,10 +1,17 @@
 {
-    "homepage": "https://www.ccleaner.com/defraggler",
     "version": "2.22.995",
-    "license": "Freeware",
     "description": "Speed up your PC with quick & easy defragmentation.",
+    "homepage": "https://www.ccleaner.com/defraggler",
+    "license": "Freeware",
     "url": "https://download.ccleaner.com/dfsetup222.exe#/dl.7z",
-    "hash": "b53eb82d6a46c812171ca878b7342e1939a0afecc277b0b57c708eef8fc700de",
+    "hash": "167b7192937b39e657def16ffb0fdbbab326f007747505d5c8785811d6b03ab8",
+    "pre_install": [
+        "Set-Content \"$dir\\portable.dat\" '#PORTABLE#' -Encoding Ascii",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\uninst.exe\" -Recurse -Force",
+        "if (!(Test-Path \"$persist_dir\\Defraggler.ini\")) {",
+        "   Set-Content \"$dir\\Defraggler.ini\" @('[Software\\Piriform\\Defraggler]', 'UpdateCheck=0') -Encoding Ascii",
+        "}"
+    ],
     "architecture": {
         "64bit": {
             "bin": [
@@ -37,13 +44,6 @@
             ]
         }
     },
-    "pre_install": [
-        "Set-Content \"$dir\\portable.dat\" '#PORTABLE#' -Encoding ASCII",
-        "Remove-Item \"$dir\\`$*\", \"$dir\\uninst.exe\" -Recurse -Force",
-        "if(!(Test-Path \"$persist_dir\\Defraggler.ini\")) {",
-        "   Set-Content \"$dir\\Defraggler.ini\" (@('[Software\\Piriform\\Defraggler]', 'UpdateCheck=0') -join \"`r`n\") -Encoding ASCII",
-        "}"
-    ],
     "persist": "Defraggler.ini",
     "checkver": {
         "url": "https://www.ccleaner.com/defraggler/version-history",

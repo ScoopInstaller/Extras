@@ -1,0 +1,58 @@
+{
+    "version": "2021.3-213.5744.279",
+    "description": "Cross-Platform IDE for PHP by JetBrains.",
+    "homepage": "https://www.jetbrains.com/phpstorm/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.jetbrains.com/store/license.html"
+    },
+    "url": "https://download.jetbrains.com/webide/PhpStorm-2021.3.exe#/dl.7z",
+    "hash": "1ca581fd4255c0c5f25b14621a1d678bce3ef4a0bb13d58aaf57da997eed5994",
+    "extract_to": "IDE",
+    "installer": {
+        "script": [
+            "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" $dir $persist_dir",
+            "Remove-Item \"$dir\\IDE\\`$*\" -Force -Recurse"
+        ]
+    },
+    "architecture": {
+        "64bit": {
+            "bin": [
+                [
+                    "IDE\\bin\\phpstorm64.exe",
+                    "phpstorm"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "IDE\\bin\\phpstorm64.exe",
+                    "JetBrains\\PhpStorm"
+                ]
+            ]
+        },
+        "32bit": {
+            "bin": "IDE\\bin\\phpstorm.exe",
+            "shortcuts": [
+                [
+                    "IDE\\bin\\phpstorm.exe",
+                    "JetBrains\\PhpStorm"
+                ]
+            ]
+        }
+    },
+    "persist": [
+        "IDE\\bin\\idea.properties",
+        "profile"
+    ],
+    "checkver": {
+        "url": "https://data.services.jetbrains.com/products/releases?code=PS&latest=true&platform=zip&type=release",
+        "regex": "version\":\"(?<ver>[\\d.]+)\".*\"build\":\"(?<build>[\\d.]+)\"",
+        "replace": "${ver}-${build}"
+    },
+    "autoupdate": {
+        "url": "https://download.jetbrains.com/webide/PhpStorm-$matchHead.exe#/dl.7z",
+        "hash": {
+            "url": "$url.sha256"
+        }
+    }
+}

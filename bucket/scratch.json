@@ -1,0 +1,32 @@
+{
+    "version": "3.27.0",
+    "description": "Educational drag-and-drop programming environment",
+    "homepage": "https://scratch.mit.edu/about",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://scratch.mit.edu/info/faq"
+    },
+    "depends": "extras/winrar-helper",
+    "url": "https://downloads.scratch.mit.edu/desktop/Scratch%203.27.0%20Setup.exe#/setup.exe",
+    "hash": "343135e697db089a7ce6e8736950c4693b418d7cbc41151e33a45cac4ecc89db",
+    "pre_install": [
+        "$Args = @\"",
+        "x -IBCK \"$dir\\setup.exe\" \"$dir\"",
+        "\"@",
+        "Start-Process -Wait \"$(appdir winrar-helper $global)\\current\\winrar.exe\" -NoNewWindow -ArgumentList $Args",
+        "Remove-Item \"$dir\\setup.exe\""
+    ],
+    "shortcuts": [
+        [
+            "Scratch 3.exe",
+            "Scratch 3"
+        ]
+    ],
+    "checkver": {
+        "url": "https://api.github.com/repos/LLK/scratch-desktop/tags",
+        "regex": "refs/tags/v([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://downloads.scratch.mit.edu/desktop/Scratch%20$version%20Setup.exe#/setup.exe"
+    }
+}

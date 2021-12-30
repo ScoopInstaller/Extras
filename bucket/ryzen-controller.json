@@ -1,0 +1,36 @@
+{
+    "version": "2.5.4",
+    "description": "Utility for tweaking AMD Ryzen laptops.",
+    "homepage": "https://ryzencontroller.com/",
+    "license": {
+        "identifier": "CC0-1.0",
+        "url": "https://gitlab.com/ryzen-controller-team/ryzen-controller/-/blob/master/LICENSE.md"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://gitlab.com/ryzen-controller-team/ryzen-controller/-/jobs/1710820449/artifacts/raw/dist/win/Ryzen%20Controller%20Setup%202.5.4.exe#/dl.7z",
+            "hash": "28babc45e0a629d18f75d2e32e8dd541289fdd0df51686cd8f3032e038f89616"
+        }
+    },
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall Ryzen Controller.exe\" -Force -Recurse | Out-Null"
+    ],
+    "shortcuts": [
+        [
+            "Ryzen Controller.exe",
+            "Ryzen Controller"
+        ]
+    ],
+    "checkver": {
+        "url": "https://scoopinstaller.github.io/UpdateTracker/ryzen-controller/latest.xml",
+        "regex": "<version>([\\d.]+)</version><url>(?<url>.*?)</url>"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "$matchUrl#/dl.7z"
+            }
+        }
+    }
+}

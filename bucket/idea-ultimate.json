@@ -1,42 +1,53 @@
 {
-    "version": "2019.3.3",
-    "description": "IntelliJ IDEA Ultimate Edition for web and enterprise development.",
+    "version": "2021.3.1-213.6461.79",
+    "description": "Cross-Platform IDE for Java by JetBrains.",
     "homepage": "https://www.jetbrains.com/idea/",
     "license": {
-        "identifier": "Shareware",
-        "url": "https://www.jetbrains.com/legal/agreements/user.html"
+        "identifier": "Proprietary",
+        "url": "https://www.jetbrains.com/store/license.html"
     },
-    "url": "https://download.jetbrains.com/idea/ideaIU-2019.3.3.win.zip",
-    "hash": "e13b6df0a28f1b6c67a44b75f9b179f6e691001bbf0d8a9d03f87fd522389479",
-    "bin": "bin\\idea.bat",
-    "env_add_path": "bin",
-    "notes": "Please restart your command line for changes to take effect.",
+    "url": "https://download.jetbrains.com/idea/ideaIU-2021.3.1.win.zip",
+    "hash": "96e59657d95c89121473294025bcd86db7f6aca9bd13c45e2c165ead5d315da8",
+    "extract_to": "IDE",
+    "installer": {
+        "script": "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" $dir $persist_dir"
+    },
     "architecture": {
         "64bit": {
-            "bin": "bin\\idea64.exe",
+            "bin": [
+                [
+                    "IDE\\bin\\idea64.exe",
+                    "idea"
+                ]
+            ],
             "shortcuts": [
                 [
-                    "bin/idea64.exe",
-                    "IntelliJ IDEA Ultimate"
+                    "IDE\\bin\\idea64.exe",
+                    "JetBrains\\IDEA Ultimate"
                 ]
             ]
         },
         "32bit": {
-            "bin": "bin\\idea.exe",
+            "bin": "IDE\\bin\\idea.exe",
             "shortcuts": [
                 [
-                    "bin/idea.exe",
-                    "IntelliJ IDEA Ultimate"
+                    "IDE\\bin\\idea.exe",
+                    "JetBrains\\IDEA Ultimate"
                 ]
             ]
         }
     },
+    "persist": [
+        "IDE\\bin\\idea.properties",
+        "profile"
+    ],
     "checkver": {
-        "url": "https://data.services.jetbrains.com/products/releases?code=IIU&latest=true&type=release",
-        "jp": "$..version"
+        "url": "https://data.services.jetbrains.com/products/releases?code=IIU&latest=true&platform=zip&type=release",
+        "regex": "version\":\"(?<ver>[\\d.]+)\".*\"build\":\"(?<build>[\\d.]+)\"",
+        "replace": "${ver}-${build}"
     },
     "autoupdate": {
-        "url": "https://download.jetbrains.com/idea/ideaIU-$version.win.zip",
+        "url": "https://download.jetbrains.com/idea/ideaIU-$matchHead.win.zip",
         "hash": {
             "url": "$url.sha256"
         }

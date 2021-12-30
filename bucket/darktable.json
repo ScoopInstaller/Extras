@@ -1,11 +1,17 @@
 {
-    "homepage": "https://www.darktable.org/",
-    "description": "Open source photography workflow application and raw developer. A virtual lighttable and darkroom for photographers",
+    "version": "3.8.0",
+    "description": "Photography workflow application and raw developer. A virtual lighttable and darkroom for photographers.",
+    "homepage": "https://www.darktable.org",
     "license": "GPL-3.0-only",
-    "version": "2.4.4",
-    "url": "https://github.com/darktable-org/darktable/releases/download/release-2.4.4/darktable-2.4.4-win64.zip",
-    "hash": "5dba3423b0889c69f723e378564e084878b20baf3996c349bfc9736bed815067",
-    "extract_dir": "darktable-2.4.4-win64",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/darktable-org/darktable/releases/download/release-3.8.0/darktable-3.8.0-win64.exe",
+            "hash": "c74d76f9feefc5648c41938bf430b261d3a3308df0ef87085be590b5a5d1110d"
+        }
+    },
+    "installer": {
+        "script": "$Env:__COMPAT_LAYER='RunAsInvoker'; Invoke-Expression \"$dir\\$fname /S /D=$dir | Out-Null \" "
+    },
     "bin": "bin\\darktable.exe",
     "shortcuts": [
         [
@@ -15,13 +21,16 @@
     ],
     "checkver": {
         "github": "https://github.com/darktable-org/darktable",
-        "re": "tree/release-([\\d.]+)"
+        "regex": "/darktable-([\\d.]+)-win64"
     },
     "autoupdate": {
-        "url": "https://github.com/darktable-org/darktable/releases/download/release-$version/darktable-$version-win64.zip",
-        "extract_dir": "darktable-$version-win64",
-        "hash": {
-            "url": "https://github.com/darktable-org/darktable/releases/latest"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/darktable-org/darktable/releases/download/release-$matchHead/darktable-$version-win64.exe",
+                "hash": {
+                    "url": "https://github.com/darktable-org/darktable/releases/tag/release-$matchHead"
+                }
+            }
         }
     }
 }

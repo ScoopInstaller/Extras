@@ -1,0 +1,39 @@
+{
+    "version": "2.3.5",
+    "description": "Software uninstaller with support for additional cleanup of registries/files",
+    "homepage": "https://www.revouninstaller.com/products/revo-uninstaller-free/",
+    "license": "Freeware",
+    "url": "https://www.revouninstaller.com/download-free-portable.php#/dl.zip",
+    "hash": "1637c4f962b33ffc509a367927342a7858ba8e09b8802e09fe589323e5dd0652",
+    "extract_dir": "RevoUninstaller_Portable",
+    "pre_install": [
+        "'ctrlbars.dat', 'un_report.dat', 'winapp_report.dat' | ForEach-Object {",
+        "    if (Test-Path \"$persist_dir\\$_\") {",
+        "        Copy-Item \"$persist_dir\\$_\" \"$dir\" -Force | Out-Null",
+        "    }",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\settings.ini\")) {",
+        "    Set-Content \"$dir\\settings.ini\" \"`r`n[General\\]`r`nAU on startup=0\" -Encoding ascii -NoNewline | Out-Null",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "'ctrlbars.dat', 'un_report.dat', 'winapp_report.dat' | ForEach-Object {",
+            "    if (Test-Path \"$dir\\$_\") {",
+            "        Copy-Item \"$dir\\$_\" \"$persist_dir\" -Force | Out-Null",
+            "    }",
+            "}"
+        ]
+    },
+    "shortcuts": [
+        [
+            "RevoUPort.exe",
+            "Revo Uninstaller"
+        ]
+    ],
+    "persist": "settings.ini",
+    "checkver": "Version: ([\\d.]+)",
+    "autoupdate": {
+        "url": "https://www.revouninstaller.com/download-free-portable.php#/dl.zip"
+    }
+}
