@@ -7,7 +7,8 @@
     "hash": "164f881fd86f9c3a35e111deb407b098c556cdca0ecd98aa57c8ec7083a60303",
     "installer": {
         "script": [
-            "Expand-7zipArchive \"$dir\\XmlNotepadPackage_2.8.0.52_AnyCPU.msix\" \"$dir\" -ExtractDir 'Application'",
+            "Get-ChildItem \"$dir\" -Filter '*AnyCPU.msix' | Rename-Item -NewName { $_.Name -replace '_[\\d.]+_', '_' }",
+            "Expand-7zipArchive \"$dir\\XmlNotepadPackage_AnyCPU.msix\" \"$dir\" -ExtractDir 'Application'",
             "Remove-Item -Path \"$dir\" -Include *.msix, *.xml, Appx* -Force -Recurse"
         ]
     },
