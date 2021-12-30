@@ -1,23 +1,21 @@
 {
-    "version": "0.11.5",
+    "version": "0.12.0",
     "description": "A simple and clean music player",
     "homepage": "https://museeks.io",
     "license": "MIT",
-    "url": "https://github.com/martpie/museeks/releases/download/0.11.5/museeks-setup.exe#/dl.7z",
-    "hash": "7d1197b6f316306182ff15474af10ba180834bd105ee30ea0aceb286364a57ea",
     "architecture": {
         "64bit": {
-            "installer": {
-                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
-            }
+            "url": "https://github.com/martpie/museeks/releases/download/0.12.0/museeks-x64-setup.exe#/dl.7z",
+            "hash": "6b4cc3baed020b0098eee3ea284bdb4d90991f61d7c60983c1de155b945b6f8d",
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
         },
         "32bit": {
-            "installer": {
-                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
-            }
+            "url": "https://github.com/martpie/museeks/releases/download/0.12.0/museeks-ia32-setup.exe#/dl.7z",
+            "hash": "98f15076c01fdbd3cf8ae3c93e474bb22577c09125c2b2b88c86b469a3d59652",
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
         }
     },
-    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall Museeks.exe\" -Recurse",
+    "post_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*.exe\" -Recurse",
     "bin": "Museeks.exe",
     "shortcuts": [
         [
@@ -29,7 +27,14 @@
         "github": "https://github.com/martpie/museeks"
     },
     "autoupdate": {
-        "url": "https://github.com/martpie/museeks/releases/download/$version/museeks-setup.exe#/dl.7z",
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/martpie/museeks/releases/download/$version/museeks-x64-setup.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://github.com/martpie/museeks/releases/download/$version/museeks-ia32-setup.exe#/dl.7z"
+            }
+        },
         "hash": {
             "url": "$url.sha256"
         }

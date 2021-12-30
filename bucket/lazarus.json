@@ -18,8 +18,9 @@
     },
     "innosetup": true,
     "post_install": [
-        "$fpcdir = \"$dir\\fpc\\\" + ($fname -replace '.*fpc-([\\d.]+)-.*', '$1')",
-        "& \"$fpcdir\\bin\\x86_64-win64\\fpcmkcfg.exe\" -d \"basepath=$fpcdir\" -o \"$fpcdir\\bin\\x86_64-win64\\fpc.cfg\""
+        "$fpcdir = \"$dir\\fpc\\\" + ($fname -replace '.*fpc-([\\d.]+)-.*', '$1');",
+        "$fpcarch=$(if ($fname -match '.*fpc-([\\d.]+)-win64') {'x86_64-win64'} else {'i386-win32'});",
+        "& \"$fpcdir\\bin\\$fpcarch\\fpcmkcfg.exe\" -d \"basepath=$fpcdir\" -o \"$fpcdir\\bin\\$fpcarch\\fpc.cfg\""
     ],
     "shortcuts": [
         [
@@ -32,7 +33,7 @@
             "--debug"
         ]
     ],
-    "checkver": "lazarus-([\\d.]+)-fpc-(?<fpc>[\\d.]+)-win64\\.exe",
+    "checkver": "lazarus-([\\d.]+)-fpc-(?<fpc>[\\d.]+)-win(64|32)\\.exe",
     "autoupdate": {
         "architecture": {
             "64bit": {
