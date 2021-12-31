@@ -5,6 +5,16 @@
     "license": "LGPL-2.1-only",
     "url": "https://downloads.sourceforge.net/project/urlget/uget%20%28stable%29/2.2.2/uget-2.2.2-win32%2Bgtk3.7z",
     "hash": "sha1:22d54d9f63be15228c21d06444e0a2c22b4e2578",
+    "pre_install": "Move-Item \"$dir\\uget-portable-mode\" \"$dir\\bin\"",
+    "persist": [
+        "config",
+        "share\\locale"
+    ],
+    "post_install": [
+        "if (!(Test-Path \"$dir\\config\\uGet\") -and (Test-Path \"$env:LocalAppData\\uGet\")) {",
+        "    Copy-Item \"$env:LocalAppData\\uGet\" \"$dir\\config\" -Recurse",
+        "}"
+    ],
     "bin": "bin\\uget.exe",
     "shortcuts": [
         [

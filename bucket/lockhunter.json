@@ -2,19 +2,74 @@
     "version": "3.4.3",
     "description": "Delete files blocked by something you do not know.",
     "homepage": "https://lockhunter.com/index.htm",
-    "license": "Unknown",
+    "license": "Freeware",
+    "depends": "sudo",
     "url": "https://lockhunter.com/assets/exe/lockhuntersetup_3-4-3.exe",
     "hash": "2c0d52dca3e5ce9cfc8062cb72c7235e3c6ff650242fcb7d46a892d602dd3dd1",
     "innosetup": true,
-    "architecture": {
-        "64bit": {
-            "pre_install": "Get-ChildItem \"$dir\" '*,1.*' | Rename-Item -Path { $_.Fullname } -NewName { $_.Basename.TrimEnd(',1') + $_.Extension }"
-        },
-        "32bit": {
-            "pre_install": "Get-ChildItem \"$dir\" '*,2.*' | Rename-Item -Path { $_.Fullname } -NewName { $_.Basename.TrimEnd(',2') + $_.Extension }"
-        }
+    "notes": [
+        "Add Lockhunter as context menu option by running: reg import \"$dir\\install-context.reg\"",
+        "This software is a Freeware. The license is located at \"$dir\\eula.rtf\""
+    ],
+    "pre_install": [
+        "If ($architecture -eq '64bit') {",
+        "   Get-ChildItem \"$dir\" '*,1.*' | Rename-Item -Path { $_.Fullname } -NewName { $_.Basename.TrimEnd(',1') + $_.Extension }",
+        "} Else {",
+        "   Get-ChildItem \"$dir\" '*,2.*' | Rename-Item -Path { $_.Fullname } -NewName { $_.Basename.TrimEnd(',2') + $_.Extension }",
+        "}",
+        "Copy-Item \"$bucketsdir\\extras\\scripts\\lockhunter\\install-context.reg\" -Destination \"$dir\\install-context.reg\"",
+        "Copy-Item \"$bucketsdir\\extras\\scripts\\lockhunter\\uninstall-context.reg\" -Destination \"$dir\\uninstall-context.reg\""
+    ],
+    "post_install": [
+        "$lhshelldll = \"$dir\\LHShellExt32.dll\".Replace('\\', '\\\\')",
+        "If (Test-Path \"$dir\\install-context.reg\") {",
+        "   If ($architecture -eq '64bit') {",
+        "       $lhshelldll = \"$dir\\LHShellExt64.dll\".Replace('\\', '\\\\')",
+        "   }",
+        "   $content = Get-Content \"$dir\\install-context.reg\"",
+        "   $content = $content.Replace('$LHShellExtdll', $lhshelldll)",
+        "   If ($global) {",
+        "       $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "   }",
+        "   $content | Set-Content -Path \"$dir\\install-context.reg\"",
+        "}",
+        "If (Test-Path \"$dir\\uninstall-context.reg\") {",
+        "   $content = Get-Content \"$dir\\uninstall-context.reg\"",
+        "   If ($global) {",
+        "       $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "   }",
+        "   $content | Set-Content -Path \"$dir\\uninstall-context.reg\"",
+        "}",
+        "$lhshelldll = \"$lhshelldll\".Replace('\\\\', '\\')",
+        "If ($global) {",
+        "   sudo \"$env:COMSPEC\" /c \"regsvr32 /s \"$lhshelldll\"\"",
+        "} Else {",
+        "   regsvr32 /s \"$lhshelldll\"",
+        "}",
+        "Remove-Item \"$dir\\*,*.*\""
+    ],
+    "uninstaller": {
+        "script": [
+            "$lhshelldll = \"$dir\\LHShellExt32.dll\"",
+            "If ($architecture -eq '64bit') {",
+            "   $lhshelldll = \"$dir\\LHShellExt64.dll\"",
+            "}",
+            "$ukey = \"HKCU:\\SOFTWARE\\Classes\\CLSID\\{0BB27CDA-7029-4C0E-9C56-D922B229F0EB}\\InprocServer32\"",
+            "$mkey = \"HKLM:\\SOFTWARE\\Classes\\CLSID\\{0BB27CDA-7029-4C0E-9C56-D922B229F0EB}\\InprocServer32\"",
+            "If (Test-Path -Path \"$ukey\") {",
+            "   Write-Host \"Unregister shellex menu \" -NoNewLine",
+            "   reg import \"$dir\\uninstall-context.reg\"",
+            "} Elseif (Test-Path -Path \"$mkey\") {",
+            "   Write-Host \"Unregister shellex menu \" -NoNewLine",
+            "   sudo \"$env:COMSPEC\" /c \"reg import \"$dir\\uninstall-context.reg\"\"",
+            "}",
+            "If ($global) {",
+            "   sudo \"$env:COMSPEC\" /c \"regsvr32 /u /s \"$lhshelldll\"\"",
+            "} Else {",
+            "   regsvr32 /u /s \"$lhshelldll\"",
+            "}"
+        ]
     },
-    "post_install": "Remove-Item \"$dir\\*,*.*\"",
     "bin": "lockhunter.exe",
     "shortcuts": [
         [

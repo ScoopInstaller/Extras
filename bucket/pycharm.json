@@ -1,47 +1,56 @@
 {
-    "version": "2021.2.3",
-    "description": "The Python IDE for Professional Developers.",
+    "version": "2021.3-213.5744.248",
+    "description": "Cross-Platform IDE for Python by JetBrains (Community edition).",
     "homepage": "https://www.jetbrains.com/pycharm/",
     "license": {
-        "identifier": "Freeware",
-        "url": "https://www.jetbrains.com/legal/agreements/user.html"
+        "identifier": "Apache-2.0",
+        "url": "https://sales.jetbrains.com/hc/en-gb/articles/115001015290-Where-can-I-find-the-EULA-End-User-License-Agreement-"
     },
-    "notes": "Please restart your command line for changes to take effect.",
-    "url": "https://download.jetbrains.com/python/pycharm-community-2021.2.3.exe#/dl.7z",
-    "hash": "70bb0a198a4a0dc3e55a4c76564560a652e9fb45c22fbf0760860a2647ace0bf",
+    "url": "https://download.jetbrains.com/python/pycharm-community-2021.3.exe#/dl.7z",
+    "hash": "eac1290363058da3ccfcc6d4f6085e9c4293d8d95f83c9c003822ec46c783f3a",
+    "extract_to": "IDE",
+    "installer": {
+        "script": [
+            "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" $dir $persist_dir",
+            "Remove-Item \"$dir\\IDE\\`$*\" -Force -Recurse"
+        ]
+    },
     "architecture": {
         "64bit": {
             "bin": [
-                "bin\\pycharm64.exe",
                 [
-                    "bin\\pycharm64.exe",
+                    "IDE\\bin\\pycharm64.exe",
                     "pycharm"
                 ]
             ],
             "shortcuts": [
                 [
-                    "bin\\pycharm64.exe",
-                    "IDEA PyCharm Community"
+                    "IDE\\bin\\pycharm64.exe",
+                    "JetBrains\\PyCharm"
                 ]
             ]
         },
         "32bit": {
-            "bin": "bin\\pycharm.exe",
+            "bin": "IDE\\bin\\pycharm.exe",
             "shortcuts": [
                 [
-                    "bin\\pycharm.exe",
-                    "IDEA PyCharm Community"
+                    "IDE\\bin\\pycharm.exe",
+                    "JetBrains\\PyCharm"
                 ]
             ]
         }
     },
-    "env_add_path": "bin",
+    "persist": [
+        "IDE\\bin\\idea.properties",
+        "profile"
+    ],
     "checkver": {
-        "url": "https://data.services.jetbrains.com/products/releases?code=PCC&latest=true&type=release",
-        "jsonpath": "$..version"
+        "url": "https://data.services.jetbrains.com/products/releases?code=PCC&latest=true&platform=zip&type=release",
+        "regex": "version\":\"(?<ver>[\\d.]+)\".*\"build\":\"(?<build>[\\d.]+)\"",
+        "replace": "${ver}-${build}"
     },
     "autoupdate": {
-        "url": "https://download.jetbrains.com/python/pycharm-community-$version.exe#/dl.7z",
+        "url": "https://download.jetbrains.com/python/pycharm-community-$matchHead.exe#/dl.7z",
         "hash": {
             "url": "$url.sha256"
         }
