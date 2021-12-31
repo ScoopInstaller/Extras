@@ -13,6 +13,22 @@
         }
     },
     "extract_dir": "HandBrake",
+    "installer": {
+        "script": [
+            "if (!(Test-Path \"$persist_dir\\portable.ini\")) {",
+            "    if (!(Test-Path \"$persist_dir\\storage\") -And (Test-Path \"$env:APPDATA\\HandBrake\")) {",
+            "        New-Item \"$persist_dir\" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null",
+            "        Move-Item -Path \"$env:APPDATA\\HandBrake\" -Destination \"$persist_dir\\storage\" -Force",
+            "    }",
+            "    Copy-Item \"$dir\\portable.ini.template\" \"$dir\\portable.ini\" -Force",
+            "}"
+        ]
+    },
+    "persist": [
+        "portable.ini",
+        "storage",
+        "tmp"
+    ],
     "shortcuts": [
         [
             "HandBrake.exe",
