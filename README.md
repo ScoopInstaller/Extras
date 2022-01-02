@@ -1,6 +1,13 @@
-# scoop-extras [![Build status](https://ci.appveyor.com/api/projects/status/r0bbdnvk15t1vnps?svg=true)](https://ci.appveyor.com/project/lukesampson/scoop-extras)
+# Scoop Extras [![Build Status](https://ci.appveyor.com/api/projects/status/ve0l0lw60hijwbs8?svg=true)](https://ci.appveyor.com/project/r15ch13/scoopinstaller-extras "Build Status") [![Excavator](https://github.com/ScoopInstaller/Extras/actions/workflows/excavator.yml/badge.svg)](https://github.com/ScoopInstaller/Extras/actions/workflows/excavator.yml)
 
-The "extras" bucket for [Scoop](http://scoop.sh), for anything that doesn't fit the [criteria](https://github.com/lukesampson/scoop/wiki/Criteria-for-including-apps-in-the-main-bucket) for inclusion in the [main bucket](https://github.com/ScoopInstaller/Main).
+Extra manifests for [Scoop](https://scoop.sh), the Windows command-line installer. For manifests that don't fit the [Main criteria](https://github.com/ScoopInstaller/Scoop/wiki/Criteria-for-including-apps-in-the-main-bucket).
 
-To make it easier to install apps from this bucket, run
-    `scoop bucket add extras`
+How do I install these manifests?
+---------------------------------
+
+To add this bucket, run `scoop bucket add extras`. To install, do `scoop install <manifest>`.
+
+How do I contribute new manifests?
+----------------------------------
+
+To make a new manifest contribution, please read the [Contributing Guide](https://github.com/ScoopInstaller/.github/blob/main/.github/CONTRIBUTING.md).

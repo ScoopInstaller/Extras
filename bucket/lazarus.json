@@ -1,5 +1,5 @@
 {
-    "version": "2.0.10",
+    "version": "2.0.12",
     "description": "A Delphi compatible cross-platform IDE for Rapid Application Development.",
     "homepage": "https://www.lazarus-ide.org",
     "license": {
@@ -8,18 +8,19 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://downloads.sourceforge.net/project/lazarus/Lazarus%20Windows%2064%20bits/Lazarus%202.0.10/lazarus-2.0.10-fpc-3.2.0-win64.exe",
-            "hash": "1c0f9080123c7e44dc4e760f2d19fa315edf372a517bb385d069efdc6d4f5217"
+            "url": "https://downloads.sourceforge.net/project/lazarus/Lazarus%20Windows%2064%20bits/Lazarus%202.0.12/lazarus-2.0.12-fpc-3.2.0-win64.exe",
+            "hash": "303971550ae5370bdad4e5dac673ef3c8f9b438f3b7010d255b9772f89629314"
         },
         "32bit": {
-            "url": "https://downloads.sourceforge.net/project/lazarus/Lazarus%20Windows%2032%20bits/Lazarus%202.0.10/lazarus-2.0.10-fpc-3.2.0-win32.exe",
-            "hash": "f42f478f8b159fc7fe192133fbfe35b00fcd36e501a73faf012ddee5e27e3690"
+            "url": "https://downloads.sourceforge.net/project/lazarus/Lazarus%20Windows%2032%20bits/Lazarus%202.0.12/lazarus-2.0.12-fpc-3.2.0-win32.exe",
+            "hash": "f2fdaa7d412625aff08b38d7f4073ccbf8724db6c4e5678181cfdf92de697f8b"
         }
     },
     "innosetup": true,
     "post_install": [
-        "$fpcdir = \"$dir\\fpc\\\" + ($fname -replace '.*fpc-([\\d.]+)-.*', '$1')",
-        "& \"$fpcdir\\bin\\x86_64-win64\\fpcmkcfg.exe\" -d \"basepath=$fpcdir\" -o \"$fpcdir\\bin\\x86_64-win64\\fpc.cfg\""
+        "$fpcdir = \"$dir\\fpc\\\" + ($fname -replace '.*fpc-([\\d.]+)-.*', '$1');",
+        "$fpcarch=$(if ($fname -match '.*fpc-([\\d.]+)-win64') {'x86_64-win64'} else {'i386-win32'});",
+        "& \"$fpcdir\\bin\\$fpcarch\\fpcmkcfg.exe\" -d \"basepath=$fpcdir\" -o \"$fpcdir\\bin\\$fpcarch\\fpc.cfg\""
     ],
     "shortcuts": [
         [
@@ -32,7 +33,7 @@
             "--debug"
         ]
     ],
-    "checkver": "lazarus-([\\d.]+)-fpc-(?<fpc>[\\d.]+)-win64\\.exe",
+    "checkver": "lazarus-([\\d.]+)-fpc-(?<fpc>[\\d.]+)-win(64|32)\\.exe",
     "autoupdate": {
         "architecture": {
             "64bit": {

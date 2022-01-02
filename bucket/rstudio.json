@@ -1,13 +1,16 @@
 {
-    "version": "1.3.1093",
-    "homepage": "https://www.rstudio.com/",
-    "description": "An IDE for R, which includes a console, syntax-highlighting editor that supports direct code execution, as well as tools for plotting, history, debugging and workspace management.",
+    "version": "2021.09.1-372",
+    "description": "An IDE for R with console, syntax-highlighting, editor that supports direct code execution, as well as tools for plotting, history, debugging and workspace management.",
+    "homepage": "https://www.rstudio.com/products/rstudio/",
     "license": "AGPL-3.0-only",
+    "notes": "For 32bit, please install 'versions/rstudio11",
+    "depends": "r",
     "architecture": {
         "64bit": {
-            "url": "https://download1.rstudio.org/desktop/windows/RStudio-1.3.1093.zip",
-            "hash": "4abe0f7735dbf63bf2391a854ae39d6d09d9a101328c6f7f80c833504be3a987",
+            "url": "https://download1.rstudio.org/desktop/windows/RStudio-2021.09.1-372.exe#/dl.7z",
+            "hash": "1c3d27f52eb035d2c855c02fcb6f6ad6815439dfbf8fcc2e0ca1c39f70a93049",
             "post_install": [
+                "Remove-Item \"$dir\\`$*\" -Recurse",
                 "if (!(Test-Path \"$env:Appdata\\RStudio\")) {",
                 "    New-Item \"$env:Appdata\\RStudio\" -ItemType Directory -Force | Out-Null",
                 "    @(",
@@ -18,7 +21,6 @@
             ]
         }
     },
-    "depends": "r",
     "bin": "bin\\rstudio.exe",
     "shortcuts": [
         [
@@ -27,19 +29,18 @@
         ]
     ],
     "checkver": {
-        "url": "https://rstudio.com/products/rstudio/download/",
-        "regex": ">RStudio Desktop ([\\d.]+)<"
+        "url": "https://www.rstudio.com/products/rstudio/download/",
+        "regex": "/windows/RStudio-([\\d.-]+)\\."
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download1.rstudio.org/desktop/windows/RStudio-$version.zip",
+                "url": "https://download1.rstudio.org/desktop/windows/RStudio-$version.exe#/dl.7z",
                 "hash": {
                     "url": "https://www.rstudio.com/products/rstudio/download/",
                     "regex": "(?s)$basename.*?$sha256"
                 }
             }
         }
-    },
-    "notes": "For 32bit, please install 'versions/rstudio11"
+    }
 }

@@ -1,5 +1,5 @@
 {
-    "version": "1.14.0.28885",
+    "version": "1.14.1.29085",
     "description": "An Apache™ Subversion (SVN)® client, implemented as a Windows shell extension.",
     "homepage": "https://tortoisesvn.net",
     "license": "GPL-2.0-only",
@@ -10,22 +10,41 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://osdn.net/frs/redir.php?m=auto&f=/storage/g/t/to/tortoisesvn/1.14.0/Application/TortoiseSVN-1.14.0.28885-x64-svn-1.14.0.msi",
-            "hash": "7a386adbbf9ce26e892f044128f21c70b13695ce7931456c12868776bc680582"
+            "url": [
+                "https://osdn.mirror.constant.com//storage/g/t/to/tortoisesvn/1.14.1/Application/TortoiseSVN-1.14.1.29085-x64-svn-1.14.1.msi",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/tortoisesvn/tortoisesvn-install-tools.reg.templ",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/tortoisesvn/tortoisesvn-install.reg.templ",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/tortoisesvn/tortoisesvn-uninstall.reg"
+            ],
+            "hash": [
+                "8a3b08ea8d87324c7d75f7ba07322a360bb70167a337a01a3470d27bcdbbd672",
+                "730bc1e2454d68402d092f5435df4e43017e8af6d8c7779093746254722ff8f3",
+                "2ee3d8b6db8134f298d00b6d1fed6b245514598206e9a80ef5af6323438166ab",
+                "3aeb9e65c620d877563e5ec61d93dc910296d427a334622451802117431d1982"
+            ]
         },
         "32bit": {
-            "url": "https://osdn.net/frs/redir.php?m=auto&f=/storage/g/t/to/tortoisesvn/1.14.0/Application/TortoiseSVN-1.14.0.28885-win32-svn-1.14.0.msi",
-            "hash": "13eb78432308c71e50b66be5fa250c10181c1897d33d9f07767de992ba592022"
+            "url": [
+                "https://osdn.mirror.constant.com//storage/g/t/to/tortoisesvn/1.14.1/Application/TortoiseSVN-1.14.1.29085-win32-svn-1.14.1.msi",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/tortoisesvn/tortoisesvn-install-tools.reg.templ",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/tortoisesvn/tortoisesvn-install.reg.templ",
+                "https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/tortoisesvn/tortoisesvn-uninstall.reg"
+            ],
+            "hash": [
+                "c9a62aae68e873ce5dbf8aa3fcc5fa0028bbe811a13198fa2abae3737ccc29c8",
+                "730bc1e2454d68402d092f5435df4e43017e8af6d8c7779093746254722ff8f3",
+                "2ee3d8b6db8134f298d00b6d1fed6b245514598206e9a80ef5af6323438166ab",
+                "3aeb9e65c620d877563e5ec61d93dc910296d427a334622451802117431d1982"
+            ]
         }
     },
     "extract_dir": "Program Files\\TortoiseSVN",
-    "post_install": [
-        "$null, $bucket = find_manifest($app)",
-        "$bucketdir = bucketdir($bucket)",
-        "$escdir = $dir -replace \"\\\\\",\"\\\\\"",
-        "(gc \"$bucketdir\\..\\scripts\\tortoisesvn\\tortoisesvn-install.reg.templ\") | % {$_ -replace \"%TSVNHOME%\",\"$escdir\"} | out-file -enc oem \"$dir\\tortoisesvn-install.reg\"",
-        "(gc \"$bucketdir\\..\\scripts\\tortoisesvn\\tortoisesvn-install-tools.reg.templ\") | % {$_ -replace \"%TSVNHOME%\",\"$escdir\"} | out-file -enc oem \"$dir\\tortoisesvn-install-tools.reg\"",
-        "cp \"$bucketdir\\..\\scripts\\tortoisesvn\\tortoisesvn-uninstall.reg\" \"$dir\""
+    "pre_install": [
+        "$escdir = \"$dir\" -replace '\\\\', '\\\\'",
+        "'install', 'install-tools' | ForEach-Object {",
+        "    (Get-Content \"$dir\\tortoisesvn-$_.reg.templ\") -replace '%TSVNHOME%', \"$escdir\" | Set-Content -LiteralPath \"$dir\\tortoisesvn-$_.reg\" -Encoding Ascii",
+        "    Remove-Item \"$dir\\tortoisesvn-$_.reg.templ\"",
+        "}"
     ],
     "bin": [
         "bin\\svn.exe",
@@ -71,15 +90,15 @@
     ],
     "checkver": {
         "url": "https://tortoisesvn.net/downloads.html",
-        "regex": "tortoisesvn/storage/(?<release>[\\d.]+)/Application/TortoiseSVN-([\\d.]+)-x64-svn-(?<svn>[\\d.]+).msi"
+        "regex": "/Application/TortoiseSVN-([\\d.]+)-x64-svn-(?<svn>[\\d.]+)\\.msi"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://osdn.net/frs/redir.php?m=auto&f=/storage/g/t/to/tortoisesvn/$matchRelease/Application/TortoiseSVN-$version-x64-svn-$matchSvn.msi"
+                "url": "https://osdn.mirror.constant.com//storage/g/t/to/tortoisesvn/$matchHead/Application/TortoiseSVN-$version-x64-svn-$matchSvn.msi"
             },
             "32bit": {
-                "url": "https://osdn.net/frs/redir.php?m=auto&f=/storage/g/t/to/tortoisesvn/$matchRelease/Application/TortoiseSVN-$version-win32-svn-$matchSvn.msi"
+                "url": "https://osdn.mirror.constant.com//storage/g/t/to/tortoisesvn/$matchHead/Application/TortoiseSVN-$version-win32-svn-$matchSvn.msi"
             }
         }
     }
