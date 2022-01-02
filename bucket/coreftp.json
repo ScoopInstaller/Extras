@@ -1,0 +1,46 @@
+{
+    "version": "2.2-1960",
+    "description": "A FTP client",
+    "homepage": "http://www.coreftp.com",
+    "license": {
+        "identifier": "Freeware",
+        "url": "http://www.coreftp.com/license.html"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "http://www.coreftp.com/download/coreftplite64.exe#/dl.7z",
+            "hash": "de53dac935ea5be6564238fd474609479d3f2fb153027b6f9c0486b03069b62c",
+            "pre_install": "Rename-Item \"$dir\\sftpdll64.dll\" \"sftpdll.dll\" -Force"
+        },
+        "32bit": {
+            "url": "http://www.coreftp.com/download/coreftplite.exe#/dl.7z",
+            "hash": "a88167cd0a1d8d12ffd4f85047f54dbcfafb69e7bf4a48559fa15d2a87f1753d"
+        }
+    },
+    "post_install": [
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\uninst*\", \"$dir\\coreftp.exe\" -Recurse -Force",
+        "Rename-Item \"$dir\\coreftpu.exe\" \"coreftp.exe\" -Force"
+    ],
+    "bin": "coreftp.exe",
+    "shortcuts": [
+        [
+            "coreftp.exe",
+            "Core FTP"
+        ]
+    ],
+    "checkver": {
+        "url": "http://www.coreftp.com/forums/viewtopic.php?t=4023051",
+        "regex": "Version\\s?([\\d.]+)\\s?\\(build\\s?([\\d]+)\\)",
+        "replace": "${1}-${2}"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "http://www.coreftp.com/download/coreftplite64.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "http://www.coreftp.com/download/coreftplite.exe#/dl.7z"
+            }
+        }
+    }
+}

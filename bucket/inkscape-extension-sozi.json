@@ -1,0 +1,37 @@
+{
+    "version": "21.12.06",
+    "description": "Inkscape extension to insert video or audio to SVG document.",
+    "homepage": "https://sozi.baierouge.fr/",
+    "license": "MPL-2.0",
+    "depends": "extras/inkscape",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/sozi-projects/Sozi/releases/download/v21.12.06/sozi-extras-media-21.12.06-1638805322-inkscape-1.0.zip",
+            "hash": "df9fa44dc4b52ea99745c2bf6dfd7583e1f2e47e51aeb1c11779e0398a97c815"
+        }
+    },
+    "post_install": [
+        "if (!(Test-Path \"$env:APPDATA\\inkscape\\extensions\")) {",
+        "   New-Item -Type directory \"$env:APPDATA\\inkscape\\extensions\" | Out-Null",
+        "}",
+        "Copy-Item -Path \"$dir\\media-inkscape-1.0\" -Destination \"$env:APPDATA\\inkscape\\extensions\" -Recurse"
+    ],
+    "uninstaller": {
+        "script": [
+            "if (Test-Path \"$env:APPDATA\\inkscape\\extensions\\media-inkscape-1.0\") {",
+            "   Remove-Item \"$env:APPDATA\\inkscape\\extensions\\media-inkscape-1.0\" -Recurse",
+            "}"
+        ]
+    },
+    "checkver": {
+        "url": "https://github.com/sozi-projects/Sozi/releases",
+        "regex": "/v(?<tag>[\\d.]+)/sozi-extras-media-([\\d.]+)-(?<build>[\\d]+)-inkscape-1.0.zip"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/sozi-projects/Sozi/releases/download/v$matchTag/sozi-extras-media-$version-$matchBuild-inkscape-1.0.zip"
+            }
+        }
+    }
+}
