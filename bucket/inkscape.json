@@ -28,12 +28,12 @@
     "checkver": {
         "script": [
             "$redirUrl = [System.Net.HttpWebRequest]::Create('https://inkscape.org/en/release').GetResponse().ResponseUri.AbsoluteUri",
-            "$version = $redirUrl -split '\\/(inkscape-)?' | Select-Object -last 1 -skip 1",
+            "$scriptver = $redirUrl -split '\\/(inkscape-)?' | Select-Object -last 1 -skip 1",
             "$32bit_dl = Invoke-WebRequest ($redirUrl + '/windows/32-bit/portable-app/dl/') -UseBasicParsing",
             "$64bit_dl = Invoke-WebRequest ($redirUrl + '/windows/64-bit/compressed-7z/dl/') -UseBasicParsing",
             "$32bit_url = $32bit_dl.links | Where-Object href -match '\\.exe$' | Select-Object -first 1 -expand href",
             "$64bit_url = $64bit_dl.links | Where-Object href -match '\\.7z$' | Select-Object -first 1 -expand href",
-            "Write-Output $version $32bit_url $64bit_url"
+            "Write-Output $scriptver $32bit_url $64bit_url"
         ],
         "regex": "(?<version>[\\d.]+)\\s(?<win32biturl>.+)\\s(?<win64biturl>.+)"
     },
