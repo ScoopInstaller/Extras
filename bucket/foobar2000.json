@@ -6,6 +6,9 @@
         "identifier": "Freeware",
         "url": "https://www.foobar2000.org/license"
     },
+    "suggest": {
+        "Encoders": "extras/foobar2000-encoders"
+    },
     "url": "https://www.videohelp.com/download/foobar2000_v1.6.9.exe#/dl.7z",
     "hash": "1efc461da260441208d854626c19267c723b34b5935ff74514f0ecdb4a244d94",
     "bin": "foobar2000.exe",
@@ -18,18 +21,23 @@
     "installer": {
         "script": [
             "Remove-Item \"$dir\\`$*\", \"$dir\\uninstall.exe\" -Force -Recurse",
-            "New-Item \"$dir\\portable_mode_enabled\" -Force | Out-Null"
+            "New-Item \"$dir\\portable_mode_enabled\" -Force | Out-Null",
+            "$EncodersDir = $(appdir foobar2000-encoders $global)",
+            "if (Test-Path \"$EncodersDir\") {",
+            "    New-Item \"$dir\\encoders\" -ItemType Junction -Target \"$EncodersDir\\current\" | Out-Null",
+            "}"
         ]
     },
     "post_install": [
-        "if (Test-Path \"$persist_dir\\playlists\") {",
-        "    Rename-Item -Path \"$persist_dir\\playlists\" -NewName playlists-v1.4 -Force",
-        "    Get-ChildItem -Exclude \"profile\" -Path \"$persist_dir\" |",
-        "        Move-Item -Destination \"$persist_dir\\profile\" -Force",
+        "if (!(Test-Path \"$persist_dir\\profile\\*\")) {",
+        "    Get-ChildItem -Path \"$persist_dir\" -Exclude \"profile\" | Move-Item -Destination \"$persist_dir\\profile\" -Force",
         "}",
-        "if (!(Test-Path \"$dir\\profile\\*\") -and (Test-Path \"$env:AppData\\foobar2000\")) {",
+        "if (!(Test-Path \"$persist_dir\\profile\\*\") -and (Test-Path \"$env:AppData\\foobar2000\")) {",
         "    info '[Portable Mode]: Copying user data...'",
-        "    Copy-Item \"$env:AppData\\foobar2000\\*\" \"$dir\\profile\" -Recurse",
+        "    Copy-Item \"$env:AppData\\foobar2000\\*\" -Destination \"$persist_dir\\profile\" -Force -Recurse",
+        "}",
+        "if (Test-Path \"$persist_dir\\profile\\playlists\") {",
+        "    Rename-Item -Path \"$persist_dir\\profile\\playlists\" -NewName \"playlists-v1.4\" -Force",
         "}"
     ],
     "persist": "profile",

@@ -6,13 +6,29 @@
         "identifier": "Freeware",
         "url": "https://www.foobar2000.org/license"
     },
-    "depends": "extras/foobar2000",
+    "suggest": {
+        "Foobar2000": "extras/foobar2000"
+    },
     "url": "https://www.videohelp.com/download/Free_Encoder_Pack-2021-01-26.exe#/dl.7z",
     "hash": "4d03269052a7075a27c7aa5d31db898278775c9dae7c2186c016685ad07738f1",
-    "post_install": [
-        "Remove-Item \"$dir\\`$PLUGINSDIR\" -Force -Recurse",
-        "New-Item \"$(appdir foobar2000 $global)\\current\\encoders\" -ItemType Junction -Target \"$dir\" | Out-Null"
-    ],
+    "installer": {
+        "script": [
+            "Remove-Item \"$dir\\`$PLUGINSDIR\" -Force -Recurse",
+            "$FoobarDir = $(appdir foobar2000 $global)",
+            "if (Test-Path \"$FoobarDir\") {",
+            "    Get-ChildItem -Path \"$FoobarDir\\current\" -Filter \"encoders\" | Remove-Item -Force -Recurse",
+            "    New-Item \"$FoobarDir\\current\\encoders\" -ItemType Junction -Target \"$dir\" | Out-Null",
+            "}"
+        ]
+    },
+    "uninstaller": {
+        "script":[
+            "$FoobarDir = $(appdir foobar2000 $global)",
+            "if (Test-Path \"$FoobarDir\") {",
+            "    Get-ChildItem -Path \"$FoobarDir\\current\" -Filter \"encoders\" | Remove-Item -Force -Recurse",
+            "}"
+        ]
+    },
     "checkver": "Free_Encoder_Pack-([\\d-]+)\\.exe",
     "autoupdate": {
         "url": "https://www.videohelp.com/download/Free_Encoder_Pack-$version.exe#/dl.7z"
