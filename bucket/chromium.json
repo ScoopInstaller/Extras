@@ -1,54 +1,61 @@
 {
     "##": "Check chromium.woolyss.com for different versions of Chromium releases.",
-    "version": "95.0.4638.69-r920003-1",
+    "version": "96.0.4664.93-r929512",
     "description": "Browser aiming for safer, faster, and more stable way for all users to experience the web.",
     "homepage": "https://www.chromium.org",
     "license": "BSD-3-Clause",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/macchrome/winchrome/releases/download/v95.0.4638.69-r920003-Win64/ungoogled-chromium-95.0.4638.69-1_Win64.7z",
-            "hash": "sha1:3b53df41a046f9e49282f9435383ab525bb94014",
-            "extract_dir": "ungoogled-chromium-95.0.4638.69-1_Win64"
+            "url": "https://github.com/Hibbiki/chromium-win64/releases/download/v96.0.4664.93-r929512/chrome.sync.7z",
+            "hash": "sha1:32dc3f7a270e2c3b6a83cef7ef0b544b19f82ebf"
         },
         "32bit": {
-            "url": "https://github.com/macchrome/winchrome/releases/download/v95.0.4638.69-r920003-Win64/ungoogled-chromium-95.0.4638.69-1_Win32.7z",
-            "hash": "sha1:f629743de7d1539fe6c1a6948891c2cef1e334f9",
-            "extract_dir": "ungoogled-chromium-95.0.4638.69-1_Win32"
+            "url": "https://github.com/Hibbiki/chromium-win32/releases/download/v96.0.4664.93-r929512/chrome.sync.7z",
+            "hash": "sha1:5213ce657a4ef2eb098d1d236182e21d363d3a8a"
         }
     },
+    "extract_dir": "Chrome-bin",
     "bin": [
-        "chrome.exe",
         [
             "chrome.exe",
-            "chromium"
+            "chromium",
+            "--user-data-dir=\"$dir\\User Data\""
         ]
     ],
     "shortcuts": [
         [
             "chrome.exe",
-            "Chromium"
+            "Chromium",
+            "--user-data-dir=\"$dir\\User Data\""
         ]
     ],
+    "post_install": [
+        "if (!(Test-Path \"$dir\\User Data\\*\") -and (Test-Path \"$env:LocalAppData\\Chromium\\User Data\")) {",
+        "    info '[Portable Mode]: Copying user data...'",
+        "    Copy-Item \"$env:LocalAppData\\Chromium\\User Data\\*\" \"$dir\\User Data\" -Recurse",
+        "}"
+    ],
+    "persist": "User Data",
     "checkver": {
-        "github": "https://github.com/macchrome/winchrome/",
-        "regex": "/v(?<chromeVersion>[\\d.]+)-r(?<build>[\\d]+)-Win64/ungoogled-chromium-[\\d.]+(?<end>-\\d)_Win(32|64)\\.7z",
-        "replace": "${chromeVersion}-r${build}${end}",
-        "reverse": true
+        "url": "https://github.com/Hibbiki/chromium-win64/releases/latest",
+        "regex": ">v([\\d.\\-r]+)</h1>"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/macchrome/winchrome/releases/download/v$matchChromeversion-r$matchBuild-Win64/ungoogled-chromium-$matchChromeversion$matchEnd_Win64.7z",
-                "extract_dir": "ungoogled-chromium-$matchChromeversion$matchEnd_Win64"
+                "url": "https://github.com/Hibbiki/chromium-win64/releases/download/v$version/chrome.sync.7z",
+                "hash": {
+                    "url": "https://github.com/Hibbiki/chromium-win64/releases/latest",
+                    "regex": "$sha1 \\.\\./out/x64/chrome.sync.7z"
+                }
             },
             "32bit": {
-                "url": "https://github.com/macchrome/winchrome/releases/download/v$matchChromeversion-r$matchBuild-Win64/ungoogled-chromium-$matchChromeversion$matchEnd_Win32.7z",
-                "extract_dir": "ungoogled-chromium-$matchChromeversion$matchEnd_Win32"
+                "url": "https://github.com/Hibbiki/chromium-win32/releases/download/v$version/chrome.sync.7z",
+                "hash": {
+                    "url": "https://github.com/Hibbiki/chromium-win32/releases/latest",
+                    "regex": "$sha1 \\.\\./out/x86/chrome.sync.7z"
+                }
             }
-        },
-        "hash": {
-            "url": "https://github.com/macchrome/winchrome/releases/tag/v$matchChromeversion-r$matchBuild-Win64",
-            "regex": "(?s)$basename.*?$sha1"
         }
     }
 }
