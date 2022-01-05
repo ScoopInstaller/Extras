@@ -14,15 +14,26 @@
         }
     },
     "extract_dir": "lib\\net45",
+    "extract_to": "AtomPortable",
     "bin": [
-        "resources\\cli\\atom.cmd",
-        "resources\\app\\apm\\bin\\apm.cmd"
+        "AtomPortable\\resources\\cli\\atom.cmd",
+        "AtomPortable\\resources\\app\\apm\\bin\\apm.cmd"
     ],
     "shortcuts": [
         [
-            "atom.exe",
+            "AtomPortable\\atom.exe",
             "Atom"
         ]
+    ],
+    "persist": ".atom",
+    "post_install": [
+        "if (!(Test-Path \"$dir\\.atom\\*\") -and (Test-Path \"$env:UserProfile\\.atom\")) {",
+        "    info '[Portable Mode]: Copying user data...'",
+        "    Copy-Item \"$env:UserProfile\\.atom\\*\" \"$dir\\.atom\" -Recurse",
+        "}",
+        "if (!(Test-Path \"$dir\\.atom\\electronUserData\")) {",
+        "    New-Item -Type Directory \"$dir\\.atom\\electronUserData\" | Out-Null",
+        "}"
     ],
     "checkver": {
         "github": "https://github.com/atom/atom"
