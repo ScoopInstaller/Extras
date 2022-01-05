@@ -11,13 +11,6 @@
     },
     "url": "https://www.videohelp.com/download/foobar2000_v1.6.9.exe#/dl.7z",
     "hash": "1efc461da260441208d854626c19267c723b34b5935ff74514f0ecdb4a244d94",
-    "bin": "foobar2000.exe",
-    "shortcuts": [
-        [
-            "foobar2000.exe",
-            "Foobar2000"
-        ]
-    ],
     "installer": {
         "script": [
             "Remove-Item \"$dir\\`$*\", \"$dir\\uninstall.exe\" -Force -Recurse",
@@ -36,9 +29,17 @@
         "    info '[Portable Mode]: Copying user data...'",
         "    Copy-Item \"$env:AppData\\foobar2000\\*\" -Destination \"$persist_dir\\profile\" -Force -Recurse",
         "}",
-        "if (Test-Path \"$persist_dir\\profile\\playlists\") {",
-        "    Rename-Item -Path \"$persist_dir\\profile\\playlists\" -NewName \"playlists-v1.4\" -Force",
-        "}"
+        "if (!(Test-Path \"$persist_dir\\profile\\playlists-v1.4\")) {",
+        "    Get-ChildItem -Path \"$persist_dir\\profile\" -Filter \"playlists\" -Directory | Rename-Item -NewName \"playlists-v1.4\" -Force",
+        "}",
+        "Get-ChildItem -Path \"$persist_dir\\profile\" -Filter \"playlists\" | Remove-Item -Force -Recurse"
+    ],
+    "bin": "foobar2000.exe",
+    "shortcuts": [
+        [
+            "foobar2000.exe",
+            "Foobar2000"
+        ]
     ],
     "persist": "profile",
     "checkver": {
