@@ -12,13 +12,9 @@
     },
     "installer": {
         "script": [
-            "$_pwd_ = $pwd",
-            "Set-Location $dir",
-            "$_exe_ = Get-ChildItem PowerToys*.exe",
-            "Start-Process $_exe_ --extract_msi -Wait; Set-Location $_pwd_",
-            "$_msi_ = Get-ChildItem -Path $dir\\PowerToys*.msi",
-            "Expand-MsiArchive $_msi_ $dir -ExtractDir 'PowerToys'",
-            "Remove-Item $_exe_, $_msi_ -Force"
+            "Expand-DarkArchive \"$dir\\$fname\" \"$dir\\.tmp\"",
+            "Expand-MsiArchive \"$dir\\.tmp\\AttachedContainer\\PowerToysSetup-$version-x64.msi\" \"$dir\" -ExtractDir 'PowerToys'",
+            "Remove-Item \"$dir\\.tmp\", \"$dir\\$fname\" -Force -Recurse"
         ]
     },
     "shortcuts": [
@@ -31,7 +27,11 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/microsoft/PowerToys/releases/download/v$version/PowerToysSetup-$version-x64.exe"
+                "url": "https://github.com/microsoft/PowerToys/releases/download/v$version/PowerToysSetup-$version-x64.exe",
+                "hash": {
+                    "url": "https://github.com/microsoft/PowerToys/releases/tag/v$version",
+                    "regex": ">$sha256<"
+                }
             }
         }
     }
