@@ -1,5 +1,5 @@
 {
-    "version": "9.4.1",
+    "version": "9.8.2",
     "description": "Complete API development environment.",
     "homepage": "https://www.getpostman.com/",
     "license": {
@@ -8,15 +8,14 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://dl.pstmn.io/download/9.4.1/Postman-win64-9.4.1-full.nupkg#/dl.7z",
-            "hash": "sha1:98ef63779ca57cd925f394af14888e40f794754e"
-        },
-        "32bit": {
-            "url": "https://dl.pstmn.io/download/9.4.1/Postman-win32-9.4.1-full.nupkg#/dl.7z",
-            "hash": "sha1:b7f5f29d3d8e41e1ff29c785518ff1b9d5fde233"
+            "url": "https://dl.pstmn.io/download/version/9.8.2/windows64#/dl.7z",
+            "hash": "sha1:60dfcea0470511d265b90861e67433cde046b801"
         }
     },
-    "extract_dir": "lib\\net45",
+    "pre_install": [
+        "Get-ChildItem \"$dir\" -Exclude '*full.nupkg' | Remove-Item -Recurse",
+        "Expand-7zipArchive \"$dir\\Postman-$version-full.nupkg\" -ExtractDir 'lib\\net45' -Removal"
+    ],
     "bin": "Postman.exe",
     "shortcuts": [
         [
@@ -31,17 +30,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://dl.pstmn.io/download/$version/Postman-win64-$version-full.nupkg#/dl.7z",
+                "url": "https://dl.pstmn.io/download/version/$version/windows64#/dl.7z",
                 "hash": {
                     "url": "https://dl.pstmn.io/RELEASES?platform=win64",
-                    "jsonpath": "$.releases[*].files[?(@.name=='$basename')].hash"
-                }
-            },
-            "32bit": {
-                "url": "https://dl.pstmn.io/download/$version/Postman-win32-$version-full.nupkg#/dl.7z",
-                "hash": {
-                    "url": "https://dl.pstmn.io/RELEASES?platform=win32",
-                    "jsonpath": "$.releases[*].files[?(@.name=='$basename')].hash"
+                    "jsonpath": "$.releases[?(@.name=='$version')].files[?(@.filetype=='.exe')].hash"
                 }
             }
         }
