@@ -14,13 +14,19 @@
         }
     },
     "extract_dir": "OpenVPN Connect",
-    "bin": "ovpnconnector.exe",
-    "shortcuts": [
-        [
-            "OpenVPNConnect.exe",
-            "OpenVPN Connect"
-        ]
+    "pre_install": [
+        "# OpenVPN Connect cannot work under junctions ('current'), therefore we need to manually create the shortcut",
+        "if($global) {$scoop_startmenu_folder = [System.IO.Path]::Combine([Environment]::GetFolderPath('commonstartmenu'), 'Programs', 'Scoop Apps')}",
+        "else {$scoop_startmenu_folder = [System.IO.Path]::Combine([Environment]::GetFolderPath('startmenu'), 'Programs', 'Scoop Apps')}",
+        "$exe_dir = (Resolve-Path \"$dir\\..\\$version\").Path",
+        "#Set-Content \"$dir\\OpenVPNConnect.ps1\" \"Start-Process `\"$exe_path`\"\"",
+        "$wsShell = New-Object -ComObject WScript.Shell",
+        "$wsShell = $wsShell.CreateShortcut(\"$scoop_startmenu_folder\\OpenVPN Connect.lnk\")",
+        "$wsShell.TargetPath = \"$exe_dir\\OpenVPNConnect.exe\"",
+        "$wsShell.WorkingDirectory = \"$exe_dir\"",
+        "$wsShell.Save()"
     ],
+    "bin": "ovpnconnector.exe",
     "checkver": {
         "url": "https://openvpn.net/vpn-server-resources/openvpn-connect-for-windows-change-log/",
         "regex": "Release notes for ([\\d.]+) \\((\\d+)\\)",
