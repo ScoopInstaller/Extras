@@ -1,6 +1,6 @@
 {
-    "version": "2.9.482",
-    "description": "Powerful search for Windows",
+    "version": "2.9.482.0",
+    "description": "Graphical GREP tool to search across text files, Word and Excel documents, PDFs and archives",
     "homepage": "http://dngrep.github.io/",
     "license": "GPL-3.0-only",
     "architecture": {
@@ -13,6 +13,7 @@
             "hash": "ffe7136771bd90fb884587b89341a64a2fd2b0cc4008e55222cd496e47a9d813"
         }
     },
+    "pre_install": "if (!(Test-Path \"$persist_dir\\dnGREP.Settings.dat\")) { New-Item \"$dir\\dnGREP.Settings.dat\" | Out-Null }",
     "extract_dir": "dnGREP",
     "bin": "dnGREP.exe",
     "shortcuts": [
@@ -22,19 +23,27 @@
         ]
     ],
     "persist": [
-        "Themes"
+        "Themes",
+        "dnGREP.Settings.dat"
     ],
     "checkver": {
-        "github": "https://github.com/dnGrep/dnGrep",
-        "regex": "Name: dnGREP.([\\d.]+).x64"
+        "github": "https://github.com/dnGrep/dnGrep"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/dnGrep/dnGrep/releases/download/v$version.0/dnGREP.$version.x64.msi"
+                "url": "https://github.com/dnGrep/dnGrep/releases/download/v$version/dnGREP.$matchHead.x64.msi",
+                "hash": {
+                    "url": "https://github.com/dnGrep/dnGrep/releases/v$version",
+                    "regex": "x64.msi[<>/\\w\\n: \\(\\)]+SHA256: ($sha256)"
+                }
             },
             "32bit": {
-                "url": "https://github.com/dnGrep/dnGrep/releases/download/v$version.0/dnGREP.$version.x86.msi"
+                "url": "https://github.com/dnGrep/dnGrep/releases/download/v$version/dnGREP.$matchHead.x86.msi",
+                "hash": {
+                    "url": "https://github.com/dnGrep/dnGrep/releases/v$version",
+                    "find": "x86.msi[<>/\\w\\n: \\(\\)]+SHA256: ($sha256)"
+                }
             }
         }
     }
