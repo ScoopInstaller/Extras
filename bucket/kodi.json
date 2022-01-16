@@ -3,7 +3,9 @@
     "description": "Open source home theater/media center software and entertainment hub for digital media",
     "homepage": "https://kodi.tv/",
     "license": "GPL-2.0-or-later",
-    "suggest": "vcredist2019",
+    "suggest": {
+        "Visual C++ Redistributable": "extras/vcredist2019"
+    },
     "architecture": {
         "64bit": {
             "url": "https://mirrors.kodi.tv/releases/windows/win64/kodi-19.3-Matrix-x64.exe#/dl.7z",
@@ -14,12 +16,7 @@
             "hash": "8915d4a47c27e513b14f09f134c8195edc46e1bcd5fcf3585cb78afc5db96d6f"
         }
     },
-    "post_install": [
-        "$unwanted = '$PLUGINSDIR', '$TEMP', 'AppxManifest.xml', 'Uninstall.exe'",
-        "foreach ($object in $unwanted) {",
-        "    Remove-Item \"$dir\\$object\"-Recurse -Force",
-        "}"
-    ],
+    "post_install": "'$PLUGINSDIR', '$TEMP', 'AppxManifest.xml', 'Uninstall.exe' | ForEach-Object { Remove-Item \"$dir\\$_\" -Recurse -Force }",
     "shortcuts": [
         [
             "kodi.exe",
@@ -27,9 +24,7 @@
             "-p"
         ]
     ],
-    "persist": [
-        "portable_data"
-    ],
+    "persist": "portable_data",
     "checkver": {
         "url": "https://kodi.tv/download/windows",
         "regex": "Kodi v(?<version>[\\d.]+) \\((?<name>\\w+)\\)"
