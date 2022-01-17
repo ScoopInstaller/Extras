@@ -13,6 +13,17 @@
             "Opentrack"
         ]
     ],
+    "post_install": [
+        "if (!(Test-Path \"$dir\\portable.txt\")) {",
+        "    info '[Portable Mode] Adding Portable Mode File...'",
+        "    New-Item \"$dir\\portable.txt\" -ItemType File | Out-Null",
+        "}",
+        "if (!(Test-Path \"$dir\\ini\\*\") -and ([Environment]::GetFolderPath(\"MyDocuments\")+\"\\opentrack-2.3\" | Test-Path)) {",
+        "    info '[Portable Mode] Copying User Settings...'",
+        "    [Environment]::GetFolderPath(\"MyDocuments\")+\"\\opentrack-2.3\\*\" | Copy-Item -Destination \"$dir\\ini\" -Recurse",
+        "}"
+    ],
+    "persist": "ini",
     "checkver": {
         "github": "https://github.com/opentrack/opentrack",
         "regex": "tag/opentrack-([\\d.]+)"
