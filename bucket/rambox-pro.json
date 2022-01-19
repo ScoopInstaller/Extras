@@ -6,31 +6,34 @@
         "identifier": "Proprietary",
         "url": "https://rambox.pro/#eula"
     },
-    "url": "https://github.com/ramboxapp/download/releases/download/v2.0.0/RamboxPro-2.0.0-win.exe#/cosi.7z",
-    "hash": "sha512:b0f17be1e9c2963c3a0a0e251b08683b3d57ca042c548b70ad497f53e05e0cc248bf10001f41ca66da5c08a05bcb5a8f78ee43bb01e639dff0c67697d0a662c9",
     "architecture": {
         "64bit": {
-            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
-        },
-        "32bit": {
-            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
+            "url": "https://github.com/ramboxapp/download/releases/download/v2.0.0/Rambox-2.0.0-win-x64.exe#/dl.7z",
+            "hash": "sha512:b0f17be1e9c2963c3a0a0e251b08683b3d57ca042c548b70ad497f53e05e0cc248bf10001f41ca66da5c08a05bcb5a8f78ee43bb01e639dff0c67697d0a662c9"
         }
     },
-    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Recurse",
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Recurse"
+    ],
     "shortcuts": [
         [
-            "RamboxPro.exe",
-            "RamboxPro"
+            "Rambox.exe",
+            "Rambox"
         ]
     ],
     "checkver": {
         "github": "https://github.com/ramboxapp/download"
     },
     "autoupdate": {
-        "url": "https://github.com/ramboxapp/download/releases/download/v$version/RamboxPro-$version-win.exe#/cosi.7z",
-        "hash": {
-            "url": "$baseurl/latest.yml",
-            "regex": "sha512:\\s+$base64"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/ramboxapp/download/releases/download/v$version/Rambox-$version-win-64.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "sha512:\\s+$base64"
+                }
+            }
         }
     }
 }
