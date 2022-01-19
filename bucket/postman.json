@@ -8,14 +8,11 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://dl.pstmn.io/download/version/9.9.3/windows64#/dl.7z",
-            "hash": "sha1:253c5a1ff2af46e64ff608e75bea4addd2378a72"
+            "url": "https://dl.pstmn.io/download/9.9.3/Postman-win64-9.9.3-full.nupkg",
+            "hash": "sha1:a80cc901fe8fa4485cf6fda3daffdb791640b6c9"
         }
     },
-    "pre_install": [
-        "Get-ChildItem \"$dir\" -Exclude '*full.nupkg' | Remove-Item -Recurse",
-        "Expand-7zipArchive \"$dir\\Postman-$version-full.nupkg\" -ExtractDir 'lib\\net45' -Removal"
-    ],
+    "extract_dir": "lib\\net45",
     "shortcuts": [
         [
             "Postman.exe",
@@ -29,10 +26,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://dl.pstmn.io/download/version/$version/windows64#/dl.7z",
+                "url": "https://dl.pstmn.io/download/$version/Postman-win64-$version-full.nupkg",
                 "hash": {
                     "url": "https://dl.pstmn.io/RELEASES?platform=win64&from=$version",
-                    "jsonpath": "$.releases[?(@.name=='$version')].files[?(@.filetype=='.exe')].hash"
+                    "regex": "(?sm)$basename.*?$sha1"
                 }
             }
         }
