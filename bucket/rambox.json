@@ -1,34 +1,39 @@
 {
-    "version": "0.7.9",
-    "description": "Messaging and emailing app that combines common web applications into one.",
-    "homepage": "https://rambox.pro/",
-    "license": "GPL-3.0-or-later",
-    "url": "https://github.com/ramboxapp/community-edition/releases/download/0.7.9/Rambox-0.7.9-win.exe#/dl.7z",
-    "hash": "sha512:fe080ee14053a2e9cbb092b2bf9eace7e471ed357653ef776662d8d4f95da8cdc9cfa2ba872e5142ed47b4a49a48d4220cd6a126766f100789fe7e00e5f5eb48",
+    "version": "2.0.0",
+    "description": "Tool for organizing web apps into one application with rich features",
+    "homepage": "https://rambox.pro",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://rambox.pro/#eula"
+    },
     "architecture": {
         "64bit": {
-            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
-        },
-        "32bit": {
-            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
+            "url": "https://github.com/ramboxapp/download/releases/download/v2.0.0/Rambox-2.0.0-win-x64.exe#/dl.7z",
+            "hash": "sha512:b0f17be1e9c2963c3a0a0e251b08683b3d57ca042c548b70ad497f53e05e0cc248bf10001f41ca66da5c08a05bcb5a8f78ee43bb01e639dff0c67697d0a662c9"
         }
     },
-    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse",
-    "bin": "Rambox.exe",
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Recurse"
+    ],
     "shortcuts": [
         [
             "Rambox.exe",
-            "Rambox Community Edition"
+            "Rambox"
         ]
     ],
     "checkver": {
-        "github": "https://github.com/ramboxapp/community-edition"
+        "github": "https://github.com/ramboxapp/download"
     },
     "autoupdate": {
-        "url": "https://github.com/ramboxapp/community-edition/releases/download/$version/Rambox-$version-win.exe#/dl.7z",
-        "hash": {
-            "url": "$baseurl/latest.yml",
-            "regex": "sha512: $base64"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/ramboxapp/download/releases/download/v$version/Rambox-$version-win-64.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "sha512:\\s+$base64"
+                }
+            }
         }
     }
 }
