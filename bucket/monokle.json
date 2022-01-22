@@ -11,12 +11,23 @@
     "architecture": {
         "64bit": {
             "url": "https://github.com/kubeshop/monokle/releases/download/v1.4.0/Monokle-win-1.4.0-x64.exe#/dl.7z",
-            "hash": "sha512:1c5537e5dbb1ea688bf6cd7544e53259a97825a12a27029befabc1fedd908b8439cf80017dd72c5f5ce5181694ba1915520d0930616898b24f2671e8f07b0303",
-            "pre_install": [
-                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Force -Recurse"
-            ]
+            "hash": "sha512:1c5537e5dbb1ea688bf6cd7544e53259a97825a12a27029befabc1fedd908b8439cf80017dd72c5f5ce5181694ba1915520d0930616898b24f2671e8f07b0303"
         }
+    },
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Force -Recurse"
+    ],
+    "installer": {
+        "script": [
+            "if (!(Test-Path \"$persist_dir\")) {",
+            "    ensure \"$persist_dir\" | Out-Null",
+            "}",
+            "New-Item $env:AppData\\monokle -ItemType Junction -Target \"$persist_dir\" | Out-Null"
+        ]
+    },
+    "uninstaller": {
+        "script": "Remove-Item $env:APPDATA\\monokle -Force -Recurse"
     },
     "shortcuts": [
         [
