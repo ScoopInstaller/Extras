@@ -1,0 +1,43 @@
+{
+    "homepage": "https://www.atominn.com/wonderpen",
+    "description": "WonderPen is a professional writing app with a focused and fluid writing experience.",
+    "version": "2.0.5",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.atominn.com/term/privacy"
+    },
+    "url": "https://www.atominn.com/to/get-file/cdn?file=WonderPen/2.0/WonderPen_win_installer_2.0.5(6174).exe#/dl.7z",
+    "hash": "64d59346fa0e053b6da71fba635f8306890ad3580830951f3083c0488adfb7af",
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": [
+                    "Expand-7ZipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\" -Removal",
+                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse"
+                ]
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": [
+                    "Expand-7ZipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\" -Removal",
+                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse"
+                ]
+            }
+        }
+    },
+    "shortcuts": [
+        [
+            "WonderPen.exe",
+            "WonderPen"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.atominn.com/wonderpen/download/all",
+        "regex": "WonderPen/(?<tag>[\\d.]+)/WonderPen_win_installer_(?<major>[\\d.]+)\\((?<build>[\\d]+)\\)",
+        "replace": "${major}"
+    },
+    "autoupdate": {
+        "url": "https://www.atominn.com/to/get-file/cdn?file=WonderPen/$matchTag/WonderPen_win_installer_$matchMajor($matchBuild).exe#/dl.7z"
+    }
+}
