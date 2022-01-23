@@ -15,25 +15,26 @@
         "    'DestinationPath' = \"$dir\"",
         "    'Removal' = $true",
         "}",
-        "if (get_config 'MSIEXTRACT_USE_LESSMSI' $true) { $_args.Add('ExtractDir', 'APPDIR\\yt-dlg') } else { $_args.Add('ExtractDir', 'yt-dlg') }",
+        "$LESSMSI = get_config 'MSIEXTRACT_USE_LESSMSI'",
+        "if ($LESSMSI) { $_args.Add('ExtractDir', 'APPDIR\\yt-dlg') } else { $_args.Add('ExtractDir', 'yt-dlg') }",
         "Expand-MsiArchive @_args"
     ],
     "shortcuts": [
         [
-            "yt-dlg\\yt-dlg.exe",
+            "yt-dlg.exe",
             "yt-dlg"
         ]
     ],
     "checkver": {
-        "github":"https://github.com/oleksis/youtube-dl-gui",
-        "re":"(?<date>(-[\\d\\.]+)?)"
+        "github": "https://github.com/oleksis/youtube-dl-gui",
+        "regex": "v(?<version>[\\d.]+)/(?<msi>.*).msi"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/oleksis/youtube-dl-gui/releases/download/v$version/yt-dlg$matchDate.msi#/dl.ism",
-                "hash":{
-                    "url": "$baseurl/releases/download/v$version/SHA2-256SUMS"
+                "url": "https://github.com/oleksis/youtube-dl-gui/releases/download/v$version/$matchMsi.msi#/dl.ism",
+                "hash": {
+                    "url": "$baseurl/SHA2-256SUMS"
                 }
             }
         }
