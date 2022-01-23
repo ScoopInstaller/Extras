@@ -1,12 +1,12 @@
 {
-    "version": "1.8.2",
+    "version": "1.8.3",
     "description": "A cross platform front-end GUI of the popular youtube-dl written in wxPython.",
     "homepage": "https://github.com/oleksis/youtube-dl-gui",
     "license": "Unlicense",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/oleksis/youtube-dl-gui/releases/download/v1.8.2/yt-dlg.msi#/dl.ism",
-            "hash": "720B1B91FD824564842E2B7CE94CF4301823AE8FC95B9A04952CA7EB23C85668"
+            "url": "https://github.com/oleksis/youtube-dl-gui/releases/download/v1.8.3/yt-dlg-20220118.2.msi#/dl.ism",
+            "hash": "71d4fc4eea97199218fdde36717e90326ed0fd4bd980c6afbffc263514e34be9"
         }
     },
     "pre_install": [
@@ -15,7 +15,8 @@
         "    'DestinationPath' = \"$dir\"",
         "    'Removal' = $true",
         "}",
-        "if (get_config 'MSIEXTRACT_USE_LESSMSI' $true) { $_args.Add('ExtractDir', 'APPDIR\\yt-dlg') } else { $_args.Add('ExtractDir', 'yt-dlg') }",
+        "$LESSMSI = get_config 'MSIEXTRACT_USE_LESSMSI'",
+        "if ($LESSMSI) { $_args.Add('ExtractDir', 'APPDIR\\yt-dlg') } else { $_args.Add('ExtractDir', 'yt-dlg') }",
         "Expand-MsiArchive @_args"
     ],
     "shortcuts": [
@@ -24,11 +25,17 @@
             "yt-dlg"
         ]
     ],
-    "checkver": "github",
+    "checkver": {
+        "github": "https://github.com/oleksis/youtube-dl-gui",
+        "regex": "v(?<version>[\\d.]+)/(?<msi>.*).msi"
+    },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/oleksis/youtube-dl-gui/releases/download/v$version/yt-dlg.msi#/dl.ism"
+                "url": "https://github.com/oleksis/youtube-dl-gui/releases/download/v$version/$matchMsi.msi#/dl.ism",
+                "hash": {
+                    "url": "$baseurl/SHA2-256SUMS"
+                }
             }
         }
     }
