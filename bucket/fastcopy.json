@@ -1,18 +1,40 @@
 {
-    "version": "3.92",
+    "version": "4.0.2",
     "description": "The Fastest copy/backup software.",
     "homepage": "https://fastcopy.jp",
     "license": {
         "identifier": "Freeware",
         "url": "https://fastcopy.jp/help/fastcopy_eng.htm#license"
     },
-    "url": "https://fastcopy.jp/archive/FastCopy392.zip",
-    "hash": "04ef1db25c903a3d97a6f72a9b0652155393f273f288d4e39918230971c774ec",
+    "url": "https://fastcopy.jp/archive/FastCopy4.0.2_installer.exe",
+    "hash": "c1a61cc5337a2fe8442548e2e9d59ecbcb890d1c3c99cde74b553a050397c69a",
     "pre_install": [
         "if (!(Test-Path \"$persist_dir\\FastCopy2.ini\")) {",
         "   Set-Content \"$dir\\FastCopy2.ini\" '[main]' -Encoding ASCII",
         "}"
     ],
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": [
+                    "Start-Process \"$dir\\$fname\" '/EXTRACT64' -Wait",
+                    "$extract_dir = Get-ChildItem -Path $dir -Filter 'FastCopy*' -Directory",
+                    "Get-ChildItem $extract_dir | Move-Item -Destination $dir",
+                    "Remove-Item \"$dir\\$fname\", $extract_dir"
+                ]
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": [
+                    "Start-Process \"$dir\\$fname\" '/EXTRACT32' -Wait",
+                    "$extract_dir = Get-ChildItem -Path $dir -Filter 'FastCopy*' -Directory",
+                    "Get-ChildItem $extract_dir | Move-Item -Destination $dir",
+                    "Remove-Item \"$dir\\$fname\", $extract_dir"
+                ]
+            }
+        }
+    },
     "bin": "FastCopy.exe",
     "shortcuts": [
         [
@@ -24,12 +46,9 @@
             "FastCopy Manual"
         ]
     ],
-    "persist": [
-        "FastCopy2.ini",
-        "Log"
-    ],
+    "persist": "FastCopy2.ini",
     "checkver": "FastCopy ver ([\\d.]+)",
     "autoupdate": {
-        "url": "https://fastcopy.jp/archive/FastCopy$cleanVersion.zip"
+        "url": "https://fastcopy.jp/archive/FastCopy$version_installer.exe"
     }
 }
