@@ -18,8 +18,9 @@
             "installer": {
                 "script": [
                     "Start-Process \"$dir\\$fname\" '/EXTRACT64' -Wait",
-                    "Get-ChildItem \"$dir\\FastCopy$version_x64\" | Move-Item -Destination \"$dir\"",
-                    "Remove-Item \"$dir\\$fname\", \"$dir\\FastCopy$version_x64\""
+                    "$extract_dir = Get-ChildItem -Path $dir -Filter 'FastCopy*' -Directory",
+                    "Get-ChildItem $extract_dir | Move-Item -Destination $dir",
+                    "Remove-Item \"$dir\\$fname\", $extract_dir"
                 ]
             }
         },
@@ -27,8 +28,9 @@
             "installer": {
                 "script": [
                     "Start-Process \"$dir\\$fname\" '/EXTRACT32' -Wait",
-                    "Get-ChildItem \"$dir\\FastCopy$version\" | Move-Item -Destination \"$dir\"",
-                    "Remove-Item \"$dir\\$fname\", \"$dir\\FastCopy$version\""
+                    "$extract_dir = Get-ChildItem -Path $dir -Filter 'FastCopy*' -Directory",
+                    "Get-ChildItem $extract_dir | Move-Item -Destination $dir",
+                    "Remove-Item \"$dir\\$fname\", $extract_dir"
                 ]
             }
         }
