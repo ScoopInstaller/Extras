@@ -17,20 +17,20 @@
         "64bit": {
             "installer": {
                 "script": [
-                    "Start-Process \"$dir\\$fname\" '/EXTRACT64' -Wait",
-                    "$extract_dir = Get-ChildItem -Path $dir -Filter 'FastCopy*' -Directory",
-                    "Get-ChildItem $extract_dir | Move-Item -Destination $dir",
-                    "Remove-Item \"$dir\\$fname\", $extract_dir"
+                    "Invoke-ExternalCommand \"$dir\\$fname\" '/EXTRACT64' | Out-Null",
+                    "$extract_dir = Get-ChildItem -Path $dir -Filter \"FastCopy*\" -Directory",
+                    "Get-ChildItem $extract_dir.FullName | Move-Item -Destination $dir",
+                    "Remove-Item \"$dir\\$fname\", $extract_dir.FullName"
                 ]
             }
         },
         "32bit": {
             "installer": {
                 "script": [
-                    "Start-Process \"$dir\\$fname\" '/EXTRACT32' -Wait",
-                    "$extract_dir = Get-ChildItem -Path $dir -Filter 'FastCopy*' -Directory",
-                    "Get-ChildItem $extract_dir | Move-Item -Destination $dir",
-                    "Remove-Item \"$dir\\$fname\", $extract_dir"
+                    "Invoke-ExternalCommand \"$dir\\$fname\" '/EXTRACT32' | Out-Null",
+                    "$extract_dir = Get-ChildItem -Path $dir -Filter \"FastCopy*\" -Directory",
+                    "Get-ChildItem $extract_dir.FullName | Move-Item -Destination $dir",
+                    "Remove-Item \"$dir\\$fname\", $extract_dir.FullName"
                 ]
             }
         }
