@@ -4,7 +4,7 @@
     "homepage": "https://github.com/LGUG2Z/komorebi",
     "license": "MIT",
     "notes": [
-        "Run 'cp $original_dir\\komorebi.sample.ahk $env:USERPROFILE\\komorebi.ahk' to get started with the sample configuration.",
+        "Run 'Copy-Item $original_dir\\komorebi.sample.ahk $env:USERPROFILE\\komorebi.ahk' to get started with the sample configuration.",
         "Run 'komorebic ahk-library' if you would like to generate an AHK helper library to use in your configuration.",
         "Once you have a configuration file in place, you can run 'komorebic start' to start the window manager."
     ],
@@ -19,13 +19,15 @@
     },
     "pre_install": "if (Get-Process -Name komorebi -ErrorAction SilentlyContinue) { komorebic stop }",
     "post_install": [
+        "# https://github.com/LGUG2Z/komorebi/issues/95",
         "Write-Host \"Copying 'komorebi' to shims folder.\"",
-        "Copy-Item $dir\\komorebi.exe $scoopdir\\shims\\komorebi.exe -Force"
+        "Copy-Item $dir\\komorebi.exe $scoopdir\\shims\\komorebi.exe"
     ],
     "uninstaller": {
         "script": "Remove-Item $scoopdir\\shims\\komorebi.exe"
     },
     "bin": [
+        "komorebi.exe",
         "komorebic.exe"
     ],
     "checkver": "github",
