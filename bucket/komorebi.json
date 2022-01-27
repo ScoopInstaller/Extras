@@ -18,8 +18,14 @@
         }
     },
     "pre_install": "if (Get-Process -Name komorebi -ErrorAction SilentlyContinue) { komorebic stop }",
+    "post_install": [
+        "Write-Host \"Copying 'komorebi' to shims folder.\"",
+        "Copy-Item $dir\\komorebi.exe $scoopdir\\shims\\komorebi.exe -Force"
+    ],
+    "uninstaller": {
+        "script": "Remove-Item $scoopdir\\shims\\komorebi.exe"
+    },
     "bin": [
-        "komorebi.exe",
         "komorebic.exe"
     ],
     "checkver": "github",
