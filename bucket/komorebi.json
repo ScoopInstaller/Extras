@@ -24,7 +24,10 @@
         "Copy-Item $dir\\komorebi.exe $scoopdir\\shims\\komorebi.exe"
     ],
     "uninstaller": {
-        "script": "Remove-Item $scoopdir\\shims\\komorebi.exe"
+        "script": [
+            "if (Get-Process -Name komorebi -ErrorAction SilentlyContinue) { komorebic stop }",
+            "Remove-Item $scoopdir\\shims\\komorebi.exe"
+        ]
     },
     "bin": [
         "komorebi.exe",
