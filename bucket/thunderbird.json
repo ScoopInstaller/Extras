@@ -3,6 +3,12 @@
     "description": "A free email application that’s easy to set up and customize.",
     "homepage": "https://www.thunderbird.net",
     "license": "MPL-2.0",
+    "notes": [
+        "To set profile 'Scoop' as *DEFAULT*, or profiles/settings was lost after update:",
+        "  - Run 'Thunderbird Profile Manager', choose 'Scoop' then click 'Start Thunderbird'.",
+        "  - Visit 'about:profiles' page in Thunderbird to check *DEFAULT* profile.",
+        "For details: https://support.mozilla.org/en-US/kb/profile-manager-create-and-remove-thunderbird-profiles"
+    ],
     "architecture": {
         "64bit": {
             "url": "https://archive.mozilla.org/pub/thunderbird/releases/91.5.1/win64/en-US/Thunderbird%20Setup%2091.5.1.exe#/dl.7z",
@@ -14,13 +20,20 @@
         }
     },
     "extract_dir": "core",
+    "post_install": "thunderbird -CreateProfile \"Scoop $dir\\profile\"",
     "bin": "thunderbird.exe",
     "shortcuts": [
         [
             "thunderbird.exe",
             "Thunderbird"
+        ],
+        [
+            "thunderbird.exe",
+            "Thunderbird Profile Manager",
+            "-P"
         ]
     ],
+    "persist": "profile",
     "checkver": {
         "url": "https://www.thunderbird.net/thunderbird/all/",
         "regex": "thunderbird/([\\d.]+)/"
