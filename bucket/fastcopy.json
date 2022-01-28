@@ -18,9 +18,8 @@
             "installer": {
                 "script": [
                     "Invoke-ExternalCommand \"$dir\\$fname\" '/EXTRACT64' | Out-Null",
-                    "$extract_dir = Get-ChildItem -Path $dir -Filter \"FastCopy*\" -Directory",
-                    "Get-ChildItem $extract_dir.FullName | Move-Item -Destination $dir",
-                    "Remove-Item \"$dir\\$fname\", $extract_dir.FullName"
+                    "Get-ChildItem \"$dir\\FastCopy$version*x64\\*\" -Recurse | Move-Item -Destination $dir",
+                    "Remove-Item \"$dir\\$fname\", \"$dir\\FastCopy$version*\" "
                 ]
             }
         },
@@ -28,9 +27,8 @@
             "installer": {
                 "script": [
                     "Invoke-ExternalCommand \"$dir\\$fname\" '/EXTRACT32' | Out-Null",
-                    "$extract_dir = Get-ChildItem -Path $dir -Filter \"FastCopy*\" -Directory",
-                    "Get-ChildItem $extract_dir.FullName | Move-Item -Destination $dir",
-                    "Remove-Item \"$dir\\$fname\", $extract_dir.FullName"
+                    "Get-ChildItem \"$dir\\FastCopy$version\\*\" -Recurse | Move-Item -Destination $dir",
+                    "Remove-Item \"$dir\\$fname\", \"$dir\\FastCopy$version\" "
                 ]
             }
         }
@@ -40,6 +38,10 @@
         [
             "FastCopy.exe",
             "FastCopy"
+        ],
+        [
+            "setup.exe",
+            "FastCopy Setup"
         ],
         [
             "doc\\FastCopy.chm",
