@@ -1,0 +1,35 @@
+{
+    "version": "2.7.27",
+    "description": "Static WYSIWYG website builder",
+    "homepage": "https://github.com/silexlabs/silex-desktop",
+    "license": "GPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/silexlabs/silex-desktop/releases/download/v2.7.27/silex-desktop-Setup-2.7.27.exe#/dl.7z",
+            "hash": "sha512:0e442e9a824e0bd2e159cb4ef6bab3ed7161cdd002f1224cb0dd12afed1c4ea194d23e39b63390df5df69567f169c2214a9797e31a1830b6571f02d63a378da2"
+        }
+    },
+    "pre_install": [
+        "Expand-7ZipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\" -Removal",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\"-Recurse -Force",
+        "Remove-Item \"$dir\\Uninstall silex-desktop.exe\"-Recurse -Force"
+    ],
+    "shortcuts": [
+        [
+            "silex-desktop.exe",
+            "Silex"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/silexlabs/silex-desktop/releases/download/v$version/silex-desktop-Setup-$version.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "sha512:\\s+$base64"
+                }
+            }
+        }
+    }
+}
