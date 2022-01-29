@@ -1,14 +1,22 @@
 {
-    "version": "2.2.2",
+    "version": "2.3.0",
     "description": "Image uploader/manager",
     "homepage": "https://picgo.github.io/PicGo-Doc/en/",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/Molunerfinn/PicGo/releases/download/v2.2.2/PicGo-Setup-2.2.2.exe#/dl.7z",
-            "hash": "sha512:18144b18773c4ddb5aaebd3b51bc1e8c437deed80e0bdf1029d033d7374d56cc001052a4225a8901d3f85dd9408abf394cb7745de0164623240913cc7b9623d9",
+            "url": "https://github.com/Molunerfinn/PicGo/releases/download/v2.3.0/PicGo-Setup-2.3.0-x64.exe#/dl.7z",
+            "hash": "sha512:c81ec09a612de90c3982dc508ed81620702c577a3288fa15adf71dea0adee7fe36f30f92ed4a1a5a64d5c971fac68f603bd1cd4e551c3adf742360c4da16bc0e",
             "pre_install": [
                 "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Recurse"
+            ]
+        },
+        "32bit": {
+            "url": "https://github.com/Molunerfinn/PicGo/releases/download/v2.3.0/PicGo-Setup-2.3.0-ia32.exe#/dl.7z",
+            "hash": "sha512:3fe915b42be565a20005cb94361dca0d9525f38b18221399da51ab79acbb91d7627bd0d988360fea16f592b8db0cd668e3626562224c91276626c87e135d7625",
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\"",
                 "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Recurse"
             ]
         }
@@ -22,6 +30,20 @@
     ],
     "checkver": {
         "url": "https://github.com/Molunerfinn/PicGo/releases",
-        "regex": "/PicGo-Setup-([\\d.]+)-x64\\.exe"
+        "regex": "/PicGo-Setup-([\\d.]+)-(x64|ia32)\\.exe"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Molunerfinn/PicGo/releases/download/v$version/PicGo-Setup-$version-x64.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://github.com/Molunerfinn/PicGo/releases/download/v$version/PicGo-Setup-$version-ia32.exe#/dl.7z"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "(?s)$basename.*?$base64"
+        }
     }
 }
