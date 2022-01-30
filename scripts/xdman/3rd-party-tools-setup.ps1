@@ -9,8 +9,8 @@ foreach ($tool in $tools) {
   }
   $exe = $gc.Source
   $shim = $exe.TrimEnd('.exe') + '.shim'
-  Invoke-Expression "cmd /c 'mklink $appdir\$tool $exe' >nul 2>&1"
-  Invoke-Expression "cmd /c 'mklink $appdir\$tool.shim $shim' >nul 2>&1"
+  Invoke-Expression "cmd /c 'mklink `\"$appdir\$tool`\" `\"$exe`\" >nul 2>&1'"
+  Invoke-Expression "cmd /c 'mklink `\"$appdir\$tool.shim`\" `\"$shim`\" >nul 2>&1'"
 }
 
 Write-Host "Additional setup completed."
