@@ -1,0 +1,54 @@
+{
+    "version": "1.5.0",
+    "description": "Simple set of tools to make working with GPG and SSH keys easier on Windows 10/11.",
+    "homepage": "https://github.com/rupor-github/win-gpg-agent",
+    "license": "Apache-2.0",
+    "notes": [
+        "win-gpg-agent is configured to have SSH_AUTH_SOCK to point to named pipe.",
+        "If you prefer cygwin socket you could edit \"$dir\\agent-gui.conf\" file."
+    ],
+    "suggest": {
+        "GnuPG": "gnupg"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/rupor-github/win-gpg-agent/releases/download/v1.5.0/win-gpg-agent.zip",
+            "hash": "a0dca5f7afaff8494aafa0ab555c8f68d8f2055b1db189d11bff8004feb42ce3"
+        }
+    },
+    "pre_install": [
+        "if (!(Test-Path \"$dir\\agent-gui.conf\")) {",
+        "  $content  = \"gpg:`r`n\"",
+        "  $content += \"  install_path: \"\"`$`{USERPROFILE`}\\\\scoop\\\\apps\\\\gnupg\\\\current\"\"`r`n\"",
+        "  $content += \"  # Before gnupg 2.3.2 release home directory could be properly link-ed`r`n\"",
+        "  $content += \"  #   homedir: \"\"`$`{USERPROFILE`}\\\\scoop\\\\apps\\\\gnupg\\\\current\\\\home\"\"`r`n\"",
+        "  $content += \"  # With gnupg 2.3.3 release (due to the changes in T5537) use this instead`r`n\"",
+        "  $content += \"  #   homedir: \"\"`$`{USERPROFILE`}\\\\scoop\\\\persist\\\\gnupg\\\\home\"\"`r`n\"",
+        "  $content += \"  #   socketdir: \"\"\"\"`r`n\"",
+        "  $content += \"  # After gnupg 2.3.4 release we have to switch to`r`n\"",
+        "  $content += \"  homedir: \"\"`$`{USERPROFILE`}\\\\scoop\\\\apps\\\\gnupg\\\\current\\\\home\"\"`r`n\"",
+        "  $content += \"  socketdir: \"\"`$`{USERPROFILE`}\\\\scoop\\\\apps\\\\gnupg\\\\current\\\\gnupg\"\"`r`n\"",
+        "  $content += \"gui:`r`n\"",
+        "  $content += \"  debug: false`r`n\"",
+        "  $content += \"  setenv: true`r`n\"",
+        "  $content += \"  # Use line below to enable SSH_AUTH_SOCK to point to cygwin socket`r`n\"",
+        "  $content += \"  #   openssh: cygwin`r`n\"",
+        "  $content | Set-Content \"$dir\\agent-gui.conf\" -Encoding ASCII",
+        "}"
+    ],
+    "persist": "agent-gui.conf",
+    "shortcuts": [
+        [
+            "agent-gui.exe",
+            "win-gpg-agent"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/rupor-github/win-gpg-agent/releases/download/v$version/win-gpg-agent.zip"
+            }
+        }
+    }
+}
