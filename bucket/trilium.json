@@ -1,12 +1,12 @@
 {
-    "version": "0.44.6",
+    "version": "0.50.1",
     "description": "Build your personal knowledge base with Trilium Notes",
     "homepage": "https://github.com/zadam/trilium",
     "license": "AGPL-3.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/zadam/trilium/releases/download/v0.44.6/trilium-windows-x64-0.44.6.zip",
-            "hash": "168e679e693110f7ae19da51a19eca462e37aac5c3416f53628544bdee626abc",
+            "url": "https://github.com/zadam/trilium/releases/download/v0.50.1/trilium-windows-x64-0.50.1.zip",
+            "hash": "1e66499b71eb966bbc15c9852beb7ae81d77b43db80c161ce49af47339c16736",
             "extract_dir": "trilium-windows-x64"
         }
     },
@@ -16,6 +16,17 @@
             "Trilium"
         ]
     ],
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\trilium-data\") -and (Test-Path \"$env:APPDATA\\trilium-data\")) {",
+        "    info \"Copying old '$env:APPDATA\\trilium-data' to '$persist_dir\\trilium-data'\"",
+        "    ensure \"$persist_dir\\trilium-data\" | Out-Null",
+        "    Copy-Item \"$env:APPDATA\\trilium-data\\*\" \"$persist_dir\\trilium-data\" -Recurse -Force",
+        "}"
+    ],
+    "env_set": {
+        "TRILIUM_DATA_DIR": "$persist_dir\\trilium-data"
+    },
+    "persist": "trilium-data",
     "checkver": "github",
     "autoupdate": {
         "architecture": {

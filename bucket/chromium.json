@@ -1,52 +1,61 @@
 {
     "##": "Check chromium.woolyss.com for different versions of Chromium releases.",
-    "version": "85.0.4183.83",
+    "version": "98.0.4758.80-r950365",
     "description": "Browser aiming for safer, faster, and more stable way for all users to experience the web.",
     "homepage": "https://www.chromium.org",
     "license": "BSD-3-Clause",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/macchrome/winchrome/releases/download/v85.0.4183.83-r782793-Win64/ungoogled-chromium-85.0.4183.83-2_Win64.7z",
-            "hash": "sha1:e2a561650ca6f3622acc1d170a6e76ef87405152",
-            "extract_dir": "ungoogled-chromium-85.0.4183.83-2_Win64"
+            "url": "https://github.com/Hibbiki/chromium-win64/releases/download/v98.0.4758.80-r950365/chrome.sync.7z",
+            "hash": "sha1:0dc103b836a14978ee5bf501719c46508eb2b62d"
         },
         "32bit": {
-            "url": "https://github.com/macchrome/winchrome/releases/download/v85.0.4183.83-r782793-Win64/Ungoogled-Chromium-85.0.4183.83-2_Win32.7z",
-            "hash": "sha1:7be72395b89ce0cc5f6fdbcd3a90835baf4051e8",
-            "extract_dir": "Ungoogled-Chromium-85.0.4183.83-2_Win32"
+            "url": "https://github.com/Hibbiki/chromium-win32/releases/download/v98.0.4758.80-r950365/chrome.sync.7z",
+            "hash": "sha1:264ec72267b1165a32492f2c4d6b224900504019"
         }
     },
+    "extract_dir": "Chrome-bin",
     "bin": [
-        "chrome.exe",
         [
             "chrome.exe",
-            "chromium"
+            "chromium",
+            "--user-data-dir=\"$dir\\User Data\""
         ]
     ],
     "shortcuts": [
         [
             "chrome.exe",
-            "Chromium"
+            "Chromium",
+            "--user-data-dir=\"$dir\\User Data\""
         ]
     ],
+    "post_install": [
+        "if (!(Test-Path \"$dir\\User Data\\*\") -and (Test-Path \"$env:LocalAppData\\Chromium\\User Data\")) {",
+        "    info '[Portable Mode]: Copying user data...'",
+        "    Copy-Item \"$env:LocalAppData\\Chromium\\User Data\\*\" \"$dir\\User Data\" -Recurse",
+        "}"
+    ],
+    "persist": "User Data",
     "checkver": {
-        "github": "https://github.com/macchrome/winchrome",
-        "regex": "v([\\d.]+)-r(?<build>\\d+)-Win64"
+        "url": "https://github.com/Hibbiki/chromium-win64/releases/latest",
+        "regex": ">v([\\d.\\-r]+)</h1>"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/macchrome/winchrome/releases/download/v$version-r$matchBuild-Win64/ungoogled-chromium-$version-2_Win64.7z",
-                "extract_dir": "ungoogled-chromium-$version-2_Win64"
+                "url": "https://github.com/Hibbiki/chromium-win64/releases/download/v$version/chrome.sync.7z",
+                "hash": {
+                    "url": "https://github.com/Hibbiki/chromium-win64/releases/latest",
+                    "regex": "$sha1 \\.\\./out/x64/chrome.sync.7z"
+                }
             },
             "32bit": {
-                "url": "https://github.com/macchrome/winchrome/releases/download/v$version-r$matchBuild-Win64/Ungoogled-Chromium-$version-2_Win32.7z",
-                "extract_dir": "Ungoogled-Chromium-$version-2_Win32"
+                "url": "https://github.com/Hibbiki/chromium-win32/releases/download/v$version/chrome.sync.7z",
+                "hash": {
+                    "url": "https://github.com/Hibbiki/chromium-win32/releases/latest",
+                    "regex": "$sha1 \\.\\./out/x86/chrome.sync.7z"
+                }
             }
-        },
-        "hash": {
-            "url": "https://github.com/macchrome/winchrome/releases/v$version-r$matchBuild-Win64",
-            "regex": "(?s)$basename.*?$sha1"
         }
     }
 }

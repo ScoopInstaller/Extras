@@ -1,33 +1,38 @@
 {
-    "version": "7.2.1",
+    "version": "8.3.4",
     "description": "Open platform for analytics and data monitoring",
     "homepage": "https://grafana.com/",
     "license": "Apache-2.0",
     "architecture": {
         "64bit": {
-            "url": "https://dl.grafana.com/oss/release/grafana-7.2.1.windows-amd64.zip",
-            "hash": "bf7748455994a4186516d2413a83bea2b370fd1eac67a53945e2830dd0717267"
+            "url": "https://dl.grafana.com/oss/release/grafana-8.3.4.windows-amd64.zip",
+            "hash": "46be95632a673bdee187bac2dafea644959ccb7447829fc0dc5a961f7754093b"
         }
     },
-    "extract_dir": "grafana-7.2.1",
-    "bin": "bin\\grafana-server.exe",
+    "extract_dir": "grafana-8.3.4",
+    "bin": [
+        [
+            "bin\\grafana-server.exe",
+            "grafana-server",
+            "-homepath $dir"
+        ]
+    ],
     "persist": [
         "conf",
         "data"
     ],
     "checkver": {
         "url": "https://grafana.com/grafana/download?platform=windows",
-        "regex": "grafana-([\\d.]+)\\.windows"
+        "regex": "-([\\d.]+)\\.windows"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://dl.grafana.com/oss/release/grafana-$version.windows-amd64.zip",
-                "hash": {
-                    "url": "https://grafana.com/grafana/download/$version?platform=windows",
-                    "regex": "Standalone.*?([A-Fa-f\\d]{64})"
-                }
+                "url": "https://dl.grafana.com/oss/release/grafana-$version.windows-amd64.zip"
             }
+        },
+        "hash": {
+            "url": "$url.sha256"
         },
         "extract_dir": "grafana-$version"
     }

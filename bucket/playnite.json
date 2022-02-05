@@ -1,33 +1,37 @@
 {
-    "version": "7.9",
-    "description": "An open source video game library manager and launcher with support for 3rd party libraries like Steam, GOG, Origin, Battle.net and Uplay. Includes game emulation support, providing one unified interface for your games.",
-    "homepage": "https://playnite.link/",
+    "version": "9.15",
+    "description": "Video game library manager and launcher with support for 3rd party libraries like Steam, GOG, Origin, Battle.net, ...",
+    "homepage": "https://playnite.link",
     "license": "MIT",
-    "url": "https://playnite.link/update/stable/7.9/Playnite79.zip",
-    "hash": "18f56dbca04bad3f4893e9b607370e8b8942d28e368e756160187ee3fc5bfa99",
-    "bin": "PlayniteUI.exe",
-    "shortcuts": [
+    "url": "https://github.com/JosefNemec/Playnite/releases/download/9.15/Playnite915.zip",
+    "hash": "ed730dd8e306591fed69b7f9a114cd9b2ff48a6dc6305aa115d2fa3781393e75",
+    "pre_install": "Copy-Item \"$persist_dir\\config.json\" \"$dir\" -ErrorAction 'SilentlyContinue'",
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\config.json\" \"$persist_dir\" -ErrorAction 'SilentlyContinue' -Force"
+    },
+    "bin": [
         [
-            "PlayniteUI.exe",
+            "Playnite.DesktopApp.exe",
             "Playnite"
         ]
     ],
-    "pre_install": [
-        "if (!(Test-Path \"$dir\\config.json\")) {",
-        "    New-Item -Force -Path \"$dir\" -Name 'config.json' -Value '{}' | Out-Null",
-        "}"
+    "shortcuts": [
+        [
+            "Playnite.DesktopApp.exe",
+            "Playnite"
+        ]
+    ],
+    "persist": [
+        "browsercache",
+        "cache",
+        "Extensions",
+        "ExtensionsData",
+        "library"
     ],
     "checkver": {
         "github": "https://github.com/JosefNemec/Playnite"
     },
     "autoupdate": {
-        "url": "https://playnite.link/update/stable/$version/Playnite$cleanVersion.zip"
-    },
-    "persist": [
-        "browsercache",
-        "cache",
-        "ExtensionsData",
-        "library",
-        "config.json"
-    ]
+        "url": "https://github.com/JosefNemec/Playnite/releases/download/$version/Playnite$cleanVersion.zip"
+    }
 }

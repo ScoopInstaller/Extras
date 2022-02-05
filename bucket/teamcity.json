@@ -1,0 +1,37 @@
+{
+    "version": "2021.2.2.99660",
+    "description": "Continuous Integration server by JetBrains.",
+    "homepage": "https://www.jetbrains.com/teamcity/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.jetbrains.com/store/license.html"
+    },
+    "notes": "TeamCity can be started from anywhere using 'teamcity' command.",
+    "url": "https://download.jetbrains.com/teamcity/TeamCity-2021.2.exe#/dl.7z",
+    "hash": "22ce9505517feb04449ac7104a37074811b3cd7a81258c483e915645b15a198b",
+    "installer": {
+        "script": [
+            "Remove-Item \"$dir\\`$*\" -Recurse",
+            "$ver_path = \"$dir\\bin\"",
+            "$cont = @(",
+            "    \"Push-Location \"\"$ver_path\"\"\"",
+            "    '& .\\teamcity-server.bat @args'",
+            "    'Pop-Location'",
+            ")",
+            "Set-Content \"$dir\\teamcity.ps1\" $cont -Encoding Ascii"
+        ]
+    },
+    "bin": "teamcity.ps1",
+    "persist": "conf",
+    "checkver": {
+        "url": "https://data.services.jetbrains.com/products/releases?code=TC&latest=true&platform=windows&type=release",
+        "regex": "version\":\"(?<ver>[\\d.]+)\".*\"build\":\"(?<build>[\\d.]+)\"",
+        "replace": "${ver}.${build}"
+    },
+    "autoupdate": {
+        "url": "https://download.jetbrains.com/teamcity/TeamCity-$majorVersion.$minorVersion.exe#/dl.7z",
+        "hash": {
+            "url": "$url.sha256"
+        }
+    }
+}

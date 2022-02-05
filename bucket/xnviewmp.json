@@ -1,19 +1,34 @@
 {
-    "version": "0.97.0",
-    "description": "Photo viewer, image resizer & batch converter.",
+    "version": "0.99.7",
+    "description": "Photo viewer, image resizer & batch converter",
     "homepage": "https://www.xnview.com/en/xnviewmp/",
     "license": "Freeware|Proprietary",
     "architecture": {
         "64bit": {
             "url": "https://download.xnview.com/XnViewMP-win-x64.zip",
-            "hash": "146fa8d3ef519ecc49463e1e6573eb35fcbf9f692c44f487408a25fcf7f74781"
+            "hash": "e526025f69515c6ed87f50e7aa72602418dadb250142d287b2e086fb7b40e912"
         },
         "32bit": {
             "url": "https://download.xnview.com/XnViewMP-win.zip",
-            "hash": "250bbe597658ef9245114c09a93d5caf77a316079c19aa8383585575630e8868"
+            "hash": "ee782f7857337697506e6fc87f24dca123f5cf909c894113403205a1c89d4262"
         }
     },
     "extract_dir": "XnViewMP",
+    "pre_install": [
+        "# --- If xnview.ini exists as a folder, then remove it ---",
+        "if (Test-Path \"$persist_dir\\xnview.ini\" -PathType Container) {",
+        "    Remove-Item \"$persist_dir\\xnview.ini\" -Force -Recurse",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\xnview.ini\")) {",
+        "   New-Item \"$dir\\xnview.ini\" -ItemType File | Out-Null",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "# Manually copy because Xnview overwrites hardlink with a regular file, which breaks persist",
+            "if ((Test-Path \"$dir\\xnview.ini\") -and !(Get-Item \"$dir\\xnview.ini\").LinkType -and (Test-Path $persist_dir)) { Copy-Item \"$dir\\xnview.ini\" $persist_dir -Force }"
+        ]
+    },
     "bin": "xnviewmp.exe",
     "shortcuts": [
         [
@@ -21,10 +36,7 @@
             "XnViewMP"
         ]
     ],
-    "pre_install": [
-        "if (!(Test-Path \"$env:APPDATA\\XnViewMP\\xnview.ini\")) {",
-        "    New-Item -Force -Path \"$env:APPDATA\\XnViewMP\" -Name \"xnview.ini\" -ItemType file | Out-Null}"
-    ],
+    "persist": "xnview.ini",
     "checkver": "Download <strong>XnView MP ([\\d.]+)",
     "autoupdate": {
         "architecture": {

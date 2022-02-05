@@ -1,19 +1,20 @@
 {
-    "version": "4.3.7.25118",
+    "version": "4.4.1.26165",
     "description": "Directory and file compare functions in one package",
     "homepage": "https://www.scootersoftware.com",
     "license": {
         "identifier": "Shareware",
         "url": "https://www.scootersoftware.com/index.php?zz=kb_licensev4"
     },
+    "notes": "Add Beyond Compare as a context menu option by running: '$dir\\install-context.reg'",
     "architecture": {
         "64bit": {
-            "url": "https://www.scootersoftware.com/BCompare-4.3.7.25118_x64.msi",
-            "hash": "780048ea537860a8a706fb61483cee0a1118039e25ab72c805e042b5c70bb781"
+            "url": "https://www.scootersoftware.com/BCompare-4.4.1.26165_x64.msi",
+            "hash": "9c50944316cfdaf19ee7ea29be0bd04c4940609d66adff81076b2061ac6f9e8e"
         },
         "32bit": {
-            "url": "https://www.scootersoftware.com/BCompare-4.3.7.25118_x86.msi",
-            "hash": "dd20fc3f688c98714341cd7c4095f8222f2402d26c7c9ecb430165bf7889b038"
+            "url": "https://www.scootersoftware.com/BCompare-4.4.1.26165_x86.msi",
+            "hash": "cf951c8da7b344345d4396e3ec9658711d5a6e1a42d164d84d4d466b089c6757"
         }
     },
     "extract_dir": "Beyond Compare 4",
@@ -27,6 +28,20 @@
             "BCClipboard.exe",
             "Clipboard Compare"
         ]
+    ],
+    "post_install": [
+        "$dir_escaped = \"$dir\".Replace('\\', '\\\\')",
+        "\"install-context-$architecture\", \"uninstall-context\" | ForEach-Object {",
+        "  if (Test-Path \"$bucketsdir\\extras\\scripts\\beyondcompare\\$_.reg\") {",
+        "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\beyondcompare\\$_.reg\"",
+        "    $content = $content.Replace('$install_dir', $dir_escaped)",
+        "    if ($global) {",
+        "      $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "    }",
+        "    $outfile_no_arch = $_.Replace(\"-$architecture\", \"\")",
+        "    $content | Set-Content -Path \"$dir\\$outfile_no_arch.reg\"",
+        "  }",
+        "}"
     ],
     "checkver": {
         "url": "https://www.scootersoftware.com/download.php?zz=kb_dl4_winalternate",

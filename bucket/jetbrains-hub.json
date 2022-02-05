@@ -1,0 +1,43 @@
+{
+    "version": "2021.1.14276",
+    "description": "YouTrack, TeamCity, and Upsource Connector by JetBrains.",
+    "homepage": "https://www.jetbrains.com/hub/",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.jetbrains.com/legal/docs/hub/license"
+    },
+    "notes": "Hub can be started from anywhere using 'jetbrains-hub' command.",
+    "url": "https://download.jetbrains.com/hub/hub-2021.1.14276.zip",
+    "hash": "656c25ad04dfafa92ace70d98eaf57b4893d45718e78a1b0d7cac5563266b9a0",
+    "extract_dir": "hub-2021.1.14276",
+    "installer": {
+        "script": [
+            "$ver_path = \"$dir\\bin\"",
+            "$cont = @(",
+            "    \"Push-Location \"\"$ver_path\"\"\"",
+            "    '& .\\hub.bat @args'",
+            "    'Pop-Location'",
+            ")",
+            "Set-Content \"$dir\\jetbrains-hub.ps1\" $cont -Encoding Ascii"
+        ]
+    },
+    "bin": "jetbrains-hub.ps1",
+    "persist": [
+        "backups",
+        "conf",
+        "data",
+        "logs"
+    ],
+    "checkver": {
+        "url": "https://data.services.jetbrains.com/products/releases?code=HB&latest=true&type=release",
+        "regex": "version\":\"(?<ver>[\\d.]+)\".*\"build\":\"(?<build>[\\d.]+)\"",
+        "replace": "${ver}.${build}"
+    },
+    "autoupdate": {
+        "url": "https://download.jetbrains.com/hub/hub-$version.zip",
+        "hash": {
+            "url": "$url.sha256"
+        },
+        "extract_dir": "hub-$version"
+    }
+}

@@ -1,11 +1,14 @@
 {
-    "version": "3.24",
+    "version": "4.29",
     "description": "GUI client based on v2ray core",
     "homepage": "https://github.com/2dust/v2rayN",
     "license": "GPL-3.0-only",
-    "depends": "v2ray",
-    "url": "https://github.com/2dust/v2rayN/releases/download/3.24/v2rayN.zip",
-    "hash": "a16b23d2ff89fca5ea9769894ff7befb2dc572ea9ec7b9f38a0b2e2b1f3e0b73",
+    "depends": [
+        "v2ray",
+        "xray"
+    ],
+    "url": "https://github.com/2dust/v2rayN/releases/download/4.29/v2rayN.zip",
+    "hash": "09a263e1408e4f73a54a45210f59207c4e173c3b6501a32dcfe4ed44497e1eaa",
     "extract_dir": "v2rayN",
     "pre_install": [
         "foreach ($name in @('guiNConfig.json', 'user-wininet.json')) {",
@@ -22,6 +25,15 @@
         "        if ($name -Like $form) {",
         "            Write-Host \"Creating hardlink for $name\"",
         "            New-Item -ItemType HardLink -Path \"$dir\" -Name $name -Target \"$(appdir v2ray $global)\\current\\$name\" | Out-Null",
+        "        }",
+        "    }",
+        "}",
+        "foreach ($form in @('*.exe')) {",
+        "    foreach ($_ in Get-ChildItem \"$(appdir xray $global)\\current\" -File) {",
+        "        $name = $_.Name",
+        "        if ($name -Like $form) {",
+        "            Write-Host \"Creating hardlink for $name\"",
+        "            New-Item -ItemType HardLink -Path \"$dir\" -Name $name -Target \"$(appdir xray $global)\\current\\$name\" | Out-Null",
         "        }",
         "    }",
         "}"

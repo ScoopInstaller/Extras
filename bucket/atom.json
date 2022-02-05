@@ -1,28 +1,39 @@
 {
-    "version": "1.51.0",
+    "version": "1.58.0",
     "description": "The hackable text editor",
     "homepage": "https://atom.io/",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/atom/atom/releases/download/v1.51.0/atom-x64-1.51.0-full.nupkg",
-            "hash": "sha1:f3210f01e32336c584440d88c697e80bd435fb9c"
+            "url": "https://github.com/atom/atom/releases/download/v1.58.0/atom-x64-1.58.0-full.nupkg",
+            "hash": "sha1:2d6404691a292fc70db238764b7807ec4520997f"
         },
         "32bit": {
-            "url": "https://github.com/atom/atom/releases/download/v1.51.0/atom-1.51.0-full.nupkg",
-            "hash": "sha1:52c5930cb73f262ce7f76c63fcd3ead5ad07335a"
+            "url": "https://github.com/atom/atom/releases/download/v1.58.0/atom-1.58.0-full.nupkg",
+            "hash": "sha1:231fcc3b56c9a5803d0552a6f361dd054cf173d3"
         }
     },
     "extract_dir": "lib\\net45",
+    "extract_to": "AtomPortable",
     "bin": [
-        "resources\\cli\\atom.cmd",
-        "resources\\app\\apm\\bin\\apm.cmd"
+        "AtomPortable\\resources\\cli\\atom.cmd",
+        "AtomPortable\\resources\\app\\apm\\bin\\apm.cmd"
     ],
     "shortcuts": [
         [
-            "atom.exe",
+            "AtomPortable\\atom.exe",
             "Atom"
         ]
+    ],
+    "persist": ".atom",
+    "post_install": [
+        "if (!(Test-Path \"$dir\\.atom\\*\") -and (Test-Path \"$env:UserProfile\\.atom\")) {",
+        "    info '[Portable Mode]: Copying user data...'",
+        "    Copy-Item \"$env:UserProfile\\.atom\\*\" \"$dir\\.atom\" -Recurse",
+        "}",
+        "if (!(Test-Path \"$dir\\.atom\\electronUserData\")) {",
+        "    New-Item -Type Directory \"$dir\\.atom\\electronUserData\" | Out-Null",
+        "}"
     ],
     "checkver": {
         "github": "https://github.com/atom/atom"

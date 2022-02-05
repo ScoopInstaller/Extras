@@ -1,0 +1,36 @@
+{
+    "##": "Using installer instead of portable ZIP for bundled GTK+ (required for pidgin to run properly)",
+    "version": "2.14.8",
+    "description": "Universal instant messaging program supporting AIM, ICQ, Google Talk, Jabber/XMPP, MSN Messenger, Yahoo!, Bonjour, Gadu-Gadu, IRC, MXit, Novell GroupWise Messenger, Lotus Sametime, SILC, SIMPLE, MySpaceIM, and Zephyr",
+    "homepage": "https://pidgin.im/",
+    "license": "GPL-2.0-or-later",
+    "url": "https://downloads.sourceforge.net/project/pidgin/Pidgin/2.14.8/pidgin-2.14.8-offline.exe#/dl.7z",
+    "hash": "e79e81812d8194ca6ee43d3e3becfab66fa9c94602459f7b1b24b1387b4c2d42",
+    "env_set": {
+        "PURPLEHOME": "$dir"
+    },
+    "bin": "pidgin.exe",
+    "pre_install": [
+        "if ($env:PIDGINLANG -eq $null) {$env:PIDGINLANG = 'en'}",
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\gtk.zip\" \"$dir\"",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\",\"$dir\\pidgin-uninst.exe.nsis\" -Recurse"
+    ],
+    "shortcuts": [
+        [
+            "pidgin.exe",
+            "Pidgin IM"
+        ]
+    ],
+    "persist": ".purple",
+    "checkver": {
+        "url": "https://sourceforge.net/projects/pidgin/files/Pidgin/",
+        "regex": "files/Pidgin/([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://downloads.sourceforge.net/project/pidgin/Pidgin/$version/pidgin-$version-offline.exe#/dl.7z",
+        "hash": {
+            "url": "$url.sha256sum",
+            "regex": "$sha256"
+        }
+    }
+}

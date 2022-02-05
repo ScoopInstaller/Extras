@@ -1,0 +1,43 @@
+{
+    "version": "2020.1.1956",
+    "description": "Code Review and Project Analytics tool by JetBrains.",
+    "homepage": "https://jetbrains.com/upsource/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.jetbrains.com/upsource/buy/license.html"
+    },
+    "notes": "Upsource can be started from anywhere using 'upsource' command.",
+    "url": "https://download.jetbrains.com/upsource/upsource-2020.1.1956.zip",
+    "hash": "4676ffa32a2f10d1e4006894d0015d88aaacb5719b3b7c8a697bd1cbffba1b54",
+    "extract_dir": "upsource-2020.1.1956",
+    "installer": {
+        "script": [
+            "$ver_path = \"$dir\\bin\"",
+            "$cont = @(",
+            "    \"Push-Location \"\"$ver_path\"\"\"",
+            "    '& .\\upsource.bat @args'",
+            "    'Pop-Location'",
+            ")",
+            "Set-Content \"$dir\\upsource.ps1\" $cont -Encoding Ascii"
+        ]
+    },
+    "bin": "upsource.ps1",
+    "persist": [
+        "backups",
+        "conf",
+        "data",
+        "logs"
+    ],
+    "checkver": {
+        "url": "https://data.services.jetbrains.com/products/releases?code=US&latest=true&type=release",
+        "regex": "version\":\"(?<ver>[\\d.]+)\".*\"build\":\"(?<build>[\\d.]+)\"",
+        "replace": "${ver}.${build}"
+    },
+    "autoupdate": {
+        "url": "https://download.jetbrains.com/upsource/upsource-$version.zip",
+        "hash": {
+            "url": "$url.sha256"
+        },
+        "extract_dir": "upsource-$version"
+    }
+}

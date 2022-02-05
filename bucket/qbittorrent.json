@@ -1,5 +1,5 @@
 {
-    "version": "4.2.5",
+    "version": "4.4.0",
     "description": "Free and reliable P2P Bittorent client.",
     "homepage": "https://www.qbittorrent.org/",
     "license": {
@@ -8,15 +8,37 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://downloads.sourceforge.net/project/qbittorrent/qbittorrent-win32/qbittorrent-4.2.5/qbittorrent_4.2.5_x64_setup.exe#/dl.7z",
-            "hash": "62731c7d44c217b79724cb23bef4267570332ed67c1c1feef3f6c803a6f57ef3"
+            "url": "https://downloads.sourceforge.net/project/qbittorrent/qbittorrent-win32/qbittorrent-4.4.0/qbittorrent_4.4.0_x64_setup.exe#/dl.7z",
+            "hash": "e114cc035b422d7377958ed0e86f5524db719dfb2166b70fbe66c3685756d99f"
         },
         "32bit": {
-            "url": "https://downloads.sourceforge.net/project/qbittorrent/qbittorrent-win32/qbittorrent-4.2.5/qbittorrent_4.2.5_setup.exe#/dl.7z",
-            "hash": "7d5ec6993bde912ad35d98e2bb523c6d6022766b058bef0626bd41c8c00b81ff"
+            "url": "https://downloads.sourceforge.net/project/qbittorrent/qbittorrent-win32/qbittorrent-4.4.0/qbittorrent_4.4.0_setup.exe#/dl.7z",
+            "hash": "32b271a8fc75a22fef7dc9158faba520d4441fdb59eaee3611cd79e1c5eda92c"
         }
     },
-    "pre_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Force -Recurse",
+    "pre_install": [
+        "Remove-Item \"$dir\\`$PLUGINSDIR\" -Force -Recurse",
+        "if ((!(Test-Path \"$persist_dir\\profile\")) -and ((Test-Path \"$persist_dir\\..\\qbittorrent-portable\\profile\") -or (Test-Path \"$env:APPDATA\\qBittorrent\"))) {",
+        "    Write-Host \"Scoop is migrating qbittorrent to use portable mode by default.\" -ForegroundColor Yellow",
+        "    Write-Host \"For details, see: https://github.com/ScoopInstaller/Extras/issues/5845\" -ForegroundColor Yellow",
+        "    if ((Test-Path \"$persist_dir\\..\\qbittorrent-portable\\profile\") -and (Test-Path \"$env:APPDATA\\qBittorrent\")) {",
+        "        Write-Host \"Both portable and non-portable qBittorrent profile exist.\" -ForegroundColor Yellow",
+        "        Write-Host \"Scoop will prioritize and import the non-portable one.\" -ForegroundColor Yellow",
+        "    }",
+        "    New-Item \"$persist_dir\\profile\" -ItemType Directory | Out-Null",
+        "    if (Test-Path \"$env:APPDATA\\qBittorrent\") {",
+        "        Write-Host \"Copying non-portable profile's config and data to Scoop persist directory...\" -ForegroundColor Yellow",
+        "        Copy-Item \"$env:APPDATA\\qBittorrent\" \"$persist_dir\\profile\\qBittorrent\\config\" -Recurse | Out-Null",
+        "        Copy-Item \"$env:LOCALAPPDATA\\qBittorrent\" \"$persist_dir\\profile\\qBittorrent\\data\" -Recurse | Out-Null",
+        "    } else {",
+        "        Write-Host \"Copying portable profile's config and data to Scoop persist directory...\" -ForegroundColor Yellow",
+        "        Write-Host \"If you haven't setup an absolute download path before torrenting, please manually migrate affected torrents, as they use relative path by default for storaging.\" -ForegroundColor Yellow",
+        "        Write-Host \"Or you can move them to an absolute download path in qbittorrent-portable and cleanly (re)install qbittorrent to let migration script to take care of them.\" -ForegroundColor Yellow",
+        "        Copy-Item \"$persist_dir\\..\\qbittorrent-portable\\profile\\qBittorrent\\config\" \"$persist_dir\\profile\\qBittorrent\\config\" -Recurse | Out-Null",
+        "        Copy-Item \"$persist_dir\\..\\qbittorrent-portable\\profile\\qBittorrent\\data\" \"$persist_dir\\profile\\qBittorrent\\data\" -Recurse | Out-Null",
+        "    }",
+        "}"
+    ],
     "bin": "qbittorrent.exe",
     "shortcuts": [
         [
@@ -24,6 +46,7 @@
             "qBittorrent"
         ]
     ],
+    "persist": "profile",
     "checkver": {
         "url": "https://www.qbittorrent.org/download.php",
         "regex": "Latest:\\s+v([\\d.]+)"

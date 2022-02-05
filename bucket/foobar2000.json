@@ -1,19 +1,39 @@
 {
-    "version": "1.6.1",
+    "version": "1.6.9",
     "description": "An advanced freeware audio player for the Windows platform.",
     "homepage": "https://www.foobar2000.org/",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.foobar2000.org/license"
     },
-    "notes": [
-        "WARNING: foobar2000 package is reverting back to non-portable installation.",
-        "If you still want portable version, use foobar2000-portable instead.",
-        "If you want to migrate persisted data to portable version",
-        "please rename $persist_dir to \"foobar2000-portable\"."
+    "suggest": {
+        "Encoders": "extras/foobar2000-encoders"
+    },
+    "url": "https://www.videohelp.com/download/foobar2000_v1.6.9.exe#/dl.7z",
+    "hash": "1efc461da260441208d854626c19267c723b34b5935ff74514f0ecdb4a244d94",
+    "installer": {
+        "script": [
+            "Remove-Item \"$dir\\`$*\", \"$dir\\uninstall.exe\" -Force -Recurse",
+            "New-Item \"$dir\\portable_mode_enabled\" -Force | Out-Null",
+            "$EncodersDir = $(appdir foobar2000-encoders $global)",
+            "if (Test-Path \"$EncodersDir\") {",
+            "    New-Item \"$dir\\encoders\" -ItemType Junction -Target \"$EncodersDir\\current\" | Out-Null",
+            "}"
+        ]
+    },
+    "post_install": [
+        "if (!(Test-Path \"$persist_dir\\profile\\*\")) {",
+        "    Get-ChildItem -Path \"$persist_dir\" -Exclude \"profile\" | Move-Item -Destination \"$persist_dir\\profile\" -Force",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\profile\\*\") -and (Test-Path \"$env:AppData\\foobar2000\")) {",
+        "    info '[Portable Mode]: Copying user data...'",
+        "    Copy-Item \"$env:AppData\\foobar2000\\*\" -Destination \"$persist_dir\\profile\" -Force -Recurse",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\profile\\playlists-v1.4\")) {",
+        "    Get-ChildItem -Path \"$persist_dir\\profile\" -Filter \"playlists\" -Directory | Rename-Item -NewName \"playlists-v1.4\" -Force",
+        "}",
+        "Get-ChildItem -Path \"$persist_dir\\profile\" -Filter \"playlists\" | Remove-Item -Force -Recurse"
     ],
-    "url": "https://www.videohelp.com/download/foobar2000_v1.6.1.exe#/dl.7z",
-    "hash": "d1dd0ba39f4f874275ef08c8f6bedb8cf9bfc6f445d1e8d1722a6bf7b12f3827",
     "bin": "foobar2000.exe",
     "shortcuts": [
         [
@@ -21,12 +41,7 @@
             "Foobar2000"
         ]
     ],
-    "installer": {
-        "script": [
-            "Remove-Item \"$dir\\`$*\", \"$dir\\uninstall.exe\" -Force -Recurse",
-            "New-Item \"$dir\\user_profiles_enabled\" -Force | Out-Null"
-        ]
-    },
+    "persist": "profile",
     "checkver": {
         "url": "https://www.foobar2000.org/download",
         "regex": "foobar2000_v([\\d.]+)\\."
