@@ -7,7 +7,7 @@
         "64bit": {
             "url": "https://inkscape.org/en/gallery/item/31717/inkscape-1.1.2_2022-02-04_0a00cf5339-x64.7z",
             "hash": "6148552b90b27db8a096c4af1b75929111c7917fb23e1d155a5f8fd1c14e5494",
-            "extract_dir": "idir"
+            "extract_dir": "inkscape-1.1.2_2022-02-04_0a00cf5339-x64"
         },
         "32bit": {
             "url": "https://inkscape.org/en/gallery/item/31711/InkscapePortable_1.1.2.paf.exe#/dl.7z",
@@ -33,14 +33,16 @@
             "$64bit_dl = Invoke-WebRequest ($redirUrl + '/windows/64-bit/compressed-7z/dl/') -UseBasicParsing",
             "$32bit_url = $32bit_dl.links | Where-Object href -match '\\.exe$' | Select-Object -first 1 -expand href",
             "$64bit_url = $64bit_dl.links | Where-Object href -match '\\.7z$' | Select-Object -first 1 -expand href",
-            "Write-Output $scriptver $32bit_url $64bit_url"
+            "$inkscape_dir = ($64bit_url -split '/' | Select-Object -last 1) -split '.7z' | Select-Object -first 1",
+            "Write-Output $version $32bit_url $64bit_url $inkscape_dir"
         ],
-        "regex": "(?<version>[\\d.]+)\\s(?<win32biturl>.+)\\s(?<win64biturl>.+)"
+        "regex": "(?<version>[\\d.]+)\\s(?<win32biturl>.+)\\s(?<win64biturl>.+)\\s(?<inkscapedir>.+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://inkscape.org/en$matchWin64biturl"
+                "url": "https://inkscape.org/en$matchWin64biturl",
+                "extract_dir": "$matchInkscapedir"
             },
             "32bit": {
                 "url": "https://inkscape.org/en$matchWin32biturl#/dl.7z"
