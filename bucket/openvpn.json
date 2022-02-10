@@ -1,40 +1,31 @@
 {
-    "version": "2.4.10",
+    "##": "Renaming .msi to .msi_ to avoid auto extraction",
+    "version": "2.5.5",
     "description": "A flexible virtual private network (VPN) solution to secure data communications.",
     "homepage": "https://openvpn.net",
     "license": "GPL-2.0-only",
     "suggest": {
         "openssl": "openssl"
     },
-    "url": "https://swupdate.openvpn.org/community/releases/openvpn-install-2.4.10-I601-Win10.exe",
-    "hash": "83c987df1c2320001aef74fcd3d42de4b8ca7fda4f39b6f585357805a9d43a29",
+    "architecture": {
+        "64bit": {
+            "url": "https://swupdate.openvpn.org/community/releases/OpenVPN-2.5.5-I602-amd64.msi#/setup.msi_",
+            "hash": "8e3c1b02c8a33bb982b45ab80d14a117c624ddc4ab6e849897848e256487f16f"
+        },
+        "32bit": {
+            "url": "https://swupdate.openvpn.org/community/releases/OpenVPN-2.5.5-I602-x86.msi#/setup.msi_",
+            "hash": "1b41448508ad0e2eab5dedd18472cdad7694f88af4ecda7e65a2650f5f5f7511"
+        }
+    },
     "pre_install": [
         "if ([Environment]::OSVersion.Version.Major -lt 10) { error 'Windows 10 is required since version 2.4.8. Use \"versions/openvpn-w7\" instead'; break }",
-        "if (-not (is_admin)) { throw 'Administrator privileges are needed for installation' }"
+        "if (-not (is_admin)) { error 'Administrator privileges are needed for installation'; break }",
+        "Invoke-ExternalCommand msiexec -ArgumentList @('/i', \"$dir\\setup.msi_\", \"PRODUCTDIR=`\"$dir`\"\", 'ADDLOCAL=OpenVPN.GUI,OpenVPN.Service,OpenVPN.Documentation,OpenVPN.SampleCfg,OpenSSL,EasyRSA,OpenVPN,OpenVPN.GUI.OnLogon,Drivers.TAPWindows6,Drivers,Drivers.Wintun', '/passive') -RunAs | Out-Null"
     ],
-    "installer": {
-        "args": [
-            "/S",
-            "/SELECT_OPENVPN=1",
-            "/SELECT_SHORTCUTS=0",
-            "/SELECT_SERVICE=1",
-            "/SELECT_TAP=1",
-            "/SELECT_OPENVPNGUI=1",
-            "/SELECT_ASSOCIATIONS=1",
-            "/SELECT_OPENSSL_UTILITIES=0",
-            "/SELECT_EASYRSA=1",
-            "/SELECT_PATH=0",
-            "/SELECT_OPENSSLDLLS=1",
-            "/SELECT_LZODLLS=1",
-            "/SELECT_PKCS11DLLS=1",
-            "/SELECT_LAUNCH=0",
-            "/D=$dir"
-        ]
-    },
     "uninstaller": {
         "script": [
-            "if (-not (is_admin)) { throw 'Admin privileges are needed.' }",
-            "Invoke-ExternalCommand -FilePath \"$dir\\Uninstall.exe\" -ArgumentList '/S' | Out-Null"
+            "if (-not (is_admin)) { error 'Admin privileges are needed.'; break }",
+            "Invoke-ExternalCommand msiexec -ArgumentList ('/x', \"$dir\\setup.msi_\", '/passive') -RunAs | Out-Null"
         ]
     },
     "bin": "bin\\openvpn.exe",
@@ -47,9 +38,16 @@
     "persist": "config",
     "checkver": {
         "url": "https://openvpn.net/index.php/open-source/downloads.html",
-        "regex": "openvpn-install-([\\d.]+)-I601-Win10\\.exe"
+        "regex": "OpenVPN-([\\d.]+)-I602-amd64\\.msi"
     },
     "autoupdate": {
-        "url": "https://swupdate.openvpn.org/community/releases/openvpn-install-$version-I601-Win10.exe"
+        "architecture": {
+            "64bit": {
+                "url": "https://swupdate.openvpn.org/community/releases/OpenVPN-$version-I602-amd64.msi#/setup.msi_"
+            },
+            "32bit": {
+                "url": "https://swupdate.openvpn.org/community/releases/OpenVPN-$version-I602-x86.msi#/setup.msi_"
+            }
+        }
     }
 }
