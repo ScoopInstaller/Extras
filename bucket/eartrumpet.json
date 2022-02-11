@@ -14,10 +14,13 @@
     "post_install": [
         "$exepath = \"$dir\\EarTrumpet.exe\".Replace('\\', '\\\\')",
         "'add-startup', 'remove-startup' | ForEach-Object {",
-        "   $content = Get-Content \"$bucketsdir\\extras\\scripts\\eartrumpet\\$_.reg\"",
-        "   $content = $content.Replace('$exepath', $exepath)",
-        "   $content | Set-Content -Path \"$dir\\$_.reg\"",
-        "  }"
+        "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\eartrumpet\\$_.reg\"",
+        "    $content = $content.Replace('$exepath', $exepath)",
+        "    if ($global) {",
+        "       $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "    }",
+        "    $content | Set-Content -Path \"$dir\\$_.reg\"",
+        "}"
     ],
     "uninstaller": {
         "script": "Invoke-ExternalCommand reg -ArgumentList @('import', \"$dir\\remove-startup.reg\") | Out-Null"
