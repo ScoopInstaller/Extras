@@ -2,7 +2,7 @@
     "version": "2.4.2",
     "description": "File sharing program using DC and ADC protocols",
     "homepage": "https://github.com/eiskaltdcpp/eiskaltdcpp",
-    "license": "GPL-3",
+    "license": "GPL-3.0-or-later",
     "architecture": {
         "64bit": {
             "url": "https://downloads.sourceforge.net/project/eiskaltdcpp/files/Windows/EiskaltDC++-2.4.2_x86_64-portable.7z",
@@ -19,6 +19,11 @@
         "    if(!(Test-Path \"$persist_dir\\$_\")) {New-Item \"$dir\\$_\" | Out-Null}",
         "}"
     ],
+    "pre_install": [
+        "'FinishedDownloads.sqlite', 'FinishedUploads.sqlite', 'HashData.dat' | ForEach-Object {",
+        "    if(!(Test-Path \"$persist_dir\\$_\")) {New-Item \"$dir\\$_\" | Out-Null}",
+        "}"
+    ],
     "bin": "eiskaltdcpp-daemon.exe",
     "shortcuts": [
         [
@@ -28,8 +33,16 @@
     ],
     "checkver": {
         "url": "https://sourceforge.net/projects/eiskaltdcpp/rss?path=/Windows",
-        "regex": "portable"
+        "regex": "Windows/EiskaltDC\\+\\+-([\\d.]+)_x86_64-portable\\.7z"
     },
+    "persist": [
+        "Certificates",
+        "FileLists",
+        "HubLists",
+        "FinishedDownloads.sqlite",
+        "FinishedUploads.sqlite",
+        "HashData.dat"
+    ],
     "autoupdate": {
         "architecture": {
             "64bit": {
