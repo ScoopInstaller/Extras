@@ -20,7 +20,12 @@
         }
     },
     "extract_dir": "core",
-    "post_install": "seamonkey -CreateProfile \"Scoop $persist_dir\\profile\"",
+    "post_install": [
+        "seamonkey -CreateProfile \"Scoop $persist_dir\\profile\"",
+        "$Addition = \"$persist_dir\\addition\"",
+        "if (Test-Path $Addition) {",
+        "  Copy-Item -Path $Addition\\* -Destination $dir -Force -Recurse -ErrorAction SilentlyContinue }"
+    ],
     "bin": "seamonkey.exe",
     "shortcuts": [
         [
