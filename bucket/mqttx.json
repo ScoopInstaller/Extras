@@ -5,10 +5,18 @@
     "license": "Apache-2.0",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/emqx/MQTTX/releases/download/v1.7.2/MQTTX.Setup.1.7.2.exe#/dl.7z",
-            "hash": "sha512:a90237cec506f84722fb03f700f010a8d0fa21207424b07ced7425cc7963cc116e166d3883fabaa025778dae29f5fdc37d5f2bdf1843d73ec22fa4a0fbc84f69",
+            "url": "https://github.com/emqx/MQTTX/releases/download/v1.7.2/MQTTX-Setup-1.7.2-x64.exe#/dl.7z",
+            "hash": "sha512:17d1de087c4e27e085961a10bde2a3e3b97cc0eb827a54e8c78bf85580145ea77163e0baf79e00956c694b9994f299f868bb8c9bf4dfbd8a9c7a28329f23f90a",
             "pre_install": [
                 "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse"
+            ]
+        },
+        "32bit": {
+            "url": "https://github.com/emqx/MQTTX/releases/download/v1.7.2/MQTTX-Setup-1.7.2-ia32.exe#/dl.7z",
+            "hash": "sha512:eb845d68928904c0e2bca636d41302b74249d8904d29883b8d4cd8cafcc474a230f0f1c2b0408c7a1291935ce07341604ac3d42b7b1328ea0ca76af118d8c756",
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\"",
                 "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse"
             ]
         }
@@ -25,12 +33,19 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/emqx/MQTTX/releases/download/v$version/MQTTX.Setup.$version.exe#/dl.7z"
+                "url": "https://github.com/emqx/MQTTX/releases/download/v$version/MQTTX-Setup-$version-x64.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "(?sm)x64.*?sha512:\\s+$base64"
+                }
+            },
+            "32bit": {
+                "url": "https://github.com/emqx/MQTTX/releases/download/v$version/MQTTX-Setup-$version-ia32.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "(?sm)ia32.*?sha512:\\s+$base64"
+                }
             }
-        },
-        "hash": {
-            "url": "$baseurl/latest.yml",
-            "regex": "sha512:\\s+$base64"
         }
     }
 }
