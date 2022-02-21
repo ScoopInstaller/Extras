@@ -1,0 +1,42 @@
+{
+    "version": "1.0.1",
+    "description": "Kubernates container management tool that can build, push, and pull images and run containers.",
+    "homepage": "https://rancherdesktop.io/",
+    "license": "Apache-2.0",
+    "notes": [
+        "Rancher requires WSL (Windows Subsystem for Linux) to work properly.",
+        "To install WSL, run '$dir\\install-wsl.ps1' under Powershell."
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/rancher-sandbox/rancher-desktop/releases/download/v1.0.1/Rancher.Desktop.Setup.1.0.1.exe#/dl.7z",
+            "hash": "bdfa295a59cd5c46eb93686e36bc8ad6e60f271ee4844624b12a35bdd3deb07f"
+        }
+    },
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\" -Removal | Out-Null",
+        "Copy-Item \"$dir\\`$PLUGINSDIR\\install-wsl.ps1\" \"$dir\"",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\uninstall*.exe\" -Force -Recurse"
+    ],
+    "shortcuts": [
+        [
+            "Rancher Desktop.exe",
+            "Rancher Desktop"
+        ]
+    ],
+    "env_add_path": [
+        "resources\\resources\\win32\\bin",
+        "resources\\resources\\linux\\bin"
+    ],
+    "checkver": {
+        "github": "https://github.com/rancher-sandbox/rancher-desktop"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/rancher-sandbox/rancher-desktop/releases/download/v$version/Rancher.Desktop.Setup.$version.exe#/dl.7z",
+                "hash": "$url.sha512sum"
+            }
+        }
+    }
+}
