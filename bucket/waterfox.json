@@ -17,7 +17,14 @@
         }
     },
     "extract_dir": "core",
-    "post_install": "waterfox -CreateProfile \"Scoop $persist_dir\\profile\"",
+    "post_install": [
+        "waterfox -CreateProfile \"Scoop $persist_dir\\profile\"",
+        "$Addition = \"$persist_dir\\addition\"",
+        "if (Test-Path $Addition) {",
+        "  info 'Copying additional items...'",
+        "  Copy-Item -Path $Addition\\* -Destination $dir -Force -Recurse -ErrorAction SilentlyContinue",
+        "}"
+    ],
     "bin": "waterfox.exe",
     "shortcuts": [
         [
