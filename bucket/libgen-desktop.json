@@ -3,13 +3,13 @@
     "description": "Desktop for Library Gensis",
     "homepage": "https://github.com/libgenapps/LibgenDesktop",
     "license": "Unknown",
-    "notes": [
-        "Require Windows Vista SP2 or later and .NET Framework 4.5 (Included in Windows 8 or later by default) or higher to run.",
-        "See also https://wiki.mhut.org/software:libgen_desktop for details."
-    ],
+    "notes": "See also https://wiki.mhut.org/software:libgen_desktop for details.",
     "pre_install": [
-        "Out-File -FilePath \"$dir\\libgen.config\" -Encoding ascii",
-        "Out-File -FilePath \"$dir\\downloads.json\" -Encoding ascii"
+        "(\"libgen.config\", \"downloads.json\") | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\$_\") -and !(Test-Path \"$dir\\$_\")) {",
+        "       Out-File -FilePath \"$dir\\$_\" -Encoding ascii",
+        "    }",
+        "}"
     ],
     "architecture": {
         "64bit": {
@@ -21,7 +21,6 @@
             "hash": "2142efa5924cc0d47dc5751cd88892ca4e7dc1beb919c11739f562e94fe05c59"
         }
     },
-    "extract_to": "",
     "shortcuts": [
         [
             "LibgenDesktop.exe",
