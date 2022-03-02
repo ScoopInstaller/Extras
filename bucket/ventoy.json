@@ -6,7 +6,11 @@
     "url": "https://github.com/ventoy/Ventoy/releases/download/v1.0.70/ventoy-1.0.70-windows.zip",
     "hash": "b5425c40a737bd39134584f34d841ef51f13405db89446431a5fb47b65ddc4f7",
     "extract_dir": "ventoy-1.0.70",
-    "pre_install": "if (!(Test-Path \"$persist_dir\\log.txt\")) { New-Item \"$dir\\log.txt\" | Out-Null }",
+    "pre_install": [
+        "'log.txt', 'Ventoy2Disk.ini' | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" -ItemType File | Out-Null }",
+        "}"
+    ],
     "architecture": {
         "64bit": {
             "shortcuts": [
@@ -43,7 +47,10 @@
             ]
         }
     },
-    "persist": "log.txt",
+    "persist": [
+        "log.txt",
+        "Ventoy2Disk.ini"
+    ],
     "checkver": {
         "github": "https://github.com/ventoy/Ventoy"
     },
