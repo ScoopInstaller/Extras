@@ -5,7 +5,15 @@
     "license": "GPL-2.0-or-later",
     "url": "https://download.geany.org/geany-1.38_setup.exe#/dl.7z",
     "hash": "6791f03161d5271f2dc47fff814da713b4ff89fd05c0bec0deb380261c8f8bcf",
-    "pre_install": "Remove-Item \"$dir\\`$*\" -Recurse",
+    "pre_install": "Remove-Item \"$dir\\`$*\", \"$dir\\uninst*\" -Recurse",
+    "installer": {
+        "script": [
+            "if (Test-Path -Path $(appdir geany-plugins $global)) {",
+            "  Get-ChildItem \"$(appdir geany-plugins $global)\\current\" -Exclude install.json, manifest.json |",
+            "  Copy-Item -Destination $dir -Recurse -Force",
+            "}"
+        ]
+    },
     "bin": "bin\\geany.exe",
     "shortcuts": [
         [
