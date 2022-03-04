@@ -13,7 +13,13 @@
             "hash": "b5b947652d210c20397bd90756cd023a2bf38bd199cca326d705b699e65bb7d1"
         }
     },
-    "pre_install": "Set-Content -Path \"$dir\\sunshine.bat\" -Value (@('@echo off', 'pushd %~dp0 && sunshine.exe %* && popd') -join \"`r`n\")",
+    "pre_install": [
+        "Set-Content -Path \"$dir\\sunshine.bat\" -Value (@('@echo off', 'pushd %~dp0 && sunshine.exe %* && popd') -join \"`r`n\")",
+        "# Create sunshine_state.json if it does not exist",
+        "if (!(Test-Path \"$persist_dir\\sunshine_state.json\" -PathType Leaf)) {",
+        "    New-Item -Type File \"$dir\\sunshine_state.json\" | Out-Null",
+        "}"
+    ],
     "bin": [
         "sunshine.bat",
         "tools\\dxgi-info.exe",
