@@ -10,7 +10,19 @@
         }
     },
     "extract_dir": "sioyek-release-windows",
-    "pre_install": "New-Item \"$dir\\last_document_path.txt\" | Out-Null",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\last_document_path.txt\"))New-Item \"$dir\\last_document_path.txt\" | Out-Null",
+        "'test.db', 'local.db', 'shared.db' | ForEach-Object {",
+        "    if (Test-Path \"$persist_dir\\$_\") {Copy-Item \"$persist_dir\\$_\" \"$dir\\\"}",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "'test.db', 'local.db', 'shared.db' | ForEach-Object {",
+            "    if (Test-Path \"$dir\\$_\") {Copy-Item \"$dir\\$_\" \"$persist_dir\\\"}",
+            "}"
+        ]
+    },
     "shortcuts": [
         [
             "sioyek.exe",
