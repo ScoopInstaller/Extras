@@ -3,6 +3,9 @@
     "description": "A PDF viewer designed for reading research papers and technical books",
     "homepage": "https://sioyek.info/",
     "license": "GPL-3.0-only",
+    "suggest": {
+        "Microsoft Visual C++ Redistributables 2019": "extras/vcredist2019"
+    },
     "architecture": {
         "64bit": {
             "url": "https://github.com/ahrm/sioyek/releases/download/v1.1.0/sioyek-release-windows-portable.zip",
@@ -11,10 +14,13 @@
     },
     "extract_dir": "sioyek-release-windows",
     "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\last_document_path.txt\"))New-Item \"$dir\\last_document_path.txt\" | Out-Null",
+        "if (!(Test-Path \"$persist_dir\\last_document_path.txt\")) {",
+        "   New-Item \"$dir\\last_document_path.txt\" | Out-Null",
+        "}",
         "'test.db', 'local.db', 'shared.db' | ForEach-Object {",
         "    if (Test-Path \"$persist_dir\\$_\") {Copy-Item \"$persist_dir\\$_\" \"$dir\\\"}",
-        "}"
+        "}",
+        "Remove-Item \"$dir\\vc_redist.x64.exe\""
     ],
     "uninstaller": {
         "script": [
