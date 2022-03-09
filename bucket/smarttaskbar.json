@@ -10,12 +10,12 @@
     "installer": {
         "script": [
             "$startup = shortcut_folder $global | Select-Object -ExpandProperty Path | Split-Path -Parent | Join-Path -ChildPath 'Startup'",
-            "$current = current_dir $dir",
+            "$current_dir = if (get_config NO_JUNCTIONS) { $dir } else { \"$(appdir $app $global)\\current\" }",
             "$cont = @(",
             "    '$wsShell = New-Object -ComObject WScript.Shell'",
             "    \"`$wsShell = `$wsShell.CreateShortcut('$startup\\SmartTaskbar.lnk')\"",
-            "    \"`$wsShell.TargetPath = '$current\\SmartTaskbar.exe'\"",
-            "    \"`$wsShell.WorkingDirectory = '$current'\"",
+            "    \"`$wsShell.TargetPath = '$current_dir\\SmartTaskbar.exe'\"",
+            "    \"`$wsShell.WorkingDirectory = '$current_dir'\"",
             "    '$wsShell.Save()'",
             "    'Write-Host \"SmartTaskbar has been added to the startup programs.\"'",
             "    'Write-Host \"Run `smarttaskbar-remove-startup` to remove from startup.\"'",
