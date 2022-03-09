@@ -41,8 +41,8 @@
             "",
             "rm -r \"$srcdir\"",
             "",
-            "$pcdir = \"$(current_dir $dir)\\lib\\pkgconfig\"",
-            "$cmdir = \"$(current_dir $dir)\"",
+            "$cmdir = if (get_config NO_JUNCTIONS) { $dir } else { \"$(appdir $app $global)\\current\" }",
+            "$pcdir = \"$cmdir\\lib\\pkgconfig\"",
             "# future sessions",
             "$null, $currpath = strip_path (env 'PKG_CONFIG_PATH' $global) $pcdir",
             "env 'PKG_CONFIG_PATH' $global \"$pcdir;$currpath\"",
@@ -57,8 +57,8 @@
     },
     "uninstaller": {
         "script": [
-            "$pcdir = \"$(current_dir $dir)\\lib\\pkgconfig\"",
-            "$cmdir = \"$(current_dir $dir)\"",
+            "$cmdir = if (get_config NO_JUNCTIONS) { $dir } else { \"$(appdir $app $global)\\current\" }",
+            "$pcdir = \"$cmdir\\lib\\pkgconfig\"",
             "# future sessions",
             "$was_in_path, $newpath = strip_path (env 'PKG_CONFIG_PATH' $global) $pcdir",
             "if($was_in_path) {",
