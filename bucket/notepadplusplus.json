@@ -6,44 +6,27 @@
     "notes": "Add Notepad++ as a context menu option by running: reg import \"$dir\\install-context.reg\"",
     "architecture": {
         "64bit": {
-            "url": [
-                "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.3.2/npp.8.3.2.portable.x64.zip",
-                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/notepadplusplus/install-context.reg",
-                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/notepadplusplus/uninstall-context.reg"
-            ],
-            "hash": [
-                "9743507e32d572d2e3ab5a060486341976088bfc6076d5e24a1573a39b41d035",
-                "2957865501223f2167a7da51196157a1138c8ad09819ad536beef5b97b19cf13",
-                "601a517c9be3b341e46692035130d094ed1613f55e78cb61d86dff774947d0e0"
-            ]
+            "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.3.2/npp.8.3.2.portable.x64.zip",
+            "hash": "9743507e32d572d2e3ab5a060486341976088bfc6076d5e24a1573a39b41d035"
         },
         "32bit": {
-            "url": [
-                "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.3.2/npp.8.3.2.portable.zip",
-                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/notepadplusplus/install-context.reg",
-                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/notepadplusplus/uninstall-context.reg"
-            ],
-            "hash": [
-                "58d32434b3adeea6098d67d2b7bc2a3167a43192215f87dc607e8f4f0424e870",
-                "2957865501223f2167a7da51196157a1138c8ad09819ad536beef5b97b19cf13",
-                "601a517c9be3b341e46692035130d094ed1613f55e78cb61d86dff774947d0e0"
-            ]
+            "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.3.2/npp.8.3.2.portable.zip",
+            "hash": "58d32434b3adeea6098d67d2b7bc2a3167a43192215f87dc607e8f4f0424e870"
         }
     },
     "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\session.xml\")) { New-Item \"$dir\\session.xml\" -Force | Out-Null }",
-        "if (!(Test-Path \"$persist_dir\\userDefineLang.xml\")) { New-Item \"$dir\\userDefineLang.xml\" -Force | Out-Null }",
-        "if (!(Test-Path \"$persist_dir\\nativeLang.xml\")) { New-Item \"$dir\\nativeLang.xml\" -Force | Out-Null }",
-        "$file = \"$dir\\install-context.reg\"",
-        "if (Test-Path $file) {",
-        "    $nppPath = \"$dir\\notepad++.exe\".Replace('\\', '\\\\')",
-        "    $content = (Get-Content $file).Replace('$npp', $nppPath)",
-        "    if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
-        "    Set-Content $file $content -Encoding Ascii -Force",
-        "}",
-        "$file = \"$dir\\uninstall-context.reg\"",
-        "if ((Test-Path $file) -and $global) {",
-        "    (Get-Content $file).Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') | Set-Content -Path $file -Encoding Ascii -Force",
+        "'session.xml', 'userDefineLang.xml', 'nativeLang.xml' | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" -ItemType File | Out-Null }",
+        "}"
+    ],
+    "post_install": [
+        "'install-context', 'uninstall-context' | ForEach-Object {",
+        "    if (Test-Path \"$bucketsdir\\extras\\scripts\\notepadplusplus\\$_.reg\") {",
+        "        $nppPath = \"$dir\\notepad++.exe\".Replace('\\', '\\\\')",
+        "        $content = (Get-Content \"$bucketsdir\\extras\\scripts\\notepadplusplus\\$_.reg\").Replace('$npp', $nppPath)",
+        "        if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "        Set-Content \"$dir\\$_.reg\" $content -Encoding Ascii -Force",
+        "    }",
         "}"
     ],
     "bin": "notepad++.exe",
