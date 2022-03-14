@@ -1,5 +1,5 @@
 {
-    "version": "0.0.311",
+    "version": "1.0.9004",
     "description": "Free Voice and Text Chat",
     "homepage": "https://discordapp.com/",
     "license": {
@@ -7,9 +7,17 @@
         "url": "https://discordapp.com/terms"
     },
     "notes": "To avoid manifest removal due to internal updates, disable automatic updates by running: '$dir\\disable-auto-update.ps1'",
-    "url": "http://dl.discordapp.net/apps/win/Discord-0.0.311-full.nupkg",
-    "hash": "sha1:3928a4af8e249184f2d4212bd8c958adc8b2ff4f",
-    "extract_dir": "lib\\net45",
+    "url": "https://dl.discordapp.net/distro/app/stable/win/x86/1.0.9004/DiscordSetup.exe#/dl.7z",
+    "hash": "5edc53181d1300141e42bc756a7188949f3ce6bbebcafe80cd8e326deec21eae",
+    "extract_to": "_temp",
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\_temp\\Discord-$version-full.nupkg\" \"$dir\\_temp\"",
+            "Move-Item \"$dir\\_temp\\lib\\net45\\*\" \"$dir\" -Force",
+            "Remove-Item \"$dir\\_temp\" -Force -Recurse"
+        ]
+    },
+    "post_install": "Copy-Item -Path \"$bucketsdir\\extras\\scripts\\discord\\disable-auto-update.ps1\" -Destination \"$dir\\\"",
     "bin": "Discord.exe",
     "shortcuts": [
         [
@@ -17,15 +25,12 @@
             "Discord"
         ]
     ],
-    "post_install": "Copy-Item -Path \"$bucketsdir\\extras\\scripts\\discord\\disable-auto-update.ps1\" -Destination \"$dir\\\"",
     "checkver": {
-        "url": "https://discordapp.com/api/updates/stable/RELEASES",
-        "regex": "Discord-([\\d.]+)-full"
+        "url": "https://discord.com/api/updates/distributions/app/manifests/latest?arch=x86&channel=stable&platform=win",
+        "json_path": "$.full.url",
+        "regex": "x86\\/([\\d.]+)\\/full\\.distro"
     },
     "autoupdate": {
-        "url": "http://dl.discordapp.net/apps/win/Discord-$version-full.nupkg",
-        "hash": {
-            "url": "https://discordapp.com/api/updates/stable/RELEASES"
-        }
+        "url": "https://dl.discordapp.net/distro/app/stable/win/x86/$version/DiscordSetup.exe#/dl.7z"
     }
 }
