@@ -3,26 +3,49 @@
     "description": "Mintty as a terminal for WSL (Windows Subsystem for Linux).",
     "homepage": "https://github.com/mintty/wsltty",
     "license": "GPL-3.0-or-later",
-    "note": "Installer is always silent; specify blank arguments to avoid spurious warnings per https://github.com/microsoft/winget-pkgs/pull/40573#issuecomment-1012933569",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/mintty/wsltty/releases/download/3.6.0/wsltty-3.6.0-x86_64-install-quiet.exe#/dl.7z",
-            "hash": "124f65f77c24516f2cbb42008e3a635b4161817b5adc660350abd5eca5837301"
+            "url": "https://github.com/mintty/wsltty/releases/download/3.6.0/wsltty-3.6.0-x86_64.cab#/dl.7z",
+            "hash": "b5962a13afb45c5c883532532026473b80748bdf6f9bf11acc4517260d1f5a3a",
+            "extract_dir": "wsltty-3.6.0-x86_64"
         },
         "32bit": {
-            "url": "https://github.com/mintty/wsltty/releases/download/3.6.0/wsltty-3.6.0-x86_64-install-quiet.exe#/dl.7z",
-            "hash": "124f65f77c24516f2cbb42008e3a635b4161817b5adc660350abd5eca5837301"
+            "url": "https://github.com/mintty/wsltty/releases/download/3.6.0/wsltty-3.6.0-i686.cab#/dl.7z",
+            "hash": "09fbe264a90f1c5ea8b9c48911261f8a2fd522378bd200198e5d91e731f5b450",
+            "extract_dir": "wsltty-3.6.0-i686"
         }
     },
+    "extract_to": "installer",
     "installer": {
-        "file": "install.bat",
-        "keep": true
+        "script": [
+            "$env:installdir = $dir",
+            "$env:configdir = \"$dir\\config\"",
+            "Push-Location \"$dir\\installer\"",
+            "& .\\install.bat 2>&1>$null",
+            "Pop-Location"
+        ]
     },
+    "post_install": "Remove-Item -LiteralPath \"$dir\\installer\" -Force -Recurse",
     "uninstaller": {
-        "file": "uninstall.bat"
+        "script": [
+            "$env:installdir = $dir",
+            "Push-Location \"$dir\"",
+            "& .\\uninstall.bat 2>&1>$null",
+            "Pop-Location"
+        ]
     },
+    "persist": "config",
     "checkver": "github",
     "autoupdate": {
-        "url": "https://github.com/mintty/wsltty/releases/download/$version/wsltty-$version-x86_64-install-quiet.exe#/dl.7z"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/mintty/wsltty/releases/download/$version/wsltty-$version-x86_64.cab#/dl.7z",
+                "extract_dir": "wsltty-$version-x86_64"
+            },
+            "32bit": {
+                "url": "https://github.com/mintty/wsltty/releases/download/$version/wsltty-$version-i686.cab#/dl.7z",
+                "extract_dir": "wsltty-$version-i686"
+            }
+        }
     }
 }
