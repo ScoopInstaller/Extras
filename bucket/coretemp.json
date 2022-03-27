@@ -6,6 +6,7 @@
         "identifier": "Freeware",
         "url": "https://www.alcpu.com/CoreTemp/terms.html"
     },
+    "notes": "Download language packs by running: \"$dir\\download-language-packs.ps1\" (\"powershell \"$dir\\download-language-packs.ps1\"\" under cmd)",
     "architecture": {
         "64bit": {
             "url": "https://www.alcpu.com/CoreTemp/CoreTemp64.zip",
@@ -16,14 +17,25 @@
             "hash": "5b71c1109d8cacc3763ba4dd470d6ec5f426c69a4b675121d1557e9b54e2c0db"
         }
     },
-    "pre_install": "if (!(Test-Path \"$dir\\CoreTemp.ini\")) { New-Item \"$dir\\CoreTemp.ini\" | Out-Null }",
+    "pre_install": [
+        "Copy-Item \"$bucketsdir\\extras\\scripts\\coretemp\\download-language-packs.ps1\" \"$dir\\\" | Out-Null",
+        "if (Test-Path \"$persist_dir\\CoreTemp.ini\") { Copy-Item \"$persist_dir\\CoreTemp.ini\" \"$dir\\\" | Out-Null }"
+    ],
+    "uninstaller": {
+        "script": [
+            "if (Test-Path \"$dir\\CoreTemp.ini\") {",
+            "    ensure \"$persist_dir\" | Out-Null",
+            "    Copy-Item \"$dir\\CoreTemp.ini\" \"$persist_dir\\\" | Out-Null",
+            "}"
+        ]
+    },
     "shortcuts": [
         [
             "Core Temp.exe",
             "Core Temp"
         ]
     ],
-    "persist": "CoreTemp.ini",
+    "persist": "languages",
     "checkver": {
         "url": "https://www.alcpu.com/CoreTemp/history.html",
         "regex": "Version ([\\d.]+)"
