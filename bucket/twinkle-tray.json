@@ -1,0 +1,46 @@
+{
+    "version": "1.13.11",
+    "description": "A monitor brightness controller based on DDC/CI",
+    "homepage": "https://github.com/xanderfrangos/twinkle-tray",
+    "license": "MIT",
+    "notes": "Twinkle Tray supports requesting brightness changes with command 'twinkle-tray', visit https://github.com/xanderfrangos/twinkle-tray#command-line-arguments for more information.",
+    "url": "https://github.com/xanderfrangos/twinkle-tray/releases/download/v1.13.11/Twinkle.Tray.v1.13.11.exe#/dl.7z",
+    "hash": "666194a2ba70997194f73342fa30c4688814226c760577f40839b5c9a874f367",
+    "pre_install": [
+        "if (Test-Path \"$persist_dir\\twinkle-tray\") {",
+        "    Get-ChildItem -Path \"$env:APPDATA\" -Filter \"twinkle-tray\" -Directory | Remove-Item -Force -Recurse",
+        "    Move-Item \"$persist_dir\\twinkle-tray\" \"$env:APPDATA\" -Force",
+        "}"
+    ],
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+            "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse"
+        ]
+    },
+    "bin": [
+        [
+            "Twinkle Tray.exe",
+            "twinkle-tray"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "Twinkle Tray.exe",
+            "Twinkle Tray"
+        ]
+    ],
+    "uninstaller": {
+        "script": [
+            "if (!(Test-Path \"$persist_dir\")) {",
+            "    New-Item \"$persist_dir\" -Type Directory -Force | Out-Null",
+            "}",
+            "Get-ChildItem -Path \"$persist_dir\" -Filter \"twinkle-tray\" -Directory | Remove-Item -Force -Recurse",
+            "Get-ChildItem -Path \"$env:APPDATA\" -Filter \"twinkle-tray\" -Directory | Move-Item -Destination \"$persist_dir\" -Force"
+        ]
+    },
+    "checkver": "github",
+    "autoupdate": {
+        "url": "https://github.com/xanderfrangos/twinkle-tray/releases/download/v$version/Twinkle.Tray.v$version.exe#/dl.7z"
+    }
+}
