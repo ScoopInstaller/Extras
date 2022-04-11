@@ -1,32 +1,20 @@
 {
-    "version": "3.0.02",
+    "version": "5.0-2022-03-29_00",
     "description": "A super fast account switcher for Steam",
     "homepage": "https://github.com/TcNobo/TcNo-Acc-Switcher",
     "license": "GPL-3.0-only,LGPL-2.1-only,...",
     "notes": ".NET Framework 4.8 is required.",
-    "architecture": {
-        "64bit": {
-            "url": "https://github.com/TcNobo/TcNo-Acc-Switcher/releases/download/3.0.02/TcNo.Account.Switcher.x64.zip",
-            "hash": "42d17824569d311451e78cf5f12333f1c6af2dc9080b68c5226c741e4e2aa1e4",
-            "extract_dir": "TcNo.Account.Switcher.x64"
-        },
-        "32bit": {
-            "url": "https://github.com/TcNobo/TcNo-Acc-Switcher/releases/download/3.0.02/TcNo.Account.Switcher.x32.zip",
-            "hash": "16c62e3392821f082993a1f5c6bf1c21550351f6f72f7ee6a85d33d84a48f486",
-            "extract_dir": "TcNo.Account.Switcher.x32"
-        }
-    },
+    "url": "https://github.com/TcNobo/TcNo-Acc-Switcher/releases/download/2022-03-29_00/TcNo-Acc-Switcher_2022-03-29_00.7z",
+    "hash": "4fcd88adf10634d454a89c5d33ef54e052622aa53eb98ceb3100ab4204792c7b",
     "pre_install": [
-        "'globals.json', 'Steam\\SteamSettings.json', 'Steam\\SteamVACCache.json', 'Steam\\Tray_Users.json' | ForEach-Object {",
+        "'globals.json' | ForEach-Object {",
         "    $cont = if ($_ -like '*Tray_Users*') { '[]' } else { '{}' }",
         "    if (!(Test-Path \"$persist_dir\\$_\")) { Set-Content \"$dir\\$_\" $cont -Encoding Ascii | Out-Null }",
-        "}",
-        "Remove-Item \"$dir\\TcNo Acc Switcher Updater.exe\""
+        "}"
     ],
-    "bin": "TcNo Account Switcher.exe",
     "shortcuts": [
         [
-            "TcNo Account Switcher.exe",
+            "TcNo-Acc-Switcher.exe",
             "TcNo Account Switcher"
         ]
     ],
@@ -39,5 +27,12 @@
         "Steam\\Errors",
         "Steam\\images"
     ],
-    "checkver": "github"
+    "checkver": {
+        "github": "https://github.com/TcNobo/TcNo-Acc-Switcher",
+        "regex": "TcNo Account Switcher - v([\\d.]+) - (\\d{4}-\\d{2}-\\d{2}_\\d{2})",
+        "replace": "${1}-${2}"
+    },
+    "autoupdate": {
+        "url": "https://github.com/TcNobo/TcNo-Acc-Switcher/releases/download/$match2/TcNo-Acc-Switcher_$match2.7z"
+    }
 }
