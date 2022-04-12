@@ -39,7 +39,36 @@
         "GPUs.txt",
         "config.xml"
     ],
-    "checkver": "fah-installer_([\\d.]+)_x86\\.exe",
+    "checkver": {
+        "script": [
+            "$url1 = 'https://download.foldingathome.org/releases/public/release/fah-installer/windows-10-32bit'",
+            "$links = $(Invoke-WebRequest($url1)).Links",
+            "$major_version = 0",
+            "$minor_version = 0",
+            "$links | ForEach-Object {",
+            "    # not using [\\d.] here because '.' and '..' will be matched",
+            "    if(!($_.outerHTML -match '(\\d+)\\.(\\d+)')) { return }",
+            "    # Convert to int because '9' is greater than '10' in Powershell's string comparison",
+            "    $m1 = [int]$matches[1]",
+            "    $m2 = [int]$matches[2]",
+            "    if ( ($m1 -gt $major_version) -or ($m1 -eq $major_version -and $m2 -gt $minor_version) ) {",
+            "        $major_version = $m1",
+            "        $minor_version = $m2",
+            "    }",
+            "}",
+            "",
+            "$url2 = \"$url1/v$major_version.$minor_version\"",
+            "$links = $(Invoke-WebRequest($url2)).Links",
+            "$patch_version = 0",
+            "$links | ForEach-Object {",
+            "    if(!($_.outerHTML -match 'fah-installer_(\\d+)\\.(\\d+)\\.(\\d+)_x86\\.exe')) { return }",
+            "    $m3 = [int]$matches[3]",
+            "    if ($m3 -gt $patch_version) { $patch_version = $m3 }",
+            "}",
+            "Write-Output \"$major_version.$minor_version.$patch_version\""
+        ],
+        "regex": "(.*)"
+    },
     "autoupdate": {
         "url": "https://download.foldingathome.org/releases/public/release/fah-installer/windows-10-32bit/v$majorVersion.$minorVersion/fah-installer_$version_x86.exe#/dl.7z"
     }
