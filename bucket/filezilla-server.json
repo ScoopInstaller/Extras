@@ -1,50 +1,76 @@
 {
-    "version": "0.9.60.2",
+    "version": "1.3.0",
     "description": "Open-source FTP server software",
     "homepage": "https://filezilla-project.org/",
     "license": "GPL-2.0-or-later",
-    "notes": "Run 'filezilla_server' as Admin to configure FileZilla Server.",
-    "url": "https://download.filezilla-project.org/server/FileZilla_Server-0_9_60_2.exe#/dl.7z",
-    "hash": "sha512:0e0a92f3693d31d09341354ce212f42e1941743cf5f49bffe58b0c05cbc04865470e96c145ae0ffeea060a86d618da2a7de78a38946a9c3a2dcb956d0f2b3cfa",
-    "installer": {
-        "script": [
-            "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\source\", \"$dir\\`$R1\", \"$dir\\Uninstall.exe.nsis\" -Recurse",
-            "if(!(Test-Path \"$dir\\FileZilla Server.xml\")) {Set-Content \"$dir\\FileZilla Server.xml\" $null}"
-        ]
+    "notes": [
+        "The DEFAULT settings for server interface is--Host: 127.0.0.1, Port: 14148, Password: (empty)",
+        "If you are upgrading from old versions (before ver 1.0.0), run the following command to migrate config files:",
+        "filezilla-server-config-converter (path to old 'FileZilla Server.xml') \"FileZilla Server\""
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://download.filezilla-project.org/server/FileZilla_Server_1.3.0_win64-setup.exe#/dl.7z",
+            "hash": "sha512:e949cd7b0ecfaf975a76074fe2884f30000fa8923a8907c81fc35c9930688ae063826f5f8c06b055633186bb1f80d2cb829010e6182a3282bbc9d532f0b2d22b"
+        }
     },
+    "pre_install": [
+        "if (!(is_admin)) {error 'This package requires admin rights to install'; break}",
+        "Set-Content \"$dir\\start-filezilla-server.bat\" \"net start `\"FileZilla Server`\"\" -Encoding ascii",
+        "Set-Content \"$dir\\stop-filezilla-server.bat\" \"net stop `\"FileZilla Server`\"\" -Encoding ascii",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall.exe.nsis\" -Force -Recurse"
+    ],
+    "post_install": [
+        "Write-Host 'Installing FileZilla Server service...'",
+        "sc.exe create \"FileZilla Server\" \"binPath=$dir\\filezilla-server.exe\" start=auto",
+        "net start \"FileZilla Server\""
+    ],
     "uninstaller": {
         "script": [
-            "taskkill /F /IM 'FileZilla Server Interface.exe' /FI 'status eq running' | Out-Null",
-            "Start-Process 'cmd' -ArgumentList @('/c', 'net', 'stop', '\"Filezilla Server\"') -Verb RunAs -Wait | Out-Null",
-            "Start-Process 'cmd' -ArgumentList @('/c', 'sc', 'delete', '\"Filezilla Server\"') -Verb RunAs -Wait | Out-Null"
+            "if (!(is_admin)) {error 'This package requires admin rights to uninstall'; break}",
+            "Write-Host 'Removing FileZilla Server service...'",
+            "Stop-Process -Name 'filezilla-server-gui' -ErrorAction SilentlyContinue",
+            "net stop \"FileZilla Server\"",
+            "sc.exe delete \"FileZilla Server\""
         ]
     },
     "bin": [
-        "FileZilla Server.exe",
-        [
-            "FileZilla Server.exe",
-            "filezilla_server"
-        ]
+        "filezilla-server.exe",
+        "filezilla-server-config-converter.exe",
+        "filezilla-server-crypt.exe",
+        "filezilla-server-impersonator.exe"
     ],
     "shortcuts": [
         [
-            "FileZilla Server Interface.exe",
+            "filezilla-server-gui.exe",
             "FileZilla Server Interface"
         ],
         [
-            "FileZilla Server.exe",
+            "start-filezilla-server.bat",
             "Start FileZilla Server",
-            "/start"
+            "",
+            "filezilla-server.exe"
         ],
         [
-            "FileZilla Server.exe",
+            "stop-filezilla-server.bat",
             "Stop FileZilla Server",
-            "/stop"
+            "",
+            "filezilla-server.exe"
         ]
     ],
-    "persist": "FileZilla Server.xml",
     "checkver": {
         "url": "https://filezilla-project.org/download.php?show_all=1&type=server",
         "regex": "The latest stable version of FileZilla Server is ([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download.filezilla-project.org/server/FileZilla_Server_$version_win64-setup.exe#/dl.7z"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/FileZilla_Server_$version.sha512",
+            "regex": "$sha512\\s\\*$basename"
+        }
     }
 }
