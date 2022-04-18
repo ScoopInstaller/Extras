@@ -1,0 +1,34 @@
+{
+    "version": "0.60.0",
+    "description": "All-in-one repack for latest Microsoft Visual C++ Redistributable Runtimes, without the original setup bloat payload.",
+    "homepage": "https://github.com/abbodi1406/vcredist",
+    "license": "Unlicense",
+    "url": "https://github.com/abbodi1406/vcredist/releases/latest/download/VisualCppRedist_AIO_x86_x64_60.zip",
+    "hash": "d7cc0d80290040083df52537999c16d0fc7931b4ef23cbbbbbc5176b48017df0",
+    "pre_install": "if (!(is_admin)) {error 'This package requires admin rights to install'; break}",
+    "installer": {
+        "file": "VisualCppRedist_AIO_x86_x64.exe",
+        "args": [
+            "/ai",
+            "/gm2"
+        ],
+        "keep": true
+    },
+    "bin": "VisualCppRedist_AIO_x86_x64.exe",
+    "uninstaller": {
+        "script": [
+            "if (!(is_admin)) {error 'This package requires admin rights to uninstall'; break}",
+            "Invoke-ExternalCommand \"$dir\\VisualCppRedist_AIO_x86_x64.exe\" -ArgumentList @('/ai', '/gm2') | Out-Null"
+        ]
+    },
+    "checkver": {
+        "github": "https://github.com/abbodi1406/vcredist"
+    },
+    "autoupdate": {
+        "url": "https://github.com/abbodi1406/vcredist/releases/latest/download/VisualCppRedist_AIO_x86_x64_$minorVersion.zip",
+        "hash": {
+            "url": "https://github.com/abbodi1406/vcredist/releases/latest",
+            "find": "File: $basename[\\S\\s]*?SHA-256: $sha256"
+        }
+    }
+}
