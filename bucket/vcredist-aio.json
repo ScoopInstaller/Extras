@@ -5,6 +5,7 @@
     "license": "Unlicense",
     "url": "https://github.com/abbodi1406/vcredist/releases/latest/download/VisualCppRedist_AIO_x86_x64_60.zip",
     "hash": "d7cc0d80290040083df52537999c16d0fc7931b4ef23cbbbbbc5176b48017df0",
+    "pre_install": "if (!(is_admin)) {error 'This package requires admin rights to install'; break}",
     "installer": {
         "file": "VisualCppRedist_AIO_x86_x64.exe",
         "args": [
@@ -15,10 +16,9 @@
     },
     "bin": "VisualCppRedist_AIO_x86_x64.exe",
     "uninstaller": {
-        "file": "VisualCppRedist_AIO_x86_x64.exe",
-        "args": [
-            "/aiR",
-            "/gm2"
+        "script": [
+            "if (!(is_admin)) {error 'This package requires admin rights to uninstall'; break}",
+            "Invoke-ExternalCommand \"$dir\\VisualCppRedist_AIO_x86_x64.exe\" -ArgumentList @('/ai', '/gm2') | Out-Null"
         ]
     },
     "checkver": {
