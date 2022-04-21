@@ -31,16 +31,20 @@
         ]
     ],
     "post_install": [
+        "if (!(Test-Path \"$dir\\User Data\\*\") -and (Test-Path \"$persist_dir\\data\")) {",
+        "    info '[Portable Mode]: Copying user data from portapps data directory . . .'",
+        "    Copy-Item \"$persist_dir\\data\\*\" \"$dir\\User Data\" -Recurse",
+        "}",
         "if (!(Test-Path \"$dir\\User Data\\*\") -and (Test-Path \"$env:LocalAppData\\BraveSoftware\\Brave-Browser\\User Data\")) {",
-        "    info '[Portable Mode]: Copying user data...'",
+        "    info '[Portable Mode]: Copying user data from local application data directory . . .'",
         "    Copy-Item \"$env:LocalAppData\\BraveSoftware\\Brave-Browser\\User Data\\*\" \"$dir\\User Data\" -Recurse",
         "}"
     ],
+    "persist": "User Data",
     "checkver": {
         "url": "https://brave.com/latest/",
         "regex": "<strong>V([\\d.]+)</strong>"
     },
-    "persist": "User Data",
     "autoupdate": {
         "architecture": {
             "64bit": {
