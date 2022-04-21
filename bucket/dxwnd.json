@@ -1,10 +1,10 @@
 {
-    "version": "2.05.83",
+    "version": "2.05.83-fx3",
     "description": "Window hooker to run fullscreen programs in window and much more.",
     "homepage": "https://sourceforge.net/projects/dxwnd/",
     "license": "GPL-3.0-or-later",
-    "url": "https://downloads.sourceforge.net/project/dxwnd/Latest%20build/v2_05_83_build.rar",
-    "hash": "sha1:bc2d7456e248b82719d87986d90f6f9b0e9dc96f",
+    "url": "https://downloads.sourceforge.net/project/dxwnd/Latest%20build/v2_05_83_fx3_build.rar",
+    "hash": "sha1:f37f47fd883ded8b44c0bc3b08f75c745d958c79",
     "pre_install": "if (!(Test-Path \"$persist_dir\\dxwnd.ini\")) { New-Item \"$dir\\dxwnd.ini\" | Out-Null }",
     "shortcuts": [
         [
@@ -19,9 +19,15 @@
     ],
     "env_add_path": "vcda",
     "checkver": {
-        "url": "https://sourceforge.net/projects/dxwnd/files/",
-        "regex": "v(\\d+)_(\\d+)_(\\d+)_build.rar",
-        "replace": "${1}.${2}.${3}"
+        "script": [
+            "$url = 'https://sourceforge.net/projects/dxwnd/files/Latest%20build/'",
+            "$cont = $(Invoke-WebRequest($url)).Content",
+            "if(!($cont -match 'v(\\d+)_(\\d+)_(\\d+)(_(fx\\d+))?_build\\.rar')) { break }",
+            "if ($matches[4] -eq $null) { $script_ver = \"{0}.{1}.{2}\" -f $matches[1], $matches[2], $matches[3] }",
+            "else { $script_ver = \"{0}.{1}.{2}-{3}\" -f $matches[1], $matches[2], $matches[3], $matches[5] }",
+            "Write-Output $script_ver; Write-Host $script_ver"
+        ],
+        "regex": "(.*)"
     },
     "autoupdate": {
         "url": "https://downloads.sourceforge.net/project/dxwnd/Latest%20build/v$underscoreVersion_build.rar"
