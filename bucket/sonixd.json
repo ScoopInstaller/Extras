@@ -1,0 +1,37 @@
+{
+    "version": "0.15.1",
+    "homepage": "https://github.com/jeffvli/sonixd",
+    "description": "A full-featured Subsonic/Jellyfin compatible desktop music player.",
+    "license": "GPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/jeffvli/sonixd/releases/download/v0.15.1/Sonixd-0.15.1-win-x64.exe#/dl.7z",
+            "hash": "sha512:2fc21f1715976d96ec28d304f87412df2e3a3fd86d44bfaca201423653f2bba91985b0a9aebb7180f0c16ce6830f42c1194134f7da7444a8425bad3a1d50edd6"
+        }
+    },
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+            "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninst*\" -Force -Recurse"
+        ]
+    },
+    "shortcuts": [
+        [
+            "Sonixd.exe",
+            "Sonixd"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/jeffvli/sonixd/releases/download/v$version/Sonixd-$version-win-x64.exe#/dl.7z",
+                "hash": {
+                    "url": "https://github.com/jeffvli/sonixd/releases/download/v$version/latest.yml",
+                    "mode": "extract",
+                    "regex": "(?sm)exe.*sha512: $base64"
+                }
+            }
+        }
+    }
+}
