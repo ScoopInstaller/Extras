@@ -6,12 +6,6 @@
     "suggest": {
         "vcredist2022": "extras/vcredist2022"
     },
-    "notes": [
-        "From version 2.4.0, WindTerm changed the way how the connection profiles are stored.",
-        "During the first run of version 2.4.0 or higher, please, choose the first option for 'profile directory', so the profiles will be stored along the application files.",
-        "Then copy the old profiles directory, stored under 'persist/WindTerm/profiles', over the newly created folder under 'persist/WindTerm/.wind/profiles'. After that you can delete the old 'profiles' directory.",
-        "For details: https://github.com/kingToolbox/WindTerm/releases, section Upgrade."
-    ],
     "architecture": {
         "64bit": {
             "url": "https://github.com/kingToolbox/WindTerm/releases/download/2.4.0/WindTerm_2.4.1_Windows_Portable_x86_64.zip",
@@ -28,6 +22,14 @@
             "WindTerm.exe",
             "WindTerm"
         ]
+    ],
+    "post_install": [
+        "info '[Portable Mode] Configuring profiles directory...'",
+        "'{ \"path\" : \".\" }' | Set-Content -Path \"$dir\\profiles.config\"",
+        "if (!(Test-Path \"$dir\\.wind\\profiles\") -and (Test-Path \"$persist_dir\\profiles\")) {",
+        "    info '[Portable Mode] Copying existing profiles...'",
+        "    Copy-Item \"$persist_dir\\profiles\" \"$dir\\.wind\" -Recurse",
+        "}"
     ],
     "persist": [
         ".wind"
