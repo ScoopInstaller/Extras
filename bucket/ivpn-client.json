@@ -1,0 +1,38 @@
+{
+    "version": "3.8.7",
+    "description": "Open-source VPN software",
+    "homepage": "https://www.ivpn.net/apps-windows/",
+    "license": "GPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://repo.ivpn.net/windows/bin/IVPN-Client-v3.8.7.exe#/setup.exe",
+            "hash": "d9b16b2b3eff87e32a09b74558d3570d1b1ca82b77e9483ceb7aac179a568661"
+        }
+    },
+    "pre_install": [
+        "if (!(is_admin)) {error 'This package requires admin rights to install'; break}",
+        "# IVPN service will only work if 'IVPN Service.exe' is under ProgramFiles. Therefore we cannot use INSTALLDIR here.",
+        "Invoke-ExternalCommand \"$dir\\setup.exe\" -ArgumentList '/S' -RunAs | Out-Null",
+        "Remove-Item \"$dir\\setup.exe\""
+    ],
+    "uninstaller": {
+        "script": [
+            "if (!(is_admin)) {error 'This package requires admin rights to uninstall'; break}",
+            "Invoke-ExternalCommand \"$($Env:ProgramFiles)\\IVPN Client\\Uninstall.exe\" -ArgumentList '/S' -RunAs | Out-Null"
+        ]
+    },
+    "checkver": {
+        "github": "https://github.com/ivpn/desktop-app"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://repo.ivpn.net/windows/bin/IVPN-Client-v$version.exe#/setup.exe",
+                "hash": {
+                    "url": "https://api.github.com/repos/ivpn/desktop-app/releases/latest",
+                    "regex": "$basename.*?$sha256"
+                }
+            }
+        }
+    }
+}
