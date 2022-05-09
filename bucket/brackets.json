@@ -5,11 +5,14 @@
     "license": "MIT",
     "url": "https://github.com/brackets-cont/brackets/releases/download/v2.0.1/Brackets.2.0.1ml.exe#/dl.exe",
     "hash": "edc5da4da36298e4ef752bfbfc72f77f7d778e47c70b73b745afdbf6b5cb313d",
+    "depends": "lessmsi",
     "pre_install": [
         "New-Item \"$dir\\installer\" -ItemType Directory | Out-Null",
         "Invoke-ExternalCommand \"$dir\\dl.exe\" -ArgumentList \"/extract:`\"$dir\\installer`\"\" | Out-Null",
-        "Expand-MsiArchive \"$dir\\installer\\Brackets.msi\" \"$dir\" | Out-Null",
-        "Remove-Item \"$dir\\installer\",\"$dir\\dl.exe\" -Force -Recurse"
+        "# Workaround for #8436",
+        "Invoke-ExternalCommand lessmsi -ArgumentList @('x', \"$dir\\installer\\Brackets.msi\", \"`\"$dir\\`\"\") -LogPath \"$dir\\msi.log\" | Out-Null",
+        "Move-Item \"$dir\\SourceDir\\APPDIR\\*\" \"$dir\\\"",
+        "Remove-Item \"$dir\\SourceDir\", \"$dir\\installer\", \"$dir\\dl.exe\", \"$dir\\msi.log\" -Force -Recurse"
     ],
     "bin": "brackets.exe",
     "shortcuts": [
