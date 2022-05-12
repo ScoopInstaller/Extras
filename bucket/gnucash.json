@@ -1,5 +1,5 @@
 {
-    "version": "4.10-1",
+    "version": "4.10",
     "description": "Personal and small-business financial-accounting software",
     "homepage": "https://www.gnucash.org/",
     "license": "GPL-2.0-or-later",
@@ -10,31 +10,34 @@
         "64bit": {
             "pre_install": [
                 "Get-ChildItem \"$dir\\*,2.*\" -Recurse | Rename-Item -NewName { $_.FullName -replace ',2\\.', '.' }",
-                "Get-ChildItem \"$dir\\*,1.*\" -Recurse | Remove-Item"
+                "Get-ChildItem \"$dir\\*,1.*\" -Recurse | Remove-Item",
+                "if (!(Test-Path -Path \"$persist_dir\\etc\\gnucash\\environment.local\")) { New-Item -Path \"$dir\\etc\\gnucash\" -Name \"environment.local\" -Value \"[Variables]\" | Out-Null }"
             ]
         },
         "32bit": {
             "pre_install": [
                 "Get-ChildItem \"$dir\\*,1.*\" -Recurse | Rename-Item -NewName { $_.FullName -replace ',1\\.', '.' }",
-                "Get-ChildItem \"$dir\\*,2.*\" -Recurse | Remove-Item"
+                "Get-ChildItem \"$dir\\*,2.*\" -Recurse | Remove-Item",
+                "if (!(Test-Path -Path \"$persist_dir\\etc\\gnucash\\environment.local\")) { New-Item -Path \"$dir\\etc\\gnucash\" -Name \"environment.local\" -Value \"[Variables]\" | Out-Null }"
             ]
         }
     },
-    "bin": "bin\\gnucash.exe",
+    "bin": "bin\\gnucash-cli.exe",
     "shortcuts": [
         [
             "bin\\gnucash.exe",
             "GnuCash"
         ]
     ],
+    "persist": "etc\\gnucash\\environment.local",
     "checkver": {
         "github": "https://github.com/Gnucash/gnucash",
-        "regex": "gnucash-([\\w.-]+)\\.setup\\.exe"
+        "regex": "/download/([\\d.]+)/gnucash-([\\w.-]+)\\.setup\\.exe"
     },
     "autoupdate": {
-        "url": "https://github.com/Gnucash/gnucash/releases/download/$matchHead/gnucash-$version.setup.exe",
+        "url": "https://github.com/Gnucash/gnucash/releases/download/$version/gnucash-$match2.setup.exe",
         "hash": {
-            "url": "https://github.com/Gnucash/gnucash/releases/tag/$matchHead",
+            "url": "https://github.com/Gnucash/gnucash/releases/tag/$version",
             "regex": "$sha256.*?$basename"
         }
     }
