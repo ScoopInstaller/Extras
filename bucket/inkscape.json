@@ -5,13 +5,13 @@
     "license": "GPL-3.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://inkscape.org/en/gallery/item/33465/inkscape-1.2_2022-05-15_dc2aedaf03-x64.7z",
-            "hash": "e7dedf1fd0288bea2196a3bbdab06e364ee13a239c7ac14329a2e1f8f547b248",
+            "url": "https://media.inkscape.org/dl/resources/file/inkscape-1.2_2022-05-15_dc2aedaf03-x64.7z",
+            "hash": "38b5b7687aeca2762e4026fbf5f4586582b5c832cc6a30f8bca608c509e8ac31",
             "extract_dir": "inkscape-1.2_2022-05-15_dc2aedaf03-x64"
         },
         "32bit": {
-            "url": "https://inkscape.org/en/gallery/item/33462/inkscape-1.2_2022-05-15_dc2aedaf03-x86.7z#/dl.7z",
-            "hash": "c76c1a3919d334a5f38796c0c5a5324bfc891b84ce0519c6dd4c596c1e0d54048",
+            "url": "https://media.inkscape.org/dl/resources/file/inkscape-1.2_2022-05-15_dc2aedaf03-x86.7z",
+            "hash": "2befe7b80be2f101ed0d1e223730c0dd39746b230029b622607d832303be2f22",
             "extract_dir": "inkscape-1.2_2022-05-15_dc2aedaf03-x86"
         }
     },
@@ -28,29 +28,30 @@
     "checkver": {
         "script": [
             "$redirUrl = [System.Net.HttpWebRequest]::Create('https://inkscape.org/en/release').GetResponse().ResponseUri.AbsoluteUri",
-            "$32bit_dl = Invoke-WebRequest ($redirUrl + '/windows/32-bit/compressed-7z/dl/') -UseBasicParsing",
-            "$64bit_dl = Invoke-WebRequest ($redirUrl + '/windows/64-bit/compressed-7z/dl/') -UseBasicParsing",
-            "$32bit_url = $32bit_dl.links | Where-Object href -match '\\.7z$' | Select-Object -first 1 -expand href",
-            "$64bit_url = $64bit_dl.links | Where-Object href -match '\\.7z$' | Select-Object -first 1 -expand href",
-            "$inkscape_dir = ($64bit_url -split '/' | Select-Object -last 1) -split '-x64.7z' | Select-Object -first 1",
-            "$scriptver = ($64bit_dl | Select-String -Pattern 'inkscape-([\\d.]+_[\\d-]+)_').Matches.Groups[1].Value",
-            "Write-Output $scriptver $32bit_url $64bit_url $inkscape_dir"
+            "$test_dl = Invoke-WebRequest ($redirUrl + '/windows/64-bit/compressed-7z/dl/') -UseBasicParsing",
+            "$filename = ($test_dl.links | Where-Object href -match '\\.7z$' | Select-Object -first 1 -expand href) -split '/' | Select-Object -last 1",
+            "$clean_filename = $filename -replace '-(x86|x64)_\\w+\\.7z$'",
+            "$version = $clean_filename -replace '^inkscape-([0-9_\\-.]+)_\\w+$','$1'",
+            "Write-Output $version $clean_filename"
         ],
-        "regex": "(?<version>[\\d.]+_[\\d-]+)\\s(?<win32biturl>.+)\\s(?<win64biturl>.+)\\s(?<inkscapedir>.+)"
+        "regex": "(?<version>.+)\\s(?<cleanfilename>.+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://inkscape.org/en$matchWin64biturl",
-                "extract_dir": "$matchInkscapedir-x64"
+                "url": "https://media.inkscape.org/dl/resources/file/$matchCleanfilename-x64.7z",
+                "extract_dir": "$matchCleanfilename-x64",
+                "hash": {
+                    "url": "https://media.inkscape.org/media/resources/sigs/$matchCleanfilename-x64.7z.sha256"
+                }
             },
             "32bit": {
-                "url": "https://inkscape.org/en$matchWin32biturl#/dl.7z",
-                "extract_dir": "$matchInkscapedir-x86"
+                "url": "https://media.inkscape.org/dl/resources/file/$matchCleanfilename-x86.7z",
+                "extract_dir": "$matchCleanfilename-x86",
+                "hash": {
+                    "url": "https://media.inkscape.org/media/resources/sigs/$matchCleanfilename-x86.7z.sha256"
+                }
             }
-        },
-        "hash": {
-            "url": "https://media.inkscape.org/media/resources/sigs/$basename.sha256"
         }
     }
 }
