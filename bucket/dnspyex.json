@@ -1,0 +1,39 @@
+{
+    "version": "6.1.9",
+    "description": "Continuation of the dnSpy project, a .NET debugger and assembly editor.",
+    "homepage": "https://github.com/dnSpyEx/dnSpy",
+    "license": "GPL-3.0-or-later",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/dnSpyEx/dnSpy/releases/download/v6.1.9/dnSpy-net-win64.zip#/dl.zip_",
+            "hash": "8c01e7fd5c1684cd52dbee6c18d267990f2c1d2f3cfd23d037ea324508ce8e12"
+        },
+        "32bit": {
+            "url": "https://github.com/dnSpyEx/dnSpy/releases/download/v6.1.9/dnSpy-net-win32.zip#/dl.zip_",
+            "hash": "ab881a7dee96478326d7b6c2e27793c9e9b2608ae6befe7a95046d981100132a"
+        }
+    },
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\dl.zip_\" \"$dir\" -Removal | Out-Null",
+        "$archive = Get-ChildItem \"$dir\\*.zip\" | Select -First 1 -ExpandProperty FullName",
+        "Expand-7zipArchive \"$archive\" \"$dir\" -Removal  | Out-Null"
+    ],
+    "bin": "dnSpy.Console.exe",
+    "shortcuts": [
+        [
+            "dnSpy.exe",
+            "dnSpy"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/dnSpyEx/dnSpy/releases/download/v$version/dnSpy-net-win64.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/dnSpyEx/dnSpy/releases/download/v$version/dnSpy-net-win32.zip"
+            }
+        }
+    }
+}
