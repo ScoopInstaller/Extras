@@ -5,8 +5,14 @@
     "license": "GPL-2.0-only",
     "url": "https://ftp.osuosl.org/pub/xiph/releases/icecast/icecast_win32_2.4.3.exe#/dl.7z",
     "hash": "603bb7c94a9248ac104ef84c3e8472949db8bd3c2fcc4ff7a7a34ee98057efe0",
-    "depends": "nssm",
-    "notes": "Run \"$dir\\install-service.bat\" under Admin to install IceCast as Windows service.",
+    "suggest": {
+        "nssm": "nssm"
+    },
+    "notes": [
+        "To install IceCast as Windows service:",
+        "(1) Install nssm",
+        "(2) Run \"$dir\\install-service.bat\" under Admin"
+    ],
     "pre_install": [
         "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall.exe\" -Force -Recurse",
         "'log\\access.log', 'log\\error.log', 'log\\playlist.log' | ForEach-Object {",
@@ -15,12 +21,22 @@
         "Set-Content \"$dir\\icecast-scoop-start.bat\" \"@echo off`r`ncd /d %~dp0`r`nicecast.bat\" -Encoding Ascii"
     ],
     "post_install": [
-        "Set-Content \"$dir\\install-service.bat\"  \"@echo off`r`nnssm install IceCast `\"$dir\\icecast-scoop-start.bat`\"`r`nnet start IceCast\" -Encoding Ascii",
+        "$cont = @(",
+        "    '@echo off'",
+        "    'where nssm >nul'",
+        "    'if %ERRORLEVEL% neq 0 ('",
+        "    '    echo ERROR: cannot find nssm in PATH. Please install nssm before running this script.'",
+        "    '    exit /B'",
+        "    ')'",
+        "    \"nssm install IceCast `\"$dir\\icecast-scoop-start.bat`\"\"",
+        "    'net start IceCast'",
+        ")",
+        "Set-Content \"$dir\\install-service.bat\" ($cont -join \"`r`n\") -Encoding Ascii",
         "Set-Content \"$dir\\uninstall-service.bat\"  \"@echo off`r`nsc delete IceCast\" -Encoding Ascii"
     ],
     "uninstaller": {
         "script": [
-            "# uninstall IceCast service if the user uninstalls the app, but not updates the app",
+            "# if user uninstalls (but not updates) the app, then uninstall IceCast service",
             "if ($cmd -eq 'uninstall') {",
             "    sc.exe query IceCast | Out-Null",
             "    if ($LASTEXITCODE -eq 0) {",
