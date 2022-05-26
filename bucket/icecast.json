@@ -38,8 +38,8 @@
         "script": [
             "# if user uninstalls (but not updates) the app, then uninstall IceCast service",
             "if ($cmd -eq 'uninstall') {",
-            "    sc.exe query IceCast | Out-Null",
-            "    if ($LASTEXITCODE -eq 0) {",
+            "    $service = Get-Service 'IceCast' -ErrorAction SilentlyContinue",
+            "    if ($service) {",
             "        if(!(is_admin)) { error 'Admin right is required to uninstall IceCast service'; break }",
             "        sc.exe delete IceCast",
             "    }",
