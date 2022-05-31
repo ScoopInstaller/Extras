@@ -3,25 +3,33 @@
     "description": "PDF and eBook reader",
     "homepage": "https://www.sumatrapdfreader.org/free-pdf-reader",
     "license": "GPL-3.0-only,BSD-2-Clause",
+    "extract_dir":"SumatraPDF",
     "architecture": {
         "64bit": {
-            "url": "https://www.sumatrapdfreader.org/dl/rel/3.4.3/SumatraPDF-3.4.3-64.zip",
-            "hash": "3bae82f4b9518b5b3fc8ec2a6c8ff201ff85882fb72168a94ba507f34b14165b"
+            "url": "https://www.sumatrapdfreader.org/dl/rel/3.4.3/SumatraPDF-3.4.3-64-install.exe",
+            "hash": "e3e0332106376ea0f6bed37140c6eea9315126adf3c943e8c9a0fa8568d1b1fc"
         },
         "32bit": {
-            "url": "https://www.sumatrapdfreader.org/dl/rel/3.4.3/SumatraPDF-3.4.3.zip",
-            "hash": "db05470f1a22523e92fcff01921e804b638ef4bfb29a327623272499e6782493"
+            "url": "https://www.sumatrapdfreader.org/dl/rel/3.4.3/SumatraPDF-3.4.3-install.exe",
+            "hash": "2f8b1ca575a6504ca5e04ca84ebd59214c48d5c8c652041da5e4b69cff07c92d"
         }
     },
     "pre_install": [
         "$file = 'SumatraPDF-settings.txt'",
-        "if (!(Test-Path \"$persist_dir\\$file\")) {",
+        "if (-not (Test-Path \"$persist_dir\\$file\")) {",
         "    Write-Host 'File' $file 'does not exists. Creating.' -f Yellow",
         "    Set-Content \"$dir\\$file\" 'CheckForUpdates = false' -Encoding Ascii",
         "}",
-        "Get-ChildItem \"$dir\\SumatraPDF-*.exe\" | Rename-Item -NewName 'SumatraPDF.exe'"
+        "Get-ChildItem \"$dir\\SumatraPDF-*.exe\" | Rename-Item -NewName 'SumatraPDF-installer.exe'"
     ],
     "bin": "SumatraPDF.exe",
+    "installer": {
+        "file": "SumatraPDF-installer.exe",
+        "args": [
+            "-x",
+            "-d $dir"
+        ]
+    },
     "shortcuts": [
         [
             "SumatraPDF.exe",
@@ -32,6 +40,14 @@
         "SumatraPDF-settings.txt",
         "sumatrapdfcache"
     ],
+    "post_install":[
+        "regsvr32 /s $dir\\pdfpreview.dll"
+    ],
+    "uninstaller": {
+        "script":[
+            "c:\\windows\\system32\\regsvr32.exe /u /s $dir\\pdfpreview.dll"
+        ]
+    },
     "checkver": {
         "url": "https://www.sumatrapdfreader.org/docs/Version-history",
         "regex": "([\\d.]+)\\s+\\(\\d+"
@@ -39,10 +55,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://www.sumatrapdfreader.org/dl/rel/$version/SumatraPDF-$version-64.zip"
+                "url": "https://www.sumatrapdfreader.org/dl/rel/$version/SumatraPDF-$version-64-install.exe"
             },
             "32bit": {
-                "url": "https://www.sumatrapdfreader.org/dl/rel/$version/SumatraPDF-$version.zip"
+                "url": "https://www.sumatrapdfreader.org/dl/rel/$version/SumatraPDF-$version-32-install.exe"
             }
         }
     }
