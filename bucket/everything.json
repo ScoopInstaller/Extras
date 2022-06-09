@@ -3,7 +3,10 @@
     "description": "Locate files and folders by name instantly.",
     "homepage": "https://www.voidtools.com",
     "license": "MIT",
-    "notes": "Run '$dir\\install-context.reg' to add Everything to right-click context menu.",
+    "notes": [
+        "To add Everything to right-click context menu, run:",
+        "reg import \"$dir\\install-context.reg\""
+    ],
     "architecture": {
         "64bit": {
             "url": "https://www.voidtools.com/Everything-1.4.1.1017.x64.zip",
@@ -35,7 +38,7 @@
     "uninstaller": {
         "script": [
             "Get-ChildItem \"$dir\\*\" -Include 'Everything.ini', 'Everything.db', 'Bookmarks.csv' | Copy-Item -Destination \"$persist_dir\" -ErrorAction SilentlyContinue -Force",
-            "reg import \"$dir\\uninstall-context.reg\""
+            "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }"
         ]
     },
     "bin": "Everything.exe",
