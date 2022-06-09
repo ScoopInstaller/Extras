@@ -3,13 +3,16 @@
     "description": "Volume control for Windows",
     "homepage": "https://github.com/File-New-Project/EarTrumpet",
     "license": "MIT",
-    "notes": "Start EarTrumpet with Windows by running: '$dir\\add-startup.reg'",
+    "notes": [
+        "Start EarTrumpet with Windows by running:",
+        "reg import \"$dir\\add-startup.reg\""
+    ],
     "url": "https://packages.chocolatey.org/eartrumpet.2.2.0.0.nupkg",
     "hash": "9bef9d08e07a14a35e308f5c227a43d1523f13800c6fe1577f4e161393323133",
     "extract_dir": "tools",
     "pre_install": [
         "Remove-Item \"$dir\\choco*\"",
-        "Expand-ZipArchive \"$dir\\Release.zip\" -Removal"
+        "Expand-7ZipArchive \"$dir\\Release.zip\" -Removal"
     ],
     "post_install": [
         "$exepath = \"$dir\\EarTrumpet.exe\".Replace('\\', '\\\\')",
@@ -23,7 +26,7 @@
         "}"
     ],
     "uninstaller": {
-        "script": "Invoke-ExternalCommand reg -ArgumentList @('import', \"$dir\\remove-startup.reg\") | Out-Null"
+        "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\remove-startup.reg\" }"
     },
     "bin": "EarTrumpet.exe",
     "shortcuts": [
