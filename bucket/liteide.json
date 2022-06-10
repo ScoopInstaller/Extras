@@ -1,16 +1,16 @@
 {
-    "version": "37.4",
+    "version": "38.0",
     "description": "Simple, open source, cross-platform Go IDE",
     "homepage": "http://liteide.org",
     "license": "LGPL-2.1-only",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/visualfc/liteide/releases/download/x37.4/liteidex37.4.win64-qt5.14.2.zip",
-            "hash": "9acd6fd879252691118cd6cc04f57a5fb4b9f0d2973501a033f3a408b940a0cf"
+            "url": "https://github.com/visualfc/liteide/releases/download/x38.0/liteidex38.0.win64-qt5.15.2.zip",
+            "hash": "074ab5392f40143760cae7b36b7d7706ef9eed3161bbbcb80b7f03f3a8dfc069"
         },
         "32bit": {
-            "url": "https://github.com/visualfc/liteide/releases/download/x37.4/liteidex37.4.win32-qt4.8.5.zip",
-            "hash": "cd06bcb99c5186105d7e40e1e4cc1bf7b0b8f4e11ae47cba9225709ac67ac81b"
+            "url": "https://github.com/visualfc/liteide/releases/download/x38.0/liteidex38.0.win32-qt4.8.5.zip",
+            "hash": "95024e21b107e67bdc99a30fcf197f6f54cb9773f9937bcb45321536f3029aff"
         }
     },
     "extract_dir": "liteide",
@@ -22,16 +22,17 @@
         ]
     ],
     "checkver": {
-        "github": "https://github.com/visualfc/liteide",
-        "regex": "liteidex([\\d.-]+)\\.win64-qt(?<qtver>[\\d.]+)\\.zip"
+        "url": "https://api.github.com/repos/visualfc/liteide/releases/latest",
+        "jsonpath": "$.assets..browser_download_url",
+        "regex": "liteidex([\\d.-]+).win32-qt(?<qt32bitver>[\\d.]+).zip.+liteidex[\\d.-]+.win64-qt(?<qt64bitver>[\\d.]+).zip"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/visualfc/liteide/releases/download/x$version/liteidex$version.win64-qt5.14.2.zip"
+                "url": "https://github.com/visualfc/liteide/releases/download/x$version/liteidex$version.win64-qt$matchQt64bitver.zip"
             },
             "32bit": {
-                "url": "https://github.com/visualfc/liteide/releases/download/x$version/liteidex$version.win32-qt4.8.5.zip"
+                "url": "https://github.com/visualfc/liteide/releases/download/x$version/liteidex$version.win32-qt$matchQt32bitver.zip"
             }
         }
     }
