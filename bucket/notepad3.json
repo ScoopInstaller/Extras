@@ -1,41 +1,38 @@
 {
     "version": "5.21.1129.1",
-    "description": "Notepad like text editor based on the Scintilla source code",
+    "description": "Notepad-like text editor based on the Scintilla source code",
     "homepage": "https://www.rizonesoft.com/downloads/notepad3/",
     "license": "BSD-3-Clause",
+    "notes": [
+        "To add Notepad3 to right-click context menu, run:",
+        "reg import \"$dir\\install-context.reg\""
+    ],
     "architecture": {
         "64bit": {
-            "url": [
-                "https://github.com/rizonesoft/Notepad3/releases/download/RELEASE_5.21.1129.1/Notepad3_5.21.1129.1_x64.zip",
-                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/notepad3/replace-windows-notepad.reg",
-                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/notepad3/restore-windows-notepad.reg"
-            ],
-            "hash": [
-                "c5311c69fc376f94fa14f79cdccc6b2f3557a59ae93ba38a332650b7c2dd41cf",
-                "28dd141a7d1e40304c44b376fe076b58dc4f57937c8846ff83a72eb22f3a3801",
-                "aeb2cff91aefeb50d0136e3f0aaa00a131ca90e3ee4aee701544e97983442c2e"
-            ]
+            "url": "https://github.com/rizonesoft/Notepad3/releases/download/RELEASE_5.21.1129.1/Notepad3_5.21.1129.1_x64.zip",
+            "hash": "c5311c69fc376f94fa14f79cdccc6b2f3557a59ae93ba38a332650b7c2dd41cf"
         },
         "32bit": {
-            "url": [
-                "https://github.com/rizonesoft/Notepad3/releases/download/RELEASE_5.21.1129.1/Notepad3_5.21.1129.1_x86.zip",
-                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/notepad3/replace-windows-notepad.reg",
-                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/notepad3/restore-windows-notepad.reg"
-            ],
-            "hash": [
-                "5636df4d0a9595f90598e80353e0db5186354a4dfd54e411cdf39988be459681",
-                "28dd141a7d1e40304c44b376fe076b58dc4f57937c8846ff83a72eb22f3a3801",
-                "aeb2cff91aefeb50d0136e3f0aaa00a131ca90e3ee4aee701544e97983442c2e"
-            ]
+            "url": "https://github.com/rizonesoft/Notepad3/releases/download/RELEASE_5.21.1129.1/Notepad3_5.21.1129.1_x86.zip",
+            "hash": "5636df4d0a9595f90598e80353e0db5186354a4dfd54e411cdf39988be459681"
         }
     },
     "post_install": [
-        "if (Test-Path \"$dir\\replace-windows-notepad.reg\") {",
-        "    $notepad3 = \"$dir\\Notepad3.exe\".Replace('\\', '\\\\')",
-        "    $content = (Get-Content \"$dir\\replace-windows-notepad.reg\").Replace('$notepad3', $notepad3)",
-        "    Set-Content \"$dir\\replace-windows-notepad.reg\" $content -Encoding ASCII",
+        "$appdir = \"$dir\\Notepad3.exe\".Replace('\\', '\\\\')",
+        "'install-context.reg', 'uninstall-context.reg' | ForEach-Object {",
+        "    if (Test-Path \"$bucketsdir\\extras\\scripts\\$app\\$_\") {",
+        "        $content = Get-Content \"$bucketsdir\\extras\\scripts\\$app\\$_\"",
+        "        $content = $content.Replace('$appdir', $appdir)",
+        "        if ($global) {",
+        "            $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "        }",
+        "    }",
+        "    $content | Set-Content -Path \"$dir\\$_\" -Encoding ascii",
         "}"
     ],
+    "uninstaller": {
+        "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }"
+    },
     "bin": [
         "Notepad3.exe",
         "minipath.exe"
@@ -52,6 +49,7 @@
     ],
     "persist": [
         "Favorites",
+        "Themes",
         "minipath.ini",
         "Notepad3.ini"
     ],
