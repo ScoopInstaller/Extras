@@ -35,12 +35,16 @@
         "    $content | Set-Content -Path \"$dir\\$_\" -Encoding ascii",
         "}"
     ],
-    "uninstaller": {
-        "script": [
-            "Get-ChildItem \"$dir\\*\" -Include 'Everything.ini', 'Everything.db', 'Bookmarks.csv' | Copy-Item -Destination \"$persist_dir\" -ErrorAction SilentlyContinue -Force",
-            "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }"
-        ]
-    },
+    "pre_uninstall": [
+        "Stop-Process -Name 'everything' -ErrorAction SilentlyContinue",
+        "if (Get-Service 'Everything' -ErrorAction SilentlyContinue) {",
+        "    if (!(is_admin)) { error 'Admin rights are required to stop Everything service'; break }",
+        "    Stop-Service -Name 'Everything' -ErrorAction SilentlyContinue | Out-Null",
+        "    if ($cmd -eq 'uninstall') { sc.exe delete 'Everything' }",
+        "}",
+        "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }",
+        "Get-ChildItem \"$dir\\*\" -Include 'Everything.ini', 'Everything.db', 'Bookmarks.csv' | Copy-Item -Destination \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
+    ],
     "bin": "Everything.exe",
     "shortcuts": [
         [
