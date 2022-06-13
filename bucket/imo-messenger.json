@@ -1,0 +1,37 @@
+{
+    "##": "The homepage requires JS to load (not suitable for checkver)",
+    "version": "1.4.1.6",
+    "description": "Video calls and chat software",
+    "homepage": "https://imo.im/",
+    "depends": "extras/uniextract2",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://imo.im/policies/terms_of_service.html"
+    },
+    "url": "https://static-web.imoim.net/as/indigo-static/imo-app/imo-Windows/ImoSetup_1.4.1.6_Release.exe#/dl.exe",
+    "hash": "a752c5d464597d99cfadab2009353d3420a761738d8ab301692584159a54c4a7",
+    "pre_install": [
+        "New-Item \"$dir\\extract\" -ItemType Directory | Out-Null",
+        "Invoke-ExternalCommand uniextract -ArgumentList @(\"`\"$dir\\dl.exe`\"\", \"`\"$dir\\extract`\"\", '/silent') | Out-Null",
+        "Expand-MsiArchive \"$dir\\extract\\AttachedContainer\\ImoInstaller.msi\" \"$dir\" -ExtractDir \"imo\\$version\" | Out-Null",
+        "Remove-Item \"$dir\\dl.exe\", \"$dir\\extract\" -Force -Recurse"
+    ],
+    "pre_uninstall": "Stop-Process -Name 'ImoDesktopApp' -ErrorAction SilentlyContinue | Out-Null",
+    "shortcuts": [
+        [
+            "ImoDesktopApp.exe",
+            "Imo Messenger"
+        ]
+    ],
+    "persist": [
+        "data",
+        "Logs"
+    ],
+    "checkver": {
+        "url": "https://downloads.digitaltrends.com/imo/windows",
+        "regex": "\"Imo ([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://static-web.imoim.net/as/indigo-static/imo-app/imo-Windows/ImoSetup_$version_Release.exe#/dl.exe"
+    }
+}
