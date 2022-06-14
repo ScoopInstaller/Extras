@@ -1,8 +1,9 @@
 {
-    "version": "3.2.0",
+    "version": "4.1.0-3",
     "description": "A command-line utility that pipes video streams from various services into a video player.",
     "homepage": "https://streamlink.github.io/",
     "license": "BSD-2-Clause",
+    "notes": "You will find your config file here: '$dir\\config'. To customise it, read the docs here: https://streamlink.github.io/cli/config.html#syntax",
     "suggest": {
         "FFmpeg": [
             "ffmpeg",
@@ -12,12 +13,14 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/beardypig/streamlink-portable/releases/download/3.2.0/streamlink-portable-3.2.0-py3.6.8-amd64.zip",
-            "hash": "814c1a8290202f144a1ba842a2ac614e6c19dc4b03a9741296a24b84f42a7a90"
+            "url": "https://github.com/streamlink/windows-builds/releases/download/4.1.0-3/streamlink-4.1.0-3-py310-x86_64.zip",
+            "hash": "eaa22bbd4838a0aa3c7f959191c825c049aafa74febb057ae602788db33c23cd",
+            "extract_dir": "streamlink-4.1.0-3-py310-x86_64"
         },
         "32bit": {
-            "url": "https://github.com/beardypig/streamlink-portable/releases/download/3.2.0/streamlink-portable-3.2.0-py3.6.8-win32.zip",
-            "hash": "059100d950d3f7ebc6f0487eefa217af91129b098e1451b4208d383900d24a82"
+            "url": "https://github.com/streamlink/windows-builds/releases/download/4.1.0-3/streamlink-4.1.0-3-py310-x86.zip",
+            "hash": "8abea98cc0c8384973768c08fc63dd80d3ecb655ce992deefc8825e11ceea870",
+            "extract_dir": "streamlink-4.1.0-3-py310-x86"
         }
     },
     "pre_install": [
@@ -26,23 +29,29 @@
         "        info 'Copying existing ''config'' from ''%APPDATA%\\streamlink\\config'''",
         "        Copy-Item \"$env:APPDATA\\streamlink\\config\" \"$dir\\config\"",
         "    } else {",
-        "        Copy-Item \"$dir\\config.template\" \"$dir\\config\"",
+        "        New-Item \"$dir\\config\" | Out-Null",
         "    }",
-        "}"
+        "}",
+        "Set-Content \"$dir\\streamlink.bat\" \"@echo off`r`n%~dp0\\bin\\streamlink.exe --ffmpeg-ffmpeg `\"$dir\\ffmpeg\\ffmpeg.exe`\" --config `\"$dir\\config`\" %*\" -Encoding Ascii | Out-Null"
     ],
-    "extract_dir": "streamlink",
-    "bin": "streamlink.bat",
+    "bin": [
+        "streamlink.bat",
+        "bin\\streamlinkw.exe"
+    ],
     "persist": "config",
     "checkver": {
-        "github": "https://github.com/beardypig/streamlink-portable"
+        "url": "https://github.com/streamlink/windows-builds/releases/",
+        "regex": "tree/([\\d.\\-]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/beardypig/streamlink-portable/releases/download/$version/streamlink-portable-$version-py3.6.8-amd64.zip"
+                "url": "https://github.com/streamlink/windows-builds/releases/download/$version/streamlink-$version-py310-x86_64.zip",
+                "extract_dir": "streamlink-$version-py310-x86_64"
             },
             "32bit": {
-                "url": "https://github.com/beardypig/streamlink-portable/releases/download/$version/streamlink-portable-$version-py3.6.8-win32.zip"
+                "url": "https://github.com/streamlink/windows-builds/releases/download/$version/streamlink-$version-py310-x86.zip",
+                "extract_dir": "streamlink-$version-py310-x86"
             }
         }
     }
