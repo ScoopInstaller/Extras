@@ -1,0 +1,27 @@
+{
+    "version": "2.1.3",
+    "description": "Bridge that allows to keep using a desktop client while benefiting from Proton Mail’s end-to-end encryption.",
+    "homepage": "https://proton.me/mail/bridge",
+    "license": "GPL-3.0-only",
+    "url": "https://github.com/ProtonMail/proton-bridge/releases/download/v2.1.3/Bridge-Installer.exe#/dl.exe",
+    "hash": "ddfaa8f2cbf81d8d6d4bacee53eb042eb8e068b878973d1b1b96a01022608e28",
+    "pre_install": [
+        "New-Item \"$dir\\extract\" -ItemType Directory | Out-Null",
+        "Invoke-ExternalCommand \"$dir\\dl.exe\" -ArgumentList (\"/extract:`\"$dir\\extract`\"\") | Out-Null",
+        "Expand-MsiArchive \"$dir\\extract\\Bridge-Installer.msi\" \"$dir\" | Out-Null",
+        "Remove-Item \"$dir\\dl.exe\", \"$dir\\extract\" -Force -Recurse"
+    ],
+    "pre_uninstall": "Stop-Process -Name 'proton-bridge' -ErrorAction SilentlyContinue",
+    "shortcuts": [
+        [
+            "Desktop-Bridge.exe",
+            "ProtonMail Bridge"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/ProtonMail/proton-bridge"
+    },
+    "autoupdate": {
+        "url": "https://github.com/ProtonMail/proton-bridge/releases/download/v$version/Bridge-Installer.exe#/dl.exe"
+    }
+}
