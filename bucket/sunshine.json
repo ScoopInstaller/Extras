@@ -4,7 +4,7 @@
     "homepage": "https://github.com/SunshineStream/Sunshine",
     "license": "GPL-3.0-only",
     "notes": [
-        "Run '$dir\\install-service.bat' to setup the service.",
+        "Run '$dir\\install-service.bat' and '$dir\\uninstall-service.bat' to install and uninstall the service correspondingly.",
         "Sunshine can be configured at https://localhost:47990/ by default."
     ],
     "architecture": {
@@ -13,23 +13,33 @@
             "hash": "bcc850e7b85c27f28f9765a12d9176daae8f1fb617363fa884002e54cd096e48"
         }
     },
+    "extract_dir": "Sunshine",
     "pre_install": [
         "Set-Content -Path \"$dir\\sunshine.bat\" -Value (@('@echo off', 'pushd %~dp0 && sunshine.exe %* && popd') -join \"`r`n\")",
         "# Create sunshine_state.json if it does not exist",
         "if (!(Test-Path \"$persist_dir\\sunshine_state.json\" -PathType Leaf)) {",
         "    Set-Content -Path \"$dir\\sunshine_state.json\" -Value \"{}\"",
-        "}"
+        "}",
+        "",
+        "# https://github.com/SunshineStream/Sunshine/issues/197",
+        "Copy-Item \"$bucketsdir\\extras\\scripts\\sunshine\\install-service.bat\" \"$dir\" | Out-Null",
+        "Copy-Item \"$bucketsdir\\extras\\scripts\\sunshine\\uninstall-service.bat\" \"$dir\" | Out-Null"
     ],
     "bin": [
         "sunshine.bat",
         "tools\\dxgi-info.exe",
         "tools\\audio-info.exe"
     ],
+    "shortcuts": [
+        [
+            "sunshine.exe",
+            "Sunshine"
+        ]
+    ],
     "persist": [
-        "sunshine_state.json",
+        "config",
         "credentials",
-        "assets\\sunshine.conf",
-        "assets\\apps_windows.json"
+        "sunshine_state.json"
     ],
     "checkver": "github",
     "autoupdate": {
