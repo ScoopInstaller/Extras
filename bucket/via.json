@@ -1,0 +1,31 @@
+{
+    "version": "1.3.1",
+    "description": "Graphical keyboard configuration manager.",
+    "homepage": "https://www.caniusevia.com/",
+    "license": "Unknown",
+    "url": "https://github.com/the-via/releases/releases/download/v1.3.1/via-1.3.1-win.exe#/dl.7z",
+    "hash": "4258ba2302fa848baade9f9090de46e367b50a713e21b2707d7721d774a47b53",
+    "architecture": {
+        "64bit": {
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Recurse"
+            ]
+        }
+    },
+    "shortcuts": [
+        [
+            "VIA.exe",
+            "VIA"
+        ]
+    ],
+    "post_install": [
+        "(Get-Content \"$dir\\resources\\app-update.yml\" -Encoding ASCII).replace('publishAutoUpdate: true', 'publishAutoUpdate: false') | Set-Content \"$dir\\resources\\app-update.yml\" -Encoding ASCII"
+    ],
+    "checkver": {
+        "github": "https://github.com/the-via/releases"
+    },
+    "autoupdate": {
+        "url": "https://github.com/the-via/releases/releases/download/v$version/via-$version-win.exe#/dl.7z"
+    }
+}
