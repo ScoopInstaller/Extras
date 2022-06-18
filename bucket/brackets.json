@@ -10,7 +10,8 @@
         "New-Item \"$dir\\installer\" -ItemType Directory | Out-Null",
         "Invoke-ExternalCommand \"$dir\\dl.exe\" -ArgumentList \"/extract:`\"$dir\\installer`\"\" | Out-Null",
         "# Workaround for #8436",
-        "Invoke-ExternalCommand lessmsi -ArgumentList @('x', \"$dir\\installer\\Brackets.msi\", \"`\"$dir\\`\"\") -LogPath \"$dir\\msi.log\" | Out-Null",
+        "Invoke-ExternalCommand lessmsi -ArgumentList @('x', \"`\"$dir\\installer\\Brackets.msi`\"\", \"`\"$dir\\`\"\") -LogPath \"$dir\\msi.log\" | Out-Null",
+        "if (Get-Process 'msiexec' -ErrorAction SilentlyContinue) { Start-Sleep -Seconds 2 }",
         "Move-Item \"$dir\\SourceDir\\APPDIR\\*\" \"$dir\\\"",
         "Remove-Item \"$dir\\SourceDir\", \"$dir\\installer\", \"$dir\\dl.exe\", \"$dir\\msi.log\" -Force -Recurse"
     ],
