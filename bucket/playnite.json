@@ -5,10 +5,24 @@
     "license": "MIT",
     "url": "https://github.com/JosefNemec/Playnite/releases/download/9.18/Playnite918.zip",
     "hash": "bf39ad21cabe02dfd26d7aa23c8c22c3980cb0a8d1254647e5405625a143cdd6",
-    "pre_install": "Copy-Item \"$persist_dir\\config.json\" \"$dir\" -ErrorAction 'SilentlyContinue'",
-    "uninstaller": {
-        "script": "Copy-Item \"$dir\\config.json\" \"$persist_dir\" -ErrorAction 'SilentlyContinue' -Force"
-    },
+    "pre_install": [
+        "Copy-Item \"$persist_dir\\config.json\" \"$dir\" -ErrorAction 'SilentlyContinue'",
+        "if (Test-Path \"$persist_dir\\Themes\") {",
+        "    # Only copy themes that does not exist in $dir",
+        "    # This avoids overwriting newer version of themes with the old ones",
+        "    Get-ChildItem \"$persist_dir\\Themes\\Desktop\" | ForEach-Object {",
+        "        if (!(Test-Path \"$dir\\Themes\\Desktop\\$_\")) { Copy-Item \"$persist_dir\\Themes\\Desktop\\$_\" \"$dir\\Themes\\Desktop\\\" -Recurse }",
+        "    }",
+        "    Get-ChildItem \"$persist_dir\\Themes\\Fullscreen\" | ForEach-Object {",
+        "        if (!(Test-Path \"$dir\\Themes\\Fullscreen\\$_\")) { Copy-Item \"$persist_dir\\Themes\\Fullscreen\\$_\" \"$dir\\Themes\\Fullscreen\\\" -Recurse }",
+        "    }",
+        "}"
+    ],
+    "pre_uninstall": [
+        "Stop-Process -Name 'Playnite.DesktopApp' -ErrorAction SilentlyContinue",
+        "Copy-Item \"$dir\\config.json\" \"$persist_dir\" -ErrorAction 'SilentlyContinue' -Force",
+        "Copy-Item \"$dir\\themes\" \"$persist_dir\\\" -Recurse -Force"
+    ],
     "bin": [
         [
             "Playnite.DesktopApp.exe",
