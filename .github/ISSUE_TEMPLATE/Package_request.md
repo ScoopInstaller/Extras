@@ -13,6 +13,15 @@ labels: "package-request"
 
 ## Package Request
 
+### Criteria
+
+For a package to be acceptable in the Extras bucket, it should be:
+
+<!-- All items need to be checked. -->
+
+- [ ] a well-known and widely used tool (e.g. if it's a GitHub project, it should have at least 100 stars and 50 forks)
+- [ ] the latest stable version of the program
+
 ### Information
 
 **Name:** [name of new package]
