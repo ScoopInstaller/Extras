@@ -10,11 +10,24 @@
             "hash": "sha512:de11016857e658bea32dcd23d34169005b05d673db18caf2a266a3295c43949a071abf0a3c2a6142d5eb4d2d590918b0e44976e05bbf9a3a0b54ca15b47d99a0",
             "installer": {
                 "script": [
+                    "# Check if Python 3 is installed and in PATH",
+                    "# note: Errors of Invoke-Expression cannot be omitted by -ErrorAction switch",
+                    "$response = Invoke-Expression 'python3 --version' 2>&1",
+                    "if ($response) { $python = 'python3' }",
+                    "if (!$response) {",
+                    "    $python = 'python'",
+                    "    $response = Invoke-Expression 'python --version' 2>&1",
+                    "    if (!response) {error 'Could not find python.exe or python3.exe. Please make sure Python is installed and added to PATH.'; break }",
+                    "    if (!($response -match 'Python\\s+([\\d.]+)')) { error 'Could not match Python version from python.exe.'; break }",
+                    "    # note: Powershell 5 does not support casting int/float to System.Version",
+                    "    $python_ver = [Version]::new($matches[1])",
+                    "    if ($python_ver.Major -lt 3) { error \"$app only supports Python 3. Please make sure Python 3 is installed and added to PATH.\"; break }",
+                    "}",
                     "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
                     "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse",
-                    "info 'Installing Python3 kernel...'",
-                    "python3 -m pip install ipykernel",
-                    "python3 -m ipykernel install --user"
+                    "info 'Installing ipykernel for Python3...'",
+                    "Invoke-Expression \"$python -m pip install ipykernel\"",
+                    "Invoke-Expression \"$python -m ipykernel install --user\""
                 ]
             }
         }
