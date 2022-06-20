@@ -11,13 +11,13 @@
             "installer": {
                 "script": [
                     "# Check if Python 3 is installed and in PATH",
-                    "# note: Errors of Invoke-Expression cannot be omitted by -ErrorAction switch",
-                    "$response = Invoke-Expression 'python3 --version' 2>&1",
-                    "if ($response) { $python = 'python3' }",
-                    "if (!$response) {",
+                    "$result = Get-Command 'python3' -ErrorAction SilentlyContinue",
+                    "if ($result) { $python = 'python3' }",
+                    "if (!$result) {",
                     "    $python = 'python'",
+                    "    # note: Errors of Invoke-Expression cannot be omitted by -ErrorAction switch",
                     "    $response = Invoke-Expression 'python --version' 2>&1",
-                    "    if (!response) {error 'Could not find python.exe or python3.exe. Please make sure Python is installed and added to PATH.'; break }",
+                    "    if (!$response) {error 'Could not find python.exe or python3.exe. Please make sure Python is installed and added to PATH.'; break }",
                     "    if (!($response -match 'Python\\s+([\\d.]+)')) { error 'Could not match Python version from python.exe.'; break }",
                     "    # note: Powershell 5 does not support casting int/float to System.Version",
                     "    $python_ver = [Version]::new($matches[1])",
