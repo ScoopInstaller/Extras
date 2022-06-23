@@ -9,30 +9,24 @@
     "url": "https://fastcopy.jp/archive/FastCopy4.1.6_installer.exe",
     "hash": "66683a4108b768f11d001cdf0fa0641bb8603c4a49c812382e85b049a8c64678",
     "pre_install": [
+        "if ($architecture -eq '64bit') {Invoke-ExternalCommand \"$dir\\$fname\" '/EXTRACT64' | Out-Null }",
+        "elseif ($architecture -eq '32bit') {Invoke-ExternalCommand \"$dir\\$fname\" '/EXTRACT32' | Out-Null }",
+        "Get-ChildItem \"$dir\\FastCopy$version*x64\\*\" -Recurse | Move-Item -Destination $dir",
+        "Remove-Item \"$dir\\$fname\", \"$dir\\FastCopy$version*\", \"$dir\\setup.exe\"",
+        "",
+        "if (!(Test-Path \"$persist_dir\\FastCopy.log\")) { New-Item \"$dir\\FastCopy.log\" | Out-Null }",
         "if (!(Test-Path \"$persist_dir\\FastCopy2.ini\")) {",
         "   Set-Content \"$dir\\FastCopy2.ini\" '[main]' -Encoding ASCII",
         "}"
     ],
-    "architecture": {
-        "64bit": {
-            "installer": {
-                "script": [
-                    "Invoke-ExternalCommand \"$dir\\$fname\" '/EXTRACT64' | Out-Null",
-                    "Get-ChildItem \"$dir\\FastCopy$version*x64\\*\" -Recurse | Move-Item -Destination $dir",
-                    "Remove-Item \"$dir\\$fname\", \"$dir\\FastCopy$version*\" "
-                ]
-            }
-        },
-        "32bit": {
-            "installer": {
-                "script": [
-                    "Invoke-ExternalCommand \"$dir\\$fname\" '/EXTRACT32' | Out-Null",
-                    "Get-ChildItem \"$dir\\FastCopy$version\\*\" -Recurse | Move-Item -Destination $dir",
-                    "Remove-Item \"$dir\\$fname\", \"$dir\\FastCopy$version\" "
-                ]
-            }
-        }
-    },
+    "pre_uninstall": [
+        "'FastEx64.dll', 'FastExt1.dll' | ForEach-Object {",
+        "    Invoke-ExternalCommand regsvr32 -ArgumentList @('/u', \"`\"$dir\\$_`\"\", '/s') | Out-Null",
+        "}",
+        "# restart explorer to avoid 'file in use' error",
+        "Stop-Process -Name 'explorer'; Start-Sleep -Seconds 2",
+        "if (!(Get-Process 'explorer' -ErrorAction SilentlyContinue)) { explorer }"
+    ],
     "bin": [
         "FastCopy.exe",
         "FcHash.exe",
@@ -44,15 +38,15 @@
             "FastCopy"
         ],
         [
-            "setup.exe",
-            "FastCopy Setup"
-        ],
-        [
             "doc\\FastCopy.chm",
             "FastCopy Manual"
         ]
     ],
-    "persist": "FastCopy2.ini",
+    "persist": [
+        "Log",
+        "FastCopy.log",
+        "FastCopy2.ini"
+    ],
     "checkver": "FastCopy ver ([\\d.]+)",
     "autoupdate": {
         "url": "https://fastcopy.jp/archive/FastCopy$version_installer.exe"
