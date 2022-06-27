@@ -1,0 +1,58 @@
+{
+    "##": "The shortcut will be created when adding the Appx package",
+    "version": "0.6.0.0",
+    "description": "A lightweight Universal Windows proxy app based on Leaf.",
+    "homepage": "https://github.com/YtFlow/Maple",
+    "license": "Apache-2.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/YtFlow/Maple/releases/download/v0.6.0/Maple.App_0.6.0.0_x64_Test.zip",
+            "hash": "11438e1df19ebe2801e62fb37a08911e47a03193081d4929018f274431da4fcd",
+            "extract_dir": "Maple.App_0.6.0.0_x64_Test"
+        }
+    },
+    "pre_install": [
+        "Rename-Item \"$dir\\*.cer\" 'maple.cer'",
+        "Rename-Item \"$dir\\*.appxbundle\" 'maple.appxbundle'",
+        "",
+        "# Check if the certificate is installed",
+        "$trusted = $false",
+        "$cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2(\"$dir\\maple.cer\")",
+        "Get-ChildItem 'Cert:\\LocalMachine\\Root' | ForEach-Object {",
+        "    if ($_.Thumbprint -eq $cert.Thumbprint) { $trusted = $true }",
+        "}",
+        "if (!$trusted) {",
+        "    # install/'trust' the certificate",
+        "    if (!(is_admin)) { error \"$app requires admin rights to install certificate\"; break }",
+        "    Write-Host 'Installing certificate' -ForegroundColor Yellow",
+        "    # using 'LocalMachine' instead of 'CurrentUser' so that it can install silently",
+        "    $rootStore = Get-Item 'cert:\\LocalMachine\\Root'",
+        "    $rootStore.Open('ReadWrite')",
+        "    $rootStore.Add($cert)",
+        "    $rootStore.Close()",
+        "}",
+        "",
+        "# Install Appx package",
+        "# note: using '3>$null' to omit warning message. Also, '-SkipEditionCheck' does not work for Appx module",
+        "if ($PSVersionTable.PSVersion.Major -ge 6) { Import-Module Appx -UseWindowsPowershell 3>$null }",
+        "else { Import-Module Appx }",
+        "Add-AppxPackage \"$dir\\maple.appxbundle\""
+    ],
+    "pre_uninstall": [
+        "if ($PSVersionTable.PSVersion.Major -ge 6) { Import-Module Appx -UseWindowsPowershell 3>$null }",
+        "else { Import-Module Appx }",
+        "Get-AppxPackage '56263bdbai.Maple' | Remove-AppxPackage"
+    ],
+    "checkver": {
+        "github": "https://github.com/YtFlow/Maple",
+        "regex": "Maple.App_([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/YtFlow/Maple/releases/download/v$matchHead/Maple.App_$version_x64_Test.zip",
+                "extract_dir": "Maple.App_$version_x64_Test"
+            }
+        }
+    }
+}
