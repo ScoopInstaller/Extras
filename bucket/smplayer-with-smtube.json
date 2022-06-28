@@ -1,0 +1,92 @@
+{
+    "version": "22.2.0.0-smtube21.10.0",
+    "description": "A video player forked from MPV. It can also play Youtube videos, search and download subtitles, and includes other features like a thumbnail generator and audio and video filters.",
+    "homepage": "https://www.smplayer.info/",
+    "license": "GPL-2.0-or-later",
+    "architecture": {
+        "64bit": {
+            "url": [
+                "https://www.fosshub.com/SMPlayer.html?dwl=smplayer-portable-22.2.0.0-x64.7z",
+                "https://sourceforge.net/projects/smtube/files/SMTube/21.10.0/smtube-21.10.0-x64.exe#/smtube.7z"
+            ],
+            "hash": [
+                "c054f61eddc3ac97b0ce03c3001e6e080a9e6543de999a071df17e2a7fe3618d",
+                "sha1:776c7fc98370c22c1bbd640cb93e2a7d28950958"
+            ]
+        },
+        "32bit": {
+            "url": [
+                "https://www.fosshub.com/SMPlayer.html?dwl=smplayer-portable-22.2.0.0-win32-qt5.6.7z",
+                "https://sourceforge.net/projects/smtube/files/SMTube/21.10.0/smtube-21.10.0-win32-qt5.6.exe#/smtube.7z"
+            ],
+            "hash": [
+                "be10cdc34a9b6282e1e91e9b789825a11939576750f1d5be839e2a4892532402",
+                "sha1:b854f382c3440a1631dcfe9b3caa82cef688e123"
+            ]
+        }
+    },
+    "pre_install": [
+        "Remove-Item \"$dir\\`$PLUGINSDIR\" -Force -Recurse",
+        "Rename-Item \"$dir\\SMPlayer.html\" 'dl.7z'",
+        "Expand-7zipArchive \"$dir\\dl.7z\" \"$dir\" -ExtractDir 'smplayer-portable' -Removal | Out-Null",
+        "'hdpi.ini', 'playlist.ini', 'favorites.m3u8', 'radio.m3u8', 'tv.m3u8' | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "}",
+        "# manually persist 'smplayer.ini' because SMPlayer does not follow symlink for the file",
+        "if (Test-Path \"$persist_dir\\smplayer.ini\") { Copy-Item \"$persist_dir\\smplayer.ini\" \"$dir\\smplayer.ini\" }"
+    ],
+    "pre_uninstall": "Copy-Item \"$dir\\smplayer.ini\" \"$persist_dir\\smplayer.ini\"",
+    "shortcuts": [
+        [
+            "smplayer.exe",
+            "SMPlayer"
+        ],
+        [
+            "smtube.exe",
+            "SMTube"
+        ]
+    ],
+    "persist": [
+        "screenshots",
+        "hdpi.ini",
+        "playlist.ini",
+        "favorites.m3u8",
+        "radio.m3u8",
+        "tv.m3u8"
+    ],
+    "checkver": {
+        "script": [
+            "# matching from Extras bucket to avoid mangling FossHub mode in the script",
+            "$url1 = 'https://raw.githubusercontent.com/ScoopInstaller/Extras/master/bucket/smplayer.json'",
+            "$regex1 = 'smplayer-portable-([\\d.]+)-win32-qt([\\d.]+)\\.7z'",
+            "$cont = (Invoke-WebRequest $url1).Content | ConvertFrom-Json",
+            "if (!($cont.architecture.'32bit'.url -match $regex1)) { error \"Could not match '$regex1' on '$url1'\"; break }",
+            "$smplayer_ver = $matches[1]; $smplayer_qtver = $matches[2]",
+            "",
+            "$url2 = 'https://api.github.com/repos/smplayer-dev/smtube/releases/latest'",
+            "$regex2 = 'smtube-([\\d.]+)-win32-qt([\\d.]+)\\.exe'",
+            "$cont = (Invoke-WebRequest $url2).Content",
+            "if (!($cont -match $regex2)) { error \"Could not match '$regex2' on '$url2'\"; break }",
+            "$smtube_ver = $matches[1]; $smtube_qtver = $matches[2]",
+            "Write-Output $smplayer_ver $smplayer_qtver $smtube_ver  $smtube_qtver"
+        ],
+        "regex": "(?<smplayerver>[\\d.]+) (?<smplayerqtver>[\\d.]+) (?<smtubever>[\\d.]+) (?<smtubeqtver>[\\d.]+)",
+        "replace": "${smplayerver}-smtube${smtubever}"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": [
+                    "https://www.fosshub.com/SMPlayer.html?dwl=smplayer-portable-$matchSmplayerver-x64.7z",
+                    "https://sourceforge.net/projects/smtube/files/SMTube/$matchSmtubever/smtube-$matchSmtubever-x64.exe#/smtube.7z"
+                ]
+            },
+            "32bit": {
+                "url": [
+                    "https://www.fosshub.com/SMPlayer.html?dwl=smplayer-portable-$matchSmplayerver-win32-qt$matchSmplayerqtver.7z",
+                    "https://sourceforge.net/projects/smtube/files/SMTube/$matchSmtubever/smtube-$matchSmtubever-win32-qt$matchSmtubeqtver.exe#/smtube.7z"
+                ]
+            }
+        }
+    }
+}
