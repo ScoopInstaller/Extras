@@ -17,7 +17,12 @@
     ],
     "persist": "PortableSettings",
     "checkver": {
-        "url": "https://raw.githubusercontent.com/RickStrahl/MarkdownMonsterReleases/master/CurrentRelease/MarkdownMonster_Version.xml",
+        "script": [
+            "$url = 'https://raw.githubusercontent.com/RickStrahl/MarkdownMonsterReleases/master/CurrentRelease/MarkdownMonster_Version.xml'",
+            "$cont = (Invoke-WebRequest $url).Content",
+            "$cont = $cont.Replace(\"`u{FFFD}\", '').Replace(\"`u{0}\", '')",
+            "Write-Output $cont"
+        ],
         "xpath": "/VersionInfo/Version"
     },
     "autoupdate": {
