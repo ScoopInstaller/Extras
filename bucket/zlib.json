@@ -22,7 +22,7 @@
     "pre_uninstall": [
         "if ($cmd -eq 'uninstall') {",
         "    $key = Get-ItemProperty -Path 'HKLM:\\SOFTWARE\\GnuWin32\\Zlib' -Name 'InstallPath' -ErrorAction SilentlyContinue",
-        "    if ($key.InstallPath.Contains('apps\\zlib\\current')) {",
+        "    if ($key -and $key.InstallPath.Contains('apps\\zlib\\current')) {",
         "        if (!(is_admin)) { error \"$app requies admin rights to unregister the installation path\"; break }",
         "        Invoke-ExternalCommand reg -ArgumentList @('import', \"$dir\\unregister.reg\") -RunAs | Out-Null",
         "    }",
