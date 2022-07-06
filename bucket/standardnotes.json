@@ -1,15 +1,19 @@
 {
-    "version": "3.22.11",
+    "version": "3.23.21",
     "description": "A safe place for your notes, thoughts, and life's work.",
     "homepage": "https://standardnotes.org/",
     "license": "AGPL-3.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/standardnotes/desktop/releases/download/v3.22.11/standard-notes-3.22.11-win-x64.exe#/dl.7z",
-            "hash": "sha512:2bb8d06904b4aab3107551a82d92a51c4d2466609b253332f90ff16358f6a7aaa8963480a42d0c237f24773e04bbaa2c52125672515cf9c5f83a1c6905d93aec",
-            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+            "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.23.21/standard-notes-3.23.21-win-x64.exe#/dl.7z",
+            "hash": "sha512:5d4f85c6b7258352848895b74071c4aee2c160fa0bcbcc517b068268db38d38053d672455467261dd90cf605335ba0492cb5a7ba8355012bc7923fc4825d8bab"
+        },
+        "32bit": {
+            "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@3.23.21/standard-notes-3.23.21-win-ia32.exe#/dl.7z",
+            "hash": "sha512:4a07647727228bf84736b1357f80cc545cc333e4b995e8b1cd0e7a66239c2a7ed0126537424941b39ddcaf4c8f7275a5e5a411a7358c870223da38fc8d1f2267"
         }
     },
+    "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-$($architecture.Substring(0,2)).7z\" \"$dir\"",
     "post_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Recurse",
     "shortcuts": [
         [
@@ -18,17 +22,21 @@
         ]
     ],
     "checkver": {
-        "github": "https://github.com/standardnotes/desktop"
+        "url": "https://api.github.com/repos/standardnotes/app/releases/latest",
+        "regex": "@standardnotes/desktop@([\\d.]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/standardnotes/desktop/releases/download/v$version/standard-notes-$version-win-x64.exe#/dl.7z",
-                "hash": {
-                    "url": "$baseurl/latest.yml",
-                    "regex": "(?is)$basename.*?$base64"
-                }
+                "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@$version/standard-notes-$version-win-x64.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://github.com/standardnotes/app/releases/download/@standardnotes/desktop@$version/standard-notes-$version-win-ia32.exe#/dl.7z"
             }
+        },
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "(?is)$basename.*?$base64"
         }
     }
 }
