@@ -3,6 +3,10 @@
     "description": "Allows to get the best experience while using a DualShock 4 on PC.",
     "homepage": "https://ryochan7.github.io/ds4windows-site/",
     "license": "MIT",
+    "notes": "ViGEmBus is required for DS4Windows to work. You can install it within the app.",
+    "suggest": {
+        ".NET Core Runtime": "extras/windowsdesktop-runtime"
+    },
     "architecture": {
         "64bit": {
             "url": "https://github.com/Ryochan7/DS4Windows/releases/download/v3.1.0/DS4Windows_3.1.0_x64.zip",
@@ -16,8 +20,6 @@
     "extract_dir": "DS4Windows",
     "pre_install": [
         "$conf = @(",
-        "    @{'Profiles.xml' = '<?xml version=\"1.0\" encoding=\"utf-8\"?><Profile><CheckWhen>0</CheckWhen></Profile>' }",
-        "    @{'Auto Profiles.xml' = '<?xml version=\"1.0\" encoding=\"utf-8\"?><Programs />' }",
         "    @{'Actions.xml' = @'",
         "<?xml version=\"1.0\" encoding=\"utf-8\"?>",
         "<Actions>",
@@ -28,10 +30,21 @@
         "    </Action>",
         "</Actions>",
         "'@ }",
+        "    @{'Auto Profiles.xml' = '<?xml version=\"1.0\" encoding=\"utf-8\"?><Programs />' }",
+        "    @{'ControllerConfigs.xml' = '<?xml version=\"1.0\" encoding=\"utf-8\"?><Controllers />' }",
+        "    @{'LinkedProfiles.xml' = '<?xml version=\"1.0\" encoding=\"utf-8\"?><LinkedControllers />' }",
+        "    @{'OutputSlots' = '<?xml version=\"1.0\" encoding=\"utf-8\"?><OutputSlots />' }",
+        "    @{'Profiles.xml' = '<?xml version=\"1.0\" encoding=\"utf-8\"?><Profile><CheckWhen>0</CheckWhen></Profile>' }",
         ")",
+        "",
+        "# Create default files",
         "foreach ($k in $conf.Keys) {",
-        "    if (-not (Test-Path \"$persist_dir\\$k\")) { Set-Content \"$dir\\$k\" $conf.$k -Encoding Ascii }",
+        "    if (!(Test-Path \"$persist_dir\\$k\")) { ",
+        "        Set-Content \"$dir\\$k\" $conf.$k -Encoding Ascii",
+        "    }",
         "}",
+        "",
+        "# Delete updater",
         "if (Test-Path \"$dir\\DS4Updater.exe\") { Remove-Item \"$dir\\DS4Updater.exe\" -Force }"
     ],
     "shortcuts": [
@@ -44,6 +57,9 @@
         "Profiles",
         "Actions.xml",
         "Auto Profiles.xml",
+        "ControllerConfigs.xml",
+        "LinkedProfiles.xml",
+        "OutputSlots.xml",
         "Profiles.xml"
     ],
     "checkver": {
