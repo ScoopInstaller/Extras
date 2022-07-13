@@ -6,8 +6,8 @@
     "suggest": {
         "ffmpeg": [
             "ffmpeg",
-            "ffmpeg-nightly",
-            "ffmpeg-shared"
+            "ffmpeg-shared",
+            "versions/ffmpeg-nightly"
         ]
     },
     "url": "https://www.videohelp.com/download/FFQueue_1_7_59.7z",
@@ -23,12 +23,14 @@
             "FFQueue Documentation"
         ]
     ],
-    "pre_install": [
-        "$manifest.persist | ForEach-Object {",
-        "    if (-not (Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" -ItemType file | Out-Null }",
+    "pre_install": "if (Test-Path \"$persist_dir\\ffqueue.cfg\") { Copy-Item \"$persist_dir\\ffqueue.cfg\" \"$dir\\\" }",
+    "pre_uninstall": [
+        "# Manually persist ffqueue.cfg",
+        "if (Test-Path \"$dir\\ffqueue.cfg\") {",
+        "    ensure \"$persist_dir\" | Out-Null",
+        "    Copy-Item \"$dir\\ffqueue.cfg\" \"$persist_dir\\\"",
         "}"
     ],
-    "persist": "ffqueue.cfg",
     "checkver": {
         "url": "https://www.videohelp.com/software/FFQueue",
         "regex": "FFQueue ([\\d.]+)"
