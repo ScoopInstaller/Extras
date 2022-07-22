@@ -9,7 +9,17 @@
     "url": "https://webcdn.m.qq.com/spcmgr/download/WeChatSetup_3.7.5.23.exe#/dl.7z",
     "hash": "c91856d0721b09a10c7b37013ca93cabb5e618ea768e66a70141052930c0c351",
     "installer": {
-        "script": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\`$_15_\", \"$dir\\`$R5\" -Force -Recurse"
+        "script": [
+            "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\`$_15_\", \"$dir\\`$R5\" -Force -Recurse",
+            "$configpath = \"$env:APPDATA\\Tencent\\WeChat\\All Users\\config\"",
+            "ensure \"$configpath\" | Out-Null",
+            "Set-Content -NoNewline -Path \"$configpath\\3ebffe94.ini\" -Value \"$persist_dir\"",
+            "$regpath = \"HKCU:Software\\Tencent\\WeChat\"",
+            "if (!(Test-Path \"$regpath\")) {",
+            "    New-Item -Path \"$regpath\" -Type Directory -Force | Out-Null",
+            "}",
+            "New-ItemProperty -Path $regpath -Name \"FileSavePath\" -Value \"$persist_dir\" -Force | Out-Null"
+        ]
     },
     "shortcuts": [
         [
@@ -17,6 +27,13 @@
             "WeChat"
         ]
     ],
+    "persist": "WeChat Files",
+    "uninstaller": {
+        "script": [
+            "Remove-Item -Path \"$env:APPDATA\\Tencent\\WeChat\\All Users\\config\\3ebffe94.ini\" -Force | Out-Null",
+            "Remove-ItemProperty -Path \"HKCU:Software\\Tencent\\WeChat\" -Name \"FileSavePath\" -Force | Out-Null"
+        ]
+    },
     "checkver": {
         "url": "https://pc.qq.com/detail/8/detail_11488.html",
         "regex": "WeChatSetup_([\\d.]+)\\.exe"
