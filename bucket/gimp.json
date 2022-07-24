@@ -21,18 +21,14 @@
             "   Get-ChildItem -Filter '*,1*' -Recurse | Remove-Item",
             "   Get-ChildItem -Filter '*,*' -Recurse | Rename-Item -NewName { $_.name -Replace ',\\d','' }",
             "}",
-            "$defpath = \"`nPATH=`${gimp_installation_dir}\\bin`n\"",
-            "$defenv = Get-Content 'lib\\gimp\\2.0\\environ\\default.env' -Raw",
-            "$defenv += $defpath",
-            "$defenv += \"PYTHONPATH=`${gimp_installation_dir}\\lib\\gimp\\2.0\\python;`${gimp_plug_in_dir}\\plug-ins\\python-console\"",
-            "$defenv | Set-Content 'lib\\gimp\\2.0\\environ\\default.env'",
             "$pyenv = Get-Content 'lib\\gimp\\2.0\\environ\\pygimp.env' -Raw",
             "$pyenv + '__COMPAT_LAYER=HIGHDPIAWARE' | Set-Content 'lib\\gimp\\2.0\\environ\\pygimp.env'",
             "$pyint = Get-Content 'lib\\gimp\\2.0\\interpreters\\pygimp.interp' -Raw",
             "$pyint = $pyint -Replace '(python|python2)=(.*)', \"`$1=$dir\\bin\\pythonw.exe\"",
             "$pyint = $pyint -Replace 'py::python2', 'py::python'",
             "$pyint | Set-Content 'lib\\gimp\\2.0\\interpreters\\pygimp.interp'",
-            "Pop-Location"
+            "Pop-Location",
+            "Copy-Item \"$bucketsdir\\extras\\scripts\\gimp\\default.env\" \"$dir\\lib\\gimp\\2.0\\environ\\\" | Out-Null"
         ]
     },
     "bin": [
