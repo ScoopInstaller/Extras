@@ -9,6 +9,26 @@
     "psmodule": {
         "name": "scoop-completion"
     },
+    "post_install": [
+        "Get-ChildItem -Path \"$dir\" -Filter \"scoop-completion-$version\" -Directory | Remove-Item -Force -Recurse",
+        "Import-Module scoop-completion",
+        "function AddtoProfile([string] $content) {",
+        "    if (!(test-path $profile)) {",
+        "        New-Item -Path $profile -Value \"$content\" -ItemType File -Force | Out-Null",
+        "    } else {",
+        "        Add-Content -Path $profile -Value \"`n$content\" -NoNewLine",
+        "    }",
+        "}",
+        "AddtoProfile 'Import-Module scoop-completion'"
+    ],
+    "uninstaller":{
+        "script":[
+            "function ClearProfile([string] $content) {",
+            "    ((Get-Content -Path $profile -raw) -replace \"[\\r\\n]*$content\",'').trim() | Set-Content $profile -NoNewLine",
+            "}",
+            "ClearProfile 'Import-Module scoop-completion'"
+        ]
+    },
     "checkver": {
         "url": "https://api.github.com/repos/Moeologist/scoop-completion/tags",
         "regex": "tags/v([\\d.]+)"
