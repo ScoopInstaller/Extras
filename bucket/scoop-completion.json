@@ -12,21 +12,15 @@
     "post_install": [
         "Get-ChildItem -Path \"$dir\" -Filter \"scoop-completion-$version\" -Directory | Remove-Item -Force -Recurse",
         "Import-Module scoop-completion",
-        "function AddtoProfile([string] $content) {",
-        "    if (!(test-path $profile)) {",
-        "        New-Item -Path $profile -Value \"$content\" -ItemType File -Force | Out-Null",
-        "    } else {",
-        "        Add-Content -Path $profile -Value \"`n$content\" -NoNewLine",
-        "    }",
-        "}",
-        "AddtoProfile 'Import-Module scoop-completion'"
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name extras) scripts/ModifyPSProfile.psm1)",
+        "AddtoProfile 'Import-Module scoop-completion'",
+        "Remove-Module -Name ModifyPSProfile"
     ],
     "uninstaller":{
         "script":[
-            "function ClearProfile([string] $content) {",
-            "    ((Get-Content -Path $profile -raw) -replace \"[\\r\\n]*$content\",'').trim() | Set-Content $profile -NoNewLine",
-            "}",
-            "ClearProfile 'Import-Module scoop-completion'"
+            "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name extras) scripts/ModifyPSProfile.psm1)",
+            "ClearProfile 'Import-Module scoop-completion'",
+            "Remove-Module -Name ModifyPSProfile"
         ]
     },
     "checkver": {
