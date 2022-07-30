@@ -1,6 +1,6 @@
 #Requires -Version 5.1
 
-function Append-to-Profile {
+function AppendtoProfile {
     <#
     .SYNOPSIS
         Add certain content to PSProfile.
@@ -21,7 +21,7 @@ function Append-to-Profile {
     }
 }
 
-function Remove-from-Profile {
+function RemovefromProfile {
     <#
     .SYNOPSIS
         Remove certain content from PSProfile.
@@ -40,4 +40,4 @@ function Remove-from-Profile {
 
 Export-ModuleMember `
     -Function `
-        Append-to-Profile, Remove-from-Profile
+        AppendtoProfile, RemovefromProfile
