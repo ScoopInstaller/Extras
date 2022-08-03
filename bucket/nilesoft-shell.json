@@ -3,17 +3,29 @@
     "description": "A context menu extender that lets you handpick the items to integrate into Windows File Explorer context menu.",
     "homepage": "https://nilesoft.org/",
     "license": "MIT",
+    "url": "https://nilesoft.org/download/shell.exe",
+    "hash": "c5a85c7416a8b1c5ed47a2ed4bf1b779aa56c5da9bd3ae255d7effe286963826",
+    "innosetup": true,
     "architecture": {
         "64bit": {
-            "url": "https://nilesoft.org/download/shell.zip",
-            "hash": "c5a85c7416a8b1c5ed47a2ed4bf1b779aa56c5da9bd3ae255d7effe286963826"
+            "pre_install": [
+                "if(!(Test-Path \"$persist_dir\\shell.log\")) { New-Item \"$dir\\shell.log\" | Out-Null }",
+                "Move-Item \"$dir\\shell,1.exe\" \"$dir\\shell.exe\"",
+                "Move-Item \"$dir\\shell,1.dll\" \"$dir\\shell.dll\"",
+                "Remove-Item \"$dir\\shell,2.*\"",
+                "Remove-Item \"$dir\\shell,3.*\""
+            ]
         },
         "32bit": {
-            "url": "https://nilesoft.org/download/shell-32.zip",
-            "hash": "c5a85c7416a8b1c5ed47a2ed4bf1b779aa56c5da9bd3ae255d7effe286963826"
+            "pre_install": [
+                "if(!(Test-Path \"$persist_dir\\shell.log\")) { New-Item \"$dir\\shell.log\" | Out-Null }",
+                "Move-Item \"$dir\\shell,3.exe\" \"$dir\\shell.exe\"",
+                "Move-Item \"$dir\\shell,3.dll\" \"$dir\\shell.dll\"",
+                "Remove-Item \"$dir\\shell,1.*\"",
+                "Remove-Item \"$dir\\shell,2.*\""
+            ]
         }
     },
-    "pre_install": "if(!(Test-Path \"$persist_dir\\shell.log\")) { New-Item \"$dir\\shell.log\" | Out-Null }",
     "uninstaller": {
         "script": [
             "if ($cmd -eq 'uninstall') {",
@@ -42,13 +54,6 @@
         "regex": "Shell version ([\\d.]+)</h5>"
     },
     "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://nilesoft.org/download/shell.zip"
-            },
-            "32bit": {
-                "url": "https://nilesoft.org/download/shell-32.zip"
-            }
-        }
+        "url": "https://nilesoft.org/download/shell.exe"
     }
 }
