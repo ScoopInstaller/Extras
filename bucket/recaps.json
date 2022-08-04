@@ -1,0 +1,47 @@
+{
+    "version": "0.9.0.3480",
+    "description": "Switch keyboard layouts using Caps Lock (or other keys)",
+    "homepage": "https://recaps.sourceforge.io/",
+    "license": "GPL-3.0-or-later",
+    "notes": [
+        "Add Recaps to startup by running:",
+        "reg import \"$dir\\add-startup.reg\""
+    ],
+    "innosetup": true,
+    "pre_install": [
+        "if ($architecture -eq '64bit') {",
+        "    Rename-Item \"$dir\\recaps,1.exe\" 'recaps.exe'",
+        "    Remove-Item \"$dir\\recaps,2.exe\"",
+        "} elseif ($architecture -eq '32bit') {",
+        "    Rename-Item \"$dir\\recaps,2.exe\" 'recaps.exe'",
+        "    Remove-Item \"$dir\\recaps,1.exe\"",
+        "}"
+    ],
+    "post_install": [
+        "$dirpath = $dir.Replace('\\', '\\\\')",
+        "'add-startup.reg', 'remove-startup.reg' | ForEach-Object {",
+        "    if (Test-Path \"$bucketsdir\\extras\\scripts\\recaps\\$_\") {",
+        "        $content = Get-Content \"$bucketsdir\\extras\\scripts\\recaps\\$_\"",
+        "        $content = $content.Replace('$dir', $dirpath)",
+        "        if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "        $content | Set-Content -Path \"$dir\\$_\"",
+        "    }",
+        "}"
+    ],
+    "pre_uninstall": "if ($cmd -eq 'uninstall') { reg import \"$dir\\remove-startup.reg\" }",
+    "url": "https://downloads.sourceforge.net/project/recaps/0.9.0.3480/ReCaps_V0.9.0.3480.exe#/dl.exe",
+    "hash": "sha1:7adf7ab338d32a84516a8769572bd5da3ce3e748",
+    "shortcuts": [
+        [
+            "recaps.exe",
+            "Recaps"
+        ]
+    ],
+    "checkver": {
+        "url": "https://sourceforge.net/projects/recaps/files/",
+        "regex": "files/([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://downloads.sourceforge.net/project/recaps/0.9.0.3480/ReCaps_V0.9.0.3480.exe#/dl.exe"
+    }
+}
