@@ -7,13 +7,11 @@
     "hash": "18ecc7cac987db5677ee0e5d0c5418ee0895c05e74168e7032a3490e5e5ea4a7",
     "depends": "lessmsi",
     "pre_install": [
-        "New-Item \"$dir\\installer\" -ItemType Directory | Out-Null",
-        "Invoke-ExternalCommand \"$dir\\dl.exe\" -ArgumentList \"/extract:`\"$dir\\installer`\"\" | Out-Null",
+        "Invoke-ExternalCommand \"$dir\\dl.exe\" -ArgumentList \"/extract:`\"$dir`\"\" | Out-Null",
         "# Workaround for #8436",
-        "Invoke-ExternalCommand lessmsi -ArgumentList @('x', \"`\"$dir\\installer\\Brackets.msi`\"\", \"`\"$dir\\`\"\") -LogPath \"$dir\\msi.log\" | Out-Null",
-        "if (Get-Process 'msiexec' -ErrorAction SilentlyContinue) { Start-Sleep -Seconds 2 }",
+        "Invoke-ExternalCommand lessmsi -ArgumentList @('x', \"$dir\\Brackets.msi\", \"$dir\\\") -LogPath \"$dir\\msi.log\" | Out-Null",
         "Move-Item \"$dir\\SourceDir\\APPDIR\\*\" \"$dir\\\"",
-        "Remove-Item \"$dir\\SourceDir\", \"$dir\\installer\", \"$dir\\dl.exe\", \"$dir\\msi.log\" -Force -Recurse"
+        "# Remove-Item \"$dir\\SourceDir\", \"$dir\\Brackets.msi\", \"$dir\\Brackets.aiui\", \"$dir\\Brackets*.cab\", \"$dir\\dl.exe\", \"$dir\\msi.log\" -Force -Recurse"
     ],
     "bin": "brackets.exe",
     "shortcuts": [
