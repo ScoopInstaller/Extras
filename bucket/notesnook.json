@@ -1,0 +1,40 @@
+{
+    "version": "2.1.4",
+    "description": "Open-source end-to-end encrypted note taking alternative to Evernote.",
+    "homepage": "https://notesnook.com/",
+    "license": {
+        "identifier": "Shareware",
+        "url": "https://notesnook.com/tos"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/streetwriters/notesnook/releases/download/v2.1.4/notesnook_x64.exe#/dl.7z",
+            "hash": "sha512:c878331b227bfdd7de7b7a02412b6ea6d2920f1834a8580d5d6f2725e0cdcac8d273aa55ad045d001d9add856c0e6896a386f355655663563ea053ddcb53d755"
+        }
+    },
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\" | Out-Null",
+        "Remove-Item \"$dir\\`$*\" -Force -Recurse"
+    ],
+    "shortcuts": [
+        [
+            "Notesnook.exe",
+            "Notesnook"
+        ]
+    ],
+    "checkver": {
+        "url": "https://api.github.com/repos/streetwriters/notesnook/releases",
+        "regex": "Notesnook Desktop v([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/streetwriters/notesnook/releases/download/v$version/notesnook_x64.exe#/dl.7z"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "(?sm)$basename.*?$base64"
+        }
+    }
+}
