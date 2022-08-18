@@ -3,14 +3,19 @@
     "description": "Spring Tools for Eclipse",
     "homepage": "https://spring.io/tools/sts",
     "license": "EPL-1.0",
+    "depends": "7zip19.00-helper",
     "notes": "For Windows 32bit, please use \"sts396\" in versions bucket.",
     "architecture": {
         "64bit": {
-            "url": "https://download.springsource.com/release/STS4/4.15.3.RELEASE/dist/e4.24/spring-tool-suite-4-4.15.3.RELEASE-e4.24.0-win32.win32.x86_64.zip",
+            "url": "https://download.springsource.com/release/STS4/4.15.3.RELEASE/dist/e4.24/spring-tool-suite-4-4.15.3.RELEASE-e4.24.0-win32.win32.x86_64.zip#/dl.zip_",
             "hash": "sha1:16cf2ad81b4f16f16e275cef994119dd8356da95"
         }
     },
-    "extract_dir": "sts-4.15.3.RELEASE",
+    "pre_install": [
+        "Invoke-ExternalCommand 7z1900-helper -ArgumentList @('x', '-bso0', \"$dir\\dl.zip_\", \"-o$dir\") | Out-Null",
+        "Move-Item \"$dir\\sts-$version.RELEASE\\*\" \"$dir\\\"",
+        "Remove-Item \"$dir\\dl.zip_\""
+    ],
     "shortcuts": [
         [
             "SpringToolSuite4.exe",
@@ -24,12 +29,11 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.springsource.com/release/STS4/$version.RELEASE/dist/e$matchShort/spring-tool-suite-4-$version.RELEASE-e$matchEclipse-win32.win32.x86_64.zip",
+                "url": "https://download.springsource.com/release/STS4/$version.RELEASE/dist/e$matchShort/spring-tool-suite-4-$version.RELEASE-e$matchEclipse-win32.win32.x86_64.zip#/dl.zip_",
                 "hash": {
                     "url": "$url.sha1"
                 }
             }
-        },
-        "extract_dir": "sts-$version.RELEASE"
+        }
     }
 }
