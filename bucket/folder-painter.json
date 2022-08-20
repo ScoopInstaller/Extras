@@ -27,6 +27,21 @@
     "url": "https://www.sordum.org/files/download/folder-painter/FolderPainter.zip",
     "hash": "73677d9c11cb833a3ef03846fc610f8accc64b756ebe07b51eda07f298f1c10c",
     "extract_dir": "FolderPainter",
+    "pre_uninstall": [
+        "# Unregister right-click context menu if user uninstalls the app",
+        "$reg_paths = @(",
+        "  'HKLM:\\SOFTWARE\\Classes\\Directory\\shell\\zFolderPainter_01',",
+        "  'HKLM:\\SOFTWARE\\Classes\\Directory\\shell\\zFolderPainter_02'",
+        ")",
+        "if ($cmd -eq 'uninstall') {",
+        "  $reg_paths | ForEach-Object {",
+        "  if (Test-Path $_) {",
+        "      if (!(is_admin)) { error \"$app requires admin rights to unregister right-click context menu\"; break }",
+        "      Remove-Item $_ -Force -Recurse",
+        "    }",
+        "  }",
+        "}"
+    ],
     "checkver": {
         "regex": "Folder Painter v([\\d.]+)"
     },
