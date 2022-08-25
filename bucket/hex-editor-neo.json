@@ -1,5 +1,5 @@
 {
-    "version": "6.54.03.7295",
+    "version": "7.03.00.7939",
     "description": "Binary file editor optimized for large files",
     "homepage": "https://www.hhdsoftware.com/free-hex-editor",
     "license": {
@@ -7,7 +7,7 @@
         "url": "https://docs.hhdsoftware.com/pdf/hex"
     },
     "url": "https://www.hhdsoftware.com/download/free-hex-editor-neo.exe#/dl.7z_",
-    "hash": "c77678af9da730c9957e631db2dce746b62fdd97c224443ebb2c4a26c1f02aba",
+    "hash": "1118ad726b29048cb4f987a8b8c641642753543b98c278f8442116a2addcc1a5",
     "pre_install": [
         "if ($architecture -eq '64bit') { $arch = 'x64' }",
         "else { $arch = 'x86' }",
@@ -17,11 +17,9 @@
         "$archive = Get-ChildItem \"$dir\\extract\\*.7z\" | Select -First 1 -ExpandProperty FullName",
         "Expand-7zipArchive \"$archive\" \"$dir\\extract2\" -ExtractDir 'Components' | Out-Null",
         "",
-        "# 'Sample Structures' and 'Tool Window Layouts' ",
-        "New-Item \"$dir\\Sample Structures\", \"$dir\\Tool Window Layouts\" -ItemType Directory | Out-Null",
+        "# Sample Structures",
+        "New-Item \"$dir\\Sample Structures\" -ItemType Directory | Out-Null",
         "Move-Item \"$dir\\extract2\\SViewerSamples\\*\" \"$dir\\Sample Structures\\\"",
-        "Move-Item \"$dir\\extract2\\musthavelayouts\\*\" \"$dir\\Tool Window Layouts\\\"",
-        "Move-Item \"$dir\\extract2\\wslayouts\\*\" \"$dir\\Tool Window Layouts\\\"",
         "",
         "# Other Components",
         "Get-ChildItem \"$dir\\extract2\" | Select -ExpandProperty FullName | ForEach-Object {",
@@ -29,7 +27,7 @@
         "    if(Test-Path \"$_\\$arch\\*\") { Move-Item \"$_\\$arch\\*\" \"$dir\\\" }",
         "    Get-ChildItem \"$_\" -File | Select -ExpandProperty FullName | ForEach-Object { Move-Item \"$_\" \"$dir\\\" }",
         "}",
-        "Remove-Item \"$dir\\dl.7z_\", \"$dir\\extract\", \"$dir\\extract2\" -Force -Recurse"
+        "# Remove-Item \"$dir\\dl.7z_\", \"$dir\\extract\", \"$dir\\extract2\" -Force -Recurse"
     ],
     "bin": "HexFrame.exe",
     "shortcuts": [
@@ -38,6 +36,7 @@
             "Hex Editor Neo"
         ]
     ],
+    "persist": "Localization",
     "checkver": {
         "url": "https://www.hhdsoftware.com/free-hex-editor/history",
         "regex": "([\\d.]+)</span>"

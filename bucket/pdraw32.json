@@ -1,0 +1,39 @@
+{
+    "version": "1.1.147",
+    "description": "Tool for DNA cloning, sequence analysis and plasmid/DNA plotting",
+    "homepage": "http://www.acaclone.com/",
+    "license": {
+        "identifier": "Shareware",
+        "url": "http://www.acaclone.com/info/licensing.htm"
+    },
+    "url": "http://www.acaclone.com/download/pDRAW32setup147.zip",
+    "hash": "74611dfed52624713a983b6aed513af4f843e1d3e9d18a683fa34a728e5f07ad",
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\pDRAW32.CAB\" \"$dir\" -Removal | Out-Null",
+        "Remove-Item \"$dir\\setup*.exe\", \"$dir\\setup.lst\", \"$dir\\ST6UNST.EXE\"",
+        "",
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+        "'COMDLG32.OCX', 'MSCOMCTL.OCX', 'RICHTX32.OCX', 'TABCTL32.OCX' | ForEach-Object {",
+        "    Invoke-ExternalCommand regsvr32 -ArgumentList @(\"$dir\\$_\", '/s') -RunAs | Out-Null",
+        "}"
+    ],
+    "pre_uninstall": [
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+        "'COMDLG32.OCX', 'MSCOMCTL.OCX', 'RICHTX32.OCX', 'TABCTL32.OCX' | ForEach-Object {",
+        "    Invoke-ExternalCommand regsvr32 -ArgumentList @('/u', \"$dir\\$_\", '/s') -RunAs | Out-Null",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "pDRAW32.exe",
+            "pDRAW32"
+        ]
+    ],
+    "checkver": {
+        "url": "http://www.acaclone.com/download/install.htm",
+        "regex": "pDRAW32 installation - revision ([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "http://www.acaclone.com/download/pDRAW32setup$patchVersion.zip"
+    }
+}

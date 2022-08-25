@@ -1,23 +1,26 @@
 {
-    "version": "8.6.0",
+    "version": "8.8.0",
     "description": "A free file archiver utility, based on Open Source technologies",
     "homepage": "https://www.peazip.org",
     "license": "LGPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://dotsrc.dl.osdn.net/osdn/peazip/77146/peazip_portable-8.6.0.WIN64.zip",
-            "hash": "4b42bc2121dbadc895140cd2ef21a332a0b51f328907f93d660ee598b8d1bf20",
-            "extract_dir": "peazip_portable-8.6.0.WIN64"
+            "url": "https://dotsrc.dl.osdn.net/osdn/peazip/77653/peazip_portable-8.8.0.WIN64.zip",
+            "hash": "5ab7ee2d52ec718bb70bc8b81f88079778cfa4b88541d5f75912fca3812042b9",
+            "extract_dir": "peazip_portable-8.8.0.WIN64"
         },
         "32bit": {
-            "url": "https://dotsrc.dl.osdn.net/osdn/peazip/77146/peazip_portable-8.6.0.WINDOWS.zip",
-            "hash": "1b7e113db76e08209d0c574540d9fdbefa7af08a051bc99cb286c4d14b5991c5",
-            "extract_dir": "peazip_portable-8.6.0.WINDOWS"
+            "url": "https://dotsrc.dl.osdn.net/osdn/peazip/77653/peazip_portable-8.8.0.WINDOWS.zip",
+            "hash": "8d497daa2c42faff82f61c6e7d44be9adfc607e546e4f0c2483f6cb4eca0c130",
+            "extract_dir": "peazip_portable-8.8.0.WINDOWS"
         }
     },
     "pre_install": [
-        "if(!(Test-Path \"$persist_dir\\res\\bookmarks.txt\")) { New-Item \"$dir\\res\\bookmarks.txt\" | Out-Null }",
-        "if(!(Test-Path \"$persist_dir\\res\\custedit.txt\")) { New-Item \"$dir\\res\\custedit.txt\" | Out-Null }"
+        "$manifest.persist | ForEach-Object {",
+        "    if ([io.path]::GetExtension($_)) {",
+        "        if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "    }",
+        "}"
     ],
     "bin": "peazip.exe",
     "shortcuts": [

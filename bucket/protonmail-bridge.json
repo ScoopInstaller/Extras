@@ -1,19 +1,22 @@
 {
-    "version": "2.1.3",
+    "version": "2.2.2",
     "description": "Bridge app that allows to users to use their preferred desktop mail client (e.g. Microsoft Outlook, Apple Mail, Mozilla Thunderbird), while benefiting from Proton Mail’s end-to-end encryption.",
     "homepage": "https://proton.me/mail/bridge",
     "license": "GPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/ProtonMail/proton-bridge/releases/download/v2.1.3/Bridge-Installer.exe#/dl.exe",
-            "hash": "ddfaa8f2cbf81d8d6d4bacee53eb042eb8e068b878973d1b1b96a01022608e28"
+            "url": "https://github.com/ProtonMail/proton-bridge/releases/download/v2.2.2/Bridge-Installer.exe#/dl.exe",
+            "hash": "a59a5ac931e84569180168140062109ccbf49e226c6a55106fe79a717b71cc58"
         }
     },
     "pre_install": [
-        "New-Item \"$dir\\extract\" -ItemType Directory | Out-Null",
-        "Invoke-ExternalCommand \"$dir\\dl.exe\" -ArgumentList (\"/extract:`\"$dir\\extract`\"\") | Out-Null",
-        "Expand-MsiArchive \"$dir\\extract\\Bridge-Installer.msi\" \"$dir\" | Out-Null",
-        "Remove-Item \"$dir\\dl.exe\", \"$dir\\extract\" -Force -Recurse"
+        "Invoke-ExternalCommand \"$dir\\dl.exe\" -ArgumentList ('/extract') | Out-Null",
+        "Expand-MsiArchive \"$dir\\Bridge-Installer.msi\" \"$dir\" | Out-Null",
+        "if (get_config 'MSIEXTRACT_USE_LESSMSI' $false) {",
+        "    Move-Item \"$dir\\APPDIR\\*\" \"$dir\\\"",
+        "    Remove-Item \"$dir\\APPDIR\"",
+        "}",
+        "Remove-Item \"$dir\\dl.exe\", \"$dir\\Bridge-Installer.msi\", \"$dir\\Bridge-Installer.aiui\", \"$dir\\Bridge-Installer*.cab\" -Force -Recurse"
     ],
     "pre_uninstall": "Stop-Process -Name 'proton-bridge' -ErrorAction SilentlyContinue",
     "shortcuts": [

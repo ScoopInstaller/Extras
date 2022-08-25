@@ -20,7 +20,18 @@
     "pre_install": [
         "if ([Environment]::OSVersion.Version.Major -lt 10) { error 'Windows 10 is required since version 2.4.8. Use \"versions/openvpn-w7\" instead'; break }",
         "if (-not (is_admin)) { error 'Administrator privileges are needed for installation'; break }",
-        "Invoke-ExternalCommand msiexec -ArgumentList @('/i', \"`\"$dir\\setup.msi_`\"\", \"PRODUCTDIR=`\"$dir`\"\", 'ADDLOCAL=OpenVPN.GUI,OpenVPN.Service,OpenVPN.Documentation,OpenVPN.SampleCfg,OpenSSL,EasyRSA,OpenVPN,OpenVPN.GUI.OnLogon,Drivers.TAPWindows6,Drivers,Drivers.Wintun', '/passive') -RunAs | Out-Null"
+        "Invoke-ExternalCommand msiexec -ArgumentList @('/i', \"`\"$dir\\setup.msi_`\"\", \"PRODUCTDIR=`\"$dir`\"\", 'ADDLOCAL=OpenVPN.GUI,OpenVPN.Service,OpenVPN.Documentation,OpenVPN.SampleCfg,OpenSSL,EasyRSA,OpenVPN,OpenVPN.GUI.OnLogon,Drivers.TAPWindows6,Drivers,Drivers.Wintun', '/passive') -RunAs | Out-Null",
+        "if (Test-Path \"$persist_dir\\config\") { Copy-Item \"$persist_dir\\config\" \"$dir\\\" -Force -Recurse }",
+        "else { Copy-Item \"$dir\\sample-config\\*\" \"$dir\\config\\\" }",
+        "Remove-Item \"$Env:Public\\Desktop\\OpenVPN*.lnk\""
+    ],
+    "pre_uninstall": [
+        "# Persist manually because the uninstaller deletes the 'config' folder",
+        "if (Test-Path \"$dir\\config\") {",
+        "    ensure \"$persist_dir\" | Out-Null",
+        "    Copy-Item \"$dir\\config\" \"$persist_dir\\\" -Force -Recurse",
+        "}",
+        "Stop-Process -Name 'openvpn*' -Force -ErrorAction SilentlyContinue"
     ],
     "uninstaller": {
         "script": [
@@ -29,13 +40,6 @@
         ]
     },
     "bin": "bin\\openvpn.exe",
-    "shortcuts": [
-        [
-            "bin\\openvpn-gui.exe",
-            "OpenVPN GUI"
-        ]
-    ],
-    "persist": "config",
     "checkver": {
         "url": "https://openvpn.net/index.php/open-source/downloads.html",
         "regex": "OpenVPN-([\\d.]+)-I602-amd64\\.msi"
