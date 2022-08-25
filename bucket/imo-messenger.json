@@ -11,8 +11,9 @@
     "hash": "f0dc22766c95964bf61e3d53e9bb81a017cb5e21415720f4db0906b052bde5b8",
     "pre_install": [
         "New-Item \"$dir\\extract\" -ItemType Directory | Out-Null",
-        "Invoke-ExternalCommand uniextract -ArgumentList @(\"`\"$dir\\dl.exe`\"\", \"`\"$dir\\extract`\"\", '/silent') | Out-Null",
-        "Expand-MsiArchive \"$dir\\extract\\AttachedContainer\\ImoInstaller.msi\" \"$dir\" -ExtractDir \"imo\\$version\" | Out-Null",
+        "Invoke-ExternalCommand uniextract -ArgumentList @(\"$dir\\dl.exe\", \"$dir\\extract\", '/silent') | Out-Null",
+        "Expand-MsiArchive \"$dir\\extract\\AttachedContainer\\ImoInstaller.msi\" \"$dir\\extract\" | Out-Null",
+        "Move-Item \"$dir\\extract\\imo\\*\\*\" \"$dir\\\"",
         "Remove-Item \"$dir\\dl.exe\", \"$dir\\extract\" -Force -Recurse"
     ],
     "pre_uninstall": "Stop-Process -Name 'ImoDesktopApp' -ErrorAction SilentlyContinue | Out-Null",
