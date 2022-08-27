@@ -98,7 +98,13 @@ function Remove-ProfileContent {
         [string] $Content
     )
 
-    ((Get-Content -Path $PROFILE -raw) -replace "[\r\n]*$Content",'').trim() | Set-Content $PROFILE -NoNewLine
+    $RawProfile = Get-Content -Path $PROFILE -raw
+
+    if ($null -eq $RawProfile) {
+        Return
+    }
+
+    ($RawProfile -replace "[\r\n]*$Content",'').trim() | Set-Content $PROFILE -NoNewLine
 }
 
 Set-Alias AppendtoProfile Add-ProfileContent
