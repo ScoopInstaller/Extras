@@ -5,7 +5,7 @@
     "license": "MIT",
     "notes": [
         "Run following command to import scoop-completion automatically in Powershell:",
-        "$dir\\append-to-profile.ps1"
+        "$dir\\add-profile-content.ps1"
     ],
     "url": "https://github.com/Moeologist/scoop-completion/archive/v0.2.3.zip",
     "hash": "59fcda6e723b2c0bf7430668ccfb57086d82e9472733a01f9f7f9315768b5e5f",
@@ -16,21 +16,23 @@
     "post_install": [
         "Get-ChildItem -Path \"$dir\" -Filter \"scoop-completion-$version\" -Directory | Remove-Item -Force -Recurse",
         "Import-Module scoop-completion",
-        "$ScriptsDir = $(Join-Path $(Find-BucketDirectory -Root -Name extras) scripts/scoop-completion)",
-        "$ModifierPath = $(Join-Path $(Find-BucketDirectory -Root -Name extras) scripts/ModifyPSProfile.psm1)",
-        "'append-to-profile.ps1', 'remove-from-profile.ps1' | ForEach-Object {",
-        "    if ((Test-Path \"$ScriptsDir\\$_\") -and (Test-Path \"$ModifierPath\")) {",
-        "        Copy-Item \"$ScriptsDir\\$_\" \"$dir\\\"",
-        "        $Content = (Get-Content \"$dir\\$_\").Replace('$ModifyPSProfile', \"$ModifierPath\")",
-        "        $content | Set-Content -Path \"$dir\\$_\"",
-        "    } else {",
-        "        Write-Host 'Missing files, please update scoop buckets and reinstall this module again' -ForegroundColor Red",
-        "    }",
+        "$BucketDir = Find-BucketDirectory -Root -Name extras",
+        "$UtilsPath = $BucketDir | Join-Path -ChildPath \"scripts\\ModifyPSProfile.psm1\"",
+        "if (Test-Path $UtilsPath) {",
+        "    Unblock-File $UtilsPath",
+        "    Import-Module $UtilsPath",
+        "    New-ProfileModifier -Type ImportModule -Name scoop-completion -BucketDir $BucketDir",
+        "    New-ProfileModifier -Type RemoveModule -Name scoop-completion -BucketDir $BucketDir",
+        "    Remove-Module ModifyPSProfile",
+        "} else {",
+        "    Write-Host 'Missing files, please update scoop buckets and reinstall this app.' -ForegroundColor Red",
         "}"
     ],
     "pre_uninstall": [
-        "if (($cmd -eq 'uninstall') -and (Test-Path \"$dir\\remove-from-profile.ps1\")) {",
-        "    & \"$dir\\remove-from-profile.ps1\"",
+        "$UtilsPath = Find-BucketDirectory -Root -Name extras | Join-Path -ChildPath \"scripts\\ModifyPSProfile.psm1\"",
+        "if (($cmd -eq 'uninstall') -and (Test-Path \"$dir\\remove-profile-content.ps1\") -and (Test-Path $UtilsPath)) {",
+        "    Unblock-File $UtilsPath",
+        "    & \"$dir\\remove-profile-content.ps1\"",
         "}"
     ],
     "checkver": {
