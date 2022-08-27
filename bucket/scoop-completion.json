@@ -18,8 +18,8 @@
         "Import-Module scoop-completion",
         "$BucketDir = Find-BucketDirectory -Root -Name extras",
         "$UtilsPath = $BucketDir | Join-Path -ChildPath \"scripts\\ModifyPSProfile.psm1\"",
-        "Unblock-File $UtilsPath",
         "if (Test-Path $UtilsPath) {",
+        "    Unblock-File $UtilsPath",
         "    Import-Module $UtilsPath",
         "    New-ProfileModifier -Type ImportModule -Name scoop-completion -BucketDir $BucketDir",
         "    New-ProfileModifier -Type RemoveModule -Name scoop-completion -BucketDir $BucketDir",
@@ -31,6 +31,7 @@
     "pre_uninstall": [
         "$UtilsPath = Find-BucketDirectory -Root -Name extras | Join-Path -ChildPath \"scripts\\ModifyPSProfile.psm1\"",
         "if (($cmd -eq 'uninstall') -and (Test-Path \"$dir\\remove-profile-content.ps1\") -and (Test-Path $UtilsPath)) {",
+        "    Unblock-File $UtilsPath",
         "    & \"$dir\\remove-profile-content.ps1\"",
         "}"
     ],
