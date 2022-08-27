@@ -13,15 +13,20 @@ function New-ProfileModifier {
 
     .PARAMETER BucketDir
         Path of bucket root directory.
+
+    .PARAMETER ModuleName
+        Use this parameter if module name differs from app name.
     #>
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true, Position = 0)]
         [string] $Type,
-        [Parameter(Mandatory = $true, Position = 0)]
+        [Parameter(Mandatory = $true, Position = 1)]
         [string] $Name,
-        [Parameter(Mandatory = $true, Position = 0)]
-        [string] $BucketDir
+        [Parameter(Mandatory = $true, Position = 2)]
+        [string] $BucketDir,
+        [Parameter(Mandatory = $false, Position = 3)]
+        [string] $ModuleName
     )
 
     $SupportedType = @("ImportModule", "RemoveModule")
@@ -31,6 +36,10 @@ function New-ProfileModifier {
         Return
     }
 
+    if (-not($ModuleName)) {
+        $ModuleName = $Name
+    }
+
     $UtilsPath = $BucketDir | Join-Path -ChildPath "\scripts\ModifyPSProfile.psm1"
     $ScoopDir = Split-Path $BucketDir | Split-Path
     $AppDir = $ScoopDir | Join-Path -ChildPath "\apps\$Name\current\"
@@ -38,8 +47,8 @@ function New-ProfileModifier {
     $ImportUtilsCommand = ("Import-Module ", $UtilsPath) -Join("")
     $RemoveUtilsCommand = "Remove-Module -Name ModifyPSProfile"
 
-    $ImportModuleCommand = ("Add-ProfileContent 'Import-Module ", $Name, "'") -Join("")
-    $RemoveModuleCommand = ("Remove-ProfileContent 'Import-Module ", $Name, "'") -Join("")
+    $ImportModuleCommand = ("Add-ProfileContent 'Import-Module ", $ModuleName, "'") -Join("")
+    $RemoveModuleCommand = ("Remove-ProfileContent 'Import-Module ", $ModuleName, "'") -Join("")
 
     switch ($Type) {
         {$_ -eq "ImportModule"} {
