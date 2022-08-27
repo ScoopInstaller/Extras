@@ -76,7 +76,7 @@ function Add-ProfileContent {
         [string] $Content
     )
 
-    if (!(test-path $PROFILE)) {
+    if (-not(test-path $PROFILE)) {
         New-Item -Path $PROFILE -Value "$Content" -ItemType File -Force | Out-Null
     }
     else {
@@ -97,6 +97,10 @@ function Remove-ProfileContent {
         [Parameter(Mandatory = $true, Position = 0)]
         [string] $Content
     )
+
+    if (-not(test-path $PROFILE)) {
+        Return
+    }
 
     $RawProfile = Get-Content -Path $PROFILE -raw
 
