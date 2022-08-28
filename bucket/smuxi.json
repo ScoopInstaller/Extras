@@ -12,7 +12,15 @@
             "Smuxi"
         ]
     ],
-    "pre_install": "if (installed 'gtk-sharp' $global) {Copy-Item \"$(appdir gtk-sharp $global)\\current\\lib\\gtk-sharp-2.0\\*.dll\" \"$dir\\\" } else { error 'Please install `extras/gtk-sharp` first, then reinstall `extras/smuxi`.'}",
+    "pre_install": [
+        "if (installed 'gtk-sharp' $global) {",
+        "    if ($architecture -eq '64bit') { $pg_files = ${Env:ProgramFiles(x86)} }",
+        "    elseif ($architecture -eq '32bit') { $pg_files = $Env:ProgramFiles }",
+        "    Copy-Item \"$pg_files\\GtkSharp\\*\\lib\\gtk-sharp-2.0\\*.dll\" \"$dir\\\"",
+        "} else {",
+        "    error 'Please install `extras/gtk-sharp` first, then reinstall `extras/smuxi`.'",
+        "}"
+    ],
     "checkver": {
         "url": "https://smuxi.im/download/",
         "regex": "smuxi-([\\d.]+)-win32-setup.exe"
