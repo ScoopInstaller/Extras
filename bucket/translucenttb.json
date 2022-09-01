@@ -10,14 +10,13 @@
         }
     },
     "pre_install": [
-        "# '6' can be casted into System.Version under Powershell 6+, but not under Powershell 5",
-        "if($PSVersionTable.PSVersion.Major -ge [Version]::new(6,0,0,0)) {Import-Module Appx -UseWindowsPowershell | Out-Null}",
+        "if($PSVersionTable.PSVersion.Major -ge 6) {Import-Module Appx -UseWindowsPowershell 3>$null | Out-Null}",
         "Add-AppxPackage \"$dir\\TranslucentTB.appinstaller\" -AppInstaller"
     ],
     "uninstaller": {
         "script": [
             "taskkill /F /IM TranslucentTB.exe /FI \"status eq running\" | Out-Null",
-            "if($PSVersionTable.PSVersion.Major -ge 6) {Import-Module Appx -UseWindowsPowershell | Out-Null}",
+            "if($PSVersionTable.PSVersion.Major -ge 6) {Import-Module Appx -UseWindowsPowershell 3>$null | Out-Null}",
             "Get-AppxPackage '28017CharlesMilette.TranslucentTB' | Remove-AppxPackage"
         ]
     },

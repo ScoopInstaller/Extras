@@ -9,27 +9,26 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://repo.anaconda.com/miniconda/Miniconda3-py39_4.12.0-Windows-x86_64.exe",
+            "url": "https://repo.anaconda.com/miniconda/Miniconda3-py39_4.12.0-Windows-x86_64.exe#/setup.exe",
             "hash": "1acbc2e8277ddd54a5f724896c7edee112d068529588d944702966c867e7e9cc"
         },
         "32bit": {
-            "url": "https://repo.anaconda.com/miniconda/Miniconda3-py39_4.12.0-Windows-x86.exe",
+            "url": "https://repo.anaconda.com/miniconda/Miniconda3-py39_4.12.0-Windows-x86.exe#/setup.exe",
             "hash": "4fb64e6c9c28b88beab16994bfba4829110ea3145baa60bda5344174ab65d462"
         }
     },
     "installer": {
-        "args": [
-            "/S",
-            "/InstallationType=JustMe",
-            "/RegisterPython=0",
-            "/AddToPath=0",
-            "/NoRegistry=1",
-            "/D=$dir"
+        "script": [
+            "# Using Start-Process as a workaround because the installer will not work properly when args are quoted (e.g. \"`\"/S`\"\")",
+            "Start-Process \"$dir\\setup.exe\" -ArgumentList @('/S', '/InstallationType=JustMe', '/RegisterPython=0', '/AddToPath=0', '/NoRegistry=1', \"/D=$dir\") -Wait | Out-Null"
         ]
     },
     "uninstaller": {
-        "file": "Uninstall-Miniconda3.exe",
-        "args": "/S"
+        "script": [
+            "Start-Process \"$dir\\Uninstall-Miniconda3.exe\" -ArgumentList '/S' -Wait | Out-Null",
+            "# Create a 'dummy' to avoid error because the uninstaller removes the symlink. The does not affect persist.",
+            "New-Item \"$dir\\envs\" -ItemType Directory | Out-Null"
+        ]
     },
     "bin": [
         "python.exe",

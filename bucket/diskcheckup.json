@@ -1,0 +1,31 @@
+{
+    "version": "3.5.1002",
+    "description": "Monitors SMART attributes of a particular hard disk drive.",
+    "homepage": "https://www.passmark.com/products/diskcheckup/",
+    "license": "Proprietary",
+    "notes": "Free for personal use only. For commercial use, you need to purchase company licenses.",
+    "url": "https://www.passmark.com/downloads/diskcheckup.exe#/dl.exe",
+    "hash": "0d109fc74fa5c90ac475fdf2cb31832ad1dad2460a83751f15942dcdfd7b082a",
+    "innosetup": true,
+    "pre_install": [
+        "'localization,1.txt', 'SMARTDesc,1.csv', 'SysInfo_localization,1.txt' | ForEach-Object {",
+        "    Rename-Item \"$dir\\$_\" $_.Replace(',1', '')",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\DiskCheckup.cfg\")) { New-Item \"$dir\\DiskCheckup.cfg\" | Out-Null }"
+    ],
+    "shortcuts": [
+        [
+            "DiskCheckup.exe",
+            "DiskCheckup"
+        ]
+    ],
+    "persist": "DiskCheckup.cfg",
+    "checkver": {
+        "url": "https://www.passmark.com/products/diskcheckup/",
+        "regex": "Version:.*?V([\\d.]+) \\(Build (\\d+)\\)",
+        "replace": "${1}.${2}"
+    },
+    "autoupdate": {
+        "url": "https://www.passmark.com/downloads/diskcheckup.exe#/dl.exe"
+    }
+}

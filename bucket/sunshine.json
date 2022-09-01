@@ -1,41 +1,55 @@
 {
-    "version": "0.13.0",
+    "version": "0.14.1",
     "description": "A Gamestream host for Moonlight",
-    "homepage": "https://github.com/SunshineStream/Sunshine",
+    "homepage": "https://github.com/LizardByte/Sunshine",
     "license": "GPL-3.0-only",
     "notes": [
-        "Run '$dir\\install-service.bat' to setup the service.",
+        "Run '$dir\\install-service.bat' and '$dir\\uninstall-service.bat' to install and uninstall the service correspondingly.",
         "Sunshine can be configured at https://localhost:47990/ by default."
     ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/SunshineStream/Sunshine/releases/download/v0.13.0/Sunshine-Windows.zip",
-            "hash": "b5b947652d210c20397bd90756cd023a2bf38bd199cca326d705b699e65bb7d1"
+            "url": "https://github.com/LizardByte/Sunshine/releases/download/v0.14.1/Sunshine-Windows.zip",
+            "hash": "af3eb039c40ea0bb76f534c7c892e4d46ca906ec8608262bff570ebfbb7ebee0"
         }
     },
+    "extract_dir": "Sunshine",
     "pre_install": [
         "Set-Content -Path \"$dir\\sunshine.bat\" -Value (@('@echo off', 'pushd %~dp0 && sunshine.exe %* && popd') -join \"`r`n\")",
         "# Create sunshine_state.json if it does not exist",
         "if (!(Test-Path \"$persist_dir\\sunshine_state.json\" -PathType Leaf)) {",
         "    Set-Content -Path \"$dir\\sunshine_state.json\" -Value \"{}\"",
-        "}"
+        "}",
+        "'apps.json', 'sunshine.conf' | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\$_\")) { Copy-Item \"$dir\\config\\$_\" \"$dir\\$_\" | Out-Null }",
+        "}",
+        "",
+        "# https://github.com/LizardByte/Sunshine/issues/197",
+        "Copy-Item \"$bucketsdir\\extras\\scripts\\sunshine\\install-service.bat\" \"$dir\" | Out-Null",
+        "Copy-Item \"$bucketsdir\\extras\\scripts\\sunshine\\uninstall-service.bat\" \"$dir\" | Out-Null"
     ],
     "bin": [
         "sunshine.bat",
         "tools\\dxgi-info.exe",
         "tools\\audio-info.exe"
     ],
+    "shortcuts": [
+        [
+            "sunshine.exe",
+            "Sunshine"
+        ]
+    ],
     "persist": [
-        "sunshine_state.json",
         "credentials",
-        "assets\\sunshine.conf",
-        "assets\\apps_windows.json"
+        "apps.json",
+        "sunshine.conf",
+        "sunshine_state.json"
     ],
     "checkver": "github",
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/SunshineStream/Sunshine/releases/download/v$version/Sunshine-Windows.zip"
+                "url": "https://github.com/LizardByte/Sunshine/releases/download/v$version/Sunshine-Windows.zip"
             }
         }
     }

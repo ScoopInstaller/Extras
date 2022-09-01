@@ -1,11 +1,16 @@
 {
-    "version": "8.16.4",
+    "version": "8.17.6",
     "description": "HDD/SSD utility software which supports S.M.A.R.T and a part of USB-HDD",
     "homepage": "https://osdn.net/projects/crystaldiskinfo/",
     "license": "MIT",
-    "url": "https://free.nchc.org.tw/osdn//crystaldiskinfo/77136/CrystalDiskInfo8_16_4.zip",
-    "hash": "2e5670b2149c0cb983a975b154b85098b84e9da2e36321855b9def2c61857382",
-    "pre_install": "if (!(Test-Path \"$persist_dir\\DiskInfo.ini\")) { New-Item \"$dir\\DiskInfo.ini\" | Out-Null }",
+    "url": "https://free.nchc.org.tw/osdn//crystaldiskinfo/77675/CrystalDiskInfo8_17_6.zip",
+    "hash": "e49cebd630e3e2b814d7908df8e145c7f3502c44b5053b252439028ad6ab19e5",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\DiskInfo.ini\")) { New-Item \"$dir\\DiskInfo.ini\" | Out-Null }",
+        "# Manually persist AMD RAID plugins (AMD_RC2t7x64.dll, AMD_RC2t7x86.dll)",
+        "if (Test-Path \"$persist_dir\\AMD_RC2t7*.dll\") { Copy-Item \"$persist_dir\\AMD_RC2t7*.dll\" \"$dir\\\" }"
+    ],
+    "pre_uninstall": "if (Test-Path \"$dir\\AMD_RC2t7*.dll\") { Copy-Item \"$dir\\AMD_RC2t7*.dll\" \"$persist_dir\\\" }",
     "architecture": {
         "64bit": {
             "bin": [

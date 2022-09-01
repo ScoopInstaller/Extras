@@ -3,29 +3,33 @@
     "description": "The most popular Python distribution for data science.",
     "homepage": "https://www.anaconda.com/",
     "license": "BSD-3-Clause",
+    "notes": [
+        "From 4.6.0, conda has built the support for Cmd, Powershell or other shells.",
+        "Use \"conda init powershell\" or \"conda init __your_favorite_shell__\""
+    ],
     "architecture": {
         "64bit": {
-            "url": "https://repo.anaconda.com/archive/Anaconda3-2022.05-Windows-x86_64.exe",
+            "url": "https://repo.anaconda.com/archive/Anaconda3-2022.05-Windows-x86_64.exe#/setup.exe",
             "hash": "2766eb102f9d65da36d262b651777358de39fbe5f1a74f9854a2e5e29caeeeec"
         },
         "32bit": {
-            "url": "https://repo.anaconda.com/archive/Anaconda3-2022.05-Windows-x86.exe",
+            "url": "https://repo.anaconda.com/archive/Anaconda3-2022.05-Windows-x86.exe#/setup.exe",
             "hash": "cd8c688349bcd1f429e3b383620fb0d19f52be0f765b2eae78d63b41aefb2e73"
         }
     },
-    "pre_install": "Write-Host 'Installing Anaconda 3. This can take up to 30 minutes on an HDD.' -ForegroundColor Magenta",
     "installer": {
-        "args": [
-            "/S",
-            "/InstallationType=JustMe",
-            "/RegisterPython=1",
-            "/AddToPath=0",
-            "/D=$dir"
+        "script": [
+            "Write-Host 'Installing Anaconda 3. This can take up to 30 minutes on an HDD.' -ForegroundColor Magenta",
+            "# Using Start-Process as a workaround because the installer will not work properly when args are quoted (e.g. \"`\"/S`\"\")",
+            "Start-Process \"$dir\\setup.exe\" -ArgumentList @('/S', '/InstallationType=JustMe', '/RegisterPython=1', '/AddToPath=0', '/NoRegistry=1', \"/D=$dir\") -Wait | Out-Null"
         ]
     },
     "uninstaller": {
-        "file": "Uninstall-Anaconda3.exe",
-        "args": "/S"
+        "script": [
+            "Start-Process \"$dir\\Uninstall-Anaconda3.exe\" -ArgumentList '/S' -Wait | Out-Null",
+            "# Create a 'dummy' to avoid error because the uninstaller removes the symlink. The does not affect persist.",
+            "New-Item \"$dir\\envs\" -ItemType Directory | Out-Null"
+        ]
     },
     "bin": [
         "python.exe",
@@ -44,14 +48,14 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://repo.anaconda.com/archive/Anaconda3-$version-Windows-x86_64.exe",
+                "url": "https://repo.anaconda.com/archive/Anaconda3-$version-Windows-x86_64.exe#/setup.exe",
                 "hash": {
                     "url": "http://docs.anaconda.com/anaconda/install/hashes/Anaconda3-$version-Windows-x86_64.exe-hash/",
                     "regex": "$sha256"
                 }
             },
             "32bit": {
-                "url": "https://repo.anaconda.com/archive/Anaconda3-$version-Windows-x86.exe",
+                "url": "https://repo.anaconda.com/archive/Anaconda3-$version-Windows-x86.exe#/setup.exe",
                 "hash": {
                     "url": "http://docs.anaconda.com/anaconda/install/hashes/Anaconda3-$version-Windows-x86.exe-hash/",
                     "regex": "$sha256"
