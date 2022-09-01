@@ -8,7 +8,15 @@
     },
     "url": "https://download.teamviewer.com/download/version_15x/TeamViewerPortable.zip",
     "hash": "6492da7262330a5698942c643888c5772cec577f53941ff27eeb3a12027d325c",
-    "pre_uninstall": "Stop-Process -Name 'teamviewer' -ErrorAction SilentlyContinue",
+    "pre_uninstall": [
+        "# For details, see: https://community.teamviewer.com/English/discussion/49721",
+        "Stop-Process -Name 'teamviewer' -ErrorAction SilentlyContinue",
+        "if (Test-Path \"$dir\\rolloutfile.tv13\") {",
+        "    Write-Host 'Removing rolloutfile.tv13.' -f Yellow",
+        "    icacls \"$dir\\rolloutfile.tv13\" /reset",
+        "    Remove-Item \"$dir\\rolloutfile.tv13\" -Force",
+        "}"
+    ],
     "bin": "teamviewer.exe",
     "shortcuts": [
         [
