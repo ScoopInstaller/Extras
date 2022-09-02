@@ -1,4 +1,5 @@
 {
+    "##": "The installer is made with InnoSetup, but encrypted with a password.",
     "version": "1.40.0.0",
     "description": "Tweaks and hidden settings for power-users for Windows 7/8/8.1/10/11",
     "homepage": "https://winaerotweaker.com/",
@@ -13,12 +14,9 @@
         "Get-ChildItem \"$dir\" '*setup.exe' | Rename-Item -NewName 'setup.exe'"
     ],
     "installer": {
-        "file": "setup.exe",
-        "args": [
-            "/SP-",
-            "/VERYSILENT",
-            "/PORTABLE",
-            "/DIR=\"$dir\""
+        "script":[
+            "Start-Process -Wait \"$dir\\setup.exe\" -ArgumentList @('/SP-', '/VERYSILENT', '/PORTABLE', \"/DIR=`\"$dir`\"\")",
+            "Remove-Item \"$dir\\setup.exe\""
         ]
     },
     "bin": "WinaeroTweaker.exe",
