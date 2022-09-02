@@ -1,0 +1,37 @@
+{
+    "version": "1.5.7-beta.8",
+    "description": "Cross-platform Apple Music client",
+    "license": "AGPL-3.0-or-later",
+    "homepage": "https://cider.sh",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/ciderapp/cider-releases/releases/download/v1.5.7-beta.8/Cider-Setup-winget-1.5.7-beta.8.exe#/dl.7z",
+            "hash": "sha512:0f0337cbfb0cf495519d7eb1afe35649141d17d94bcaf7f9335b54557ec763c35c90f96e3a5b20de52486301b714ad2e4e49442334ecdbbab335b02c0fc9de78",
+            "installer": {
+                "script": "Expand-7zipArchive -Path \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+            }
+        }
+    },
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\`$R0\" -Recurse -Force",
+    "shortcuts": [
+        [
+            "Cider.exe",
+            "Cider"
+        ]
+    ],
+    "checkver": {
+        "url": "https://github.com/ciderapp/cider-releases/releases",
+        "regex": "Cider Version ([\\d\\.]+-beta\\.\\d+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/ciderapp/cider-releases/releases/download/v$version/Cider-Setup-winget-$version.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "sha512:\\s+$base64"
+                }
+            }
+        }
+    }
+}
