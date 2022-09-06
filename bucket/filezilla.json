@@ -1,10 +1,20 @@
 {
+    "##": "This package should be updated manually. See #9179 for details",
     "version": "3.60.2",
     "description": "Fast and reliable cross-platform FTP, FTPS and SFTP client with lots of useful features and an intuitive graphical user interface.",
     "homepage": "https://filezilla-project.org/",
     "license": "GPL-2.0-or-later",
-    "url": "https://example.com/#/dummy.txt",
-    "hash": "ea8fac7c65fb589b0d53560f5251f74f9e9b243478dcb6b3ea79b5e36449c8d9",
+    "architecture": {
+        "64bit": {
+            "url": "https://raw.githubusercontent.com/ScoopInstaller/Binary/master/filezilla/FileZilla_3.60.2_win64.zip",
+            "hash": "d6dd439e2aae2f950ee4c2a12cca3b20f3fa290b21db631c04fdd441846087d8"
+        },
+        "32bit": {
+            "url": "https://raw.githubusercontent.com/ScoopInstaller/Binary/master/filezilla/FileZilla_3.60.2_win32.zip",
+            "hash": "47b26d8eb1fc4c90c7f92d284bdf78701810cd3593bfabedeb0ef28cce7ccd3d"
+        }
+    },
+    "extract_dir": "filezilla-3.60.2",
     "pre_install": [
         "@'",
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>",
@@ -32,28 +42,6 @@
         "    Rename-Item \"$oldfzdefault\" \"fzdefaults.xml.bak\"",
         "}"
     ],
-    "installer": {
-        "script": [
-            "# Workaround for 'access denied when user agent is Scoop/...'",
-            "$useragent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.63 Safari/537.36'",
-            "if ($architecture -eq '64bit') { $url = \"https://download.filezilla-project.org/client/FileZilla_${version}_win64.zip\" }",
-            "elseif ($architecture -eq '32bit') { $url = \"https://download.filezilla-project.org/client/FileZilla_${version}_win32.zip\" }",
-            "",
-            "$retry_count = 0",
-            "for (;;) {",
-            "    $retry_count += 1",
-            "    if (5 -le $retry_count) { error 'Could not download the installer after 5 attempts. Cancel installation.'; break }",
-            "    warn 'Downloading FileZilla...'",
-            "    Invoke-WebRequest $url -OutFile \"$dir\\dl.zip\" -UserAgent $useragent",
-            "    warn 'Checking file integrity...'",
-            "    7z t \"$dir\\dl.zip\" | Out-Null",
-            "    if ($LASTEXITCODE -eq 0) { break }",
-            "    else { warn 'File check failed. Retrying' }",
-            "}",
-            "Expand-7zipArchive \"$dir\\dl.zip\" \"$dir\" -ExtractDir \"FileZilla-$version\" -Removal | Out-Null",
-            "Remove-Item \"$dir\\dummy.txt\""
-        ]
-    },
     "bin": "filezilla.exe",
     "shortcuts": [
         [
@@ -61,13 +49,5 @@
             "FileZilla"
         ]
     ],
-    "persist": "config",
-    "checkver": {
-        "url": "https://filezilla-project.org/download.php?show_all=1",
-        "regex": "The latest stable version of FileZilla Client is ([\\d.]+)",
-        "useragent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.63 Safari/537.36"
-    },
-    "autoupdate": {
-        "url": "https://example.com/#/dummy.txt"
-    }
+    "persist": "config"
 }
