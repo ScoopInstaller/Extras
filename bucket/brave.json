@@ -1,5 +1,5 @@
 {
-    "version": "1.43.88",
+    "version": "1.43.89",
     "description": "Secure, Fast & Private Web Browser with Adblocker",
     "homepage": "https://brave.com",
     "license": {
@@ -8,12 +8,12 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/brave/brave-browser/releases/download/v1.43.88/brave-v1.43.88-win32-x64.zip",
-            "hash": "30f67414a1c5eb6c01a452a2f92b1e0c73752d9ad439433e522fdd6e2e3b28a0"
+            "url": "https://github.com/brave/brave-browser/releases/download/v1.43.89/brave-v1.43.89-win32-x64.zip",
+            "hash": "7e4b0dd382327d832e62de1853aa1e649c78bdeeb9c80a437d5ca5288a9af3cd"
         },
         "32bit": {
-            "url": "https://github.com/brave/brave-browser/releases/download/v1.43.88/brave-v1.43.88-win32-ia32.zip",
-            "hash": "b7c7b0c841a904ce294e26f8bdf714e6662f17ad421d5f5941a3b4a67931e262"
+            "url": "https://github.com/brave/brave-browser/releases/download/v1.43.89/brave-v1.43.89-win32-ia32.zip",
+            "hash": "06dd8be6bd7c4190d7316717e35ea3f222535e161dece475fbe06df677e4f438"
         }
     },
     "bin": [
@@ -42,8 +42,18 @@
     ],
     "persist": "User Data",
     "checkver": {
-        "url": "https://api.github.com/repos/brave/brave-browser/releases",
-        "regex": "Release v([\\d.]+)"
+        "script": [
+            "# Using checkver script because sometimes Desktop and Mobile versions release at the same time,",
+            "# which causes autoupdate fail to catch up. See v1.43.89 and v1.43.90 for example",
+            "$url = 'https://api.github.com/repos/brave/brave-browser/releases'",
+            "$release_tags = (Invoke-WebRequest $url).Content | ConvertFrom-Json",
+            "$release_tags | ForEach-Object {",
+            "    if ($_.name.Contains('Release') -and ($_.assets -match 'brave-v([\\d.]+)-win32')) {",
+            "        Write-Output $_.tag_name.replace('v', '')",
+            "    }",
+            "}"
+        ],
+        "regex": "([\\d.]+)"
     },
     "autoupdate": {
         "architecture": {
@@ -53,6 +63,9 @@
             "32bit": {
                 "url": "https://github.com/brave/brave-browser/releases/download/v$version/brave-v$version-win32-ia32.zip"
             }
+        },
+        "hash": {
+            "url": "$url.sha256"
         }
     }
 }
