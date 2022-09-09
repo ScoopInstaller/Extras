@@ -1,0 +1,34 @@
+{
+    "version": "5.0.2",
+    "description": "The SD Memory Card Formatter formats SD Memory Card, SDHC Memory Card and SDXC Memory Card (respectively SD/SDHC/SDXC Cards) complying with the SD File System Specification created by the SD Association (SDA).",
+    "homepage": "https://www.sdcard.org/downloads/formatter/",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.sdcard.org/downloads/formatter/sd-memory-card-formatter-for-windows-download/"
+    },
+    "url": "https://www.sdcard.org/downloads/formatter/eula_windows/SDCardFormatterv5_WinEN.zip",
+    "hash": "df18843616643f53a613fd536eb4ff05a068de16b2902f48234706a2cfedc374",
+    "installer": {
+        "script": [
+            "Wait-Process -InputObject (Start-Process \"$dir\\SDCardFormatterv$($version.split('.')[0])_WinEN\\SD Card Formatter $version Setup EN.exe\" -ArgumentList \"/a /s /v/qn /vTARGETDIR=$dir\" -PassThru)",
+            "Move-Item \"$dir\\program files\\SDA\\SD Card Formatter\\*\" \"$dir\"",
+            "Get-ChildItem -Recurse \"$dir\" -Exclude ('format_sd.exe', 'SD Card Formatter.exe') | Remove-Item -Recurse"
+        ]
+    },
+    "bin": [
+        "format_sd.exe",
+        "SD Card Formatter.exe"
+    ],
+    "shortcuts": [
+        [
+            "SD Card Formatter.exe",
+            "SD Card Formatter"
+        ]
+    ],
+    "checkver": {
+        "regex": "SD Memory Card Formatter ([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://www.sdcard.org/downloads/formatter/eula_windows/SDCardFormatterv$majorVersion_WinEN.zip"
+    }
+}
