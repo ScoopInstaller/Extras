@@ -6,13 +6,15 @@
     "architecture": {
         "64bit": {
             "url": "https://github.com/ciderapp/cider-releases/releases/download/v1.5.6/Cider-Setup-winget-1.5.6.exe#/dl.7z",
-            "hash": "sha512:0416893ef73d6883f155d0ec1276b7ff83141adfa3bf3a074a14b5af6cf742079a01ed8afeae6a026f79cad456900d47fa68d4e659742e63cdc6b4424b2aabf6",
-            "installer": {
-                "script": "Expand-7zipArchive -Path \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
-            }
+            "hash": "sha512:0416893ef73d6883f155d0ec1276b7ff83141adfa3bf3a074a14b5af6cf742079a01ed8afeae6a026f79cad456900d47fa68d4e659742e63cdc6b4424b2aabf6"
         }
     },
-    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\`$R0\" -Recurse -Force",
+    "pre_install": [
+        "# There is a symlink 'python3' in node_modules that points to '/usr/python3'",
+        "# ,which is not applicable on Windows and cause error in 7-zip extraction",
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\" -Switches '-xr!python3'",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\`$R0\" -Recurse -Force"
+    ],
     "shortcuts": [
         [
             "Cider.exe",
