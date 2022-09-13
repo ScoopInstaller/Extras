@@ -25,7 +25,7 @@
     "pre_install": [
         "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
         "",
-        "if (!(Test-Path \"$env:LOCALAPPDATA\\SimpleDnsCrypt\")) {New-Item -Path \"$env:LOCALAPPDATA\" -Name \"SimpleDnsCrypt\" -ItemType \"directory\" | Out-Null}"
+        "if (!(Test-Path \"$env:LOCALAPPDATA\\SimpleDnsCrypt\")) {New-Item -Path \"$env:LOCALAPPDATA\" -Name \"SimpleDnsCrypt\" -ItemType \"directory\" -Force | Out-Null}"
     ],
     "shortcuts": [
         [
@@ -42,8 +42,8 @@
         "",
         "if (Get-Process -Name \"SimpleDnsCrypt\") {Stop-Process -Name \"SimpleDnsCrypt\" | Out-Null}",
         "if (Get-Service -Name \"dnscrypt-proxy\") {Stop-Service -Name \"dnscrypt-proxy\"| Out-Null; Remove-Service -Name \"dnscrypt-proxy\" | Out-Null}",
-        "if (Test-Path \"$dir\") {Remove-Item \"$dir\" | Out-Null}",
-        "if (Test-Path \"$persist_dir\") {Remove-Item \"$persist_dir\" | Out-Null}"
+        "if (Test-Path \"$dir\") {Remove-Item \"$dir\" -Force -Recurse | Out-Null}",
+        "if (Test-Path \"$persist_dir\") {Remove-Item \"$persist_dir\" -Force -Recurse | Out-Null}"
     ],
     "checkver": {
         "github": "https://github.com/bitbeans/SimpleDnsCrypt"
