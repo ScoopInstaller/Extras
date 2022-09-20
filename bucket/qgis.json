@@ -1,0 +1,68 @@
+{
+    "version": "3.26.3",
+    "description": "QGIS is a user friendly Open Source Geographic Information System (GIS) licensed under the GNU General Public License. QGIS supports vector, raster, and database formats and user defined projections. It also has great features for visualizing and manipulating your data. QGIS supports plugins to do just about anything you can imagine.",
+    "homepage": "https://qgis.org",
+    "license": "GNU General Public License",
+    "architecture": {
+        "64bit": {
+            "url": "https://download.qgis.org/downloads/QGIS-OSGeo4W-3.26.3-1.msi",
+            "hash": "cabacaf3fc159c0324a3c0414e12b9600644d2b373149a80c88fab3bd88f983c",
+            "extract_dir": "QGIS 3.26.3"
+        }
+    },
+    "persist": "config",
+    "env_add_path": "bin",
+    "env_set": {
+        "GDAL_DATA": "$dir\\share\\gdal",
+        "PROJ_LIB": "$dir\\share\\proj",
+        "OSGEO4W_ROOT": "$dir",
+        "QGIS_CUSTOM_CONFIG_PATH": "$persist_dir\\config"
+    },
+    "shortcuts": [
+        [
+            "bin\\qgis-bin.exe",
+            "QGIS\\QGIS Desktop"
+        ],
+        [
+            "bin\\grass78.bat",
+            "QGIS\\GRASS GIS 7.8.7",
+            "--gui",
+            "apps\\grass\\grass78\\gui\\icons\\grass.ico"
+        ],
+        [
+            "osgeo4w.bat",
+            "QGIS\\OSGeo4W Shell",
+            "",
+            "osgeo4w.ico"
+        ],
+        [
+            "bin\\saga_gui.bat",
+            "QGIS\\SAGA GIS 7.8.2"
+        ]
+    ],
+    "post_install": [
+        "if (!(Test-Path \"$dir\\shortcuts\")) { New-Item \"$dir\\shortcuts\" -ItemType Directory | Out-Null }",
+        "$postInstallScriptPath = \"$dir\\etc\\postinstall.bat\"",
+        "$shortcutsPath = \"$dir\\shortcuts\"",
+        "$shortcutsPathStartMenu = \"$shortcutsPath\\startmenu\"",
+        "$shortcutsPathDesktop = \"$shortcutsPath\\desktop\"",
+        "$postInstallArguments = @(\"/C\", $postInstallScriptPath, $shortcutsPathStartMenu, $shortcutsPathDesktop, \"1\", \"1\", \">\", \"$dir\\etc\\postinstall.log\", \"2>&1\" )",
+        "$postInstallParams = @{\"FilePath\" = \"$($Env:COMSPEC)\"; \"ArgumentList\" = $postInstallArguments; \"Wait\" = $true; \"PassThru\" = $true; \"WindowStyle\" = \"Hidden\"}",
+        "Start-Process @postInstallParams | Out-Null"
+    ],
+    "checkver": {
+        "url": "https://qgis.org/en/site/forusers/download.html",
+        "regex": "The current version is QGIS ([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download.qgis.org/downloads/QGIS-OSGeo4W-$version-1.msi",
+                "extract_dir": "QGIS $version"
+            }
+        },
+        "hash": {
+            "url": "https://download.qgis.org/downloads/QGIS-OSGeo4W-$version-1.sha256sum"
+        }
+    }
+}
