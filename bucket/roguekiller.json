@@ -1,0 +1,50 @@
+{
+    "version": "15.6.1.0",
+    "homepage": "https://www.adlice.com/roguekiller/",
+    "description": "A security app used for terminating malicious processes, and programs from your computer.",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.adlice.com/global-eula/"
+    },
+    "notes": "App Config and Settings are stored in this directory: \"$env:ProgramData\\RogueKiller\"",
+    "innosetup": true,
+    "url": "https://cloud.adlice.com/owncloud/index.php/s/QE2fq4D24A1IKEb/download?path=15.6.1.0&files=RogueKiller_setup.exe",
+    "hash": "E47C4D1E46521122DFF47C6E234479720678377737438B935A38072A9A6BB1CD",
+    "architecture": {
+        "64bit": {
+            "pre_install": [
+                "Rename-Item \"$dir\\RogueKillerSvc,2.exe\" 'RogueKillerSvc.exe'; Rename-Item \"$dir\\RogueKillerShell,2.dll\" 'RogueKillerShell.dll' | Out-Null",
+                "Remove-Item (\"$dir\\RogueKiller.exe\", \"$dir\\rkmon32.dll\", \"$dir\\RogueKillerShell,1.dll\", \"$dir\\RogueKillerSvc,1.exe\", \"$dir\\Updater.exe\") | Out-Null"
+            ],
+            "bin": "RogueKiller64.exe",
+            "shortcuts": [
+                [
+                    "RogueKiller64.exe",
+                    "RogueKiller"
+                ]
+            ],
+            "pre_uninstall": "if (Get-Process -Name ('RogueKiller64', 'RogueKillerSvc')) {Stop-Process -Name ('RogueKiller64', 'RogueKillerSvc') -Force | Out-Null}"
+        },
+        "32bit": {
+            "pre_install": [
+                "Rename-Item \"$dir\\RogueKillerSvc,1.exe\" 'RogueKillerSvc.exe'; Rename-Item \"$dir\\RogueKillerShell,1.dll\" 'RogueKillerShell.dll' | Out-Null",
+                "Remove-Item (\"$dir\\RogueKiller64.exe\", \"$dir\\rkmon64.dll\", \"$dir\\RogueKillerShell,2.dll\", \"$dir\\RogueKillerSvc,2.exe\", \"$dir\\Updater.exe\") | Out-Null"
+            ],
+            "bin": "RogueKiller.exe",
+            "shortcuts": [
+                [
+                    "RogueKiller.exe",
+                    "RogueKiller"
+                ]
+            ],
+            "pre_uninstall": "if (Get-Process -Name ('RogueKiller', 'RogueKillerSvc')) {Stop-Process -Name ('RogueKiller', 'RogueKillerSvc') -Force | Out-Null}"
+        }
+    },
+    "checkver": {
+        "url": "https://www.fosshub.com/RogueKiller.html",
+        "regex": "<dd itemprop=\"softwareVersion\">(\\d.+)</dd>"
+    },
+    "autoupdate": {
+        "url": "https://cloud.adlice.com/owncloud/index.php/s/QE2fq4D24A1IKEb/download?path=$version&files=RogueKiller_setup.exe"
+    }
+}
