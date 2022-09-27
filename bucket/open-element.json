@@ -1,0 +1,28 @@
+{
+    "version": "1.57-R9",
+    "homepage": "https://openelement.uk/",
+    "description": "A website editor that lets you have total control. Modify any element and style the way you want.",
+    "license": "Freeware",
+    "url": "https://openelement.uk/Files/Other/openElement.exe#/package.exe",
+    "hash": "22F33F86128B59D3911702150EDA6438C2275065C765EE550491A601FF568AE6",
+    "pre_install": [
+        "Start-Process \"$dir\\package.exe\" -Wait -WindowStyle 'Hidden' -ArgumentList @('/extract', '/exenoui') | Out-Null",
+        "Remove-Item \"$dir\\package.exe\"; Move-Item \"$dir\\070D160\\*\" \"$dir\" -Exclude @('Uninstall.exe', 'updater.exe', 'openElement.msi') | Out-Null",
+        "Remove-Item \"$dir\\070D160\" -Recurse | Out-Null"
+    ],
+    "bin": "openElement.exe",
+    "shortcuts": [
+        [
+            "openElement.exe",
+            "openElement"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.openelement.uk/Download.htm",
+        "regex": "(?<main>[\\d.]+\\s?<build>[\\w]+)\\s",
+        "replace": "${main}-${build}"
+    },
+    "autoupdate": {
+        "url": "https://openelement.uk/Files/Other/openElement.exe#/package.exe"
+    }
+}
