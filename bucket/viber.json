@@ -1,0 +1,34 @@
+{
+    "version": "18.5.0.10",
+    "homepage": "https://www.viber.com/",
+    "description": "A freenium service that allows for secure calls and messages to anyone, anywhere.",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.viber.com/en/terms/viber-terms-use/"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://download.cdn.viber.com/desktop/windows/ViberSetup.exe",
+            "hash": "f225043af16fdf142fe9fbf1ab7d3aa9d96a79f854ebd29b68e58c42f6ff8737"
+        }
+    },
+    "pre_install": [
+        "Expand-DarkArchive \"$dir\\ViberSetup.exe\" \"$dir\\extract_folder\" -Removal",
+        "Expand-MsiArchive \"$dir\\extract_folder\\AttachedContainer\\ViberSetup.msi\" \"$dir\\extract_folder\\AttachedContainer\" -Removal",
+        "Move-Item \"$dir\\extract_folder\\AttachedContainer\\Viber\\*\" \"$dir\"; Remove-Item \"$dir\\extract_folder\" -Recurse | Out-Null"
+    ],
+    "bin": "Viber.exe",
+    "shortcuts": [
+        [
+            "Viber.exe",
+            "Viber"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.filehorse.com/download-viber-for-windows/",
+        "regex": "<li>Viber\\sfor\\sWindows\\s([\\d.]+)</li>"
+    },
+    "autoupdate": {
+        "url": "https://download.cdn.viber.com/desktop/windows/ViberSetup.exe"
+    }
+}
