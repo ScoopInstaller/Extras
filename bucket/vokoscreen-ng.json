@@ -1,0 +1,45 @@
+{
+    "version": "3.4.0",
+    "homepage": "https://linuxecke.volkoh.de/vokoscreen/vokoscreen.html",
+    "description": "A free and open source screencast creator for recording the user's screen.",
+    "license": "GPL-2.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://linuxecke.volkoh.de/vokoscreen/download/windows/vokoscreenNG-3.4.0-win64.exe#/dl.exe",
+            "hash": "01415f740add7c6f53ec7a44863aaf369a6460206cdfe8af4ca54c883b38861e"
+        }
+    },
+    "pre_install": [
+        "Start-Process \"$dir\\dl.exe\" -Wait -Verb 'RunAs' -WindowStyle 'Hidden' -ArgumentList @('in', '-c', '--am', '--al', '-t', \"$dir\")",
+        "Remove-Item @(\"$dir\\dl.exe\", \"$dir\\vcredist_2010_x64.exe\", \"$dir\\Uninstall.*\") | Out-Null",
+        "Remove-Item \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\vokoscreenNG-3.4.0.lnk\" -Force | Out-Null",
+        "Remove-Item \"$HOME\\Desktop\\vokoscreenNG-3.4.0.lnk\" -Force | Out-Null"
+    ],
+    "shortcuts": [
+        [
+            "vokoscreenNG.exe",
+            "vokoscreenNG"
+        ]
+    ],
+    "checkver": {
+        "url": "https://linuxecke.volkoh.de/vokoscreen/vokoscreen-download.html",
+        "regex": "vokoscreenNG-([\\d.]+)-win64.exe"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://linuxecke.volkoh.de/vokoscreen/download/windows/vokoscreenNG-$version-win64.exe#/dl.exe",
+                "hash": {
+                    "url": "https://linuxecke.volkoh.de/vokoscreen/vokoscreen-download.html",
+                    "regex": "([\\w]+)</a>"
+                }
+            }
+        },
+        "pre_install": [
+            "Start-Process \"$dir\\dl.exe\" -Wait -Verb 'RunAs' -WindowStyle 'Hidden' -ArgumentList @('in', '-c', '--am', '--al', '-t', \"$dir\")",
+            "Remove-Item @(\"$dir\\dl.exe\", \"$dir\\vcredist_2010_x64.exe\", \"$dir\\Uninstall.*\") | Out-Null",
+            "Remove-Item \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\vokoscreenNG-$version.lnk\" -Force | Out-Null",
+            "Remove-Item \"$HOME\\Desktop\\vokoscreenNG-$version.lnk\" -Force | Out-Null"
+        ]
+    }
+}
