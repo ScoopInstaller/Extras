@@ -1,0 +1,43 @@
+{
+    "version": "1.6",
+    "homepage": "https://www.sordum.org/7615/easy-context-menu",
+    "description": "A simple app for editing the context menu.",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.sordum.org/eula/"
+    },
+    "url": "https://www.sordum.org/files/easy-context-menu/ec_menu.zip",
+    "hash": "7fda0f551fd769b150d1519c614131e2d610a2d98769f87ff654e3cd6de76167",
+    "extract_dir": "EcMenu_v1.6",
+    "pre_install": "New-Item \"$dir\\Files\\EcMenu.ini\" -ItemType 'File' | Out-Null",
+    "architecture": {
+        "32bit": {
+            "pre_install": "Remove-Item \"$dir\\EcMenu_x64.exe\" | Out-Null",
+            "shortcuts": [
+                [
+                    "EcMenu.exe",
+                    "Easy Context Menu"
+                ]
+            ]
+        },
+        "64bit": {
+            "pre_install": "Remove-Item \"$dir\\EcMenu.exe\" | Out-Null",
+            "shortcuts": [
+                [
+                    "EcMenu_x64.exe",
+                    "Easy Context Menu"
+                ]
+            ]
+        }
+    },
+    "pre_uninstall": [
+        "reg delete 'HKEY_CLASSES_ROOT\\Directory\\Background\\shell\\Z001AAC' /f | Out-Null",
+        "if (Test-Path \"$env:ProgramFiles\\Easy Context Menu\") {Remove-Item \"$env:ProgramFiles\\Easy Context Menu\" -Recurse -Force | Out-Null}"
+    ],
+    "persist": "Files\\EcMenu.ini",
+    "checkver": "Easy\\sContext\\sMenu\\sv([\\d.]+)",
+    "autoupdate": {
+        "url": "https://www.sordum.org/files/easy-context-menu/ec_menu.zip",
+        "extract_dir": "EcMenu_v$version"
+    }
+}
