@@ -40,10 +40,10 @@
     "pre_uninstall": [
         "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
         "",
-        "Start-Process -Wait \"$dir\\Uninstall.exe\" | Out-Null",
+        "Start-Process -Wait \"$dir\\Uninstall.exe\" | Out-Null; Start-Sleep -Seconds 5",
         "if (Get-Process -Name 'SimpleDnsCrypt' -ErrorAction SilentlyContinue) { Stop-Process -Name 'SimpleDnsCrypt' | Out-Null }",
         "$service = Get-Service -Name 'dnscrypt-proxy' -ErrorAction SilentlyContinue",
-        "if (($service) -and ($service.Status -ne 'Stopped')) {",
+        "if ($service.Status -ne 'Stopped') {",
         "    if (!(is_admin)) { error 'Admin rights are required to stop dnscrypt-proxy service'; break }",
         "    Stop-Service -Name 'dnscrypt-proxy' | Out-Null",
         "}",
