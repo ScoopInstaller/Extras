@@ -20,7 +20,19 @@
         "if (!(Test-Path \"$env:LOCALAPPDATA\\SimpleDnsCrypt\")) { New-Item \"$env:LOCALAPPDATA\\SimpleDnsCrypt\" -ItemType Directory -Force | Out-Null }",
         "'blacklist.txt', 'blocked.log', 'query.log', 'domain-blacklist.txt', 'domain-whitelist.txt' | ForEach-Object {",
         "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\dnscrypt-proxy\\$_\" -ItemType 'File' | Out-Null }",
-        "}"
+        "}",
+        "# Credit to @Rasa for this powershell script",
+        "$configFile = \"$dir\\SimpleDnsCrypt.exe.config\" ",
+        "[xml]$configFileContent = Get-Content \"$configFile\" ",
+        "",
+        "foreach ($item in $configFileContent.configuration.userSettings.'SimpleDnsCrypt.Properties.Settings'.setting) {",
+        "   if ($item.name -eq 'AutoUpdate') {",
+        "       $item.value = 'False' ",
+        "    }",
+        "}",
+        "",
+        "Copy-Item \"$configFile\" \"$configFile.backup\" ",
+        "$configFileContent.Save(\"$configFile\")"
     ],
     "shortcuts": [
         [
@@ -40,7 +52,7 @@
     "pre_uninstall": [
         "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
         "",
-        "Start-Process -Wait \"$dir\\Uninstall.exe\" | Out-Null; Start-Sleep -Seconds 5",
+        "Start-Process -Wait \"$dir\\Uninstall.exe\" | Out-Null; Start-Sleep -Seconds 8",
         "if (Get-Process -Name 'SimpleDnsCrypt' -ErrorAction SilentlyContinue) { Stop-Process -Name 'SimpleDnsCrypt' | Out-Null }",
         "$service = Get-Service -Name 'dnscrypt-proxy' -ErrorAction SilentlyContinue",
         "if ($service.Status -ne 'Stopped') {",
