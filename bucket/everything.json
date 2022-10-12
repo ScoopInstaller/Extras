@@ -38,11 +38,11 @@
     "pre_uninstall": [
         "Stop-Process -Name 'everything' -Force -ErrorAction SilentlyContinue",
         "if ($(Get-Service -Name Everything -ErrorAction SilentlyContinue).Status -ne 'Stopped') {",
-        "    if (!(is_admin)) { error 'Admin rights are required to stop Everything service'; break }",
+        "    if (!(is_admin) -and $(Get-Service -Name Everything -ErrorAction SilentlyContinue)) { error 'Admin rights are required to stop Everything service'; break }",
         "    Stop-Service -Name 'Everything' -Force -ErrorAction SilentlyContinue | Out-Null",
         "}",
         "if ((Get-Service -Name Everything -ErrorAction SilentlyContinue) -and ($cmd -eq 'uninstall')) {",
-        "    if (!(is_admin)) { error 'Admin rights are required to remove Everything service'; break }",
+        "    if (!(is_admin) -and $(Get-Service -Name Everything -ErrorAction SilentlyContinue)) { error 'Admin rights are required to remove Everything service'; break }",
         "    sc.exe delete 'Everything'",
         "}",
         "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }",
