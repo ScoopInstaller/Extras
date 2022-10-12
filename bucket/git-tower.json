@@ -1,0 +1,37 @@
+ {
+    "version": "4.0.410",
+    "homepage": "https://www.git-tower.com/",
+    "description": "An easy to use GUI client for Git with powerful features.",
+    "license": {
+        "identifier": "Shareware",
+        "url": "https://www.git-tower.com/legal/eula/windows"
+    },
+    "url": "https://www.git-tower.com/download/windows#/Setup.7z",
+    "hash": "sha1:246C1A4F91905E512767FC2D0288BD98B7B72AE3",
+    "pre_install": [
+        "Remove-Item \"$dir\\*\" -Exclude 'Tower-*-full.nupkg'; Expand-7zipArchive \"$dir\\Tower-*-full.nupkg\" $dir -Removal",
+        "Remove-Item $dir -Include @('_rels', 'package', '*.xml', 'Tower.nuspec') -Recurse; Move-Item \"$dir\\lib\\net45\\*\" $dir | Out-Null",
+        "Remove-Item \"$dir\\lib\" -Recurse"
+    ],
+    "bin": "Tower.exe",
+    "shortcuts": [
+        [
+            "Tower.exe",
+            "Git Tower"
+        ]
+    ],
+    "checkver": {
+        "script": [
+            "$redirUrl = [System.Net.HttpWebRequest]::Create('https://www.git-tower.com/download/windows').GetResponse().ResponseUri.AbsoluteUri",
+            "Write-Output $redirUrl"
+        ],
+        "regex": "Tower-([\\d.]+).exe"
+    },
+    "autoupdate": {
+        "url": "https://www.git-tower.com/download/windows#/Setup.7z",
+        "hash": {
+            "url": "https://www.git-tower.com/release-notes/windows",
+            "regex": "data-checksum=\"$sha1\">Copy\\sSHA1\\schecksum"
+        }
+    }
+ }
