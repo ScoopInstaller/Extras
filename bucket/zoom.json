@@ -41,9 +41,11 @@
         ]
     ],
     "checkver": {
-        "url": "https://support.zoom.us/hc/en-us/articles/201361953",
-        "regex": "version\\s*([\\d.]+)\\s+\\((\\d+)\\)",
-        "replace": "$1.$2"
+        "script": [
+            "$redirUrl = [System.Net.HttpWebRequest]::Create('https://zoom.us/client/latest/ZoomInstaller.exe').GetResponse().ResponseUri.AbsoluteUri",
+            "Write-Output $redirUrl"
+        ],
+        "regex": "([\\d.]+)/ZoomInstaller.exe"
     },
     "autoupdate": {
         "architecture": {
