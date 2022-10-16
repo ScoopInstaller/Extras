@@ -9,22 +9,22 @@
     "architecture": {
         "64bit": {
             "url": "https://cdn.zoom.us/prod/5.12.2.9281/x64/ZoomInstallerFull.exe#/dl.7z",
-            "hash": "f7cba2e790a7d41658ea0f430ac775f08d9872add59168fd72f12262bc9f9786"
+            "hash": "f7cba2e790a7d41658ea0f430ac775f08d9872add59168fd72f12262bc9f9786",
+            "pre_install": "Expand-7zipArchive \"$dir\\ZoomFull_Sip.cab\" -Removal"
         },
         "32bit": {
             "url": "https://cdn.zoom.us/prod/5.12.2.9281/ZoomInstaller.exe#/dl.7z",
-            "hash": "02a6d6c34b332fedbcd0efad99d36e7c5570932bfaff575f95443f38cbdb31d8"
+            "hash": "02a6d6c34b332fedbcd0efad99d36e7c5570932bfaff575f95443f38cbdb31d8",
+            "pre_install": "Expand-7zipArchive \"$dir\\Zoom.msi\" -Removal"
         },
         "arm64": {
             "url": "https://cdn.zoom.us/prod/5.12.2.9281/arm64/ZoomInstallerFull.exe#/dl.7z",
-            "hash": "4469285d3ecaa03b2bc644f3beb755ce0b8530327ca24790a733f78117fa54f8"
+            "hash": "4469285d3ecaa03b2bc644f3beb755ce0b8530327ca24790a733f78117fa54f8",
+            "pre_install": "Expand-7zipArchive \"$dir\\ZoomFull_Sip.cab\" -Removal"
         }
     },
-    "pre_install": [
-        "Expand-7zipArchive \"$dir\\Zoom.msi\" -Removal",
-        "Remove-Item \"$dir\\Install*\""
-    ],
     "post_install": [
+        "Remove-Item \"$dir\\Install*\"",
         "Write-Host \"Registering zoommtg:// protocol handler\"",
         "$regpath = \"HKCU:\\SOFTWARE\\Classes\\zoommtg\"",
         "New-Item -Path $regpath -Value \"Zoom (Application Name)\" -Force | Out-Null",
