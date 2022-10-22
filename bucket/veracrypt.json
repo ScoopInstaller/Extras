@@ -1,0 +1,39 @@
+{
+  "version": "1.25.9",
+  "description": "Free Open source disk encryption with strong security for the Paranoid",
+  "homepage": "https://www.veracrypt.fr",
+  "license": "LGPL-3.0-only",
+  "architecture": {
+    "64bit": {
+      "url": "https://launchpad.net/veracrypt/trunk/1.25.9/+download/VeraCrypt_Setup_x64_1.25.9.msi#/setup.msi_",
+      "hash": "md5:25f8a853a23f4b64bd5c723d0c41443d"
+    }
+  },
+  "pre_install": [
+    "if ([Environment]::OSVersion.Version.Major -lt 7) { error 'Windows 7 or higher is required.'; break }"
+  ],
+  "installer": {
+    "script": [
+      "Invoke-ExternalCommand msiexec -ArgumentList @('/i', \"`\"$dir\\setup.msi_`\"\", \"ACCEPTLICENSE=YES\", '/qn', '/norestart') -RunAs | Out-Null"
+    ]
+  },
+  "uninstaller": {
+    "script": [
+      "Invoke-ExternalCommand msiexec -ArgumentList ('/x', \"`\"$dir\\setup.msi_`\"\", '/passive') -RunAs | Out-Null"
+    ]
+  },
+  "checkver": {
+    "url": "https://veracrypt.fr/en/Downloads.html",
+    "regex": "VeraCrypt_Setup_x64_([\\d]+\\.[\\d]+\\.[\\d]+)\\.msi"
+  },
+  "autoupdate": {
+    "architecture": {
+      "64bit": {
+        "url": "https://launchpad.net/veracrypt/trunk/$version/+download/VeraCrypt_Setup_x64_$version.msi#/setup.msi_"
+      }
+    },
+    "hash": {
+      "url": "$url/%2Bmd5"
+    }
+  }
+}
