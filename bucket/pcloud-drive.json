@@ -25,6 +25,7 @@
         }
     },
     "pre_install": [
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
         "Expand-DarkArchive \"$dir\\dl.exe\" \"$dir\\extracted\" -Removal",
         "Expand-MsiArchive \"$dir\\extracted\\AttachedContainer\\pCloud Drive.msi\" \"$dir\" -ExtractDir 'pCloud Drive' -Removal",
         "Remove-Item \"$dir\\extracted\" -Recurse"
@@ -37,6 +38,7 @@
         ]
     ],
     "pre_uninstall": [
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
         "if (Get-Process -Name 'pCloud' -ErrorAction 'SilentlyContinue') {Stop-Process -Name 'pCloud' -ErrorAction 'SilentlyContinue' -Force}",
         "if ($architecture -eq '64bit') {",
         "   Start-Process 'regsvr32' -ArgumentList @('/u', \"$dir\\OverlayIcon64.dll\", '/s') -Verb 'RunAs' -Wait",
