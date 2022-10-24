@@ -1,0 +1,97 @@
+{
+    "##": "The license will be inside the app directory after installation.",
+    "version": "11.00",
+    "homepage": "https://www.petges.lu",
+    "description": "A Windows Explorer shell extension that allows users to easily change file and folder properties with a right-click.",
+    "license": "Freeware",
+    "notes": [
+        "IMPORTANT FOR NON-ENGLISH SPEAKERS!!!",
+        "If you want this application translated to your native langauge, please run the following command:",
+        "& \"$dir\\change_language.ps1\"",
+        "**The powershell script will propmt you to enter the number that corresponds to your native langauge.**",
+        "",
+        "1 = BRAZILIAN PORTUGUESE",
+        "2 = CZECH",
+        "3 = DANISH",
+        "4 = FRENCH",
+        "5 = GERMAN",
+        "6 = HUNGARIAN",
+        "7 = ITALIAN",
+        "8 = KOREAN",
+        "9 = POLISH",
+        "10 = SPANISH",
+        "11 = SWEDISH",
+        "12 = TURKISH",
+        "13 = ENGLISH   (ONLY IF YOU NEED TO RESET THE 'messages.ini' FILE BACK TO ENGLISH.)"
+    ],
+    "url": "https://www.petges.lu/pubfiles/ac-11_00.exe",
+    "hash": "md5:2F158D9531FB1E9749C5287EAF533AC0",
+    "innosetup": true,
+    "architecture": {
+        "64bit": {
+            "pre_install": [
+                "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+                "Remove-Item \"$dir\\acmain,1.exe\", \"$dir\\acshell,1.dll\"; Rename-Item \"$dir\\acmain,2.exe\" 'acmain.exe'",
+                "Start-Process 'regsvr32' -ArgumentList @(\"$dir\\acshell,2.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
+                "Start-Sleep -Seconds 2"
+            ],
+            "pre_uninstall": [
+                "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+                "Start-Process 'regsvr32' -ArgumentList @('/u', \"$dir\\acshell,2.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
+                "Start-Sleep -Seconds 2"
+            ]
+        },
+        "32bit": {
+            "pre_install": [
+                "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+                "Remove-Item \"$dir\\acmain,2.exe\", \"$dir\\acshell,2.dll\"; Rename-Item \"$dir\\acmain,1.exe\" 'acmain.exe'",
+                "Start-Process 'regsvr32' -ArgumentList @(\"$dir\\acshell,1.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
+                "Start-Sleep -Seconds 2"
+            ],
+            "pre_uninstall": [
+                "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+                "Start-Process 'regsvr32' -ArgumentList @('/u', \"$dir\\acshell,1.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
+                "Start-Sleep -Seconds 2"
+            ]
+        }
+    },
+    "post_install": [
+        "$documents = (Get-ChildItem \"$dir\" -Filter '*.pdf').Length; $subtract = $documents - 5",
+        "Copy-Item \"$dir\\template.ini\" \"$dir\\messages,13.ini\"; Copy-Item \"$dir\\template.ini\" \"$dir\\messages.ini\"; Copy-Item \"$dir\\ac,4.pdf\" \"$dir\\ac.pdf\"",
+        "Remove-Item \"$dir\\ac,4.pdf\"",
+        "$MinusValue1 = $documents - $subtract; $NewValue1 = $MinusValue1 - 1; Rename-Item \"$dir\\ac,$MinusValue1.pdf\" \"ac,$NewValue1.pdf\"",
+        "$MinusValue2 = ($documents - $subtract) + 1; $NewValue2 = $MinusValue2 - 1; Rename-Item \"$dir\\ac,$MinusValue2.pdf\" \"ac,$NewValue2.pdf\"",
+        "$MinusValue3 = ($documents - $subtract) + 2; $NewValue3 = $MinusValue3 - 1; Rename-Item \"$dir\\ac,$MinusValue3.pdf\" \"ac,$NewValue3.pdf\"",
+        "$MinusValue4 = ($documents - $subtract) + 3; $NewValue4 = $MinusValue4 - 1; Rename-Item \"$dir\\ac,$MinusValue4.pdf\" \"ac,$NewValue4.pdf\"",
+        "$MinusValue5 = ($documents - $subtract) + 4; $NewValue5 = $MinusValue5 - 1; Rename-Item \"$dir\\ac,$MinusValue5.pdf\" \"ac,$NewValue5.pdf\"",
+        "$MinusValue6 = ($documents - $subtract) + 5; $NewValue6 = $MinusValue6 - 1; Rename-Item \"$dir\\ac,$MinusValue6.pdf\" \"ac,$NewValue6.pdf\"",
+        "$MinusValue7 = ($documents - $subtract) + 6; $NewValue7 = $MinusValue7 - 1; Rename-Item \"$dir\\ac,$MinusValue7.pdf\" \"ac,$NewValue7.pdf\"",
+        "$MinusValue8 = ($documents - $subtract) + 7; $NewValue8 = $MinusValue8 - 1; Rename-Item \"$dir\\ac,$MinusValue8.pdf\" \"ac,$NewValue8.pdf\"",
+        "$MinusValue9 = ($documents - $subtract) + 8; $NewValue9 = $MinusValue9 - 1; Rename-Item \"$dir\\ac,$MinusValue9.pdf\" \"ac,$NewValue9.pdf\"",
+        "Copy-Item \"$dir\\ac.pdf\" \"$dir\\ac,$documents.pdf\"",
+        "New-Item \"$dir\\change_language.ps1\" -Value '$ac_language = Read-Host -Prompt \"Please enter the number that corresponds to your native langauge\"' | Out-Null",
+        "Add-Content \"$dir\\change_language.ps1\" -Value @(",
+        "'`nCopy-Item \"$dir\\messages,$ac_language.ini\" \"$dir\\messages.ini\" -Force', 'Copy-Item \"$dir\\ac,$ac_language.pdf\" \"$dir\\ac.pdf\" -Force'",
+        ")",
+        "$content = (Get-Content \"$dir\\change_language.ps1\")",
+        "$content = $content.Replace('$dir', \"$dir\")",
+        "$content | Set-Content -Path \"$dir\\change_language.ps1\"",
+        "$content2 = (Get-Content \"$dir\\change_language.ps1\")",
+        "$content2 = $content.Replace('`n', \"`n\")",
+        "$content2 | Set-Content -Path \"$dir\\change_language.ps1\"",
+        "Start-Sleep -Seconds 2"
+    ],
+    "bin": "acmain.exe",
+    "checkver": {
+        "url": "https://www.petges.lu/download/",
+        "regex": "ac-([\\d]+)_([\\w]+).exe",
+        "replace": "${1}.${2}"
+    },
+    "autoupdate": {
+        "url": "https://www.petges.lu/pubfiles/ac-$underscoreVersion.exe",
+        "hash": {
+            "url": "https://www.petges.lu/download/",
+            "regex": "<p>MD5\\sChecksum:\\s$md5</p>"
+        }
+    }
+}
