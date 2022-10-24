@@ -1,5 +1,5 @@
 {
-    "version": "1.1.95.893.g6cf4d40c",
+    "version": "1.1.96.785.g464c973a",
     "description": "A digital music service that gives you access to millions of songs.",
     "homepage": "https://www.spotify.com/",
     "license": {
@@ -32,14 +32,14 @@
     },
     "checkver": {
         "script": [
-            "$download_url = 'https://download.scdn.co/SpotifyFullSetup.exe'",
-            "$download = cache_path 'spotify' 'unknown' $download_url",
-            "do_dl $download_url $download",
-            "$spotify_version = (Get-Item $download).VersionInfo.ProductVersion",
-            "Move-Item -Force $download -Destination (cache_path 'spotify' $spotify_version $download_url)",
-            "return $spotify_version"
+            "$dl_url = 'https://download.scdn.co/SpotifyFullSetup.exe'",
+            "$dl = cache_path 'spotify' 'unknown' $dl_url",
+            "Invoke-WebRequest $dl_url -OutFile $dl",
+            "$ver = (Get-Item $dl).VersionInfo.ProductVersion",
+            "Move-Item -Force $dl (cache_path 'spotify' $ver $dl_url)",
+            "$ver"
         ],
-        "regex": "(.+)"
+        "regex": "(\\S+)"
     },
     "autoupdate": {
         "url": "https://download.scdn.co/SpotifyFullSetup.exe"
