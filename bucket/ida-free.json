@@ -6,28 +6,32 @@
     "architecture": {
         "64bit": {
             "url": "https://out7.hex-rays.com/files/idafree81_windows.exe",
-            "hash": "sha1:666df4d5e32b26e7f0fae5c18beed9c58bcd9cc7",
-            "bin": "ida64.exe",
-            "shortcuts": [
-                [
-                    "ida64.exe",
-                    "IDA Freeware"
-                ]
-            ]
+            "hash": "sha1:666df4d5e32b26e7f0fae5c18beed9c58bcd9cc7"
         }
     },
     "pre_install": "if (!(is_admin)) { throw 'Administrator privileges are required' }",
     "installer": {
         "args": [
-            "--mode unattended",
-            "--unattendedmodeui minimal",
-            "--installpassword freeware",
-            "--prefix \"$dir\""
+            "--mode",
+            "unattended",
+            "--prefix",
+            "$dir"
         ]
     },
+    "bin": "ida64.exe",
+    "shortcuts": [
+        [
+            "ida64.exe",
+            "IDA Freeware"
+        ]
+    ],
+    "pre_uninstall": "if (!(is_admin)) { throw 'Administrator privileges are required' }",
     "uninstaller": {
         "file": "uninstall.exe",
-        "args": "--mode unattended"
+        "args": [
+            "--mode",
+            "unattended"
+        ]
     },
     "checkver": {
         "url": "https://hex-rays.com/ida-free/#download",
@@ -36,12 +40,12 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://out7.hex-rays.com/files/idafree$majorVersion$minorVersion_windows.exe"
+                "url": "https://out7.hex-rays.com/files/idafree$majorVersion$minorVersion_windows.exe",
+                "hash": {
+                    "url": "https://hex-rays.com/ida-free/#download",
+                    "regex": "$sha1\\s+$basename"
+                }
             }
-        },
-        "hash": {
-            "url": "https://hex-rays.com/ida-free/#download",
-            "regex": "$sha1\\s+$basename"
         }
     }
 }
