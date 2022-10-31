@@ -4,14 +4,15 @@
     "description": "A free, open source, backup client that securely stores encrypted, incremental, compressed backups on cloud storage services and remote file servers.",
     "license": "LGPL-2.1",
     "notes": [
-        "If you want Dupilicati to run at the startup of your system, run:",
+        "If you want Dupilicati to run at the startup of your system, run: (REQUIRES ADMINSTRATOR PRIVELLAGES)",
         "& \"$dir\\Duplicati.WindowsService.exe\" install",
         "",
-        "To remove Duplicati startup, run:",
+        "To remove Duplicati startup, run: (REQUIRES ADMINSTRATOR PRIVELLAGES)",
         "& \"$dir\\Duplicati.WindowsService.exe\" uninstall"
     ],
     "url": "https://github.com/duplicati/duplicati/releases/download/v2.0.6.3-2.0.6.3_beta_2021-06-17/duplicati-2.0.6.3_beta_2021-06-17.zip",
     "hash": "85A45CE43E0F8050324854F64F130E8967D881C73C3E120CF81028C1F110CB50",
+    "pre_install": "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
     "bin": [
         "Duplicati.CommandLine.exe",
         [
@@ -30,6 +31,7 @@
         ]
     ],
     "pre_uninstall": [
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
         "if (Get-Service -Name 'Duplicati' -ErrorAction 'SilentlyContinue') {",
         "    Start-Process \"$dir\\Duplicati.WindowsService.exe\" -Wait -Verb 'RunAs' -ArgumentList 'uninstall' -WindowStyle 'Hidden'",
         "}"
