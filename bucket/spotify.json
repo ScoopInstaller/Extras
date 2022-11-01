@@ -1,5 +1,5 @@
 {
-    "version": "1.1.94.872.g7a9200fe",
+    "version": "1.1.97.962.g24733a46",
     "description": "A digital music service that gives you access to millions of songs.",
     "homepage": "https://www.spotify.com/",
     "license": {
@@ -7,7 +7,7 @@
         "url": "https://www.spotify.com/legal/end-user-agreement/"
     },
     "url": "https://download.scdn.co/SpotifyFullSetup.exe",
-    "hash": "2570f56e4e0dc3cdc273606306bb1d10887fad55e93be28e01af7049ef047f5f",
+    "hash": "83e95605b777c1b73b36122c3c2a8aa22193a8d55523c6d62141b920f083562d",
     "installer": {
         "script": [
             "Start-Process -Wait \"$dir\\$fname\" -ArgumentList '/extract', \"`\"$dir`\"\"",
@@ -32,14 +32,14 @@
     },
     "checkver": {
         "script": [
-            "$download_url = 'https://download.scdn.co/SpotifyFullSetup.exe'",
-            "$download = cache_path 'spotify' 'unknown' $download_url",
-            "do_dl $download_url $download",
-            "$spotify_version = (Get-Item $download).VersionInfo.ProductVersion",
-            "Move-Item -Force $download -Destination (cache_path 'spotify' $spotify_version $download_url)",
-            "return $spotify_version"
+            "$dl_url = 'https://download.scdn.co/SpotifyFullSetup.exe'",
+            "$dl = cache_path 'spotify' 'unknown' $dl_url",
+            "Invoke-WebRequest $dl_url -OutFile $dl",
+            "$ver = (Get-Item $dl).VersionInfo.ProductVersion",
+            "Move-Item -Force $dl (cache_path 'spotify' $ver $dl_url)",
+            "$ver"
         ],
-        "regex": "(.+)"
+        "regex": "(\\S+)"
     },
     "autoupdate": {
         "url": "https://download.scdn.co/SpotifyFullSetup.exe"
