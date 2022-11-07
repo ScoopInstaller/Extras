@@ -4,15 +4,14 @@
     "description": "A free, open source, backup client that securely stores encrypted, incremental, compressed backups on cloud storage services and remote file servers.",
     "license": "LGPL-2.1",
     "notes": [
-        "If you want Dupilicati to run at the startup of your system, run: (REQUIRES ADMINSTRATOR PRIVELLAGES)",
-        "& \"$dir\\Duplicati.WindowsService.exe\" install",
+        "If you want Dupilicati to run at the startup of your system, run: (requires administrator privileges)",
+        "Start-Process \"$dir\\Duplicati.WindowsService.exe\" -Wait -Verb 'RunAs' -ArgumentList 'install' -WindowStyle 'Hidden'",
         "",
-        "To remove Duplicati startup, run: (REQUIRES ADMINSTRATOR PRIVELLAGES)",
-        "& \"$dir\\Duplicati.WindowsService.exe\" uninstall"
+        "To remove Duplicati from startup, run: (requires administrator privileges)",
+        "Start-Process \"$dir\\Duplicati.WindowsService.exe\" -Wait -Verb 'RunAs' -ArgumentList 'uninstall' -WindowStyle 'Hidden'"
     ],
     "url": "https://github.com/duplicati/duplicati/releases/download/v2.0.6.3-2.0.6.3_beta_2021-06-17/duplicati-2.0.6.3_beta_2021-06-17.zip",
-    "hash": "85A45CE43E0F8050324854F64F130E8967D881C73C3E120CF81028C1F110CB50",
-    "pre_install": "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+    "hash": "85a45ce43e0f8050324854f64f130e8967d881c73c3e120cf81028c1f110cb50",
     "bin": [
         "Duplicati.CommandLine.exe",
         [
@@ -31,8 +30,8 @@
         ]
     ],
     "pre_uninstall": [
-        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
         "if (Get-Service -Name 'Duplicati' -ErrorAction 'SilentlyContinue') {",
+        "    if (!(is_admin)) { error \"Admin rights required to remove Duplicati service\"; break }",
         "    Start-Process \"$dir\\Duplicati.WindowsService.exe\" -Wait -Verb 'RunAs' -ArgumentList 'uninstall' -WindowStyle 'Hidden'",
         "}"
     ],
