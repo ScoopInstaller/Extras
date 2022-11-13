@@ -3,16 +3,22 @@
     "homepage": "https://github.com/stnkl/EverythingToolbar",
     "description": "Everything integration for the Windows taskbar.",
     "license": "MIT",
+    "notes": [
+        "• Enable EverythingToolbar via the context menu of the taskbar",
+        "   ∘ Note: You will have to open the context menu twice as it doesn't show up the first time you open it.",
+        "• Adjust size and position after unlocking the taskbar. Demonstration video:",
+        "   https://user-images.githubusercontent.com/17520641/107118574-19a1bf80-6882-11eb-843a-7e854e5d0684.gif"
+    ],
     "depends": "everything-toolbar-scripts",
     "url": "https://github.com/stnkl/EverythingToolbar/releases/download/0.7.4/EverythingToolbar-0.7.4.msi",
     "hash": "3982c5605ed0c440ccc24a04ef48870f2546ee34d516471c54af93d8f9c9cf88",
     "extract_dir": "EverythingToolbar",
     "pre_install": [
         "if (Test-Path \"$scoopdir\\apps\\everything-toolbar-scripts\") {",
-        "   Copy-Item \"$scoopdir\\apps\\everything-toolbar-scripts\\current\\*.cmd\" \"$dir\" -ErrorAction 'Break' -Recurse",
+        "   Copy-Item \"$scoopdir\\apps\\everything-toolbar-scripts\\current\\*.cmd\" \"$dir\" -ErrorAction 'Stop' -Recurse",
         "}",
         "elseif (Test-Path \"$globaldir\\apps\\everything-toolbar-scripts\") {",
-        "   Copy-Item \"$globaldir\\apps\\everything-toolbar-scripts\\current\\*.cmd\" \"$dir\" -ErrorAction 'Break' -Recurse",
+        "   Copy-Item \"$globaldir\\apps\\everything-toolbar-scripts\\current\\*.cmd\" \"$dir\" -ErrorAction 'Stop' -Recurse",
         "}",
         "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
         "Start-Process 'cmd' -Wait -Verb 'RunAs' -WindowStyle 'Hidden' -ArgumentList @('/c', \"$dir\\install.cmd\"); Stop-Process -Name 'explorer' -Force"
