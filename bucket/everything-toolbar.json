@@ -1,0 +1,28 @@
+{
+    "version": "0.7.4",
+    "homepage": "https://github.com/stnkl/EverythingToolbar",
+    "description": "Everything integration for the Windows taskbar.",
+    "license": "MIT",
+    "depends": "everything-toolbar-scripts",
+    "url": "https://github.com/stnkl/EverythingToolbar/releases/download/0.7.4/EverythingToolbar-0.7.4.msi",
+    "hash": "3982c5605ed0c440ccc24a04ef48870f2546ee34d516471c54af93d8f9c9cf88",
+    "extract_dir": "EverythingToolbar",
+    "pre_install": [
+        "if (Test-Path \"$scoopdir\\apps\\everything-toolbar-scripts\") {",
+        "   Copy-Item \"$scoopdir\\apps\\everything-toolbar-scripts\\current\\*.cmd\" \"$dir\" -ErrorAction 'Break' -Recurse",
+        "}",
+        "elseif (Test-Path \"$globaldir\\apps\\everything-toolbar-scripts\") {",
+        "   Copy-Item \"$globaldir\\apps\\everything-toolbar-scripts\\current\\*.cmd\" \"$dir\" -ErrorAction 'Break' -Recurse",
+        "}",
+        "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
+        "Start-Process 'cmd' -Wait -Verb 'RunAs' -WindowStyle 'Hidden' -ArgumentList @('/c', \"$dir\\install.cmd\"); Stop-Process -Name 'explorer' -Force"
+    ],
+    "pre_uninstall": [
+        "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
+        "Start-Process 'cmd' -Wait -Verb 'RunAs' -WindowStyle 'Hidden' -ArgumentList @('/c', \"$dir\\uninstall.cmd\"); Start-Sleep -Seconds 2"
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "url": "https://github.com/stnkl/EverythingToolbar/releases/download/$version/EverythingToolbar-$version.msi"
+    }
+}
