@@ -13,6 +13,10 @@
         }
     },
     "innosetup": true,
+    "pre_install": [
+        "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
+        "New-Service -Name 'Barrier' -BinaryPathName \"$dir\\barrierd.exe\" -StartupType 'Manual' -Description 'Manages the Barrier background processes.' -ErrorAction 'SilentlyContinue' | Out-Null"
+    ],
     "bin": [
         "barrierc.exe",
         "barriers.exe"
@@ -22,6 +26,10 @@
             "barrier.exe",
             "Barrier"
         ]
+    ],
+    "pre_uninstall": [
+        "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
+        "Remove-Service -Name 'Barrier' -Verbose -ErrorAction 'SilentlyContinue'"
     ],
     "checkver": "github",
     "autoupdate": {
