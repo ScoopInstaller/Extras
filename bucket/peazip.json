@@ -54,8 +54,17 @@
         "res\\conf\\custedit.txt"
     ],
     "pre_uninstall": [
-        "reg delete 'HKEY_CLASSES_ROOT\\AllFileSystemObjects\\shell\\PeaZip' /f",
-        "reg delete 'HKEY_CLASSES_ROOT\\*\\shell\\PeaZip' /f"
+        "$uninstallerFile = (Get-ChildItem \"$dir\\*\" -Recurse -Include 'unins000.exe' -ErrorAction 'SilentlyContinue').FullName",
+        "$uninstallerName = (Get-ChildItem \"$dir\\*\" -Recurse -Include 'unins000.exe' -ErrorAction 'SilentlyContinue').Name",
+        "if ($uninstallerName -eq 'unins000.exe') {",
+        "   if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
+        "   Start-Process \"$uninstallerFile\" -Wait -Verb 'RunAs' -ArgumentList @('/VERYSILENT', '/FORCECLOSEAPPLICATIONS', '/SUPPRESSMSGBOXES')",
+        "   Stop-Process -Name 'explorer' -Force -ErrorAction 'SilentlyContinue'; Start-Sleep -Seconds 2",
+        "}",
+        "else {",
+        "   reg delete 'HKEY_CLASSES_ROOT\\AllFileSystemObjects\\shell\\PeaZip' /f",
+        "   reg delete 'HKEY_CLASSES_ROOT\\*\\shell\\PeaZip' /f",
+        "}"
     ],
     "checkver": {
         "url": "https://osdn.net/projects/peazip/",
