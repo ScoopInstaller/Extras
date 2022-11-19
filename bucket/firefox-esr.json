@@ -3,12 +3,6 @@
     "description": "Extended Support Release of Firefox: the popular open source web browser",
     "homepage": "https://www.mozilla.org/en-US/firefox/organizations/",
     "license": "MPL-2.0",
-    "notes": [
-        "To set profile 'Scoop-ESR' as *DEFAULT*, or profiles/settings was lost after update:",
-        "  - Run 'Firefox ESR Profile Manager', choose 'Scoop-ESR' then click 'Start Firefox'.",
-        "  - Visit 'about:profiles' page in Firefox ESR to check *DEFAULT* profile.",
-        "For details: https://support.mozilla.org/en-US/kb/profile-manager-create-remove-switch-firefox-profiles"
-    ],
     "architecture": {
         "64bit": {
             "url": "https://archive.mozilla.org/pub/firefox/releases/102.5.0esr/win64/en-US/Firefox%20Setup%20102.5.0esr.exe#/dl.7z",
@@ -21,7 +15,9 @@
     },
     "extract_dir": "core",
     "post_install": [
-        "firefox-esr -CreateProfile \"Scoop-ESR $persist_dir\\profile\"",
+        "if (-Not (Test-Path \"$persist_dir\\profile\\prefs.js\")) {",
+        "  Copy-Item \"$bucketsdir\\extras\\scripts\\firefox\\prefs.js\" \"$persist_dir\\profile\\prefs.js\" | Out-Null",
+        "}",
         "$Addition = \"$persist_dir\\addition\"",
         "if (Test-Path $Addition) {",
         "  info 'Copying additional items...'",
@@ -37,7 +33,8 @@
     "shortcuts": [
         [
             "firefox.exe",
-            "Firefox ESR"
+            "Firefox ESR",
+            "-profile \"$persist_dir\\profile\""
         ],
         [
             "firefox.exe",
