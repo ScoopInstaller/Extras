@@ -1,0 +1,51 @@
+{
+    "##": "'rootfs' must be a 'real' directory (at least on Windows 10 RS4)",
+    "version": "20221117",
+    "description": "Install Manjaro as a WSL2 Instance",
+    "homepage": "https://github.com/sileshn/ManjaroWSL2",
+    "license": "MIT",
+    "notes": "Even when you are logging in as 'root', some operations (like service command) require Windows administrator privileges",
+    "url": "https://github.com/sileshn/ManjaroWSL2/releases/download/20221117/ManjaroWSL2.zip",
+    "hash": "5058e3a7fbb004c539dea3d5bc9ae034a9fc63681ed7bf18afb30d31e6b4c073",
+    "post_install": [
+        "$installable = $true",
+        "if ($null -eq (Get-Command 'wslconfig' -ErrorAction SilentlyContinue)) {",
+        "    warn 'WSL appears not to be enabled!'",
+        "    warn 'Run ''Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux'''",
+        "    warn 'from an elevated PowerShell. Restart your computer when prompted and reinstall ManjaroWSL2.'",
+        "    $installable = $false",
+        "}",
+        "& \"$dir\\Manjaro.exe\" 'isregd'",
+        "if ($?) {",
+        "    warn 'ManjaroWSL2 is already registered'",
+        "    $installable = $false",
+        "}",
+        "if ($installable) {",
+        "    Copy-Item \"$dir\\Manjaro.exe\" \"$persist_dir\\data\\Manjaro.exe\"",
+        "    $res = Invoke-ExternalCommand \"$persist_dir\\data\\Manjaro.exe\" 'install', \"$dir\\rootfs.tar.gz\"",
+        "    Remove-Item \"$persist_dir\\data\\Manjaro.exe\" -Force",
+        "    if(!$res) { error 'ManjaroWSL2 installation failed!'; return }",
+        "}",
+        "Remove-Item \"$dir\\rootfs.tar.gz\" -Force"
+    ],
+    "uninstaller": {
+        "script": [
+            "if ($cmd -ne 'uninstall') { return }",
+            "$res = Invoke-ExternalCommand \"$dir\\Manjaro.exe\" 'isregd'",
+            "if(!$res) { error 'ManjaroWSL2 is not registered!'; return }",
+            "Invoke-ExternalCommand \"$dir\\Manjaro.exe\" 'clean', '-y' | Out-Null"
+        ]
+    },
+    "bin": "Manjaro.exe",
+    "shortcuts": [
+        [
+            "Manjaro.exe",
+            "Manjaro"
+        ]
+    ],
+    "persist": "data",
+    "checkver": "github",
+    "autoupdate": {
+        "url": "https://github.com/sileshn/ManjaroWSL2/releases/download/$version/ManjaroWSL2.zip"
+    }
+}
