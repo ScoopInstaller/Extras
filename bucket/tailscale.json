@@ -1,0 +1,59 @@
+{
+    "version": "1.32.2",
+    "description": "Tailscale a WireGuard based mesh VPN, used to connect your computers and other devices together securely without proxies.",
+    "homepage": "https://tailscale.com",
+    "license": "BSD-3-Clause",
+    "depends": "sudo",
+    "architecture": {
+        "64bit": {
+            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.32.2-amd64.msi",
+            "hash": "f1662d7eb8293b062e8f07ef9f46262239426cf8543ce870f05e87e0da5806db"
+        },
+        "32bit": {
+            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.32.2-x86.msi",
+            "hash": "4f76c02e66426c521ee0d7eaff72e7b5f00291156ee1578bb2cb15e279c3f2fb"
+        },
+        "arm64": {
+            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.32.2-arm64.msi",
+            "hash": "abc98c47795c0090555b233e7d3d12d68e3164c7a7f575ffed1d687115ed8f79"
+        }
+    },
+    "post_install": [
+        "sudo tailscale-ipn.exe /install"
+    ],
+    "uninstaller": {
+        "script": [
+            "Stop-Process -Name 'tailscale-ipn' -Force -ErrorAction SilentlyContinue | Out-Null",
+            "sudo tailscale-ipn.exe /uninstall"
+        ]
+    },
+    "extract_dir": "Tailscale",
+    "bin": [
+        "tailscale.exe",
+        "tailscale-ipn.exe",
+        "tailscaled.exe"
+    ],
+    "shortcuts": [
+        [
+            "tailscale-ipn.exe",
+            "Tailscale"
+        ]
+    ],
+    "checkver": {
+        "url": "https://pkgs.tailscale.com/stable/",
+        "regex": "tailscale-setup-([\\d.]+)-amd64\\.msi"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://pkgs.tailscale.com/stable/tailscale-setup-$version-amd64.msi"
+            },
+            "32bit": {
+                "url": "https://pkgs.tailscale.com/stable/tailscale-setup-$version-x86.msi"
+            },
+            "arm64": {
+                "url": "https://pkgs.tailscale.com/stable/tailscale-setup-$version-arm64.msi"
+            }
+        }
+    }
+}
