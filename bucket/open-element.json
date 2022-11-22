@@ -6,6 +6,7 @@
     "url": "https://openelement.uk/Files/Other/openElement.exe",
     "hash": "22F33F86128B59D3911702150EDA6438C2275065C765EE550491A601FF568AE6",
     "pre_install": [
+        "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
         "Start-Process \"$dir\\openElement.exe\" -Wait -Verb 'RunAs' -WindowStyle 'Hidden' -ArgumentList @('/extract', '/exenoui'); Start-Sleep -Seconds 2",
         "Remove-Item \"$dir\\openElement.exe\"; Rename-Item \"$dir\\*\" 'extracted_folder'",
         "Move-Item \"$dir\\extracted_folder\\*\" \"$dir\" -Exclude @('Uninstall.exe', 'updater.exe', 'openElement.msi'); Remove-Item \"$dir\\extracted_folder\" -Recurse"
