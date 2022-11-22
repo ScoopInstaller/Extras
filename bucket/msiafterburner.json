@@ -21,7 +21,11 @@
     "hash": "43e5cfac9aa9560b6294cec26578a26f83aa597e9ab8419da47fb90e6ecea202",
     "pre_install": [
         "Expand-7zipArchive \"$dir\\MSIAfterburnerSetup*.exe\" -Removal",
-        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\", \"$dir\\Redist\" -Recurse"
+        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\", \"$dir\\Redist\" -Recurse",
+        "if (!(Test-Path \"$persist_dir\\Plugins\\Monitoring\\*.cfg.user\")) {",
+        "   Copy-Item \"$dir\\Plugins\\Monitoring\\AIDA64.cfg\" \"$dir\\Plugins\\Monitoring\\AIDA64.cfg.user\"",
+        "   Copy-Item \"$dir\\Plugins\\Monitoring\\PerfCounter.cfg\" \"$dir\\Plugins\\Monitoring\\PerfCounter.cfg.user\"",
+        "}"
     ],
     "post_install": [
         "if (Test-Path \"$persist_dir\\AB_Profiles\") {",
@@ -37,10 +41,17 @@
             "MSI Afterburner"
         ]
     ],
-    "persist": "Profiles",
+    "persist": [
+        "Profiles",
+        "Plugins\\Monitoring\\AIDA64.cfg.user",
+        "Plugins\\Monitoring\\PerfCounter.cfg.user"
+    ],
     "checkver": {
         "url": "https://www.guru3d.com/files-details/msi-afterburner-beta-download.html",
         "regex": ">Download\\s+([\\d.]+)\\s+Stable\\s+\\(Final\\)",
         "reverse": true
+    },
+    "autoupdate": {
+        "url": "https://download.msi.com/uti_exe/vga/MSIAfterburnerSetup.zip?__token__=exp=zzzz~acl=/*~zzzzzzzz#/dl.zip"
     }
 }
