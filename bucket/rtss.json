@@ -10,11 +10,13 @@
     "url": "https://ftp.nluug.nl/pub/games/PC/guru3d/afterburner/%5BGuru3D.com%5D-RTSS.zip",
     "hash": "d2df6f2456040e66dc197f5626726d7ecd8870d353253ded147cb6648218322a",
     "pre_install": [
+        "ensure \"$persist_dir\" | Out-Null",
         "Expand-7zipArchive \"$dir\\RTSSSetup*.exe\" -Removal",
         "Remove-Item \"$dir\\`$*\", \"$dir\\Guru3D.com\", \"$dir\\Uninstall*\" -Recurse",
         "Move-Item \"$dir\\RTSSHooks.dll.copy\" \"$dir\\RTSSHooks.dll\"",
         "Move-Item \"$dir\\RTSSHooks64.dll.copy\" \"$dir\\RTSSHooks64.dll\"",
-        "'HotkeyHandler.cfg', 'OverlayEditor.cfg' | ForEach-Object {if (!(Test-Path \"$persist_dir\\Plugins\\Client\\$_\")) {New-Item \"$dir\\Plugins\\Client\\$_\" | Out-Null}}"
+        "'HotkeyHandler.cfg', 'OverlayEditor.cfg' | ForEach-Object {if (!(Test-Path \"$persist_dir\\Plugins\\Client\\$_\")) {New-Item \"$dir\\Plugins\\Client\\$_\" | Out-Null}}",
+        "Copy-Item \"$persist_dir\\Plugins\\Client\" \"$dir\\Plugins\\Client\" -Recurse -ErrorAction 'SilentlyContinue'"
     ],
     "post_install": [
         "$rtssProfiles = \"$persist_dir\\..\\msiafterburner\\RTSS_Profiles\"",
@@ -31,12 +33,8 @@
             "RivaTuner Statistics Server"
         ]
     ],
-    "persist": [
-        "Plugins\\Client\\Overlays",
-        "Profiles",
-        "Plugins\\Client\\HotkeyHandler.cfg",
-        "Plugins\\Client\\OverlayEditor.cfg"
-    ],
+    "persist": "Profiles",
+    "pre_uninstall": "if (Test-Path \"$persist_dir\") {Copy-Item \"$dir\\Plugins\\Client\" \"$persist_dir\\Plugins\\Client\" -Recurse -ErrorAction 'SilentlyContinue'}",
     "checkver": {
         "url": "https://rtss.guru3d.com/Update.txt",
         "regex": "ProductVersion\\s+=\\s*([\\d.]+)"
