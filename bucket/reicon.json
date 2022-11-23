@@ -13,8 +13,8 @@
         "ensure \"$persist_dir\" | Out-Null",
         "if ($architecture -eq '32bit') {Remove-Item \"$dir\\ReIcon_x64.exe\"}",
         "elseif ($architecture -eq '64bit') {Remove-Item \"$dir\\ReIcon.exe\"; Rename-Item \"$dir\\ReIcon_x64.exe\" 'ReIcon.exe'}",
-        "if (!(Test-Path \"$dir\\IconLayoutsFor$env:USERNAME.ini\") {New-Item \"$dir\\IconLayoutsFor$env:USERNAME.ini\" | Out-Null}",
-        "Copy-Item \"$persist_dir\\IconLayoutsFor$env:USERNAME.ini\" \"$dir\\IconLayoutsFor$env:USERNAME.ini\""
+        "if (!(Test-Path \"$dir\\IconLayoutsFor$env:USERNAME.ini\")) {New-Item \"$dir\\IconLayoutsFor$env:USERNAME.ini\" | Out-Null}",
+        "Copy-Item \"$persist_dir\\IconLayoutsFor$env:USERNAME.ini\" \"$dir\\IconLayoutsFor$env:USERNAME.ini\" -ErrorAction 'SilentlyContinue'"
     ],
     "bin": "ReIcon.exe",
     "shortcuts": [
@@ -24,7 +24,7 @@
         ]
     ],
     "persist": "ReIcon.ini",
-    "pre_uninstall": "if (Test-Path \"$persist_dir\") {Copy-Item \"$dir\\IconLayoutsFor$env:USERNAME.ini\" \"$persist_dir\\IconLayoutsFor$env:USERNAME.ini\"}",
+    "pre_uninstall": "if (Test-Path \"$persist_dir\") {Copy-Item \"$dir\\IconLayoutsFor$env:USERNAME.ini\" \"$persist_dir\\IconLayoutsFor$env:USERNAME.ini\" -ErrorAction 'SilentlyContinue'}",
     "checkver": "ReIcon\\sv([\\d.]+)",
     "autoupdate": {
         "url": "https://www.sordum.org/files/download/restore-desktop-icon-layouts/ReIcon.zip"
