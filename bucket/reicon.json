@@ -6,18 +6,16 @@
         "identifier": "Freeware",
         "url": "https://www.sordum.org/eula/"
     },
-    "notes": "Desktop icon layout Files created by the program are currenlty unable to be persisted in the app folder. So please place them somewhere else in your computer",
     "url": "https://www.sordum.org/files/download/restore-desktop-icon-layouts/ReIcon.zip",
     "hash": "0917519c64dcea763b9ef0b91737baecb195181f8bf3585ba3ed94b85c766acd",
     "extract_dir": "ReIcon",
-    "architecture": {
-        "64bit": {
-            "pre_install": "Remove-Item \"$dir\\ReIcon.exe\" | Out-Null; Rename-Item \"$dir\\ReIcon_x64.exe\" 'ReIcon.exe' | Out-Null"
-        },
-        "32bit": {
-            "pre_install": "Remove-Item \"$dir\\ReIcon_x64.exe\" | Out-Null"
-        }
-    },
+    "pre_install": [
+        "ensure \"$persist_dir\" | Out-Null",
+        "if ($architecture -eq '32bit') {Remove-Item \"$dir\\ReIcon_x64.exe\"}",
+        "elseif ($architecture -eq '64bit') {Remove-Item \"$dir\\ReIcon.exe\"; Rename-Item \"$dir\\ReIcon_x64.exe\" 'ReIcon.exe'}",
+        "if (!(Test-Path \"$dir\\IconLayoutsFor$env:USERNAME.ini\") {New-Item \"$dir\\IconLayoutsFor$env:USERNAME.ini\" | Out-Null}",
+        "Copy-Item \"$persist_dir\\IconLayoutsFor$env:USERNAME.ini\" \"$dir\\IconLayoutsFor$env:USERNAME.ini\""
+    ],
     "bin": "ReIcon.exe",
     "shortcuts": [
         [
@@ -26,6 +24,7 @@
         ]
     ],
     "persist": "ReIcon.ini",
+    "pre_uninstall": "if (Test-Path \"$persist_dir\") {Copy-Item \"$dir\\IconLayoutsFor$env:USERNAME.ini\" \"$persist_dir\\IconLayoutsFor$env:USERNAME.ini\"}",
     "checkver": "ReIcon\\sv([\\d.]+)",
     "autoupdate": {
         "url": "https://www.sordum.org/files/download/restore-desktop-icon-layouts/ReIcon.zip"
