@@ -13,7 +13,9 @@
         "Expand-7zipArchive \"$dir\\RTSSSetup*.exe\" -Removal",
         "Remove-Item \"$dir\\`$*\", \"$dir\\Guru3D.com\", \"$dir\\Uninstall*\" -Recurse",
         "Move-Item \"$dir\\RTSSHooks.dll.copy\" \"$dir\\RTSSHooks.dll\"",
-        "Move-Item \"$dir\\RTSSHooks64.dll.copy\" \"$dir\\RTSSHooks64.dll\""
+        "Move-Item \"$dir\\RTSSHooks64.dll.copy\" \"$dir\\RTSSHooks64.dll\"",
+        "# configs",
+        "Copy-Item \"$persist_dir\\Plugins\\Client\\*.cfg\" \"$dir\\Plugins\\Client\" -ErrorAction SilentlyContinue"
     ],
     "post_install": [
         "$rtssProfiles = \"$persist_dir\\..\\msiafterburner\\RTSS_Profiles\"",
@@ -33,6 +35,10 @@
     "persist": [
         "Plugins\\Client\\Overlays",
         "Profiles"
+    ],
+    "pre_uninstall": [
+        "# persist configs",
+        "Copy-Item \"$dir\\Plugins\\Client\\*.cfg\" \"$persist_dir\\Plugins\\Client\" -Force -ErrorAction SilentlyContinue"
     ],
     "checkver": {
         "url": "https://rtss.guru3d.com/Update.txt",
