@@ -33,7 +33,10 @@
         ]
     ],
     "persist": "Profiles",
-    "pre_uninstall": "if (Test-Path \"$persist_dir\") {Copy-Item \"$dir\\Plugins\\Client\" \"$persist_dir\\Plugins\\Client\" -Recurse -ErrorAction 'SilentlyContinue'}",
+    "pre_uninstall": [
+        "# persist configs",
+        "Copy-Item \"$dir\\Plugins\\Client\\*.cfg\" \"$persist_dir\\Plugins\\Client\" -Force -ErrorAction SilentlyContinue"
+    ],
     "checkver": {
         "url": "https://rtss.guru3d.com/Update.txt",
         "regex": "ProductVersion\\s+=\\s*([\\d.]+)"
