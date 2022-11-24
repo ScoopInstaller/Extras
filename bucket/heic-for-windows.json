@@ -1,0 +1,32 @@
+{
+    "version": "2.000",
+    "homepage": "https://www.copytrans.net/copytransheic/",
+    "description": "A Windows File Explorer shell extension that allows for viewing of HEIC and HEIF photos on Windows, as well as convert them to JPG with a simple right-click.",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.copytrans.net/support/terms-and-conditions/"
+    },
+    "url": "https://www.copytrans.net/bin/CopyTransHEICforWindowsv2.000.exe#/setup.exe",
+    "hash": "3cc4b5fc063268f546e0b310f42c89e4f7380641df28d00c8d46b59318c5fdf7",
+    "pre_install": [
+        "if ($architecture -eq '32bit') {Expand-InnoArchive \"$dir\\setup.exe\" \"$dir\" -ExtractDir '{commonpf32}\\CopyTrans HEIC for Windows' -Removal}",
+        "elseif ($architecture -eq '64bit') {Expand-InnoArchive \"$dir\\setup.exe\" \"$dir\" -Removal}",
+        "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
+        "Start-Process 'regsvr32' -Wait -Verb 'RunAs' -ArgumentList @(\"$dir\\CopyTransHEICforWindows.dll\", '/s'); Start-Sleep -Seconds 2"
+    ],
+    "pre_uninstall": [
+        "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
+        "Start-Process 'regsvr32' -Wait -Verb 'RunAs' -ArgumentList @('/u', \"$dir\\CopyTransHEICforWindows.dll\", '/s'); Stop-Process -Name 'explorer' -Force",
+        "Start-Sleep -Seconds 2"
+    ],
+    "checkver": {
+        "script": [
+            "$redirUrl = [System.Net.HttpWebRequest]::Create('https://www.copytrans.net/download-zip?program=CTH').GetResponse().ResponseUri.AbsoluteUri",
+            "return $redirUrl"
+        ],
+        "regex": "CopyTransHEICforWindowsv([\\d.]+).exe"
+    },
+    "autoupdate": {
+        "url": "https://www.copytrans.net/bin/CopyTransHEICforWindowsv$version.exe#/setup.exe"
+    }
+}
