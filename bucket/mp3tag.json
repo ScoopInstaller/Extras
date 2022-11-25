@@ -9,8 +9,14 @@
     "url": "https://download.mp3tag.de/mp3tagv318setup.exe#/dl.7z",
     "hash": "520e74932fd8e59ca5febacd12ef9f6719cdfb955aa1341ff253c5e792167293",
     "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\mp3tag.cfg\")) { New-Item \"$dir\\mp3tag.cfg\" | Out-Null }",
-        "Remove-Item \"$dir\\`$*\", \"$dir\\Mp3tagUninst*\" -Recurse"
+        "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
+        "'mp3tag.cfg', 'data\\columns.ini', 'data\\usrfields.ini' | ForEach-Object {",
+        "   if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "}",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\Mp3tagUninst*\" -Recurse",
+        "if ($architecture -eq '32bit') { Start-Process 'regsvr32' -Wait -Verb 'RunAs' -ArgumentList @(\"$dir\\Mp3tagShell32.dll\", '/s') }",
+        "elseif ($architecture -eq '64bit') { Start-Process 'regsvr32' -Wait -Verb 'RunAs' -ArgumentList @(\"$dir\\Mp3tagShell.dll\", '/s') }",
+        "Copy-Item \"$persist_dir\\export\" \"$dir\\export\" -Recurse -ErrorAction 'SilentlyContinue'"
     ],
     "bin": "mp3tag.exe",
     "shortcuts": [
@@ -20,9 +26,18 @@
         ]
     ],
     "persist": [
-        "data",
-        "export",
+        "data\\panels",
+        "data\\columns",
+        "data\\columns.ini",
+        "data\\usrfields.ini",
         "mp3tag.cfg"
+    ],
+    "pre_uninstall": [
+        "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
+        "Copy-Item \"$dir\\export\" \"$persist_dir\\export\" -Recurse -ErrorAction 'SilentlyContinue'",
+        "if ($architecture -eq '32bit') { Start-Process 'regsvr32' -Wait -Verb 'RunAs' -ArgumentList @('/u', \"$dir\\Mp3tagShell32.dll\", '/s') }",
+        "elseif ($architecture -eq '64bit') { Start-Process 'regsvr32' -Wait -Verb 'RunAs' -ArgumentList @('/u', \"$dir\\Mp3tagShell.dll\", '/s') }",
+        "Stop-Process -Name 'explorer' -Force; Start-Sleep -Seconds 2"
     ],
     "checkver": "Mp3tag\\s+v([\\w.]+)",
     "autoupdate": {
