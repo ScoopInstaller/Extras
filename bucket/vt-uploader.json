@@ -4,13 +4,15 @@
     "description": "A simple application written in C# that allows for file uploading to the VirusTotal website. (Requires a Virustotal API Key)",
     "license": "GPL-3.0",
     "notes": [
-        "For a guide on how to get your Virustotal API Key, visit",
+        "You can add VirusTotalUploader as a context menu option by running,",
+        "reg import \"$dir\\install-context.reg\"",
+        "",
+        "For a guide on how to get your Virustotal API Key, visit,",
         "https://github.com/SamuelTulach/VirusTotalUploader#how-to-get-api-key"
     ],
     "url": "https://github.com/SamuelTulach/VirusTotalUploader/releases/download/0.1.9/setup_anycpu_signed.zip",
     "hash": "142751060f6e68b989af65df8b16420e7d29979849f6aaa27e782d59901beae9",
     "pre_install": [
-        "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
         "Rename-Item \"$dir\\uploader.exe\" 'setup.exe'; Expand-InnoArchive \"$dir\\setup.exe\" \"$dir\" -Removal",
         "if (!(Test-Path \"$persist_dir\\vtu_settings.json\")) {",
         "   New-Item \"$dir\\vtu_settings.json\" -ItemType 'File' -Value '{\"ApiKey\":\"\",\"Language\":\"\",\"DirectUpload\":false}' | Out-Null",
@@ -20,8 +22,7 @@
         "Copy-Item \"$bucketsdir\\MyScoop\\scripts\\vt-uploader\\install-context.reg\" \"$dir\\install-context.reg\"",
         "$vtPath = $dir.Replace('\\', '\\\\')",
         "$regContent = (Get-Content \"$dir\\install-context.reg\").Replace('$dir', \"$vtPath\")",
-        "Set-Content \"$dir\\install-context.reg\" -Value \"$regContent\" -Encoding 'Ascii'",
-        "reg import \"$dir\\install-context.reg\""
+        "Set-Content \"$dir\\install-context.reg\" -Value \"$regContent\" -Encoding 'Ascii'"
     ],
     "bin": "uploader.exe",
     "shortcuts": [
@@ -32,7 +33,6 @@
     ],
     "persist": "vtu_settings.json",
     "pre_uninstall": [
-        "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
         "if ($cmd -eq 'uninstall') {",
         "   reg delete 'HKCR\\*\\shell\\Upload to VirusTotal' /f",
         "}"
