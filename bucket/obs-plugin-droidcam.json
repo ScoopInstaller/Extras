@@ -16,13 +16,38 @@
         "   Copy-Item \"$dir\\data\\obs-plugins\\droidcam-obs\" \"$(appdir obs-studio $global)\\current\\data\\droidcam-obs\" -Recurse -ErrorAction 'SilentlyContinue'",
         "   Copy-Item \"$dir\\obs-plugins\\64bit\\*\" \"$(appdir obs-studio $global)\\current\\obs-plugins\\64bit\" -Recurse -ErrorAction 'SilentlyContinue'",
         "}",
-        "elseif (!(Test-Path \"$(appdir obs-studio $global)\")) {error \"$app requires 'obs-studio' to be installed\"; break}"
+        "elseif (Test-Path \"$(appdir obs-studio-small $global)\") {",
+        "   Copy-Item \"$dir\\data\\obs-plugins\\droidcam-obs\" \"$(appdir obs-studio-small $global)\\current\\data\\droidcam-obs\" -Recurse -ErrorAction 'SilentlyContinue'",
+        "   Copy-Item \"$dir\\obs-plugins\\64bit\\*\" \"$(appdir obs-studio-small $global)\\current\\obs-plugins\\64bit\" -Recurse -ErrorAction 'SilentlyContinue'",
+        "}",
+        "elseif (Test-Path \"$(appdir obs-studio27 $global)\") {",
+        "   Copy-Item \"$dir\\data\\obs-plugins\\droidcam-obs\" \"$(appdir obs-studio27 $global)\\current\\data\\droidcam-obs\" -Recurse -ErrorAction 'SilentlyContinue'",
+        "   Copy-Item \"$dir\\obs-plugins\\64bit\\*\" \"$(appdir obs-studio27 $global)\\current\\obs-plugins\\64bit\" -Recurse -ErrorAction 'SilentlyContinue'",
+        "}",
+        "elseif (Test-Path \"$(appdir obs-studio-pre $global)\") {",
+        "   Copy-Item \"$dir\\data\\obs-plugins\\droidcam-obs\" \"$(appdir obs-studio-pre $global)\\current\\data\\droidcam-obs\" -Recurse -ErrorAction 'SilentlyContinue'",
+        "   Copy-Item \"$dir\\obs-plugins\\64bit\\*\" \"$(appdir obs-studio-pre $global)\\current\\obs-plugins\\64bit\" -Recurse -ErrorAction 'SilentlyContinue'",
+        "}",
+        "else { error \"$app requires any obs-studio variant to be installed!`nPlease install either,`nextras/obs-studio`nextras/obs-studio-small`nversions/obs-studio27`nversions/obs-studio-pre\"; break }"
     ],
     "pre_uninstall": [
         "if (Test-Path \"$(appdir obs-studio $global)\") {",
         "   Remove-Item \"$(appdir obs-studio $global)\\current\\data\\droidcam-obs\" -Recurse -ErrorAction 'SilentlyContinue' -Force",
         "   Remove-Item \"$(appdir obs-studio $global)\\current\\obs-plugins\\64bit\\droidcam-obs.*\" -Recurse -ErrorAction 'SilentlyContinue' -Force",
-        "}"
+        "}",
+        "elseif (Test-Path \"$(appdir obs-studio-small $global)\") {",
+        "   Remove-Item \"$(appdir obs-studio-small $global)\\current\\data\\droidcam-obs\" -Recurse -ErrorAction 'SilentlyContinue' -Force",
+        "   Remove-Item \"$(appdir obs-studio-small $global)\\current\\obs-plugins\\64bit\\droidcam-obs.*\" -Recurse -ErrorAction 'SilentlyContinue' -Force",
+        "}",
+        "elseif (Test-Path \"$(appdir obs-studio27 $global)\") {",
+        "   Remove-Item \"$(appdir obs-studio27 $global)\\current\\data\\droidcam-obs\" -Recurse -ErrorAction 'SilentlyContinue' -Force",
+        "   Remove-Item \"$(appdir obs-studio27 $global)\\current\\obs-plugins\\64bit\\droidcam-obs.*\" -Recurse -ErrorAction 'SilentlyContinue' -Force",
+        "}",
+        "elseif (Test-Path \"$(appdir obs-studio-pre $global)\") {",
+        "   Remove-Item \"$(appdir obs-studio-pre $global)\\current\\data\\droidcam-obs\" -Recurse -ErrorAction 'SilentlyContinue' -Force",
+        "   Remove-Item \"$(appdir obs-studio-pre $global)\\current\\obs-plugins\\64bit\\droidcam-obs.*\" -Recurse -ErrorAction 'SilentlyContinue' -Force",
+        "}",
+        "else { continue }"
     ],
     "checkver": {
         "github": "https://github.com/dev47apps/droidcam-obs-plugin"
