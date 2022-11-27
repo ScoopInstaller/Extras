@@ -18,7 +18,9 @@
     "post_install": [
         "$vtPath = $dir.Replace('\\', '\\\\')",
         "$regContent = (Get-Content \"$bucketsdir\\extras\\scripts\\vt-uploader\\install-context.reg\").Replace('$dir', \"$vtPath\")",
-        "Set-Content \"$dir\\install-context.reg\" -Value $regContent -Encoding 'Ascii'"
+        "if ($global) { $regContent = $regContent.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "Set-Content \"$dir\\install-context.reg\" -Value $regContent -Encoding 'Ascii'",
+        "reg import \"$dir\\install-context.reg\""
     ],
     "bin": [
         [
