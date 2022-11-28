@@ -25,23 +25,14 @@
         "}"
     ],
     "pre_uninstall": [
-        "if (Test-Path \"$(appdir obs-studio $global)\") {",
-        "   Remove-Item \"$(appdir obs-studio $global)\\current\\data\\droidcam-obs\" -Recurse -ErrorAction 'SilentlyContinue' -Force",
-        "   Remove-Item \"$(appdir obs-studio $global)\\current\\obs-plugins\\64bit\\droidcam-obs.*\" -Recurse -ErrorAction 'SilentlyContinue' -Force",
-        "}",
-        "elseif (Test-Path \"$(appdir obs-studio-small $global)\") {",
-        "   Remove-Item \"$(appdir obs-studio-small $global)\\current\\data\\droidcam-obs\" -Recurse -ErrorAction 'SilentlyContinue' -Force",
-        "   Remove-Item \"$(appdir obs-studio-small $global)\\current\\obs-plugins\\64bit\\droidcam-obs.*\" -Recurse -ErrorAction 'SilentlyContinue' -Force",
-        "}",
-        "elseif (Test-Path \"$(appdir obs-studio27 $global)\") {",
-        "   Remove-Item \"$(appdir obs-studio27 $global)\\current\\data\\droidcam-obs\" -Recurse -ErrorAction 'SilentlyContinue' -Force",
-        "   Remove-Item \"$(appdir obs-studio27 $global)\\current\\obs-plugins\\64bit\\droidcam-obs.*\" -Recurse -ErrorAction 'SilentlyContinue' -Force",
-        "}",
-        "elseif (Test-Path \"$(appdir obs-studio-pre $global)\") {",
-        "   Remove-Item \"$(appdir obs-studio-pre $global)\\current\\data\\droidcam-obs\" -Recurse -ErrorAction 'SilentlyContinue' -Force",
-        "   Remove-Item \"$(appdir obs-studio-pre $global)\\current\\obs-plugins\\64bit\\droidcam-obs.*\" -Recurse -ErrorAction 'SilentlyContinue' -Force",
-        "}",
-        "else { continue }"
+        "'obs-studio', 'obs-studio-small', 'obs-studio27', 'obs-studio-pre' | ForEach-Object {",
+        "    $obs = \"$(appdir $_ $global)\"",
+        "    if (Test-Path $obs) {",
+        "        info \"Uninstall for $_\"",
+        "        Remove-Item \"$obs\\current\\data\\droidcam-obs\" -Force -Recurse -ErrorAction SilentlyContinue",
+        "        Remove-Item \"$obs\\current\\obs-plugins\\64bit\\droidcam-obs.*\" -Force -ErrorAction SilentlyContinue",
+        "    }",
+        "}"
     ],
     "checkver": {
         "github": "https://github.com/dev47apps/droidcam-obs-plugin"
