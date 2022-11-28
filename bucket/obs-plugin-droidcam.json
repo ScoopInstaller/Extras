@@ -16,13 +16,16 @@
     "pre_install": [
         "Remove-Item \"$dir\\data\\obs-plugins\\droidcam-obs\\`$_13_\" -Recurse",
         "'obs-studio', 'obs-studio-small', 'obs-studio27', 'obs-studio-pre' | ForEach-Object {",
-        "    $obs = \"$(appdir $_ $global)\"",
-        "    if (Test-Path $obs) {",
-        "        info \"Install for $_\"",
-        "        Copy-Item \"$dir\\data\" \"$obs\\current\" -Recurse -ErrorAction SilentlyContinue",
-        "        Copy-Item \"$dir\\obs-plugins\" \"$obs\\current\" -Recurse -ErrorAction SilentlyContinue",
-        "    }",
-        "    else { error \"$app requires any obs-studio variant to be installed!`nPlease install either,`nextras/obs-studio`nextras/obs-studio-small`nversions/obs-studio27`nversions/obs-studio-pre\"; break }",
+        "   $obs = \"$(appdir @($_) $global)\"",
+        "   if (Test-Path \"$obs\") {",
+        "       info \"Install for $_\"",
+        "       Copy-Item \"$dir\\data\\obs-plugins\\droidcam-obs\" \"$obs\\current\\data\\obs-plugins\\droidcam-obs\" -Recurse -ErrorAction SilentlyContinue",
+        "       Copy-Item \"$dir\\obs-plugins\\64bit\\*\" \"$obs\\current\\obs-plugins\\64bit\" -Recurse -ErrorAction SilentlyContinue",
+        "   }",
+        "   if (!(Get-ChildItem \"$obs\")) {",
+        "      error \"$app requires any obs-studio variant to be installed!`nPlease install either,`nextras/obs-studio`nextras/obs-studio-small`nversions/obs-studio27`nversions/obs-studio-pre\"",
+        "      break",
+        "   }",
         "}"
     ],
     "pre_uninstall": [
@@ -30,7 +33,7 @@
         "    $obs = \"$(appdir $_ $global)\"",
         "    if (Test-Path $obs) {",
         "        info \"Uninstall for $_\"",
-        "        Remove-Item \"$obs\\current\\data\\droidcam-obs\" -Force -Recurse -ErrorAction SilentlyContinue",
+        "        Remove-Item \"$obs\\current\\data\\obs-plugins\\droidcam-obs\" -Force -Recurse -ErrorAction SilentlyContinue",
         "        Remove-Item \"$obs\\current\\obs-plugins\\64bit\\droidcam-obs.*\" -Force -ErrorAction SilentlyContinue",
         "    }",
         "}"
