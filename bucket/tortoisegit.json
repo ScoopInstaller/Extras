@@ -1,5 +1,5 @@
 {
-    "version": "2.11",
+    "version": "2.13.0.1",
     "description": "A Windows Shell Interface to Git",
     "homepage": "https://tortoisegit.org",
     "license": "GPL-2.0-only",
@@ -10,41 +10,43 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://download.tortoisegit.org/tgit/2.11.0.0/TortoiseGit-2.11.0.0-64bit.msi",
-            "hash": "8a2576ec68e60f0cef7b0a9581e9018b954f265faf5fce1d7df97814ab36bf3a"
+            "url": [
+                "https://download.tortoisegit.org/tgit/2.13.0.0/TortoiseGit-2.13.0.1-64bit.msi"
+            ],
+            "hash": [
+                "35e56c66124ab6f776c48da24b82ef044743c3619e1eacb40bc38b6a178a6f98"
+            ]
         },
         "32bit": {
-            "url": "https://download.tortoisegit.org/tgit/2.11.0.0/TortoiseGit-2.11.0.0-32bit.msi",
-            "hash": "d8fd909c660b68d3e240b4237c2dc8fa31beeb9cc1197ef2e65fcf092aaecf6c"
+            "url": [
+                "https://download.tortoisegit.org/tgit/2.13.0.0/TortoiseGit-2.13.0.1-32bit.msi"
+            ],
+            "hash": [
+                "ad7be5dbdcd85483be8e8d1fa1d1f6c41dcbd0b39b72073cb946761a1b1a8732"
+            ]
         }
     },
     "extract_dir": "Program Files\\TortoiseGit",
-    "post_install": [
-        "$null, $bucket = find_manifest($app)",
-        "$bucketdir = bucketdir($bucket)",
-        "$escdir = $dir -replace \"\\\\\",\"\\\\\"",
-        "(gc \"$bucketdir\\..\\scripts\\tortoisegit\\tortoisegit-install.reg.templ\") | % {$_ -replace \"%TGITHOME%\",\"$escdir\"} | out-file -enc oem \"$dir\\tortoisegit-install.reg\"",
-        "(gc \"$bucketdir\\..\\scripts\\tortoisegit\\tortoisegit-install-tools.reg.templ\") | % {$_ -replace \"%TGITHOME%\",\"$escdir\"} | out-file -enc oem \"$dir\\tortoisegit-install-tools.reg\"",
-        "cp \"$bucketdir\\..\\scripts\\tortoisegit\\tortoisegit-uninstall.reg\" \"$dir\""
+    "pre_install": [
+        "$escdir = \"$dir\" -replace '\\\\', '\\\\'",
+        "'install', 'install-tools' | ForEach-Object {",
+        "    (Get-Content \"$dir\\tortoisegit-$_.reg.templ\") -replace '%TGITHOME%', \"$escdir\" | Set-Content -LiteralPath \"$dir\\tortoisegit-$_.reg\" -Encoding Ascii",
+        "    Remove-Item \"$dir\\tortoisegit-$_.reg.templ\"",
+        "}"
     ],
+    // "post_install": [
+    //     "$null, $bucket = find_manifest($app)",
+    //     "$bucketdir = bucketdir($bucket)",
+    //     "$escdir = $dir -replace \"\\\\\",\"\\\\\"",
+    //     "(gc \"$bucketdir\\..\\scripts\\tortoisegit\\tortoisegit-install.reg.templ\") | % {$_ -replace \"%TGITHOME%\",\"$escdir\"} | out-file -enc oem \"$dir\\tortoisegit-install.reg\"",
+    //     "(gc \"$bucketdir\\..\\scripts\\tortoisegit\\tortoisegit-install-tools.reg.templ\") | % {$_ -replace \"%TGITHOME%\",\"$escdir\"} | out-file -enc oem \"$dir\\tortoisegit-install-tools.reg\"",
+    //     "cp \"$bucketdir\\..\\scripts\\tortoisegit\\tortoisegit-uninstall.reg\" \"$dir\""
+    // ],
     "shortcuts": [
-        [
-            "bin\\TortoiseGitIDiff.exe",
-            "TortoiseGitIDiff"
-        ],
-        [
-            "bin\\TortoiseGitMerge.exe",
-            "TortoiseGitMerge"
-        ],
-        [
-            "bin\\TortoiseGitProc.exe",
-            "TortoiseGit",
-            "/command:rtfm"
-        ],
-        [
-            "bin\\TortoiseGitBlame.exe",
-            "TortoiseGitBlame"
-        ],
+        ["bin\\TortoiseGitIDiff.exe", "TortoiseGitIDiff"],
+        ["bin\\TortoiseGitMerge.exe", "TortoiseGitMerge"],
+        ["bin\\TortoiseGitProc.exe", "TortoiseGit", "/command:rtfm"],
+        ["bin\\TortoiseGitBlame.exe", "TortoiseGitBlame"],
         [
             "bin\\TortoiseGitProc.exe",
             "TortoiseGit Settings",
@@ -52,16 +54,29 @@
         ]
     ],
     "checkver": {
-        "url": "https://download.tortoisegit.org/tgit",
-        "regex": "diricon diricon-folder\"><\/span><\/td><td><a href=(?<release>[\\d.]+)\/ >"
+        "script": [
+            "$url = 'https://download.tortoisegit.org/tgit'",
+            "$content = (Invoke-WebRequest $url).Content",
+            "$r = 'diricon diricon-folder\"></span></td><td><a href=([\\d\\.]+)/ >'",
+            "if (!($content -match $r)) { error \"Could not match $r in $url\"; break }",
+            "$directory = $matches[1]",
+            "$url = \"$($url)/$directory\"",
+            "$content = (Invoke-WebRequest $url).Content",
+            "$r = '>TortoiseGit-([\\d\\.]+)-64bit.msi<'",
+            "if (!($content -match $r)) { error \"Could not match $r in $url\"; break }",
+            "$match = (Select-String -Pattern $r -InputObject $content -AllMatches).Matches | Select-Object -Last 1",
+            "$version = $match.Groups[1].Value",
+            "Write-Output $directory $version"
+        ],
+        "regex": "(?<directory>[\\d\\.]+) ([\\d\\.]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.tortoisegit.org/tgit/$matchRelease/TortoiseGit-$matchRelease-64bit.msi"
+                "url": "https://download.tortoisegit.org/tgit/$matchDirectory/TortoiseGit-$version-64bit.msi"
             },
             "32bit": {
-                "url": "https://download.tortoisegit.org/tgit/$matchRelease/TortoiseGit-$matchRelease-32bit.msi"
+                "url": "https://download.tortoisegit.org/tgit/$matchDirectory/TortoiseGit-$version-32bit.msi"
             }
         }
     }
