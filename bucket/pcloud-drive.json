@@ -1,0 +1,74 @@
+{
+    "version": "3.11.17",
+    "homepage": "https://www.pcloud.com",
+    "description": "The official Windows 10/11 client for syncronising local files/folders to your pCloud drive, and vice versa.",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.pcloud.com/terms_and_conditions.html"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://partner.pcloud.com/dl/win64#/setup.exe",
+            "hash": "66f1d5eeb11615d6a581b23f69e358e2afe1ab33b7bfa9437b50981c37fa9018",
+            "post_install": [
+                "Start-Process 'regsvr32' -ArgumentList @(\"$dir\\OverlayIcon64.dll\", '/s') -Verb 'RunAs' -Wait",
+                "Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force; Start-Sleep -Seconds 2"
+            ]
+        },
+        "32bit": {
+            "url": "https://partner.pcloud.com/dl/win#/setup.exe",
+            "hash": "6f21127b474a0f827fd0b62e4f2962dac67b27c00f889b928ecf707e6d87507a",
+            "post_install": [
+                "Start-Process 'regsvr32' -ArgumentList @(\"$dir\\OverlayIcon.dll\", '/s') -Verb 'RunAs' -Wait",
+                "Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force; Start-Sleep -Seconds 2"
+            ]
+        }
+    },
+    "pre_install": [
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+        "Expand-DarkArchive \"$dir\\setup.exe\" \"$dir\\extracted\" -Removal",
+        "Expand-MsiArchive \"$dir\\extracted\\AttachedContainer\\pCloud Drive.msi\" \"$dir\" -ExtractDir 'pCloud Drive' -Removal",
+        "Remove-Item \"$dir\\extracted\" -Recurse"
+    ],
+    "bin": "pCloud.exe",
+    "shortcuts": [
+        [
+            "pCloud.exe",
+            "pCloud Drive"
+        ]
+    ],
+    "pre_uninstall": [
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+        "if (Get-Process -Name 'pCloud' -ErrorAction 'SilentlyContinue') {Stop-Process -Name 'pCloud' -ErrorAction 'SilentlyContinue' -Force}",
+        "if ($architecture -eq '64bit') {",
+        "   Start-Process 'regsvr32' -ArgumentList @('/u', \"$dir\\OverlayIcon64.dll\", '/s') -Verb 'RunAs' -Wait",
+        "   Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force; Start-Sleep -Seconds 2",
+        "}",
+        "elseif ($architecture -eq '32bit') {",
+        "   Start-Process 'regsvr32' -ArgumentList @('/u', \"$dir\\OverlayIcon.dll\", '/s') -Verb 'RunAs' -Wait",
+        "   Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force; Start-Sleep -Seconds 2",
+        "}"
+    ],
+    "checkver": {
+        "script": [
+            "# Checkver for pCloud",
+            "$id = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'",
+            "(Invoke-WebRequest 'https://www.pcloud.com/release-notes/windows.html' -UserAgent $id) -match '\\|\\s<a\\shref=\"(?<url64>https://u\\.pcloud\\.link/publink/show\\?code=[\\w]+)' | Out-Null",
+            "$resp_part1 = $Matches['url64']",
+            "(Invoke-WebRequest \"$resp_part1\" -UserAgent \"$id\") -match '\"name\":\\s\"pCloud_Windows_(?<version>[\\d.]+)_(x64|x86)\\.exe\",' | Out-Null",
+            "$resp_part2 = $Matches['version']",
+            "return $resp_part2"
+        ],
+        "regex": "([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://partner.pcloud.com/dl/win64#/setup.exe"
+            },
+            "32bit": {
+                "url": "https://partner.pcloud.com/dl/win#/setup.exe"
+            }
+        }
+    }
+}
