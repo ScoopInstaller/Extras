@@ -1,23 +1,23 @@
 {
-    "version": "2.035",
+    "version": "2.037",
     "homepage": "https://kurtzimmermann.com/index_e.html",
     "description": "An application that offers a comprehensive toolkit for system maintenance. Developed by Kurt Zimmermann.",
     "license": {
         "identifier": "Freeware",
         "url": "https://kurtzimmermann-com.translate.goog/datenschutz_en.html?_x_tr_sl=auto&_x_tr_tl=en-US&_x_tr_hl=en-US"
     },
-    "notes": [
+    "##": [
         "For a guide on how to use this app, click the link below:",
         "https://kurtzimmermann-com.translate.goog/hdhelp_de.html?_x_tr_sl=auto&_x_tr_tl=en-US&_x_tr_hl=en-US"
     ],
     "architecture": {
         "32bit": {
             "url": "https://kurtzimmermann.com/files/HDCleanerX32.zip",
-            "hash": "473cee4d9e4550032ae190f50089b7c363ef4a7e35da4130581384acf269893c"
+            "hash": "0a2eb551c0849e35ae72275ab656a30b48352305db8bbcf9f1e8fbb2109d6799"
         },
         "64bit": {
             "url": "https://kurtzimmermann.com/files/HDCleanerX64.zip",
-            "hash": "84b4d1a24e6fc5ca40ff18b90ace8784b58ccce4782d938e8e7ef1b2b4c62ca8"
+            "hash": "71925837c20f0a7a4402270fc1ed4ac4f0c6052f67203834ac234cdc3786a9d6"
         }
     },
     "pre_install": "Remove-Item \"$dir\\Uninstaller.exe\" | Out-Null",
@@ -29,6 +29,11 @@
         ]
     ],
     "persist": "Settings",
+    "pre_uninstall": [
+        "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
+        "Start-Process 'regsvr32' -Wait -Verb 'RunAs' -ArgumentList @('/u', \"$dir\\HDCleanerContextMenu.dll\", '/s')",
+        "Start-Sleep -Seconds 2"
+    ],
     "checkver": {
         "url": "https://kurtzimmermann.com/hdcleanerversions_de.html",
         "regex": "v([\\d.]+)"

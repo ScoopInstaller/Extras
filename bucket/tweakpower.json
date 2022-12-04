@@ -1,5 +1,5 @@
 {
-    "version": "2.026",
+    "version": "2.027",
     "homepage": "https://kurtzimmermann.com/index_e.html",
     "description": "A software tool that allows Windows 11 users to fine-tune their operating system and programs for optimum performance. Developed by Kurt Zimmermann.",
     "license": {
@@ -9,11 +9,11 @@
     "architecture": {
         "32bit": {
             "url": "https://kurtzimmermann.com/files/TweakPowerX32.zip",
-            "hash": "C90841429F8188CDA60CC1B021C388AB0C4C2AFCFCF49158894EF31A338DC954"
+            "hash": "c31ef1a8454c756c9635424f90ce15ed96bb24019b9346540d08fae2169aad05"
         },
         "64bit": {
             "url": "https://kurtzimmermann.com/files/TweakPowerX64.zip",
-            "hash": "58EC8711C6BC0B458CF7A47827CCC38733DAEBDAA8A84221EE7B47297128DC20"
+            "hash": "fdc07c5f10c05126c10ca3cd48f1603985922f10efc5e9ef2ccc7cd11e2706df"
         }
     },
     "pre_install": "Remove-Item \"$dir\\Uninstaller.exe\" | Out-Null",
@@ -23,6 +23,11 @@
             "TweakPower.exe",
             "TweakPower"
         ]
+    ],
+    "pre_uninstall": [
+        "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
+        "Start-Process 'regsvr32' -Wait -Verb 'RunAs' -ArgumentList @('/u', \"$dir\\TweakPowerContextMenu.dll\", '/s')",
+        "Start-Sleep -Seconds 2"
     ],
     "checkver": {
         "url": "https://kurtzimmermann.com/tweakpowerversions_de.html",
