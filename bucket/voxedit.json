@@ -17,6 +17,7 @@
         "$content2 = $content.Replace('pause >nul', '')",
         "$content2 | Set-Content \"$dir\\uninstall.bat\"",
         "",
+        "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
         "Start-Process 'cmd' -Wait -Verb 'RunAs' -ArgumentList @('/C', \"$dir\\install.bat\"); Start-Sleep -Seconds 2"
     ],
     "bin": "VoxEdit.bat",
@@ -28,7 +29,10 @@
             "VoxEdit.exe"
         ]
     ],
-    "pre_uninstall": "Start-Process 'cmd' -Wait -Verb 'RunAs' -ArgumentList @('/C', \"$dir\\uninstall.bat\"); Start-Sleep -Seconds 2",
+    "pre_uninstall": [
+        "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
+        "Start-Process 'cmd' -Wait -Verb 'RunAs' -ArgumentList @('/C', \"$dir\\uninstall.bat\"); Start-Sleep -Seconds 2"
+    ],
     "checkver": {
         "useragent": "Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0",
         "url": "https://translations.sandbox.game/en.json",
