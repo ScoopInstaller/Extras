@@ -56,7 +56,7 @@
     ],
     "pre_uninstall": [
         "$uninstallerFile = (Get-ChildItem \"$dir\\*\" -Recurse -Include 'unins000.exe' -ErrorAction 'SilentlyContinue').FullName",
-        "if ($uninstallerFile) {",
+        "if ((Test-Path $uninstallerFile) -and ($cmd -eq 'uninstall')) {",
         "   $datFile = $uninstallerFile.Trim('unins000.exe')",
         "   if (Get-ChildItem \"$datFile\\unins000.dat\") {",
         "       if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
@@ -64,7 +64,7 @@
         "       Stop-Process -Name 'explorer' -Force -ErrorAction 'SilentlyContinue'; Start-Sleep -Seconds 2",
         "   }",
         "}",
-        "else {",
+        "elseif ($cmd -eq 'uninstall') {",
         "   reg delete 'HKEY_CLASSES_ROOT\\AllFileSystemObjects\\shell\\PeaZip' /f",
         "   reg delete 'HKEY_CLASSES_ROOT\\*\\shell\\PeaZip' /f",
         "}"
