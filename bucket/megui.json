@@ -1,19 +1,52 @@
 {
     "version": "2913",
-    "description": "MPEG-4 encoding/muxing solution.",
-    "homepage": "https://sourceforge.net/projects/megui/",
-    "license": "GPL-2.0-or-later",
-    "url": "https://downloads.sourceforge.net/project/megui/megui-stable/2913/MeGUI-2913-32.zip",
-    "hash": "sha1:260ce2d2b84e494619c8c75970daaf7322fd1454",
-    "bin": "MeGUI.exe",
+    "homepage": "https://en.wikibooks.org/wiki/MeGUI",
+    "description": "A video conversion application for Windows, which was primarily designed to be a DVD ripper, but is capable of many transcoding tasks.",
+    "license": "GPL-2.0",
+    "url": "https://sourceforge.net/projects/megui/files/megui-stable/2913/MeGUI-2913-32.zip",
+    "hash": "md5:49837577e81513490a0e932575679179",
+    "pre_install": [
+        "'logs', 'jobs', 'allprofiles', 'settings.xml' | ForEach-Object {",
+        "   if (!(Test-Path \"$persist_dir\\$_\")) {",
+        "       $xmlValue = (",
+        "       \"<?xml version=\"\"1.0\"\"?>\", ",
+        "       \"<MeGUISettings xmlns:xsi=\"\"http://www.w3.org/2001/XMLSchema-instance\"\" xmlns:xsd=\"\"http://www.w3.org/2001/XMLSchema\"\">\", ",
+        "       \"  <AutoUpdate>false</AutoUpdate>\", ",
+        "       \"  <UpdateCheckInterval>0</UpdateCheckInterval>\", ",
+        "       \"  <FirstUpdateCheck>false</FirstUpdateCheck>\", ",
+        "       \"</MeGUISettings>\"",
+        "       )",
+        "       Set-Content \"$dir\\settings.xml\" -Encoding 'utf8' -Value $xmlValue -Force",
+        "       Start-Process \"$dir\\MeGUI.exe\" -WindowStyle 'Hidden' -Verb 'Open'",
+        "       while (!(Test-Path \"$dir\\AviSynth.dll\")) { Start-Sleep -Seconds 3 }",
+        "       Start-Sleep -Seconds 1",
+        "       Stop-Process -Name 'MeGUI'",
+        "   }",
+        "}",
+        "Copy-Item \"$persist_dir\\joblists.xml\" \"$dir\\joblists.xml\" -ErrorAction 'SilentlyContinue'"
+    ],
     "shortcuts": [
         [
             "MeGUI.exe",
             "MeGUI"
         ]
     ],
-    "checkver": "MeGUI-(\\d+)-32\\.zip",
+    "persist": [
+        "logs",
+        "jobs",
+        "allprofiles",
+        "settings.xml"
+    ],
+    "pre_uninstall": "Copy-Item \"$dir\\joblists.xml\" \"$persist_dir\\joblists.xml\" -ErrorAction 'SilentlyContinue'",
+    "checkver": {
+        "url": "https://sourceforge.net/projects/megui/rss?path=/megui-stable",
+        "regex": "\\/megui-stable\\/([\\d]+)\\/"
+    },
     "autoupdate": {
-        "url": "https://downloads.sourceforge.net/project/megui/megui-stable/$version/MeGUI-$version-32.zip"
+        "url": "https://sourceforge.net/projects/megui/files/megui-stable/$version/MeGUI-$version-32.zip",
+        "hash": {
+            "url": "https://sourceforge.net/projects/megui/rss?path=/megui-stable",
+            "regex": "\\s+algo=\"md5\">$md5<"
+        }
     }
 }
