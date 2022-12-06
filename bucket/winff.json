@@ -1,0 +1,33 @@
+{
+    "version": "1.5.5",
+    "homepage": "https://www.biggmatt.com/p/winff.html",
+    "description": "A GUI frontend for the command line video converter FFmpeg or avconv.",
+    "license": "GPL-3.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://www.videohelp.com/download/WinFF_1.5.5.zip",
+            "hash": "1f7e673a51108ec2f8748e1c9d82050d1aecb71368617d49ab09287b37484349"
+        }
+    },
+    "extract_dir": "WinFF_1.5.5",
+    "pre_install": "ensure \"$persist_dir\" | Out-Null; Copy-Item \"$persist_dir\\*\" \"$dir\" -Include @('X-Winff.ini', 'Backups', 'Documents', 'User') -ErrorAction 'SilentlyContinue' -Recurse",
+    "shortcuts": [
+        [
+            "X-Winff.exe",
+            "WinFF"
+        ]
+    ],
+    "pre_uninstall": "Copy-Item \"$dir\\*\" \"$persist_dir\" -Include @('X-Winff.ini', 'Backups', 'Documents', 'User') -ErrorAction 'SilentlyContinue' -Recurse",
+    "checkver": {
+        "url": "https://www.videohelp.com/software/WinFF/version-history",
+        "regex": "v([\\d.]+)<br\\s/>"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://www.videohelp.com/download/WinFF_$version.zip"
+            }
+        },
+        "extract_dir": "WinFF_$version"
+    }
+}
