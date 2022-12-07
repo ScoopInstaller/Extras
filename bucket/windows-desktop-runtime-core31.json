@@ -1,0 +1,59 @@
+{
+    "##": "If this version of dotNET desktop runtime core is discontinued. Please remove the 'checkver' & 'autoupdate' properties.",
+    "version": "3.1.31",
+    "homepage": "https://dotnet.microsoft.com/en-us/download/dotnet/3.1",
+    "description": "Microsoft .NET 3.1 Desktop Runtime Core",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.microsoft.com/en-us/legal/intellectualproperty/copyright/default.aspx"
+    },
+    "notes": [
+        "You can now remove this installer by running,",
+        "scoop uninstall windows-desktop-runtime-core31"
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://download.visualstudio.microsoft.com/download/pr/f68e8704-171f-47dc-88a5-40572a22319a/43a6b2785e73b2177a4401ceccd01ef3/windowsdesktop-runtime-3.1.31-win-x64.exe",
+            "hash": "sha512:7d10dd9f9e345a57b0c91b6703115c114d3418bbf2715297bbee8445e6a9919741cc167fd55a0b5628ac5f31d416e716b13eacf57dcd5c6305b4a6bf26192398"
+        },
+        "32bit": {
+            "url": "https://download.visualstudio.microsoft.com/download/pr/df67c05e-3019-4d7f-846b-e08b92924b60/18a670ed3b1b60c5f7061f7bdaa6f7f6/windowsdesktop-runtime-3.1.31-win-x86.exe",
+            "hash": "sha512:9d8b64ae13d855aab9e622af4bb4967cc9c8b97ee2671bb9efe9ef31ebe3b7a312e213f3d4b3237cb1201445f1edaa6de987b08929412528fb0b6521ce0f7780"
+        }
+    },
+    "pre_install": [
+        "if (!(is_admin)) { throw 'Admin privileges are required.' }",
+        "Invoke-ExternalCommand \"$dir\\$fname\" -ArgumentList '/install', '/quiet', '/norestart' -RunAs"
+    ],
+    "checkver": {
+        "script": [
+            "(Invoke-WebRequest 'https://dotnet.microsoft.com/en-us/download/dotnet/3.1') -match '\\.NET\\sDesktop\\sRuntime\\s(?<version>[\\d.]+)' | Out-Null",
+            "$getVersion = $Matches['version']",
+            "$regex = 'https:\\/\\/download\\.visualstudio\\.microsoft\\.com\\/download\\/pr\\/(?<parts>([\\w-]+)\\/\\w+)\\/windowsdesktop-runtime-([\\d.]+)-win-(x64|x86)\\.exe'",
+            "(Invoke-WebRequest \"https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-$getVersion-windows-x64-installer\") -match \"$regex\" | Out-Null",
+            "$getPart_64 = $Matches['parts']",
+            "(Invoke-WebRequest \"https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-$getVersion-windows-x86-installer\") -match \"$regex\" | Out-Null",
+            "$getPart_32 = $Matches['parts']",
+            "return \"$getVersion, 64bit:$getPart_64, 32bit:$getPart_32\""
+        ],
+        "regex": "([\\d.]+),\\s64bit:(?<Part64>[\\w-]+\\/[\\w]+),\\s32bit:(?<Part32>[\\w-]+\\/[\\w]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download.visualstudio.microsoft.com/download/pr/$matchPart64/windowsdesktop-runtime-$version-win-x64.exe",
+                "hash": {
+                    "url": "https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-$version-windows-x64-installer",
+                    "regex": "\\s+readonly\\s+value=\"$sha512\""
+                }
+            },
+            "32bit": {
+                "url": "https://download.visualstudio.microsoft.com/download/pr/$matchPart32/windowsdesktop-runtime-$version-win-x86.exe",
+                "hash": {
+                    "url": "https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-$version-windows-x86-installer",
+                    "regex": "\\s+readonly\\s+value=\"$sha512\""
+                }
+            }
+        }
+    }
+}
