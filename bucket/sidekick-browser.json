@@ -1,0 +1,36 @@
+{
+    "version": "106.32.3.27969-1668b03",
+    "homepage": "https://www.meetsidekick.com/",
+    "description": "A work browser that is focused on productivity, speed, and security.",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.meetsidekick.com/terms-of-use/"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://fast-cdn.meetsidekick.com/builds/sidekick-win-release-x64-106.32.3.27969-1668b03-df.exe#/dl.7z",
+            "hash": "b293069273ff9e40b93bf41b5289411577694abdcc7b62aadfee4b8fb64ab285"
+        }
+    },
+    "pre_install": "Expand-7zipArchive \"$dir\\sidekick.7z\" -ExtractDir 'Sidekick-bin' -Removal",
+    "shortcuts": [
+        [
+            "sidekick.exe",
+            "Sidekick Browser"
+        ]
+    ],
+    "checkver": {
+        "script": [
+            "$redirUrl = [System.Net.HttpWebRequest]::Create('https://api.meetsidekick.com/downloads/df/win').GetResponse().ResponseUri.AbsoluteUri",
+            "Write-Output $redirUrl"
+        ],
+        "regex": "sidekick-win-release-x64-([\\d.]+-[\\w]+)-df.exe"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://fast-cdn.meetsidekick.com/builds/sidekick-win-release-x64-$version-df.exe#/dl.7z"
+            }
+        }
+    }
+}

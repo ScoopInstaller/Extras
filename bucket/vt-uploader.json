@@ -1,0 +1,48 @@
+{
+    "version": "0.1.9",
+    "homepage": "https://github.com/SamuelTulach/VirusTotalUploader",
+    "description": "A simple application written in C# that allows for file uploading to the VirusTotal website. (Requires a Virustotal API Key)",
+    "license": "GPL-3.0",
+    "notes": [
+        "For a guide on how to get your Virustotal API Key, visit:",
+        "https://github.com/SamuelTulach/VirusTotalUploader#how-to-get-api-key"
+    ],
+    "url": "https://github.com/SamuelTulach/VirusTotalUploader/releases/download/0.1.9/setup_anycpu_signed.zip",
+    "hash": "142751060f6e68b989af65df8b16420e7d29979849f6aaa27e782d59901beae9",
+    "pre_install": [
+        "Rename-Item \"$dir\\uploader.exe\" 'setup.exe'; Expand-InnoArchive \"$dir\\setup.exe\" \"$dir\" -Removal",
+        "if (!(Test-Path \"$persist_dir\\vtu_settings.json\")) {",
+        "   New-Item \"$dir\\vtu_settings.json\" -ItemType 'File' -Value '{\"ApiKey\":\"\",\"Language\":\"\",\"DirectUpload\":false}' | Out-Null",
+        "}"
+    ],
+    "post_install": [
+        "$registryPath = 'HKCU\\Software\\Classes\\*\\shell\\Upload to VirusTotal\\command'",
+        "$registryValue = (\"\"\"$dir\\uploader.exe\"\" \"\"%1\"\"\").Replace('$dir', $dir)",
+        "if ($global) { REG ADD $registryPath.Replace('HKCU', 'HKLM') /f /d $registryValue }",
+        "else { REG ADD $registryPath /f /d $registryValue }"
+    ],
+    "bin": [
+        [
+            "uploader.exe",
+            "vt-uploader"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "uploader.exe",
+            "VirusTotal Uploader"
+        ]
+    ],
+    "persist": "vtu_settings.json",
+    "post_uninstall": [
+        "if ($cmd -eq 'uninstall') {",
+        "    $registryPath = 'HKCU\\Software\\Classes\\*\\shell\\Upload to VirusTotal'",
+        "    if ($global) { REG DELETE $registryPath.Replace('HKCU', 'HKLM') /f }",
+        "    else { REG DELETE $registryPath /f }",
+        "}"
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "url": "https://github.com/SamuelTulach/VirusTotalUploader/releases/download/$version/setup_anycpu_signed.zip"
+    }
+}
