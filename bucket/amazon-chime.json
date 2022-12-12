@@ -1,0 +1,74 @@
+{
+    "version": "4.39.20010",
+    "homepage": "https://aws.amazon.com/chime/",
+    "description": "A communications service that lets you meet, chat, and place business calls inside and outside your organization, all using a single application.",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://aws.amazon.com/terms/?nc1=f_pr"
+    },
+    "notes": [
+        "To add 'Amazon Chime' to the context menu run:",
+        "chime-context-menu.ps1 install",
+        "To remove 'Amazon Chime' from the context menu run:",
+        "chime-context-menu.ps1 uninstall"
+    ],
+    "url": "https://clients.chime.aws/win/releases/Chime.4.39.20010.exe",
+    "hash": "76a458f269e6bf8797692f504410e916eef9448d1b4dc29dea49fb5950042b8a",
+    "innosetup": true,
+    "extract_dir": "{userappdata}\\Chime",
+    "pre_install": [
+        "if ($architecture -eq '32bit') { Remove-Item \"$dir\\MediaClient,1.dll\"; Rename-Item \"$dir\\MediaClient,2.dll\" 'MediaClient.dll' }",
+        "elseif ($architecture -eq '64bit') { Remove-Item \"$dir\\MediaClient,2.dll\"; Rename-Item \"$dir\\MediaClient,1.dll\" 'MediaClient.dll' }",
+        "Remove-Item \"$dir\\unins000.*\"",
+        "$currentDir = $dir.Replace(\"$version\", 'current')",
+        "$value = (",
+        "    '$command = $args',",
+        "    \"`r\",",
+        "    'if ($command -eq ''install'') {',",
+        "    \"`r\",",
+        "    \"    New-item 'REGISTRY::HKEY_CURRENT_USER\\SOFTWARE\\Classes\\Chime\\shell\\open' -Name 'command' -Value \"\"$currentDir\\Chime.exe %1\"\" -Force | Out-Null\",",
+        "    \"`r\",",
+        "    '} elseif ($command -eq ''uninstall'') { Remove-Item ''REGISTRY::HKEY_CURRENT_USER\\SOFTWARE\\Classes\\Chime\\shell'' -Recurse -Force }',",
+        "    \"`r\",",
+        "    'else {',",
+        "    \"`r\",",
+        "    '    Write-Output \"Command Usage:`n\", \"chime-context-menu.ps1 <arguments>\"',",
+        "    \"`r\",",
+        "    '    Write-Output \"`tinstall - to add ''Amazon Chime'' to the context menu\", \"`tuninstall - to remove ''Amazon Chime'' from the context menu`n\"',",
+        "    \"`r\",",
+        "    '}'",
+        ")",
+        "Set-Content \"$dir\\chime-context-menu.ps1\" -Value \"$value\" -Encoding 'UTF8' | Out-Null"
+    ],
+    "bin": [
+        "Chime.exe",
+        "chime-context-menu.ps1"
+    ],
+    "shortcuts": [
+        [
+            "Chime.exe",
+            "Amazon Chime"
+        ]
+    ],
+    "post_install": [
+        "Write-Host \"Registering 'URL:chime' protocol handler\"",
+        "New-item 'HKCU:\\SOFTWARE\\Classes\\Chime' -Name 'DefaultIcon' -Value \"$dir\\Chime.exe,0\" -Force | Out-Null",
+        "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\Chime' -Name '(Default)' -Value 'URL:chime' -Force | Out-Null",
+        "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\Chime' -Name 'URL Protocol' -Value '' -Force | Out-Null",
+        "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\Chime' -Name 'UseOriginalUrlEncoding' -PropertyType 'Dword' -Value '1' -Force | Out-Null"
+    ],
+    "pre_uninstall": [
+        "Write-Host \"Unregistering 'URL:chime' protocol handler\"; Remove-Item 'HKCU:\\SOFTWARE\\Classes\\Chime' -Recurse -Force",
+        "Remove-Item \"$env:APPDATA\" -Include 'AWS Mobile Services', 'Amazon' -Recurse -Force"
+    ],
+    "checkver": {
+        "script": [
+            "$redirUrl = [System.Net.HttpWebRequest]::Create('https://clients.chime.aws/win/latest').GetResponse().ResponseUri.AbsoluteUri",
+            "Return \"$redirUrl\""
+        ],
+        "regex": "Chime\\.([\\d.]+)\\.exe"
+    },
+    "autoupdate": {
+        "url": "https://clients.chime.aws/win/releases/Chime.$version.exe"
+    }
+}
