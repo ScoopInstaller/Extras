@@ -1,6 +1,5 @@
 {
-    "##": "If this version of dotNET desktop runtime core is discontinued. Please remove the 'checkver' & 'autoupdate' properties.",
-    "version": "3.1.31",
+    "version": "3.1.32",
     "homepage": "https://dotnet.microsoft.com/en-us/download/dotnet/3.1",
     "description": "Microsoft .NET 3.1 Desktop Runtime Core",
     "license": {
@@ -13,47 +12,16 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://download.visualstudio.microsoft.com/download/pr/f68e8704-171f-47dc-88a5-40572a22319a/43a6b2785e73b2177a4401ceccd01ef3/windowsdesktop-runtime-3.1.31-win-x64.exe",
-            "hash": "sha512:7d10dd9f9e345a57b0c91b6703115c114d3418bbf2715297bbee8445e6a9919741cc167fd55a0b5628ac5f31d416e716b13eacf57dcd5c6305b4a6bf26192398"
+            "url": "https://download.visualstudio.microsoft.com/download/pr/b92958c6-ae36-4efa-aafe-569fced953a5/1654639ef3b20eb576174c1cc200f33a/windowsdesktop-runtime-3.1.32-win-x64.exe",
+            "hash": "sha512:426add7ee806ff3e50e348bd294d406594c44d2a2894b037b1f871999ed9cce685f4fefac3828cd814897a2e40147647d03ba521d952a66bfe18c85767b40603"
         },
         "32bit": {
-            "url": "https://download.visualstudio.microsoft.com/download/pr/df67c05e-3019-4d7f-846b-e08b92924b60/18a670ed3b1b60c5f7061f7bdaa6f7f6/windowsdesktop-runtime-3.1.31-win-x86.exe",
-            "hash": "sha512:9d8b64ae13d855aab9e622af4bb4967cc9c8b97ee2671bb9efe9ef31ebe3b7a312e213f3d4b3237cb1201445f1edaa6de987b08929412528fb0b6521ce0f7780"
+            "url": "https://download.visualstudio.microsoft.com/download/pr/3f353d2c-0431-48c5-bdf6-fbbe8f901bb5/542a4af07c1df5136a98a1c2df6f3d62/windowsdesktop-runtime-3.1.32-win-x86.exe",
+            "hash": "sha512:6b96d2db0d42d06683b6fc2e991193686167d40c85912737705db23dbe8dc7d6b80689ab25201fc0a397c70c463c3fdd40d294e9c47d48b375ff8b7a0a699cf7"
         }
     },
     "pre_install": [
         "if (!(is_admin)) { throw 'Admin privileges are required.' }",
         "Invoke-ExternalCommand \"$dir\\$fname\" -ArgumentList '/install', '/quiet', '/norestart' -RunAs"
-    ],
-    "checkver": {
-        "script": [
-            "(Invoke-WebRequest 'https://dotnet.microsoft.com/en-us/download/dotnet/3.1') -match '\\.NET\\sDesktop\\sRuntime\\s(?<version>[\\d.]+)' | Out-Null",
-            "$getVersion = $Matches['version']",
-            "$regex = 'https:\\/\\/download\\.visualstudio\\.microsoft\\.com\\/download\\/pr\\/(?<parts>([\\w-]+)\\/\\w+)\\/windowsdesktop-runtime-([\\d.]+)-win-(x64|x86)\\.exe'",
-            "(Invoke-WebRequest \"https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-$getVersion-windows-x64-installer\") -match \"$regex\" | Out-Null",
-            "$getPart_64 = $Matches['parts']",
-            "(Invoke-WebRequest \"https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-$getVersion-windows-x86-installer\") -match \"$regex\" | Out-Null",
-            "$getPart_32 = $Matches['parts']",
-            "return \"$getVersion, 64bit:$getPart_64, 32bit:$getPart_32\""
-        ],
-        "regex": "([\\d.]+),\\s64bit:(?<Part64>[\\w-]+\\/[\\w]+),\\s32bit:(?<Part32>[\\w-]+\\/[\\w]+)"
-    },
-    "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://download.visualstudio.microsoft.com/download/pr/$matchPart64/windowsdesktop-runtime-$version-win-x64.exe",
-                "hash": {
-                    "url": "https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-$version-windows-x64-installer",
-                    "regex": "\\s+readonly\\s+value=\"$sha512\""
-                }
-            },
-            "32bit": {
-                "url": "https://download.visualstudio.microsoft.com/download/pr/$matchPart32/windowsdesktop-runtime-$version-win-x86.exe",
-                "hash": {
-                    "url": "https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-$version-windows-x86-installer",
-                    "regex": "\\s+readonly\\s+value=\"$sha512\""
-                }
-            }
-        }
-    }
+    ]
 }
