@@ -1,0 +1,48 @@
+{
+    "version": "2022.12.3",
+    "homepage": "https://portswigger.net/burp",
+    "description": "An application that comes with set of tools used for penetration and security testing of web applications.",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://portswigger.net/legal"
+    },
+    "suggest": {
+        "JDK": "java/openjdk",
+        "JRE": "java/temurin-jre"
+    },
+    "url": [
+        "https://portswigger-cdn.net/burp/releases/download?product=community&version=2022.12.3&type=Jar#/burpsuite-community.jar",
+        "https://portswigger.net/content/images/logos/favicon.ico"
+    ],
+    "hash": [
+        "fd622dde31901fb02f4d1bc8fe491445c2d7241b83afbdb43326ca7d0badffd7",
+        "2220571c52f5480c6c5742d1551d9e2647467f4e006ac042cdadebfb67d1ed6e"
+    ],
+    "pre_install": [
+        "$currentDir = $dir.Replace(\"$version\", 'current')",
+        "Set-Content \"$dir\\burpsuite-community.cmd\" -Value \"@start javaw -jar \"\"$currentDir\\burpsuite-community.jar\"\"\" -Encoding 'utf8' -Force"
+    ],
+    "bin": "burpsuite-community.jar",
+    "shortcuts": [
+        [
+            "burpsuite-community.cmd",
+            "Burp Suite Community Edition",
+            "",
+            "favicon.ico"
+        ]
+    ],
+    "checkver": {
+        "url": "https://portswigger.net/burp/releases/data",
+        "jsonpath": "$.ResultSet.Results..version",
+        "regex": "([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://portswigger-cdn.net/burp/releases/download?product=community&version=$version&type=Jar#/burpsuite-community.jar",
+        "hash": {
+            "url": "https://portswigger.net/burp/releases/data",
+            "mode": "json",
+            "jsonpath": "$.ResultSet.Results..builds..Sha256Checksum",
+            "find": "$sha256"
+        }
+    }
+}
