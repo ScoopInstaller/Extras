@@ -26,11 +26,14 @@
     "url": "https://download.mp3tag.de/mp3tagv318setup.exe#/dl.7z",
     "hash": "520e74932fd8e59ca5febacd12ef9f6719cdfb955aa1341ff253c5e792167293",
     "pre_install": [
-        "'mp3tag.cfg', 'data\\columns.ini', 'data\\usrfields.ini' | ForEach-Object {",
-        "   if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "'mp3tag.cfg', 'data\\columns.ini' | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
         "}",
         "Remove-Item \"$dir\\`$*\", \"$dir\\Mp3tagUninst*\" -Recurse",
-        "Copy-Item \"$persist_dir\\export\\*\" \"$dir\\export\" -Recurse -ErrorAction 'SilentlyContinue'"
+        "if (!(Test-Path \"$persist_dir\\data\\usrfields.ini\")) {",
+        "    Start-Process \"$dir\\mp3tag.exe\" -Verb Open -WindowStyle Minimized; Start-Sleep -Seconds 3; Stop-Process -Name 'mp3tag'",
+        "}",
+        "Copy-Item \"$persist_dir\\export\\*\" \"$dir\\export\" -Recurse -ErrorAction SilentlyContinue"
     ],
     "bin": "mp3tag.exe",
     "shortcuts": [
@@ -47,11 +50,11 @@
         "mp3tag.cfg"
     ],
     "pre_uninstall": [
-        "Copy-Item \"$dir\\export\\*\" \"$persist_dir\\export\" -Recurse -ErrorAction 'SilentlyContinue'",
-        "if (Test-Path 'HKLM:\\SOFTWARE\\Classes\\Directory\\shellex\\ContextMenuHandlers\\Mp3tagShell\\') {",
-        "   if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
-        "   Start-Process 'regsvr32' -Wait -Verb 'RunAs' -ArgumentList @('/u', \"$dir\\Mp3tagShell32.dll\", '/s')",
-        "   Start-Process 'regsvr32' -Wait -Verb 'RunAs' -ArgumentList @('/u', \"$dir\\Mp3tagShell.dll\", '/s')",
+        "Copy-Item \"$dir\\export\\*\" \"$persist_dir\\export\" -Recurse -ErrorAction SilentlyContinue",
+        "if (($cmd -eq 'uninstall') -and (Test-Path 'HKLM:\\SOFTWARE\\Classes\\Directory\\shellex\\ContextMenuHandlers\\Mp3tagShell\\')) {",
+        "    if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+        "    Start-Process 'regsvr32' -Wait -Verb RunAs -ArgumentList @('/u', \"$dir\\Mp3tagShell32.dll\", '/s')",
+        "    Start-Process 'regsvr32' -Wait -Verb RunAs -ArgumentList @('/u', \"$dir\\Mp3tagShell.dll\", '/s')",
         "}"
     ],
     "checkver": "Mp3tag\\s+v([\\w.]+)",
