@@ -1,0 +1,36 @@
+{
+    "version": "0.2.0.0",
+    "homepage": "https://github.com/tjackenpacken/taskbar-groups",
+    "description": "A lightweight utility for organizing applications pinned on the taskbar through groups ",
+    "license": "MIT",
+    "url": "https://github.com/tjackenpacken/taskbar-groups/releases/download/v0.2.0.0/TaskbarGroups.zip",
+    "hash": "f9cb043d420c18f4c8567f102511ecf25ac255b3a1451257a379e5d97e7ff858",
+    "extract_dir": "TaskbarGroups",
+    "pre_install": [
+        "ensure \"$persist_dir\" | Out-Null",
+        "$newDir = $dir.Replace(\"$version\", 'current')",
+        "New-Item \"$dir\\OpenTaskbarGroupsShortcuts.bat\" -Value \" start \"\"%windir%\\explorer.exe\"\" \"\"$newDir\\Shortcuts\"\" \" | Out-Null",
+        "Copy-Item \"$persist_dir\\*\" \"$dir\" -Include 'Shortcuts', 'config' -Recurse -ErrorAction 'SilentlyContinue'"
+    ],
+    "bin": "TaskbarGroups.exe",
+    "shortcuts": [
+        [
+            "TaskbarGroups.exe",
+            "Taskbar Groups"
+        ],
+        [
+            "OpenTaskbarGroupsShortcuts.bat",
+            "Open Taskbar Groups Shortcuts",
+            "",
+            "TaskbarGroups.exe"
+        ]
+    ],
+    "pre_uninstall": "Copy-Item \"$dir\\*\" \"$persist_dir\" -Include 'Shortcuts', 'config' -Recurse -ErrorAction 'SilentlyContinue'",
+    "checkver": {
+        "url": "https://github.com/tjackenpacken/taskbar-groups/tags",
+        "regex": "tag/v([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://github.com/tjackenpacken/taskbar-groups/releases/download/v$version/TaskbarGroups.zip"
+    }
+}
