@@ -1,0 +1,52 @@
+{
+    "version": "2.2.0",
+    "homepage": "https://jsignpdf.sourceforge.net/",
+    "description": "A Java application which adds digital signatures to PDF documents.",
+    "license": "MPL-2.0|LGPL-2.1",
+    "url": "https://sourceforge.net/projects/jsignpdf/files/stable/JSignPdf%202.2.0/JSignPdf_setup_2.2.0.exe",
+    "hash": "md5:2aaff477c1d87fa372f3690e5340c6e4",
+    "innosetup": true,
+    "pre_install": [
+        "if ($architecture -eq '32bit') {",
+        "   Get-ChildItem \"$dir\\jre\" -Recurse -Filter '*,1.*' | Remove-Item; $get32bit_Items = Get-ChildItem \"$dir\\jre\" -Recurse -Filter '*,2.*'",
+        "   $get32bit_Items | Rename-Item -NewName { $_.Name -replace '([\\w?.|_]+),\\d+\\.([\\w]+)', '$1.$2' } -ErrorAction 'SilentlyContinue'",
+        "   $get32bit_Items | Rename-Item -NewName { $_.Name -replace '([\\w?.|_]+),\\d+', '$1' } -ErrorAction 'SilentlyContinue'",
+        "} elseif ($architecture -eq '64bit') {",
+        "   Get-ChildItem \"$dir\\jre\" -Recurse -Filter '*,2.*' | Remove-Item; $get64bit_Items = Get-ChildItem \"$dir\\jre\" -Recurse -Filter '*,1*'",
+        "   $get64bit_Items | Rename-Item -NewName { $_.Name -replace '([\\w?.|_]+),\\d+\\.([\\w]+)', '$1.$2' } -ErrorAction 'SilentlyContinue'",
+        "   $get64bit_Items | Rename-Item -NewName { $_.Name -replace '([\\w?.|_]+),\\d+', '$1' } -ErrorAction 'SilentlyContinue'",
+        "}",
+        "ensure \"$persist_dir\" | Out-Null",
+        "Copy-Item \"$persist_dir\\conf\" \"$dir\\conf\" -Recurse -ErrorAction 'SilentlyContinue'"
+    ],
+    "bin": [
+        "InstallCert.exe",
+        "JSignPdf.exe"
+    ],
+    "shortcuts": [
+        [
+            "InstallCert.exe",
+            "Install Certificate Tool"
+        ],
+        [
+            "JSignPdf.exe",
+            "JSignPdf"
+        ],
+        [
+            "docs\\JSignPdf.pdf",
+            "JSignPdf Guide"
+        ]
+    ],
+    "pre_uninstall": "Copy-Item \"$dir\\conf\" \"$persist_dir\\conf\" -Recurse -ErrorAction 'SilentlyContinue'",
+    "checkver": {
+        "url": "https://sourceforge.net/projects/jsignpdf/rss?path=/stable",
+        "regex": "/stable/JSignPdf\\s([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://sourceforge.net/projects/jsignpdf/files/stable/JSignPdf%20$version/JSignPdf_setup_$version.exe",
+        "hash": {
+            "url": "https://sourceforge.net/projects/jsignpdf/rss?path=/stable",
+            "regex": "\\s+algo=\"md5\">$md5<"
+        }
+    }
+}
