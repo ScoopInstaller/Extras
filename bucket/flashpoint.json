@@ -1,0 +1,32 @@
+{
+    "version": "11",
+    "homepage": "https://bluemaxima.org/flashpoint/",
+    "description": "A preservation project that allows anyone to make usage of 100,000+ Flash games/animations that are no longer supported on today's web browsers.",
+    "license": "MIT",
+    "url": "https://bluemaxima.org/flashpoint/Flashpoint%2011%20Infinity.exe#/dl.7z",
+    "hash": "4c171d82a37827045168d71c7394c1e6197f306aa96aaa0d8507503e826be1c0",
+    "extract_dir": "Flashpoint 11 Infinity",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\extConfig.json\")) { Set-Content \"$dir\\extConfig.json\" -Value \"{`r}\" -Encoding 'utf8' -Force }",
+        "Copy-Item \"$persist_dir\\Data\\*\" \"$dir\\Data\" -ErrorAction 'SilentlyContinue' -Recurse"
+    ],
+    "shortcuts": [
+        [
+            "Start Flashpoint.exe",
+            "Start Flashpoint"
+        ]
+    ],
+    "persist": [
+        "extConfig.json",
+        "Curations"
+    ],
+    "pre_uninstall": "Copy-Item \"$dir\\Data\\*\" \"$persist_dir\\Data\" -ErrorAction 'SilentlyContinue' -Recurse",
+    "checkver": {
+        "url": "https://bluemaxima.org/flashpoint/changelog.txt",
+        "regex": "Flashpoint\\s([\\d?.]+)"
+    },
+    "autoupdate": {
+        "url": "https://bluemaxima.org/flashpoint/Flashpoint%20$version%20Infinity.exe#/dl.7z",
+        "extract_dir": "Flashpoint $version Infinity"
+    }
+}
