@@ -3,36 +3,36 @@
     "description": "The ultimate automation scripting language for Windows.",
     "homepage": "https://www.autohotkey.com/",
     "license": "GPL-2.0-or-later",
-    "url": "https://github.com/Lexikos/AutoHotkey_L/releases/download/v2.0.0/AutoHotkey_2.0.0_setup.exe#/dl.7z",
-    "hash": "8dc4871ac544d2cd0ff7ccd84b8862eaf9ba0af18bd5b71e29146b17e4b13783",
-    "architecture": {
-        "64bit": {
-            "bin": [
-                "autohotkeyu64.exe",
-                [
-                    "autohotkeyu64.exe",
-                    "autohotkey"
-                ],
-                "compiler\\ahk2exe.exe"
-            ],
-            "post_install": "Copy-Item \"$dir\\Compiler\\Unicode 64-bit.bin\" \"$dir\\Compiler\\AutoHotkeySC.bin\""
-        },
-        "32bit": {
-            "bin": [
-                "autohotkeyu32.exe",
-                [
-                    "autohotkeyu32.exe",
-                    "autohotkey"
-                ],
-                "compiler\\ahk2exe.exe"
-            ],
-            "post_install": "Copy-Item \"$dir\\Compiler\\Unicode 32-bit.bin\" \"$dir\\Compiler\\AutoHotkeySC.bin\""
-        }
+    "url": "https://www.autohotkey.com/download/2.0/AutoHotkey_2.0.0.zip",
+    "hash": "04eb8295af197da058cec5a2b78b8b7f6bcee7299cbadebf68dc6837968c5bb0",
+    "extract_to": "installer",
+    "installer": {
+        "script": [
+            "$args = @('/script', \"$dir\\installer\\UX\\install.ahk\", '/to', $dir, '/user', '/silent')",
+            "if ($global) { $args = @('/script', \"$dir\\installer\\UX\\install.ahk\", '/to', $dir, '/silent') }",
+            "Start-Process -Wait \"$dir\\installer\\AutoHotkey32.exe\" -ArgumentList $args"
+        ]
+    },
+    "post_install": "Remove-Item \"$dir\\installer\" -Force -Recurse",
+    "bin": [
+        [
+            "UX\\AutoHotkeyUX.exe",
+            "autohotkey"
+        ],
+        "v2\\AutoHotkey32.exe",
+        "v2\\AutoHotkey64.exe"
+    ],
+    "uninstaller": {
+        "script": "Start-Process -Wait \"$dir\\UX\\AutoHotkeyUX.exe\" -ArgumentList @('/script', \"$dir\\UX\\install.ahk\", '/uninstall', '/silent')"
     },
     "checkver": {
-        "github": "https://github.com/lexikos/autohotkey_l"
+        "url": "https://www.autohotkey.com/download/2.0/version.txt",
+        "regex": "([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://github.com/Lexikos/AutoHotkey_L/releases/download/v$version/AutoHotkey_$version_setup.exe#/dl.7z"
+        "url": "https://www.autohotkey.com/download/2.0/AutoHotkey_$version.zip",
+        "hash": {
+            "url": "$url.sha256"
+        }
     }
 }
