@@ -3,6 +3,13 @@
     "description": "The ultimate automation scripting language for Windows.",
     "homepage": "https://www.autohotkey.com/",
     "license": "GPL-2.0-or-later",
+    "notes": [
+        "Install specific version of interpreter(Default: Latest 1.x):",
+        "  - 'autohotkey /script $dir\\UX\\install-version.ahk [version]'",
+        "Uninstall Sub-versions of Interpreter:",
+        "  - 'autohotkey /script $dir\\UX\\ui-uninstall.ahk'",
+        "See also: https://github.com/ScoopInstaller/Extras/issues/10066"
+    ],
     "url": "https://www.autohotkey.com/download/2.0/AutoHotkey_2.0.0.zip",
     "hash": "04eb8295af197da058cec5a2b78b8b7f6bcee7299cbadebf68dc6837968c5bb0",
     "extract_to": "installer",
@@ -14,14 +21,26 @@
         ]
     },
     "post_install": "Remove-Item \"$dir\\installer\" -Force -Recurse",
-    "bin": [
-        [
-            "UX\\AutoHotkeyUX.exe",
-            "autohotkey"
-        ],
-        "v2\\AutoHotkey32.exe",
-        "v2\\AutoHotkey64.exe"
-    ],
+    "architecture": {
+        "64bit": {
+            "bin": [
+                [
+                    "UX\\AutohotkeyUX.exe",
+                    "autohotkey"
+                ],
+                [
+                    "v2\\AutoHotkey32.exe",
+                    "autohotkey32"
+                ]
+            ]
+        },
+        "32bit": {
+            "bin": [
+                "UX\\AutohotkeyUX.exe",
+                "autohotkey"
+            ]
+        }
+    },
     "uninstaller": {
         "script": "Start-Process -Wait \"$dir\\UX\\AutoHotkeyUX.exe\" -ArgumentList @('/script', \"$dir\\UX\\install.ahk\", '/uninstall', '/silent')"
     },
