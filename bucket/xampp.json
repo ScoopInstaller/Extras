@@ -3,7 +3,6 @@
     "description": "Apache distribution containing MariaDB, PHP, and Perl",
     "homepage": "https://www.apachefriends.org/index.html",
     "license": "GPL-2.0-only",
-    "notes": "Follow the instructions on '$dir\\readme_en.txt' to set up XAMPP.",
     "suggest": {
         "Visual C++ 2019 Redistributable": "extras/vcredist2022"
     },
@@ -14,6 +13,12 @@
         }
     },
     "extract_dir": "xampp",
+    "pre_install": [
+        "if (-Not (Test-Path \"$dir\\xampp-control.ini\")) {",
+        "   New-Item \"$dir\\xampp-control.ini\"",
+        "}"
+    ],
+    "post_install": "Start-Process -FilePath \"$dir\\setup_xampp.bat\" -ArgumentList \"< nul\" -WorkingDirectory \"$dir\" -Wait",
     "bin": [
         "apache\\bin\\httpd.exe",
         "mysql\\bin\\mysql.exe",
