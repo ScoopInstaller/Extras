@@ -1,0 +1,36 @@
+{
+    "version": "7.01-701.30321",
+    "homepage": "https://www.resplendence.com/whocrashed",
+    "description": "A utility application that reveals the drivers responsible for crashing your computer.",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.resplendence.com/licensing"
+    },
+    "url": "https://www.resplendence.com/download/whocrashedSetup.exe",
+    "hash": "302b9a24938561acf81d090e92e6fb75cfec034a9b91e153d2d63385a5044823",
+    "innosetup": true,
+    "pre_install": [
+        "if ($architecture -eq '32bit') {",
+        "   Get-ChildItem \"$dir\" -Recurse -Filter '*,2.*' | Remove-Item; $get32bit_Items = Get-ChildItem \"$dir\" -Recurse -Filter '*,1.*'",
+        "   $get32bit_Items | Rename-Item -NewName { $_.Name -replace '([\\w]+),\\d+\\.([\\w]+)', '$1.$2' } -ErrorAction 'SilentlyContinue'",
+        "} elseif ($architecture -eq '64bit') {",
+        "   Get-ChildItem \"$dir\" -Recurse -Filter '*,1.*' | Remove-Item; $get64bit_Items = Get-ChildItem \"$dir\" -Recurse -Filter '*,2.*'",
+        "   $get64bit_Items | Rename-Item -NewName { $_.Name -replace '([\\w]+),\\d+\\.([\\w]+)', '$1.$2' } -ErrorAction 'SilentlyContinue'",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "WhoCrashedEx.exe",
+            "WhoCrashed"
+        ]
+    ],
+    "checkver": {
+        "useragent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+        "url": "https://www.resplendence.com/bin/rspupdate.dll/checkforupdate?product=WhoCrashed&edition=home",
+        "regex": ">LatestVersion=([\\d.]+),\\sbuild\\s([\\d.]+)<",
+        "replace": "$1-$2"
+    },
+    "autoupdate": {
+        "url": "https://www.resplendence.com/download/whocrashedSetup.exe"
+    }
+}
