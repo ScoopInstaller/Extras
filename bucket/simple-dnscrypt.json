@@ -3,7 +3,6 @@
     "description": "An easy to use GUI for dnscrypt-proxy",
     "homepage": "https://simplednscrypt.org/",
     "license": "MIT",
-    "notes": "Service Management: 'dnscrypt-proxy --help' (with sudo)",
     "suggest": {
         "vcredist2015-2022": "extras/vcredist2022"
     },
@@ -20,16 +19,8 @@
     "pre_install": [
         "if (!(Test-Path \"$env:LOCALAPPDATA\\SimpleDnsCrypt\")) { New-Item \"$env:LOCALAPPDATA\\SimpleDnsCrypt\" -ItemType Directory -Force | Out-Null }",
         "'blacklist.txt', 'blocked.log', 'query.log', 'domain-blacklist.txt', 'domain-whitelist.txt' | ForEach-Object {",
-        "    if (!(Test-Path \"$persist_dir\\dnscrypt-proxy\\$_\")) { New-Item \"$dir\\dnscrypt-proxy\\$_\" -ItemType 'File' | Out-Null }",
-        "}",
-        "# Credit to @Rasa for this powershell script",
-        "$configFile = \"$dir\\SimpleDnsCrypt.exe.config\" ",
-        "[xml]$configFileContent = Get-Content \"$configFile\" ",
-        "foreach ($item in $configFileContent.configuration.userSettings.'SimpleDnsCrypt.Properties.Settings'.setting) {",
-        "    if ($item.name -eq 'AutoUpdate') { $item.value = 'False' }",
-        "}",
-        "Copy-Item \"$configFile\" \"$configFile.backup\" ",
-        "$configFileContent.Save(\"$configFile\")"
+        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "}"
     ],
     "shortcuts": [
         [
@@ -37,10 +28,7 @@
             "Simple DnsCrypt"
         ]
     ],
-    "bin": [
-        "SimpleDnsCrypt.exe",
-        "dnscrypt-proxy\\dnscrypt-proxy.exe"
-    ],
+    "bin": "SimpleDnsCrypt.exe",
     "persist": [
         "dnscrypt-proxy\\dnscrypt-proxy.toml",
         "dnscrypt-proxy\\blacklist.txt",
@@ -50,41 +38,18 @@
         "dnscrypt-proxy\\domain-whitelist.txt"
     ],
     "pre_uninstall": [
-        "$process = Get-Process -Name 'SimpleDnsCrypt' -ErrorAction SilentlyContinue",
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+        "",
+        "Start-Process -Wait \"$dir\\Uninstall.exe\" | Out-Null",
+        "if (Get-Process -Name 'SimpleDnsCrypt' -ErrorAction SilentlyContinue) { Stop-Process -Name 'SimpleDnsCrypt' | Out-Null }",
         "$service = Get-Service -Name 'dnscrypt-proxy' -ErrorAction SilentlyContinue",
-        "if ($process) { error \"Please close 'Simple DnsCrypt' GUI before Updating/uninstalling\"; break }",
-        "if ($service) {",
-        "    if (!(is_admin)) {",
-        "        if (($service.Status -ne 'Stopped') -or ($cmd -eq 'uninstall')) { error \"Admin rights are required to stop service: 'dnscrypt-proxy'\"; break }",
-        "    }",
-        "    else {",
-        "        sc.exe stop dnscrypt-proxy | Out-Null",
-        "        if ($cmd -eq 'uninstall') {",
-        "            $re = \"[\\']([^']*):\\d+[\\']\"",
-        "            (Get-Content \"$dir\\dnscrypt-proxy\\dnscrypt-proxy.toml\" | Select-String -Pattern 'listen_addresses') -match $re | Out-Null",
-        "            $blacklist = @('Microsoft Virtual', 'Hamachi Network', 'VMware', 'VirtualBox', 'Software Loopback', 'Microsoft ISATAP', 'Microsoft-ISATAP', 'Teredo Tunneling Pseudo-Interface', 'Microsoft Wi-Fi Direct Virtual', 'Microsoft Teredo Tunneling Adapter', 'Von Microsoft gehosteter', 'Microsoft hosted', 'Virtueller Microsoft-Adapter', 'TAP')",
-        "            $interfaces = New-Object Collections.Generic.HashSet[Object]",
-        "            foreach ($adapter in Get-NetAdapter) {",
-        "                if ($adapter.Status -ne 'Up') { continue }",
-        "                foreach ($entry in $blacklist) {",
-        "                    if ($adapter.InterfaceDescription.Contains($entry) -or $adapter.Name.Contains($entry)) { continue }",
-        "                    if ($adapter.Name -in $interfaces) { continue }",
-        "                    foreach ($addresses in Get-DnsClientServerAddress -InterfaceAlias $adapter.Name) {",
-        "                        $addresses | ForEach-Object {",
-        "                            if ($_.Address -in $Matches.Values) { $interfaces.Add($adapter.Name) | Out-Null  }",
-        "                        }",
-        "                    }",
-        "                }",
-        "            }",
-        "            if ($interfaces) {",
-        "                $interfaces | ForEach-Object {",
-        "                    netsh.exe interface ipv4 delete dns \"$_\" all | Out-Null",
-        "                    netsh.exe interface ipv6 delete dns \"$_\" all | Out-Null",
-        "                }",
-        "            }",
-        "            sc.exe delete dnscrypt-proxy | Out-Null",
-        "        }",
-        "    }",
+        "if (($service) -and ($service.Status -ne 'Stopped')) {",
+        "    if (!(is_admin)) { error 'Admin rights are required to stop dnscrypt-proxy service'; break }",
+        "    Stop-Service -Name 'dnscrypt-proxy' | Out-Null",
+        "}",
+        "if (($service) -and ($cmd -eq 'uninstall')) {",
+        "    if (!(is_admin)) { error 'Admin rights are required to remove dnscrypt-proxy service'; break }",
+        "    Remove-Service -Name 'dnscrypt-proxy' | Out-Null",
         "}"
     ],
     "checkver": {
