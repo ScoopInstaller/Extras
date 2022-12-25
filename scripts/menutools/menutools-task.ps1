@@ -5,6 +5,7 @@ function is_admin {
 }
 
 $subCommand = $args[0]
+
 if (is_admin) {
     if ($subCommand -eq 'add') {
         $actions = New-ScheduledTaskAction -Execute "REPLACE_HERE\MenuTools.exe"
