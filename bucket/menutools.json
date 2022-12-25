@@ -1,0 +1,44 @@
+{
+    "version": "1.0.2",
+    "homepage": "https://github.com/navossoc/MenuTools",
+    "description": "An application that adds new features to the system menu of applications.",
+    "license": "MIT",
+    "notes": [
+        "To add menutools as a startup task, run:",
+        "menutools-task.ps1 add",
+        "To remove the menutools startup task, run:",
+        "menutools-task.ps1 remove"
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/navossoc/MenuTools/releases/download/1.0.2/menutools-setup-1.0.2.exe",
+            "hash": "3fc6c21ad78d1bdbef8464b02fac7735ac2bc8b131063021afa037df617a258c"
+        }
+    },
+    "innosetup": true,
+    "pre_install": [
+        "$currentDir = $dir.Replace($version, 'current')",
+        "$content = Get-Content \"$bucketsdir\\MyScoop\\scripts\\menutools\\menutools-task.ps1\"",
+        "$content = $content.Replace('REPLACE_HERE', $currentDir)",
+        "Set-Content \"$dir\\menutools-task.ps1\" -Value $content -Force"
+    ],
+    "bin": "menutools-task.ps1",
+    "shortcuts": [
+        [
+            "MenuTools.exe",
+            "MenuTools"
+        ]
+    ],
+    "pre_uninstall": [
+        "if (!(is_admin)) { error \"menutools requires admin rights to $cmd\"; break }",
+        "Stop-Process -Name 'MenuTools', 'MenuTools64' -Force -ErrorAction 'SilentlyContinue'"
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/navossoc/MenuTools/releases/download/$version/menutools-setup-$version.exe"
+            }
+        }
+    }
+}
