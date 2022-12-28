@@ -8,7 +8,7 @@
     "pre_install": [
         "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
         "Start-Process \"$dir\\openElement.exe\" -Wait -Verb 'RunAs' -WindowStyle 'Hidden' -ArgumentList @('/extract', '/exenoui'); Start-Sleep -Seconds 2",
-        "Remove-Item \"$dir\\openElement.exe\"; Get-ChildItem \"$dir\\*\" | Rename-Item -NewName 'extracted_folder'",
+        "Remove-Item \"$dir\\openElement.exe\"; Get-ChildItem \"$dir\\*\" -Attributes 'D' | Rename-Item -NewName 'extracted_folder'",
         "Move-Item \"$dir\\extracted_folder\\*\" \"$dir\" -Exclude @('Uninstall.exe', 'updater.exe', 'openElement.msi'); Remove-Item \"$dir\\extracted_folder\" -Recurse"
     ],
     "bin": "openElement.exe",
