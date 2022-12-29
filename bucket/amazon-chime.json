@@ -30,15 +30,17 @@
     ],
     "post_install": [
         "Write-Host \"Registering 'URL:chime' protocol handler\"",
-        "New-item 'HKCU:\\SOFTWARE\\Classes\\Chime\\DefaultIcon' -Value \"$dir\\Chime.exe,0\" -Force | Out-Null",
-        "New-item 'REGISTRY::HKEY_CURRENT_USER\\SOFTWARE\\Classes\\Chime\\shell\\open\\command' -Value \"$currentDir\\Chime.exe %1\" -Force | Out-Null",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\Chime\\DefaultIcon' -Value \"$dir\\Chime.exe,0\" -Force | Out-Null",
+        "New-Item 'REGISTRY::HKEY_CURRENT_USER\\SOFTWARE\\Classes\\Chime\\shell\\open\\command' -Value \"$currentDir\\Chime.exe %1\" -Force | Out-Null",
         "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\Chime' -Name '(Default)' -Value 'URL:chime' -Force | Out-Null",
         "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\Chime' -Name 'URL Protocol' -Value '' -Force | Out-Null",
-        "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\Chime' -Name 'UseOriginalUrlEncoding' -PropertyType 'Dword' -Value '1' -Force | Out-Null"
+        "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\Chime' -Name 'UseOriginalUrlEncoding' -PropertyType 'Dword' -Value '1' -Force | Out-Null",
+        "Write-Host 'Done!'"
     ],
     "pre_uninstall": [
         "Write-Host \"Unregistering 'URL:chime' protocol handler\"; Remove-Item 'HKCU:\\SOFTWARE\\Classes\\Chime' -Recurse -Force",
-        "Remove-Item \"$env:APPDATA\" -Include 'AWS Mobile Services', 'Amazon' -Recurse -Force"
+        "Remove-Item \"$env:APPDATA\" -Include 'AWS Mobile Services', 'Amazon' -Recurse -Force",
+        "Write-Host 'Done!'"
     ],
     "checkver": {
         "script": [
