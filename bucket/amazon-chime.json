@@ -19,31 +19,9 @@
     "pre_install": [
         "if ($architecture -eq '32bit') { Remove-Item \"$dir\\MediaClient,1.dll\"; Rename-Item \"$dir\\MediaClient,2.dll\" 'MediaClient.dll' }",
         "elseif ($architecture -eq '64bit') { Remove-Item \"$dir\\MediaClient,2.dll\"; Rename-Item \"$dir\\MediaClient,1.dll\" 'MediaClient.dll' }",
-        "Remove-Item \"$dir\\unins000.*\"",
-        "$currentDir = $dir.Replace(\"$version\", 'current')",
-        "$value = (",
-        "    '$command = $args',",
-        "    \"`r\",",
-        "    'if ($command -eq ''install'') {',",
-        "    \"`r\",",
-        "    \"    New-item 'REGISTRY::HKEY_CURRENT_USER\\SOFTWARE\\Classes\\Chime\\shell\\open' -Name 'command' -Value \"\"$currentDir\\Chime.exe %1\"\" -Force | Out-Null\",",
-        "    \"`r\",",
-        "    '} elseif ($command -eq ''uninstall'') { Remove-Item ''REGISTRY::HKEY_CURRENT_USER\\SOFTWARE\\Classes\\Chime\\shell'' -Recurse -Force }',",
-        "    \"`r\",",
-        "    'else {',",
-        "    \"`r\",",
-        "    '    Write-Output \"Command Usage:`n\", \"chime-context-menu.ps1 <arguments>\"',",
-        "    \"`r\",",
-        "    '    Write-Output \"`tinstall - to add ''Amazon Chime'' to the context menu\", \"`tuninstall - to remove ''Amazon Chime'' from the context menu`n\"',",
-        "    \"`r\",",
-        "    '}'",
-        ")",
-        "Set-Content \"$dir\\chime-context-menu.ps1\" -Value \"$value\" -Encoding 'UTF8' | Out-Null"
+        "Remove-Item \"$dir\\unins000.*\""
     ],
-    "bin": [
-        "Chime.exe",
-        "chime-context-menu.ps1"
-    ],
+    "bin": "Chime.exe",
     "shortcuts": [
         [
             "Chime.exe",
@@ -53,6 +31,7 @@
     "post_install": [
         "Write-Host \"Registering 'URL:chime' protocol handler\"",
         "New-item 'HKCU:\\SOFTWARE\\Classes\\Chime' -Name 'DefaultIcon' -Value \"$dir\\Chime.exe,0\" -Force | Out-Null",
+        "New-item 'REGISTRY::HKEY_CURRENT_USER\\SOFTWARE\\Classes\\Chime\\shell\\open' -Name 'command' -Value \"$currentDir\\Chime.exe %1\" -Force | Out-Null",
         "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\Chime' -Name '(Default)' -Value 'URL:chime' -Force | Out-Null",
         "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\Chime' -Name 'URL Protocol' -Value '' -Force | Out-Null",
         "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\Chime' -Name 'UseOriginalUrlEncoding' -PropertyType 'Dword' -Value '1' -Force | Out-Null"
