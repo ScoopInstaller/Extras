@@ -6,6 +6,12 @@
         "identifier": "GPL-3.0-openssl-exception",
         "url": "https://github.com/kotatogram/kotatogram-desktop/blob/dev/LICENSE"
     },
+    "notes": [
+        "To register the 'URL:Telegram Link' protocol, run:",
+        "protocol-handler.ps1 register",
+        "To unregister the 'URL:Telegram Link' protocol, run:",
+        "protocol-handler.ps1 unregister"
+    ],
     "architecture": {
         "64bit": {
             "url": "https://github.com/kotatogram/kotatogram-desktop/releases/download/k1.4.8/1.4.8-win64-portable.zip",
@@ -16,8 +22,16 @@
             "hash": "32a8d3fd60de7ffa85bc7488b7fe3b04328eb367472b79b3ae31e40885fe1553"
         }
     },
-    "pre_install": "if (Test-Path \"$persist_dir\\log.txt\") { Copy-Item \"$persist_dir\\log.txt\" \"$dir\\\" }",
-    "pre_uninstall": "if (Test-Path \"$dir\\log.txt\") { Copy-Item \"$dir\\log.txt\" \"$persist_dir\\\" }",
+    "pre_install": [
+        "if (Test-Path \"$persist_dir\\log.txt\") { Copy-Item \"$persist_dir\\log.txt\" \"$dir\\\" }",
+        "Remove-Item \"$dir\\Updater.exe\"",
+        "$currentDir = $dir.Replace($version, 'current')",
+        "$content = Get-Content \"$bucketsdir\\extras\\scripts\\telegram\\protocol-handler.ps1\"",
+        "$content = $content.Replace('REPLACE_HERE', $currentDir)",
+        "$content = $content.Replace('Telegram.exe', 'Kotatogram.exe')",
+        "Set-Content \"$dir\\protocol-handler.ps1\" $content -Force"
+    ],
+    "bin": "protocol-handler.ps1",
     "shortcuts": [
         [
             "Kotatogram.exe",
@@ -25,6 +39,11 @@
         ]
     ],
     "persist": "tdata",
+    "pre_uninstall": [
+        "if (Test-Path \"$dir\\log.txt\") { Copy-Item \"$dir\\log.txt\" \"$persist_dir\\\" }",
+        "Write-Host 'Unregistering ''URL:Telegram Link'' protocol handler...'",
+        "Remove-Item 'HKCU:\\SOFTWARE\\Classes\\tg', 'HKCU:\\SOFTWARE\\Classes\\TelegramDesktop' -Force -Recurse -ErrorAction 'SilentlyContinue'; Write-Host 'Done!'"
+    ],
     "checkver": {
         "github": "https://github.com/kotatogram/kotatogram-desktop",
         "regex": "Version ([\\d.]+)"
