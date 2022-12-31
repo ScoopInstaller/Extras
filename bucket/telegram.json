@@ -3,6 +3,12 @@
     "description": "A messaging app with a focus on speed and security",
     "homepage": "https://telegram.org",
     "license": "GPL-3.0-only",
+    "notes": [
+        "To register the 'URL:Telegram Link' protocol, run:",
+        "protocol-handler.ps1 register",
+        "To unregister the 'URL:Telegram Link' protocol, run:",
+        "protocol-handler.ps1 unregister"
+    ],
     "architecture": {
         "64bit": {
             "url": "https://github.com/telegramdesktop/tdesktop/releases/download/v4.5.0/tportable-x64.4.5.0.zip",
@@ -14,8 +20,17 @@
         }
     },
     "extract_dir": "Telegram",
-    "pre_install": "Set-Content \"$dir\\telegram.cmd\" '@start \"Telegram\" /D \"%~dp0\" \"%~dp0Telegram.exe\" %*' -Encoding Ascii",
-    "bin": "telegram.cmd",
+    "pre_install": [
+        "Set-Content \"$dir\\telegram.cmd\" '@start \"Telegram\" /D \"%~dp0\" \"%~dp0Telegram.exe\" %*' -Encoding Ascii",
+        "$currentDir = $dir.Replace($version, 'current')",
+        "$content = Get-Content \"$bucketsdir\\extras\\scripts\\telegram\\protocol-handler.ps1\"",
+        "$content = $content.Replace('REPLACE_HERE', $currentDir)",
+        "Set-Content \"$dir\\protocol-handler.ps1\" $content -Force"
+    ],
+    "bin": [
+        "telegram.cmd",
+        "protocol-handler.ps1"
+    ],
     "shortcuts": [
         [
             "Telegram.exe",
@@ -23,6 +38,10 @@
         ]
     ],
     "persist": "tdata",
+    "pre_uninstall": [
+        "Write-Host 'Unregistering ''URL:Telegram Link'' protocol handler...'",
+        "Remove-Item 'HKCU:\\SOFTWARE\\Classes\\tg', 'HKCU:\\SOFTWARE\\Classes\\TelegramDesktop' -Force -Recurse -ErrorAction 'SilentlyContinue'; Write-Host 'Done!'"
+    ],
     "checkver": {
         "github": "https://github.com/telegramdesktop/tdesktop"
     },
