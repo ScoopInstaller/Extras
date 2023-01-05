@@ -1,13 +1,13 @@
 {
-    "version": "10.50.10.3842-4c441c2594",
+    "version": "10.51.7.3866-10d8cd4f38",
     "homepage": "https://evernote.com/",
     "description": "Remember everything and tackle any project with your notes, tasks, and schedule all in one place.",
     "license": {
         "identifier": "Freeware",
         "url": "https://evernote.com/legal"
     },
-    "url": "https://cdn1.evernote.com/boron/win/builds/Evernote-10.50.10-win-ddl-ga-3842-4c441c2594-setup.exe#/dl.7z",
-    "hash": "e44d06d7178819653379fbea3a70937fc8521d63a3eabda6f12bf9a6e09fe86a",
+    "url": "https://cdn1.evernote.com/boron/win/builds/Evernote-10.51.7-win-ddl-ga-3866-10d8cd4f38-setup.exe#/dl.7z",
+    "hash": "001bf6ca3a10ac8951bc827aeba50b2ef9defca17182b573323106ccbd6f166c",
     "extract_dir": "$PLUGINSDIR",
     "pre_install": [
         "if ($architecture -eq '32bit') { Expand-7zipArchive \"$dir\\app-32.7z\" \"$dir\" -Removal; Remove-Item \"$dir\\app-64.7z\" }",
@@ -20,15 +20,15 @@
         ]
     ],
     "checkver": {
-        "url": "https://evernote.com/download",
-        "regex": "Evernote-(?<Ver>[\\d.]+)-win-ddl-ga-(?<Build>[\\w-]+)-setup\\.exe",
-        "replace": "${Ver}.${Build}"
+        "script": [
+            "$userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'",
+            "(Invoke-RestMethod 'https://evernote.com/download' -UserAgent $userAgent) -match '(?<File>Evernote-(?<Ver>[\\d.]+)-win-ddl-ga-(?<Build>[\\w-]+)-setup\\.exe)' | Out-Null",
+            "$getFile = $Matches['File']; $getVersion = $Matches['Ver']; $getBuild = $Matches['Build']",
+            "Write-Output \"$getFile, $getVersion.$getBuild\""
+        ],
+        "regex": "(?<File>[\\w.-]+),\\s([\\w.-]+)"
     },
     "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://cdn1.evernote.com/boron/win/builds/Evernote-$matchVer-win-ddl-ga-$matchBuild-setup.exe#/dl.7z"
-            }
-        }
+        "url": "https://cdn1.evernote.com/boron/win/builds/$matchFile#/dl.7z"
     }
 }
