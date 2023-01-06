@@ -7,12 +7,17 @@
         "64bit": {
             "url": "https://github.com/microsoft/PowerToys/releases/download/v0.66.0/PowerToysSetup-0.66.0-x64.exe",
             "hash": "ee3f76f056a0611f69a203ba6d2b36ff81014b1fa29d1f46ecdcc6d312724fc6"
+        },
+        "arm64": {
+            "url": "https://github.com/microsoft/PowerToys/releases/download/v0.66.0/PowerToysSetup-0.66.0-arm64.exe",
+            "hash": "19da79d497cad28cc80a9c9954459ee93fe23ffc560de7732dd806a38e862210"
         }
     },
     "installer": {
         "script": [
             "Expand-DarkArchive \"$dir\\$fname\" \"$dir\\.tmp\"",
-            "Expand-MsiArchive \"$dir\\.tmp\\AttachedContainer\\PowerToysSetup-$version-x64.msi\" \"$dir\" -ExtractDir 'PowerToys'",
+            "Get-ChildItem \"$dir\\.tmp\\AttachedContainer\\PowerToysSetup*.msi\" | Rename-Item -NewName 'PowerToysSetup.msi' -Force",
+            "Expand-MsiArchive \"$dir\\.tmp\\AttachedContainer\\PowerToysSetup.msi\" \"$dir\" -ExtractDir 'PowerToys'",
             "Remove-Item \"$dir\\.tmp\", \"$dir\\$fname\" -Force -Recurse"
         ]
     },
@@ -48,6 +53,13 @@
                 "hash": {
                     "url": "https://github.com/microsoft/PowerToys/releases/tag/v$version",
                     "regex": ">$sha256<"
+                }
+            },
+            "arm64": {
+                "url": "https://github.com/microsoft/PowerToys/releases/download/v$version/PowerToysSetup-$version-arm64.exe",
+                "hash": {
+                    "url": "https://github.com/microsoft/PowerToys/releases/tag/v$version",
+                    "regex": "ARM64 Installer Hash[\\s\\S]*>$sha256<"
                 }
             }
         }
