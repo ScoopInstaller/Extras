@@ -15,9 +15,9 @@
     "extract_to": "installer",
     "installer": {
         "script": [
-            "$args = @('/script', \"$dir\\installer\\UX\\install.ahk\", '/to', $dir, '/user', '/silent')",
-            "if ($global) { $args = @('/script', \"$dir\\installer\\UX\\install.ahk\", '/to', $dir, '/silent') }",
-            "Start-Process -Wait \"$dir\\installer\\AutoHotkey32.exe\" -ArgumentList $args"
+            "$ahk = @('/script', \"`\"$dir\\installer\\UX\\install.ahk`\"\", '/to', \"`\"$dir`\"\", '/user', '/silent')",
+            "if ($global) { $ahk = @('/script', \"`\"$dir\\installer\\UX\\install.ahk`\"\", '/to', \"`\"$dir`\"\", '/silent') }",
+            "Start-Process \"$dir\\installer\\AutoHotkey32.exe\" -ArgumentList $ahk -Wait"
         ]
     },
     "post_install": "Remove-Item \"$dir\\installer\" -Force -Recurse",
@@ -42,7 +42,7 @@
         }
     },
     "uninstaller": {
-        "script": "Start-Process -Wait \"$dir\\UX\\AutoHotkeyUX.exe\" -ArgumentList @('/script', \"$dir\\UX\\install.ahk\", '/uninstall', '/silent')"
+        "script": "Start-Process \"$dir\\UX\\AutoHotkeyUX.exe\" -ArgumentList @('/script', \"`\"$dir\\UX\\install.ahk`\"\", '/uninstall', '/silent') -Wait"
     },
     "checkver": {
         "url": "https://www.autohotkey.com/download/2.0/version.txt",
