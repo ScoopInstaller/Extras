@@ -1,0 +1,40 @@
+{
+    "version": "3.11",
+    "homepage": "https://gamebanana.com/tools/6321",
+    "description": "A tool to help download, install and manage mods available through Gamebanana for a variety of different games.",
+    "license": "CC-BY-NC-ND-4.0",
+    "url": "https://files.gamebanana.com/tools/modboy_install_68c70.exe",
+    "hash": "md5:5718560ab093f903b3e6ef51e68575ac",
+    "innosetup": true,
+    "shortcuts": [
+        [
+            "Modboy.exe",
+            "Modboy"
+        ]
+    ],
+    "post_install": [
+        "Write-Host 'Registering the ''modboy://'' Protocol...'",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\modboy\\shell\\open\\command' -Value \"\"\"$dir\\Modboy.exe\"\" \"\"%1\"\"\" -Force | Out-Null",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\modboy\\DefaultIcon' -Value \"$dir\\Modboy.exe,1\" -Force | Out-Null",
+        "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\modboy' -Name '(Default)' -PropertyType 'String' -Value 'URL:modboy' | Out-Null",
+        "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\modboy' -Name 'URL Protocol' -PropertyType 'String' -Value '' | Out-Null"
+    ],
+    "pre_uninstall": "Write-Host 'Unregistering the ''modboy://'' Protocol...'; Remove-Item 'HKCU:\\SOFTWARE\\Classes\\modboy' -Recurse -Force",
+    "checkver": {
+        "script": [
+            "$userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'",
+            "$getData = ((Invoke-RestMethod 'https://gamebanana.com/apiv10/Tool/6321/Updates' -UserAgent $userAgent)._aRecords)[0]",
+            "$getFile = $getData._aFiles._sFile; $getVersion = ($getData._sName) -replace 'v([\\d.]+)\\s-[\\s\\w]+', '$1'",
+            "Write-Output \"$getFile, $getVersion\""
+        ],
+        "regex": "(?<File>[\\w_.]+),\\s([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://files.gamebanana.com/tools/$matchFile",
+        "hash": {
+            "url": "https://gamebanana.com/apiv10/Tool/6321/Updates",
+            "mode": "json",
+            "jsonpath": "$._aRecords._aFiles._sMd5Checksum"
+        }
+    }
+}
