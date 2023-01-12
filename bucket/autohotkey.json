@@ -4,10 +4,10 @@
     "homepage": "https://www.autohotkey.com/",
     "license": "GPL-2.0-or-later",
     "notes": [
-        "Install specific version of interpreter(Default: Latest 1.x):",
-        "  - 'autohotkey /script $dir\\UX\\install-version.ahk [version]'",
+        "Install specific version of Interpreter(Default: Latest 1.x):",
+        "  - 'autohotkey /script \"$dir\\UX\\install-version.ahk\" [version]'",
         "Uninstall Sub-versions of Interpreter:",
-        "  - 'autohotkey /script $dir\\UX\\ui-uninstall.ahk'",
+        "  - 'autohotkey /script \"$dir\\UX\\ui-uninstall.ahk\"'",
         "See also: https://github.com/ScoopInstaller/Extras/issues/10066"
     ],
     "url": "https://www.autohotkey.com/download/2.0/AutoHotkey_2.0.2.zip",
@@ -20,7 +20,17 @@
             "Start-Process \"$dir\\installer\\AutoHotkey32.exe\" -ArgumentList $ahk -Wait"
         ]
     },
-    "post_install": "Remove-Item \"$dir\\installer\" -Force -Recurse",
+    "post_install": [
+        "Remove-Item \"$dir\\installer\" -Force -Recurse",
+        "# Persistence",
+        "if (Test-Path \"$persist_dir\\installed-files.csv\") {",
+        "    Get-Content \"$persist_dir\\installed-files.csv\" | Add-Content \"$dir\\UX\\installed-files.csv\"",
+        "    Copy-Item \"$persist_dir\\installed-files\\*\" \"$dir\" -Recurse",
+        "    # Remove old files",
+        "    Remove-Item \"$persist_dir\\installed-files.csv\" -Force",
+        "    Remove-Item \"$persist_dir\\installed-files\" -Force -Recurse",
+        "}"
+    ],
     "architecture": {
         "64bit": {
             "bin": [
@@ -41,6 +51,25 @@
             ]
         }
     },
+    "pre_uninstall": [
+        "# Persistence",
+        "ensure \"$persist_dir\" | Out-Null",
+        "ensure \"$persist_dir\\installed-files\" | Out-Null",
+        "if (Test-Path \"$dir\\UX\\installed-files.csv\") {",
+        "    $csv = Import-Csv \"$dir\\UX\\installed-files.csv\" | Where-Object 'Version' -ne $version",
+        "    if ($csv) {",
+        "        $export = @()",
+        "        $dirs = @()",
+        "        $csv | ForEach-Object {",
+        "            $current = (Get-Item \"$dir\\$($_.'Path')\" -ErrorAction SilentlyContinue).Directory.Name",
+        "            $export += \"$($_.'Hash'),$($_.'Version'),$($_.'Path'),$($_.'Description')\"",
+        "            if (!($dirs.Contains($current)) -and ($_.'Path' -notlike '*.lnk')) { $dirs += $current }",
+        "        }",
+        "        $export | Out-File \"$persist_dir\\installed-files.csv\" -Encoding ASCII",
+        "        $dirs | ForEach-Object { Copy-Item \"$dir\\$_\" \"$persist_dir\\installed-files\" -Recurse }",
+        "    }",
+        "}"
+    ],
     "uninstaller": {
         "script": "Start-Process \"$dir\\UX\\AutoHotkeyUX.exe\" -ArgumentList @('/script', \"`\"$dir\\UX\\install.ahk`\"\", '/uninstall', '/silent') -Wait"
     },
