@@ -16,13 +16,6 @@
     "extract_dir": "Sunshine",
     "pre_install": [
         "Set-Content -Path \"$dir\\sunshine.bat\" -Value (@('@echo off', 'pushd %~dp0 && sunshine.exe %* && popd') -join \"`r`n\")",
-        "# Create sunshine_state.json if it does not exist",
-        "if (!(Test-Path \"$persist_dir\\sunshine_state.json\" -PathType Leaf)) {",
-        "    Set-Content -Path \"$dir\\sunshine_state.json\" -Value \"{}\"",
-        "}",
-        "'apps.json', 'sunshine.conf' | ForEach-Object {",
-        "    if (!(Test-Path \"$persist_dir\\$_\")) { Copy-Item \"$dir\\config\\$_\" \"$dir\\$_\" | Out-Null }",
-        "}",
         "",
         "# https://github.com/LizardByte/Sunshine/issues/197",
         "Copy-Item \"$bucketsdir\\extras\\scripts\\sunshine\\install-service.bat\" \"$dir\" | Out-Null",
@@ -39,12 +32,7 @@
             "Sunshine"
         ]
     ],
-    "persist": [
-        "credentials",
-        "apps.json",
-        "sunshine.conf",
-        "sunshine_state.json"
-    ],
+    "persist": "config",
     "checkver": "github",
     "autoupdate": {
         "architecture": {
