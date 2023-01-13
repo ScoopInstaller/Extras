@@ -1,0 +1,32 @@
+{
+    "version": "1.0.0-beta.3",
+    "homepage": "https://primo.so/",
+    "description": "A modern WordPress alternative that makes it easy build fully-customizable websites.",
+    "license": "AGPL-3.0",
+    "url": "https://github.com/primodotso/primo/releases/download/v1.0.0-beta.3/Primo.Setup.1.0.0--beta.3.exe#/dl.7z",
+    "hash": "sha512:ed67ae545c866e4bb090fecdb8dec164f028b7d3eb4765b0759555f2f7e9683d6d45c50d2ad1cae89e4c793a81b9d2530754a300690c23e27bd6aa4f6289e798",
+    "extract_dir": "$PLUGINSDIR",
+    "pre_install": [
+        "if ($architecture -eq '32bit') { Expand-7zipArchive \"$dir\\app-32.7z\" \"$dir\" -Removal; Remove-Item \"$dir\\app-64.7z\" }",
+        "else { Expand-7zipArchive \"$dir\\app-64.7z\" \"$dir\" -Removal; Remove-Item \"$dir\\app-32.7z\" }"
+    ],
+    "shortcuts": [
+        [
+            "Primo.exe",
+            "Primo"
+        ]
+    ],
+    "checkver": {
+        "useragent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+        "url": "https://api.github.com/repos/primodotso/primo/releases/latest",
+        "jsonpath": "$.assets..browser_download_url",
+        "regex": "v([\\w.-]+)/(?<File>[\\w.-]+\\.exe)"
+    },
+    "autoupdate": {
+        "url": "https://github.com/primodotso/primo/releases/download/v$version/$matchFile#/dl.7z",
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512:\\s$base64"
+        }
+    }
+}
