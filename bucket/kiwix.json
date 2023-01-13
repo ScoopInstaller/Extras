@@ -1,0 +1,36 @@
+{
+    "version": "2.3.1",
+    "homepage": "https://www.kiwix.org/en/",
+    "description": "Store any website on your mobile phone or computer, easily.",
+    "license": "GPL-3.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://download.kiwix.org/release/kiwix-desktop/kiwix-desktop_windows_x64_2.3.1.zip",
+            "hash": "53c5217b9ffafad8ad46d01da4af32f61604408e191af273c9e877cd7b3562c3",
+            "extract_dir": "kiwix-desktop_windows_x64_2.3.1"
+        }
+    },
+    "shortcuts": [
+        [
+            "kiwix-desktop.exe",
+            "Kiwix Desktop"
+        ]
+    ],
+    "checkver": {
+        "script": [
+            "$userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'",
+            "$returnFile = Invoke-WebRequest 'https://download.kiwix.org/release/kiwix-desktop/kiwix-desktop_windows_x64.zip' -UserAgent $userAgent",
+            "$returnFile = ($returnFile.BaseResponse.RequestMessage.RequestUri.AbsoluteUri) -replace 'https://.*/(kiwix-desktop_windows_x64_[\\d.]+\\.zip)', '$1'",
+            "Write-Output $returnFile"
+        ],
+        "regex": "kiwix-desktop_windows_x64_([\\d.]+)\\.zip"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download.kiwix.org/release/kiwix-desktop/kiwix-desktop_windows_x64_$version.zip",
+                "extract_dir": "kiwix-desktop_windows_x64_$version"
+            }
+        }
+    }
+}
