@@ -3,7 +3,6 @@
     "description": "Tailscale a WireGuard based mesh VPN, used to connect your computers and other devices together securely without proxies.",
     "homepage": "https://tailscale.com",
     "license": "BSD-3-Clause",
-    "depends": "sudo",
     "architecture": {
         "64bit": {
             "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.32.2-amd64.msi",
@@ -19,12 +18,14 @@
         }
     },
     "post_install": [
-        "sudo tailscale-ipn.exe /install"
+        "if (!(is_admin)) {error 'This package requires admin rights to install'; break}",
+        "tailscale-ipn.exe /install"
     ],
     "uninstaller": {
         "script": [
+            "if (!(is_admin)) { error 'Admin rights are required to uninstall'; break }"
             "Stop-Process -Name 'tailscale-ipn' -Force -ErrorAction SilentlyContinue | Out-Null",
-            "sudo tailscale-ipn.exe /uninstall"
+            "tailscale-ipn.exe /uninstall"
         ]
     },
     "extract_dir": "Tailscale",
