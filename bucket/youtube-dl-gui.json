@@ -1,12 +1,12 @@
 {
-    "version": "1.8.3",
+    "version": "1.8.4",
     "description": "A cross platform front-end GUI of the popular youtube-dl written in wxPython.",
     "homepage": "https://github.com/oleksis/youtube-dl-gui",
     "license": "Unlicense",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/oleksis/youtube-dl-gui/releases/download/v1.8.3/yt-dlg-20220118.2.msi#/dl.ism",
-            "hash": "71d4fc4eea97199218fdde36717e90326ed0fd4bd980c6afbffc263514e34be9"
+            "url": "https://github.com/oleksis/youtube-dl-gui/releases/download/v1.8.4/yt-dlg-20221113.1.msi#/dl.ism",
+            "hash": "8c1d796edb502d39348ca4f554cade519bf5b1f3b9ebbe15815ad175e00f5efd"
         }
     },
     "pre_install": [
@@ -15,7 +15,7 @@
         "    'DestinationPath' = \"$dir\"",
         "    'Removal' = $true",
         "}",
-        "$LESSMSI = get_config 'MSIEXTRACT_USE_LESSMSI'",
+        "$LESSMSI = get_config USE_LESSMSI",
         "if ($LESSMSI) { $_args.Add('ExtractDir', 'APPDIR\\yt-dlg') } else { $_args.Add('ExtractDir', 'yt-dlg') }",
         "Expand-MsiArchive @_args"
     ],
@@ -26,13 +26,14 @@
         ]
     ],
     "checkver": {
-        "github": "https://github.com/oleksis/youtube-dl-gui",
-        "regex": "v(?<version>[\\d.]+)/(?<msi>.*).msi"
+        "url": "https://api.github.com/repos/oleksis/youtube-dl-gui/releases/latest",
+        "jsonpath": "$.assets..browser_download_url",
+        "regex": "v([\\d.]+)/yt-dlg-(?<Release>[\\d.]+).msi"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/oleksis/youtube-dl-gui/releases/download/v$version/$matchMsi.msi#/dl.ism",
+                "url": "https://github.com/oleksis/youtube-dl-gui/releases/download/v$version/yt-dlg-$matchRelease.msi#/dl.ism",
                 "hash": {
                     "url": "$baseurl/SHA2-256SUMS"
                 }

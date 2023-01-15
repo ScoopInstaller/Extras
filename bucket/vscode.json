@@ -1,5 +1,5 @@
 {
-    "version": "1.71.2",
+    "version": "1.74.3",
     "description": "Lightweight but powerful source code editor",
     "homepage": "https://code.visualstudio.com/",
     "license": {
@@ -12,12 +12,16 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://update.code.visualstudio.com/1.71.2/win32-x64-archive/stable#/dl.7z",
-            "hash": "59b66921041c3be3c7942bb0607adaa74a558e351c33092a555fc7f06ca1a1c8"
+            "url": "https://update.code.visualstudio.com/1.74.3/win32-x64-archive/stable#/dl.7z",
+            "hash": "a31bdec3a5e7914f99d46bd78cef6d60d0759477dc76802f3f19f720f8b6ee47"
         },
         "32bit": {
-            "url": "https://update.code.visualstudio.com/1.71.2/win32-archive/stable#/dl.7z",
-            "hash": "c90a5b91a9265994cab0fb6defb17dcc7be009b990444cab1e4082521ad34d7a"
+            "url": "https://update.code.visualstudio.com/1.74.3/win32-archive/stable#/dl.7z",
+            "hash": "1e382e3d2dd867316fddfc7f44285d570141476cb60534539727e6e28d756e3f"
+        },
+        "arm64": {
+            "url": "https://update.code.visualstudio.com/1.74.3/win32-arm64-archive/stable#/dl.7z",
+            "hash": "1eaf3a1f3c6503bad7d0eb0e5a711efe3634be2c664ca72db1b901807045a9b6"
         }
     },
     "env_add_path": "bin",
@@ -48,6 +52,11 @@
         "if (!(Test-Path \"$dir\\data\\user-data\") -and (Test-Path \"$env:AppData\\Code\")) {",
         "    info '[Portable Mode] Copying user data...'",
         "    Copy-Item \"$env:AppData\\Code\" \"$dir\\data\\user-data\" -Recurse",
+        "}",
+        "$extensions_file = \"$dir\\data\\extensions\\extensions.json\"",
+        "if ((Test-Path \"$extensions_file\")) {",
+        "    info 'Adjusting path in extensions file...'",
+        "    (Get-Content \"$extensions_file\") -replace '(?<=vscode(/|\\\\\\\\)).*?(?=(/|\\\\\\\\)data(/|\\\\\\\\)extensions)', $version | Set-Content \"$extensions_file\"",
         "}"
     ],
     "uninstaller": {
@@ -72,6 +81,13 @@
                 "hash": {
                     "url": "https://code.visualstudio.com/sha?build=stable",
                     "jsonpath": "$.products[?(@.platform.os == 'win32-archive')].sha256hash"
+                }
+            },
+            "arm64": {
+                "url": "https://update.code.visualstudio.com/$version/win32-arm64-archive/stable#/dl.7z",
+                "hash": {
+                    "url": "https://code.visualstudio.com/sha?build=stable",
+                    "jsonpath": "$.products[?(@.platform.os == 'win32-arm64-archive')].sha256hash"
                 }
             }
         }
