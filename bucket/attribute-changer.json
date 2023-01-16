@@ -1,13 +1,13 @@
 {
     "##": "The license will be inside the app directory after installation.",
-    "version": "11.00",
+    "version": "11.10",
     "homepage": "https://www.petges.lu",
     "description": "A Windows Explorer shell extension that allows users to easily change file and folder properties with a right-click.",
     "license": "Freeware",
     "notes": [
         "IMPORTANT FOR NON-ENGLISH SPEAKERS!!!",
         "If you want this application translated to your native langauge, please run the following command:",
-        "& \"$dir\\change_language.ps1\"",
+        "change_language.ps1",
         "**The powershell script will propmt you to enter the number that corresponds to your native langauge.**",
         "",
         "1 = BRAZILIAN PORTUGUESE",
@@ -24,8 +24,8 @@
         "12 = TURKISH",
         "13 = ENGLISH   (ONLY IF YOU NEED TO RESET THE 'messages.ini' FILE BACK TO ENGLISH.)"
     ],
-    "url": "https://www.petges.lu/pubfiles/ac-11_00.exe",
-    "hash": "md5:2F158D9531FB1E9749C5287EAF533AC0",
+    "url": "https://www.petges.lu/pubfiles/ac-11_10.exe",
+    "hash": "md5:2029beb543527d59d85ed850c0f790d6",
     "innosetup": true,
     "architecture": {
         "64bit": {
@@ -55,6 +55,14 @@
             ]
         }
     },
+    "installer": {
+        "script": [
+            "New-Item \"$dir\\change_language.ps1\" -Value '$ac_language = Read-Host -Prompt \"Please enter the number that corresponds to your native langauge\"' | Out-Null",
+            "Add-Content \"$dir\\change_language.ps1\" -Value @(",
+            "'`nCopy-Item \"$dir\\messages,$ac_language.ini\" \"$dir\\messages.ini\" -Force', 'Copy-Item \"$dir\\ac,$ac_language.pdf\" \"$dir\\ac.pdf\" -Force'",
+            ")"
+        ]
+    },
     "post_install": [
         "$documents = (Get-ChildItem \"$dir\" -Filter '*.pdf').Length; $subtract = $documents - 5",
         "Copy-Item \"$dir\\template.ini\" \"$dir\\messages,13.ini\"; Copy-Item \"$dir\\template.ini\" \"$dir\\messages.ini\"; Copy-Item \"$dir\\ac,4.pdf\" \"$dir\\ac.pdf\"",
@@ -69,10 +77,6 @@
         "$MinusValue8 = ($documents - $subtract) + 7; $NewValue8 = $MinusValue8 - 1; Rename-Item \"$dir\\ac,$MinusValue8.pdf\" \"ac,$NewValue8.pdf\"",
         "$MinusValue9 = ($documents - $subtract) + 8; $NewValue9 = $MinusValue9 - 1; Rename-Item \"$dir\\ac,$MinusValue9.pdf\" \"ac,$NewValue9.pdf\"",
         "Copy-Item \"$dir\\ac.pdf\" \"$dir\\ac,$documents.pdf\"",
-        "New-Item \"$dir\\change_language.ps1\" -Value '$ac_language = Read-Host -Prompt \"Please enter the number that corresponds to your native langauge\"' | Out-Null",
-        "Add-Content \"$dir\\change_language.ps1\" -Value @(",
-        "'`nCopy-Item \"$dir\\messages,$ac_language.ini\" \"$dir\\messages.ini\" -Force', 'Copy-Item \"$dir\\ac,$ac_language.pdf\" \"$dir\\ac.pdf\" -Force'",
-        ")",
         "$content = (Get-Content \"$dir\\change_language.ps1\")",
         "$content = $content.Replace('$dir', \"$dir\")",
         "$content | Set-Content -Path \"$dir\\change_language.ps1\"",
@@ -81,11 +85,14 @@
         "$content2 | Set-Content -Path \"$dir\\change_language.ps1\"",
         "Start-Sleep -Seconds 2"
     ],
-    "bin": "acmain.exe",
+    "bin": [
+        "acmain.exe",
+        "change_language.ps1"
+    ],
     "checkver": {
         "url": "https://www.petges.lu/download/",
         "regex": "ac-([\\d]+)_([\\w]+).exe",
-        "replace": "${1}.${2}"
+        "replace": "$1.$2"
     },
     "autoupdate": {
         "url": "https://www.petges.lu/pubfiles/ac-$underscoreVersion.exe",
