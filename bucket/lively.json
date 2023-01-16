@@ -1,0 +1,47 @@
+{
+    "version": "2.0.5.0",
+    "homepage": "https://livelywallpaper.net/",
+    "description": "A free and open-source software that allows users to set animated desktop wallpapers and screensavers. ",
+    "license": "GPL-3.0",
+    "notes": [
+        "To add 'lively' as a system startup option, run:",
+        "add-startup.ps1",
+        "To remove 'lively' from the system startup , run:",
+        "remove-startup.ps1"
+    ],
+    "suggest": {
+        "Microsoft .NET Desktop Runtime": "extras/windowsdesktop-runtime",
+        "VCRedist": "extras/vcredist"
+    },
+    "url": "https://github.com/rocksdanister/lively/releases/download/v2.0.5.0/lively_setup_x86_full_v2050.exe",
+    "hash": "00446677990be6841dd83b9e3b736d71a70a094f3babbdfb5fb9139f97d95b94",
+    "innosetup": true,
+    "pre_install": [
+        "$currentDir = $dir.Replace($version, 'current')",
+        "$value1 = \"New-ItemProperty 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run' -Name 'Lively' -PropertyType 'String' -Value \"\"$currentDir\\Lively.exe\"\" | Out-Null\"",
+        "Set-Content \"$dir\\add-startup.ps1\" $value1 -Encoding 'UTF8' -Force",
+        "$value2 = 'Remove-ItemProperty ''HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run'' -Name ''Lively'' -Force'",
+        "Set-Content \"$dir\\remove-startup.ps1\" $value2 -Encoding 'UTF8' -Force"
+    ],
+    "bin": [
+        "add-startup.ps1",
+        "remove-startup.ps1"
+    ],
+    "shortcuts": [
+        [
+            "Lively.exe",
+            "Lively"
+        ]
+    ],
+    "pre_uninstall": "Remove-ItemProperty 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run' -Name 'Lively' -ErrorAction 'SilentlyContinue' -Force",
+    "checkver": {
+        "github": "https://github.com/rocksdanister/lively"
+    },
+    "autoupdate": {
+        "url": "https://github.com/rocksdanister/lively/releases/download/v$version/lively_setup_x86_full_v$cleanVersion.exe",
+        "hash": {
+            "url": "https://github.com/rocksdanister/lively/releases/latest",
+            "regex": ">SHA256</h2>\\n+<p>$sha256<"
+        }
+    }
+}
