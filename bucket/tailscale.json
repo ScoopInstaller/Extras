@@ -1,32 +1,33 @@
 {
-    "version": "1.32.2",
+    "version": "1.34.2",
     "description": "Tailscale a WireGuard based mesh VPN, used to connect your computers and other devices together securely without proxies.",
     "homepage": "https://tailscale.com",
     "license": "BSD-3-Clause",
     "architecture": {
         "64bit": {
-            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.32.2-amd64.msi",
-            "hash": "f1662d7eb8293b062e8f07ef9f46262239426cf8543ce870f05e87e0da5806db"
+            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.34.2-amd64.msi",
+            "hash": "cf065a8700bb9b4543a8aca1cb377378cd7c7115f68a65ea7a9d44d4346081ff"
         },
         "32bit": {
-            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.32.2-x86.msi",
-            "hash": "4f76c02e66426c521ee0d7eaff72e7b5f00291156ee1578bb2cb15e279c3f2fb"
+            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.34.2-x86.msi",
+            "hash": "9e9868fed2823f8e16f0f2f858a863d4a4b8ba31e9dfe95d9ca5d556c52858cc"
         },
         "arm64": {
-            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.32.2-arm64.msi",
-            "hash": "abc98c47795c0090555b233e7d3d12d68e3164c7a7f575ffed1d687115ed8f79"
+            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.34.2-arm64.msi",
+            "hash": "41bd41724075059fbac5b460081dd8535265444cc2db1c32b68aa16e5f0514cd"
         }
     },
     "post_install": [
         "if (!(is_admin)) {error 'This package requires admin rights to install'; break}",
         "tailscale-ipn.exe /install"
     ],
+    "pre_uninstall": [
+        "if (!(is_admin)) { error 'Admin rights are required to uninstall'; break }",
+        "Stop-Process -Name 'tailscale-ipn' -Force -ErrorAction SilentlyContinue | Out-Null",
+        "Stop-Service -Name 'Tailscale' -Force -ErrorAction SilentlyContinue | Out-Null"
+    ],
     "uninstaller": {
-        "script": [
-            "if (!(is_admin)) { error 'Admin rights are required to uninstall'; break }"
-            "Stop-Process -Name 'tailscale-ipn' -Force -ErrorAction SilentlyContinue | Out-Null",
-            "tailscale-ipn.exe /uninstall"
-        ]
+        "script": "tailscale-ipn.exe /uninstall"
     },
     "extract_dir": "Tailscale",
     "bin": [
