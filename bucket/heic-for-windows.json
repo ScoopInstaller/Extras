@@ -11,11 +11,11 @@
     "pre_install": [
         "if ($architecture -eq '32bit') {Expand-InnoArchive \"$dir\\setup.exe\" \"$dir\" -ExtractDir '{commonpf32}\\CopyTrans HEIC for Windows' -Removal}",
         "elseif ($architecture -eq '64bit') {Expand-InnoArchive \"$dir\\setup.exe\" \"$dir\" -Removal}",
-        "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
         "Start-Process 'regsvr32' -Wait -Verb 'RunAs' -ArgumentList @(\"$dir\\CopyTransHEICforWindows.dll\", '/s'); Start-Sleep -Seconds 2"
     ],
     "pre_uninstall": [
-        "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
         "Start-Process 'regsvr32' -Wait -Verb 'RunAs' -ArgumentList @('/u', \"$dir\\CopyTransHEICforWindows.dll\", '/s'); Stop-Process -Name 'explorer' -Force",
         "Start-Sleep -Seconds 2"
     ],
@@ -24,7 +24,7 @@
             "$redirUrl = [System.Net.HttpWebRequest]::Create('https://www.copytrans.net/download-zip?program=CTH').GetResponse().ResponseUri.AbsoluteUri",
             "return $redirUrl"
         ],
-        "regex": "CopyTransHEICforWindowsv([\\d.]+).exe"
+        "regex": "CopyTransHEICforWindowsv([\\d.]+)\\.exe"
     },
     "autoupdate": {
         "url": "https://www.copytrans.net/bin/CopyTransHEICforWindowsv$version.exe#/setup.exe"
