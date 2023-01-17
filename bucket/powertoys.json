@@ -1,34 +1,41 @@
 {
-    "version": "0.64.1",
+    "version": "0.66.0",
     "description": "A set of utilities for power users to tune and streamline their Windows experience for greater productivity.",
     "homepage": "https://github.com/microsoft/PowerToys",
     "license": "MIT",
-    "notes": "To run this application, you must install .Net Core: https://dotnet.microsoft.com/download",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/microsoft/PowerToys/releases/download/v0.64.1/PowerToysSetup-0.64.1-x64.exe",
-            "hash": "0110ee62579462d509086d50f65ea44196f52624b08cdc8c9e1cbb8a7ffd4f35"
+            "url": "https://github.com/microsoft/PowerToys/releases/download/v0.66.0/PowerToysSetup-0.66.0-x64.exe",
+            "hash": "ee3f76f056a0611f69a203ba6d2b36ff81014b1fa29d1f46ecdcc6d312724fc6"
+        },
+        "arm64": {
+            "url": "https://github.com/microsoft/PowerToys/releases/download/v0.66.0/PowerToysSetup-0.66.0-arm64.exe",
+            "hash": "19da79d497cad28cc80a9c9954459ee93fe23ffc560de7732dd806a38e862210"
         }
     },
     "installer": {
         "script": [
             "Expand-DarkArchive \"$dir\\$fname\" \"$dir\\.tmp\"",
-            "Expand-MsiArchive \"$dir\\.tmp\\AttachedContainer\\PowerToysSetup-$version-x64.msi\" \"$dir\" -ExtractDir 'PowerToys'",
+            "Get-ChildItem \"$dir\\.tmp\\AttachedContainer\\PowerToysSetup*.msi\" | Rename-Item -NewName 'PowerToysSetup.msi' -Force",
+            "Expand-MsiArchive \"$dir\\.tmp\\AttachedContainer\\PowerToysSetup.msi\" \"$dir\" -ExtractDir 'PowerToys'",
             "Remove-Item \"$dir\\.tmp\", \"$dir\\$fname\" -Force -Recurse"
         ]
     },
     "post_install": [
-        "foreach ($f in @('Settings', 'modules\\PowerRename', 'modules\\MeasureTool', 'modules\\FileLocksmith', ",
-        "                 'modules\\Hosts')) {",
+        "foreach ($f in @('Settings', 'modules\\FileLocksmith', 'modules\\Hosts', 'modules\\MeasureTool', ",
+        "                 'modules\\PowerRename')) {",
         "    Get-ChildItem -Path \"$dir\\dll\\WinAppSDK\" | ForEach-Object {",
         "        New-Item -ItemType HardLink -Path \"$dir\\$f\\$($_.Name)\" -Value $_.FullName | Out-Null",
         "    }",
         "}",
-        "foreach ($f in @('Settings', 'modules\\ColorPicker', 'modules\\PowerOCR', 'modules\\launcher', ",
-        "                 'modules\\FancyZones', 'modules\\ImageResizer', 'modules\\Awake', 'modules\\MeasureTool', ",
-        "                 'modules\\PowerAccent', 'modules\\FileLocksmith', 'modules\\Hosts')) {",
+        "foreach ($f in @('Settings', 'modules\\Awake', 'modules\\ColorPicker', 'modules\\FancyZones', ",
+        "                 'modules\\FileExplorerPreview', 'modules\\FileLocksmith', 'modules\\Hosts', 'modules\\ImageResizer', ",
+        "                 'modules\\launcher', 'modules\\MeasureTool', 'modules\\PowerAccent', 'modules\\PowerOCR')) {",
         "    Get-ChildItem -Path \"$dir\\dll\\Interop\" | ForEach-Object {",
         "        New-Item -ItemType HardLink -Path \"$dir\\$f\\$($_.Name)\" -Value $_.FullName | Out-Null",
+        "    }",
+        "    Get-ChildItem -Path \"$dir\\dll\\dotnet\" | ForEach-Object {",
+        "        New-Item -ItemType HardLink -Path \"$dir\\$f\\$($_.Name)\" -Value $_.FullName -ErrorAction SilentlyContinue | Out-Null",
         "    }",
         "}"
     ],
@@ -46,6 +53,13 @@
                 "hash": {
                     "url": "https://github.com/microsoft/PowerToys/releases/tag/v$version",
                     "regex": ">$sha256<"
+                }
+            },
+            "arm64": {
+                "url": "https://github.com/microsoft/PowerToys/releases/download/v$version/PowerToysSetup-$version-arm64.exe",
+                "hash": {
+                    "url": "https://github.com/microsoft/PowerToys/releases/tag/v$version",
+                    "regex": "ARM64 Installer Hash[\\s\\S]*>$sha256<"
                 }
             }
         }

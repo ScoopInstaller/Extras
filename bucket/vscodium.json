@@ -1,5 +1,5 @@
 {
-    "version": "1.73.1.22314",
+    "version": "1.74.3.23010",
     "description": "Binary releases of VS Code without MS branding/telemetry/licensing.",
     "homepage": "https://github.com/VSCodium/vscodium",
     "license": "MIT",
@@ -9,12 +9,16 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/VSCodium/vscodium/releases/download/1.73.1.22314/VSCodium-win32-x64-1.73.1.22314.zip",
-            "hash": "7e6044e269764665ab7b233046cdb34cc8a48914676193b3bcbdabc9b9b5dd9e"
+            "url": "https://github.com/VSCodium/vscodium/releases/download/1.74.3.23010/VSCodium-win32-x64-1.74.3.23010.zip",
+            "hash": "f5a14bd2df84eaad3fc7b2469958897312ea47da09199c8cd0fec8277b0f7b75"
         },
         "32bit": {
-            "url": "https://github.com/VSCodium/vscodium/releases/download/1.73.1.22314/VSCodium-win32-ia32-1.73.1.22314.zip",
-            "hash": "b705dbadbd5c06613871029ef04a2d2cdda7989ab92e9ea09603b0693873c019"
+            "url": "https://github.com/VSCodium/vscodium/releases/download/1.74.3.23010/VSCodium-win32-ia32-1.74.3.23010.zip",
+            "hash": "589894ade2ff2b4fc253827da991a0f671d2b26ae03a35c0453edfec96a86ba2"
+        },
+        "arm64": {
+            "url": "https://github.com/VSCodium/vscodium/releases/download/1.74.3.23010/VSCodium-win32-arm64-1.74.3.23010.zip",
+            "hash": "33a73c8aebf5a4632770e378ec1f46874cb99a9402993b6808c4eaf57fff8a0f"
         }
     },
     "env_add_path": "bin",
@@ -46,6 +50,11 @@
         "if (!(Test-Path \"$dir\\data\\user-data\") -and (Test-Path \"$env:AppData\\VSCodium\")) {",
         "    info '[Portable Mode] Copying user data...'",
         "    Copy-Item \"$env:AppData\\VSCodium\" \"$dir\\data\\user-data\" -Recurse",
+        "}",
+        "$extensions_file = \"$dir\\data\\extensions\\extensions.json\"",
+        "if ((Test-Path \"$extensions_file\")) {",
+        "    info 'Adjusting path in extensions file...'",
+        "    (Get-Content \"$extensions_file\") -replace '(?<=vscodium(/|\\\\\\\\)).*?(?=(/|\\\\\\\\)data(/|\\\\\\\\)extensions)', $version | Set-Content \"$extensions_file\"",
         "}"
     ],
     "persist": "data",
@@ -57,6 +66,9 @@
             },
             "32bit": {
                 "url": "https://github.com/VSCodium/vscodium/releases/download/$version/VSCodium-win32-ia32-$version.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/VSCodium/vscodium/releases/download/$version/VSCodium-win32-arm64-$version.zip"
             }
         },
         "hash": {
