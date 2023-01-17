@@ -1,44 +1,48 @@
 {
-    "version": "August.29.2022",
+    "version": "ba991e52",
     "homepage": "https://www.voxedit.io",
     "description": "An application that allows you to create your own voxel models, rig them and animate them in no time.",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.sandbox.game/en/licenses/"
     },
-    "url": "https://sandbox-voxedit-installers.s3-us-west-2.amazonaws.com/VoxEdit_WIN_latest.zip",
-    "hash": "13aae7303727fef6731916f35efa0db96721510051ccc49e61fa421f23324c8b",
-    "pre_install": [
-        "$content = (Get-Content \"$dir\\install.bat\")",
-        "$content = $content.Replace('pause >nul', '')",
-        "$content | Set-Content \"$dir\\install.bat\"",
-        "",
-        "$content2 = (Get-Content \"$dir\\uninstall.bat\")",
-        "$content2 = $content.Replace('pause >nul', '')",
-        "$content2 | Set-Content \"$dir\\uninstall.bat\"",
-        "",
-        "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
-        "Start-Process 'cmd' -Wait -Verb 'RunAs' -ArgumentList @('/C', \"$dir\\install.bat\"); Start-Sleep -Seconds 2"
+    "suggest": {
+        "sudo": "main/sudo"
+    },
+    "notes": [
+        "Warning: These batch files require admin privellages to run.",
+        "To register the file associations, run:",
+        "install.bat",
+        "To register the 'voxedit://' URL associations, run:",
+        "scheme.bat",
+        "To unregister the the file associations, and the 'voxedit://' URL associations, run:",
+        "unregister.bat"
     ],
-    "bin": "VoxEdit.bat",
+    "url": "https://sandbox-voxedit-installers.s3-us-west-2.amazonaws.com/VoxEdit_WIN_latest.zip",
+    "hash": "6d1a3bb1f6dab6c499dc39161a0fda6ecaa2168042df92b4178db1edc9af4e9f",
+    "pre_install": [
+        "Remove-Item \"$dir\\VoxEdit.bat\"",
+        "Get-ChildItem \"$dir\\*.bat\" | ForEach-Object { $content = ($_ | Get-Content).Replace('pause >nul', ''); $content | Set-Content $_ -Force }"
+    ],
+    "bin": [
+        "install.bat",
+        "scheme.bat",
+        "uninstall.bat"
+    ],
     "shortcuts": [
         [
-            "VoxEdit.bat",
-            "VoxEdit",
-            "",
-            "VoxEdit.exe"
+            "VoxEdit.exe",
+            "VoxEdit"
         ]
     ],
     "pre_uninstall": [
-        "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
-        "Start-Process 'cmd' -Wait -Verb 'RunAs' -ArgumentList @('/C', \"$dir\\uninstall.bat\"); Start-Sleep -Seconds 2"
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+        "Start-Process 'cmd' -Wait -NoNewWindow -Args @('/c', \"$dir\\uninstall.bat\"); Start-Sleep -Seconds 2"
     ],
     "checkver": {
-        "useragent": "Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0",
-        "url": "https://translations.sandbox.game/en.json",
-        "jsonpath": "$.changelogVoxedit..date",
-        "regex": "([\\w]+)\\s([\\d]+),\\s([\\d]+)\\s",
-        "replace": "$1.$2.$3"
+        "useragent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36",
+        "url": "https://sandbox-voxedit-installers.s3-us-west-2.amazonaws.com/version.json",
+        "jsonpath": "$.version"
     },
     "autoupdate": {
         "url": "https://sandbox-voxedit-installers.s3-us-west-2.amazonaws.com/VoxEdit_WIN_latest.zip"
