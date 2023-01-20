@@ -22,7 +22,13 @@
         "'session.xml', 'userDefineLang.xml', 'nativeLang.xml' | ForEach-Object {",
         "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" -ItemType File | Out-Null }",
         "}",
-        "if (!(Test-Path \"$persist_dir\\stylers.xml\")) { Copy-Item \"$dir\\stylers.model.xml\" \"$dir\\stylers.xml\" }"
+        "if (!(Test-Path \"$persist_dir\\stylers.xml\")) { Copy-Item \"$dir\\stylers.model.xml\" \"$dir\\stylers.xml\" }",
+        "'config.xml', 'contextMenu.xml', 'shortcuts.xml' | ForEach-Object {",
+        "   Copy-Item \"$persist_dir\\$_\" \"$dir\\$_\" -ErrorAction 'SilentlyContinue'",
+        "}",
+        "'themes', 'userDefineLangs', 'plugins' | ForEach-Object {",
+        "   Copy-Item \"$persist_dir\\$_\\*\" \"$dir\\$_\" -ErrorAction 'SilentlyContinue' -Recurse",
+        "}"
     ],
     "post_install": [
         "'install-context', 'uninstall-context' | ForEach-Object {",
@@ -38,6 +44,12 @@
         "script": [
             "if ($cmd -eq 'uninstall') {",
             "    reg import \"$dir\\uninstall-context.reg\"",
+            "}",
+            "'config.xml', 'contextMenu.xml', 'shortcuts.xml' | ForEach-Object {",
+            "   Copy-Item \"$dir\\$_\" \"$persist_dir\\$_\" -ErrorAction 'SilentlyContinue'",
+            "}",
+            "'themes', 'userDefineLangs', 'plugins' | ForEach-Object {",
+            "   Copy-Item \"$dir\\$_\\*\" \"$persist_dir\\$_\" -ErrorAction 'SilentlyContinue' -Recurse",
             "}"
         ]
     },
@@ -51,13 +63,8 @@
     "persist": [
         "backup",
         "cloud",
-        "plugins",
-        "themes",
-        "userDefineLangs",
-        "config.xml",
         "nativeLang.xml",
         "session.xml",
-        "shortcuts.xml",
         "stylers.xml",
         "userDefineLang.xml"
     ],
