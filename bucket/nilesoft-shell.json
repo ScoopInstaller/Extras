@@ -1,15 +1,15 @@
 {
-    "version": "1.7",
+    "version": "1.8",
     "description": "A context menu extender that lets you handpick the items to integrate into Windows File Explorer context menu.",
     "homepage": "https://nilesoft.org/",
     "license": "MIT",
-    "url": "https://nilesoft.org/download/shell.exe",
-    "hash": "c5a85c7416a8b1c5ed47a2ed4bf1b779aa56c5da9bd3ae255d7effe286963826",
+    "url": "https://nilesoft.org/download/shell/1.8/setup.exe",
+    "hash": "5b29ba86b356fe6246da0f0ca9cb037c20843d4f50e381d77f70b3d54097d1cf",
     "innosetup": true,
     "architecture": {
         "64bit": {
             "pre_install": [
-                "if(!(Test-Path \"$persist_dir\\shell.log\")) { New-Item \"$dir\\shell.log\" | Out-Null }",
+                "if (!(Test-Path \"$persist_dir\\shell.log\")) { New-Item \"$dir\\shell.log\" | Out-Null }",
                 "Move-Item \"$dir\\shell,1.exe\" \"$dir\\shell.exe\"",
                 "Move-Item \"$dir\\shell,1.dll\" \"$dir\\shell.dll\"",
                 "Remove-Item \"$dir\\shell,2.*\"",
@@ -18,42 +18,61 @@
         },
         "32bit": {
             "pre_install": [
-                "if(!(Test-Path \"$persist_dir\\shell.log\")) { New-Item \"$dir\\shell.log\" | Out-Null }",
+                "if (!(Test-Path \"$persist_dir\\shell.log\")) { New-Item \"$dir\\shell.log\" | Out-Null }",
                 "Move-Item \"$dir\\shell,3.exe\" \"$dir\\shell.exe\"",
                 "Move-Item \"$dir\\shell,3.dll\" \"$dir\\shell.dll\"",
                 "Remove-Item \"$dir\\shell,1.*\"",
                 "Remove-Item \"$dir\\shell,2.*\""
             ]
+        },
+        "arm64": {
+            "pre_install": [
+                "if (!(Test-Path \"$persist_dir\\shell.log\")) { New-Item \"$dir\\shell.log\" | Out-Null }",
+                "Move-Item \"$dir\\shell,2.exe\" \"$dir\\shell.exe\"",
+                "Move-Item \"$dir\\shell,2.dll\" \"$dir\\shell.dll\"",
+                "Remove-Item \"$dir\\shell,1.*\"",
+                "Remove-Item \"$dir\\shell,3.*\""
+            ]
         }
     },
-    "uninstaller": {
+    "installer": {
         "script": [
-            "if ($cmd -eq 'uninstall') {",
-            "    $regkey = Get-ItemProperty -Path 'HKLM:\\SOFTWARE\\Classes\\Directory\\background\\shellex\\ContextMenuHandlers\\nilesoft.shell' -ErrorAction SilentlyContinue",
-            "    if ($regkey) {",
-            "        if (!(is_admin)) { error 'Admin right is required to unregister nilesoft shell'; break }",
-            "        Invoke-ExternalCommand \"$dir\\shell.exe\" -ArgumentList @('-unregister', '-restart', '-silent') -RunAs | Out-Null",
-            "        if (Get-Process -Name 'shell' -ErrorAction SilentlyContinue) { Start-Sleep -Seconds 2 }",
-            "    }",
-            "}"
+            "Set-Content \"$dir\\OpenConfigFolder.cmd\" -Value '@start explorer \"%~dp0\"' -Encoding 'utf8' -Force",
+            "Copy-Item \"$persist_dir\\shell.nss\" \"$dir\\shell.nss\" -ErrorAction SilentlyContinue",
+            "Copy-Item \"$persist_dir\\imports\\*\" \"$dir\\imports\" -ErrorAction SilentlyContinue"
         ]
     },
+    "pre_uninstall": [
+        "Copy-Item \"$dir\\shell.nss\" \"$persist_dir\\shell.nss\" -ErrorAction SilentlyContinue",
+        "Copy-Item \"$dir\\imports\\*\" \"$persist_dir\\imports\" -ErrorAction SilentlyContinue",
+        "if ($cmd -eq 'uninstall') {",
+        "    $regkey = Get-ItemProperty -Path 'HKLM:\\SOFTWARE\\Classes\\Directory\\background\\shellex\\ContextMenuHandlers\\nilesoft.shell' -ErrorAction SilentlyContinue",
+        "    if ($regkey) {",
+        "        if (!(is_admin)) { error 'Admin right is required to unregister nilesoft shell'; break }",
+        "        Invoke-ExternalCommand \"$dir\\shell.exe\" -ArgumentList @('-unregister', '-restart', '-silent') -RunAs | Out-Null",
+        "        Start-Sleep -Seconds 2",
+        "    }",
+        "}"
+    ],
     "bin": "shell.exe",
     "shortcuts": [
         [
             "shell.exe",
             "Nilesoft Shell"
+        ],
+        [
+            "OpenConfigFolder.cmd",
+            "Open Nilesoft Shell config folder",
+            "",
+            "shell.exe"
         ]
     ],
-    "persist": [
-        "shell.log",
-        "shell.shl"
-    ],
+    "persist": "shell.log",
     "checkver": {
         "url": "https://nilesoft.org/download",
-        "regex": "Shell version ([\\d.]+)</h5>"
+        "regex": "Shell\\s(?:v|V)ersion\\s([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://nilesoft.org/download/shell.exe"
+        "url": "https://nilesoft.org/download/shell/$version/setup.exe"
     }
 }
