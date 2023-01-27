@@ -1,0 +1,64 @@
+{
+    "version": "1.36.0",
+    "description": "Tailscale a WireGuard based mesh VPN, used to connect your computers and other devices together securely without proxies.",
+    "homepage": "https://tailscale.com",
+    "license": "BSD-3-Clause",
+    "architecture": {
+        "64bit": {
+            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.36.0-amd64.msi",
+            "hash": "54540fdfc69178ee31e2fdbba379536ec2c4eee9990af65d5ab94b4e079c0a2e"
+        },
+        "32bit": {
+            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.36.0-x86.msi",
+            "hash": "390613a481750908629778cace447b5caabce0ff03fa22db3a262e8b2222675c"
+        },
+        "arm64": {
+            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.36.0-arm64.msi",
+            "hash": "788eb8f8a8004eacfa41379961c3001b562d4db7b51a14e2235f980ec4051f11"
+        }
+    },
+    "post_install": [
+        "if (!(is_admin)) {error 'This package requires admin rights to install'; break}",
+        "tailscale-ipn.exe /install"
+    ],
+    "pre_uninstall": [
+        "if (!(is_admin)) { error 'Admin rights are required to uninstall'; break }",
+        "Stop-Process -Name 'tailscale-ipn' -Force -ErrorAction SilentlyContinue | Out-Null",
+        "Stop-Service -Name 'Tailscale' -Force -ErrorAction SilentlyContinue | Out-Null"
+    ],
+    "uninstaller": {
+        "script": "tailscale-ipn.exe /uninstall"
+    },
+    "extract_dir": "Tailscale",
+    "bin": [
+        "tailscale.exe",
+        "tailscale-ipn.exe",
+        "tailscaled.exe"
+    ],
+    "shortcuts": [
+        [
+            "tailscale-ipn.exe",
+            "Tailscale"
+        ]
+    ],
+    "checkver": {
+        "url": "https://pkgs.tailscale.com/stable/",
+        "regex": "tailscale-setup-([\\d.]+)-amd64\\.msi"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://pkgs.tailscale.com/stable/tailscale-setup-$version-amd64.msi"
+            },
+            "32bit": {
+                "url": "https://pkgs.tailscale.com/stable/tailscale-setup-$version-x86.msi"
+            },
+            "arm64": {
+                "url": "https://pkgs.tailscale.com/stable/tailscale-setup-$version-arm64.msi"
+            }
+        },
+        "hash": {
+            "url": "$url.sha256"
+        }
+    }
+}

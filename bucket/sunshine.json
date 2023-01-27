@@ -1,5 +1,5 @@
 {
-    "version": "0.15.0",
+    "version": "0.17.0",
     "description": "A Gamestream host for Moonlight",
     "homepage": "https://github.com/LizardByte/Sunshine",
     "license": "GPL-3.0-only",
@@ -9,20 +9,13 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/LizardByte/Sunshine/releases/download/v0.15.0/Sunshine-Windows.zip",
-            "hash": "7b0f2eaee4b8d6a6f1a83dc74081b8f80232b753442adfaddf3dc2c284941f33"
+            "url": "https://github.com/LizardByte/Sunshine/releases/download/v0.17.0/Sunshine-Windows.zip",
+            "hash": "09a0bcfda4e5610a2ef96b6ff79ff14ce7f64cf2ce528fe24d08805d99d8d72a"
         }
     },
     "extract_dir": "Sunshine",
     "pre_install": [
         "Set-Content -Path \"$dir\\sunshine.bat\" -Value (@('@echo off', 'pushd %~dp0 && sunshine.exe %* && popd') -join \"`r`n\")",
-        "# Create sunshine_state.json if it does not exist",
-        "if (!(Test-Path \"$persist_dir\\sunshine_state.json\" -PathType Leaf)) {",
-        "    Set-Content -Path \"$dir\\sunshine_state.json\" -Value \"{}\"",
-        "}",
-        "'apps.json', 'sunshine.conf' | ForEach-Object {",
-        "    if (!(Test-Path \"$persist_dir\\$_\")) { Copy-Item \"$dir\\config\\$_\" \"$dir\\$_\" | Out-Null }",
-        "}",
         "",
         "# https://github.com/LizardByte/Sunshine/issues/197",
         "Copy-Item \"$bucketsdir\\extras\\scripts\\sunshine\\install-service.bat\" \"$dir\" | Out-Null",
@@ -39,12 +32,7 @@
             "Sunshine"
         ]
     ],
-    "persist": [
-        "credentials",
-        "apps.json",
-        "sunshine.conf",
-        "sunshine_state.json"
-    ],
+    "persist": "config",
     "checkver": "github",
     "autoupdate": {
         "architecture": {

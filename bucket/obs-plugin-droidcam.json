@@ -1,0 +1,53 @@
+{
+    "version": "2.0.1",
+    "homepage": "https://www.dev47apps.com/obs/",
+    "description": "An OBS plugin that allows the user to use their phone as a webcam for OBS Studio.",
+    "license": "GPL-2.0",
+    "notes": "If you don't have any obs-studio version installed in your computer, please install one of the following below. Then uninstall this app and install it again.",
+    "suggest": {
+        "OBS": [
+            "extras/obs-studio",
+            "extras/obs-studio-small",
+            "versions/obs-studio-pre",
+            "versions/obs-studio27"
+        ]
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/dev47apps/droidcam-obs-plugin/releases/download/2.0.1/DroidCamOBS.Setup.2.0.1.exe#/dl.7z",
+            "hash": "3178d9b2a5898e918ca85b8d11c032f3c974097020f53ed167f47d81bf5d6e7b"
+        }
+    },
+    "extract_dir": "$_13_",
+    "pre_install": [
+        "Remove-Item \"$dir\\data\\obs-plugins\\droidcam-obs\\`$_13_\" -Recurse",
+        "'obs-studio', 'obs-studio-small', 'obs-studio27', 'obs-studio-pre' | ForEach-Object {",
+        "    $obs = \"$(appdir $_ $global)\"",
+        "    if (Test-Path $obs) {",
+        "       info \"Install for $_\"",
+        "       Copy-Item \"$dir\\data\" \"$obs\\current\" -Recurse -ErrorAction SilentlyContinue",
+        "       Copy-Item \"$dir\\obs-plugins\" \"$obs\\current\" -Recurse -ErrorAction SilentlyContinue",
+        "   }",
+        "}"
+    ],
+    "pre_uninstall": [
+        "'obs-studio', 'obs-studio-small', 'obs-studio27', 'obs-studio-pre' | ForEach-Object {",
+        "    $obs = \"$(appdir $_ $global)\"",
+        "    if (Test-Path $obs) {",
+        "        info \"Uninstall for $_\"",
+        "        Remove-Item \"$obs\\current\\data\\obs-plugins\\droidcam-obs\" -Force -Recurse -ErrorAction SilentlyContinue",
+        "        Remove-Item \"$obs\\current\\obs-plugins\\64bit\\droidcam-obs.*\" -Force -ErrorAction SilentlyContinue",
+        "    }",
+        "}"
+    ],
+    "checkver": {
+        "github": "https://github.com/dev47apps/droidcam-obs-plugin"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/dev47apps/droidcam-obs-plugin/releases/download/$version/DroidCamOBS.Setup.$version.exe#/dl.7z"
+            }
+        }
+    }
+}

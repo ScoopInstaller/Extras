@@ -16,24 +16,25 @@
             "hash": "56ebfc80eb32f5893b83df427606d5a9e70867271ad05438007bdd1f27ace455"
         }
     },
-    "bin": [
-        [
-            "registryfinder.exe",
-            "registry-finder",
-            "--dataFolder \"$dir\\config\""
-        ]
+    "post_install": [
+        "'favorites.txt', 'RegistryFinder.config', 'UndoHistory', 'VisitationHistory' | ForEach-Object {",
+        "Copy-Item \"$persist_dir\\$_\" \"$dir\" -Recurse -ErrorAction SilentlyContinue }"
     ],
+    "bin": "registryfinder.exe",
     "shortcuts": [
         [
             "RegistryFinder.exe",
-            "Registry Finder",
-            "--dataFolder \"$dir\\config\""
+            "Registry Finder"
         ]
     ],
-    "persist": "config",
+    "persist": "res",
     "checkver": {
         "regex": "bin/([\\d.]+)/"
     },
+    "pre_uninstall": [
+        "'favorites.txt', 'RegistryFinder.config', 'UndoHistory', 'VisitationHistory' | ForEach-Object {",
+        "Copy-Item \"$dir\\$_\" \"$persist_dir\" -Recurse -ErrorAction SilentlyContinue }"
+    ],
     "autoupdate": {
         "architecture": {
             "64bit": {
