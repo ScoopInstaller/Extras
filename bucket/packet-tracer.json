@@ -6,22 +6,66 @@
         "identifier": "Freeware",
         "url": "https://www.netacad.com/sites/default/files/terms/cisco_networking_academy_terms_and_conditions_oct_2021_english.pdf"
     },
+    "notes": [
+        "To install file associations, run:",
+        "install-associations",
+        "To remove file associations, run:",
+        "remove-associations"
+    ],
     "architecture": {
         "64bit": {
             "url": "https://archive.org/download/cisco-packet-tracer-820-ubuntu-64bit/CiscoPacketTracer_820_Windows_64bit.exe",
-            "hash": "sha1:ddbc262abd68dc5e10170310a5f5cfdf37912c89"
+            "hash": "968bdbfe007fcfbc669643510a45e133a19d92bf3a27d8e6267758a633c48885"
         },
         "32bit": {
             "url": "https://archive.org/download/cisco-packet-tracer-820-ubuntu-64bit/CiscoPacketTracer_820_Windows_32bit.exe",
-            "hash": "sha1:2ecee1c2cc6cb100815c08eb4e22140ab91bde4f"
+            "hash": "056e6a39088e982210b6adb6eb92a5613bae7931ee72d2a0278b6a23a7c22618"
         }
     },
     "innosetup": true,
+    "pre_install": [
+        "Copy-Item \"$bucketsdir\\extras\\scripts\\packet-tracer\\remove-associations.ps1\" \"$dir\\remove-associations.ps1\" -ErrorAction 'SilentlyContinue'",
+        "$currentDir = $dir.Replace($version, 'current')",
+        "$content = Get-Content \"$bucketsdir\\extras\\scripts\\packet-tracer\\install-associations.ps1\"",
+        "$content = $content.Replace('REPLACE_HERE', $currentDir)",
+        "Set-Content \"$dir\\install-associations.ps1\" $content -Force",
+        "Get-ChildItem \"$dir\\*-associations.ps1\" | ForEach-Object {",
+        "   $verValue = ($_ | Get-Content).Replace('VERSION_HERE', $version); $verValue | Set-Content $_",
+        "}"
+    ],
+    "bin": [
+        "install-associations.ps1",
+        "remove-associations.ps1"
+    ],
     "shortcuts": [
         [
             "bin\\PacketTracer.exe",
             "Cisco Packet Tracer"
         ]
+    ],
+    "env_set": {
+        "PT8HOME": "$dir"
+    },
+    "post_install": [
+        "Write-Host 'Registering the ''URL:pttp'' protocol'",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\pttp' -Value 'URL:pttp' -Force | Out-Null",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\pttp\\shell\\open\\command' -Value \"$dir\\bin\\PacketTracer.exe -uri=%1\" -Force | Out-Null",
+        "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\pttp' -Name 'URL Protocol' -PropertyType 'String' -Force | Out-Null"
+    ],
+    "pre_uninstall": [
+        "Write-Host 'Unregistering the ''URL:pttp'' protocol, and removing file associations.'",
+        "$majorVersion = $version.Split('.')[0]",
+        "",
+        "'.pkt', '.pka', '.pkz', '.pks', '.pksz' | ForEach-Object {",
+        "    Remove-Item \"HKCU:\\SOFTWARE\\Classes\\$_\" -Recurse -ErrorAction 'SilentlyContinue' -Force",
+        "    Remove-Item \"HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\$_\" -Recurse -ErrorAction 'SilentlyContinue' -Force",
+        "}",
+        "",
+        "\"PacketTracer$majorVersion\", \"PacketTracer$majorVersion.Activity\", \"PacketTracer$majorVersion.PKZ\", \"PacketTracer$majorVersion.ActivitySequence\", \"PacketTracer$majorVersion.ActivitySequencePackage\" | ForEach-Object {",
+        "    Remove-Item \"HKCU:\\SOFTWARE\\Classes\\$_\" -Recurse -ErrorAction 'SilentlyContinue' -Force",
+        "}",
+        "",
+        "Remove-Item 'HKCU:\\SOFTWARE\\Classes\\pttp' -Recurse -Force"
     ],
     "checkver": {
         "url": "https://www.computernetworkingnotes.com/ccna-study-guide/download-packet-tracer-for-windows-and-linux.html",
@@ -35,6 +79,9 @@
             "32bit": {
                 "url": "https://archive.org/download/cisco-packet-tracer-$cleanVersion-ubuntu-64bit/CiscoPacketTracer_$cleanVersion_Windows_32bit.exe"
             }
+        },
+        "env_set": {
+            "PT$majorVersionHOME": "$dir"
         }
     }
 }
