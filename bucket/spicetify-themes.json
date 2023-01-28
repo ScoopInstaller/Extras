@@ -1,0 +1,42 @@
+{
+    "version": "2023-01-22T21.31.58",
+    "description": "Community-created themes for Spicetify.",
+    "homepage": "https://github.com/spicetify/spicetify-themes",
+    "license": "MIT",
+    "suggest": {
+        "Spicetify": "spicetify-cli"
+    },
+    "url": "https://github.com/spicetify/spicetify-themes/archive/master.zip",
+    "hash": "b1c27903d30513b698e18ac9cb3ad398d9b1d095b7e4285324934c593220d800",
+    "extract_dir": "spicetify-themes-master",
+    "installer": {
+        "script": [
+            "$spctconf = $Env:AppData\\spicetify",
+            "if ($Env:SPICETIFY_CONFIG) {",
+            "    $spctconf = $Env:SPICETIFY_CONFIG",
+            "}",
+            "ensure $spctconf",
+            "Get-ChildItem $dir -Directory | ForEach-Object {",
+            "    Remove-Item -ErrorAction Ignore -Recurse \"$spctconf\\Themes\\$($_.Name)\"",
+            "    Copy-Item -Recurse $_.FullName -Destination \"$spctconf\\Themes\"",
+            "}"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "$spctconf = $Env:AppData\\spicetify",
+            "if ($Env:SPICETIFY_CONFIG) {",
+            "    $spctconf = $Env:SPICETIFY_CONFIG",
+            "}",
+            "Get-ChildItem \"$dir\" | ForEach-Object { Remove-Item -Recurse -ErrorAction Ignore \"$spctconf\\Themes\\$($_.Name)\" }"
+        ]
+    },
+    "checkver": {
+        "url": "https://api.github.com/repos/spicetify/spicetify-themes/commits",
+        "regex": "([\\d-]+T)(\\d+):(\\d+):(\\d+)",
+        "replace": "$1$2.$3.$4"
+    },
+    "autoupdate": {
+        "url": "https://github.com/spicetify/spicetify-themes/archive/master.zip"
+    }
+}
