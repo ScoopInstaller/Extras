@@ -3,11 +3,38 @@
     "description": "Quickly and easily develop desktop, mobile, and web applications with Java, JavaScript, HTML5, PHP, C/C++ and more.",
     "homepage": "https://netbeans.org",
     "license": "Apache-2.0",
+    "suggest": {
+        "JDK11": [
+            "java/openjdk11"
+        ],
+        "JDK17": [
+            "java/openjdk17"
+        ]
+    },
     "url": "https://www.apache.org/dist/netbeans/netbeans/16/netbeans-16-bin.zip",
     "hash": "sha512:93e663e93296d2d39262f33a575a24178433eb68193044c2e971bdf16db756dcf7faf76269d75df010b60c183ba7d6750a87d1abcb1bc2da5e4c933715a5efd2",
     "extract_dir": "netbeans",
+    "post_install": [
+        "if ($env:JAVA_HOME) {",
+        "    $conf = Get-Content \"$dir\\etc\\netbeans.conf\"",
+        "    $conf.Replace('#netbeans_jdkhome=\"/path/to/jdk\"', \"netbeans_jdkhome=`\"$env:JAVA_HOME`\"\") | Set-Content \"$dir\\etc\\netbeans.conf\" -Encoding ascii",
+        "    info \"Config entry 'netbeans_jdkhome' has been set to '$env:JAVA_HOME'.\"",
+        "} else {",
+        "    warn \"Environment variable 'JAVA_HOME' is not detected, $app cannot run with JDK.\"",
+        "    warn 'Solutions:'",
+        "    warn '- Reinstall $app after installing JDK'",
+        "    warn \"- Run via command: 'netbeans --jdkhome <path_to_jdk>'\"",
+        "    warn \"- Set config entry 'netbeans_jdkhome' in file: '$dir\\etc\\netbeans.conf' manually.\"",
+        "}"
+    ],
     "architecture": {
         "64bit": {
+            "bin": [
+                [
+                    "bin\\netbeans64.exe",
+                    "netbeans"
+                ]
+            ],
             "shortcuts": [
                 [
                     "bin\\netbeans64.exe",
@@ -16,6 +43,12 @@
             ]
         },
         "32bit": {
+            "bin": [
+                [
+                    "bin\\netbeans.exe",
+                    "netbeans"
+                ]
+            ],
             "shortcuts": [
                 [
                     "bin\\netbeans.exe",
