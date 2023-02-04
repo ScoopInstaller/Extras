@@ -1,0 +1,31 @@
+{
+    "version": "1.1.0",
+    "homepage": "https://pomofocus.io/",
+    "description": "A customizable pomodoro timer for your desktop.",
+    "license": "Freeware",
+    "architecture": {
+        "64bit": {
+            "url": "https://pomofocus.io/downloadable/pomofocus-1.1.0-setup.zip",
+            "hash": "ff591536030ab57743ac193ac63170b1338f73b7956cd147ea51cd8fb3007dcd"
+        }
+    },
+    "pre_install": [
+        "Move-Item \"$dir\\pomofocus-*Setup.exe\" \"$dir\\pomofocus-Setup.exe\"; Expand-7zipArchive \"$dir\\pomofocus-Setup.exe\" $dir -Removal",
+        "Move-Item \"$dir\\pomofocus-*-full.nupkg\" \"$dir\\pomofocus-full.nupkg\"; Remove-Item \"$dir\\*\" -Exclude 'pomofocus-full.nupkg'",
+        "Expand-7zipArchive \"$dir\\pomofocus-full.nupkg\" $dir -ExtractDir 'lib\\net45' -Removal"
+    ],
+    "shortcuts": [
+        [
+            "pomofocus.exe",
+            "Pomofocus"
+        ]
+    ],
+    "checkver": "pomofocus-([\\d.]+)-setup\\.zip",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://pomofocus.io/downloadable/pomofocus-$version-setup.zip"
+            }
+        }
+    }
+}
