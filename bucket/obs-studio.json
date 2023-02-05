@@ -22,7 +22,13 @@
     "pre_install": "if (!(Test-Path \"$persist_dir\\portable_mode.txt\")) { New-Item \"$dir\\portable_mode.txt\" | Out-Null }",
     "persist": [
         "config",
-        "portable_mode.txt"
+        "portable_mode.txt",
+        "obs-plugins"
+    ],
+    "post_install": [
+        "if (!(Test-Path \"$dir\\obs-plugins.original\")) { return }",
+        "Copy-Item \"$dir\\obs-plugins.original\\*\" \"$dir\\obs-plugins\" -Recurse -Force",
+        "Remove-Item \"$dir\\obs-plugins.original\" -Recurse -Force"
     ],
     "checkver": {
         "url": "https://obsproject.com/download",
