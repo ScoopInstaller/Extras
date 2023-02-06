@@ -1,0 +1,45 @@
+{
+    "version": "1.3.2",
+    "description": "A better aria2 desktop frontend than AriaNg, with all features of AriaNg and providing more features for desktop usage.",
+    "homepage": "https://github.com/mayswind/AriaNg-Native",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/mayswind/AriaNg-Native/releases/download/1.3.2/AriaNg_Native-1.3.2-Windows-x64.7z",
+            "hash": "f9a002552612c03c30644e7faa3711b352fe89accfdfe1d07c39dabcd503648c"
+        },
+        "32bit": {
+            "url": "https://github.com/mayswind/AriaNg-Native/releases/download/1.3.2/AriaNg_Native-1.3.2-Windows-x86.7z",
+            "hash": "32468adc436cbfe7c01efe0ee844bfcdc2b33804713198a0840e1c7137a61f33"
+        }
+    },
+    "pre_install": [
+        "if (Test-Path \"$env:AppData\\ariang-native\") {",
+        "    info '[Persistent AppData]: Moving user data...'",
+        "    ensure \"$persist_dir\\UserData\" | Out-Null",
+        "    Copy-Item \"$env:AppData\\ariang-native\\*\" \"$persist_dir\\UserData\\\" -Recurse -Force -ErrorAction 'SilentlyContinue'",
+        "    Remove-Item \"$env:AppData\\ariang-native\" -Recurse -Force -ErrorAction 'SilentlyContinue'",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "AriaNg Native.exe",
+            "AriaNg Native",
+            "--user-data-dir=\"$persist_dir\\UserData\""
+        ]
+    ],
+    "persist": "UserData",
+    "checkver": {
+        "github": "https://github.com/mayswind/AriaNg-Native"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/mayswind/AriaNg-Native/releases/download/$version/AriaNg_Native-$version-Windows-x64.7z"
+            },
+            "32bit": {
+                "url": "https://github.com/mayswind/AriaNg-Native/releases/download/$version/AriaNg_Native-$version-Windows-x86.7z"
+            }
+        }
+    }
+}
