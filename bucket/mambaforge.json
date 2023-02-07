@@ -15,8 +15,11 @@
     },
     "installer": {
         "script": [
-            "Start-Process -Wait \"$dir\\$fname\" -ArgumentList @('/S', '/InstallationType=JustMe', '/RegisterPython=0', '/AddToPath=0', '/NoRegistry=1', \"/D=$dir\")",
-            "Remove-Item \"$dir\\$fname\""
+            "$TempFilePath = Join-Path -Path $env:TEMP -ChildPath $fname",
+            "if (Test-Path -Path $TempFilePath){throw 'Temporary file path already exists. Please remove ' + $TempFilePath}",
+            "Move-Item -Path \"$dir\\$fname\" -Destination $TempFilePath",
+            "Start-Process -Wait \"$TempFilePath\" -ArgumentList @('/S', '/InstallationType=JustMe', '/RegisterPython=0', '/AddToPath=0', '/NoRegistry=1', \"/D=$dir\")",
+            "Remove-Item \"$TempFilePath\""
         ]
     },
     "uninstaller": {
