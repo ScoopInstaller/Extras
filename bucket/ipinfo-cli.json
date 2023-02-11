@@ -1,0 +1,54 @@
+{
+    "version": "2.10.1",
+    "description": "This is the official CLI for the IPinfo.io IP address API",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://github.com/ipinfo/cli/raw/staged/LICENSE.txt"
+    },
+    "homepage": "https://github.com/ipinfo/cli",
+    "architecture": {
+        "32bit": {
+            "url": "https://github.com/ipinfo/cli/releases/download/ipinfo-2.10.1/ipinfo_2.10.1_windows_386.zip",
+            "hash": "04996a279baa1fe3dd6b4f9dfbefba84e5b1782569c05695ccde2f5c67d415c0",
+            "bin": [
+                "ipinfo.exe"
+            ]
+        },
+        "64bit": {
+            "url": "https://github.com/ipinfo/cli/releases/download/ipinfo-2.10.1/ipinfo_2.10.1_windows_amd64.zip",
+            "hash": "31502fb04f935ae941d1c8c9cecda154c6ba03a60e8afb279a1b41e3ee52bb1e",
+            "bin": [
+                "ipinfo.exe"
+            ]
+        },
+        "arm64": {
+            "url": "https://github.com/ipinfo/cli/releases/download/ipinfo-2.10.1/ipinfo_2.10.1_windows_arm.zip",
+            "hash": "a5db375c12965a43a41d49b0c147014ffe8b080c32a78f08c6c146fb9de5be92",
+            "bin": [
+                "ipinfo.exe"
+            ]
+        }
+    },
+    "pre_install": [
+        "$exe_path = (Get-ChildItem -Path \"$original_dir\\*\" -Include \"*.exe\" -File)[0].FullName",
+        "Rename-Item -Path \"${exe_path}\" -NewName \"ipinfo.exe\" -Force"
+    ],
+    "checkver": {
+        "url": "https://api.github.com/repos/ipinfo/cli/releases/latest",
+        "jsonpath": "$.name",
+        "regex": "ipinfo-(?<version>.*)$"
+    },
+    "autoupdate": {
+        "architecture": {
+            "32bit": {
+                "url": "https://github.com/ipinfo/cli/releases/download/ipinfo-$version/ipinfo_$version_windows_386.zip"
+            },
+            "64bit": {
+                "url": "https://github.com/ipinfo/cli/releases/download/ipinfo-$version/ipinfo_$version_windows_amd64.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/ipinfo/cli/releases/download/ipinfo-$version/ipinfo_$version_windows_arm.zip"
+            }
+        }
+    }
+}
