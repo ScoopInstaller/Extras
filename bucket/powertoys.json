@@ -3,6 +3,10 @@
     "description": "A set of utilities for power users to tune and streamline their Windows experience for greater productivity.",
     "homepage": "https://github.com/microsoft/PowerToys",
     "license": "MIT",
+    "notes": [
+        "Add PowerToys context menu option by running:",
+        "reg import \"$dir\\install-context.reg\""
+    ],
     "architecture": {
         "64bit": {
             "url": "https://github.com/microsoft/PowerToys/releases/download/v0.67.1/PowerToysSetup-0.67.1-x64.exe",
@@ -37,8 +41,23 @@
         "    Get-ChildItem -Path \"$dir\\dll\\dotnet\" | ForEach-Object {",
         "        New-Item -ItemType HardLink -Path \"$dir\\$f\\$($_.Name)\" -Value $_.FullName -ErrorAction SilentlyContinue | Out-Null",
         "    }",
+        "}",
+        "$dirpath = \"$dir\".Replace('\\', '\\\\')",
+        "'install-context', 'uninstall-context' | ForEach-Object {",
+        "    if (Test-Path \"$bucketsdir\\$bucket\\scripts\\$app\\$_.reg\") {",
+        "        $content = Get-Content \"$bucketsdir\\$bucket\\scripts\\$app\\$_.reg\"",
+        "        $content = $content.Replace('{{scoop_dir}}', $dirpath)",
+        "        if ($global) {",
+        "            $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "            $content = $content.Replace('HKEY_CURRENT_USER\\Software\\Classes', 'HKEY_CLASSES_ROOT')",
+        "        }",
+        "        $content | Set-Content -Path \"$dir\\$_.reg\"",
+        "    }",
         "}"
     ],
+    "uninstaller": {
+        "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }"
+    },
     "shortcuts": [
         [
             "PowerToys.exe",
