@@ -4,7 +4,7 @@
     "homepage": "https://github.com/LizardByte/Sunshine",
     "license": "GPL-3.0-only",
     "notes": [
-        "Run '$dir\\install-service.bat' and '$dir\\uninstall-service.bat' to install and uninstall the service correspondingly.",
+        "Check the '$dir\\scripts' folder to setup the service and firewall rules.",
         "Sunshine can be configured at https://localhost:47990/ by default."
     ],
     "architecture": {
@@ -17,9 +17,9 @@
     "pre_install": [
         "Set-Content -Path \"$dir\\sunshine.bat\" -Value (@('@echo off', 'pushd %~dp0 && sunshine.exe %* && popd') -join \"`r`n\")",
         "",
-        "# https://github.com/LizardByte/Sunshine/issues/197",
-        "Copy-Item \"$bucketsdir\\extras\\scripts\\sunshine\\install-service.bat\" \"$dir\" | Out-Null",
-        "Copy-Item \"$bucketsdir\\extras\\scripts\\sunshine\\uninstall-service.bat\" \"$dir\" | Out-Null"
+        "if (!(Test-Path \"$persist_dir\\sunshine_state.json\" -PathType Leaf)) { Set-Content -Path \"$dir\\sunshine_state.json\" -Value \"{}\" }",
+        "if (!(Test-Path \"$persist_dir\\sunshine.conf\" -PathType Leaf)) { New-Item \"$dir\\sunshine.conf\" | Out-Null }",
+        "if (!(Test-Path \"$persist_dir\\apps.json\")) { Copy-Item \"$dir\\assets\\apps.json\" \"$dir\\apps.json\" | Out-Null }"
     ],
     "bin": [
         "sunshine.bat",
@@ -37,7 +37,7 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/LizardByte/Sunshine/releases/download/v$version/Sunshine-Windows.zip"
+                "url": "https://github.com/LizardByte/Sunshine/releases/download/v$version/sunshine-windows.zip"
             }
         }
     }
