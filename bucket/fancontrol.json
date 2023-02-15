@@ -1,24 +1,17 @@
 {
     "version": "146",
+    "description": "A highly customizable fan controlling software for Windows",
     "homepage": "https://getfancontrol.com/",
-    "description": "A highly customizable fan controlling software for the Windows OS.",
     "license": "Freeware",
     "suggest": {
         ".NET Runtime": "extras/windowsdesktop-runtime"
     },
-    "notes": "Make sure to install both the 64bit & 32bit versions of Microsoft .NET Desktop Runtime before running the application.",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/Rem0o/FanControl.Releases/releases/download/V146/FanControl_net_4_8.zip",
-            "hash": "3aa245fa4c63747f2fbfe367b1d723b1ab19caa87d791764df679ac3dc318d20"
+            "url": "https://github.com/Rem0o/FanControl.Releases/releases/download/V146/FanControl_net_7_0.zip",
+            "hash": "44982f0bd2f659fd7cf1856c34d0dc557085e3b442f9b63a717d03e69eaa68de"
         }
     },
-    "pre_install": [
-        "'userConfig.json', 'CACHE' | ForEach-Object {",
-        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
-        "}"
-    ],
-    "bin": "FanControl.exe",
     "shortcuts": [
         [
             "FanControl.exe",
@@ -26,19 +19,18 @@
         ]
     ],
     "persist": [
-        "userConfig.json",
-        "CACHE",
+        "Configurations",
         "Plugins"
     ],
     "checkver": {
         "url": "https://api.github.com/repos/Rem0o/FanControl.Releases/releases/latest",
         "jsonpath": "$.assets..browser_download_url",
-        "regex": "/V([\\d.]+)/FanControl_net_(?<Release>[\\d?_|.]+)\\.zip"
+        "regex": "/V([\\d.]+)/FanControl_net_(?<netver>(?!4_8)[\\d_]+).zip"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/Rem0o/FanControl.Releases/releases/download/V$version/FanControl_net_$matchRelease.zip"
+                "url": "https://github.com/Rem0o/FanControl.Releases/releases/download/V$version/FanControl_net_$matchNetver.zip"
             }
         }
     }
