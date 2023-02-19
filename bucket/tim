@@ -1,0 +1,43 @@
+{
+    "version": "3.4.5.22071",
+    "description": "An lightweight instant messaging software service developed by Tencent",
+    "homepage": "https://tim.qq.com/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://ti.qq.com/tim/serverinfo.html"
+    },
+    "url": "https://webcdn.m.qq.com/spcmgr/download/TIM3.4.5.22071.exe#/dl.exe",
+    "hash": "e92a4705964f2f572e376aa6634e6d487fba2dd3060f0f1c1991ab86350934e6",
+    "installer": {
+        "script": [
+            "7z x \"$dir\\$fname\"  -o\"$dir\" -t*",
+            "Get-Item \"$dir\\*\" -Exclude .rsrc | Remove-Item",
+            "Expand-7zipArchive \"$dir\\.rsrc\\2052\\MSI\\101\" \"Files\" -Destination \"$dir\\\" -Removal",
+            "Move-Item \"$dir\\Files\\*\" \"$dir\"",
+            "Expand-7zipArchive \"$dir\\.rsrc\\2052\\MSI\\102\" \"vcruntime140.dll\" -Destination \"$dir\\Bin\\\"",
+            "Expand-7zipArchive \"$dir\\.rsrc\\2052\\MSI\\102\" \"msvcp140.dll\" -Destination \"$dir\\Bin\\\"",
+            "Expand-7zipArchive \"$dir\\.rsrc\\2052\\MSI\\102\" \"msvcr100.dll\" -Destination \"$dir\\Bin\\\"",
+            "Expand-7zipArchive \"$dir\\.rsrc\\2052\\MSI\\102\" \"vcomp140.dll\" -Destination \"$dir\\Bin\\\"",
+            "Expand-7zipArchive \"$dir\\.rsrc\\2052\\MSI\\102\" \"msvcp100.dll\" -Destination \"$dir\\Bin\\\"",
+            "Expand-7zipArchive \"$dir\\.rsrc\\2052\\MSI\\102\" \"TXSSO\\TXSSOSetup.exe\" -Destination \"$dir\" -Removal",
+            "Expand-7zipArchive \"$dir\\TXSSO\\TXSSOSetup.exe\" \"TXSSO\" -Destination \"$dir\\bin\" -Removal"
+        ]
+    },
+    "post_install": "Echo \"$dir\\Files\" \"$dir\\.rsrc\" \"$dir\\TXSSO\" | Remove-Item -Recurse",
+    "uninstaller": {
+        "script": "Remove-Item \"$env:APPDATA\\Tencent\\TIM\" -Recurse -Force"
+    },
+    "shortcuts": [
+        [
+            "Bin\\QQScLauncher.exe",
+            "TIM"
+        ]
+    ],
+    "checkver": {
+        "url": "https://pc.qq.com/detail/18/detail_23258.html",
+        "regex": "TIM([\\d.]+).exe"
+    },
+    "autoupdate": {
+        "url": "https://webcdn.m.qq.com/spcmgr/download/TIM$version.exe#/dl.7z"
+    }
+}
