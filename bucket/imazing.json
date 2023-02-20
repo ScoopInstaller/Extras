@@ -1,0 +1,69 @@
+{
+    "version": "2.16.9",
+    "homepage": "https://imazing.com/",
+    "description": "An app that lets you manage your iPhone, iPod, or iPad without iTunes.",
+    "license": {
+        "identifier": "Shareware",
+        "url": "https://imazing.com/terms-and-conditions"
+    },
+    "url": "https://downloads.imazing.com/windows/iMazing/2.16.9/iMazing_2.16.9.exe",
+    "hash": "4bc641cab1cf7260b55cd2564db529b2eed88d266def0ea7c0f587db5f32498c",
+    "innosetup": true,
+    "pre_install": [
+        "if ($architecture -eq '32bit') {",
+        "   Get-ChildItem \"$dir\\*,2*\" -Recurse | Remove-Item",
+        "   Get-ChildItem \"$dir\\*,1*\" -Recurse | Rename-Item -NewName { $_ -replace '\\,1', ''}",
+        "}",
+        "else {",
+        "   Get-ChildItem \"$dir\\*,1*\" -Recurse | Remove-Item",
+        "   Get-ChildItem \"$dir\\*,2*\" -Recurse | Rename-Item -NewName { $_ -replace '\\,2', ''}",
+        "}"
+    ],
+    "bin": "iMazing-CLI.exe",
+    "shortcuts": [
+        [
+            "iMazing Converter.exe",
+            "iMazing HEIC Converter"
+        ],
+        [
+            "iMazing Mini.exe",
+            "iMazing Mini"
+        ],
+        [
+            "iMazing Profile Editor.exe",
+            "iMazing Profile Editor"
+        ],
+        [
+            "iMazing.exe",
+            "iMazing"
+        ]
+    ],
+    "post_install": [
+        "Write-Host 'Registering the ''URL:iMazing Activation Protocol'' handler, context menu, and file handlers.'",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\imz\\shell\\open\\command' -Value \"\"\"$dir\\iMazing.exe\"\"  \"\"%1\"\"\" -Force | Out-Null",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\imz' -Value 'URL:iMazing Activation Protocol' -Force | Out-Null",
+        "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\imz' -Name 'URL Protocol' -Value '' -Force | Out-Null",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\.imazing' -Value 'iMazingFile' -Force | Out-Null",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\.imazingapp' -Value 'iMazingApp' -Force | Out-Null",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\iMazing\\shell\\open\\command' -Value \"\"\"$dir\\iMazing.exe\"\"  \"\"%1\"\"\" -Force | Out-Null",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\iMazingApp\\shell\\open\\command' -Value \"\"\"$dir\\iMazing.exe\"\"  \"\"%1\"\"\" -Force | Out-Null",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\iMazingApp\\DefaultIcon' -Value \"\"\"$dir\\Resources\\iMazingAppFileIcon.ico\"\"\" -Force | Out-Null",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\iMazingFile\\shell\\open\\command' -Value \"\"\"$dir\\iMazing.exe\"\"  \"\"%1\"\"\" -Force | Out-Null",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\iMazingFile\\DefaultIcon' -Value \"\"\"$dir\\Resources\\iMazingAppFileIcon.ico\"\"\" -Force | Out-Null",
+        "Write-Host 'Done!'"
+    ],
+    "pre_uninstall": [
+        "Write-Host  'Removing the ''URL:iMazing Activation Protocol'' handler, context menu, and file handlers.'",
+        "'imz', '.imazing', '.imazingapp', 'iMazing', 'iMazingApp', 'iMazingFile' | ForEach-Object {",
+        "   Remove-Item \"HKCU:\\SOFTWARE\\Classes\\$_\" -Force -Recurse",
+        "}",
+        "Write-Host 'Done!'"
+    ],
+    "checkver": {
+        "url": "https://downloads.imazing.com/com.DigiDNA.iMazing2Windows.xml",
+        "regex": "Version\\s([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://downloads.imazing.com/windows/iMazing/$version/iMazing_$version.exe"
+    }
+}
