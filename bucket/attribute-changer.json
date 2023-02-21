@@ -31,7 +31,7 @@
         "64bit": {
             "pre_install": [
                 "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-                "Get-ChildItem \"$dir\\*,1*\" -Recurse -Include '*.exe', '*.dll' | Remove-Item; Get-ChildItem \"$dir\\*,2*\" -Recurse -Include '*.exe', '*.dll' | Rename-Item -NewName { $_ -replace '\\,2', '' }",
+                "Get-ChildItem \"$dir\\*,1*\" -Include '*.exe', '*.dll' | Remove-Item; Get-ChildItem \"$dir\\*,2*\" -Include '*.exe', '*.dll' | Rename-Item -NewName { $_ -replace '\\,2', '' }",
                 "Start-Process 'regsvr32' -ArgumentList @(\"$dir\\acshell.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
                 "Start-Sleep -Seconds 2"
             ],
@@ -44,7 +44,7 @@
         "32bit": {
             "pre_install": [
                 "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-                "Get-ChildItem \"$dir\\*,2*\" -Recurse -Include '*.exe', '*.dll' | Remove-Item; Get-ChildItem \"$dir\\*,1*\" -Recurse -Include '*.exe', '*.dll' | Rename-Item -NewName { $_ -replace '\\,1', '' }",
+                "Get-ChildItem \"$dir\\*,2*\" -Include '*.exe', '*.dll' | Remove-Item; Get-ChildItem \"$dir\\*,1*\" -Include '*.exe', '*.dll' | Rename-Item -NewName { $_ -replace '\\,1', '' }",
                 "Start-Process 'regsvr32' -ArgumentList @(\"$dir\\acshell.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
                 "Start-Sleep -Seconds 2"
             ],
