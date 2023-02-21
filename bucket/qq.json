@@ -25,11 +25,29 @@
             "Expand-7zipArchive \"$dir\\.rsrc\\2052\\MSI\\102\" \"vcomp140.dll\" -Destination \"$dir\\Bin\\\"",
             "Expand-7zipArchive \"$dir\\.rsrc\\2052\\MSI\\102\" \"msvcp100.dll\" -Destination \"$dir\\Bin\\\"",
             "Expand-7zipArchive \"$dir\\.rsrc\\2052\\MSI\\102\" \"TXSSO\\TXSSOSetup.exe\" -Destination \"$dir\" -Removal",
-            "Expand-7zipArchive \"$dir\\TXSSO\\TXSSOSetup.exe\" \"TXSSO\" -Destination \"$dir\\bin\" -Removal"        ]
+            "Expand-7zipArchive \"$dir\\TXSSO\\TXSSOSetup.exe\" \"TXSSO\" -Destination \"$dir\\bin\" -Removal"
+        ]
     },
-    "post_install": "Echo \"$dir\\Files\" \"$dir\\.rsrc\" \"$dir\\TXSSO\" | Remove-Item -Recurse",
+    "post_install": [
+        "Echo \"$dir\\Files\" \"$dir\\.rsrc\" \"$dir\\TXSSO\" | Remove-Item -Recurse",
+        "if (!(Test-Path \"$persist_dir\")) {",
+        "    ensure \"$persist_dir\" | Out-Null",
+        "}",
+        "$TencentFilesFolder = [Environment]::GetFolderPath(\"MyDocuments\") + \"\\Tencent Files\" ",
+        "if (Test-Path $TencentFilesFolder) {",
+        "    Move-Item \"$TencentFilesFolder\\*\" \"$persist_dir\" ",
+        "    Remove-Item \"$TencentFilesFolder\" -Force }",
+        "New-Item \"$TencentFilesFolder\" -ItemType Junction -Target \"$persist_dir\" | Out-Null",
+        "$QQRoaming = \"$env:APPDATA\\Tencent\\QQ\" ",
+        "if (Test-Path $QQRoaming) {",
+        "    Move-Item \"$QQRoaming\\*\" \"$persist_dir\\QQRoaming\" ",
+        "    Remove-Item \"$QQRoaming\" -Force }",
+        "if (!(Test-Path \"$persist_dir\\QQRoaming\")) { New-Item \"$persist_dir\\QQRoaming\" -ItemType \"directory\" | Out-Null}",
+        "New-Item \"$QQRoaming\" -ItemType Junction -Target \"$persist_dir\\QQRoaming\" | Out-Null"
+    ],
+
     "uninstaller": {
-        "script": "Remove-Item \"$env:APPDATA\\Tencent\\QQ\" -Recurse -Force"
+        "script": "if ($purge) { Remove-Item \"$env:APPDATA\\Tencent\\QQ\" -Recurse -Force -ErrorAction SilentlyContinue }"
     },
     "checkver": {
         "url": "https://pc.qq.com/detail/18/detail_23258.html",
