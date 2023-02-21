@@ -31,40 +31,42 @@
         "64bit": {
             "pre_install": [
                 "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-                "Remove-Item \"$dir\\acmain,1.exe\", \"$dir\\acshell,1.dll\"; Rename-Item \"$dir\\acmain,2.exe\" 'acmain.exe'",
-                "Start-Process 'regsvr32' -ArgumentList @(\"$dir\\acshell,2.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
+                "Get-ChildItem \"$dir\\*,1*\" -Recurse -Include '*.exe', '*.dll' | Remove-Item; Get-ChildItem \"$dir\\*,2*\" -Recurse -Include '*.exe', '*.dll' | Rename-Item -NewName { $_ -replace '\\,2', '' }",
+                "Start-Process 'regsvr32' -ArgumentList @(\"$dir\\acshell.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
                 "Start-Sleep -Seconds 2"
             ],
             "pre_uninstall": [
                 "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-                "Start-Process 'regsvr32' -ArgumentList @('/u', \"$dir\\acshell,2.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
+                "Start-Process 'regsvr32' -ArgumentList @('/u', \"$dir\\acshell.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
                 "Start-Sleep -Seconds 2"
             ]
         },
         "32bit": {
             "pre_install": [
                 "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-                "Remove-Item \"$dir\\acmain,2.exe\", \"$dir\\acshell,2.dll\"; Rename-Item \"$dir\\acmain,1.exe\" 'acmain.exe'",
-                "Start-Process 'regsvr32' -ArgumentList @(\"$dir\\acshell,1.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
+                "Get-ChildItem \"$dir\\*,2*\" -Recurse -Include '*.exe', '*.dll' | Remove-Item; Get-ChildItem \"$dir\\*,1*\" -Recurse -Include '*.exe', '*.dll' | Rename-Item -NewName { $_ -replace '\\,1', '' }",
+                "Start-Process 'regsvr32' -ArgumentList @(\"$dir\\acshell.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
                 "Start-Sleep -Seconds 2"
             ],
             "pre_uninstall": [
                 "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-                "Start-Process 'regsvr32' -ArgumentList @('/u', \"$dir\\acshell,1.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
+                "Start-Process 'regsvr32' -ArgumentList @('/u', \"$dir\\acshell.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
                 "Start-Sleep -Seconds 2"
             ]
         }
     },
     "installer": {
         "script": [
-            "New-Item \"$dir\\change_language.ps1\" -Value '$ac_language = Read-Host -Prompt \"Please enter the number that corresponds to your native langauge\"' | Out-Null",
-            "Add-Content \"$dir\\change_language.ps1\" -Value @(",
-            "'`nCopy-Item \"$dir\\messages,$ac_language.ini\" \"$dir\\messages.ini\" -Force', 'Copy-Item \"$dir\\ac,$ac_language.pdf\" \"$dir\\ac.pdf\" -Force'",
-            ")"
+            "$value = @\"",
+            "`$ac_language = Read-Host -Prompt 'Please enter the number that corresponds to your native langauge'",
+            "Copy-Item \"$dir\\messages,`$ac_language.ini\" \"$dir\\messages.ini\" -Force",
+            "Copy-Item \"$dir\\ac,`$ac_language.pdf\" \"$dir\\ac.pdf\" -Force",
+            "\"@",
+            "Set-Content \"$dir\\change_language.ps1\" $value -Encoding 'utf8' -Force"
         ]
     },
     "post_install": [
-        "$documents = (Get-ChildItem \"$dir\" -Filter '*.pdf').Length; $subtract = $documents - 5",
+        "$documents = (Get-ChildItem $dir -Filter '*.pdf').Length; $subtract = $documents - 5",
         "Copy-Item \"$dir\\template.ini\" \"$dir\\messages,13.ini\"; Copy-Item \"$dir\\template.ini\" \"$dir\\messages.ini\"; Copy-Item \"$dir\\ac,4.pdf\" \"$dir\\ac.pdf\"",
         "Remove-Item \"$dir\\ac,4.pdf\"",
         "$MinusValue1 = $documents - $subtract; $NewValue1 = $MinusValue1 - 1; Rename-Item \"$dir\\ac,$MinusValue1.pdf\" \"ac,$NewValue1.pdf\"",
@@ -76,14 +78,7 @@
         "$MinusValue7 = ($documents - $subtract) + 6; $NewValue7 = $MinusValue7 - 1; Rename-Item \"$dir\\ac,$MinusValue7.pdf\" \"ac,$NewValue7.pdf\"",
         "$MinusValue8 = ($documents - $subtract) + 7; $NewValue8 = $MinusValue8 - 1; Rename-Item \"$dir\\ac,$MinusValue8.pdf\" \"ac,$NewValue8.pdf\"",
         "$MinusValue9 = ($documents - $subtract) + 8; $NewValue9 = $MinusValue9 - 1; Rename-Item \"$dir\\ac,$MinusValue9.pdf\" \"ac,$NewValue9.pdf\"",
-        "Copy-Item \"$dir\\ac.pdf\" \"$dir\\ac,$documents.pdf\"",
-        "$content = (Get-Content \"$dir\\change_language.ps1\")",
-        "$content = $content.Replace('$dir', \"$dir\")",
-        "$content | Set-Content -Path \"$dir\\change_language.ps1\"",
-        "$content2 = (Get-Content \"$dir\\change_language.ps1\")",
-        "$content2 = $content.Replace('`n', \"`n\")",
-        "$content2 | Set-Content -Path \"$dir\\change_language.ps1\"",
-        "Start-Sleep -Seconds 2"
+        "Copy-Item \"$dir\\ac.pdf\" \"$dir\\ac,$documents.pdf\""
     ],
     "bin": [
         "acmain.exe",
