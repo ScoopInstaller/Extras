@@ -24,10 +24,11 @@
         "script": [
             "$userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'",
             "$getData = ((Invoke-RestMethod 'https://gamebanana.com/apiv10/Tool/6321/Updates' -UserAgent $userAgent)._aRecords)[0]",
-            "$getFile = $getData._aFiles._sFile; $getVersion = ($getData._sName) -replace 'v([\\d.]+)\\s-[\\s\\w]+', '$1'",
+            "$getFile = $getData._aFiles._sFile",
+            "($getData._sName) -match 'v([\\d.]+)' | Out-Null; $getVersion = $Matches[1]",
             "Write-Output \"$getFile, $getVersion\""
         ],
-        "regex": "(?<File>[\\w_.]+),\\s([\\d.]+)"
+        "regex": "(?<File>[\\w_]+\\.exe),\\s([\\d.]+)"
     },
     "autoupdate": {
         "url": "https://files.gamebanana.com/tools/$matchFile",
