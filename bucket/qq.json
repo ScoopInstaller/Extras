@@ -22,20 +22,15 @@
     "installer": {
         "script": [
             "Get-Item \"$dir\\*\" -Exclude .rsrc | Remove-Item",
-            "Expand-7zipArchive \"$dir\\.rsrc\\2052\\MSI\\101\" \"Files\" -Destination \"$dir\\\" -Removal",
-            "Move-Item \"$dir\\Files\\*\" \"$dir\"",
-            "Expand-7zipArchive \"$dir\\.rsrc\\2052\\MSI\\102\" \"vcruntime140.dll\" -Destination \"$dir\\Bin\\\"",
-            "Expand-7zipArchive \"$dir\\.rsrc\\2052\\MSI\\102\" \"msvcp140.dll\" -Destination \"$dir\\Bin\\\"",
-            "Expand-7zipArchive \"$dir\\.rsrc\\2052\\MSI\\102\" \"msvcr100.dll\" -Destination \"$dir\\Bin\\\"",
-            "Expand-7zipArchive \"$dir\\.rsrc\\2052\\MSI\\102\" \"vcomp140.dll\" -Destination \"$dir\\Bin\\\"",
-            "Expand-7zipArchive \"$dir\\.rsrc\\2052\\MSI\\102\" \"msvcp100.dll\" -Destination \"$dir\\Bin\\\"",
-            "Expand-7zipArchive \"$dir\\.rsrc\\2052\\MSI\\102\" \"TXSSO\\TXSSOSetup.exe\" -Destination \"$dir\" -Removal",
-            "Expand-7zipArchive \"$dir\\TXSSO\\TXSSOSetup.exe\" \"TXSSO\" -Destination \"$dir\\bin\" -Removal"
+            "Expand-7zipArchive \"$dir\\.rsrc\\2052\\MSI\\101\" \"$dir\" -ExtractDir 'Files'",
+            "Expand-7zipArchive \"$dir\\.rsrc\\2052\\MSI\\102\" \"$dir\\temp\"",
+            "'vcruntime140.dll', 'msvcp140.dll', 'msvcr100.dll', 'vcomp140.dll', 'msvcp100.dll' | ForEach-Object {",
+            "  Move-Item \"$dir\\temp\\$_\" \"$dir\\Bin\\\"",
+            "}",
+            "Expand-7zipArchive \"$dir\\temp\\TXSSO\\TXSSOSetup.exe\" \"$dir\\Bin\\TXSSO\" -ExtractDir 'TXSSO'",
+            "Remove-Item \"$dir\\.rsrc\", \"$dir\\temp\" -Recurse"
         ]
     },
-    "post_install": [
-        "Echo \"$dir\\Files\" \"$dir\\.rsrc\" \"$dir\\TXSSO\" | Remove-Item -Recurse"
-    ],
     "checkver": {
         "url": "https://pc.qq.com/detail/18/detail_23258.html",
         "regex": "QQ([\\d.]+).exe"
