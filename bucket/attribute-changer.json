@@ -67,8 +67,8 @@
     },
     "post_install": [
         "$documents = (Get-ChildItem $dir -Filter '*.pdf').Length; $subtract = $documents - 5",
-        "Copy-Item \"$dir\\template.ini\" \"$dir\\messages,$documents.ini\"; Copy-Item \"$dir\\template.ini\" \"$dir\\messages.ini\"; Copy-Item \"$dir\\ac,4.pdf\" \"$dir\\ac.pdf\"",
-        "Remove-Item \"$dir\\ac,4.pdf\"",
+        "Copy-Item \"$dir\\template.ini\" \"$dir\\messages,$documents.ini\"; Copy-Item \"$dir\\template.ini\" \"$dir\\messages.ini\"; Copy-Item \"$dir\\ac,$(($documents - $subtract) - 1 ).pdf\" \"$dir\\ac.pdf\"",
+        "Remove-Item \"$dir\\ac,$(($documents - $subtract) - 1 ).pdf\"",
         "$MinusValue1 = $documents - $subtract; $NewValue1 = $MinusValue1 - 1; Rename-Item \"$dir\\ac,$MinusValue1.pdf\" \"ac,$NewValue1.pdf\"",
         "$MinusValue2 = ($documents - $subtract) + 1; $NewValue2 = $MinusValue2 - 1; Rename-Item \"$dir\\ac,$MinusValue2.pdf\" \"ac,$NewValue2.pdf\"",
         "$MinusValue3 = ($documents - $subtract) + 2; $NewValue3 = $MinusValue3 - 1; Rename-Item \"$dir\\ac,$MinusValue3.pdf\" \"ac,$NewValue3.pdf\"",
