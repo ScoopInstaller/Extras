@@ -7,7 +7,7 @@
     "notes": [
         "IMPORTANT FOR NON-ENGLISH SPEAKERS!!!",
         "If you want this application translated to your native language, please run the following command:",
-        "change_language.ps1",
+        "change-ac-language.ps1",
         "**The powershell script will prompt you to enter the number that corresponds to your native language.**",
         "",
         "1 = BRAZILIAN PORTUGUESE",
@@ -34,11 +34,6 @@
                 "Get-ChildItem \"$dir\\*,1*\" -Include '*.exe', '*.dll' | Remove-Item; Get-ChildItem \"$dir\\*,2*\" -Include '*.exe', '*.dll' | Rename-Item -NewName { $_ -replace '\\,2', '' }",
                 "Start-Process 'regsvr32' -ArgumentList @(\"$dir\\acshell.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
                 "Start-Sleep -Seconds 2"
-            ],
-            "pre_uninstall": [
-                "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-                "Start-Process 'regsvr32' -ArgumentList @('/u', \"$dir\\acshell.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
-                "Start-Sleep -Seconds 2"
             ]
         },
         "32bit": {
@@ -46,11 +41,6 @@
                 "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
                 "Get-ChildItem \"$dir\\*,2*\" -Include '*.exe', '*.dll' | Remove-Item; Get-ChildItem \"$dir\\*,1*\" -Include '*.exe', '*.dll' | Rename-Item -NewName { $_ -replace '\\,1', '' }",
                 "Start-Process 'regsvr32' -ArgumentList @(\"$dir\\acshell.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
-                "Start-Sleep -Seconds 2"
-            ],
-            "pre_uninstall": [
-                "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-                "Start-Process 'regsvr32' -ArgumentList @('/u', \"$dir\\acshell.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
                 "Start-Sleep -Seconds 2"
             ]
         }
@@ -62,9 +52,13 @@
             "Copy-Item \"$dir\\messages,`$ac_language.ini\" \"$dir\\messages.ini\" -Force",
             "Copy-Item \"$dir\\ac,`$ac_language.pdf\" \"$dir\\ac.pdf\" -Force",
             "\"@",
-            "Set-Content \"$dir\\change_language.ps1\" $value -Encoding 'utf8' -Force"
+            "Set-Content \"$dir\\change-ac-language.ps1\" $value -Encoding 'utf8' -Force"
         ]
     },
+    "bin": [
+        "acmain.exe",
+        "change-ac-language.ps1"
+    ],
     "post_install": [
         "$documents = (Get-ChildItem $dir -Filter '*.pdf').Length; $subtract = $documents - 5",
         "Copy-Item \"$dir\\template.ini\" \"$dir\\messages,$documents.ini\"; Copy-Item \"$dir\\template.ini\" \"$dir\\messages.ini\"; Copy-Item \"$dir\\ac,$(($documents - $subtract) - 1 ).pdf\" \"$dir\\ac.pdf\"",
@@ -75,9 +69,10 @@
         "}",
         "Copy-Item \"$dir\\ac.pdf\" \"$dir\\ac,$documents.pdf\""
     ],
-    "bin": [
-        "acmain.exe",
-        "change_language.ps1"
+    "pre_uninstall": [
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+        "Start-Process 'regsvr32' -ArgumentList @('/u', \"$dir\\acshell.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -Force",
+        "Start-Sleep -Seconds 2"
     ],
     "checkver": {
         "url": "https://www.petges.lu/download/",
