@@ -8,17 +8,21 @@
     },
     "url": "https://clonespy.com/english/download/cspy343.exe#/dl.7z",
     "hash": "6f1c39f521d7ccdc2c0cfb8a69d456c57b6094e95afc9d9294d85f35eb116a45",
-    "pre_install": [
-        "if ($architecture -eq '64bit') {",
-        "   Remove-Item \"$dir\\CloneSpy.exe\"; Rename-Item \"$dir\\CloneSpy64.exe\" 'CloneSpy.exe'",
-        "}",
-        "elseif ($architecture -eq '32bit') {",
-        "   Remove-Item \"$dir\\CloneSpy64.exe\"",
-        "}",
-        "'CloneSpy.log', 'CSDefault.cst', 'CloneSpy.ini' | ForEach-Object {",
-        "    if (!(Test-Path \"$persist_dir\\$_\")) {New-Item \"$dir\\$_\" | Out-Null}",
-        "}"
-    ],
+    "architecture": {
+        "64bit": {
+            "pre_install": "Remove-Item \"$dir\\CloneSpy.exe\"; Rename-Item \"$dir\\CloneSpy64.exe\" 'CloneSpy.exe'"
+        },
+        "32bit": {
+            "pre_install": "Remove-Item \"$dir\\CloneSpy64.exe\""
+        }
+    },
+    "installer": {
+        "script": [
+            "'CloneSpy.log', 'CSDefault.cst', 'CloneSpy.ini' | ForEach-Object {",
+            "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+            "}"
+        ]
+    },
     "bin": "CloneSpy.exe",
     "shortcuts": [
         [
