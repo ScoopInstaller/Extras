@@ -21,9 +21,7 @@
             "Start-Process \"$dir\\..\\setup.exe\" -ArgumentList @('/S', '/InstallationType=JustMe', '/RegisterPython=0', '/AddToPath=0', '/NoRegistry=1', \"/D=$dir\") -Wait | Out-Null"
         ]
     },
-    "post_install": [
-        "Remove-Item \"$dir\\..\\setup.exe\" -Force | Out-Null"
-    ],
+    "post_install": "Remove-Item \"$dir\\..\\setup.exe\" -Force | Out-Null",
     "uninstaller": {
         "script": [
             "Start-Process \"$dir\\Uninstall-Miniconda3.exe\" -ArgumentList '/S' -Wait | Out-Null",
@@ -31,8 +29,18 @@
             "if (!(Test-Path \"$dir\\envs\")) { New-Item \"$dir\\envs\" -ItemType Directory | Out-Null }"
         ]
     },
-    "bin": ["python.exe", "pythonw.exe", ["python.exe", "python3"]],
-    "env_add_path": ["scripts", "Library\\bin"],
+    "bin": [
+        "python.exe",
+        "pythonw.exe",
+        [
+            "python.exe",
+            "python3"
+        ]
+    ],
+    "env_add_path": [
+        "scripts",
+        "Library\\bin"
+    ],
     "persist": "envs",
     "checkver": {
         "url": "https://docs.conda.io/en/latest/miniconda.html",
