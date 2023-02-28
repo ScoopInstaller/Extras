@@ -1,25 +1,27 @@
 {
-    "version": "8.9.0",
+    "version": "9.1.0",
     "description": "A free file archiver utility, based on Open Source technologies",
     "homepage": "https://www.peazip.org",
     "license": "LGPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://dotsrc.dl.osdn.net/osdn/peazip/77884/peazip_portable-8.9.0.WIN64.zip",
-            "hash": "9fee014869a112d0aea2c3dd4b765f9a811cacf0bf3074172034d51ee9e972a2",
-            "extract_dir": "peazip_portable-8.9.0.WIN64"
+            "url": "https://dotsrc.dl.osdn.net/osdn/peazip/78346/peazip_portable-9.1.0.WIN64.zip",
+            "hash": "d06d39a695376092c458a677a617a917b747cd8b879aa332872dfe2b3248da09",
+            "extract_dir": "peazip_portable-9.1.0.WIN64"
         },
         "32bit": {
-            "url": "https://dotsrc.dl.osdn.net/osdn/peazip/77884/peazip_portable-8.9.0.WINDOWS.zip",
-            "hash": "240cae01b1b3186c1006677415cf3460b9878908e132dd0834fa470c8fc4833c",
-            "extract_dir": "peazip_portable-8.9.0.WINDOWS"
+            "url": "https://dotsrc.dl.osdn.net/osdn/peazip/78346/peazip_portable-9.1.0.WINDOWS.zip",
+            "hash": "750e81d403a151f088c9928309f80adca695d253f404894371a0e9e3aa2bcf64",
+            "extract_dir": "peazip_portable-9.1.0.WINDOWS"
         }
     },
     "pre_install": [
         "'conf\\bookmarks.txt', 'conf\\custedit.txt', 'altconf.txt', 'bookmarks.txt', 'conf.txt', 'conf-lastgood.txt', 'custedit.txt' | ForEach-Object {",
         "   if (!(Test-Path \"$persist_dir\\res\\$_\")) { New-Item \"$dir\\res\\$_\" | Out-Null }",
         "}",
-        "Start-Process \"$dir\\res\\bin\\Configure PeaZip.exe\" -Wait -ArgumentList @('/VERYSILENT', \"/DIR=$dir\", '/CURRENTUSER', '/SUPPRESSMSGBOXES')"
+        "if ($cmd -eq 'install') {",
+        "   Start-Process \"$dir\\res\\bin\\Configure PeaZip.exe\" -Wait -ArgumentList @('/VERYSILENT', \"/DIR=$dir\", '/CURRENTUSER', '/SUPPRESSMSGBOXES')",
+        "}"
     ],
     "bin": [
         "peazip.exe",
@@ -59,12 +61,13 @@
         "if ((Test-Path $uninstallerFile) -and ($cmd -eq 'uninstall')) {",
         "   $datFile = $uninstallerFile.Trim('unins000.exe')",
         "   if (Get-ChildItem \"$datFile\\unins000.dat\") {",
-        "       if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
+        "       if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
         "       Start-Process \"$uninstallerFile\" -Wait -Verb 'RunAs' -ArgumentList @('/VERYSILENT', '/FORCECLOSEAPPLICATIONS', '/SUPPRESSMSGBOXES')",
         "       Stop-Process -Name 'explorer' -Force -ErrorAction 'SilentlyContinue'; Start-Sleep -Seconds 2",
         "   }",
         "}",
         "elseif ($cmd -eq 'uninstall') {",
+        "   if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
         "   reg delete 'HKEY_CLASSES_ROOT\\AllFileSystemObjects\\shell\\PeaZip' /f",
         "   reg delete 'HKEY_CLASSES_ROOT\\*\\shell\\PeaZip' /f",
         "}"
