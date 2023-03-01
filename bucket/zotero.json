@@ -13,6 +13,23 @@
             "Zotero"
         ]
     ],
+    "post_install": [
+        "Write-Host 'Registering the ''zotero://'' URL protocol...'",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\zotero' -Value 'Zotero Protocol' -Force | Out-Null",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\zotero\\DefaultIcon' -Value \"$dir\\zotero.exe,1\" -Force | Out-Null",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\zotero\\shell\\open\\command' -Value \"\"\"$dir\\zotero.exe\"\" -url \"\"%1\"\"\" -Force | Out-Null",
+        "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\zotero' -Name 'FriendlyTypeName' -Value 'Zotero Protocol' -Force | Out-Null",
+        "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\zotero' -Name 'URL Protocol' -Value '' -Force | Out-Null",
+        "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\zotero' -Name 'EditFlags' -PropertyType 'DWord' -Value '2' -Force | Out-Null",
+        "Write-Host 'Done!'"
+    ],
+    "pre_uninstall": [
+        "if ($cmd -eq 'uninstall') {",
+        "   Write-Host 'Unregistering the ''zotero://'' URL protocol...'",
+        "   Remove-Item 'HKCU:\\SOFTWARE\\Classes\\zotero' -Recurse -Force",
+        "   Write-Host 'Done!'",
+        "}"
+    ],
     "checkver": {
         "url": "https://www.zotero.org/download/client/update/5.0.0/_/WINNT_x86-msvc/en-US/release/_/update.xml",
         "xpath": "/updates/update/@appVersion"
