@@ -3,30 +3,53 @@
     "description": "Open-source reference management software to manage bibliographic data and related research materials.",
     "homepage": "https://www.zotero.org/",
     "license": "AGPL-3.0-only",
+    "notes": [
+        "To register the 'zotero://' URL protocol, run:",
+        "install-zotero-url-protocol.ps1",
+        "",
+        "To unregister the 'zotero://' URL protocol, run:",
+        "uninstall-zotero-url-protocol.ps1"
+    ],
     "url": "https://download.zotero.org/client/release/6.0.22/Zotero-6.0.22_setup.exe#/dl.7z",
     "hash": "2168765b60870764cb7e95ec5814142c62e7012fa9aefff7c0c4ce3eb77e87bc",
     "extract_dir": "core",
-    "bin": "zotero.exe",
+    "pre_install": [
+        "$newDir = $dir.Replace($version, 'current')",
+        "",
+        "$content1 = @\"",
+        "Write-Host 'Registering the ''zotero://'' URL protocol...'",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\zotero' -Value 'Zotero Protocol' -Force | Out-Null",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\zotero\\DefaultIcon' -Value \"$newDir\\zotero.exe,1\" -Force | Out-Null",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\zotero\\shell\\open\\command' -Value \"\"\"$newDir\\zotero.exe\"\" -url \"\"%1\"\"\" -Force | Out-Null",
+        "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\zotero' -Name 'FriendlyTypeName' -Value 'Zotero Protocol' -Force | Out-Null",
+        "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\zotero' -Name 'URL Protocol' -Value '' -Force | Out-Null",
+        "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\zotero' -Name 'EditFlags' -PropertyType 'DWord' -Value '2' -Force | Out-Null",
+        "Write-Host 'Done!'",
+        "\"@",
+        "$content2 = @'",
+        "Write-Host 'Unregistering the ''zotero://'' URL protocol...'",
+        "Remove-Item 'HKCU:\\SOFTWARE\\Classes\\zotero' -Recurse -Force",
+        "Write-Host 'Done!'",
+        "'@",
+        "",
+        "Set-Content \"$dir\\install-zotero-url-protocol.ps1\" $content1 -Encoding 'utf8' -Force",
+        "Set-Content \"$dir\\uninstall-zotero-url-protocol.ps1\" $content2 -Encoding 'utf8' -Force"
+    ],
+    "bin": [
+        "zotero.exe",
+        "install-zotero-url-protocol.ps1",
+        "uninstall-zotero-url-protocol.ps1"
+    ],
     "shortcuts": [
         [
             "zotero.exe",
             "Zotero"
         ]
     ],
-    "post_install": [
-        "Write-Host 'Registering the ''zotero://'' URL protocol...'",
-        "New-Item 'HKCU:\\SOFTWARE\\Classes\\zotero' -Value 'Zotero Protocol' -Force | Out-Null",
-        "New-Item 'HKCU:\\SOFTWARE\\Classes\\zotero\\DefaultIcon' -Value \"$dir\\zotero.exe,1\" -Force | Out-Null",
-        "New-Item 'HKCU:\\SOFTWARE\\Classes\\zotero\\shell\\open\\command' -Value \"\"\"$dir\\zotero.exe\"\" -url \"\"%1\"\"\" -Force | Out-Null",
-        "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\zotero' -Name 'FriendlyTypeName' -Value 'Zotero Protocol' -Force | Out-Null",
-        "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\zotero' -Name 'URL Protocol' -Value '' -Force | Out-Null",
-        "New-ItemProperty 'HKCU:\\SOFTWARE\\Classes\\zotero' -Name 'EditFlags' -PropertyType 'DWord' -Value '2' -Force | Out-Null",
-        "Write-Host 'Done!'"
-    ],
     "pre_uninstall": [
         "if ($cmd -eq 'uninstall') {",
         "   Write-Host 'Unregistering the ''zotero://'' URL protocol...'",
-        "   Remove-Item 'HKCU:\\SOFTWARE\\Classes\\zotero' -Recurse -Force",
+        "   Remove-Item 'HKCU:\\SOFTWARE\\Classes\\zotero' -ErrorAction 'SilentlyContinue' -Recurse -Force",
         "   Write-Host 'Done!'",
         "}"
     ],
