@@ -13,10 +13,14 @@
                 "Remove-Item \"$dir\\`$*\" -Recurse",
                 "if (!(Test-Path \"$env:Appdata\\RStudio\")) {",
                 "    New-Item \"$env:Appdata\\RStudio\" -ItemType Directory -Force | Out-Null",
+                "}",
+                "$conf = \"$env:Appdata\\RStudio\\desktop.ini\"",
+                "$rpath = \"$(appdir r $global)\\current\\bin\\x64\".Replace('\\', '/')",
+                "if (!(Test-Path $conf)) {",
                 "    @(",
                 "        '[General]'",
-                "        \"RBinDir=`\"$(appdir r $global)\\current\\bin\\x64`\"\".Replace('\\', '/')",
-                "    ) | Add-Content -Path \"$env:Appdata\\RStudio\\desktop.ini\" -Encoding UTF8 -Force",
+                "        \"RBinDir=$rpath\"",
+                "    ) | Add-Content -Path $conf -Encoding UTF8 -Force",
                 "}"
             ]
         }
