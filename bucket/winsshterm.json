@@ -1,6 +1,6 @@
 {
-    "version": "2.24.0",
-    "description": "A tabbed SSH solution for Windows, combining PuTTY/KiTTY, WinSCP and VcXsrv",
+    "version": "2.25.1",
+    "description": "A tabbed SSH solution for Windows, combining PuTTY, WinSCP and VcXsrv",
     "homepage": "https://winsshterm.blogspot.com/",
     "license": {
         "identifier": "Freeware",
@@ -12,13 +12,11 @@
         "X-server": "extras/vcxsrv"
     },
     "architecture": {
-        "64bit": {
-            "url": "http://dl.winsshterm.net/WinSSHTerm-2.24.0-64.zip",
-            "hash": "512fe8ac8c5bbc8ac206507ad6d9492185ddee54ccb5cfe765cdd2f6e3d3b469"
+        "arm64": {
+            "url": "https://github.com/WinSSHTerm/WinSSHTerm/releases/download/2.25.1/WinSSHTerm-2.25.1-arm64.zip"
         },
-        "32bit": {
-            "url": "http://dl.winsshterm.net/WinSSHTerm-2.24.0.zip",
-            "hash": "68973f55dbd6d292fdad98e35a1e08f9e6500171f03e18441b283cd41d9bea25"
+        "64bit": {
+            "url": "https://github.com/WinSSHTerm/WinSSHTerm/releases/download/2.25.1/WinSSHTerm-2.25.1-x64.zip"
         }
     },
     "extract_dir": "WinSSHTerm",
@@ -30,7 +28,7 @@
         ]
     ],
     "post_install": [
-        "'lib', 'tools', 'config' | ForEach-Object { ensure \"$dir\\$_\" | Out-Null }",
+        "'tools', 'config' | ForEach-Object { ensure \"$dir\\$_\" | Out-Null }",
         "",
         "$puttyDir = \"$(appdir putty $global)\\current\"",
         "'putty', 'pageant', 'plink' | ForEach-Object {",
@@ -64,23 +62,18 @@
         "config",
         "tools"
     ],
-    "checkver": "WinSSHTerm-([\\d.]+)\\.zip",
+    "checkver": {
+        "github": "https://github.com/WinSSHTerm/WinSSHTerm",
+        "regex": " WinSSHTerm-([\\d.]+)-arm64\\.zip"
+    },
     "autoupdate": {
         "architecture": {
-            "64bit": {
-                "url": "http://dl.winsshterm.net/WinSSHTerm-$version-64.zip",
-                "hash": {
-                    "url": "https://winsshterm.blogspot.com/",
-                    "regex": "SHA256 \\(.ZIP64\\):\\s*$sha256"
-                }
+            "arm64": {
+                "url": "https://github.com/WinSSHTerm/WinSSHTerm/releases/download/$matchHead/WinSSHTerm-$version-arm64.zip"
             },
-            "32bit": {
-                "url": "http://dl.winsshterm.net/WinSSHTerm-$version.zip",
-                "hash": {
-                    "url": "https://winsshterm.blogspot.com/",
-                    "regex": "SHA256 \\(.ZIP\\):\\s*$sha256"
-                }
-            }
+            "64bit": {
+                "url": "https://github.com/WinSSHTerm/WinSSHTerm/releases/download/$matchHead/WinSSHTerm-$version-x64.zip"
+            }   
         }
     }
 }
