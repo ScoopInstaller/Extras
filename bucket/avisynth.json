@@ -1,0 +1,33 @@
+{
+    "version": "2.6.1",
+    "homepage": "http://avisynth.nl/index.php/Main_Page",
+    "description": "A non-linear script language for audio/video processing.",
+    "license": "GPL-2.0",
+    "url": "https://sourceforge.net/projects/avisynth2/files/AviSynth_Alpha_Releases/AVS%202.6.1%20Alpha%201%20%5B20160517%5D/AviSynth_20160517_VC6.exe#/dl.7z",
+    "hash": "a2df523717abb4e0a79d2d225f830792e3c390a93f7cffad2b7f8fc3dcfb6c70",
+    "post_install": [
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+        "Remove-Item $dir -Include '$*', 'Uninstall.exe' -Recurse",
+        "$content1 = (Get-Content \"$dir\\Avisynth_Template.reg\").Replace('%INSTALLDIR%', $dir)",
+        "Set-Content \"$dir\\install.reg\" $content1 -Encoding 'unicode' -Force",
+        "(Select-String \"$dir\\Avisynth_Template.reg\" -Pattern 'CLSID\\\\\\{([\\w-]+)\\}')[0] -match '\\{(?<key_1>[\\w-]+)\\}' | Out-Null",
+        "$key_1 = $Matches['key_1']",
+        "(Select-String \"$dir\\Avisynth_Template.reg\" -Pattern '\"\\{([\\w-]+)\\}\"')[0] -match '\\{(?<key_2>[\\w-]+)\\}' | Out-Null",
+        "$key_2 = $Matches['key_2']",
+        "$content2 = Get-Content \"$dir\\Avisynth_Template.reg\"",
+        "$targets = @('\"Apartment\"', '\"%INSTALLDIR%\\AviSynth.dll\"', '\"%INSTALLDIR%\\AviSynth.dll,0\"', '\"%INSTALLDIR%\"', '\"\"', \"\"\"{$key_2}\"\"\", \"\"\"{$key_1}\"\"\", '\"%INSTALLDIR%\\plugins\"')",
+        "foreach ($item in $targets) {",
+        "   $content2 = $content2.Replace($item, '-')",
+        "}",
+        "$content2 = $content2 -replace ('@=\"[\\w?\\s]+\"', '@=-')",
+        "$content2 = $content2.Replace('HKEY_CLASSES_ROOT\\avsfile', '-HKEY_CLASSES_ROOT\\avsfile')",
+        "$content2 = $content2.Replace('@=\"AviSynth Script\"', '')",
+        "$content2 = $content2.Replace('HKEY_CLASSES_ROOT\\avs_auto_file', '-HKEY_CLASSES_ROOT\\avs_auto_file')",
+        "$content2 = $content2.Replace(\"HKEY_CLASSES_ROOT\\CLSID\\{$key_1}\", \"-HKEY_CLASSES_ROOT\\CLSID\\{$key_1}\")",
+        "$content2 = $content2.Replace('HKEY_CLASSES_ROOT\\AVIFile\\Extensions\\AVS', '-HKEY_CLASSES_ROOT\\AVIFile\\Extensions\\AVS')",
+        "$content2 = $content2.Replace('HKEY_LOCAL_MACHINE\\SOFTWARE\\Avisynth', '-HKEY_LOCAL_MACHINE\\SOFTWARE\\Avisynth')",
+        "Set-Content \"$dir\\uninstall.reg\" $content2 -Encoding 'unicode' -Force",
+        "reg import \"$dir\\install.reg\""
+    ],
+    "pre_uninstall": "if ($cmd -eq 'uninstall') { if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }; reg import \"$dir\\uninstall.reg\"; Start-Sleep -Seconds 2 }"
+}
