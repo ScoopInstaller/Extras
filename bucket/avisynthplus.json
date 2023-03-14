@@ -1,0 +1,49 @@
+{
+    "version": "3.7.2",
+    "homepage": "http://avs-plus.net/",
+    "description": "A fork of the well-known non-linear script language for audio/video processing, with community contributions.",
+    "license": "GPL-2.0-or-later",
+    "url": "https://github.com/AviSynth/AviSynthPlus/releases/download/v3.7.2/AviSynthPlus_3.7.2_20220317-filesonly.7z",
+    "hash": "d6981bcc1ec2760f4a27e76ac502c5f8614eebb3ad8563d01916a6b22208c9f1",
+    "extract_dir": "AviSynthPlus_20220317-filesonly",
+    "post_install": [
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+        "Remove-Item \"$dir\\*-xp\" -Recurse",
+        "$content1 = (Get-Content \"$dir\\Avisynth_Template.reg\").Replace('%INSTALLDIR%', $dir)",
+        "Set-Content \"$dir\\install.reg\" $content1 -Encoding 'utf8' -Force",
+        "(Select-String \"$dir\\Avisynth_Template.reg\" -Pattern 'CLSID\\\\\\{([\\w-]+)\\}')[0] -match '\\{(?<key_1>[\\w-]+)\\}' | Out-Null",
+        "$key_1 = $Matches['key_1']",
+        "(Select-String \"$dir\\Avisynth_Template.reg\" -Pattern '\"\\{([\\w-]+)\\}\"')[0] -match '\\{(?<key_2>[\\w-]+)\\}' | Out-Null",
+        "$key_2 = $Matches['key_2']",
+        "$content2 = Get-Content \"$dir\\Avisynth_Template.reg\"",
+        "$targets = @('\"Apartment\"', '\"%INSTALLDIR%\\AviSynth.dll\"', '\"%INSTALLDIR%\\AviSynth.dll,0\"', '\"%INSTALLDIR%\"', '\"\"', \"\"\"{$key_2}\"\"\", \"\"\"{$key_1}\"\"\", '\"%INSTALLDIR%\\plugins\"', '\"%INSTALLDIR%\\plugins+\"')",
+        "foreach ($item in $targets) { $content2 = $content2.Replace($item, '-') }",
+        "$content2 = $content2 -replace ('@=\"[\\w?\\s]+\"', '@=-')",
+        "$content2 = $content2.Replace('HKEY_CLASSES_ROOT\\avsfile', '-HKEY_CLASSES_ROOT\\avsfile')",
+        "$content2 = $content2.Replace('@=\"AviSynth Script\"', '')",
+        "$content2 = $content2.Replace('HKEY_CLASSES_ROOT\\avs_auto_file', '-HKEY_CLASSES_ROOT\\avs_auto_file')",
+        "$content2 = $content2.Replace(\"HKEY_CLASSES_ROOT\\CLSID\\{$key_1}\", \"-HKEY_CLASSES_ROOT\\CLSID\\{$key_1}\")",
+        "$content2 = $content2.Replace('HKEY_CLASSES_ROOT\\AVIFile\\Extensions\\AVS', '-HKEY_CLASSES_ROOT\\AVIFile\\Extensions\\AVS')",
+        "$content2 = $content2.Replace('HKEY_LOCAL_MACHINE\\SOFTWARE\\Avisynth', '-HKEY_LOCAL_MACHINE\\SOFTWARE\\Avisynth')",
+        "$content2 = $content2.Replace('HKEY_CURRENT_USER\\Software\\AviSynth', '-HKEY_CURRENT_USER\\Software\\AviSynth')",
+        "Set-Content \"$dir\\uninstall.reg\" $content2 -Encoding 'utf8' -Force",
+        "if ($architecture -eq '32bit') {",
+        "    Remove-Item $dir -Include 'arm64', 'x64' -Recurse; Move-Item \"$dir\\x86\\*\" $dir; Remove-Item \"$dir\\x86\"",
+        "} elseif ($architecture -eq '64bit') {",
+        "    Remove-Item $dir -Include 'arm64', 'x86' -Recurse; Move-Item \"$dir\\x64\\*\" $dir; Remove-Item \"$dir\\x64\"",
+        "} elseif ($architecture -eq 'arm64') {",
+        "    Remove-Item $dir -Include 'x64', 'x86' -Recurse; Move-Item \"$dir\\arm64\\*\" $dir; Remove-Item \"$dir\\arm64\"",
+        "}",
+        "reg import \"$dir\\install.reg\""
+    ],
+    "pre_uninstall": "if ($cmd -eq 'uninstall') { if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }; reg import \"$dir\\uninstall.reg\"; Start-Sleep -Seconds 2 }",
+    "checkver": {
+        "github": "https://api.github.com/repos/AviSynth/AviSynthPlus",
+        "jsonpath": "$.assets..browser_download_url",
+        "regex": "AviSynthPlus_([\\d.]+)_(?<Date>[\\d]+)-filesonly\\.7z"
+    },
+    "autoupdate": {
+        "url": "https://github.com/AviSynth/AviSynthPlus/releases/download/v$version/AviSynthPlus_$version_$matchDate-filesonly.7z",
+        "extract_dir": "AviSynthPlus_$matchDate-filesonly"
+    }
+}
