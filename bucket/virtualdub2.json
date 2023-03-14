@@ -1,0 +1,54 @@
+{
+    "version": "20",
+    "homepage": "http://www.virtualdub2.com/",
+    "description": "An enhanced version of the original VirtualDub with improved usability, and extended to work with new formats and plugins.",
+    "license": "GPL-2.0",
+    "notes": [
+        "To install file associations, run:",
+        "reg import \"$dir\\install-associations.reg\"",
+        "To uninstall file associations, run:",
+        "reg import \"$dir\\uninstall-associations.reg\""
+    ],
+    "url": "https://sourceforge.net/projects/vdfiltermod/files/VirtualDub%20pack/version%2020/VirtualDub2_44282.zip",
+    "hash": "md5:dfcb4d4bf350b91487603da3e887487e",
+    "pre_install": [
+        "if ($architecture -eq '32bit') { Remove-Item $dir -Include '*64.exe', 'plugins64' -Recurse }",
+        "else { Remove-Item $dir -Include '*Dub.exe', 'plugins32' -Recurse; Rename-Item \"$dir\\VirtualDub64.exe\" 'VirtualDub.exe'; Rename-Item \"$dir\\vdub64.exe\" 'vdub.exe' }"
+    ],
+    "bin": "vdub.exe",
+    "shortcuts": [
+        [
+            "VirtualDub.exe",
+            "VirtualDub2"
+        ]
+    ],
+    "post_install": [
+        "$value = (Get-Content \"$dir\\extra\\frameserver64.reg\").Replace('HKEY_LOCAL_MACHINE', 'HKEY_CURRENT_USER')",
+        "$install_content = $value",
+        "$install_content = $install_content.Replace('vdremote64.dll', \"$dir\\extra\\vdremote64.dll\")",
+        "$install_content = $install_content.Replace('vdremote.dll', \"$dir\\extra\\vdremote.dll\")",
+        "Set-Content \"$dir\\install-associations.reg\" $install_content -Encoding 'unicode' -Force",
+        "(Select-String \"$dir\\extra\\frameserver64.reg\" -Pattern 'CLSID\\\\\\{([\\w-]+)\\}')[0] -match '\\{(?<entry>[\\w-]+)\\}' | Out-Null",
+        "$entry = $Matches['entry']; $uninstall_content = $value",
+        "foreach ($item in '\"vdremote.dll\"', '\"Apartment\"', '\"1\"', '\"vdremote64.dll\"') { $uninstall_content = $uninstall_content.Replace($item, '-') }",
+        "$uninstall_content = $uninstall_content -replace ('@=\"[\\w?\\s]+\"', '@=-')",
+        "foreach ($item in 'HKEY_CURRENT_USER\\SOFTWARE\\Classes', 'HKEY_CURRENT_USER\\SOFTWARE\\Wow6432Node\\Classes') {",
+        "    $uninstall_content = $uninstall_content.Replace(\"$item\\CLSID\\{$entry}\", \"-$item\\CLSID\\{$entry}\")",
+        "    $uninstall_content = $uninstall_content.Replace(\"$item\\AVIFile\", \"-$item\\AVIFile\")",
+        "}",
+        "$uninstall_content = $uninstall_content.Replace(\"\"\"{$entry}\"\"\", '-')",
+        "Set-Content \"$dir\\uninstall-associations.reg\" $uninstall_content -Encoding 'unicode' -Force"
+    ],
+    "pre_uninstall": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-associations.reg\"; Start-Sleep -Seconds 2 }",
+    "checkver": {
+        "url": "https://sourceforge.net/projects/vdfiltermod/rss?path=/VirtualDub%20pack/version%2020",
+        "regex": "version\\s([\\d]+)/VirtualDub2_(?<Release>[\\d]+).zip"
+    },
+    "autoupdate": {
+        "url": "https://sourceforge.net/projects/vdfiltermod/files/VirtualDub%20pack/version%20$version/VirtualDub2_$matchRelease.zip",
+        "hash": {
+            "url": "https://sourceforge.net/projects/vdfiltermod/rss?path=/VirtualDub%20pack/version%20$version",
+            "regex": "files/VirtualDub%20pack/version%20$version/$basename/download\"\\sfilesize=\"[\\d]+\"><media:hash\\salgo=\"md5\">$md5"
+        }
+    }
+}
