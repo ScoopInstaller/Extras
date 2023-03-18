@@ -5,20 +5,22 @@
     "license": "GPL-3.0-or-later",
     "url": "https://lags.leetcode.net/Lagarith_1327.zip",
     "hash": "2752a26d08251553469e35d2327544b7b2692fa6a4f3decacc0b464ac4c9af65",
+    "extract_dir": "Lagarith_1327",
     "architecture": {
         "32bit": {
-            "extract_dir": "Lagarith_1327\\lagarith32",
-            "pre_install": "Copy-Item \"$dir\\lagarith.dll\" \"$env:windir\\System32\\LAGARITH.DLL\" -Force",
+            "pre_install": [
+                "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+                "Copy-Item \"$dir\\lagarith32\\Lagarith.dll\" \"$env:windir\\System32\\LAGARITH.DLL\" -Force"
+            ],
             "uninstaller": {
                 "script": "Remove-Item \"$env:windir\\System32\\LAGARITH.DLL\" -Force"
             }
         },
         "64bit": {
-            "extract_dir": "Lagarith_1327\\lagarith64",
             "pre_install": [
-                "foreach ($sysDir in \"$env:windir\\System32\\LAGARITH.DLL\", \"$env:windir\\SysWOW64\\LAGARITH.DLL\") {",
-                "   Copy-Item \"$dir\\lagarith.dll\" $sysDir -Force",
-                "}"
+                "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+                "Copy-Item \"$dir\\lagarith32\\Lagarith.dll\" \"$env:windir\\System32\\LAGARITH.DLL\" -Force",
+                "Copy-Item \"$dir\\lagarith64\\Lagarith.dll\" \"$env:windir\\SysWOW64\\LAGARITH.DLL\" -Force"
             ],
             "uninstaller": {
                 "script": [
@@ -30,7 +32,7 @@
         }
     },
     "post_install": [
-        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+        "Remove-Item \"$dir\\install.bat\", \"$dir\\lagarith.inf\"",
         "# Register the Lagarith Lossless Video Codec",
         "New-Item 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\MediaResources\\icm\\VIDC.LAGS' -Force | Out-Null",
         "foreach ($name in 'Description', 'FriendlyName') {",
@@ -42,7 +44,6 @@
     ],
     "pre_uninstall": [
         "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-        "$newDir = $dir.Replace($version, 'current')",
         "# Unregister the Lagarith Lossless Video Codec",
         "Remove-Item 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\MediaResources\\icm\\VIDC.LAGS' -Force -Recurse",
         "Remove-ItemProperty 'HKLM:\\Software\\Microsoft\\Windows NT\\CurrentVersion\\drivers.desc' -Name 'LAGARITH.DLL' -Force",
@@ -51,13 +52,6 @@
     "checkver": "Lagarith\\s(?:Installer|Codec)\\s\\(v([\\d.]+)\\)",
     "autoupdate": {
         "url": "https://lags.leetcode.net/Lagarith_$cleanVersion.zip",
-        "architecture": {
-            "32bit": {
-                "extract_dir": "Lagarith_$cleanVersion\\lagarith32"
-            },
-            "64bit": {
-                "extract_dir": "Lagarith_$cleanVersion\\lagarith64"
-            }
-        }
+        "extract_dir": "Lagarith_$cleanVersion"
     }
 }
