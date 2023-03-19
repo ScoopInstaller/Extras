@@ -22,6 +22,14 @@
         }
     },
     "pre_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Megaupdater.exe\", \"$dir\\uninst*\" -Recurse",
+    "post_install": [
+        "$bit = \"$architecture\".Substring(0,2)",
+        "7z e -bso0 -bse0 -bsp0 -aou -o\"$dir\" \"$cachedir\\megasync#$version#https_mega.nz_MEGAsyncSetup$bit.exe_dl.7z\" `$R0",
+        "if (Test-Path \"$dir\\`$R0\") { if ((7z l -bse0 \"$dir\\`$R0\") -like \"*CPU = x64*\") { Rename-Item \"$dir\\`$R0\" \"$dir\\ShellExtX64.dll\" } else { Rename-Item \"$dir\\`$R0\" \"$dir\\ShellExtX32.dll\" } }",
+        "if (Test-Path \"$dir\\`$R0_1\") { if ((7z l -bse0 \"$dir\\`$R0_1\") -like \"*CPU = x64*\") { Rename-Item \"$dir\\`$R0_1\" \"$dir\\ShellExtX64.dll\" } else { Rename-Item \"$dir\\`$R0_1\" \"$dir\\ShellExtX32.dll\" } }",
+        "Write-Host -ForegroundColor Yellow -BackgroundColor Black 'To enable MEGAsync''s context menu and sync indicator icon for files, run the following command as administrator:'",
+        "Write-Host -ForegroundColor Yellow -BackgroundColor Black \"regsvr32 \"\"$dir\\ShellExtX$bit.dll\"\"\""
+    ],
     "uninstaller": {
         "script": "shortcut_folder $global | Split-Path | Join-Path -ChildPath 'MEGAsync' | Remove-Item -ErrorAction 'SilentlyContinue' -Force -Recurse"
     },
@@ -33,7 +41,8 @@
         ]
     ],
     "checkver": {
-        "github": "https://github.com/meganz/MEGAsync"
+        "url": "https://api.github.com/repos/meganz/MEGAsync/releases",
+        "regex": "v(\\d+.\\d+.\\d+.\\d+)_Win"
     },
     "autoupdate": {
         "architecture": {
