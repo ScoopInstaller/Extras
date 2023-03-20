@@ -23,17 +23,14 @@
         ]
     ],
     "checkver": {
-        "script": [
-            "$path_64bit = [System.Net.HttpWebRequest]::Create('https://www.xmind.app/zen/download/win64/').GetResponse().ResponseUri.LocalPath.TrimStart('/')",
-            "$scriptver = $path_64bit -Replace '.*64bit-([\\d.]+)\\.exe$', '$1'",
-            "Write-Output $scriptver $path_64bit"
-        ],
-        "regex": "(?<version>[\\d.]+)\\s(?<path64bit>.+)"
+        "url": "https://xmind.app/desktop/release-notes/",
+        "regex": ">([\\d.]+) \\((\\d+)\\)</h3>",
+        "replace": "${1}.${2}"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://dl3.xmind.net/$matchPath64bit#/dl.7z"
+                "url": "https://dl3.xmind.net/Xmind-for-Windows-x64bit-$version.exe#/dl.7z"
             }
         }
     }
