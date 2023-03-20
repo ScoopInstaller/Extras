@@ -13,13 +13,6 @@
             "installer": {
                 "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
             }
-        },
-        "32bit": {
-            "url": "https://dl3.xmind.net/XMind-for-Windows-32bit-11.1.2-202111072106.exe#/dl.7z",
-            "hash": "7099f476850e2a3a3d1a71dac1635af914412556dc3b1b3048fc68cec239d2cd",
-            "installer": {
-                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
-            }
         }
     },
     "post_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Recurse",
@@ -32,19 +25,15 @@
     "checkver": {
         "script": [
             "$path_64bit = [System.Net.HttpWebRequest]::Create('https://www.xmind.app/zen/download/win64/').GetResponse().ResponseUri.LocalPath.TrimStart('/')",
-            "$path_32bit = [System.Net.HttpWebRequest]::Create('https://www.xmind.app/zen/download/win32/').GetResponse().ResponseUri.LocalPath.TrimStart('/')",
             "$scriptver = $path_64bit -Replace '.*64bit-([\\d.]+)\\.exe$', '$1'",
-            "Write-Output $scriptver $path_32bit $path_64bit"
+            "Write-Output $scriptver $path_64bit"
         ],
-        "regex": "(?<version>[\\d.]+)\\s(?<path32bit>.+)\\s(?<path64bit>.+)"
+        "regex": "(?<version>[\\d.]+)\\s(?<path64bit>.+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
                 "url": "https://dl3.xmind.net/$matchPath64bit#/dl.7z"
-            },
-            "32bit": {
-                "url": "https://dl3.xmind.net/$matchPath32bit#/dl.7z"
             }
         }
     }
