@@ -1,10 +1,10 @@
 {
     "version": "3.19",
     "description": "Powerful and easy-to-use tool to edit metadata of audio files.",
-    "homepage": "https://www.mp3tag.de",
+    "homepage": "https://www.mp3tag.de/en/",
     "license": {
         "identifier": "Freeware",
-        "url": "http://help.mp3tag.de/misc_license.html"
+        "url": "https://docs.mp3tag.de/license/"
     },
     "notes": [
         "If you want 'mp3tag' as a context menu option run the following commands:",
@@ -23,8 +23,16 @@
         "To find out if you have a have 32bit or 64bit Windows OS, run the following command:",
         "(Get-CimInstance win32_operatingsystem).OSArchitecture"
     ],
-    "url": "https://download.mp3tag.de/mp3tagv319setup.exe#/dl.7z",
-    "hash": "033835d4a5e5af7ab872c58ce2dd8b0d719c5160e679e0f868bf4430f77f13e8",
+    "architecture": {
+        "64bit": {
+            "url": "https://download.mp3tag.de/mp3tagv319-x64-setup.exe#/dl.7z",
+            "hash": "7908e12068075a8f39a2500ee23de1268ea66947379d6c807a4e5c7f5b0627e2"
+        },
+        "32bit": {
+            "url": "https://download.mp3tag.de/mp3tagv319setup.exe#/dl.7z",
+            "hash": "033835d4a5e5af7ab872c58ce2dd8b0d719c5160e679e0f868bf4430f77f13e8"
+        }
+    },
     "pre_install": [
         "'mp3tag.cfg', 'data\\columns.ini' | ForEach-Object {",
         "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
@@ -57,8 +65,18 @@
         "    Start-Process 'regsvr32' -Wait -Verb RunAs -ArgumentList @('/u', \"$dir\\Mp3tagShell.dll\", '/s')",
         "}"
     ],
-    "checkver": "Mp3tag\\s+v([\\w.]+)",
+    "checkver": {
+        "url": "https://www.mp3tag.de/en/download.html",
+        "regex": "(?i)<h\\d>Mp3tag\\s+v(?<version>[\\d.]+[a-z]{0,1})</h\\d>"
+    },
     "autoupdate": {
-        "url": "https://download.mp3tag.de/mp3tagv$cleanVersionsetup.exe#/dl.7z"
+        "architecture": {
+            "64bit": {
+                "url": "https://download.mp3tag.de/mp3tagv$cleanVersion-x64-setup.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://download.mp3tag.de/mp3tagv$cleanVersionsetup.exe#/dl.7z"
+            }
+        }
     }
 }
