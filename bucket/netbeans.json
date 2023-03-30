@@ -1,13 +1,36 @@
 {
-    "version": "15",
+    "version": "17",
     "description": "Quickly and easily develop desktop, mobile, and web applications with Java, JavaScript, HTML5, PHP, C/C++ and more.",
     "homepage": "https://netbeans.org",
     "license": "Apache-2.0",
-    "url": "https://www.apache.org/dist/netbeans/netbeans/15/netbeans-15-bin.zip",
-    "hash": "sha512:5b1a804223ca74c7d00b0f47c5a6bb2b6548193263f87bbd58ed9e846e3241490705dfa5d1fd2c88b2a4fe2db1a8b135640e76dabc4ab9dea2c170ee02c8e30e",
+    "suggest": {
+        "JDK11": "java/openjdk11",
+        "JDK17": "java/openjdk17"
+    },
+    "url": "https://www.apache.org/dist/netbeans/netbeans/17/netbeans-17-bin.zip",
+    "hash": "sha512:f513d86a2a3f86ff56947fa1721426da331d9b5d45a67a4fc460f7eb1cd5e53557eb79ed2feb1dae301012448c05d2bd2c56175fdbd997ba2a09f274d9862dfb",
     "extract_dir": "netbeans",
+    "post_install": [
+        "if ($env:JAVA_HOME) {",
+        "    $conf = Get-Content \"$dir\\etc\\netbeans.conf\"",
+        "    $conf.Replace('#netbeans_jdkhome=\"/path/to/jdk\"', \"netbeans_jdkhome=`\"$env:JAVA_HOME`\"\") | Set-Content \"$dir\\etc\\netbeans.conf\" -Encoding ascii",
+        "    info \"Config entry 'netbeans_jdkhome' has been set to '$env:JAVA_HOME'.\"",
+        "} else {",
+        "    warn \"Environment variable 'JAVA_HOME' is not detected, $app cannot run without JDK.\"",
+        "    warn 'Solutions:'",
+        "    warn '- Reinstall $app after installing JDK'",
+        "    warn \"- Run via command: 'netbeans --jdkhome <path_to_jdk>'\"",
+        "    warn \"- Set config entry 'netbeans_jdkhome' in file: '$dir\\etc\\netbeans.conf' manually.\"",
+        "}"
+    ],
     "architecture": {
         "64bit": {
+            "bin": [
+                [
+                    "bin\\netbeans64.exe",
+                    "netbeans"
+                ]
+            ],
             "shortcuts": [
                 [
                     "bin\\netbeans64.exe",
@@ -16,6 +39,12 @@
             ]
         },
         "32bit": {
+            "bin": [
+                [
+                    "bin\\netbeans.exe",
+                    "netbeans"
+                ]
+            ],
             "shortcuts": [
                 [
                     "bin\\netbeans.exe",

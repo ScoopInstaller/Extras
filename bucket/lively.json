@@ -1,0 +1,34 @@
+{
+    "version": "2.0.6.1",
+    "homepage": "https://livelywallpaper.net/",
+    "description": "A free and open-source software that allows users to set animated desktop wallpapers and screensavers. ",
+    "license": "GPL-3.0",
+    "suggest": {
+        "Microsoft .NET Desktop Runtime": "extras/windowsdesktop-runtime",
+        "VCRedist": "extras/vcredist"
+    },
+    "url": "https://github.com/rocksdanister/lively/releases/download/v2.0.6.1/lively_setup_x86_full_v2061.exe",
+    "hash": "3991f4c4af685c2ff20ebfde2cbdebe27f4f468c11f036a5e3140b43605317c6",
+    "innosetup": true,
+    "shortcuts": [
+        [
+            "Lively.exe",
+            "Lively Wallpaper"
+        ]
+    ],
+    "pre_uninstall": [
+        "if ($cmd -eq 'uninstall') {",
+        "   Remove-ItemProperty 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run' -Name 'Lively' -ErrorAction 'SilentlyContinue' -Force",
+        "}"
+    ],
+    "checkver": {
+        "github": "https://github.com/rocksdanister/lively"
+    },
+    "autoupdate": {
+        "url": "https://github.com/rocksdanister/lively/releases/download/v$version/lively_setup_x86_full_v$cleanVersion.exe",
+        "hash": {
+            "url": "https://github.com/rocksdanister/lively/releases/latest",
+            "regex": ">SHA256</h2>\\n+<p>$sha256<"
+        }
+    }
+}

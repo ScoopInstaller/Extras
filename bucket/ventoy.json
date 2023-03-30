@@ -1,11 +1,11 @@
 {
-    "version": "1.0.84",
+    "version": "1.0.90",
     "description": "Bootable USB drive creator",
     "homepage": "https://www.ventoy.net/en/index.html",
     "license": "GPL-3.0-or-later",
-    "url": "https://github.com/ventoy/Ventoy/releases/download/v1.0.84/ventoy-1.0.84-windows.zip",
-    "hash": "b4c98f0fe3432007a64f6787fe409341f7558bd6a3c0a8312726f744146e67c0",
-    "extract_dir": "ventoy-1.0.84",
+    "url": "https://github.com/ventoy/Ventoy/releases/download/v1.0.90/ventoy-1.0.90-windows.zip",
+    "hash": "a6b62ad5f7cb0690598af747c83b29a233b55c719d221429fb3a73995b1f8d39",
+    "extract_dir": "ventoy-1.0.90",
     "pre_install": [
         "'log.txt', 'Ventoy2Disk.ini' | ForEach-Object {",
         "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" -ItemType File | Out-Null }",
@@ -13,9 +13,33 @@
     ],
     "architecture": {
         "64bit": {
+            "bin": [
+                [
+                    "altexe\\Ventoy2Disk_x64.exe",
+                    "Ventoy2Disk"
+                ]
+            ],
             "shortcuts": [
                 [
                     "altexe\\Ventoy2Disk_X64.exe",
+                    "Ventoy2Disk"
+                ],
+                [
+                    "altexe\\VentoyPlugson_x64.exe",
+                    "VentoyPlugson"
+                ],
+                [
+                    "VentoyVlnk.exe",
+                    "VentoyVlnk",
+                    "-s"
+                ]
+            ]
+        },
+        "32bit": {
+            "bin": "Ventoy2Disk.exe",
+            "shortcuts": [
+                [
+                    "Ventoy2Disk.exe",
                     "Ventoy2Disk"
                 ],
                 [
@@ -29,14 +53,20 @@
                 ]
             ]
         },
-        "32bit": {
+        "arm64": {
+            "bin": [
+                [
+                    "altexe\\Ventoy2Disk_ARM64.exe",
+                    "Ventoy2Disk"
+                ]
+            ],
             "shortcuts": [
                 [
-                    "Ventoy2Disk.exe",
+                    "altexe\\Ventoy2Disk_ARM64.exe",
                     "Ventoy2Disk"
                 ],
                 [
-                    "VentoyPlugson.exe",
+                    "altexe\\VentoyPlugson_x64.exe",
                     "VentoyPlugson"
                 ],
                 [
@@ -57,8 +87,7 @@
     "autoupdate": {
         "url": "https://github.com/ventoy/Ventoy/releases/download/v$version/ventoy-$version-windows.zip",
         "hash": {
-            "url": "https://github.com/ventoy/Ventoy/releases/tag/v$version",
-            "regex": "$basename:\\s+$checksum"
+            "url": "$baseurl/sha256.txt"
         },
         "extract_dir": "ventoy-$version"
     }
