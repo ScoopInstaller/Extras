@@ -1,5 +1,5 @@
 {
-    "version": "22.11.1-4",
+    "version": "23.1.0-1",
     "description": "A conda-forge distribution",
     "homepage": "https://github.com/conda-forge/miniforge",
     "license": "BSD-3-Clause",
@@ -9,14 +9,16 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/conda-forge/miniforge/releases/download/22.11.1-4/Mambaforge-22.11.1-4-Windows-x86_64.exe",
-            "hash": "ff9cc38611211814c5d18e388fb33a421017f2adab1f68cfbdaa42afe858a64a"
+            "url": "https://github.com/conda-forge/miniforge/releases/download/23.1.0-1/Mambaforge-23.1.0-1-Windows-x86_64.exe",
+            "hash": "f28b5f9c896198c11eb085966cc80a4210868c452f1945a338017dfb786144bf"
         }
     },
+    "pre_install": "if ($dir -match ' ') { error 'The installation directory cannot include a space'; break}",
     "installer": {
         "script": [
-            "Start-Process -Wait \"$dir\\$fname\" -ArgumentList @('/S', '/InstallationType=JustMe', '/RegisterPython=0', '/AddToPath=0', '/NoRegistry=1', \"/D=$dir\")",
-            "Remove-Item \"$dir\\$fname\""
+            "Move-Item \"$dir\\$fname\" \"$dir\\..\\$fname\"",
+            "Start-Process -Wait \"$dir\\..\\$fname\" -ArgumentList @('/S', '/InstallationType=JustMe', '/RegisterPython=0', '/AddToPath=0', '/NoRegistry=1', \"/D=$dir\")",
+            "Remove-Item \"$dir\\..\\$fname\""
         ]
     },
     "uninstaller": {
