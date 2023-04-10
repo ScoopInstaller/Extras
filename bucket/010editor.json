@@ -6,7 +6,19 @@
         "identifier": "Proprietary",
         "url": "https://www.sweetscape.com/010editor/manual/License.htm"
     },
-    "notes": "This is a free 30-day trial version. Please buy a copy of it for furthur evaluation.",
+    "notes": [
+        "This is a free 30-day trial version. Please buy a copy of it for furthur evaluation.",
+        "",
+        "To install file associations, run:",
+        "reg import \"$(scoop prefix 010editor)\\install-file-associations.reg\"",
+        "To uninstall file associations, run:",
+        "reg import \"$(scoop prefix 010editor)\\uninstall-file-associations.reg\"",
+        "",
+        "To install the context menu, run:",
+        "reg import \"$(scoop prefix 010editor)\\install-context-menu.reg\"",
+        "To uninstall the context menu, run:",
+        "reg import \"$(scoop prefix 010editor)\\uninstall-context-menu.reg\""
+    ],
     "architecture": {
         "64bit": {
             "url": "https://download.sweetscape.com/010EditorWin64Portable13.0.1.zip",
@@ -19,12 +31,7 @@
             "extract_dir": "010EditorWin32Portable"
         }
     },
-    "bin": [
-        [
-            "AppData\\010Editor.exe",
-            "010editor"
-        ]
-    ],
+    "bin": "AppData\\010Editor.exe",
     "shortcuts": [
         [
             "AppData\\010Editor.exe",
@@ -39,9 +46,24 @@
         "010 Templates",
         "AppData\\Temp"
     ],
+    "post_install": [
+        "Remove-Item \"$dir\\010EditorPortable.exe\"; $scriptsDir = \"$bucketsdir\\extras\\scripts\"",
+        "$appDir = $dir.Replace('\\', '\\\\')",
+        "Get-ChildItem \"$scriptsDir\\010editor\\*.reg\" | ForEach-Object {",
+        "    $content = Get-Content $_",
+        "    $content = $content.Replace('REPLACE_HERE', $appDir)",
+        "    if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "    Set-Content \"$dir\\$($_.Name)\" $content -Encoding 'unicode' -Force",
+        "}"
+    ],
+    "pre_uninstall": [
+        "if ($cmd -eq 'uninstall') {",
+        "    foreach ($regFile in 'uninstall-file-associations.reg', 'uninstall-context-menu.reg') { reg import \"$dir\\$regFile\" }",
+        "}"
+    ],
     "checkver": {
         "url": "https://www.sweetscape.com/download/previous/",
-        "regex": "Download 010 Editor v([\\d.]+)"
+        "regex": "Download\\s010\\sEditor\\sv([\\d.]+)"
     },
     "autoupdate": {
         "architecture": {
@@ -51,6 +73,10 @@
             "32bit": {
                 "url": "https://download.sweetscape.com/010EditorWin32Portable$version.zip"
             }
+        },
+        "hash": {
+            "url": "$url.SHA256.txt",
+            "regex": "$sha256\\s+$basename"
         }
     }
 }
