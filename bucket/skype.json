@@ -1,5 +1,5 @@
 {
-    "version": "8.96.0.207",
+    "version": "0",
     "description": "Communication tool for free calls and chat.",
     "homepage": "https://www.skype.com/",
     "license": {
@@ -16,8 +16,11 @@
         ]
     ],
     "checkver": {
-        "url": "https://github.com/chocolatey-community/chocolatey-packages/raw/master/automatic/skype/skype.nuspec",
-        "regex": "<version>([\\d.]+)</version>"
+        "script": [
+            "$resp = $real_url = [System.Net.HttpWebRequest]::Create('https://go.skype.com/skype.download').GetResponse()",
+            "Write-Output = $resp.ResponseUri.LocalPath"
+        ],
+        "regex": "Skype-([\\d.]+)\\.exe"
     },
     "autoupdate": {
         "url": "https://download.skype.com/s4l/download/win/Skype-$version.exe"
