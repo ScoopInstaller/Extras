@@ -4,7 +4,7 @@
     "homepage": "https://xmind.app/",
     "license": {
         "identifier": "Shareware",
-        "url": "https://www.xmind.net/terms/"
+        "url": "https://xmind.app/terms/"
     },
     "architecture": {
         "64bit": {
@@ -12,13 +12,6 @@
             "hash": "7ce976ef8eedd2b3ac701521a0ceb6a89f5f3b88c5b67f12a0974b88b9b027d2",
             "installer": {
                 "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
-            }
-        },
-        "32bit": {
-            "url": "https://dl3.xmind.net/XMind-for-Windows-32bit-11.1.2-202111072106.exe#/dl.7z",
-            "hash": "7099f476850e2a3a3d1a71dac1635af914412556dc3b1b3048fc68cec239d2cd",
-            "installer": {
-                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
             }
         }
     },
@@ -30,21 +23,14 @@
         ]
     ],
     "checkver": {
-        "script": [
-            "$path_64bit = [System.Net.HttpWebRequest]::Create('https://www.xmind.app/zen/download/win64/').GetResponse().ResponseUri.LocalPath.TrimStart('/')",
-            "$path_32bit = [System.Net.HttpWebRequest]::Create('https://www.xmind.app/zen/download/win32/').GetResponse().ResponseUri.LocalPath.TrimStart('/')",
-            "$scriptver = $path_64bit -Replace '.*64bit-([\\d.]+).exe$', '$1'",
-            "Write-Output $scriptver $path_32bit $path_64bit"
-        ],
-        "regex": "(?<version>[\\d.]+)\\s(?<path32bit>.+)\\s(?<path64bit>.+)"
+        "url": "https://xmind.app/desktop/release-notes/",
+        "regex": ">([\\d.]+) \\((\\d+)\\)</h3>",
+        "replace": "${1}.${2}"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://dl3.xmind.net/$matchPath64bit#/dl.7z"
-            },
-            "32bit": {
-                "url": "https://dl3.xmind.net/$matchPath32bit#/dl.7z"
+                "url": "https://dl3.xmind.net/Xmind-for-Windows-x64bit-$version.exe#/dl.7z"
             }
         }
     }
