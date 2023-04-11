@@ -1,0 +1,37 @@
+{
+    "version": "7.2.25.213",
+    "description": "Foxmail like you've never seen it before.",
+    "homepage": "https://www.foxmail.com/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.foxmail.com/mac/en/terms_of_service"
+    },
+    "url": "https://dldir1.qq.com/foxmail/windows/FoxmailSetup_7.2.25.213.exe#/dl.7z",
+    "hash": "a2ed6b995a29bde883e3f0542ed9a358310130d5117384a0023b1cd19598696a",
+    "pre_install": [
+        "$file = 'FMStorage.list'",
+        "if (!(Test-Path \"$persist_dir\\$file\")) {",
+        "    $CONT = @('')",
+        "    Set-Content \"$dir\\$file\" ($CONT -join \"`r`n\") -Encoding Ascii",
+        "}"
+    ],
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
+    "shortcuts": [
+        [
+            "Foxmail.exe",
+            "Foxmail"
+        ]
+    ],
+    "persist": [
+        "Storage",
+        "Global",
+        "FMStorage.list"
+    ],
+    "checkver": {
+        "url": "https://pc.qq.com/detail/14/detail_14.html",
+        "regex": "FoxmailSetup_([\\d.]+).exe"
+    },
+    "autoupdate": {
+        "url": "https://dldir1.qq.com/foxmail/windows/FoxmailSetup_$version.exe#/dl.7z"
+    }
+}
