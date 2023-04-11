@@ -14,12 +14,8 @@
         }
     },
     "pre_install": [
-        "$conf = 'XMBCSettings.xml'",
-        "if (!(Test-Path \"$persist_dir\\$conf\")) {",
-        "    $cont = \"<?xml version=`\"1.0`\"?>`n<root>`n\"",
-        "    $cont += \"<CheckVersion Days=`\"5`\" Enable=`\"false`\" Beta=`\"false`\" />`n</root>\"",
-        "    Set-Content \"$dir\\$conf\" $cont -Encoding Ascii",
-        "}"
+        "ensure $persist_dir | Out-Null",
+        "Copy-Item \"$persist_dir\\XMBCSettings.xml\" \"$dir\\XMBCSettings.xml\" -ErrorAction 'SilentlyContinue'"
     ],
     "bin": "XMouseButtonControl.exe",
     "shortcuts": [
@@ -28,7 +24,7 @@
             "X-Mouse Button Control"
         ]
     ],
-    "persist": "XMBCSettings.xml",
+    "pre_uninstall": "Copy-Item \"$dir\\XMBCSettings.xml\" \"$persist_dir\\XMBCSettings.xml\" -ErrorAction 'SilentlyContinue'",
     "checkver": {
         "url": "https://www.highrez.co.uk/downloads/xmbc_changelog.htm",
         "regex": "Version ([\\d.]+)</"
