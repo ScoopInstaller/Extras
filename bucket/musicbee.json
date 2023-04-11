@@ -32,16 +32,10 @@
         "}"
     ],
     "checkver": {
-        "script": [
-            "(Invoke-WebRequest 'https://www.majorgeeks.com/files/details/musicbee_portable.html') -match 'MusicBee Portable (?<version>[\\d.]+)' | Out-Null",
-            "$resp = $Matches['version']",
-            "(Invoke-WebRequest 'https://www.majorgeeks.com/mg/getmirror/musicbee_portable,1.html') -match '(?<url>https:.*.zip)' | Out-Null",
-            "$resp += \",\" + $Matches['url']",
-            "Write-Output $resp"
-        ],
-        "regex": "(?<version>[\\d.]+),https://(?<dlurl>.*\\.zip)"
+        "url": "https://www.majorgeeks.com/mg/getmirror/musicbee_portable,1.html",
+        "regex": "MusicBee Portable (?<version>[\\d.]+)[\\s\\S]+https:[\\w.-/]+com/(?<hash>[\\w]+)/[\\w.-/]*Portable_(?<filenameversion>[\\w_]+)\\.zip"
     },
     "autoupdate": {
-        "url": "https://$matchDlurl"
+        "url": "https://files1.majorgeeks.com/$matchHash/multimedia/MusicBeePortable_$matchFilenameversion.zip"
     }
 }
