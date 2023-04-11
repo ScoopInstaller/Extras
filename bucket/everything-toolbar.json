@@ -1,34 +1,58 @@
 {
-    "version": "0.7.4",
-    "homepage": "https://github.com/stnkl/EverythingToolbar",
+    "version": "1.0.5",
+    "homepage": "https://github.com/srwi/EverythingToolbar",
     "description": "Everything integration for the Windows taskbar.",
     "license": "MIT",
     "notes": [
-        "• Enable EverythingToolbar via the context menu of the taskbar",
-        "∘ Note: You will have to open the context menu twice as it doesn't show up the first time you open it.",
-        "• Adjust size and position after unlocking the taskbar. Demonstration video:",
-        "https://user-images.githubusercontent.com/17520641/107118574-19a1bf80-6882-11eb-843a-7e854e5d0684.gif"
+        "If 'everything-toolbar' is not working for you properly please read, https://github.com/srwi/EverythingToolbar#setup",
+        "You may have to sign out or restart your computer in order for 'everything-toolbar' to work correctly."
     ],
-    "depends": "everything-toolbar-scripts",
-    "url": "https://github.com/stnkl/EverythingToolbar/releases/download/0.7.4/EverythingToolbar-0.7.4.msi",
-    "hash": "3982c5605ed0c440ccc24a04ef48870f2546ee34d516471c54af93d8f9c9cf88",
-    "extract_dir": "EverythingToolbar",
+    "url": [
+        "https://github.com/srwi/EverythingToolbar/releases/download/1.0.5/EverythingToolbar-1.0.5.msi",
+        "https://github.com/srwi/EverythingToolbar/files/8919288/EverythingToolbar_install_uninstall.zip"
+    ],
+    "hash": [
+        "d1bbf650adf1ea2786bdd6944b746f762db134ef6aa02225a746e35731141e8a",
+        "f78117a74a924cfed75a304962b251add651f4e87f9b4a552b216e2c9bcba37a"
+    ],
     "pre_install": [
-        "if (Test-Path \"$scoopdir\\apps\\everything-toolbar-scripts\") {",
-        "   Copy-Item \"$scoopdir\\apps\\everything-toolbar-scripts\\current\\*.cmd\" \"$dir\" -ErrorAction 'Stop' -Recurse",
-        "}",
-        "elseif (Test-Path \"$globaldir\\apps\\everything-toolbar-scripts\") {",
-        "   Copy-Item \"$globaldir\\apps\\everything-toolbar-scripts\\current\\*.cmd\" \"$dir\" -ErrorAction 'Stop' -Recurse",
-        "}",
+        "$replacer1 = (Get-Content \"$dir\\install.cmd\")",
+        "$replacer1 = $replacer1.Replace('pause', '')",
+        "$replacer1 | Set-Content \"$dir\\install.cmd\"",
+        "$replacer2 = (Get-Content \"$dir\\uninstall.cmd\")",
+        "$replacer2 = $replacer2.Replace('pause', '')",
+        "$replacer2 | Set-Content \"$dir\\uninstall.cmd\"",
         "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
         "Start-Process 'cmd' -Wait -Verb 'RunAs' -WindowStyle 'Hidden' -ArgumentList @('/c', \"$dir\\install.cmd\"); Stop-Process -Name 'explorer' -Force"
     ],
+    "shortcuts": [
+        [
+            "EverythingToolbar.Launcher.exe",
+            "EverythingToolbar Launcher"
+        ]
+    ],
     "pre_uninstall": [
         "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-        "Start-Process 'cmd' -Wait -Verb 'RunAs' -WindowStyle 'Hidden' -ArgumentList @('/c', \"$dir\\uninstall.cmd\"); Start-Sleep -Seconds 2"
+        "Start-Process 'cmd' -Wait -Verb 'RunAs' -WindowStyle 'Hidden' -ArgumentList @('/c', \"$dir\\uninstall.cmd\"); Start-Sleep -Seconds 2",
+        "taskkill /F /IM 'explorer.exe' | Out-Null && Start-Process 'explorer.exe' -Wait -WindowStyle 'Hidden'"
     ],
-    "checkver": "github",
+    "extract_dir": "EverythingToolbar",
+    "checkver": {
+        "script": [
+            "$ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'",
+            "$url = 'https://github.com/srwi/EverythingToolbar/wiki/Installation-per-user-(experimental)'",
+            "(Invoke-RestMethod $url -UserAgent $ua) -match 'files/(?<scriptVer>[\\w]+)' | Out-Null",
+            "$scriptVersion = $Matches['scriptVer']",
+            "(Invoke-RestMethod 'https://github.com/srwi/EverythingToolbar/releases/latest' -UserAgent $ua) -match 'tag/(?<mainVer>[\\d.]+)' | Out-Null",
+            "$mainVersion = $Matches['mainVer']",
+            "Write-Output \"$scriptVersion $mainVersion\""
+        ],
+        "regex": "(?<Script_version>[\\w]+)\\s([\\d.]+)"
+    },
     "autoupdate": {
-        "url": "https://github.com/stnkl/EverythingToolbar/releases/download/$version/EverythingToolbar-$version.msi"
+        "url": [
+            "https://github.com/srwi/EverythingToolbar/releases/download/$version/EverythingToolbar-1.0.5.msi",
+            "https://github.com/srwi/EverythingToolbar/files/$matchScript_version/EverythingToolbar_install_uninstall.zip"
+        ]
     }
 }
