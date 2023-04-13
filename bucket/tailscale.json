@@ -1,25 +1,38 @@
 {
-    "version": "1.36.2",
+    "version": "1.38.4",
     "description": "Tailscale a WireGuard based mesh VPN, used to connect your computers and other devices together securely without proxies.",
     "homepage": "https://tailscale.com",
     "license": "BSD-3-Clause",
+    "notes": [
+        "Start Tailscale with Windows by running:",
+        "reg import \"$dir\\add-startup.reg\""
+    ],
     "architecture": {
         "64bit": {
-            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.36.2-amd64.msi",
-            "hash": "2ee3f08cbaa108574d44f820484fb9d8fb21eeae80e0cef2e1fbbe4e55db92bd"
+            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.38.4-amd64.msi",
+            "hash": "e5b4acb075f4e6c58fdb37696d5edff30d21a61aaf8b74c84b1212cb246788d2"
         },
         "32bit": {
-            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.36.2-x86.msi",
-            "hash": "31b6b57acc40de1c72d5cde32e93b30a9d99c6baeea16c16c71fd73db6ca9e1d"
+            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.38.4-x86.msi",
+            "hash": "fd32450cc264374e11baf533e963eb413498cf4acc97ab392b83c4dc028af9b8"
         },
         "arm64": {
-            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.36.2-arm64.msi",
-            "hash": "f1ad8bc33cb942c6a39a9e0771e256892b5f8511aaba934fe8d9b6429ce96ed3"
+            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.38.4-arm64.msi",
+            "hash": "37e60882da493a94828119281cac13d97c73d09322e2a1d796702cafd6167f0a"
         }
     },
+    "pre_install": "if (!(is_admin)) {error 'This package requires admin rights to install'; break}",
     "post_install": [
-        "if (!(is_admin)) {error 'This package requires admin rights to install'; break}",
-        "tailscale-ipn.exe /install"
+        "tailscale-ipn.exe /install",
+        "$dirpath = $dir.Replace('\\', '\\\\')",
+        "'add-startup.reg', 'remove-startup.reg' | ForEach-Object {",
+        "    if (Test-Path \"$bucketsdir\\extras\\scripts\\$app\\$_\") {",
+        "        $content = Get-Content \"$bucketsdir\\extras\\scripts\\$app\\$_\"",
+        "        $content = $content.Replace('$dir', $dirpath)",
+        "        if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "        $content | Set-Content -Path \"$dir\\$_\"",
+        "    }",
+        "}"
     ],
     "pre_uninstall": [
         "if (!(is_admin)) { error 'Admin rights are required to uninstall'; break }",
@@ -27,7 +40,10 @@
         "Stop-Service -Name 'Tailscale' -Force -ErrorAction SilentlyContinue | Out-Null"
     ],
     "uninstaller": {
-        "script": "tailscale-ipn.exe /uninstall"
+        "script": [
+            "tailscale-ipn.exe /uninstall",
+            "if ($cmd -eq 'uninstall') { reg import \"$dir\\remove-startup.reg\" }"
+        ]
     },
     "extract_dir": "Tailscale",
     "bin": [
