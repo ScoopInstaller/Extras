@@ -1,28 +1,28 @@
 {
-    "version": "0.67.1",
+    "version": "0.69.1",
     "description": "A set of utilities for power users to tune and streamline their Windows experience for greater productivity.",
     "homepage": "https://github.com/microsoft/PowerToys",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/microsoft/PowerToys/releases/download/v0.67.1/PowerToysSetup-0.67.1-x64.exe",
-            "hash": "a5ad6bca1df8a9399a56334a96ccf49b1e55005b369493b2081388ae7bdc1fb4"
+            "url": "https://github.com/microsoft/PowerToys/releases/download/v0.69.1/PowerToysUserSetup-0.69.1-x64.exe",
+            "hash": "662e4082a788df808bfb34c8d922c8b15835632808ce8c93db7e13d9f2b984ba"
         },
         "arm64": {
-            "url": "https://github.com/microsoft/PowerToys/releases/download/v0.67.1/PowerToysSetup-0.67.1-arm64.exe",
-            "hash": "e6f4e41c4b35b2f1f9262e4d954254d64769d68bddfddec67b5626e58dce3842"
+            "url": "https://github.com/microsoft/PowerToys/releases/download/v0.69.1/PowerToysUserSetup-0.69.1-arm64.exe",
+            "hash": "cbd35e2f0dcef16e902c6f5110224618e0e272b8afdba3468f7ad32978603a51"
         }
     },
     "installer": {
         "script": [
             "Expand-DarkArchive \"$dir\\$fname\" \"$dir\\.tmp\"",
-            "Get-ChildItem \"$dir\\.tmp\\AttachedContainer\\PowerToysSetup*.msi\" | Rename-Item -NewName 'PowerToysSetup.msi' -Force",
+            "Get-ChildItem \"$dir\\.tmp\\AttachedContainer\\PowerToysUserSetup*.msi\" | Rename-Item -NewName 'PowerToysSetup.msi' -Force",
             "Expand-MsiArchive \"$dir\\.tmp\\AttachedContainer\\PowerToysSetup.msi\" \"$dir\" -ExtractDir 'PowerToys'",
             "Remove-Item \"$dir\\.tmp\", \"$dir\\$fname\" -Force -Recurse"
         ]
     },
     "post_install": [
-        "foreach ($f in @('Settings', 'modules\\FileLocksmith', 'modules\\Hosts', 'modules\\MeasureTool', ",
+        "foreach ($f in @('modules\\FileLocksmith', 'modules\\Hosts', 'modules\\MeasureTool', ",
         "                 'modules\\PowerRename')) {",
         "    Get-ChildItem -Path \"$dir\\dll\\WinAppSDK\" | ForEach-Object {",
         "        New-Item -ItemType HardLink -Path \"$dir\\$f\\$($_.Name)\" -Value $_.FullName | Out-Null",
@@ -30,7 +30,8 @@
         "}",
         "foreach ($f in @('Settings', 'modules\\Awake', 'modules\\ColorPicker', 'modules\\FancyZones', ",
         "                 'modules\\FileExplorerPreview', 'modules\\FileLocksmith', 'modules\\Hosts', 'modules\\ImageResizer', ",
-        "                 'modules\\launcher', 'modules\\MeasureTool', 'modules\\PowerAccent', 'modules\\PowerOCR')) {",
+        "                 'modules\\launcher', 'modules\\MeasureTool', 'modules\\MouseUtils\\MouseJumpUI', ",
+        "                 'modules\\PowerAccent', 'modules\\PowerOCR')) {",
         "    Get-ChildItem -Path \"$dir\\dll\\Interop\" | ForEach-Object {",
         "        New-Item -ItemType HardLink -Path \"$dir\\$f\\$($_.Name)\" -Value $_.FullName | Out-Null",
         "    }",
@@ -49,17 +50,17 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/microsoft/PowerToys/releases/download/v$version/PowerToysSetup-$version-x64.exe",
+                "url": "https://github.com/microsoft/PowerToys/releases/download/v$version/PowerToysUserSetup-$version-x64.exe",
                 "hash": {
                     "url": "https://github.com/microsoft/PowerToys/releases/tag/v$version",
                     "regex": ">$sha256<"
                 }
             },
             "arm64": {
-                "url": "https://github.com/microsoft/PowerToys/releases/download/v$version/PowerToysSetup-$version-arm64.exe",
+                "url": "https://github.com/microsoft/PowerToys/releases/download/v$version/PowerToysUserSetup-$version-arm64.exe",
                 "hash": {
                     "url": "https://github.com/microsoft/PowerToys/releases/tag/v$version",
-                    "regex": "ARM64 Installer Hash[\\s\\S]*>$sha256<"
+                    "regex": ">(?:[a-fA-F0-9]{64})<[\\s\\S]*?>([a-fA-F0-9]{64})<"
                 }
             }
         }
