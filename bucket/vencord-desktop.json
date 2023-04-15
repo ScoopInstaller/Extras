@@ -1,0 +1,36 @@
+{
+    "version": "0.1.8",
+    "description": "Vencord Desktop is a free/libre and open source cross platform desktop app aiming to give you a snappier Discord experience with Vencord pre-installed",
+    "homepage": "https://github.com/Vencord/Desktop",
+    "license": "GPL-3.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Vencord/Desktop/releases/download/v0.1.8/Vencord-Desktop-Setup-0.1.8.exe#/dl.7z",
+            "hash": "sha512:694effae8803a5554dc00d9ca5eeaa9334e2bbad7cfbe9f98a09d52fe2364498574628db874a0adb20d245b05ab4a86708270fb878e321b6b79a1fe4ef5af880",
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse"
+            ]
+        }
+    },
+    "pre_uninstall": "Stop-Process -Name 'Vencord Desktop' -ErrorAction SilentlyContinue",
+    "bin": "Vencord Desktop.exe",
+    "shortcuts": [
+        [
+            "Vencord Desktop.exe",
+            "Vencord Desktop"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Vencord/Desktop/releases/download/v0.1.8/Vencord-Desktop-Setup-$version.exe#/dl.7z"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512:\\s$base64"
+        }
+    }
+}
