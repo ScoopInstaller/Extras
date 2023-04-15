@@ -4,12 +4,12 @@
     "description": "A website editor that lets you have total control. Modify any element and style the way you want.",
     "license": "Freeware",
     "url": "https://openelement.uk/Files/Other/openElement.exe",
-    "hash": "22F33F86128B59D3911702150EDA6438C2275065C765EE550491A601FF568AE6",
+    "hash": "22f33f86128b59d3911702150eda6438c2275065c765ee550491a601ff568ae6",
     "pre_install": [
-        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-        "Start-Process \"$dir\\openElement.exe\" -Wait -Verb 'RunAs' -WindowStyle 'Hidden' -ArgumentList @('/extract', '/exenoui'); Start-Sleep -Seconds 2",
-        "Remove-Item \"$dir\\openElement.exe\"; Get-ChildItem \"$dir\\*\" -Attributes 'D' | Rename-Item -NewName 'extracted_folder'",
-        "Move-Item \"$dir\\extracted_folder\\*\" \"$dir\" -Exclude @('Uninstall.exe', 'updater.exe', 'openElement.msi'); Remove-Item \"$dir\\extracted_folder\" -Recurse"
+        "$env:__COMPAT_LAYER='RunAsInvoker'; Start-Process \"$dir\\$fname\" -Wait -ArgumentList @('/extract', '/exenoui')",
+        "Get-ChildItem \"$dir\" -Directory | Rename-Item -NewName '_EXTRACTED'",
+        "Get-ChildItem \"$dir\\_EXTRACTED\\*\" | Move-Item -Destination \"$dir\" -Force",
+        "Remove-Item \"$dir\\_EXTRACTED\", \"$dir\\openElement.msi\", \"$dir\\Uninstall.exe\", \"$dir\\updater.exe\" -Force -Recurse"
     ],
     "shortcuts": [
         [
