@@ -1,14 +1,15 @@
 {
-    "version": "6.9.9",
+    "version": "6.11.0-build-317",
     "description": "An easy to use Cloud Downloader, BitTorrent Client and Media Player. Search, Download, Play, Share",
     "homepage": "http://www.frostwire.com",
     "license": "Freeware",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/frostwire/frostwire/releases/download/frostwire-desktop-6.9.9-build-313/frostwire-6.9.9.windows.github.exe#/dl.7z",
-            "hash": "cf828748c541b254dee1812932197272fa8cec9a0742e9d92d2a9eed0998db10"
+            "url": "https://sourceforge.net/projects/frostwire/files/frostwire-desktop-6.11.0-build-317/frostwire-6.11.0.windows.github.exe#/dl.7z",
+            "hash": "sha1:3a3646f4f67f93effef9695e5f379f9869c9b6ea"
         }
     },
+    "pre_install": "Remove-Item \"$dir\\`$*\" -Recurse",
     "shortcuts": [
         [
             "FrostWire.exe",
@@ -16,14 +17,14 @@
         ]
     ],
     "checkver": {
-        "url": "https://api.github.com/repos/frostwire/frostwire/releases/latest",
-        "jsonpath": "$.tag_name",
-        "regex": "frostwire-desktop-(?<version>[\\d.]+)-build-(?<extra>[\\d.]+)"
+        "sourceforge": "frostwire",
+        "regex": "frostwire-desktop-([\\d.]+)-build-(?<build>\\d+)",
+        "replace": "${1}-build-${2}"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/frostwire/frostwire/releases/download/frostwire-desktop-$version-build-$matchExtra/frostwire-$version.windows.github.exe#/dl.7z"
+                "url": "https://sourceforge.net/projects/frostwire/files/frostwire-desktop-$matchHead-build-$matchBuild/frostwire-$matchHead.windows.github.exe#/dl.7z"
             }
         }
     }
