@@ -2,16 +2,17 @@
     "version": "2.10.0",
     "homepage": "https://labplot.kde.org/",
     "description": "A free, open source, and cross-platform Data Visualization and Analysis software accessible to everyone.",
-    "license": "Apache-2.0,BSD-3-Clause,CC0-1.0,CC-BY-3.0,GPL-2.0-only,GPL-2.0-or-later,GPL-3.0-only,GPL-3.0-or-later,LGPL-3.0-or-later,MIT",
+    "license": "GPL-2.0-or-later",
     "architecture": {
         "64bit": {
             "url": "https://download.kde.org/stable/labplot/labplot-2.10.0.exe#/dl.7z",
             "hash": "f48efcebd8d9fca59153e0ae08dade8708435f60f3e6233d5ef000e97ad6712c"
         }
     },
+    "extract_to": "_EXTRACTED",
     "pre_install": [
-        "Remove-Item \"$dir\" -Include 'unins*', '$*', '7z*' -Recurse; Get-ChildItem \"$dir\\labplot-*.7z\" | Rename-Item -NewName 'labplot.7z'",
-        "Expand-7zipArchive \"$dir\\labplot.7z\" \"$dir\" -Removal"
+        "Expand-7zipArchive (Get-ChildItem \"$dir\\_EXTRACTED\\labplot-*.7z\").FullName \"$dir\"",
+        "Remove-Item \"$dir\\_EXTRACTED\" -Force -Recurse"
     ],
     "shortcuts": [
         [
@@ -20,7 +21,7 @@
         ]
     ],
     "checkver": {
-        "url": "https://labplot.kde.org/download/",
+        "url": "https://download.kde.org/stable/labplot/",
         "regex": "labplot-([\\d.]+)\\.exe"
     },
     "autoupdate": {
