@@ -1,20 +1,22 @@
 {
-    "version": "3.3.4.0",
-    "description": "UserBenchmark - Speed test your PC in less than a minute.",
+    "version": "3.5.5.0",
+    "description": "Speed test PC in less than a minute.",
     "homepage": "https://www.userbenchmark.com/",
-    "license": "Unknown",
+    "license": "Freeware",
     "url": "https://www.userbenchmark.com/resources/download/UserBenchmark.zip",
-    "hash": "eb3440a597bb49257ed7f0c5ca043303f7bdb5c460e231588cea941b7652a586",
+    "hash": "955fb621ef482c08082a31048eeb61f7da48595a6e422da201ff3a2993cd1f55",
     "extract_dir": "UserBenchmark",
-    "pre_install": "ensure \"$persist_dir\" | Out-Null; Copy-Item \"$persist_dir\\User\\*\" \"$dir\\User\" -Recurse -ErrorAction 'SilentlyContinue'",
-    "bin": "UserBenchmark.exe",
+    "pre_install": "Copy-Item \"$persist_dir\\User\" \"$dir\" -Force -Recurse -ErrorAction SilentlyContinue",
     "shortcuts": [
         [
             "UserBenchmark.exe",
             "UserBenchmark"
         ]
     ],
-    "pre_uninstall": "Copy-Item \"$dir\\User\" \"$persist_dir\\User\" -Recurse -ErrorAction 'SilentlyContinue'",
+    "pre_uninstall": [
+        "ensure \"$persist_dir\\User\" | Out-Null",
+        "Copy-Item \"$dir\\User\\*\" \"$persist_dir\\User\" -Exclude 'manifest.dat' -Force -Recurse"
+    ],
     "checkver": {
         "url": "https://www.filehorse.com/download-userbenchmark/",
         "regex": "<p>UserBenchmark\\s([\\d.]+)"
