@@ -1,0 +1,55 @@
+{
+    "version": "170b",
+    "homepage": "https://effekseer.github.io/",
+    "description": "An open source tool that allows easy creation of beautiful particle effects for games and movies. ",
+    "license": "MIT",
+    "architecture": {
+        "32bit": {
+            "url": "https://github.com/effekseer/Effekseer/releases/download/170b/Effekseer170bWin_x86.zip",
+            "hash": "28469ec9993ba89f471a2d2e2d9b4a2f1acbbd60b42b1d4de5cd12d4938b5d17"
+        },
+        "64bit": {
+            "url": "https://github.com/effekseer/Effekseer/releases/download/170b/Effekseer170bWin.zip",
+            "hash": "dbba33dceb9b2d96598dc5d79e599cdd2f585c7c952c8b24c39b592bfe6daa90"
+        }
+    },
+    "installer": {
+        "script": [
+            "foreach ($c_file in 'Effekseer.imgui.ini', 'config.option.xml', 'config.recent.xml', 'Effekseer.config.Dock.xml') {",
+            "    Copy-Item \"$persist_dir\\Tool\\$c_file\" \"$dir\\Tool\\$c_file\" -ErrorAction 'SilentlyContinue'",
+            "}",
+            "if (!(Test-Path \"$persist_dir\\Tool\\config.network.xml\")) { New-Item \"$dir\\Tool\\config.network.xml\" | Out-Null }"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "foreach ($c_file in 'Effekseer.imgui.ini', 'config.option.xml', 'config.recent.xml', 'Effekseer.config.Dock.xml') {",
+            "    Copy-Item \"$dir\\Tool\\$c_file\" \"$persist_dir\\Tool\\$c_file\" -ErrorAction 'SilentlyContinue'",
+            "}"
+        ]
+    },
+    "shortcuts": [
+        [
+            "Tool\\Effekseer.exe",
+            "Effekseer"
+        ]
+    ],
+    "persist": [
+        "Tool\\config.network.xml",
+        "Tool\\scripts"
+    ],
+    "checkver": {
+        "github": "https://github.com/effekseer/Effekseer",
+        "regex": "tag/([\\w]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "32bit": {
+                "url": "https://github.com/effekseer/Effekseer/releases/download/$version/Effekseer$versionWin_x86.zip"
+            },
+            "64bit": {
+                "url": "https://github.com/effekseer/Effekseer/releases/download/$version/Effekseer$versionWin.zip"
+            }
+        }
+    }
+}
