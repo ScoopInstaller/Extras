@@ -14,7 +14,7 @@
     "hash": "f0f417e2e524bc3c1c72c1a2fcb0cdca847128490064856b376bfac42ca8b55e",
     "pre_install": [
         "Start-Process \"$dir\\$fname\" -Args @('/SILENT', \"/DIR=$dir\", '/NOPROG', '/NODESK') -Wait",
-        "Copy-Item \"$persist_dir\\FastCopy.log\", \"$persist_dir\\FastCopy2.ini\" -Destination \"$dir\" -ErrorAction SilentlyContinue",
+        "Copy-Item \"$persist_dir\\FastCopy.log\", \"$persist_dir\\FastCopy2.ini\", \"$persist_dir\\Log\" -Destination \"$dir\" -Force -Recurse -ErrorAction SilentlyContinue",
         "Remove-Item \"$dir\\$fname\""
     ],
     "bin": [
@@ -32,9 +32,9 @@
             "FastCopy Manual"
         ]
     ],
-    "persist": "Log",
     "pre_uninstall": [
-        "Copy-Item \"$dir\\FastCopy.log\", \"$dir\\FastCopy2.ini\" -Destination \"$persist_dir\" -ErrorAction SilentlyContinue",
+        "ensure \"$persist_dir\\Log\"",
+        "Copy-Item \"$dir\\FastCopy.log\", \"$dir\\FastCopy2.ini\", \"$dir\\Log\" -Destination \"$persist_dir\" -Force -Recurse -ErrorAction SilentlyContinue",
         "Start-Process \"$dir\\setup.exe\" -Args @('/SILENT', '/r') -Wait"
     ],
     "checkver": "Download v([\\d.]+)",
