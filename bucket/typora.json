@@ -12,6 +12,10 @@
             "url": "https://download.typora.io/windows/typora-setup-x64-1.5.12.exe",
             "hash": "1b7e6d1e2c232408755ecfda1e723d2a10e7d50a9ab7ffd750edb17dfa51cc49"
         },
+        "arm64": {
+            "url": "https://download.typora.io/windows/typora-setup-arm64-1.5.8.exe",
+            "hash": "d9bf7042174e9647e2034316dec1adc9adeb6b4776fe420edcf4b6dcc170139e"
+        },
         "32bit": {
             "url": "https://download.typora.io/windows/typora-setup-ia32-1.5.12.exe",
             "hash": "1455041c96b0b8e4fc069e5728ae300a68b1627d95b7c840f55871607407396b"
@@ -26,16 +30,32 @@
         ]
     ],
     "checkver": {
-        "url": "https://typora.io/releases/stable",
-        "regex": "<h2>([\\d.]+)"
+        "script": [
+            "$url = 'https://typora.io/releases/stable'",
+            "$cont = (Invoke-WebRequest $url).Content",
+            "$r = 'typora-setup-x64-([\\d.]+)\\.' ",
+            "if (!($cont -match $r)) { error \"Could not match $r in $url\"; continue }",
+            "$version = $matches[1]",
+            "$r = 'typora-setup-ia32-([\\d.]+)\\.' ",
+            "if (!($cont -match $r)) { error \"Could not match $r in $url\"; continue }",
+            "$ia32 = $matches[1]",
+            "$r = 'typora-setup-arm64-([\\d.]+)\\.' ",
+            "if (!($cont -match $r)) { error \"Could not match $r in $url\"; continue }",
+            "$arm64 = $matches[1]",
+            "Write-Output $version $ia32 $arm64"
+        ],
+        "regex": "([\\d.]+) (?<ia32>[\\d.]+) (?<arm64>[\\d.]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
                 "url": "https://download.typora.io/windows/typora-setup-x64-$version.exe"
             },
+            "arm64": {
+                "url": "https://download.typora.io/windows/typora-setup-arm64-$matchArm64.exe"
+            },
             "32bit": {
-                "url": "https://download.typora.io/windows/typora-setup-ia32-$version.exe"
+                "url": "https://download.typora.io/windows/typora-setup-ia32-$matchIa32.exe"
             }
         }
     }
