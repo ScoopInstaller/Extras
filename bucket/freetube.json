@@ -13,10 +13,19 @@
             "hash": "f2cdfc564c66cc3476f97e8f7e4aa084671bb576e61ae7e54ca71de88b55f611"
         }
     },
+    "pre_install": [
+        "if (Test-Path \"$env:AppData\\freetube\") {",
+        "    info '[Persistent AppData]: Moving user data...'",
+        "    ensure \"$persist_dir\\UserData\" | Out-Null",
+        "    Copy-Item \"$env:AppData\\freetube\\*\" \"$persist_dir\\UserData\\\" -Recurse -Force -ErrorAction 'SilentlyContinue'",
+        "    Remove-Item \"$env:AppData\\freetube\" -Recurse -Force -ErrorAction 'SilentlyContinue'",
+        "}"
+    ],
     "shortcuts": [
         [
             "FreeTube.exe",
-            "FreeTube"
+            "FreeTube",
+            "--user-data-dir=\"$persist_dir\\UserData\""
         ]
     ],
     "checkver": {
