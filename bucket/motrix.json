@@ -9,14 +9,21 @@
             "hash": "sha512:b8af895ba86f77ed5837b8a65580ec828b45fab647998bc1c82dc82426b857340a4306fc5222a6fb64c0f1c338bb221b90d8f563c7c7aa87d46664722ad56ab9",
             "pre_install": [
                 "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-                "Remove-Item \"$dir\\`$*\" -Force -Recurse"
+                "Remove-Item \"$dir\\`$*\" -Force -Recurse",
+                "if (Test-Path \"$env:AppData\\motrix\") {",
+                "    info '[Persistent AppData]: Moving user data...'",
+                "    ensure \"$persist_dir\\UserData\" | Out-Null",
+                "    Copy-Item \"$env:AppData\\motrix\\*\" \"$persist_dir\\UserData\\\" -Recurse -Force -ErrorAction 'SilentlyContinue'",
+                "    Remove-Item \"$env:AppData\\motrix\" -Recurse -Force -ErrorAction 'SilentlyContinue'",
+				"}"
             ]
         }
     },
     "shortcuts": [
         [
             "Motrix.exe",
-            "Motrix"
+            "Motrix",
+      		"--user-data-dir=\"$persist_dir\\UserData\""
         ]
     ],
     "checkver": {
