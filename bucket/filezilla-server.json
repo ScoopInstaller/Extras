@@ -1,5 +1,5 @@
 {
-    "version": "1.6.6",
+    "version": "1.7.0",
     "description": "Open-source FTP server software",
     "homepage": "https://filezilla-project.org/",
     "license": "GPL-2.0-or-later",
@@ -10,15 +10,17 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://raw.githubusercontent.com/ScoopInstaller/Binary/master/filezilla-server/FileZilla_Server_1.6.6_win64-setup.exe#/dl.7z",
-            "hash": "sha512:a1547119436936f592ffc84c57ec9d82df889d2eb3d8532c7acbf151b2a87eec2bb0a2607b4b165fa3d5c45500e09afe26294094bc3893fecf92e19da7a8346b"
+            "url": "https://packages.chocolatey.org/filezilla.server.1.7.0.nupkg",
+            "hash": "ff1e9a1f932af6d4a00a1eecd6a0edac8fca82459692e8372070c32e707477a7"
         }
     },
+    "extract_dir": "tools",
     "pre_install": [
         "if (!(is_admin)) {error 'This package requires admin rights to install'; break}",
+        "Expand-7zipArchive \"$dir\\FileZilla_Server_*_win64-setup.exe\" \"$dir\" -Removal",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall.exe.nsis\", \"$dir\\*.ps1\", \"$dir\\*.xml\" -Force -Recurse",
         "Set-Content \"$dir\\start-filezilla-server.bat\" \"net start `\"FileZilla Server`\"\" -Encoding ascii",
-        "Set-Content \"$dir\\stop-filezilla-server.bat\" \"net stop `\"FileZilla Server`\"\" -Encoding ascii",
-        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall.exe.nsis\" -Force -Recurse"
+        "Set-Content \"$dir\\stop-filezilla-server.bat\" \"net stop `\"FileZilla Server`\"\" -Encoding ascii"
     ],
     "post_install": [
         "Write-Host 'Installing FileZilla Server service...'",
@@ -57,5 +59,20 @@
             "",
             "filezilla-server.exe"
         ]
-    ]
+    ],
+    "checkver": {
+        "url": "https://community.chocolatey.org/packages/filezilla.server",
+        "regex": "<meta property=\"og:title\" content=\"FileZilla Server ([\\d.]+)\">"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://packages.chocolatey.org/filezilla.server.$version.nupkg",
+                "hash": {
+                    "url": "https://community.chocolatey.org/packages/filezilla.server/$version",
+                    "regex": "$sha256.*?$basename"
+                }
+            }
+        }
+    }
 }
