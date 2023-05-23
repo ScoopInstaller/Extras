@@ -1,5 +1,5 @@
 {
-    "version": "1.16.10261.0",
+    "version": "1.17.11391.0",
     "description": "The new Windows Terminal, and the original Windows console host - all in the same place!",
     "homepage": "https://github.com/microsoft/terminal",
     "license": "MIT",
@@ -7,22 +7,26 @@
     "suggest": {
         "vcredist": "extras/vcredist2022"
     },
-    "url": "https://github.com/microsoft/terminal/releases/download/v1.16.10261.0/Microsoft.WindowsTerminal_Win10_1.16.10261.0_8wekyb3d8bbwe.msixbundle#/dl.7z",
-    "hash": "ba6fc6854e713094b4009cf2021e8b4887cff737ab4b9c4f9390462dd2708298",
     "architecture": {
         "64bit": {
-            "pre_install": "Get-ChildItem \"$dir\" -Exclude '*x64.msix' | Remove-Item -Force -Recurse"
+            "url": "https://github.com/microsoft/terminal/releases/download/v1.17.11391.0/Microsoft.WindowsTerminal_1.17.11391.0_x64.zip",
+            "hash": "061e019c311592212c4a8c36abdbdacacb2d875de055fb3e28602900a35ee617"
         },
         "32bit": {
-            "pre_install": "Get-ChildItem \"$dir\" -Exclude '*x86.msix' | Remove-Item -Force -Recurse"
+            "url": "https://github.com/microsoft/terminal/releases/download/v1.17.11391.0/Microsoft.WindowsTerminal_1.17.11391.0_x86.zip",
+            "hash": "5bfd0e7e0ec3bbc54201836f316ac6484e0ec9d192a77c1e24a34c4ec95c28cb"
+        },
+        "arm64": {
+            "url": "https://github.com/microsoft/terminal/releases/download/v1.17.11391.0/Microsoft.WindowsTerminal_1.17.11391.0_arm64.zip",
+            "hash": "f483d0d77097402dbcb3f40c60124a735d8e5ff30f7f1e2da5412a17e0666a6a"
         }
     },
+    "extract_dir": "terminal-1.17.11391.0",
     "installer": {
         "script": [
             "$winVer = [Environment]::OSVersion.Version",
-            "if (($winver.Major -lt '10') -or ($winVer.Build -lt 18362)) { error 'At least Windows 10 19H1 (build 18362) is required.'; break }",
-            "Get-ChildItem \"$dir\" '*.msix' | Select-Object -ExpandProperty Fullname | Expand-7zipArchive -DestinationPath \"$dir\" -Removal",
-            "Get-ChildItem \"$dir\\ProfileIcons\" '*.png' | Rename-Item -NewName { $_.Name.Replace('%7B', '{').Replace('%7D', '}') }"
+            "if (($winver.Major -lt '10') -or ($winVer.Build -lt 19041)) { error 'At least Windows 10 20H1 (build 19041) is required.'; break }",
+            "if (!(Test-Path \"$persist_dir\\.portable\")) { Add-Content \"$dir\\.portable\" '' -Encoding Ascii }"
         ]
     },
     "post_install": [
@@ -35,7 +39,6 @@
         "    }",
         "}"
     ],
-    "pre_uninstall": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }",
     "bin": [
         "WindowsTerminal.exe",
         "wt.exe"
@@ -46,8 +49,28 @@
             "Windows Terminal"
         ]
     ],
+    "persist": [
+        ".portable",
+        "settings"
+    ],
+    "pre_uninstall": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }",
     "checkver": "github",
     "autoupdate": {
-        "url": "https://github.com/microsoft/terminal/releases/download/v$version/Microsoft.WindowsTerminal_Win10_$version_8wekyb3d8bbwe.msixbundle#/dl.7z"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/microsoft/terminal/releases/download/v$version/Microsoft.WindowsTerminal_$version_x64.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/microsoft/terminal/releases/download/v$version/Microsoft.WindowsTerminal_$version_x86.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/microsoft/terminal/releases/download/v$version/Microsoft.WindowsTerminal_$version_arm64.zip"
+            }
+        },
+        "hash": {
+            "url": "https://github.com/microsoft/terminal/releases/tag/v$version",
+            "regex": "(?s)$basename.*?$sha256"
+        },
+        "extract_dir": "terminal-$version"
     }
 }
