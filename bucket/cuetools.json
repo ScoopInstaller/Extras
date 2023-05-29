@@ -13,22 +13,13 @@
         }
     },
     "extract_dir": "CUETools_2.2.3",
-    "post_install": "Remove-Item \"$dir\\user_profiles_enabled\"",
     "pre_install": [
-        "if (Test-Path \"$persist_dir\\CUE Tools\\settings.txt\") {",
-        "    Copy-Item \"$persist_dir\\CUE Tools\\settings.txt\" \"$dir\\CUE Tools\\settings.txt\" -Force",
-        "}",
-        "if (Test-Path \"$persist_dir\\CUERipper\\settings.txt\") {",
-        "    Copy-Item \"$persist_dir\\CUERipper\\settings.txt\" \"$dir\\CUERipper\\settings.txt\" -Force",
-        "}"
+        "ensure \"$dir\\CUE Tools\" | Out-Null",
+        "ensure \"$dir\\CUERipper\" | Out-Null",
+        "if (!(Test-Path \"$persist_dir\\CUE Tools\\settings.txt\")) { New-Item \"$dir\\CUE Tools\\settings.txt\" | Out-Null }",
+        "if (!(Test-Path \"$persist_dir\\CUERipper\\settings.txt\")) { New-Item \"$dir\\CUERipper\\settings.txt\" | Out-Null }"
     ],
-    "uninstaller": {
-        "script": [
-            "ensure \"$persist_dir\" | Out-Null",
-            "Copy-Item \"$dir\\CUE Tools\\settings.txt\" \"$persist_dir\\CUE Tools\\settings.txt\" -Force",
-            "Copy-Item \"$dir\\CUERipper\\settings.txt\" \"$persist_dir\\CUERipper\\settings.txt\" -Force"
-        ]
-    },
+    "post_install": "Remove-Item \"$dir\\user_profiles_enabled\"",
     "bin": "CUETools.Ripper.Console.exe",
     "shortcuts": [
         [
@@ -39,6 +30,10 @@
             "CUETools.exe",
             "CUETools"
         ]
+    ],
+    "persist": [
+        "CUE Tools\\settings.txt",
+        "CUERipper\\settings.txt"
     ],
     "checkver": {
         "github": "https://github.com/gchudov/cuetools.net"
