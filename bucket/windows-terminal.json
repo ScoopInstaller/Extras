@@ -1,16 +1,9 @@
 {
-    "##": "Remove the note about portable mode in 2023-12-01",
     "version": "1.17.11461.0",
     "description": "The new Windows Terminal, and the original Windows console host - all in the same place!",
     "homepage": "https://github.com/microsoft/terminal",
     "license": "MIT",
-    "notes": [
-        "Add Windows Terminal as a context menu option by running `reg import \"$dir\\install-context.reg\"`",
-        "",
-        "Portable mode is enabled from version 1.17.11391.0, please migrate the settings manually:",
-        "original settings dir: \"$env:LOCALAPPDATA\\Packages\\Microsoft.WindowsTerminal_8wekyb3d8bbwe\\LocalState\"",
-        "Portable settsing dir: \"$dir\\settings\""
-    ],
+    "notes": "Add Windows Terminal as a context menu option by running `reg import \"$dir\\install-context.reg\"`",
     "suggest": {
         "vcredist": "extras/vcredist2022"
     },
@@ -29,6 +22,16 @@
         }
     },
     "extract_dir": "terminal-1.17.11461.0",
+    "pre_install": [
+        "# Remove this hint in 2023-12-01",
+        "$settings_path = \"$env:LOCALAPPDATA\\Packages\\Microsoft.WindowsTerminal_8wekyb3d8bbwe\\LocalState\"",
+        "if (!(Test-Path \"$persist_dir\\settings\") -and (Test-Path $settings_path)) {",
+        "  $current_setings = $dir.Replace($version, 'current') + \"\\settings\"",
+        "  warn \"Portable mode is enabled from version 1.17.11391.0, please migrate the settings manually:\"",
+        "  warn \"Original settings dir: `'$settings_path`'\"",
+        "  warn \"Portable settings dir: `'$current_setings`'\"",
+        "}"
+    ],
     "installer": {
         "script": [
             "$winVer = [Environment]::OSVersion.Version",
