@@ -12,37 +12,36 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://repo.anaconda.com/archive/Anaconda3-2023.03-1-Windows-x86_64.exe#/setup.exe",
+            "url": "https://repo.anaconda.com/archive/Anaconda3-2023.03-1-Windows-x86_64.exe",
             "hash": "f13a2ae812d2069654521e7b1d897227ea4af52bff7cd8b3d80e7b2271fc79e4"
         }
     },
     "pre_install": "if ($dir -match ' ') { error 'The installation directory cannot include a space'; break}",
     "installer": {
         "script": [
-            "Move-Item \"$dir\\setup.exe\" \"$dir\\..\\setup.exe\" | Out-Null",
-            "Write-Host 'Installing Anaconda 3. This can take up to 30 minutes on an HDD.' -ForegroundColor Magenta",
-            "# Using Start-Process as a workaround because the installer will not work properly when args are quoted (e.g. \"`\"/S`\"\")",
-            "Start-Process \"$dir\\..\\setup.exe\" -ArgumentList @('/S', '/InstallationType=JustMe', '/RegisterPython=1', '/AddToPath=0', '/NoRegistry=1', \"/D=$dir\") -Wait | Out-Null"
+            "warn 'Installing Anaconda 3. This can take up to 30 minutes on an HDD.'",
+            "# The installer will not work properly when args are quoted (e.g. \"`\"/S`\"\")",
+            "Start-Process \"$dir\\$fname\" -ArgumentList @('/S', '/InstallationType=JustMe', '/RegisterPython=1', '/AddToPath=0', '/NoRegistry=1', \"/D=$dir\\App\") -Wait"
         ]
     },
-    "post_install": "Remove-Item \"$dir\\..\\setup.exe\" -Force | Out-Null",
-    "uninstaller": {
-        "script": [
-            "Start-Process \"$dir\\Uninstall-Anaconda3.exe\" -ArgumentList '/S' -Wait | Out-Null",
-            "# Create a 'dummy' to avoid error because the uninstaller removes the symlink. The does not affect persist.",
-            "if (!(Test-Path \"$dir\\envs\")) { New-Item \"$dir\\envs\" -ItemType Directory | Out-Null }"
-        ]
-    },
+    "post_install": "Remove-Item \"$dir\\$fname\"",
+    "env_add_path": "App\\Scripts",
     "bin": [
-        "python.exe",
-        "pythonw.exe",
+        "App\\python.exe",
+        "App\\pythonw.exe",
         [
-            "python.exe",
+            "App\\python.exe",
             "python3"
         ]
     ],
-    "env_add_path": "Scripts",
-    "persist": "envs",
+    "persist": "App\\envs",
+    "uninstaller": {
+        "script": [
+            "Start-Process \"$dir\\App\\Uninstall-Anaconda3.exe\" -ArgumentList '/S' -Wait",
+            "# Create a 'dummy' to avoid error because the uninstaller removes the symlink. The does not affect persist.",
+            "ensure \"$dir\\App\\envs\" | Out-Null"
+        ]
+    },
     "checkver": {
         "url": "https://docs.anaconda.com/free/anaconda/reference/hashes/win-3-64/",
         "regex": "Anaconda3-([\\d.-]+)-Windows"
@@ -50,7 +49,7 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://repo.anaconda.com/archive/Anaconda3-$version-Windows-x86_64.exe#/setup.exe",
+                "url": "https://repo.anaconda.com/archive/Anaconda3-$version-Windows-x86_64.exe",
                 "hash": {
                     "url": "https://docs.anaconda.com/free/anaconda/reference/hashes/Anaconda3-$version-Windows-x86_64.exe-hash/",
                     "regex": "$sha256"
