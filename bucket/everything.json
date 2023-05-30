@@ -44,8 +44,8 @@
     ],
     "pre_uninstall": [
         "Stop-Process -Name 'Everything' -Force -ErrorAction SilentlyContinue",
-        "$service_installed_by_current_user_via_scoop = (sc.exe qc Everything) -match $dir.Replace('\\', '\\\\')",
-        "if ($service_installed_by_current_user_via_scoop) {",
+        "$service_installed_in_current_dir_via_scoop = (sc.exe qc Everything) -match $dir.Replace('\\', '\\\\')",
+        "if ($service_installed_in_current_dir_via_scoop) {",
         "    if ($(Get-Service -Name Everything -ErrorAction SilentlyContinue).Status -ne 'Stopped') {",
         "        if (!(is_admin) -and $(Get-Service -Name Everything -ErrorAction SilentlyContinue)) { error 'Admin rights are required to stop Everything service'; break }",
         "        Stop-Service -Name 'Everything' -Force -ErrorAction SilentlyContinue | Out-Null",
