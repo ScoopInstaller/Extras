@@ -1,19 +1,22 @@
 {
-    "version": "23.02.05",
+    "version": "23.06.04",
     "description": "QMPlay2 is a video and audio player which can play most formats and codecs.",
     "homepage": "https://github.com/zaps166/QMPlay2",
     "license": "LGPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/zaps166/QMPlay2/releases/download/23.02.05/QMPlay2-Win64-23.02.05.exe#/dl.7z",
-            "hash": "6b9d676e27383dc14afe72cbfde5be98f102ca4650c9d56a6cbccc7feccc7056"
+            "url": "https://github.com/zaps166/QMPlay2/releases/download/23.06.04/QMPlay2-Win64-23.06.04.exe#/dl.7z",
+            "hash": "878c63e009864280391e433583d3e1edd1b81afb9432ae5e07a2a96c7608ad1b"
         },
         "32bit": {
-            "url": "https://github.com/zaps166/QMPlay2/releases/download/21.12.24/QMPlay2-Win32-21.12.24.exe#/dl.7z",
-            "hash": "10f281a9f6f5a0c7572c34a88ad225bf31ee65a26b411af9b1cf9b04dd0cf0b3"
+            "url": "https://github.com/zaps166/QMPlay2/releases/download/23.06.04/QMPlay2-Win32-23.06.04.exe#/dl.7z",
+            "hash": "5f266fb369a7ab6293b9ee5cd70d5323cbacd22e4e0d1ec8fbe64a077efdb5b1"
         }
     },
-    "post_install": "Remove-Item -LiteralPath \"$dir\\`$PLUGINSDIR\" -Force -Recurse",
+    "post_install": [
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Unins*\" -Force -Recurse",
+        "New-Item \"$dir\\portable\" -ErrorAction SilentlyContinue | Out-Null"
+    ],
     "bin": "QMPlay2.exe",
     "shortcuts": [
         [
@@ -30,6 +33,9 @@
             "32bit": {
                 "url": "https://github.com/zaps166/QMPlay2/releases/download/$version/QMPlay2-Win32-$version.exe#/dl.7z"
             }
+        },
+        "hash": {
+            "url": "https://github.com/zaps166/QMPlay2/releases/tag/$version"
         }
     }
 }
