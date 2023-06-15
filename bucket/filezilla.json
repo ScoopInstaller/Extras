@@ -1,21 +1,17 @@
 {
     "##": "This package should be updated manually. See #9179 for details",
-    "version": "3.63.1",
+    "version": "3.64.0",
     "description": "Fast and reliable cross-platform FTP, FTPS and SFTP client with lots of useful features and an intuitive graphical user interface.",
     "homepage": "https://filezilla-project.org/",
     "license": "GPL-2.0-or-later",
-    "architecture": {
-        "64bit": {
-            "url": "https://raw.githubusercontent.com/ScoopInstaller/Binary/master/filezilla/FileZilla_3.63.1_win64.zip",
-            "hash": "sha512:67add3c597d2d65c3616409322fcfa0b156a66432d9a51fbe9334e775d1fca68fe2c841f90e77e0427e3bdbd1d4b069e1b5aec91e8ecd79d4017ee1c2cf31fe4"
-        },
-        "32bit": {
-            "url": "https://raw.githubusercontent.com/ScoopInstaller/Binary/master/filezilla/FileZilla_3.63.1_win32.zip",
-            "hash": "sha512:321d0154dca0ac02c2d3065ed417b235151bd284c89bd6c45a527362041b8805e949b6fdaa2ce7ba662d13b94a34dca35cfc0eb93ac48741b7e0623348d44bb5"
-        }
-    },
-    "extract_dir": "filezilla-3.63.1",
+    "url": "https://packages.chocolatey.org/filezilla.3.64.0.nupkg",
+    "hash": "aab0a7c76cf51f60b583786679169a8aca576a949e49caa5a77c5718e9b18e01",
+    "extract_dir": "tools",
     "pre_install": [
+        "$arch = 'x86'",
+        "if (\"$architecture\" -Match '64bit' -or \"$architecture\" -Match 'arm64') { $arch = 'x64' }",
+        "Expand-7zipArchive \"$dir\\FileZilla_*_$arch.exe\" \"$dir\" -Removal",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\uninstall.exe.nsis\", \"$dir\\*.ps1\", \"$dir\\FileZilla_*.exe\" -Recurse -Force",
         "@'",
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>",
         "<FileZilla3>",
@@ -49,5 +45,16 @@
             "FileZilla"
         ]
     ],
-    "persist": "config"
+    "persist": "config",
+    "checkver": {
+        "url": "https://community.chocolatey.org/packages/filezilla",
+        "regex": "<meta property=\"og:title\" content=\"FileZilla ([\\d.]+)\">"
+    },
+    "autoupdate": {
+        "url": "https://packages.chocolatey.org/filezilla.$version.nupkg",
+        "hash": {
+            "url": "https://community.chocolatey.org/packages/filezilla/$version",
+            "regex": "$sha256.*?$basename"
+        }
+    }
 }
