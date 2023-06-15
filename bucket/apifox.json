@@ -6,21 +6,13 @@
     "architecture": {
         "64bit": {
             "url": "https://cdn.apifox.cn/download/2.3.0/Apifox-2.3.0.exe#/dl.7z",
-            "hash": "sha512:af3a528a60bbdbf819a882ef73592df7a8cd485d3bcf3c1d6450b6d166c17c0a7368c3b6c1c93c71a4c420b7a48871e3eabebe3509c34c652b9588b6c825ccdd",
-            "pre_install": [
-                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Force -Recurse"
-            ]
-        },
-        "32bit": {
-            "url": "https://cdn.apifox.cn/download/2.3.0/Apifox-windows-x86-2.3.0.exe#/dl.7z",
-            "hash": "sha512:4d0f595d0c9bd4bb1035f175485fd9c8388f3e4acd7e1f2e02addd6511bd42c245e096af6bcf5512af6847ccdc96dd325e95a8a3dc790bd018de148f5d4e9e4d",
-            "pre_install": [
-                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\"",
-                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Force -Recurse"
-            ]
+            "hash": "sha512:af3a528a60bbdbf819a882ef73592df7a8cd485d3bcf3c1d6450b6d166c17c0a7368c3b6c1c93c71a4c420b7a48871e3eabebe3509c34c652b9588b6c825ccdd"
         }
     },
+    "pre_install": [
+        "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Expand-7zipArchive -DestinationPath \"$dir\"",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Force -Recurse"
+    ],
     "shortcuts": [
         [
             "Apifox.exe",
@@ -29,6 +21,10 @@
         ]
     ],
     "persist": "UserData",
+    "pre_uninstall": [
+        "Stop-Process -Name 'ApifoxAppAgent' -ErrorAction SilentlyContinue",
+        "Wait-Process -Name 'ApifoxAppAgent' -ErrorAction SilentlyContinue -Timeout 30"
+    ],
     "checkver": {
         "url": "https://cdn.apifox.cn/download/latest.yml",
         "regex": "version: ([\\d.]+)"
@@ -38,14 +34,7 @@
             "64bit": {
                 "url": "https://cdn.apifox.cn/download/$version/Apifox-$version.exe#/dl.7z",
                 "hash": {
-                    "url": "https://cdn.apifox.cn/download/latest.yml",
-                    "regex": "sha512: $base64"
-                }
-            },
-            "32bit": {
-                "url": "https://cdn.apifox.cn/download/$version/Apifox-windows-x86-$version.exe#/dl.7z",
-                "hash": {
-                    "url": "https://cdn.apifox.cn/download/x32/latest.yml",
+                    "url": "$baseurl/latest.yml",
                     "regex": "sha512: $base64"
                 }
             }
