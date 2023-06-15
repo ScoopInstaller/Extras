@@ -1,26 +1,18 @@
 {
-    "version": "2.2.40",
+    "version": "2.3.0",
     "description": "All-in-one collaboration platform for API documentation, API debugging, API Mock and API test automation.",
     "homepage": "https://apifox.com",
     "license": "Freeware",
     "architecture": {
         "64bit": {
-            "url": "https://cdn.apifox.cn/download/2.2.40/Apifox-2.2.40.exe#/dl.7z",
-            "hash": "sha512:4013315534bc11e8812a424438e3ed07101fd23b8d1bbd5ff41588e369ab75299924c2fc83e8732357737c1203b882e62377e1d13a7f60ec15ba18d30d5aa3d5",
-            "pre_install": [
-                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Force -Recurse"
-            ]
-        },
-        "32bit": {
-            "url": "https://cdn.apifox.cn/download/2.2.40/Apifox-windows-x86-2.2.40.exe#/dl.7z",
-            "hash": "sha512:fbe53ab6d237bbfa55b2833ba5940cb25fb833a28b1679ca83fdff53065ec9bfb05b975a0aa59291d388f5553091ef6e9604060ca7a3282f5c6f4d94499a7b47",
-            "pre_install": [
-                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\"",
-                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Force -Recurse"
-            ]
+            "url": "https://cdn.apifox.cn/download/2.3.0/Apifox-2.3.0.exe#/dl.7z",
+            "hash": "sha512:af3a528a60bbdbf819a882ef73592df7a8cd485d3bcf3c1d6450b6d166c17c0a7368c3b6c1c93c71a4c420b7a48871e3eabebe3509c34c652b9588b6c825ccdd"
         }
     },
+    "pre_install": [
+        "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Expand-7zipArchive -DestinationPath \"$dir\"",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Force -Recurse"
+    ],
     "shortcuts": [
         [
             "Apifox.exe",
@@ -28,11 +20,11 @@
             "--user-data-dir=\"$dir\\UserData\""
         ]
     ],
+    "persist": "UserData",
     "pre_uninstall": [
         "Stop-Process -Name 'ApifoxAppAgent' -ErrorAction SilentlyContinue",
-        "Wait-Process -Name 'ApifoxAppAgent' -ErrorAction SilentlyContinue"
+        "Wait-Process -Name 'ApifoxAppAgent' -ErrorAction SilentlyContinue -Timeout 30"
     ],
-    "persist": "UserData",
     "checkver": {
         "url": "https://cdn.apifox.cn/download/latest.yml",
         "regex": "version: ([\\d.]+)"
@@ -43,13 +35,6 @@
                 "url": "https://cdn.apifox.cn/download/$version/Apifox-$version.exe#/dl.7z",
                 "hash": {
                     "url": "$baseurl/latest.yml",
-                    "regex": "sha512: $base64"
-                }
-            },
-            "32bit": {
-                "url": "https://cdn.apifox.cn/download/$version/Apifox-windows-x86-$version.exe#/dl.7z",
-                "hash": {
-                    "url": "$baseurl/x32/latest.yml",
                     "regex": "sha512: $base64"
                 }
             }
