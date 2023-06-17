@@ -10,10 +10,10 @@
         }
     },
     "pre_install": [
-        "ensure \"$dir\\extract\" | Out-Null",
-        "Expand-7zipArchive \"$dir\\dl.7z_\" \"$dir\\extract\" | Out-Null",
-        "Expand-7zipArchive \"$dir\\extract\\GitHubDesktop-$version-full.nupkg\" \"$dir\" -ExtractDir 'lib\\net45' | Out-Null",
-        "Remove-Item \"$dir\\extract\", \"$dir\\dl.7z_\" -Force -Recurse"
+        "Expand-7zipArchive \"$dir\\dl.7z_\" \"$dir\\extract\"",
+        "Get-Item \"$dir\\extract\\GitHubDesktop*.nupkg\" | Rename-Item -NewName 'github.nupkg'",
+        "Expand-7zipArchive \"$dir\\extract\\github.nupkg\" \"$dir\" -ExtractDir 'lib\\net45'",
+        "Remove-Item \"$dir\\extract\", \"$dir\\$fname\" -Force -Recurse"
     ],
     "bin": "GitHubDesktop.exe",
     "shortcuts": [
