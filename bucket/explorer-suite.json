@@ -1,0 +1,46 @@
+{
+    "version": "III",
+    "description": "A suite of tools including a PE editor called CFF Explorer and a process viewer.",
+    "homepage": "https://ntcore.com/?page_id=388",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://ntcore.com/?page_id=388"
+    },
+    "url": "https://ntcore.com/files/ExplorerSuite.exe",
+    "hash": "94f4348ec573b05990b1e19542986e46dc30a87870739f5d5430b60072d5144d",
+    "innosetup": true,
+    "pre_install": [
+        "Get-ChildItem \"$dir\\*\" -Include @('*.exe', '*.dll') -Recurse | Select -ExpandProperty FullName | ForEach-Object {",
+        "    if ($architecture -eq '64bit') {",
+        "        if ($_.Contains(',1')) {Rename-Item $_ $_.Replace(',1', '')}",
+        "        if ($_.Contains(',2')) {Remove-Item $_}",
+        "    }",
+        "    elseif ($architecture -eq '32bit') {",
+        "        if ($_.Contains(',2')) {Rename-Item $_ $_.Replace(',2', '')}",
+        "        if ($_.Contains(',1')) {Remove-Item $_}",
+        "    }",
+        "}",
+        "if ($architecture -eq '64bit') {",
+        "    Remove-Item \"$dir\\Task Explorer.exe\"",
+        "    Rename-Item \"$dir\\Task Explorer-x64.exe\" 'Task Explorer.exe'",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "CFF Explorer.exe",
+            "CFF Explorer"
+        ],
+        [
+            "PE Detective.exe",
+            "PE Detective"
+        ],
+        [
+            "Signature Explorer.exe",
+            "Signature Explorer"
+        ],
+        [
+            "Task Explorer.exe",
+            "Task Explorer"
+        ]
+    ]
+}

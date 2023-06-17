@@ -15,7 +15,8 @@
     },
     "installer": {
         "script": [
-            "$pcdir = \"$(current_dir $dir)\\lib\\pkgconfig\"",
+            "$current_dir = if (get_config NO_JUNCTIONS) { $dir } else { \"$(appdir $app $global)\\current\" }",
+            "$pcdir = \"$current_dir\\lib\\pkgconfig\"",
             "",
             "# future sessions",
             "$null, $currpath = strip_path (env 'PKG_CONFIG_PATH' $global) $pcdir",
@@ -28,7 +29,8 @@
     },
     "uninstaller": {
         "script": [
-            "$pcdir = \"$(current_dir $dir)\\lib\\pkgconfig\"",
+            "$current_dir = if (get_config NO_JUNCTIONS) { $dir } else { \"$(appdir $app $global)\\current\" }",
+            "$pcdir = \"$current_dir\\lib\\pkgconfig\"",
             "",
             "# future sessions",
             "$was_in_path, $newpath = strip_path (env 'PKG_CONFIG_PATH' $global) $pcdir",

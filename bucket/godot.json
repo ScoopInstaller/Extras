@@ -1,29 +1,32 @@
 {
-    "version": "3.4.2",
+    "version": "4.0.3",
     "description": "A feature-packed, cross-platform game engine to create 2D and 3D games from a unified interface.",
     "homepage": "https://godotengine.org/",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/godotengine/godot/releases/download/3.4.2-stable/Godot_v3.4.2-stable_win64.exe.zip",
-            "hash": "7137839e41dae173eb31da86f789fcdf00933250a6d31ed8939e47bfb80d190d"
+            "url": "https://github.com/godotengine/godot/releases/download/4.0.3-stable/Godot_v4.0.3-stable_win64.exe.zip",
+            "hash": "sha512:e5819205ba40e3929c42c1cbe4323125f10d42b6e0b78467fac9c4fc72ae59c8a7609890460f9c2399ab6d00dad2f155123f5f00f9097546a27976deb6ad1984"
         },
         "32bit": {
-            "url": "https://github.com/godotengine/godot/releases/download/3.4.2-stable/Godot_v3.4.2-stable_win32.exe.zip",
-            "hash": "d261f5747ab8c6d5171a63c06020a58670db45299b1d17847e6a44b82ab2c40e"
+            "url": "https://github.com/godotengine/godot/releases/download/4.0.3-stable/Godot_v4.0.3-stable_win32.exe.zip",
+            "hash": "sha512:3dd42ed8b22fada375b4eb29314c670a1b0b93e202f91747c90fc36630272b3fc95d545a8ad60d8f1bcf5ea5798adfd8f7ea36b552ca747f8113a37a607a8d31"
         }
     },
-    "pre_install": "Get-ChildItem \"$dir\\Godot_*.exe\" | Rename-Item -NewName \"$dir\\godot.exe\"",
+    "pre_install": [
+        "Remove-Item \"$dir\\Godot_*_console.*\"",
+        "Get-Item \"$dir\\Godot_*.exe\" | Rename-Item -NewName 'godot.exe'"
+    ],
     "bin": "godot.exe",
     "shortcuts": [
         [
             "godot.exe",
-            "Godot"
+            "Godot Engine"
         ]
     ],
     "checkver": {
-        "url": "https://godotengine.org/download",
-        "regex": "<h2>Godot <em>([\\d.]+)</em></h2>"
+        "url": "https://github.com/godotengine/godot/releases/latest",
+        "regex": "(?<version>[\\d\\w.]+)-stable"
     },
     "autoupdate": {
         "architecture": {
@@ -33,6 +36,9 @@
             "32bit": {
                 "url": "https://github.com/godotengine/godot/releases/download/$version-stable/Godot_v$version-stable_win32.exe.zip"
             }
+        },
+        "hash": {
+            "url": "$baseurl/SHA512-SUMS.txt"
         }
     }
 }

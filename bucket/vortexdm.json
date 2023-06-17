@@ -1,0 +1,46 @@
+{
+    "version": "2022.1.0",
+    "description": "Multi-connections download manager",
+    "homepage": "https://github.com/Sixline/VortexDM",
+    "license": "LGPL-3.0-only",
+    "notes": [
+        "VortexDM is built with 64-bit Python 3.10+, and will only work on 64-bit Windows 10+.",
+        "For Windows 7 or 32 bit Windows 10, please install 'FireDM'."
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Sixline/VortexDM/releases/download/2022.1.0/VortexDM-2022.1.0-win64.zip",
+            "hash": "dd491bce137ce392f16525a4868eadb77b52d30719424f41231918679db04a22"
+        }
+    },
+    "extract_dir": "VortexDM",
+    "pre_install": [
+        "'downloads.dat', 'thumbnails.dat', 'user_themes.cfg' | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\setting.cfg\")) {",
+        "    Set-Content \"$dir\\setting.cfg\" -Value '{ \"check_for_update\": false }' -Encoding Ascii",
+        "}"
+    ],
+    "persist": [
+        "downloads.dat",
+        "setting.cfg",
+        "thumbnails.dat",
+        "user_themes.cfg"
+    ],
+    "bin": "vortexdm.exe",
+    "shortcuts": [
+        [
+            "VortexDM-GUI.exe",
+            "VortexDM-GUI"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Sixline/VortexDM/releases/download/$version/VortexDM-$version-win64.zip"
+            }
+        }
+    }
+}

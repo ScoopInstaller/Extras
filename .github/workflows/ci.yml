@@ -1,0 +1,48 @@
+name: Tests
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test_powershell:
+    name: WindowsPowerShell
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Bucket
+        uses: actions/checkout@main
+        with:
+          fetch-depth: 2
+          path: 'my_bucket'
+      - name: Checkout Scoop
+        uses: actions/checkout@main
+        with:
+          repository: ScoopInstaller/Scoop
+          path: 'scoop_core'
+      - name: Init and Test
+        shell: powershell
+        run: |
+          $env:SCOOP_HOME="$(Convert-Path '.\scoop_core')"
+          .\scoop_core\test\bin\init.ps1
+          .\my_bucket\bin\test.ps1
+  test_pwsh:
+    name: PowerShell
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Bucket
+        uses: actions/checkout@main
+        with:
+          fetch-depth: 2
+          path: 'my_bucket'
+      - name: Checkout Scoop
+        uses: actions/checkout@main
+        with:
+          repository: ScoopInstaller/Scoop
+          path: 'scoop_core'
+      - name: Init and Test
+        shell: pwsh
+        run: |
+          $env:SCOOP_HOME="$(Convert-Path '.\scoop_core')"
+          .\scoop_core\test\bin\init.ps1
+          .\my_bucket\bin\test.ps1

@@ -1,0 +1,59 @@
+{
+    "version": "1.8.1",
+    "description": "A context menu extender that lets you handpick the items to integrate into Windows File Explorer context menu.",
+    "homepage": "https://nilesoft.org/",
+    "license": "MIT",
+    "url": "https://nilesoft.org/download/shell/1.8/setup.exe",
+    "hash": "c87da931586ab14ce957e99971ef8b344edfb1b0caa273e87c1be752bb924447",
+    "innosetup": true,
+    "architecture": {
+        "64bit": {
+            "pre_install": [
+                "if(!(Test-Path \"$persist_dir\\shell.log\")) { New-Item \"$dir\\shell.log\" | Out-Null }",
+                "Move-Item \"$dir\\shell,1.exe\" \"$dir\\shell.exe\"",
+                "Move-Item \"$dir\\shell,1.dll\" \"$dir\\shell.dll\"",
+                "Remove-Item \"$dir\\shell,2.*\"",
+                "Remove-Item \"$dir\\shell,3.*\""
+            ]
+        },
+        "32bit": {
+            "pre_install": [
+                "if(!(Test-Path \"$persist_dir\\shell.log\")) { New-Item \"$dir\\shell.log\" | Out-Null }",
+                "Move-Item \"$dir\\shell,3.exe\" \"$dir\\shell.exe\"",
+                "Move-Item \"$dir\\shell,3.dll\" \"$dir\\shell.dll\"",
+                "Remove-Item \"$dir\\shell,1.*\"",
+                "Remove-Item \"$dir\\shell,2.*\""
+            ]
+        }
+    },
+    "uninstaller": {
+        "script": [
+            "if ($cmd -eq 'uninstall') {",
+            "    $regkey = Get-ItemProperty -Path 'HKLM:\\SOFTWARE\\Classes\\Directory\\background\\shellex\\ContextMenuHandlers\\nilesoft.shell' -ErrorAction SilentlyContinue",
+            "    if ($regkey) {",
+            "        if (!(is_admin)) { error 'Admin right is required to unregister nilesoft shell'; break }",
+            "        Invoke-ExternalCommand \"$dir\\shell.exe\" -ArgumentList @('-unregister', '-restart', '-silent') -RunAs | Out-Null",
+            "        if (Get-Process -Name 'shell' -ErrorAction SilentlyContinue) { Start-Sleep -Seconds 2 }",
+            "    }",
+            "}"
+        ]
+    },
+    "bin": "shell.exe",
+    "shortcuts": [
+        [
+            "shell.exe",
+            "Nilesoft Shell"
+        ]
+    ],
+    "persist": [
+        "shell.log",
+        "shell.shl"
+    ],
+    "checkver": {
+        "url": "https://nilesoft.org/download/changes",
+        "regex": "Version ([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://nilesoft.org/download/shell/$majorVersion.$minorVersion/setup.exe"
+    }
+}

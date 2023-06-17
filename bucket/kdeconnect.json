@@ -1,21 +1,21 @@
 {
-    "version": "21.12.1-862",
+    "version": "23.04.0-1322",
     "description": "Communications and data transfer between devices over local networks",
     "homepage": "https://kdeconnect.kde.org/",
     "license": "GPL-3.0-or-later",
+    "notes": "If you want to get the latest development branch-based installer, please install `kdeconnect-nightly` from Versions bucket.",
     "architecture": {
         "64bit": {
-            "url": "https://binary-factory.kde.org/view/Windows%2064-bit/job/kdeconnect-kde_Release_win64/862/artifact/kdeconnect-kde-21.12.1-862-windows-msvc2019_64-cl.7z",
-            "hash": "ab3b3c7a6925fd945d4d86824f6accf4bf052899c136bfef09761a47523e4300"
+            "url": "https://download.kde.org/stable/release-service/23.04.0/windows/kdeconnect-kde-23.04.0-1322-windows-cl-msvc2019-x86_64.exe#/dl.7z",
+            "hash": "b32a83ac7f89f284c2330b5dd01f430294d1adb201ab5c0f11aae19f29866eae"
         }
     },
-    "bin": [
-        "bin\\kdeconnect-cli.exe",
-        [
-            "bin\\kdeconnect-cli.exe",
-            "kdeconnect"
-        ]
+    "pre_install": [
+        "Remove-Item \"$dir\\*\" -Exclude kdeconnect-*.7z -Recurse",
+        "Expand-7ZipArchive \"$dir\\kdeconnect-*.7z\" \"$dir\"",
+        "Remove-Item \"$dir\\kdeconnect-*.7z\""
     ],
+    "bin": "bin\\kdeconnect-cli.exe",
     "shortcuts": [
         [
             "bin\\kdeconnect-app.exe",
@@ -23,19 +23,18 @@
         ]
     ],
     "checkver": {
-        "url": "https://binary-factory.kde.org/view/Windows%2064-bit/job/kdeconnect-kde_Release_win64/",
-        "regex": "kdeconnect-kde-(?<version>[\\d.]+)-(?<build>[\\d]+)-windows-msvc(?<vc>\\d+)_64-cl\\.7z</a>",
-        "replace": "${version}-${build}"
+        "url": "https://kdeconnect.kde.org/download.html",
+        "regex": "release-service/(?<release>[\\d.]+)/windows/kdeconnect-kde-(?<version>.*)-windows-(?<lib>.*)\\.exe"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://binary-factory.kde.org/view/Windows%2064-bit/job/kdeconnect-kde_Release_win64/$matchBuild/artifact/kdeconnect-kde-$version-windows-msvc$matchVc_64-cl.7z"
+                "url": "https://download.kde.org/stable/release-service/$matchRelease/windows/kdeconnect-kde-$version-windows-$matchLib.exe#/dl.7z",
+                "hash": {
+                    "url": "https://apps.kde.org/kdeconnect",
+                    "regex": "sha256:</strong> $sha256</div>"
+                }
             }
-        },
-        "hash": {
-            "url": "$url.sha256",
-            "regex": "$sha256"
         }
     }
 }

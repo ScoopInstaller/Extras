@@ -1,26 +1,48 @@
 {
-    "version": "2022.01",
+    "version": "2022.11",
     "description": "The 100% fresh, free-range, ethical browser (classic branch)",
     "homepage": "https://classic.waterfox.net",
     "license": "MPL-2.0",
     "notes": [
-        "You have installed Waterfox Classic. For latest Waterfox, please install 'waterfox'.",
+        "To set profile 'Scoop' as *DEFAULT*, or profiles/settings was lost after update:",
+        "  - Run 'Waterfox Classic Profile Manager', choose 'Scoop-Classic' then click 'Start Waterfox Classic'.",
+        "  - Visit 'about:profiles' page in Waterfox Classic to check *DEFAULT* profile.",
+        "For details: https://support.mozilla.org/en-US/kb/profile-manager-create-remove-switch-firefox-profiles",
         "Waterfox Classic has many unpatched security advisories. Use at your own discretion."
     ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/WaterfoxCo/Waterfox-Classic/releases/download/2022.01-classic/WaterfoxClassic2022.01.exe#/dl.7z",
-            "hash": "bd52db9e7df89f355da28834a44d5a51525bf9ef9b9c6251c1cbf18cab9709de"
+            "url": "https://github.com/WaterfoxCo/Waterfox-Classic/releases/download/2022.11-classic/WaterfoxClassic2022.11.exe#/dl.7z",
+            "hash": "67005d3e3883291e9685c454fb6a926e2cb5a23ed48f7e57b65746edf7f7f30e"
         }
     },
     "extract_dir": "core",
-    "bin": "waterfox.exe",
+    "post_install": [
+        "waterfox-classic -CreateProfile \"Scoop-Classic $persist_dir\\profile\"",
+        "$Addition = \"$persist_dir\\addition\"",
+        "if (Test-Path $Addition) {",
+        "  info 'Copying additional items...'",
+        "  Copy-Item -Path $Addition\\* -Destination $dir -Force -Recurse -ErrorAction SilentlyContinue",
+        "}"
+    ],
+    "bin": [
+        [
+            "waterfox.exe",
+            "waterfox-classic"
+        ]
+    ],
     "shortcuts": [
         [
             "waterfox.exe",
-            "Waterfox"
+            "Waterfox Classic"
+        ],
+        [
+            "waterfox.exe",
+            "Waterfox Classic Profile Manager",
+            "-P"
         ]
     ],
+    "persist": "profile",
     "checkver": {
         "github": "https://github.com/WaterfoxCo/Waterfox-Classic"
     },

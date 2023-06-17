@@ -1,0 +1,35 @@
+{
+    "version": "9.0.2",
+    "description": "Seafile desktop syncing client",
+    "homepage": "https://www.seafile.com/",
+    "license": "Apache-2.0",
+    "url": "https://download.seadrive.org/seafile-9.0.2-en.msi",
+    "hash": "facd1acc27f3c8abdf42d894e61dea39d3f5943eb8a168cc245d3583096ebfd1",
+    "extract_dir": "PFiles\\Seafile\\bin",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\ccnetconfdir\\seafile.ini\")) {",
+        "    ensure \"$dir\\ccnetconfdir\" | Out-Null",
+        "    Set-Content \"$dir\\ccnetconfdir\\seafile.ini\" \"$persist_dir\\data\" -Encoding Ascii",
+        "}"
+    ],
+    "env_set": {
+        "CCNET_CONF_DIR": "$dir\\ccnetconfdir"
+    },
+    "shortcuts": [
+        [
+            "seafile-applet.exe",
+            "Seafile Desktop Syncing Client"
+        ]
+    ],
+    "persist": [
+        "data",
+        "ccnetconfdir"
+    ],
+    "checkver": {
+        "url": "https://www.seafile.com/en/download/",
+        "regex": "seafile-([\\d.]+)-en\\.msi"
+    },
+    "autoupdate": {
+        "url": "https://download.seadrive.org/seafile-$version-en.msi"
+    }
+}

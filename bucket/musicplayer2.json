@@ -2,16 +2,16 @@
     "homepage": "https://github.com/zhongyang219/MusicPlayer2",
     "description": "Audio player which supports music collection playback, lyrics display, format conversion and many other functions.",
     "license": "GPL-3.0-only",
-    "version": "2.73",
+    "version": "2.76.1",
     "architecture": {
         "32bit": {
-            "url": "https://github.com/zhongyang219/MusicPlayer2/releases/download/V2.73/MusicPlayer2_V2.73_x86.zip",
-            "hash": "2ddfc916a38709358a9a8376156627534d663947704b2cdeefcb7737863f94d2",
+            "url": "https://github.com/zhongyang219/MusicPlayer2/releases/download/V2.76.1/MusicPlayer2_V2.76.1_x86.zip",
+            "hash": "51ec0ec4a87b0c018d5144cd8e8a3e280a3e391119d1b84b57842f11b973e2b2",
             "extract_dir": "MusicPlayer2"
         },
         "64bit": {
-            "url": "https://github.com/zhongyang219/MusicPlayer2/releases/download/V2.73/MusicPlayer2_V2.73_x64.zip",
-            "hash": "406cdac7dbc820474fdbe0334ee3578e5e0a376d0a8e4ae301e4ab50b167bebe",
+            "url": "https://github.com/zhongyang219/MusicPlayer2/releases/download/V2.76.1/MusicPlayer2_V2.76.1_x64.zip",
+            "hash": "f8e352570e8c5c553efbaff6bbb0ea007a2a9f0bd3f457024fabdb5cf99ce033",
             "extract_dir": "MusicPlayer2_x64"
         }
     },
@@ -21,12 +21,19 @@
             "MusicPlayer2"
         ]
     ],
-    "pre_install": "'recent_path.dat', 'song_data.dat', 'config.ini' | ForEach-Item { if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" -ItemType File -Force | Out-Null } }",
-    "persist":[
+    "pre_install": [
+        "$GLOBAL_CFG = 'global_cfg.ini'",
+        "if (!(Test-Path \"$persist_dir\\$GLOBAL_CFG\")) {",
+        "    Set-Content \"$dir\\$GLOBAL_CFG\" @('[config]', 'portable_mode = true') -Encoding Ascii",
+        "}",
+        "'recent_path.dat', 'song_data.dat', 'config.ini' | ForEach-Object { if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" -ItemType File -Force | Out-Null } }"
+    ],
+    "persist": [
         "playlist",
         "recent_path.dat",
         "song_data.dat",
-        "config.ini"
+        "config.ini",
+        "global_cfg.ini"
     ],
     "checkver": "github",
     "autoupdate": {

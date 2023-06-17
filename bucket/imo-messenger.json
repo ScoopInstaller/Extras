@@ -1,0 +1,43 @@
+{
+    "version": "1.4.8.3",
+    "description": "Video calls and chat software",
+    "homepage": "https://imo.im/",
+    "depends": "extras/uniextract2",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://imo.im/policies/terms_of_service.html"
+    },
+    "url": "https://static-web.imoim.net/as/indigo-static/winapp/1.4.8.3/ImoSetup_1.4.8.3_Release.exe#/dl.exe",
+    "hash": "174a8cd9d357206c24d1c0054314ec5d1a7db7fb759826ca41f32975f30deaba",
+    "pre_install": [
+        "New-Item \"$dir\\extract\" -ItemType Directory | Out-Null",
+        "Invoke-ExternalCommand uniextract -ArgumentList @(\"$dir\\dl.exe\", \"$dir\\extract\", '/silent') | Out-Null",
+        "Expand-MsiArchive \"$dir\\extract\\AttachedContainer\\ImoInstaller.msi\" \"$dir\\extract\" | Out-Null",
+        "Move-Item \"$dir\\extract\\imo\\*\\*\" \"$dir\\\"",
+        "Remove-Item \"$dir\\dl.exe\", \"$dir\\extract\" -Force -Recurse"
+    ],
+    "pre_uninstall": "Stop-Process -Name 'ImoDesktopApp' -ErrorAction SilentlyContinue | Out-Null",
+    "shortcuts": [
+        [
+            "ImoDesktopApp.exe",
+            "imo Messenger"
+        ]
+    ],
+    "persist": [
+        "data",
+        "Logs"
+    ],
+    "checkver": {
+        "script": [
+            "$url = 'https://apiact.imoim.net/imoweb-infrastructure-client/apk/version-list'",
+            "$body = @{type = '2'; sub_type = '1'; limit = 1000} | ConvertTo-Json",
+            "$response = Invoke-RestMethod -Uri $url -Method Post -Body $body -ContentType 'application/json'",
+            "$latestVersion = $response.data.list | Sort-Object -Property {[int64]$_.pub_time} -Descending | Select-Object -First 1",
+            "Write-Output $latestVersion.name"
+        ],
+        "regex": "imo windows ([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://static-web.imoim.net/as/indigo-static/winapp/$version/ImoSetup_$version_Release.exe#/dl.exe"
+    }
+}

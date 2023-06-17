@@ -1,24 +1,40 @@
 {
-    "##": "According to https://github.com/TranslucentTB/TranslucentTB/issues/206, there will be a portable ZIP version in future releases.",
-    "version": "2020.2",
+    "version": "2022.1",
     "description": "Makes the Windows taskbar translucent/transparent.",
     "homepage": "https://github.com/TranslucentTB/TranslucentTB",
     "license": "GPL-3.0-only",
-    "notes": [
-        "TranslucentTB will NOT automatically start when user logs in.",
-        "Open TranslucentTB, right-click on the tray icon, and select 'Open at boot' to add it to startup programs."
-    ],
-    "url": "https://github.com/TranslucentTB/TranslucentTB/releases/download/2020.2/TranslucentTB-setup.exe",
-    "hash": "b8a4f90865d681a31efa44f8b5098703b743a5050274503ca95d0e80e26c46fa",
-    "innosetup": true,
-    "uninstaller": {
-        "script": "taskkill /F /IM TranslucentTB.exe /FI \"status eq running\""
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/TranslucentTB/TranslucentTB/releases/download/2022.1/TranslucentTB-portable-x64.zip",
+            "hash": "0eafc5d529152bf6554ef9a60c10436e0e4aee06c7f95d215c1c3917eaecb815"
+        },
+        "arm64": {
+            "url": "https://github.com/TranslucentTB/TranslucentTB/releases/download/2022.1/TranslucentTB-portable-arm64.zip",
+            "hash": "ce4ed4528804c63a405337efc0bef5a927c0f45db63a5e94248e44e21124e8fd"
+        }
     },
+    "pre_install": [
+        "# Create settings.json if it does not exist",
+        "if (!(Test-Path \"$persist_dir\\settings.json\")) {",
+        "    Set-Content -Path \"$dir\\settings.json\" -Value \"{}\"",
+        "}"
+    ],
     "shortcuts": [
         [
             "TranslucentTB.exe",
             "TranslucentTB"
         ]
     ],
-    "checkver": "github"
+    "persist": "settings.json",
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/TranslucentTB/TranslucentTB/releases/download/$version/TranslucentTB-portable-x64.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/TranslucentTB/TranslucentTB/releases/download/$version/TranslucentTB-portable-arm64.zip"
+            }
+        }
+    }
 }

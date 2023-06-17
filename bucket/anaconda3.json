@@ -1,59 +1,57 @@
 {
-    "version": "2021.11",
+    "version": "2023.03-1",
     "description": "The most popular Python distribution for data science.",
     "homepage": "https://www.anaconda.com/",
     "license": "BSD-3-Clause",
+    "notes": [
+        "From 4.6.0, conda has built the support for Cmd, Powershell or other shells.",
+        "Use \"conda init powershell\" or \"conda init __your_favorite_shell__\"",
+        "",
+        "Anaconda3 drops support for 32-bit CPUs from v2022.10. If you are running a 32-bit system, please install anaconda3-2022.05 from the Versions bucket.",
+        "If you found the conda cannot fetch update, just run \" conda config --set ssl_verify False \" and try again."
+    ],
     "architecture": {
         "64bit": {
-            "url": "https://repo.anaconda.com/archive/Anaconda3-2021.11-Windows-x86_64.exe",
-            "hash": "1b3d593d1deb22b835be5c68897075e0fc9dea240ab4191c55674aba259a78ff"
-        },
-        "32bit": {
-            "url": "https://repo.anaconda.com/archive/Anaconda3-2021.11-Windows-x86.exe",
-            "hash": "dc0746dded06cc480328c20b73369803ce98df1971bda669d93859e02c1c0664"
+            "url": "https://repo.anaconda.com/archive/Anaconda3-2023.03-1-Windows-x86_64.exe",
+            "hash": "f13a2ae812d2069654521e7b1d897227ea4af52bff7cd8b3d80e7b2271fc79e4"
         }
     },
-    "pre_install": "Write-Host 'Installing Anaconda 3. This can take up to 30 minutes on an HDD.' -ForegroundColor Magenta",
+    "pre_install": "if ($dir -match ' ') { error 'The installation directory cannot include a space'; break}",
     "installer": {
-        "args": [
-            "/S",
-            "/InstallationType=JustMe",
-            "/RegisterPython=1",
-            "/AddToPath=0",
-            "/D=$dir"
+        "script": [
+            "warn 'Installing Anaconda 3. This can take up to 30 minutes on an HDD.'",
+            "# The installer will not work properly when args are quoted (e.g. \"`\"/S`\"\")",
+            "Start-Process \"$dir\\$fname\" -ArgumentList @('/S', '/InstallationType=JustMe', '/RegisterPython=1', '/AddToPath=0', '/NoRegistry=1', \"/D=$dir\\App\") -Wait"
         ]
     },
-    "uninstaller": {
-        "file": "Uninstall-Anaconda3.exe",
-        "args": "/S"
-    },
+    "post_install": "Remove-Item \"$dir\\$fname\"",
+    "env_add_path": "App\\Scripts",
     "bin": [
-        "python.exe",
-        "pythonw.exe",
+        "App\\python.exe",
+        "App\\pythonw.exe",
         [
-            "python.exe",
+            "App\\python.exe",
             "python3"
         ]
     ],
-    "env_add_path": "Scripts",
-    "persist": "envs",
+    "persist": "App\\envs",
+    "uninstaller": {
+        "script": [
+            "Start-Process \"$dir\\App\\Uninstall-Anaconda3.exe\" -ArgumentList '/S' -Wait",
+            "# Create a 'dummy' to avoid error because the uninstaller removes the symlink. The does not affect persist.",
+            "ensure \"$dir\\App\\envs\" | Out-Null"
+        ]
+    },
     "checkver": {
-        "url": "https://docs.anaconda.com/anaconda/install/hashes/win-3-64/",
-        "regex": "Anaconda3-([\\d.]+)-Windows"
+        "url": "https://docs.anaconda.com/free/anaconda/reference/hashes/win-3-64/",
+        "regex": "Anaconda3-([\\d.-]+)-Windows"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
                 "url": "https://repo.anaconda.com/archive/Anaconda3-$version-Windows-x86_64.exe",
                 "hash": {
-                    "url": "http://docs.anaconda.com/anaconda/install/hashes/Anaconda3-$version-Windows-x86_64.exe-hash/",
-                    "regex": "$sha256"
-                }
-            },
-            "32bit": {
-                "url": "https://repo.anaconda.com/archive/Anaconda3-$version-Windows-x86.exe",
-                "hash": {
-                    "url": "http://docs.anaconda.com/anaconda/install/hashes/Anaconda3-$version-Windows-x86.exe-hash/",
+                    "url": "https://docs.anaconda.com/free/anaconda/reference/hashes/Anaconda3-$version-Windows-x86_64.exe-hash/",
                     "regex": "$sha256"
                 }
             }

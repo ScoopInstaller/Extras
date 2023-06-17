@@ -3,6 +3,15 @@
     "description": "Open-source KVM software",
     "homepage": "https://github.com/debauchee/barrier",
     "license": "GPL-2.0-only",
+    "notes": [
+        "To add the 'Barrier' service run:",
+        "start 'powershell' -Verb 'RunAs' -args \"$dir\\add-service.ps1\"",
+        "To remove the 'Barrier' service run:",
+        "start 'powershell' -Verb 'RunAs' -args \"$dir\\remove-service.ps1\""
+    ],
+    "suggest": {
+        "vcredist": "extras/vcredist2022"
+    },
     "architecture": {
         "64bit": {
             "url": "https://github.com/debauchee/barrier/releases/download/v2.4.0/BarrierSetup-2.4.0-release.exe",
@@ -10,6 +19,12 @@
         }
     },
     "innosetup": true,
+    "post_install": [
+        "New-Item \"$dir\\add-service.ps1\" -Value (",
+        "    \"New-Service -Name 'Barrier' -BinaryPathName \"\"$dir\\barrierd.exe\"\" -StartupType 'Manual' -Description 'Manages the Barrier background processes.' -ErrorAction 'SilentlyContinue'\"",
+        ") | Out-Null",
+        "New-Item \"$dir\\remove-service.ps1\" -Value \"Remove-Service -Name 'Barrier' -Verbose -ErrorAction 'SilentlyContinue'\" | Out-Null"
+    ],
     "bin": [
         "barrierc.exe",
         "barriers.exe"
@@ -19,6 +34,13 @@
             "barrier.exe",
             "Barrier"
         ]
+    ],
+    "pre_uninstall": [
+        "if (Get-Service -Name 'Barrier' -ErrorAction 'SilentlyContinue') {",
+        "   if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
+        "   Stop-Service -Name 'Barrier' -Verbose -ErrorAction 'SilentlyContinue' -Force",
+        "   Remove-Service -Name 'Barrier' -Verbose -ErrorAction 'SilentlyContinue'",
+        "}"
     ],
     "checkver": "github",
     "autoupdate": {

@@ -1,16 +1,19 @@
 {
-    "##": "Check chromium.woolyss.com for different versions of Chromium releases.",
-    "version": "97.0.4692.99-r938553-1",
-    "description": "Browser aiming for safer, faster, and more stable way for all users to experience the web.",
-    "homepage": "https://www.chromium.org",
+    "version": "114.0.5735.110-1.1",
+    "description": "Google Chromium, sans integration with Google.",
+    "homepage": "https://ungoogled-software.github.io/ungoogled-chromium-binaries/",
     "license": "BSD-3-Clause",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/macchrome/winchrome/releases/download/v97.0.4692.99-r938553-Win64/ungoogled-chromium-97.0.4692.99-1_Win64.7z",
-            "hash": "sha1:b79064c55c95f79cb2333a7fe08c310fea68474d",
-            "extract_dir": "ungoogled-chromium-97.0.4692.99-1_Win64"
+            "url": "https://github.com/ungoogled-software/ungoogled-chromium-windows/releases/download/114.0.5735.110-1.1/ungoogled-chromium_114.0.5735.110-1.1_windows_x64.zip",
+            "hash": "1799b5bad85837f68102976fe3282afa4f249faf5341074261afdaf76b1ad61f"
+        },
+        "32bit": {
+            "url": "https://github.com/ungoogled-software/ungoogled-chromium-windows/releases/download/114.0.5735.110-1.1/ungoogled-chromium_114.0.5735.110-1.1_windows_x86.zip",
+            "hash": "709d13e9908ab46044efcbc4e9aa714a36b4207d53802cf1f0f0a96b9f5d72c6"
         }
     },
+    "extract_dir": "ungoogled-chromium_114.0.5735.110-1.1_windows",
     "bin": [
         [
             "chrome.exe",
@@ -25,29 +28,28 @@
             "--user-data-dir=\"$dir\\User Data\""
         ]
     ],
-    "post_install": [
-        "if (!(Test-Path \"$dir\\User Data\\*\") -and (Test-Path \"$env:LocalAppData\\Chromium\\User Data\")) {",
-        "    info '[Portable Mode]: Copying user data...'",
-        "    Copy-Item \"$env:LocalAppData\\Chromium\\User Data\\*\" \"$dir\\User Data\" -Recurse",
-        "}"
-    ],
     "persist": "User Data",
     "checkver": {
-        "github": "https://github.com/macchrome/winchrome/",
-        "regex": "/v(?<chromeVersion>[\\d.]+)-r(?<build>[\\d]+)-Win64/ungoogled-chromium-[\\d.]+(?<end>-\\d)_Win(32|64)\\.7z",
-        "replace": "${chromeVersion}-r${build}${end}",
-        "reverse": true
+        "github": "https://github.com/ungoogled-software/ungoogled-chromium-windows",
+        "regex": "releases/tag/((?<main>[\\d.]+-\\d).(?<release>\\d))"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/macchrome/winchrome/releases/download/v$matchChromeversion-r$matchBuild-Win64/ungoogled-chromium-$matchChromeversion$matchEnd_Win64.7z",
-                "extract_dir": "ungoogled-chromium-$matchChromeversion$matchEnd_Win64"
+                "url": "https://github.com/ungoogled-software/ungoogled-chromium-windows/releases/download/$version/ungoogled-chromium_$version_windows_x64.zip",
+                "hash": {
+                    "url": "https://ungoogled-software.github.io/ungoogled-chromium-binaries/releases/windows/64bit/$matchMain",
+                    "xpath": "//ul/li/a[contains(text(), \"$basename\")]/../ul/li[contains(text(), \"SHA256:\")]/code"
+                }
+            },
+            "32bit": {
+                "url": "https://github.com/ungoogled-software/ungoogled-chromium-windows/releases/download/$version/ungoogled-chromium_$version_windows_x86.zip",
+                "hash": {
+                    "url": "https://ungoogled-software.github.io/ungoogled-chromium-binaries/releases/windows/32bit/$matchMain",
+                    "xpath": "//ul/li/a[contains(text(), \"$basename\")]/../ul/li[contains(text(), \"SHA256:\")]/code"
+                }
             }
         },
-        "hash": {
-            "url": "https://github.com/macchrome/winchrome/releases/tag/v$matchChromeversion-r$matchBuild-Win64",
-            "regex": "(?s)$basename.*?$sha1"
-        }
+        "extract_dir": "ungoogled-chromium_$version_windows"
     }
 }

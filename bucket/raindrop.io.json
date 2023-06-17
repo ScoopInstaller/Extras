@@ -1,0 +1,32 @@
+{
+    "version": "5.6.5",
+    "description": "A all-in-one bookmark manager",
+    "homepage": "https://raindrop.io/",
+    "license": "Freeware",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/raindropio/desktop/releases/download/v5.6.5/Raindrop.io-5.6.5-full.nupkg",
+            "hash": "sha1:baf3f078f69035b0c6fbf6dc9cc61386bbd77cd6"
+        }
+    },
+    "extract_dir": "lib\\net45",
+    "shortcuts": [
+        [
+            "Raindrop.io.exe",
+            "Raindrop.io"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/raindropio/desktop"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/raindropio/desktop/releases/download/v$version/Raindrop.io-$version-full.nupkg",
+                "hash": {
+                    "url": "$baseurl/RELEASES"
+                }
+            }
+        }
+    }
+}

@@ -1,16 +1,19 @@
 {
-    "version": "1.82",
-    "description": "Network monitoring suspension window software in Windows platform. It can display the current network speed, CPU and memory usage. It also support the functions of display in the taskbar, change skin and historical traffic statistics.",
+    "version": "1.84.1",
+    "description": "Network monitoring floating window software on Windows. It can display the current network speed, CPU and memory usage. It also supports being embedded into the taskbar, theme changing and traffic statistics.",
     "homepage": "https://github.com/zhongyang219/TrafficMonitor/blob/master/README_en-us.md",
     "license": "MIT",
+    "suggest": {
+        "vcredist": "extras/vcredist2022"
+    },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.82/TrafficMonitor_V1.82_x64.zip",
-            "hash": "da2946d3ac2d77973c890ef8ce3be267b28240d41aad001524fb664e202cf4c4"
+            "url": "https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x64.zip",
+            "hash": "7217c298d56936c58e36f8b98fcea50537ae935d57bc85c946c6385b6ffdd7cc"
         },
         "32bit": {
-            "url": "https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.82/TrafficMonitor_V1.82_x86.zip",
-            "hash": "fb4b9d4c8719be0458b4e18b656b2a8ab67b1ef3d04adf83b3815a655f1afd91"
+            "url": "https://github.com/zhongyang219/TrafficMonitor/releases/download/V1.84.1/TrafficMonitor_V1.84.1_x86.zip",
+            "hash": "47c95d4bb315fc89353ec6f84fff31760c3c609282b076f9082e1ae37e86d9dc"
         }
     },
     "extract_dir": "TrafficMonitor",
@@ -18,7 +21,7 @@
         "    # Portable migration",
         "if (!(Test-Path \"$persist_dir\") -and (Test-Path \"$env:APPDATA\\TrafficMonitor\\config.ini\")) {",
         "    ensure \"$persist_dir\" | Out-Null",
-        "    Copy-Item \"$env:APPDATA\\TrafficMonitor\\*\" \"$persist_dir\"",
+        "    Copy-Item -Recurse \"$env:APPDATA\\TrafficMonitor\\*\" \"$persist_dir\"",
         "    Rename-Item \"$env:APPDATA\\TrafficMonitor\" 'TrafficMonitor.old'",
         "}",
         "",
@@ -26,7 +29,6 @@
         "if (!(Test-Path \"$persist_dir\\global_cfg.ini\")) { Set-Content \"$dir\\global_cfg.ini\" @('[config]', 'portable_mode = true') -Encoding Ascii }",
         "if (!(Test-Path \"$persist_dir\\history_traffic.dat\")) { New-Item \"$dir\\history_traffic.dat\" | Out-Null }"
     ],
-    "bin": "TrafficMonitor.exe",
     "shortcuts": [
         [
             "TrafficMonitor.exe",
@@ -36,7 +38,8 @@
     "persist": [
         "config.ini",
         "global_cfg.ini",
-        "history_traffic.dat"
+        "history_traffic.dat",
+        "plugins"
     ],
     "checkver": {
         "github": "https://github.com/zhongyang219/TrafficMonitor"

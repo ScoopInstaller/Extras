@@ -1,0 +1,76 @@
+{
+    "version": "4.62",
+    "description": "A fast, compact and innovative graphic viewer (without PlugIns)",
+    "homepage": "https://www.irfanview.com/",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.irfanview.com/eula.htm"
+    },
+    "notes": [
+        "This is the essential version of IrfanView without PlugIns.",
+        "If you need the PlugIns, see: https://www.irfanview.com/plugins.htm#UpdatedPlugins",
+        "uninstall this package and 'scoop install extras/irfanview'"
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://www.irfanview.info/files/iview462_x64.zip",
+            "hash": "8ae63019c130bcaa6cc230b08b235eb55df2eff3481f92414b5b48cff8efe8a2",
+            "bin": [
+                [
+                    "i_view64.exe",
+                    "irfanview"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "i_view64.exe",
+                    "IrfanView"
+                ]
+            ]
+        },
+        "32bit": {
+            "url": "https://www.irfanview.info/files/iview462.zip",
+            "hash": "a8a6579c8d7e1dca5e8c456dad34cb7e278ed2b8ff2e6e8ef197b089b2bfeef6",
+            "bin": [
+                [
+                    "i_view32.exe",
+                    "irfanview"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "i_view32.exe",
+                    "IrfanView"
+                ]
+            ]
+        }
+    },
+    "pre_install": [
+        "if (-not (Test-Path \"$persist_dir\\i_view64.ini\")) { New-Item \"$dir\\i_view64.ini\" | Out-Null }",
+        "if (-not (Test-Path \"$persist_dir\\i_view32.ini\")) { New-Item \"$dir\\i_view32.ini\" | Out-Null }"
+    ],
+    "persist": [
+        "i_view64.ini",
+        "i_view32.ini",
+        "Languages"
+    ],
+    "checkver": ">\\s*version\\s+([\\d.-]+)\\s*<",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://www.irfanview.info/files/iview$cleanVersion_x64.zip",
+                "hash": {
+                    "url": "https://www.irfanview.com/64bit.htm",
+                    "regex": "ZIP file.+\\s+.+checksum: $sha256"
+                }
+            },
+            "32bit": {
+                "url": "https://www.irfanview.info/files/iview$cleanVersion.zip",
+                "hash": {
+                    "url": "https://www.irfanview.com/main_download_engl.htm",
+                    "regex": "zip.+-\\s$sha256"
+                }
+            }
+        }
+    }
+}

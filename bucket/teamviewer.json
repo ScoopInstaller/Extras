@@ -1,5 +1,5 @@
 {
-    "version": "15.25.8",
+    "version": "15.41.10",
     "description": "Remote control, desktop sharing, online meetings, web conferencing and file transfer between computers",
     "homepage": "https://www.teamviewer.com",
     "license": {
@@ -7,7 +7,16 @@
         "url": "https://www.teamviewer.com/en/eula/"
     },
     "url": "https://download.teamviewer.com/download/version_15x/TeamViewerPortable.zip",
-    "hash": "0b789a9a36bc73e83b681ff38b76b8a6ab348d646db62d087f023bbe5371bbae",
+    "hash": "031549509e4d5d2f1583403d384f2637414ef692f6475411aa54c4afb30463ba",
+    "pre_uninstall": [
+        "# For details, see: https://community.teamviewer.com/English/discussion/49721",
+        "Stop-Process -Name 'teamviewer' -ErrorAction SilentlyContinue",
+        "if (Test-Path \"$dir\\rolloutfile.tv13\") {",
+        "    Write-Host 'Removing rolloutfile.tv13.' -f Yellow",
+        "    icacls \"$dir\\rolloutfile.tv13\" /reset",
+        "    Remove-Item \"$dir\\rolloutfile.tv13\" -Force",
+        "}"
+    ],
     "bin": "teamviewer.exe",
     "shortcuts": [
         [
@@ -17,8 +26,9 @@
     ],
     "persist": "teamviewer.ini",
     "checkver": {
-        "url": "https://www.teamviewer.com/en/download/windows/",
-        "regex": "Current version:\\s*([\\d.]+)\\s*</"
+        "useragent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.26 Safari/537.36",
+        "url": "https://www.teamviewer.com/en-us/download/windows/",
+        "regex": "<p>Current\\sversion:\\s([\\d.]+)</p>"
     },
     "autoupdate": {
         "url": "https://download.teamviewer.com/download/version_$majorVersionx/TeamViewerPortable.zip"

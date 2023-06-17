@@ -1,55 +1,43 @@
 {
-    "version": "4.0.2",
+    "version": "5.2.0",
     "description": "The Fastest copy/backup software.",
-    "homepage": "https://fastcopy.jp",
+    "homepage": "https://fastcopy.jp/",
     "license": {
         "identifier": "Freeware",
         "url": "https://fastcopy.jp/help/fastcopy_eng.htm#license"
     },
-    "url": "https://fastcopy.jp/archive/FastCopy4.0.2_installer.exe",
-    "hash": "c1a61cc5337a2fe8442548e2e9d59ecbcb890d1c3c99cde74b553a050397c69a",
-    "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\FastCopy2.ini\")) {",
-        "   Set-Content \"$dir\\FastCopy2.ini\" '[main]' -Encoding ASCII",
-        "}"
+    "notes": [
+        "If an error occurs when updating or uninstalling, execute the following command then retry:",
+        "`Stop-Process -Name 'explorer'`"
     ],
-    "architecture": {
-        "64bit": {
-            "installer": {
-                "script": [
-                    "Invoke-ExternalCommand \"$dir\\$fname\" '/EXTRACT64' | Out-Null",
-                    "Get-ChildItem \"$dir\\FastCopy$version*x64\\*\" -Recurse | Move-Item -Destination $dir",
-                    "Remove-Item \"$dir\\$fname\", \"$dir\\FastCopy$version*\" "
-                ]
-            }
-        },
-        "32bit": {
-            "installer": {
-                "script": [
-                    "Invoke-ExternalCommand \"$dir\\$fname\" '/EXTRACT32' | Out-Null",
-                    "Get-ChildItem \"$dir\\FastCopy$version\\*\" -Recurse | Move-Item -Destination $dir",
-                    "Remove-Item \"$dir\\$fname\", \"$dir\\FastCopy$version\" "
-                ]
-            }
-        }
-    },
-    "bin": "FastCopy.exe",
+    "url": "https://fastcopy.jp/archive/FastCopy5.2.0_installer.exe",
+    "hash": "70e273eeed74b819403ba45dc2ba46224435a75836e811c405033670bf0eb83e",
+    "pre_install": [
+        "Start-Process \"$dir\\$fname\" -Args @('/SILENT', \"/DIR=\"\"$dir\"\"\", '/NOPROG', '/NODESK') -Wait",
+        "Copy-Item \"$persist_dir\\FastCopy.log\", \"$persist_dir\\FastCopy2.ini\", \"$persist_dir\\Log\" -Destination \"$dir\" -Force -Recurse -ErrorAction SilentlyContinue",
+        "Remove-Item \"$dir\\$fname\""
+    ],
+    "bin": [
+        "FastCopy.exe",
+        "FcHash.exe",
+        "fcp.exe"
+    ],
     "shortcuts": [
         [
             "FastCopy.exe",
             "FastCopy"
         ],
         [
-            "setup.exe",
-            "FastCopy Setup"
-        ],
-        [
             "doc\\FastCopy.chm",
             "FastCopy Manual"
         ]
     ],
-    "persist": "FastCopy2.ini",
-    "checkver": "FastCopy ver ([\\d.]+)",
+    "pre_uninstall": [
+        "ensure \"$persist_dir\\Log\" | Out-Null",
+        "Copy-Item \"$dir\\FastCopy.log\", \"$dir\\FastCopy2.ini\", \"$dir\\Log\" -Destination \"$persist_dir\" -Force -Recurse -ErrorAction SilentlyContinue",
+        "Start-Process \"$dir\\setup.exe\" -Args @('/SILENT', '/r') -Wait"
+    ],
+    "checkver": "Download v([\\d.]+)",
     "autoupdate": {
         "url": "https://fastcopy.jp/archive/FastCopy$version_installer.exe"
     }

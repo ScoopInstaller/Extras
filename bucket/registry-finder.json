@@ -1,5 +1,5 @@
 {
-    "version": "2.52.0.0",
+    "version": "2.57.0.0",
     "description": "Registry Finder is an improved replacement for the built-in Windows registry editor",
     "license": {
         "identifier": "Freeware",
@@ -8,32 +8,33 @@
     "homepage": "https://registry-finder.com/",
     "architecture": {
         "64bit": {
-            "url": "https://registry-finder.com/bin/2.52.0.0/RegistryFinder64.zip",
-            "hash": "f57b29e1f6f6f03af05332ce6897c1234a1cf580c8b481f27a689765acc4251d"
+            "url": "https://registry-finder.com/bin/2.57.0.0/RegistryFinder64.zip",
+            "hash": "9aec406a7561bb98c15f4078bff9dda3d1e7ff256b7f700dddbd0ae734a8f406"
         },
         "32bit": {
-            "url": "https://registry-finder.com/bin/2.52.0.0/RegistryFinder.zip",
-            "hash": "d8255947a1d7e3be07cdc9021c945afc2d67d7ec5149c5262d05ad044878695a"
+            "url": "https://registry-finder.com/bin/2.57.0.0/RegistryFinder.zip",
+            "hash": "6ed3f1dc6e697a551521cb9ead167254daa5b627e8f64d6f4245bd0d2d7d09b4"
         }
     },
-    "bin": [
-        [
-            "registryfinder.exe",
-            "registry-finder",
-            "--dataFolder \"$dir\\config\""
-        ]
+    "post_install": [
+        "'favorites.txt', 'RegistryFinder.config', 'UndoHistory', 'VisitationHistory' | ForEach-Object {",
+        "Copy-Item \"$persist_dir\\$_\" \"$dir\" -Recurse -ErrorAction SilentlyContinue }"
     ],
+    "bin": "registryfinder.exe",
     "shortcuts": [
         [
             "RegistryFinder.exe",
-            "Registry Finder",
-            "--dataFolder \"$dir\\config\""
+            "Registry Finder"
         ]
     ],
-    "persist": "config",
+    "persist": "res",
     "checkver": {
         "regex": "bin/([\\d.]+)/"
     },
+    "pre_uninstall": [
+        "'favorites.txt', 'RegistryFinder.config', 'UndoHistory', 'VisitationHistory' | ForEach-Object {",
+        "Copy-Item \"$dir\\$_\" \"$persist_dir\" -Recurse -ErrorAction SilentlyContinue }"
+    ],
     "autoupdate": {
         "architecture": {
             "64bit": {

@@ -1,5 +1,5 @@
 {
-    "version": "2.53.10.2",
+    "version": "2.53.16",
     "description": "All-in-one application suite capable of web browsing, advanced e-mail, newsgroup, feed client, IRC chat and HTML editing.",
     "homepage": "https://www.seamonkey-project.org",
     "license": "MPL-2.0",
@@ -11,16 +11,23 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://archive.mozilla.org/pub/seamonkey/releases/2.53.10.2/win64/en-US/seamonkey-2.53.10.2.en-US.win64.installer.exe#/dl.7z",
-            "hash": "sha512:2356e37ea695dcb2f7f8276456dd73775f3da302eb64eca427e3fcc6959b7f66249ed3d3c916bab7d817f412f164c8e25778888fe4c114c9f913927a4ffef216"
+            "url": "https://archive.mozilla.org/pub/seamonkey/releases/2.53.16/win64/en-US/seamonkey-2.53.16.en-US.win64.installer.exe#/dl.7z",
+            "hash": "sha512:cf17d5157a0a5d51774c86d10898f033ce158e2bad601515244be8d8b83489b0a9a587f6912b8ef24cbda254cb4d8ab4938b8e1983f38a5e2f2073222675b46b"
         },
         "32bit": {
-            "url": "https://archive.mozilla.org/pub/seamonkey/releases/2.53.10.2/win32/en-US/seamonkey-2.53.10.2.en-US.win32.installer.exe#/dl.7z",
-            "hash": "sha512:e5f67ac9c32c603875259ee6c232832c02733adfb84ca2378e870c83674347b7bd0aa4156c06b090e56ea6dd9813a3634d5755e8fe8f738e9ff4a7831f97d069"
+            "url": "https://archive.mozilla.org/pub/seamonkey/releases/2.53.16/win32/en-US/seamonkey-2.53.16.en-US.win32.installer.exe#/dl.7z",
+            "hash": "sha512:2225fb535219ea6750d84f184c4df9f23bfafa2d13c818d85afd8cf0a513f0654e3ae242d9bf25b5ab10859f291fc3ef91d87e5771b7c69c82f6c5db595653de"
         }
     },
     "extract_dir": "core",
-    "post_install": "seamonkey -CreateProfile \"Scoop $dir\\profile\"",
+    "post_install": [
+        "seamonkey -CreateProfile \"Scoop $persist_dir\\profile\"",
+        "$Addition = \"$persist_dir\\addition\"",
+        "if (Test-Path $Addition) {",
+        "  info 'Copying additional items...'",
+        "  Copy-Item -Path $Addition\\* -Destination $dir -Force -Recurse -ErrorAction SilentlyContinue",
+        "}"
+    ],
     "bin": "seamonkey.exe",
     "shortcuts": [
         [

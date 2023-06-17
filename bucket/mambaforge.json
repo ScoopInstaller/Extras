@@ -1,0 +1,58 @@
+{
+    "version": "23.1.0-1",
+    "description": "A conda-forge distribution",
+    "homepage": "https://github.com/conda-forge/miniforge",
+    "license": "BSD-3-Clause",
+    "notes": [
+        "From 4.6.0, conda has built the support for Cmd, Powershell or other shells.",
+        "Use \"conda init powershell\" or \"conda init __your_favorite_shell__\""
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/conda-forge/miniforge/releases/download/23.1.0-1/Mambaforge-23.1.0-1-Windows-x86_64.exe",
+            "hash": "f28b5f9c896198c11eb085966cc80a4210868c452f1945a338017dfb786144bf"
+        }
+    },
+    "pre_install": "if ($dir -match ' ') { error 'The installation directory cannot include a space'; break}",
+    "installer": {
+        "script": [
+            "Move-Item \"$dir\\$fname\" \"$dir\\..\\$fname\"",
+            "Start-Process -Wait \"$dir\\..\\$fname\" -ArgumentList @('/S', '/InstallationType=JustMe', '/RegisterPython=0', '/AddToPath=0', '/NoRegistry=1', \"/D=$dir\")",
+            "Remove-Item \"$dir\\..\\$fname\""
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "Start-Process -Wait \"$dir\\Uninstall-Mambaforge.exe\" -ArgumentList '/S'",
+            "# Workaround for 'envs' being deleted by the uninstaller. This does not affect persist.",
+            "New-Item \"$dir\\envs\" -ItemType Directory | Out-Null"
+        ]
+    },
+    "bin": [
+        "python.exe",
+        "pythonw.exe",
+        [
+            "python.exe",
+            "python3"
+        ]
+    ],
+    "env_add_path": [
+        "scripts",
+        "Library\\bin"
+    ],
+    "persist": "envs",
+    "checkver": {
+        "github": "https://github.com/conda-forge/miniforge",
+        "regex": "tag/([\\d.-]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/conda-forge/miniforge/releases/download/$version/Mambaforge-$version-Windows-x86_64.exe",
+                "hash": {
+                    "url": "$url.sha256"
+                }
+            }
+        }
+    }
+}

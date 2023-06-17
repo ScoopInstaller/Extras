@@ -1,19 +1,24 @@
 {
-    "version": "8.1.2-0",
+    "version": "8.2.4-0",
     "description": "Apache distribution containing MariaDB, PHP, and Perl",
     "homepage": "https://www.apachefriends.org/index.html",
     "license": "GPL-2.0-only",
-    "notes": "Follow the instructions on '$dir\\readme_en.txt' to set up XAMPP.",
     "suggest": {
-        "Visual C++ 2019 Redistributable": "extras/vcredist2019"
+        "vcredist": "extras/vcredist2022"
     },
     "architecture": {
         "64bit": {
-            "url": "https://download.sourceforge.net/project/xampp/XAMPP%20Windows/8.1.2/xampp-windows-x64-8.1.2-0-VS16.7z",
-            "hash": "sha1:da2657a507058c738ba553d731947cf707953660"
+            "url": "https://download.sourceforge.net/project/xampp/XAMPP%20Windows/8.2.4/xampp-windows-x64-8.2.4-0-VS16.7z",
+            "hash": "sha1:e97edfff607eca67ebdc4b50bb58175705a5baa6"
         }
     },
     "extract_dir": "xampp",
+    "pre_install": [
+        "if (-Not (Test-Path \"$dir\\xampp-control.ini\")) {",
+        "   New-Item \"$dir\\xampp-control.ini\"",
+        "}"
+    ],
+    "post_install": "Start-Process -FilePath \"$dir\\setup_xampp.bat\" -ArgumentList \"< nul\" -WorkingDirectory \"$dir\" -Wait",
     "bin": [
         "apache\\bin\\httpd.exe",
         "mysql\\bin\\mysql.exe",

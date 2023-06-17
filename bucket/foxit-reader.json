@@ -1,26 +1,30 @@
 {
-    "version": "10.0.0.35798",
-    "description": "Super-fast, feature rich PDF reader that offers a delightful reading experience in a small footprint.",
-    "homepage": "https://www.foxitsoftware.com/",
+    "##": "Using cdn06.foxitsoftware.com for better speed worldwide. (redirects to cdn06.foxitsoftware.com.cdn.cloudflare.net)",
+    "version": "12.1.2.15332",
+    "description": "Fast and feature rich PDF reader that offers a delightful reading experience.",
+    "homepage": "https://www.foxit.com/pdf-reader/",
     "license": {
         "identifier": "Freeware",
-        "url": "https://www.foxitsoftware.com/pdf-reader/eula.html"
+        "url": "https://www.foxit.com/pdf-editor/eula.html"
     },
-    "notes": "Deprecated. Use extras/foxit-pdf-reader",
-    "url": "https://cdn01.foxitsoftware.com/pub/foxit/reader/desktop/win/10.x/10.0/en_us/FoxitReader100_Setup_Prom_IS.exe#/dl.7z",
-    "hash": "2fa85149ee0a98b6ed7e316c7efd483fc397b653790057ab19e085356b710e65",
-    "extract_dir": "$PLUGINSDIR",
-    "installer": {
-        "script": [
-            "Get-ChildItem \"$dir\" -Exclude 'Foxit*Prom.exe' | Remove-Item",
-            "Get-Item \"$dir\\Foxit*prom.exe\" | Expand-InnoArchive -Destination \"$dir\" -Removal"
-        ]
-    },
-    "bin": "FoxitReader.exe",
+    "url": "https://cdn06.foxitsoftware.com/product/reader/desktop/win/12.1.2/FoxitPDFReader1212_L10N_Setup.msi",
+    "hash": "05e7d0f888017be080d47ba5e355ad4da9dd4bc75b22fa322eae356a566185a2",
+    "pre_install": [
+        "Copy-Item \"$dir\\Foxit Software\\Foxit PDF Reader\\*\" \"$dir\" -Force -Recurse | Out-Null",
+        "Remove-Item \"$dir\\Foxit Software\" -Force -Recurse | Out-Null"
+    ],
+    "bin": "FoxitPDFReader.exe",
     "shortcuts": [
         [
-            "FoxitReader.exe",
-            "Foxit Reader"
+            "FoxitPDFReader.exe",
+            "Foxit PDF Reader"
         ]
-    ]
+    ],
+    "checkver": {
+        "url": "https://www.foxit.com/pdf-reader/version-history.html",
+        "regex": ">Version ([\\d.]+)</"
+    },
+    "autoupdate": {
+        "url": "https://cdn06.foxitsoftware.com/product/reader/desktop/win/$matchHead/FoxitPDFReader$majorVersion$minorVersion$patchVersion_L10N_Setup.msi"
+    }
 }

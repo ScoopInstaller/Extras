@@ -1,20 +1,17 @@
 {
-    "version": "3.57.0",
+    "##": "This package should be updated manually. See #9179 for details",
+    "version": "3.64.0",
     "description": "Fast and reliable cross-platform FTP, FTPS and SFTP client with lots of useful features and an intuitive graphical user interface.",
     "homepage": "https://filezilla-project.org/",
     "license": "GPL-2.0-or-later",
-    "architecture": {
-        "64bit": {
-            "url": "https://download.filezilla-project.org/client/FileZilla_3.57.0_win64.zip",
-            "hash": "sha512:607db0653727d2207e86a62c17b2c8f33f4c191acc49e630582be5af6f1bd6d7891242bcdac1c2fe46c2021a0b341ed0c77a7ebc462d978de5b08a216003e7e1"
-        },
-        "32bit": {
-            "url": "https://download.filezilla-project.org/client/FileZilla_3.57.0_win32.zip",
-            "hash": "sha512:8b10aa6778dbe2f4d951757a4eec7495ae0cc1b14704e6bd9c4006f5316ca744eaf284d014eb7ac3299666d8265e8f9e8f9a77d0f4178c5962b691c7c4172765"
-        }
-    },
-    "extract_dir": "FileZilla-3.57.0",
+    "url": "https://packages.chocolatey.org/filezilla.3.64.0.nupkg",
+    "hash": "aab0a7c76cf51f60b583786679169a8aca576a949e49caa5a77c5718e9b18e01",
+    "extract_dir": "tools",
     "pre_install": [
+        "$arch = 'x86'",
+        "if (\"$architecture\" -Match '64bit' -or \"$architecture\" -Match 'arm64') { $arch = 'x64' }",
+        "Expand-7zipArchive \"$dir\\FileZilla_*_$arch.exe\" \"$dir\" -Removal",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\uninstall.exe.nsis\", \"$dir\\*.ps1\", \"$dir\\FileZilla_*.exe\" -Recurse -Force",
         "@'",
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>",
         "<FileZilla3>",
@@ -50,21 +47,14 @@
     ],
     "persist": "config",
     "checkver": {
-        "url": "https://filezilla-project.org/download.php?show_all=1",
-        "regex": "The latest stable version of FileZilla Client is ([\\d.]+)"
+        "url": "https://community.chocolatey.org/packages/filezilla",
+        "regex": "<meta property=\"og:title\" content=\"FileZilla ([\\d.]+)\">"
     },
     "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://download.filezilla-project.org/client/FileZilla_$version_win64.zip"
-            },
-            "32bit": {
-                "url": "https://download.filezilla-project.org/client/FileZilla_$version_win32.zip"
-            }
-        },
+        "url": "https://packages.chocolatey.org/filezilla.$version.nupkg",
         "hash": {
-            "url": "$baseurl/FileZilla_$version.sha512"
-        },
-        "extract_dir": "FileZilla-$version"
+            "url": "https://community.chocolatey.org/packages/filezilla/$version",
+            "regex": "$sha256.*?$basename"
+        }
     }
 }

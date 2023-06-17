@@ -1,19 +1,51 @@
 {
-    "version": "3.0.6",
+    "version": "3.6.4",
     "description": "Mintty as a terminal for WSL (Windows Subsystem for Linux).",
     "homepage": "https://github.com/mintty/wsltty",
     "license": "GPL-3.0-or-later",
-    "url": "https://github.com/mintty/wsltty/releases/download/3.0.6/wsltty-3.0.6-install.exe#/dl.7z",
-    "hash": "90b0bb924969d5d831fe47b95d39c07039c9c7d93a354dd356770df4a79fe1dd",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/mintty/wsltty/releases/download/3.6.4/wsltty-3.6.4-x86_64.cab#/dl.7z",
+            "hash": "3ce9f22ea91caf7a53383548c2291a33c70886a813191c5c4c0600422658649b",
+            "extract_dir": "wsltty-3.6.4-x86_64"
+        },
+        "32bit": {
+            "url": "https://github.com/mintty/wsltty/releases/download/3.6.4/wsltty-3.6.4-i686.cab#/dl.7z",
+            "hash": "20b683f7c28bbe739ad79bf0bd3c2e2d5d515bbc88d8941651ec636a01606813",
+            "extract_dir": "wsltty-3.6.4-i686"
+        }
+    },
+    "extract_to": "installer",
     "installer": {
-        "file": "install.bat",
-        "keep": true
+        "script": [
+            "$env:installdir = $dir",
+            "$env:configdir = \"$dir\\config\"",
+            "Push-Location \"$dir\\installer\"",
+            "& .\\install.bat 2>&1>$null",
+            "Pop-Location"
+        ]
     },
+    "post_install": "Remove-Item -LiteralPath \"$dir\\installer\" -Force -Recurse",
     "uninstaller": {
-        "file": "uninstall.bat"
+        "script": [
+            "$env:installdir = $dir",
+            "Push-Location \"$dir\"",
+            "& .\\uninstall.bat 2>&1>$null",
+            "Pop-Location"
+        ]
     },
+    "persist": "config",
     "checkver": "github",
     "autoupdate": {
-        "url": "https://github.com/mintty/wsltty/releases/download/$version/wsltty-$version-install.exe#/dl.7z"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/mintty/wsltty/releases/download/$version/wsltty-$version-x86_64.cab#/dl.7z",
+                "extract_dir": "wsltty-$version-x86_64"
+            },
+            "32bit": {
+                "url": "https://github.com/mintty/wsltty/releases/download/$version/wsltty-$version-i686.cab#/dl.7z",
+                "extract_dir": "wsltty-$version-i686"
+            }
+        }
     }
 }

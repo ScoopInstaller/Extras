@@ -1,44 +1,65 @@
 {
-    "version": "96.0.3",
+    "version": "114.0.1-2",
     "description": "A fork of Firefox, focused on privacy, security and freedom.",
     "homepage": "https://librewolf.net/",
     "license": "MPL-2.0",
     "architecture": {
         "64bit": {
-            "url": "https://gitlab.com/librewolf-community/browser/windows/uploads/5619a0f68ce8ebafd66bbbe2c655505c/librewolf-96.0.3.en-US.win64.zip",
-            "hash": "d2ec7b9ee450c4e1547595cd297c306f87cfb43d3ac448cce0880d311efd1db4"
+            "url": "https://gitlab.com/api/v4/projects/44042130/packages/generic/librewolf/114.0.1-2/librewolf-114.0.1-2-windows-x86_64-portable.zip",
+            "hash": "3cdca46735f8a2a0e874f4b5fc5e4121ac9bb5633e6cf2d8798078a7a78c5ab9"
+        },
+        "32bit": {
+            "url": "https://gitlab.com/api/v4/projects/44042130/packages/generic/librewolf/114.0.1-2/librewolf-114.0.1-2-windows-i686-portable.zip",
+            "hash": "f7a54d43f81232939bedd7325d9ecb93a49aa6073632cf773d9b439f89a6c5db"
         }
     },
+    "extract_dir": "librewolf-114.0.1-2",
     "pre_install": [
-        "$lw_name = (Get-Item \"$dir\\librewolf-*\").FullName",
-        "Move-Item \"$lw_name\\*\" \"$dir\"",
-        "Remove-Item \"$lw_name\""
+        "Remove-Item \"$dir\\LibreWolf-WinUpdater.exe\"",
+        "# Customizing LibreWolf Using AutoConfig",
+        "# https://support.mozilla.org/en-US/kb/customizing-firefox-using-autoconfig",
+        "ensure \"$persist_dir\\LibreWolf\\defaults\\pref\" | Out-Null",
+        "Copy-Item \"$persist_dir\\LibreWolf\\defaults\\pref\\*\" \"$dir\\LibreWolf\\defaults\\pref\" -Exclude 'channel-prefs.js'",
+        "Copy-Item \"$persist_dir\\LibreWolf\\*.js\", \"$persist_dir\\LibreWolf\\*.cfg\" \"$dir\\LibreWolf\"",
+        "# Customizing LibreWolf Using policies.json",
+        "# https://support.mozilla.org/en-US/kb/customizing-firefox-using-policiesjson",
+        "# Used to override the default policies.json of LibreWolf, if you want",
+        "ensure \"$persist_dir\\LibreWolf\\distribution\" | Out-Null",
+        "Copy-Item \"$persist_dir\\LibreWolf\\distribution\\policies.json\" \"$dir\\LibreWolf\\distribution\" -ErrorAction SilentlyContinue"
     ],
     "bin": [
         [
-            "librewolf-portable.exe",
+            "LibreWolf-Portable.exe",
             "librewolf"
         ]
     ],
     "shortcuts": [
         [
-            "librewolf-portable.exe",
-            "Librewolf"
+            "LibreWolf-Portable.exe",
+            "LibreWolf"
         ]
     ],
     "persist": "Profiles",
+    "pre_uninstall": [
+        "Copy-Item \"$dir\\LibreWolf\\defaults\\pref\\*\" \"$persist_dir\\LibreWolf\\defaults\\pref\" -Exclude 'channel-prefs.js'",
+        "Copy-Item \"$dir\\LibreWolf\\*.js\", \"$dir\\LibreWolf\\*.cfg\" \"$persist_dir\\LibreWolf\" -Exclude 'librewolf.cfg'"
+    ],
     "checkver": {
-        "url": "https://gitlab.com/api/v4/projects/13852981/releases",
-        "regex": "/uploads/(?<randidzip>[a-z0-9]+)/librewolf-([\\d.]+)\\.en-US\\.win64\\.zip.*?/uploads/(?<randidsha>[a-z0-9]+)/sha256sums\\.txt"
+        "url": "https://gitlab.com/api/v4/projects/44042130/releases/permalink/latest",
+        "jsonpath": "$.tag_name"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://gitlab.com/librewolf-community/browser/windows/uploads/$matchRandidzip/librewolf-$version.en-US.win64.zip",
-                "hash": {
-                    "url": "https://gitlab.com/librewolf-community/browser/windows/uploads/$matchRandidsha/sha256sums.txt"
-                }
+                "url": "https://gitlab.com/api/v4/projects/44042130/packages/generic/librewolf/$version/librewolf-$version-windows-x86_64-portable.zip"
+            },
+            "32bit": {
+                "url": "https://gitlab.com/api/v4/projects/44042130/packages/generic/librewolf/$version/librewolf-$version-windows-i686-portable.zip"
             }
-        }
+        },
+        "hash": {
+            "url": "$url.sha256sum"
+        },
+        "extract_dir": "librewolf-$version"
     }
 }

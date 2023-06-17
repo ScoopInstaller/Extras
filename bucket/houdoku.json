@@ -1,0 +1,36 @@
+{
+    "version": "2.12.2",
+    "description": "Manga reader and library manager for the desktop",
+    "homepage": "https://houdoku.org/",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/xgi/houdoku/releases/download/v2.12.2/Houdoku-Setup-2.12.2.exe#/dl.7z",
+            "hash": "sha512:1908d812fb9f01e66e62df275ac9dab307d95035ca48c42fb430b2977e48a6178bbccf01eae3e110e22aa56328ea3c60a22278e2b59d661fd6d11e1e70b99d58"
+        }
+    },
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse -Force"
+    ],
+    "shortcuts": [
+        [
+            "Houdoku.exe",
+            "Houdoku"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/xgi/houdoku"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/xgi/houdoku/releases/download/v$version/Houdoku-Setup-$version.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "sha512:\\s+$base64"
+                }
+            }
+        }
+    }
+}

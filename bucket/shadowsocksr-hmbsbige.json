@@ -1,0 +1,47 @@
+{
+    "version": "6.1.0",
+    "description": "ShadowsocksR for Windows maintained by HMBSbige.",
+    "homepage": "https://github.com/HMBSbige/ShadowsocksR-Windows",
+    "license": "GPL-3.0-only",
+    "suggest": {
+        ".NET Desktop Runtime": "extras/windowsdesktop-runtime"
+    },
+    "url": "https://github.com/HMBSbige/ShadowsocksR-Windows/releases/download/6.1.0/ShadowsocksR-6.1.0.7z",
+    "hash": "adbe1e1bd5d71896fd70000551798b77173abd50de56395b11b4bb05e7f8e937",
+    "extract_dir": "ShadowsocksR",
+    "bin": "ShadowsocksR.exe",
+    "shortcuts": [
+        [
+            "ShadowsocksR.exe",
+            "ShadowsocksR"
+        ]
+    ],
+    "pre_install": [
+        "   #Create placeholder files",
+        "function CreateFile([String] $file, [String] $content = $null) {",
+        "    if(!(Test-Path \"$persist_dir\\$file\")) {",
+        "        Write-Host \"Create placeholder for shadowsocksr-windows: $file\"",
+        "        New-Item -Force -Path \"$persist_dir\\$file\" -ItemType file -Value $content | Out-Null",
+        "    }",
+        "}",
+        "CreateFile 'gui-config.json' '{}'",
+        "CreateFile 'pac.txt'",
+        "CreateFile 'transfer_log.json' '{}'",
+        "CreateFile 'user-rule.txt'"
+    ],
+    "persist": [
+        "gui-config.json",
+        "pac.txt",
+        "transfer_log.json",
+        "user-rule.txt",
+        "temp"
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "url": "https://github.com/HMBSbige/ShadowsocksR-Windows/releases/download/$version/ShadowsocksR-$version.7z",
+        "hash": {
+            "url": "https://github.com/HMBSbige/ShadowsocksR-Windows/releases",
+            "regex": "(?sm)$basename.*?$sha256"
+        }
+    }
+}

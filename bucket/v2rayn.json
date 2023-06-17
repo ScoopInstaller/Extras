@@ -1,39 +1,35 @@
 {
-    "version": "4.29",
-    "description": "GUI client based on v2ray core",
+    "version": "6.23",
+    "description": "A V2Ray client for Windows, support Xray & v2fly core",
     "homepage": "https://github.com/2dust/v2rayN",
     "license": "GPL-3.0-only",
-    "depends": [
-        "v2ray",
-        "xray"
-    ],
-    "url": "https://github.com/2dust/v2rayN/releases/download/4.29/v2rayN.zip",
-    "hash": "09a263e1408e4f73a54a45210f59207c4e173c3b6501a32dcfe4ed44497e1eaa",
+    "depends": "xray",
+    "suggest": {
+        ".NET Desktop Runtime": "extras/windowsdesktop-runtime-lts",
+        "v2fly-core": "v2ray"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/2dust/v2rayN/releases/download/6.23/v2rayN.zip",
+            "hash": "e03163198e4dbebdbb50f030da6104d802d9c108f262a33ffa9a1bf0cdf4126f"
+        },
+        "32bit": {
+            "url": "https://github.com/2dust/v2rayN/releases/download/6.23/v2rayN-32.zip",
+            "hash": "b444d23aee0986d46a44966b249a3101bbf03cd024527d07660722bf7e0971a6"
+        },
+        "arm64": {
+            "url": "https://github.com/2dust/v2rayN/releases/download/6.23/v2rayN-arm64.zip",
+            "hash": "7e7905dbac9670b6a81835c429171ca04d437a95ed03220f69abdad8ef9de976"
+        }
+    },
     "extract_dir": "v2rayN",
     "pre_install": [
-        "foreach ($name in @('guiNConfig.json', 'user-wininet.json')) {",
-        "    if (!(Test-Path \"$persist_dir\\$name\")) {",
-        "        New-Item -Force -Path \"$dir\" -Name $name | Out-Null",
-        "    }",
-        "}",
-        "if (!(Test-Path \"$persist_dir\\config.json\")) {",
-        "    Copy-Item \"$(appdir v2ray $global)\\current\\config.json\" \"$dir\" | Out-Null",
-        "}",
-        "foreach ($form in @('*.exe', '*.dat', 'vpoint*.json')) {",
-        "    foreach ($_ in Get-ChildItem \"$(appdir v2ray $global)\\current\" -File) {",
-        "        $name = $_.Name",
-        "        if ($name -Like $form) {",
-        "            Write-Host \"Creating hardlink for $name\"",
-        "            New-Item -ItemType HardLink -Path \"$dir\" -Name $name -Target \"$(appdir v2ray $global)\\current\\$name\" | Out-Null",
-        "        }",
-        "    }",
-        "}",
-        "foreach ($form in @('*.exe')) {",
+        "foreach ($form in @('*.exe', '*.dat')) {",
         "    foreach ($_ in Get-ChildItem \"$(appdir xray $global)\\current\" -File) {",
         "        $name = $_.Name",
         "        if ($name -Like $form) {",
         "            Write-Host \"Creating hardlink for $name\"",
-        "            New-Item -ItemType HardLink -Path \"$dir\" -Name $name -Target \"$(appdir xray $global)\\current\\$name\" | Out-Null",
+        "            New-Item -ItemType HardLink -Path \"$dir\\bin\\Xray\" -Name $name -Target \"$(appdir xray $global)\\current\\$name\" | Out-Null",
         "        }",
         "    }",
         "}"
@@ -45,13 +41,26 @@
             "v2rayN"
         ]
     ],
-    "persist": [
-        "user-wininet.json",
-        "config.json",
-        "guiNConfig.json"
-    ],
+    "persist": "guiConfigs",
+    "uninstaller": {
+        "script": [
+            "if (Test-Path \"$dir\\guiConfigs\\config.json\") {",
+            "    Copy-Item \"$dir\\guiConfigs\\config.json\" \"$persist_dir\\guiConfigs\\config.json\" | Out-Null",
+            "}"
+        ]
+    },
     "checkver": "github",
     "autoupdate": {
-        "url": "https://github.com/2dust/v2rayN/releases/download/$version/v2rayN.zip"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/2dust/v2rayN/releases/download/$version/v2rayN.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/2dust/v2rayN/releases/download/$version/v2rayN-32.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/2dust/v2rayN/releases/download/$version/v2rayN-arm64.zip"
+            }
+        }
     }
 }

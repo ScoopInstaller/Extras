@@ -1,11 +1,18 @@
 {
-    "version": "1.14.2",
+    "version": "2.2.1",
     "description": "A modern, open source text editor that understands web design.",
     "homepage": "http://brackets.io/",
     "license": "MIT",
-    "url": "https://github.com/adobe/brackets/releases/download/release-1.14.2/Brackets.Release.1.14.2.msi",
-    "hash": "5f059e271fe78fefe224e187b6ef559445b1efadd6dca9446a99ca1a53eb4e56",
-    "extract_dir": "Brackets",
+    "url": "https://github.com/brackets-cont/brackets/releases/download/v2.2.1/Brackets-2.2.1.exe#/dl.exe",
+    "hash": "a4a4a80f65ee2d8ec77ff4179ebcb940d63ee4f69d3f7de85d5b99df7b246890",
+    "depends": "lessmsi",
+    "pre_install": [
+        "Invoke-ExternalCommand \"$dir\\dl.exe\" -ArgumentList '/extract' | Out-Null",
+        "# Workaround for #8436",
+        "Invoke-ExternalCommand lessmsi -ArgumentList @('x', \"$dir\\Brackets.msi\", \"$dir\\\") -LogPath \"$dir\\msi.log\" | Out-Null",
+        "Move-Item \"$dir\\SourceDir\\APPDIR\\*\" \"$dir\\\"",
+        "Remove-Item \"$dir\\SourceDir\", \"$dir\\Brackets.msi\", \"$dir\\Brackets.aiui\", \"$dir\\Brackets*.cab\", \"$dir\\dl.exe\", \"$dir\\msi.log\" -Force -Recurse"
+    ],
     "bin": "brackets.exe",
     "shortcuts": [
         [
@@ -14,10 +21,9 @@
         ]
     ],
     "checkver": {
-        "github": "https://github.com/adobe/brackets",
-        "regex": "/releases/tag/release-([\\d.]+)"
+        "github": "https://github.com/brackets-cont/brackets"
     },
     "autoupdate": {
-        "url": "https://github.com/adobe/brackets/releases/download/release-$version/Brackets.Release.$version.msi"
+        "url": "https://github.com/brackets-cont/brackets/releases/download/v$version/Brackets-$version.exe#/dl.exe"
     }
 }

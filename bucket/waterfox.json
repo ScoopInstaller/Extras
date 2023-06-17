@@ -1,31 +1,57 @@
 {
-    "version": "4.0.6",
+    "version": "5.1.8",
     "description": "The 100% fresh, free-range, ethical browser",
     "homepage": "https://www.waterfox.net",
     "license": "MPL-2.0",
-    "notes": "For Waterfox Classic, please install 'waterfox-classic'.",
+    "notes": [
+        "To set profile 'Scoop' as *DEFAULT*, or profiles/settings was lost after update:",
+        "  - Run 'Waterfox Profile Manager', choose 'Scoop' then click 'Start Waterfox'.",
+        "  - Visit 'about:profiles' page in Waterfox to check *DEFAULT* profile.",
+        "For details: https://support.mozilla.org/en-US/kb/profile-manager-create-remove-switch-firefox-profiles",
+        "For Waterfox Classic, please install 'waterfox-classic'."
+    ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/WaterfoxCo/Waterfox/releases/download/G4.0.6/Waterfox.G4.0.6.Setup.exe#/dl.7z",
-            "hash": "fb7d3cccfdc72f51290e7f5ea613d446277188de41331e3a8b27fca5325ee22b"
+            "url": "https://cdn1.waterfox.net/waterfox/releases/G5.1.8/WINNT_x86_64/Waterfox%20Setup%20G5.1.8.exe#/dl.7z",
+            "hash": "sha512:b3bbc3ac22cbea8d23f137df5663e79890473bc65c89f6b257be619c080c78c05a3fec9fcb24f10a8b4854e25a2d8652257fe6c3f504855d5a3c228619f9a64b"
         }
     },
     "extract_dir": "core",
+    "post_install": [
+        "waterfox -CreateProfile \"Scoop $persist_dir\\profile\"",
+        "$Addition = \"$persist_dir\\addition\"",
+        "if (Test-Path $Addition) {",
+        "  info 'Copying additional items...'",
+        "  Copy-Item -Path $Addition\\* -Destination $dir -Force -Recurse -ErrorAction SilentlyContinue",
+        "}"
+    ],
     "bin": "waterfox.exe",
     "shortcuts": [
         [
             "waterfox.exe",
             "Waterfox"
+        ],
+        [
+            "waterfox.exe",
+            "Waterfox Profile Manager",
+            "-P"
         ]
+    ],
+    "persist": [
+        "distribution",
+        "profile"
     ],
     "checkver": {
         "github": "https://github.com/WaterfoxCo/Waterfox",
-        "regex": "download/G([\\d.]+)/"
+        "regex": "G([\\d.]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/WaterfoxCo/Waterfox/releases/download/G$version/Waterfox.G$version.Setup.exe#/dl.7z"
+                "url": "https://cdn1.waterfox.net/waterfox/releases/G$version/WINNT_x86_64/Waterfox%20Setup%20G$version.exe#/dl.7z",
+                "hash": {
+                    "url": "$url.sha512"
+                }
             }
         }
     }

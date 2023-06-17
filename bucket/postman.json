@@ -1,5 +1,5 @@
 {
-    "version": "9.9.3",
+    "version": "10.15.0",
     "description": "Complete API development environment.",
     "homepage": "https://www.getpostman.com/",
     "license": {
@@ -8,25 +8,30 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://dl.pstmn.io/download/9.9.3/Postman-win64-9.9.3-full.nupkg",
-            "hash": "sha1:a80cc901fe8fa4485cf6fda3daffdb791640b6c9"
+            "url": "https://dl.pstmn.io/download/10.15.0/Postman-win64-10.15.0-Setup.exe#/dl.7z",
+            "hash": "sha1:19cf6af4a7cf43e577addca012b4ad8cc0392db7"
         }
     },
-    "extract_dir": "lib\\net45",
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\Postman-$version-full.nupkg\" \"$dir\\app\" -ExtractDir 'lib\\net45' -Removal",
+            "'background.gif', 'RELEASES', 'setupIcon.ico' | ForEach-Object { Remove-Item \"$dir\\$_\" }"
+        ]
+    },
     "shortcuts": [
         [
-            "Postman.exe",
+            "app/Postman.exe",
             "Postman"
         ]
     ],
     "checkver": {
-        "url": "https://dl.pstmn.io/RELEASES?platform=win64&from=$version",
-        "jsonpath": "$.releases[-1:].name"
+        "url": "https://dl.pstmn.io/changelog?channel=stable&platform=win64",
+        "jsonpath": "$.changelog[0].name"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://dl.pstmn.io/download/$version/Postman-win64-$version-full.nupkg",
+                "url": "https://dl.pstmn.io/download/$version/Postman-win64-$version-Setup.exe#/dl.7z",
                 "hash": {
                     "url": "https://dl.pstmn.io/RELEASES?platform=win64&from=$version",
                     "regex": "(?sm)$basename.*?$sha1"

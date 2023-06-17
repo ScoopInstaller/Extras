@@ -1,15 +1,15 @@
 {
-    "version": "2.0.5",
-    "description": " SDL_image is an image loading library that is used with the SDL library, and almost as portable. It allows a programmer to use multiple image formats without having to code all the loading and conversion algorithms themselves.",
-    "homepage": "https://www.libsdl.org/projects/SDL_image/",
+    "version": "2.6.3",
+    "description": "SDL_image is an image loading library that is used with the SDL library, and almost as portable. It allows a programmer to use multiple image formats without having to code all the loading and conversion algorithms themselves.",
+    "homepage": "https://github.com/libsdl-org/SDL_image",
     "license": "Zlib",
     "url": [
-        "https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-2.0.5-VC.zip",
-        "https://www.libsdl.org/projects/SDL_image/release/SDL2_image-2.0.5.zip"
+        "https://github.com/libsdl-org/SDL_image/releases/download/release-2.6.3/SDL2_image-devel-2.6.3-VC.zip",
+        "https://github.com/libsdl-org/SDL_image/releases/download/release-2.6.3/SDL2_image-2.6.3.zip"
     ],
     "hash": [
-        "a180f9b75c4d3fbafe02af42c42463cc7bc488e763cfd1ec2ffb75678b4387ac",
-        "eee0927d1e7819d57c623fe3e2b3c6761c77c474fe9bc425e8674d30ac049b1c"
+        "5e54fa63d36358c2a310cc8ec1f5fda524c3011b1f7af1ebeadc58fef0c55ed9",
+        "b448a8ca5b7927d9bd1577d393f4d6c59581f87ee525652a27e699941db37b7c"
     ],
     "installer": {
         "script": [
@@ -45,12 +45,11 @@
             "# 2.1 Create helper variables.",
             "$pc_in = \"$src_dir\\SDL2_image.pc.in\"",
             "$pc_out = \"$dir\\lib\\pkgconfig\\SDL2_image.pc\"",
-            "$current_dir = \"$(current_dir $dir)\"",
-            "$pc_dir = \"$current_dir\\lib\\pkgconfig\"",
-            "$cm_dir = \"$current_dir\"",
+            "$cm_dir = if (get_config NO_JUNCTIONS) { $dir } else { \"$(appdir $app $global)\\current\" }",
+            "$pc_dir = \"$cm_dir\\lib\\pkgconfig\"",
             "#",
             "# 2.2 Configure the pck-config file.",
-            "sc $pc_out ((gc $pc_in) `",
+            "Set-Content $pc_out ((gc $pc_in) `",
             "    -replace \"@prefix@\",\"\" `",
             "    -replace \"@exec_prefix@\",\"`${prefix}\" `",
             "    -replace \"@libdir@\",\"`${exec_prefix}/lib\" `",
@@ -93,9 +92,8 @@
             "# 1) Remove library link in the env variables",
             "#-------------------------------------------------------------------#",
             "# 1.1 Create helper variables.",
-            "$current_dir = \"$(current_dir $dir)\"",
-            "$pc_dir = \"$current_dir\\lib\\pkgconfig\"",
-            "$cm_dir = \"$current_dir\"",
+            "$cm_dir = if (get_config NO_JUNCTIONS) { $dir } else { \"$(appdir $app $global)\\current\" }",
+            "$pc_dir = \"$cm_dir\\lib\\pkgconfig\"",
             "#",
             "# 1.2 Delete env variables for future sessions",
             "$was_in_path, $newpath = strip_path (env 'PKG_CONFIG_PATH' $global) $pc_dir",
@@ -117,13 +115,13 @@
         ]
     },
     "checkver": {
-        "url": "https://www.libsdl.org/projects/SDL_image/",
-        "regex": "SDL2_image-([\\d.]+)\\.zip"
+        "url": "https://github.com/libsdl-org/SDL_image/releases",
+        "regex": "release-([\\d.]+)"
     },
     "autoupdate": {
         "url": [
-            "https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-$version-VC.zip",
-            "https://www.libsdl.org/projects/SDL_image/release/SDL2_image-$version.zip"
+            "https://github.com/libsdl-org/SDL_image/releases/download/release-$version/SDL2_image-devel-$version-VC.zip",
+            "https://github.com/libsdl-org/SDL_image/releases/download/release-$version/SDL2_image-$version.zip"
         ]
     }
 }

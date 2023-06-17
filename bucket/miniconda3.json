@@ -1,36 +1,36 @@
 {
-    "version": "4.10.3",
+    "version": "23.3.1-0",
     "description": "A cross-platform, Python-agnostic binary package manager",
     "homepage": "https://conda.io/miniconda.html",
     "license": "BSD-3-Clause",
     "notes": [
-        "Currently conda envs activate and deactivate doesn't work on PowerShell,",
-        "for more information, see: https://github.com/conda/conda/issues/626,",
-        "or just execute: 'conda install -n root -c pscondaenvs pscondaenvs'"
+        "From 4.6.0, conda has built the support for Cmd, Powershell or other shells.",
+        "Use \"conda init powershell\" or \"conda init __your_favorite_shell__\"",
+        "",
+        "Miniconda3 drops support for 32-bit CPUs from v22.9.0. If you are running a 32-bit system, please install miniconda3-4.12.0 from the Versions bucket."
     ],
     "architecture": {
         "64bit": {
-            "url": "https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Windows-x86_64.exe",
-            "hash": "b33797064593ab2229a0135dc69001bea05cb56a20c2f243b1231213642e260a"
-        },
-        "32bit": {
-            "url": "https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Windows-x86.exe",
-            "hash": "24f438e57ff2ef1ce1e93050d4e9d13f5050955f759f448d84a4018d3cd12d6b"
+            "url": "https://repo.anaconda.com/miniconda/Miniconda3-py310_23.3.1-0-Windows-x86_64.exe#/setup.exe",
+            "hash": "307194e1f12bbeb52b083634e89cc67db4f7980bd542254b43d3309eaf7cb358"
         }
     },
+    "pre_install": "if ($dir -match ' ') { error 'The installation directory cannot include a space'; break}",
     "installer": {
-        "args": [
-            "/S",
-            "/InstallationType=JustMe",
-            "/RegisterPython=0",
-            "/AddToPath=0",
-            "/NoRegistry=1",
-            "/D=$dir"
+        "script": [
+            "# Using Start-Process as a workaround because the installer will not work properly when args are quoted (e.g. \"`\"/S`\"\")",
+            "# Move the installer to the upper directory to avoid the error \"The installatiom directory is not empty.\"",
+            "Move-Item \"$dir\\setup.exe\" \"$dir\\..\\setup.exe\" | Out-Null",
+            "Start-Process \"$dir\\..\\setup.exe\" -ArgumentList @('/S', '/InstallationType=JustMe', '/RegisterPython=0', '/AddToPath=0', '/NoRegistry=1', \"/D=$dir\") -Wait | Out-Null"
         ]
     },
+    "post_install": "Remove-Item \"$dir\\..\\setup.exe\" -Force | Out-Null",
     "uninstaller": {
-        "file": "Uninstall-Miniconda3.exe",
-        "args": "/S"
+        "script": [
+            "Start-Process \"$dir\\Uninstall-Miniconda3.exe\" -ArgumentList '/S' -Wait | Out-Null",
+            "# Create a 'dummy' to avoid error because the uninstaller removes the symlink. The does not affect persist.",
+            "if (!(Test-Path \"$dir\\envs\")) { New-Item \"$dir\\envs\" -ItemType Directory | Out-Null }"
+        ]
     },
     "bin": [
         "python.exe",
@@ -47,15 +47,12 @@
     "persist": "envs",
     "checkver": {
         "url": "https://docs.conda.io/en/latest/miniconda.html",
-        "regex": "Miniconda3-py39_([\\d.]+)-Windows"
+        "regex": "Miniconda3-py310_([\\d.-]+)-Windows"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://repo.anaconda.com/miniconda/Miniconda3-py39_$version-Windows-x86_64.exe"
-            },
-            "32bit": {
-                "url": "https://repo.anaconda.com/miniconda/Miniconda3-py39_$version-Windows-x86.exe"
+                "url": "https://repo.anaconda.com/miniconda/Miniconda3-py310_$version-Windows-x86_64.exe#/setup.exe"
             }
         },
         "hash": {

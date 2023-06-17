@@ -1,33 +1,27 @@
 {
     "##": "Multiple components under various open source licenses. Included HTTPS Everywhere extension is the strictest.",
-    "version": "11.0.4",
+    "version": "12.0.7",
     "description": "Web browser that connects to the internet via the Tor anonymity network",
     "homepage": "https://www.torproject.org/",
     "license": "GPL-3.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://dist.torproject.org/torbrowser/11.0.4/torbrowser-install-win64-11.0.4_en-US.exe",
-            "hash": "745fd1720a71a62f47b2259ad8dc5393def2c881a668967c7a54ff0c5db2c67f"
+            "url": "https://dist.torproject.org/torbrowser/12.0.7/torbrowser-install-win64-12.0.7_ALL.exe#/dl.7z",
+            "hash": "223ac64e013ed819d4332c55ed6a7ecd203dacc3a252bfc70b2174e54b892f3b"
         },
         "32bit": {
-            "url": "https://dist.torproject.org/torbrowser/11.0.4/torbrowser-install-11.0.4_en-US.exe",
-            "hash": "c7073f58f49a225bcf7668a5630e94f5f5e96fb7bed095feebf3bf8417bd3d07"
+            "url": "https://dist.torproject.org/torbrowser/12.0.7/torbrowser-install-12.0.7_ALL.exe#/dl.7z",
+            "hash": "3f01a6c2a0d26282f4923346962d0ef4ceb186a3d18c42562bace4e1f0849b38"
         }
     },
-    "installer": {
-        "script": [
-            "Start-Process \"$dir\\$fname\" \"/S /D=$dir\" -PassThru -NoNewWindow | Wait-Process",
-            "movedir \"$dir\\Browser\" \"$dir\" | Out-Null",
-            "Remove-Item \"$dir\\$fname\", \"$dir\\*.lnk\" -Force",
-            "# Persisting profile breaks Tor-Launcher and makes it fallback to config files in Tor folder: move them there",
-            "movedir \"$dir\\TorBrowser\\Data\\Tor\" \"$dir\\TorBrowser\\Tor\" | Out-Null",
-            "# Update extensions in persisted profile",
-            "movedir \"$dir\\TorBrowser\\Data\\Browser\\profile.default\" \"$persist_dir\\TorBrowser\\Data\\Browser\\profile.default\" | Out-Null"
-        ]
-    },
+    "extract_dir": "Browser",
+    "pre_install": [
+        "# Update extensions in persisted profile",
+        "movedir \"$dir\\TorBrowser\\Data\\Browser\\profile.default\" \"$persist_dir\\TorBrowser\\Data\\Browser\\profile.default\" | Out-Null"
+    ],
     "persist": [
         "TorBrowser\\Data\\Browser\\profile.default",
-        "TorBrowser\\Tor\\torrc"
+        "TorBrowser\\Data\\Tor"
     ],
     "bin": [
         [
@@ -48,10 +42,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://dist.torproject.org/torbrowser/$version/torbrowser-install-win64-$version_en-US.exe"
+                "url": "https://dist.torproject.org/torbrowser/$version/torbrowser-install-win64-$version_ALL.exe#/dl.7z"
             },
             "32bit": {
-                "url": "https://dist.torproject.org/torbrowser/$version/torbrowser-install-$version_en-US.exe"
+                "url": "https://dist.torproject.org/torbrowser/$version/torbrowser-install-$version_ALL.exe#/dl.7z"
             }
         },
         "hash": {

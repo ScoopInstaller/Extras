@@ -1,5 +1,5 @@
 {
-    "version": "91.5.1",
+    "version": "102.12.0",
     "description": "A free email application that’s easy to set up and customize.",
     "homepage": "https://www.thunderbird.net",
     "license": "MPL-2.0",
@@ -11,16 +11,23 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://archive.mozilla.org/pub/thunderbird/releases/91.5.1/win64/en-US/Thunderbird%20Setup%2091.5.1.exe#/dl.7z",
-            "hash": "sha512:81784184b7a60cda7cddedaf4c43578e69963c39fbf1f5c6fe23e20a91e68227e1e032381d205377a389226ca1365961bf5c4857d21b5c253fa635a4df8748a1"
+            "url": "https://archive.mozilla.org/pub/thunderbird/releases/102.12.0/win64/en-US/Thunderbird%20Setup%20102.12.0.exe#/dl.7z",
+            "hash": "sha512:49e9569fbcda6ad83ee96b09780be3df4f2019930a18f7964519f421556bae52cd5c85c7e8032789c0b9c0c6157badc1968f88250d52df4467e71cad2d07af36"
         },
         "32bit": {
-            "url": "https://archive.mozilla.org/pub/thunderbird/releases/91.5.1/win32/en-US/Thunderbird%20Setup%2091.5.1.exe#/dl.7z",
-            "hash": "sha512:3ea7edb4c5cdec20f28047ef07f3b861026602a34a1207b7bc214fe2c64b3790a33e76ffaad4530332c41d02c0bf6d8b67ba7b9e3c9b52754771063adafe5b51"
+            "url": "https://archive.mozilla.org/pub/thunderbird/releases/102.12.0/win32/en-US/Thunderbird%20Setup%20102.12.0.exe#/dl.7z",
+            "hash": "sha512:0a1ee9c25295aebf50ae0af614307da0ef6e1a27c8e9bec2fcf03587f018103a41cc0a29c62e1b61c7f5756f27aba4d82915b80d9a113e2388a3348486f77007"
         }
     },
     "extract_dir": "core",
-    "post_install": "thunderbird -CreateProfile \"Scoop $dir\\profile\"",
+    "post_install": [
+        "thunderbird -CreateProfile \"Scoop $persist_dir\\profile\"",
+        "$Addition = \"$persist_dir\\addition\"",
+        "if (Test-Path $Addition) {",
+        "  info 'Copying additional items...'",
+        "  Copy-Item -Path $Addition\\* -Destination $dir -Force -Recurse -ErrorAction SilentlyContinue",
+        "}"
+    ],
     "bin": "thunderbird.exe",
     "shortcuts": [
         [
@@ -33,7 +40,10 @@
             "-P"
         ]
     ],
-    "persist": "profile",
+    "persist": [
+        "distribution",
+        "profile"
+    ],
     "checkver": {
         "url": "https://www.thunderbird.net/thunderbird/all/",
         "regex": "thunderbird/([\\d.]+)/"

@@ -1,5 +1,5 @@
 {
-    "version": "27.1.3",
+    "version": "29.1.2",
     "description": "Video recording and live streaming software",
     "homepage": "https://obsproject.com",
     "license": "GPL-2.0-only",
@@ -9,21 +9,11 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://cdn-fastly.obsproject.com/downloads/OBS-Studio-27.1.3-Full-x64.zip",
-            "hash": "fbfa084cca88fa383bbfe94486e48307280f054c51945243badf649485a5045a",
+            "url": "https://cdn-fastly.obsproject.com/downloads/OBS-Studio-29.1.2.zip",
+            "hash": "4228533ba00c3cebfa61cad604c4e7878d2461f1dcb5b0799e76b2a9fa31f519",
             "shortcuts": [
                 [
                     "bin\\64bit\\obs64.exe",
-                    "OBS Studio"
-                ]
-            ]
-        },
-        "32bit": {
-            "url": "https://cdn-fastly.obsproject.com/downloads/OBS-Studio-27.1.3-Full-x86.zip",
-            "hash": "61e260b4dbc8c834f1a9820145304e41d738dc037f8215be16df7721a57b9a10",
-            "shortcuts": [
-                [
-                    "bin\\32bit\\obs32.exe",
                     "OBS Studio"
                 ]
             ]
@@ -32,19 +22,22 @@
     "pre_install": "if (!(Test-Path \"$persist_dir\\portable_mode.txt\")) { New-Item \"$dir\\portable_mode.txt\" | Out-Null }",
     "persist": [
         "config",
-        "portable_mode.txt"
+        "portable_mode.txt",
+        "obs-plugins"
+    ],
+    "post_install": [
+        "if (!(Test-Path \"$dir\\obs-plugins.original\")) { return }",
+        "Copy-Item \"$dir\\obs-plugins.original\\*\" \"$dir\\obs-plugins\" -Recurse -Force",
+        "Remove-Item \"$dir\\obs-plugins.original\" -Recurse -Force"
     ],
     "checkver": {
         "url": "https://obsproject.com/download",
-        "regex": "OBS-Studio-([\\d.]+)-Full-x64\\.zip"
+        "regex": "OBS-Studio-([\\d.]+)(-Full)?\\.zip"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://cdn-fastly.obsproject.com/downloads/OBS-Studio-$version-Full-x64.zip"
-            },
-            "32bit": {
-                "url": "https://cdn-fastly.obsproject.com/downloads/OBS-Studio-$version-Full-x86.zip"
+                "url": "https://cdn-fastly.obsproject.com/downloads/OBS-Studio-$version.zip"
             }
         }
     }

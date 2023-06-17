@@ -1,22 +1,23 @@
 {
-    "version": "3.5.5.1",
+    "version": "3.5.7.9",
     "description": "An All-In-One video converter and audio converter tool.",
     "homepage": "https://www.xmedia-recode.de/en/",
     "license": "Unknown",
     "architecture": {
         "64bit": {
-            "url": "https://www.xmedia-recode.de/download/XMediaRecode3551_x64.zip",
-            "hash": "2057897424a2150cc1577ae38d8ffd08266a101163259b00b312497408ac9cdc",
-            "extract_dir": "XMediaRecode3551_x64"
+            "url": "https://www.xmedia-recode.de/download/XMediaRecode3579_x64_setup.exe",
+            "hash": "2f7de9625966d204fa91884dfc919b3e270bb0213166b798ee1d750f26918dbc"
         },
         "32bit": {
-            "url": "https://www.xmedia-recode.de/download/XMediaRecode3551.zip",
-            "hash": "29ac7ca389bcb27a6c657e559d9f7f2fb746e83ca7ae8a97bc9847ddf01c5622",
-            "extract_dir": "XMediaRecode3551"
+            "url": "https://www.xmedia-recode.de/download/XMediaRecode3579_setup.exe",
+            "hash": "e48aa56ad2a1dce042cff2654e6b266efc2938c0a1a6b6ba511b12bf90b603e7"
         }
     },
-    "pre_install": "if(!(Test-Path \"$persist_dir\\Fav.ini\")) { New-Item \"$dir\\Fav.ini\" -ItemType File | Out-Null }",
-    "bin": "XMedia Recode.exe",
+    "innosetup": true,
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\Fav.ini\")) { New-Item \"$dir\\Fav.ini\" | Out-Null }",
+        "if (!(Test-Path \"$persist_dir\\XMediaRecode.json\")) { Set-Content \"$dir\\XMediaRecode.json\" -Value '{}' -Encoding 'utf8' -Force }"
+    ],
     "shortcuts": [
         [
             "XMedia Recode.exe",
@@ -24,8 +25,9 @@
         ]
     ],
     "persist": [
-        "XMediaRecode.ini",
-        "Fav.ini"
+        "XMediaRecode.json",
+        "Fav.ini",
+        "XMedia Recode"
     ],
     "checkver": {
         "url": "https://www.xmedia-recode.de/update/version.txt",
@@ -34,12 +36,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://www.xmedia-recode.de/download/XMediaRecode$cleanVersion_x64.zip",
-                "extract_dir": "XMediaRecode$cleanVersion_x64"
+                "url": "https://www.xmedia-recode.de/download/XMediaRecode$cleanVersion_x64_setup.exe"
             },
             "32bit": {
-                "url": "https://www.xmedia-recode.de/download/XMediaRecode$cleanVersion.zip",
-                "extract_dir": "XMediaRecode$cleanVersion"
+                "url": "https://www.xmedia-recode.de/download/XMediaRecode$cleanVersion_setup.exe"
             }
         }
     }

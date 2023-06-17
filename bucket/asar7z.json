@@ -1,0 +1,24 @@
+{
+    "version": "1.4",
+    "description": "7-Zip plugin that allows 7-zip to open, modify, or create Electron .asar archives.",
+    "homepage": "https://www.tc4shell.com/en/7zip/asar/",
+    "license": "Freeware",
+    "url": "https://www.tc4shell.com/binary/Asar.zip",
+    "hash": "f8cfb536bc04b0a8e7f9d4cd3146b86dfa6e85fed36f70ef39cacde71cbbce73",
+    "pre_install": [
+        "$7z_folder = Split-Path (scoop which 7z)",
+        "if (!(Test-Path $7z_folder)) { error 'Could not find 7z.exe in PATH. Abort installation.'; break }",
+        "if ($architecture -eq '64bit') { Copy-Item \"$dir\\Asar.64.dll\" \"$7z_folder\\Formats\\\" -Force }",
+        "elseif ($architecture -eq '32bit') { Copy-Item \"$dir\\Asar.32.dll\" \"$7z_folder\\Formats\\\" -Force }"
+    ],
+    "pre_uninstall": [
+        "$7z_folder = Split-Path (scoop which 7z)",
+        "if (!(Test-Path $7z_folder)) { warn 'Could not find 7z.exe in PATH.' }",
+        "if ($architecture -eq '64bit') { Remove-Item \"$7z_folder\\Formats\\Asar.64.dll\" }",
+        "elseif ($architecture -eq '32bit') { Remove-Item \"$7z_folder\\Formats\\Asar.32.dll\" }"
+    ],
+    "checkver": "Plugin version: ([\\d.]+)",
+    "autoupdate": {
+        "url": "https://www.tc4shell.com/binary/Asar.zip"
+    }
+}

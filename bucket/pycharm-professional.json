@@ -1,32 +1,35 @@
 {
-    "version": "2021.3.1-213.6461.77",
+    "version": "2023.1.2-231.9011.38",
     "description": "Cross-Platform IDE for Python by JetBrains.",
     "homepage": "https://www.jetbrains.com/pycharm/",
     "license": {
         "identifier": "Proprietary",
         "url": "https://www.jetbrains.com/store/license.html"
     },
-    "url": "https://download.jetbrains.com/python/pycharm-professional-2021.3.1.exe#/dl.7z",
-    "hash": "9d827c0df812b52762c9c1908d423f87e04b036570c5cc04f2dcfed99029f365",
+    "url": "https://download.jetbrains.com/python/pycharm-professional-2023.1.2.exe#/dl.7z",
+    "hash": "492771a7a03e4bde7d650819676c12825db55b9ef8d49242891ee6d1845d26fe",
     "extract_to": "IDE",
     "installer": {
         "script": [
             "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" $dir $persist_dir",
-            "Remove-Item \"$dir\\IDE\\`$*\" -Force -Recurse"
+            "Remove-Item \"$dir\\IDE\\`$*\" -Force -Recurse",
+            "Set-Content \"$dir\\run_pycharm.bat\" \"start `\"`\" `\"$dir\\IDE\\bin\\pycharm64.exe`\"\" -Encoding ascii | Out-Null"
         ]
     },
     "architecture": {
         "64bit": {
             "bin": [
                 [
-                    "IDE\\bin\\pycharm64.exe",
+                    "run_pycharm.bat",
                     "pycharm"
                 ]
             ],
             "shortcuts": [
                 [
-                    "IDE\\bin\\pycharm64.exe",
-                    "JetBrains\\PyCharm Professional"
+                    "run_pycharm.bat",
+                    "JetBrains\\PyCharm Professional",
+                    "",
+                    "IDE\\bin\\pycharm64.exe"
                 ]
             ]
         },
@@ -42,6 +45,8 @@
     },
     "persist": [
         "IDE\\bin\\idea.properties",
+        "IDE\\bin\\pycharm.exe.vmoptions",
+        "IDE\\bin\\pycharm64.exe.vmoptions",
         "profile"
     ],
     "checkver": {

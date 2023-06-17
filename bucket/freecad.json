@@ -1,36 +1,35 @@
 {
-    "version": "0.19.3",
+    "version": "0.20.2-2",
     "description": "A free and open-source multi-platform parametric 3D modeler.",
     "homepage": "https://www.freecadweb.org",
     "license": "LGPL-2.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/FreeCAD/FreeCAD/releases/download/0.19.3/FreeCAD-0.19.3-WIN-x64-portable.7z",
-            "hash": "8b7ca7385f269e3253ef82408330190654cee46a0ee6bb42c391a560cb01393c"
+            "url": "https://github.com/FreeCAD/FreeCAD/releases/download/0.20.2/FreeCAD-0.20.2-WIN-x64-portable-2.zip",
+            "hash": "d8af7454f43f1753fd6141fd2172aa9bc7513b4b9cbbac4cd7cee0567a1bca7f"
         }
     },
-    "extract_dir": "FreeCAD-0.19.3.6530e36-WIN-x64-portable",
-    "bin": "bin\\FreeCADCmd.exe",
+    "bin": "FreeCAD-portable\\bin\\FreeCADCmd.exe",
     "shortcuts": [
         [
-            "bin\\FreeCAD.exe",
+            "FreeCAD-portable\\bin\\FreeCAD.exe",
             "FreeCAD"
         ]
     ],
     "checkver": {
-        "url": "https://github.com/FreeCAD/FreeCAD/releases",
-        "regex": "(?sm)/tree/([\\d.]+)\".*?>(?<build>[\\w.]+)<"
+        "url": "https://api.github.com/repos/FreeCAD/FreeCAD/releases",
+        "regex": "FreeCAD-([\\d.]+)-WIN-x64-portable((-\\d+)?)\\.zip",
+        "replace": "${1}${2}"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/FreeCAD/FreeCAD/releases/download/$version/FreeCAD-$version-WIN-x64-portable.7z"
+                "url": "https://github.com/FreeCAD/FreeCAD/releases/download/$matchHead/FreeCAD-$matchHead-WIN-x64-portable$matchTail.zip"
             }
         },
         "hash": {
             "url": "$url-SHA256.txt",
             "regex": "SHA256: $sha256"
-        },
-        "extract_dir": "FreeCAD-$version.$matchBuild-WIN-x64-portable"
+        }
     }
 }

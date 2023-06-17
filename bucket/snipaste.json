@@ -4,7 +4,7 @@
     "homepage": "https://www.snipaste.com/",
     "license": "Unknown",
     "suggest": {
-        "vcredist": "extras/vcredist2015"
+        "vcredist": "extras/vcredist2022"
     },
     "architecture": {
         "64bit": {
@@ -16,7 +16,11 @@
             "hash": "sha1:c198dfa47010e6591e51299d985d7411e80d1f54"
         }
     },
-    "pre_install": "if (!(Test-Path \"$persist_dir\\config.ini\")) { Set-Content \"$dir\\config.ini\" '' -Encoding ASCII }",
+    "pre_install": [
+        "ensure \"$persist_dir\"",
+        "if (!(Test-Path \"$persist_dir\\config.ini\")) { Set-Content \"$persist_dir\\config.ini\" '' -Encoding ASCII }",
+        "Set-Content \"$dir\\config.ini\" \"[General]`nconfig=$($persist_dir.Replace('\\','/'))/config.ini\" -Encoding ASCII"
+    ],
     "bin": "Snipaste.exe",
     "shortcuts": [
         [
@@ -24,10 +28,7 @@
             "Snipaste"
         ]
     ],
-    "persist": [
-        "history",
-        "config.ini"
-    ],
+    "persist": "history",
     "checkver": "(?sm)Desktop.*?>v([\\d.]+) [^B]",
     "autoupdate": {
         "architecture": {

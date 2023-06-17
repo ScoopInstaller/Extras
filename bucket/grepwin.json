@@ -1,51 +1,38 @@
 {
-    "version": "2.0.9",
+    "version": "2.0.15",
     "description": "Regular expression search and replace tool for Windows.",
     "homepage": "https://tools.stefankueng.com/grepWin.html",
     "license": "GPL-3.0-only",
     "notes": "Run '$dir\\install-context.reg' to add grepWin to right-click context menu.",
     "architecture": {
         "64bit": {
-            "url": [
-                "https://github.com/stefankueng/grepWin/releases/download/2.0.9/grepWin-x64-2.0.9_portable.zip",
-                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/grepwin/install-context.reg",
-                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/grepwin/uninstall-context.reg"
-            ],
-            "hash": [
-                "79794ea063ef31fdf72c777d8c23d832888b7714e2d10a0125bd706df8322908",
-                "c8c857917693b01f33a6ded83c92c656795dcebe2ae21f2cd24ebb009b345cba",
-                "b75f5e44cf46d806b4027a44cb7c99bf33e69fe1aa592ee32dcc162b0b8792f2"
-            ],
+            "url": "https://github.com/stefankueng/grepWin/releases/download/2.0.15/grepWin-x64-2.0.15_portable.zip",
+            "hash": "0b94eeb7946ac596ce2bc04872b4a721480714218492baee33fc451258bb09cd",
             "pre_install": "Rename-Item \"$dir\\grepWin-x64-${version}_portable.exe\" 'grepWin.exe'"
         },
         "32bit": {
-            "url": [
-                "https://github.com/stefankueng/grepWin/releases/download/2.0.9/grepWin-2.0.9_portable.zip",
-                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/grepwin/install-context.reg",
-                "https://raw.githubusercontent.com/ScoopInstaller/Extras/master/scripts/grepwin/uninstall-context.reg"
-            ],
-            "hash": [
-                "4e0ade2702cccf5f4660d43dea12c7939df5f68b8d8717bf19f323bc93ca8871",
-                "c8c857917693b01f33a6ded83c92c656795dcebe2ae21f2cd24ebb009b345cba",
-                "b75f5e44cf46d806b4027a44cb7c99bf33e69fe1aa592ee32dcc162b0b8792f2"
-            ],
+            "url": "https://github.com/stefankueng/grepWin/releases/download/2.0.15/grepWin-2.0.15_portable.zip",
+            "hash": "ee65676acc4dbb9fd657c0819cf4b16197dcefe45aee274566f79a8e798f07eb",
             "pre_install": "Rename-Item \"$dir\\grepWin-${version}_portable.exe\" 'grepWin.exe'"
         }
     },
-    "installer": {
-        "script": [
-            "$app_path = \"$dir\\grepWin.exe\".Replace('\\', '\\\\')",
-            "$reg_content = (Get-Content \"$dir\\install-context.reg\")",
-            "$reg_content = $reg_content.replace('$app_path', $app_path)",
-            "Set-Content \"$dir\\install-context.reg\" $reg_content -Encoding ASCII",
-            "if (-not (Test-Path \"$persist_dir\\grepwin.ini\")) {",
-            "    Set-Content \"$dir\\grepwin.ini\" (@('[global]', '[Software\\grepWin\\History]') -join \"`r`n\") -Encoding ASCII",
-            "}"
-        ]
-    },
-    "uninstaller": {
-        "script": "reg import \"$dir\\uninstall-context.reg\""
-    },
+    "post_install": [
+        "$app_path = \"$dir\\grepWin.exe\".Replace('\\', '\\\\')",
+        "'install-context.reg', 'uninstall-context.reg' | ForEach-Object {",
+        "    if (Test-Path \"$bucketsdir\\extras\\scripts\\grepwin\\$_\") {",
+        "        $content = Get-Content \"$bucketsdir\\extras\\scripts\\grepwin\\$_\"",
+        "        $content = $content.Replace('$app_path', $app_path)",
+        "        if ($global) {",
+        "            $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "        }",
+        "    }",
+        "    $content | Set-Content -Path \"$dir\\$_\" -Encoding ascii",
+        "}",
+        "if (-not (Test-Path \"$persist_dir\\grepwin.ini\")) {",
+        "    Set-Content \"$dir\\grepwin.ini\" (@('[global]', '[Software\\grepWin\\History]') -join \"`r`n\") -Encoding ASCII",
+        "}"
+    ],
+    "pre_uninstall": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }",
     "bin": "grepWin.exe",
     "persist": "grepwin.ini",
     "shortcuts": [

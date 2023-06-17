@@ -1,13 +1,13 @@
 {
-    "version": "8.79.0.95",
+    "version": "8.98.0.407",
     "description": "Communication tool for free calls and chat.",
     "homepage": "https://www.skype.com/",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.microsoft.com/en-us/servicesagreement/"
     },
-    "url": "https://download.skype.com/s4l/download/win/Skype-8.79.0.95.exe",
-    "hash": "455c84d5c3fb53567a0ed1c280c913b6b2472ef79e5458031ac021ae9f20f125",
+    "url": "http://download.skype.com/s4l/download/win/Skype-8.98.0.407.exe",
+    "hash": "c503f5e9e24db6b5377dbcc7284a949ffb84b5153b67842326f94f9000324773",
     "innosetup": true,
     "shortcuts": [
         [
@@ -16,10 +16,13 @@
         ]
     ],
     "checkver": {
-        "url": "https://support.skype.com/en/faq/FA12041/what-is-the-latest-version-of-skype-on-each-platform",
-        "regex": "Skype for Windows Desktop version&nbsp;([\\d.]+)"
+        "script": [
+            "$resp = [System.Net.WebRequest]::Create('http://get.skype.com/go/getskype-skypeforwindows').GetResponse()",
+            "Write-Output = $resp.ResponseUri.LocalPath"
+        ],
+        "regex": "Skype-([\\d.]+)\\.exe"
     },
     "autoupdate": {
-        "url": "https://download.skype.com/s4l/download/win/Skype-$version.exe"
+        "url": "http://download.skype.com/s4l/download/win/Skype-$version.exe"
     }
 }

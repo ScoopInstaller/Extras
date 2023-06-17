@@ -1,0 +1,64 @@
+{
+    "##": "Using 7-zip 19.00 helper packages because 7-zip 21.x stuck while extracting files.",
+    "version": "2.32.0",
+    "description": "UML (Unified Modelling Language) diagram program based on KDE Technology",
+    "homepage": "https://apps.kde.org/umbrello/",
+    "license": "GPL-2.0-or-later",
+    "depends": "7zip19.00-helper",
+    "architecture": {
+        "64bit": {
+            "url": "https://download.kde.org/stable/umbrello/2.32.0/win64/umbrello-mingw64-2.32.0-126.1-portable.7z#/dl.7z_",
+            "hash": "32432219de0fe3f9c6aac4d86959d3701f1df2239b888fa1f8f191ef2f232563"
+        },
+        "32bit": {
+            "url": "https://download.kde.org/stable/umbrello/2.32.0/win32/umbrello-mingw32-2.32.0-54.1-portable.7z#/dl.7z_",
+            "hash": "546b3b467edb31db825a3d048d71aa52ba1d7562140f59888ee9b0066afd40c9"
+        }
+    },
+    "pre_install": [
+        "$ExtractDir = \"umbrello-$version\"",
+        "Invoke-ExternalCommand 7z1900-helper -ArgumentList @('x', '-bso0', \"$dir\\dl.7z_\", \"-o$dir\") | Out-Null",
+        "Move-Item \"$dir\\$ExtractDir\\*\" \"$dir\\\"",
+        "Remove-Item \"$dir\\$ExtractDir\", \"$dir\\dl.7z_\" -Force -Recurse"
+    ],
+    "bin": "bin\\umbrello.exe",
+    "shortcuts": [
+        [
+            "bin\\umbrello.exe",
+            "Umbrello"
+        ]
+    ],
+    "checkver": {
+        "script": [
+            "$arch_64bit = @{ url='https://download.kde.org/stable/umbrello/latest/win64/'; regex='umbrello-mingw64-([\\d.]+)-([\\d.]+)' }",
+            "$arch_32bit = @{ url='https://download.kde.org/stable/umbrello/latest/win32/'; regex='umbrello-mingw32-([\\d.]+)-([\\d.]+)' }",
+            "$arch_64bit, $arch_32bit | ForEach-Object {",
+            "    $cont = $(Invoke-WebRequest $_.url).Content",
+            "    if(!($cont -match $_.regex)) { error \"Could not match '$_.regex' in '$_.url'\"; continue }",
+            "    $_.version = $matches[1]",
+            "    $_.build_number = $matches[2]",
+            "}",
+            "if($arch_64bit.version -ne $arch_32bit.version) { error 'Version for 64-bit and 32 bit does not match, aborting autoupdate'; continue }",
+            "Write-Output $arch_64bit.version $arch_64bit.build_number $arch_32bit.build_number"
+        ],
+        "regex": "([\\d.]+) ([\\d.]+) ([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download.kde.org/stable/umbrello/$version/win64/umbrello-mingw64-$version-$match2-portable.7z#/dl.7z_",
+                "hash": {
+                    "url": "$url.mirrorlist",
+                    "regex": "$sha256"
+                }
+            },
+            "32bit": {
+                "url": "https://download.kde.org/stable/umbrello/$version/win32/umbrello-mingw32-$version-$match3-portable.7z#/dl.7z_",
+                "hash": {
+                    "url": "$url.mirrorlist",
+                    "regex": "$sha256"
+                }
+            }
+        }
+    }
+}

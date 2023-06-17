@@ -1,0 +1,53 @@
+{
+    "version": "2.0.0",
+    "description": "A PDF viewer designed for reading research papers and technical books",
+    "homepage": "https://sioyek.info/",
+    "license": "GPL-3.0-only",
+    "suggest": {
+        "vcredist": "extras/vcredist2022"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/ahrm/sioyek/releases/download/v2.0.0/sioyek-release-windows-portable.zip",
+            "hash": "1f4fedbb38c0dc46bbba4bb95d0d6fab39fcf3525092ac26d92c891684d2bf8d"
+        }
+    },
+    "extract_dir": "sioyek-release-windows",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\last_document_path.txt\")) {",
+        "   New-Item \"$dir\\last_document_path.txt\" | Out-Null",
+        "}",
+        "'test.db', 'local.db', 'shared.db' | ForEach-Object {",
+        "    if (Test-Path \"$persist_dir\\$_\") {Copy-Item \"$persist_dir\\$_\" \"$dir\\\"}",
+        "}",
+        "Remove-Item \"$dir\\vc_redist.x64.exe\""
+    ],
+    "uninstaller": {
+        "script": [
+            "'test.db', 'local.db', 'shared.db' | ForEach-Object {",
+            "    if (Test-Path \"$dir\\$_\") {Copy-Item \"$dir\\$_\" \"$persist_dir\\\"}",
+            "}"
+        ]
+    },
+    "shortcuts": [
+        [
+            "sioyek.exe",
+            "Sioyek"
+        ]
+    ],
+    "persist": [
+        "keys_user.config",
+        "prefs_user.config",
+        "last_document_path.txt"
+    ],
+    "checkver": {
+        "github": "https://github.com/ahrm/sioyek"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/ahrm/sioyek/releases/download/v$version/sioyek-release-windows-portable.zip"
+            }
+        }
+    }
+}

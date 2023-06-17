@@ -1,29 +1,45 @@
 {
-    "version": "1.17.1",
+    "version": "1.18",
     "description": "Monitor processor temperature and other vital information.",
     "homepage": "https://www.alcpu.com/CoreTemp/",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.alcpu.com/CoreTemp/terms.html"
     },
+    "notes": "Download language packs by running: \"$dir\\download-language-packs.ps1\" (\"powershell \"$dir\\download-language-packs.ps1\"\" under cmd)",
     "architecture": {
         "64bit": {
             "url": "https://www.alcpu.com/CoreTemp/CoreTemp64.zip",
-            "hash": "1287dca98adecd6e8e27272f96f206ad9d60fb84b61fe0a353865ee81bd1a088"
+            "hash": "cbd804d84cb0ba3d4e738dc510bbf5448024fdb005627fb81e757ca5054e05bb"
         },
         "32bit": {
             "url": "https://www.alcpu.com/CoreTemp/CoreTemp32.zip",
-            "hash": "5b71c1109d8cacc3763ba4dd470d6ec5f426c69a4b675121d1557e9b54e2c0db"
+            "hash": "06016eb81fcbd6e57b07fe01cef48d004335df7397e1153f7e8ab0896d559dfa"
         }
     },
-    "pre_install": "if (!(Test-Path \"$dir\\CoreTemp.ini\")) { New-Item \"$dir\\CoreTemp.ini\" | Out-Null }",
+    "pre_install": [
+        "Copy-Item \"$bucketsdir\\extras\\scripts\\coretemp\\download-language-packs.ps1\" \"$dir\\\" | Out-Null",
+        "if (Test-Path \"$persist_dir\\CoreTemp.ini\") { Copy-Item \"$persist_dir\\CoreTemp.ini\" \"$dir\\\" | Out-Null }"
+    ],
+    "pre_uninstall": "Stop-Process -Name 'Core Temp' -ErrorAction SilentlyContinue",
+    "uninstaller": {
+        "script": [
+            "if (Test-Path \"$dir\\CoreTemp.ini\") {",
+            "    ensure \"$persist_dir\" | Out-Null",
+            "    Copy-Item \"$dir\\CoreTemp.ini\" \"$persist_dir\\\" | Out-Null",
+            "}"
+        ]
+    },
     "shortcuts": [
         [
             "Core Temp.exe",
             "Core Temp"
         ]
     ],
-    "persist": "CoreTemp.ini",
+    "persist": [
+        "languages",
+        "plugins"
+    ],
     "checkver": {
         "url": "https://www.alcpu.com/CoreTemp/history.html",
         "regex": "Version ([\\d.]+)"

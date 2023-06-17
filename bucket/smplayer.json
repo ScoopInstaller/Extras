@@ -1,0 +1,56 @@
+{
+    "version": "22.7.0.0",
+    "description": "A video player forked from MPV. It can also play Youtube videos, search and download subtitles, and includes other features like a thumbnail generator and audio and video filters.",
+    "homepage": "https://www.smplayer.info/",
+    "license": "GPL-2.0-or-later",
+    "architecture": {
+        "64bit": {
+            "url": "https://www.fosshub.com/SMPlayer.html?dwl=smplayer-portable-22.7.0.0-x64.7z",
+            "hash": "72819385d35f727aa76a513233f7472e82c334d333e879d73682dcc6800cd62a"
+        },
+        "32bit": {
+            "url": "https://www.fosshub.com/SMPlayer.html?dwl=smplayer-portable-22.7.0.0-win32-qt5.6.7z",
+            "hash": "1f85eb91fed00b15e58a111476a5633e8d1dfc850cb622b10af081dc027a13a4"
+        }
+    },
+    "pre_install": [
+        "Rename-Item \"$dir\\SMPlayer.html\" 'dl.7z'",
+        "Expand-7zipArchive \"$dir\\dl.7z\" \"$dir\" -ExtractDir 'smplayer-portable' -Removal | Out-Null",
+        "'hdpi.ini', 'playlist.ini', 'favorites.m3u8', 'radio.m3u8', 'tv.m3u8' | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "}",
+        "if (Test-Path \"$persist_dir\\smplayer.ini\") { Copy-Item \"$persist_dir\\smplayer.ini\" \"$dir\\smplayer.ini\" }"
+    ],
+    "pre_uninstall": [
+        "# The following must be done as SMPlayer deletes the original file which was linked to the persist folder when it saves settings, rather than editing the file.",
+        "Copy-Item \"$dir\\smplayer.ini\" \"$persist_dir\\smplayer.ini\""
+    ],
+    "shortcuts": [
+        [
+            "smplayer.exe",
+            "SMPlayer"
+        ]
+    ],
+    "persist": [
+        "screenshots",
+        "hdpi.ini",
+        "playlist.ini",
+        "favorites.m3u8",
+        "radio.m3u8",
+        "tv.m3u8"
+    ],
+    "checkver": {
+        "url": "https://www.fosshub.com/SMPlayer.html",
+        "regex": "smplayer-portable-([\\d.]+)-win32-qt(?<qtversion>[\\d.]+)\\.7z"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://www.fosshub.com/SMPlayer.html?dwl=smplayer-portable-$version-x64.7z"
+            },
+            "32bit": {
+                "url": "https://www.fosshub.com/SMPlayer.html?dwl=smplayer-portable-$version-win32-qt$matchQtversion.7z"
+            }
+        }
+    }
+}

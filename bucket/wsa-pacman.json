@@ -1,16 +1,19 @@
 {
-    "version": "1.2.4",
+    "version": "1.4.1",
     "description": "A GUI package manager and package installer for Windows Subsystem for Android (WSA)",
     "homepage": "https://github.com/alesimula/wsa_pacman",
     "license": "GPL-3.0-only",
-    "notes": "For .apk file associations, run '$dir\\install-associations.reg'",
+    "notes": [
+        "For .apk file associations, run:",
+        "\"$dir\\install-associations.reg\""
+    ],
     "suggest": {
         "vcredist": "extras/vcredist2022"
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/alesimula/wsa_pacman/releases/download/v1.2.4/WSA-pacman-v1.2.4-portable.zip",
-            "hash": "6684f20e291d88d22d5d0eb1de10a6c9945258c4dffba8f9e7a1d535268eb256"
+            "url": "https://github.com/alesimula/wsa_pacman/releases/download/v1.4.1/WSA-pacman-v1.4.1-portable.zip",
+            "hash": "859c4829955b6aadd7bccf766ea389f4c1367c5069e86b0d32ad2c6ab1289a4c"
         }
     },
     "shortcuts": [
@@ -32,6 +35,17 @@
         "  }",
         "}"
     ],
+    "uninstaller": {
+        "script": [
+            "if ($cmd -eq 'uninstall') {",
+            "    $regkey = Get-ItemProperty -Path 'HKLM:\\SOFTWARE\\Classes\\wsa-pacman.apk' -ErrorAction SilentlyContinue",
+            "    if ($regkey) {",
+            "        if (!(is_admin)) { error 'wsa_pacman: Admin rights are required to unregister file associations'; break }",
+            "        reg import \"$dir\\uninstall-associations.reg\"",
+            "    }",
+            "}"
+        ]
+    },
     "checkver": "github",
     "autoupdate": {
         "architecture": {

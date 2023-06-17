@@ -1,14 +1,28 @@
 {
-    "version": "9.15",
+    "version": "10.17",
     "description": "Video game library manager and launcher with support for 3rd party libraries like Steam, GOG, Origin, Battle.net, ...",
     "homepage": "https://playnite.link",
     "license": "MIT",
-    "url": "https://github.com/JosefNemec/Playnite/releases/download/9.15/Playnite915.zip",
-    "hash": "ed730dd8e306591fed69b7f9a114cd9b2ff48a6dc6305aa115d2fa3781393e75",
-    "pre_install": "Copy-Item \"$persist_dir\\config.json\" \"$dir\" -ErrorAction 'SilentlyContinue'",
-    "uninstaller": {
-        "script": "Copy-Item \"$dir\\config.json\" \"$persist_dir\" -ErrorAction 'SilentlyContinue' -Force"
-    },
+    "url": "https://github.com/JosefNemec/Playnite/releases/download/10.17/Playnite1017.zip",
+    "hash": "85f37c28d10c0add47e0f61ca6abc6d3e3f8d1e7976e6f793788648e6a550ac3",
+    "pre_install": [
+        "Copy-Item \"$persist_dir\\config.json\" \"$dir\" -ErrorAction 'SilentlyContinue'",
+        "if (Test-Path \"$persist_dir\\Themes\") {",
+        "    # Only copy themes that does not exist in $dir",
+        "    # This avoids overwriting newer version of themes with the old ones",
+        "    Get-ChildItem \"$persist_dir\\Themes\\Desktop\" | ForEach-Object {",
+        "        if (!(Test-Path \"$dir\\Themes\\Desktop\\$($_.Name)\")) { Copy-Item \"$persist_dir\\Themes\\Desktop\\$($_.Name)\" \"$dir\\Themes\\Desktop\\\" -Recurse }",
+        "    }",
+        "    Get-ChildItem \"$persist_dir\\Themes\\Fullscreen\" | ForEach-Object {",
+        "        if (!(Test-Path \"$dir\\Themes\\Fullscreen\\$($_.Name)\")) { Copy-Item \"$persist_dir\\Themes\\Fullscreen\\$($_.Name)\" \"$dir\\Themes\\Fullscreen\\\" -Recurse }",
+        "    }",
+        "}"
+    ],
+    "pre_uninstall": [
+        "Stop-Process -Name 'Playnite.DesktopApp' -ErrorAction SilentlyContinue",
+        "Copy-Item \"$dir\\config.json\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force",
+        "Copy-Item \"$dir\\themes\" \"$persist_dir\\\" -Recurse -Force -ErrorAction SilentlyContinue"
+    ],
     "bin": [
         [
             "Playnite.DesktopApp.exe",
@@ -26,7 +40,9 @@
         "cache",
         "Extensions",
         "ExtensionsData",
-        "library"
+        "ExtraMetadata",
+        "library",
+        "Themes"
     ],
     "checkver": {
         "github": "https://github.com/JosefNemec/Playnite"

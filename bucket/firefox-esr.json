@@ -1,5 +1,5 @@
 {
-    "version": "91.5.1",
+    "version": "102.12.0",
     "description": "Extended Support Release of Firefox: the popular open source web browser",
     "homepage": "https://www.mozilla.org/en-US/firefox/organizations/",
     "license": "MPL-2.0",
@@ -11,16 +11,27 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://archive.mozilla.org/pub/firefox/releases/91.5.1esr/win64/en-US/Firefox%20Setup%2091.5.1esr.exe#/dl.7z",
-            "hash": "sha512:bfbce2b6a433ccdfa6ca395786bdf3e33cc21c4606da66e678aa3d83365d1166f80d5b74944bd3278e5905d7e8327085af52ec0f2ff388e0386ab90d0e1fd86e"
+            "url": "https://archive.mozilla.org/pub/firefox/releases/102.12.0esr/win64/en-US/Firefox%20Setup%20102.12.0esr.exe#/dl.7z",
+            "hash": "sha512:0b90d341f218d67f210ec954b24fb5da07e75e78020311f184257855cdc7ffb155d29a18665cf2cf9434dc2519548a9f988a601bad0964bd38c24e6553df9d5e"
         },
         "32bit": {
-            "url": "https://archive.mozilla.org/pub/firefox/releases/91.5.1esr/win32/en-US/Firefox%20Setup%2091.5.1esr.exe#/dl.7z",
-            "hash": "sha512:eff287d239d4b7ace847e3f9a7de2bff2ac0312c243d373e01a163d8d62348c5b3ebf67aafe6beef603d3544782a64053acecaec1f4b7098d52da34ebb99d8ba"
+            "url": "https://archive.mozilla.org/pub/firefox/releases/102.12.0esr/win32/en-US/Firefox%20Setup%20102.12.0esr.exe#/dl.7z",
+            "hash": "sha512:80721d8b0281a834b217cbfd4b38e9a18d7110c615f2a49c2dc55d791860b5db929a99d82cd612ac91939f483b2393ce66fad7ae1ad0e14e0ca0a5d1b6ac7ef5"
+        },
+        "arm64": {
+            "url": "https://archive.mozilla.org/pub/firefox/releases/102.12.0esr/win64-aarch64/en-US/Firefox%20Setup%20102.12.0esr.exe#/dl.7z",
+            "hash": "sha512:e9c9085f641e48ad4ea8e815d4918f7fe12e6b6542b81e7838cb71f3d4d486b2ccc4c268c45cc00661e8eb6d9498916834fbcd4915cdd64c288167b81d7487c2"
         }
     },
     "extract_dir": "core",
-    "post_install": "firefox-esr -CreateProfile \"Scoop-ESR $dir\\profile\"",
+    "post_install": [
+        "firefox-esr -CreateProfile \"Scoop-ESR $persist_dir\\profile\"",
+        "$Addition = \"$persist_dir\\addition\"",
+        "if (Test-Path $Addition) {",
+        "  info 'Copying additional items...'",
+        "  Copy-Item -Path $Addition\\* -Destination $dir -Force -Recurse -ErrorAction SilentlyContinue",
+        "}"
+    ],
     "bin": [
         [
             "firefox.exe",
@@ -60,6 +71,13 @@
                 "hash": {
                     "url": "https://archive.mozilla.org/pub/firefox/releases/$versionesr/SHA512SUMS",
                     "regex": "$sha512\\s+win32/en-US/$basename"
+                }
+            },
+            "arm64": {
+                "url": "https://archive.mozilla.org/pub/firefox/releases/$versionesr/win64-aarch64/en-US/Firefox%20Setup%20$versionesr.exe#/dl.7z",
+                "hash": {
+                    "url": "https://archive.mozilla.org/pub/firefox/releases/$versionesr/SHA512SUMS",
+                    "regex": "$sha512\\s+win64-aarch64/en-US/$basename"
                 }
             }
         }

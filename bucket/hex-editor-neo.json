@@ -1,0 +1,47 @@
+{
+    "version": "7.31.00.8528",
+    "description": "Binary file editor optimized for large files",
+    "homepage": "https://www.hhdsoftware.com/free-hex-editor",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://docs.hhdsoftware.com/pdf/hex"
+    },
+    "url": "https://www.hhdsoftware.com/download/free-hex-editor-neo.exe#/dl.7z_",
+    "hash": "22e05e39a67537660d1b12f00e72876f02cb20c6395055e661b6bed7edfcb562",
+    "pre_install": [
+        "if ($architecture -eq '64bit') { $arch = 'x64' }",
+        "else { $arch = 'x86' }",
+        "",
+        "New-Item \"$dir\\extract\", \"$dir\\extract2\" -ItemType Directory | Out-Null",
+        "Expand-7zipArchive \"$dir\\dl.7z_\" \"$dir\\extract\" | Out-Null",
+        "$archive = Get-ChildItem \"$dir\\extract\\*.7z\" | Select -First 1 -ExpandProperty FullName",
+        "Expand-7zipArchive \"$archive\" \"$dir\\extract2\" -ExtractDir 'Components' | Out-Null",
+        "",
+        "# Sample Structures",
+        "New-Item \"$dir\\Sample Structures\" -ItemType Directory | Out-Null",
+        "Move-Item \"$dir\\extract2\\SViewerSamples\\*\" \"$dir\\Sample Structures\\\"",
+        "",
+        "# Other Components",
+        "Get-ChildItem \"$dir\\extract2\" | Select -ExpandProperty FullName | ForEach-Object {",
+        "    # For each component, move 'component_dir\\(x64 or x86)\\(FILES)' and 'component_dir\\(FILES)' to $dir",
+        "    if(Test-Path \"$_\\$arch\") { Move-Item \"$_\\$arch\\*\" \"$dir\\\" -Force }",
+        "    Get-ChildItem \"$_\" -File | Select -ExpandProperty FullName | ForEach-Object { Move-Item \"$_\" \"$dir\\\" }",
+        "}",
+        "# Remove-Item \"$dir\\dl.7z_\", \"$dir\\extract\", \"$dir\\extract2\" -Force -Recurse"
+    ],
+    "bin": "HexFrame.exe",
+    "shortcuts": [
+        [
+            "HexFrame.exe",
+            "Hex Editor Neo"
+        ]
+    ],
+    "persist": "Localization",
+    "checkver": {
+        "url": "https://www.hhdsoftware.com/free-hex-editor/history",
+        "regex": "([\\d.]+)</span>"
+    },
+    "autoupdate": {
+        "url": "https://www.hhdsoftware.com/download/free-hex-editor-neo.exe#/dl.7z_"
+    }
+}
