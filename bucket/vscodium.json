@@ -21,12 +21,15 @@
             "hash": "ae9e47c5d9fab5318cf8756ee663d2d682f0408f3a31e12f346aca02928c828a"
         }
     },
-    "env_add_path": "bin",
-    "shortcuts": [
-        [
-            "VSCodium.exe",
-            "VSCodium"
-        ]
+    "pre_install": [
+        "$product_path = \"$dir\\resources\\app\\product.json\"",
+        "if (Test-Path -Path $product_path) {",
+        "    $product = Get-Content -Path $product_path -Raw -Encoding UTF8 | ConvertFrom-Json",
+        "    if (![string]::IsNullOrEmpty($product.updateUrl)) {",
+        "        Get-Content -Path $product_path | Where-Object {$_ -notmatch \"updateurl\"} | Set-Content temp.json",
+        "        Move-Item -Path temp.json -Destination $product_path -Force",
+        "    }",
+        "}"
     ],
     "post_install": [
         "$dirpath = \"$dir\".Replace('\\', '\\\\')",
