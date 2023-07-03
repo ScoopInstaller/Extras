@@ -1,41 +1,53 @@
 {
-    "version": "9.7.10.29074",
-    "description": "An instant messaging tool that gives you the best way to keep in touch with your friends and family.",
-    "homepage": "https://im.qq.com",
+    "version": "9.9.0.14569",
+    "description": "An instant messaging tool that gives you the best way to keep in touch with your friends and family, build with Electron.",
+    "homepage": "https://im.qq.com/pcqq/index.shtml",
     "license": {
         "identifier": "Proprietary",
         "url": "https://ti.qq.com/agreement/index.html"
     },
-    "notes": [
-        "Scoop doesn't persist your QQ data, by default they are stored in: ",
-        "'%UserProfile%\\Documents\\Tencent Files'.",
-        "Files produced at runtime leaves in '%AppData%\\Tencent'."
-    ],
-    "url": "https://webcdn.m.qq.com/spcmgr/download/QQ9.7.10.29074.exe#/dl.7z",
-    "hash": "3b298b95f481ca8fb9e29e93735b40acc7d67618b2657cab7320064180bedbd8",
+    "architecture": {
+        "64bit": {
+            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/bbabcfd7/QQ9.9.0.14569_x64.exe#/dl.7z",
+            "hash": "f9f9831648cae6244e3a9685f82712d2626b87e26eacfa1ab764888e03c8bc71"
+        },
+        "32bit": {
+            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/b62fc715/QQ9.9.0.14569_x86.exe#/dl.7z",
+            "hash": "133ee4b6b1bdb5b5422983e23fc770ac4010640208c9ddad7b4771ce8552ea0c"
+        }
+    },
+    "extract_dir": "Files",
+    "installer": {
+        "script": [
+            "$configpath = \"$env:PUBLIC\\Documents\\Tencent\\QQ\"",
+            "if (!(Test-Path \"$configpath\")) {",
+            "    New-Item -Path \"$configpath\" -Type Directory -Force | Out-Null",
+            "}",
+            "Set-Content -NoNewline -Path \"$configpath\\UserDataInfo.ini\" -Value \"[UserDataSet]`nUserDataSavePathType=2`nUserDataSavePath=$persist_dir\\QQ Files\""
+        ]
+    },
     "shortcuts": [
         [
-            "Bin\\QQScLauncher.exe",
+            "QQ.exe",
             "QQ"
         ]
     ],
-    "installer": {
-        "script": [
-            "Get-Item \"$dir\\*\" -Exclude .rsrc | Remove-Item",
-            "Expand-7zipArchive \"$dir\\.rsrc\\2052\\MSI\\101\" \"$dir\" -ExtractDir 'Files'",
-            "Expand-7zipArchive \"$dir\\.rsrc\\2052\\MSI\\102\" \"$dir\\temp\"",
-            "'vcruntime140.dll', 'msvcp140.dll', 'msvcr100.dll', 'vcomp140.dll', 'msvcp100.dll' | ForEach-Object {",
-            "  Move-Item \"$dir\\temp\\$_\" \"$dir\\Bin\\\"",
-            "}",
-            "Expand-7zipArchive \"$dir\\temp\\TXSSO\\TXSSOSetup.exe\" \"$dir\\Bin\\TXSSO\" -ExtractDir 'TXSSO'",
-            "Remove-Item \"$dir\\.rsrc\", \"$dir\\temp\" -Recurse"
-        ]
+    "persist": "QQ Files",
+    "uninstaller": {
+        "script": "if ($cmd -eq 'uninstall') { Remove-Item -Path \"$env:PUBLIC\\Documents\\Tencent\\QQ\\UserDataInfo.ini\" -Force -ErrorAction SilentlyContinue | Out-Null }"
     },
     "checkver": {
-        "url": "https://pc.qq.com/detail/2/detail_2.html",
-        "regex": "QQ([\\d.]+).exe"
+        "url": "https://cdn-go.cn/qq-web/im.qq.com_new/latest/rainbow/windowsDownloadUrl.js",
+        "regex": "\"ntDownloadUrl\":\"https://dldir1.qq.com/qqfile/qq/QQNT/(?<commit32>[\\w]+)/QQ(?<version32>[\\d.]+)_x86.exe\",\\S+\"ntDownloadX64Url\":\"https://dldir1.qq.com/qqfile/qq/QQNT/(?<commit>[\\w]+)/QQ([\\d.]+)_x64.exe\","
     },
     "autoupdate": {
-        "url": "https://webcdn.m.qq.com/spcmgr/download/QQ$version.exe#/dl.7z"
+        "architecture": {
+            "64bit": {
+                "url": "https://dldir1.qq.com/qqfile/qq/QQNT/$matchCommit/QQ$version_x64.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://dldir1.qq.com/qqfile/qq/QQNT/$matchCommit32/QQ$version_x86.exe#/dl.7z"
+            }
+        }
     }
 }
