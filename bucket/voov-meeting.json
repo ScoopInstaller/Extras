@@ -1,0 +1,43 @@
+{
+    "version": "3.16.3.510",
+    "description": "Cloud meeting solutions covering 100+ countries and regions.",
+    "homepage": "https://voovmeeting.com/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://voovmeeting.com/df/en/service-agreement.html"
+    },
+    "url": "https://updatecdnv6.meeting.qq.com/cos/a66109071032e68510ce986d54823457/VooVMeeting_1410000197_3.16.3.510.publish.exe#/dl.7z",
+    "hash": "md5:a66109071032e68510ce986d54823457",
+    "pre_install": "Rename-Item -Path \"$dir\\`$_*\" -NewName \"$version\" -Force",
+    "installer": {
+        "script": [
+            "ensure \"$persist_dir\" | Out-Null",
+            "New-Item \"$env:APPDATA\\Tencent\\VooVMeeting\" -ItemType Junction -Target \"$persist_dir\" | Out-Null"
+        ]
+    },
+    "post_install": [
+        "Remove-Item \"$dir\\`$*\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "Remove-Item \"$dir\\voovmeetingapp_new.exe\" -Force -ErrorAction SilentlyContinue"
+    ],
+    "uninstaller": {
+        "script": "Remove-Item \"$env:APPDATA\\Tencent\\VooVMeeting\" -ErrorAction 'SilentlyContinue' -Force -Recurse"
+    },
+    "shortcuts": [
+        [
+            "voovmeetingapp.exe",
+            "VooV Meeting"
+        ]
+    ],
+    "checkver": {
+        "url": "https://voovmeeting.com/web-service/query-download-info?q=%5B%7B%22package-type%22:%22app%22,%22channel%22:%221410000197%22,%22platform%22:%22windows%22,%22decorators%22:%5B%22intl%22%5D%7D%5D&nonce=AAAAAAAAAAAAAAAA",
+        "regex": "\"md5\":\"(?<hash>[a-f0-9]+)\".+\"version\":\"([\\d\\.]+)\""
+    },
+    "autoupdate": {
+        "url": "https://updatecdnv6.meeting.qq.com/cos/$matchHash/VooVMeeting_1410000197_$version.publish.exe#/dl.7z",
+        "hash": {
+            "url": "https://voovmeeting.com/web-service/query-download-info?q=%5B%7B%22package-type%22:%22app%22,%22channel%22:%221410000197%22,%22platform%22:%22windows%22,%22decorators%22:%5B%22intl%22%5D%7D%5D&nonce=AAAAAAAAAAAAAAAA",
+            "mode": "json",
+            "jsonpath": "$.info-list[0].md5"
+        }
+    }
+}
