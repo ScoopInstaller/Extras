@@ -1,0 +1,28 @@
+{
+    "version": "1.0.0",
+    "description": "OSGeo4W is a self-contained Windows installer for QGIS and many other open source geospatial projects.",
+    "homepage": "https://download.osgeo.org/osgeo4w/",
+    "license": "Various",
+    "architecture": {
+        "64bit": {
+            "url": "https://download.osgeo.org/osgeo4w/v2/osgeo4w-setup.exe",
+            "hash": "ed0403af421caf91a10f2515e3c06ea217bef5c3cabfb66b4c4b873342222cdc",
+            "extract_dir": "osgeo4w"
+        }
+    },
+    "installer": {
+        "script": [
+            "Write-Host \"Installing OSGeo4W...\" -ForegroundColor Yellow",
+            "$executable = \"$dir\\osgeo4w-setup.exe\"",
+            "$params = @(\"/C\", $executable, '--autoaccept','--express', '--desktop', '--download', '--local-install', '--root', \"$dir\", \"2>&1\" )",
+            "$installParams = @{\"FilePath\" = \"$($Env:COMSPEC)\"; \"ArgumentList\" = $params; \"Wait\" = $true; \"PassThru\" = $true; \"WindowStyle\" = \"Hidden\"}",
+            "Start-Process @installParams | Out-Null"
+        ]
+    },
+    "env_add_path": "bin",
+    "env_set": {
+        "GDAL_DATA": "$dir\\apps\\gdal\\share\\gdal",
+        "PROJ_LIB": "$dir\\share\\proj",
+        "OSGEO4W_ROOT": "$dir"
+    }
+}
