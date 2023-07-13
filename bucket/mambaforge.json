@@ -1,16 +1,19 @@
 {
-    "version": "23.1.0-2",
+    "version": "23.1.0-3",
     "description": "A conda-forge distribution",
     "homepage": "https://github.com/conda-forge/miniforge",
     "license": "BSD-3-Clause",
     "notes": [
+        "* Known issue:",
+        "  - The App may fail to install when 'Long Paths' are not enabled, Check it by executing `scoop checkup`. (#11570)",
+        "------",
         "From 4.6.0, conda has built the support for Cmd, Powershell or other shells.",
         "Use \"conda init powershell\" or \"conda init __your_favorite_shell__\""
     ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/conda-forge/miniforge/releases/download/23.1.0-2/Mambaforge-23.1.0-2-Windows-x86_64.exe",
-            "hash": "99c951c3d277c8fb1043e4bbab7126d7362ef7a40996dd5bdf672219b53964e3"
+            "url": "https://github.com/conda-forge/miniforge/releases/download/23.1.0-3/Mambaforge-23.1.0-3-Windows-x86_64.exe",
+            "hash": "8f8e65e99bd24bc592e2f06e7f1198072966d68256d24560ed569910f95be6aa"
         }
     },
     "pre_install": "if ($dir -match ' ') { error 'The installation directory cannot include a space'; break}",
@@ -21,13 +24,10 @@
             "Remove-Item \"$dir\\..\\$fname\""
         ]
     },
-    "uninstaller": {
-        "script": [
-            "Start-Process -Wait \"$dir\\Uninstall-Mambaforge.exe\" -ArgumentList '/S'",
-            "# Workaround for 'envs' being deleted by the uninstaller. This does not affect persist.",
-            "New-Item \"$dir\\envs\" -ItemType Directory | Out-Null"
-        ]
-    },
+    "env_add_path": [
+        "scripts",
+        "Library\\bin"
+    ],
     "bin": [
         "python.exe",
         "pythonw.exe",
@@ -36,11 +36,14 @@
             "python3"
         ]
     ],
-    "env_add_path": [
-        "scripts",
-        "Library\\bin"
-    ],
     "persist": "envs",
+    "uninstaller": {
+        "script": [
+            "Start-Process -Wait \"$dir\\Uninstall-Mambaforge.exe\" -ArgumentList '/S'",
+            "# Workaround for 'envs' being deleted by the uninstaller. This does not affect persist.",
+            "New-Item \"$dir\\envs\" -ItemType Directory | Out-Null"
+        ]
+    },
     "checkver": {
         "github": "https://github.com/conda-forge/miniforge",
         "regex": "tag/([\\d.-]+)"
