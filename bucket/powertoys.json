@@ -1,16 +1,16 @@
 {
-    "version": "0.69.0",
+    "version": "0.71.0",
     "description": "A set of utilities for power users to tune and streamline their Windows experience for greater productivity.",
     "homepage": "https://github.com/microsoft/PowerToys",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/microsoft/PowerToys/releases/download/v0.69.0/PowerToysUserSetup-0.69.0-x64.exe",
-            "hash": "d05fc31f137718516c1d792765aafec51551fc172064bc3ee170911e455053ac"
+            "url": "https://github.com/microsoft/PowerToys/releases/download/v0.71.0/PowerToysUserSetup-0.71.0-x64.exe",
+            "hash": "4c6ccb3055e3838da50ff529a670baad129570f4bfabf497b5d92259d3052794"
         },
         "arm64": {
-            "url": "https://github.com/microsoft/PowerToys/releases/download/v0.69.0/PowerToysUserSetup-0.69.0-arm64.exe",
-            "hash": "0b113eaf17eeea86299def7f73e7af15a9cbfb8033c7f9218e33bda276f37727"
+            "url": "https://github.com/microsoft/PowerToys/releases/download/v0.71.0/PowerToysUserSetup-0.71.0-arm64.exe",
+            "hash": "48633758dfbb99de34ba2d3e3f294a60ef7e01015296d29a884251068b6fe3f6"
         }
     },
     "installer": {
@@ -23,17 +23,17 @@
     },
     "post_install": [
         "foreach ($f in @('modules\\FileLocksmith', 'modules\\Hosts', 'modules\\MeasureTool', ",
-        "                 'modules\\PowerRename')) {",
+        "                 'modules\\PowerRename', 'modules\\RegistryPreview', 'modules\\Peek')) {",
         "    Get-ChildItem -Path \"$dir\\dll\\WinAppSDK\" | ForEach-Object {",
-        "        New-Item -ItemType HardLink -Path \"$dir\\$f\\$($_.Name)\" -Value $_.FullName | Out-Null",
+        "        New-Item -ItemType HardLink -Path \"$dir\\$f\\$($_.Name)\" -Value $_.FullName -ErrorAction SilentlyContinue | Out-Null",
         "    }",
         "}",
         "foreach ($f in @('Settings', 'modules\\Awake', 'modules\\ColorPicker', 'modules\\FancyZones', ",
         "                 'modules\\FileExplorerPreview', 'modules\\FileLocksmith', 'modules\\Hosts', 'modules\\ImageResizer', ",
-        "                 'modules\\launcher', 'modules\\MeasureTool', 'modules\\MouseUtils\\MouseJumpUI', ",
-        "                 'modules\\PowerAccent', 'modules\\PowerOCR')) {",
+        "                 'modules\\launcher', 'modules\\MeasureTool', 'modules\\MouseUtils\\MouseJumpUI', 'modules\\MouseWithoutBorders', ",
+        "                 'modules\\Peek', 'modules\\PowerAccent', 'modules\\PowerOCR', 'modules\\RegistryPreview')) {",
         "    Get-ChildItem -Path \"$dir\\dll\\Interop\" | ForEach-Object {",
-        "        New-Item -ItemType HardLink -Path \"$dir\\$f\\$($_.Name)\" -Value $_.FullName | Out-Null",
+        "        New-Item -ItemType HardLink -Path \"$dir\\$f\\$($_.Name)\" -Value $_.FullName -ErrorAction SilentlyContinue | Out-Null",
         "    }",
         "    Get-ChildItem -Path \"$dir\\dll\\dotnet\" | ForEach-Object {",
         "        New-Item -ItemType HardLink -Path \"$dir\\$f\\$($_.Name)\" -Value $_.FullName -ErrorAction SilentlyContinue | Out-Null",

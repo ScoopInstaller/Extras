@@ -1,0 +1,43 @@
+{
+    "version": "2.3.4",
+    "description": "All-in-one collaboration platform for API documentation, API debugging, API Mock and API test automation.",
+    "homepage": "https://apifox.com",
+    "license": "Freeware",
+    "architecture": {
+        "64bit": {
+            "url": "https://cdn.apifox.cn/download/2.3.4/Apifox-2.3.4.exe#/dl.7z",
+            "hash": "sha512:83a64332ad67261fc2a41c1887e32da096e126468857c0c608881bda45d8c21701265d23e0c4ed7f3867a962a7fabfe9906fc536c95835577576084b5301648a"
+        }
+    },
+    "pre_install": [
+        "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Expand-7zipArchive -DestinationPath \"$dir\"",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Force -Recurse"
+    ],
+    "shortcuts": [
+        [
+            "Apifox.exe",
+            "Apifox",
+            "--user-data-dir=\"$dir\\UserData\""
+        ]
+    ],
+    "persist": "UserData",
+    "pre_uninstall": [
+        "Stop-Process -Name 'ApifoxAppAgent' -ErrorAction SilentlyContinue",
+        "Wait-Process -Name 'ApifoxAppAgent' -ErrorAction SilentlyContinue -Timeout 30"
+    ],
+    "checkver": {
+        "url": "https://cdn.apifox.cn/download/latest.yml",
+        "regex": "version: ([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://cdn.apifox.cn/download/$version/Apifox-$version.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "sha512: $base64"
+                }
+            }
+        }
+    }
+}

@@ -1,17 +1,31 @@
 {
-    "version": "4.4.159",
+    "version": "4.4.160",
     "description": "A modern media center that's a one-stop solution for your video entertainment. You discover, watch and organize video content from easy to install addons.",
     "homepage": "https://www.stremio.com/",
     "license": "Proprietary",
-    "url": "https://dl.strem.io/shell-win/v4.4.159/Stremio+4.4.159.exe#/dl.7z",
-    "hash": "7f0dad4a060c28c468a0050650a682b6f1c51039bd14e2d44883368e47d7e638",
+    "notes": "Register 'URL:Stremio Protocol' via `reg import \"$dir\\install-context.reg\"`",
+    "url": "https://dl.strem.io/shell-win/v4.4.160/Stremio+4.4.160.exe#/dl.7z",
+    "hash": "a03c976f6323d84eebe61026c94aa060b081689d9bd1031fa9511d885924d98c",
     "pre_install": "Remove-Item \"$dir\\`$*\" -Recurse",
-    "pre_uninstall": "Stop-Process -Name 'stremio.exe' -ErrorAction SilentlyContinue",
+    "post_install": [
+        "'install-context', 'uninstall-context' | ForEach-Object {",
+        "    if (Test-Path \"$bucketsdir\\extras\\scripts\\stremio\\$_.reg\") {",
+        "        $sPath = \"$dir\\stremio.exe\".Replace('\\', '\\\\')",
+        "        $content = (Get-Content \"$bucketsdir\\extras\\scripts\\stremio\\$_.reg\").Replace('$stremioexe', $sPath)",
+        "        if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "        Set-Content \"$dir\\$_.reg\" $content -Encoding Ascii -Force",
+        "    }",
+        "}"
+    ],
     "shortcuts": [
         [
             "stremio.exe",
             "Stremio"
         ]
+    ],
+    "pre_uninstall": [
+        "Stop-Process -Name 'stremio.exe' -ErrorAction SilentlyContinue",
+        "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }"
     ],
     "checkver": {
         "url": "https://api.github.com/repos/microsoft/winget-pkgs/contents/manifests/s/Stremio/Stremio",

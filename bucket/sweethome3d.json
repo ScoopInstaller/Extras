@@ -1,11 +1,19 @@
 {
     "version": "7.1",
-    "description": "A free interior design application that helps you draw the plan of your house, arrange furniture on it and visit the results in 3D.",
+    "description": "A free interior design application that helps you draw the plan of your house, arrange furniture on it and visit the results in 3D",
     "homepage": "http://www.sweethome3d.com/",
     "license": "GPL-2.0-or-later",
     "url": "https://downloads.sourceforge.net/project/sweethome3d/SweetHome3D/SweetHome3D-7.1/SweetHome3D-7.1-portable.7z#/dl.7z_",
     "hash": "sha1:b4f2997b831f254e0448363d43021cbec6dd7645",
-    "architecture": {
+    "installer": {
+        "script": [
+            "$switches = '-xr!LICENSE -xr!ASSEMBLY_EXCEPTION -xr!ADDITIONAL_LICENSE_INFO -xr!cldr.md'",
+            "Expand-7zipArchive \"$dir\\$fname\" \"$dir\" -Switches $switches -ExtractDir \"SweetHome3D-$version-portable\" -Removal",
+            "# A temporary workaround to bypass 'symbolic link' files that are not supported without Developer mode, no intention to violate any legal terms"
+        ]
+    },
+    "post_install": "if (!(Test-Path \"$persist_dir\\data\\preferences.xml\")) { New-Item \"$dir\\data\\preferences.xml\" | Out-Null }",
+        "architecture": {
         "64bit": {
             "bin": [
                 [
@@ -35,14 +43,6 @@
             ]
         }
     },
-    "installer": {
-        "script": [
-            "Expand-7zipArchive \"$dir\\$fname\" \"$dir\" -Switch \"-xr!SweetHome3D-macosx.app\" -Removal",
-            "Move-Item \"$dir\\SweetHome3D-$version-portable\\*\" \"$dir\"",
-            "Remove-Item \"$dir\\SweetHome3D-$version-portable\""
-        ]
-    },
-    "post_install": "if (!(Test-Path \"$persist_dir\\data\\preferences.xml\")) { New-Item \"$dir\\data\\preferences.xml\" | Out-Null }",
     "persist": [
         "data\\preferences.xml",
         "data\\plugins",
@@ -54,7 +54,6 @@
         "regex": "id=\"SweetHome3D#Portable\"\\s+version=\"([\\d.]+)\""
     },
     "autoupdate": {
-        "url": "https://downloads.sourceforge.net/project/sweethome3d/SweetHome3D/SweetHome3D-$version/SweetHome3D-$version-portable.7z#/dl.7z_",
-        "extract_dir": "SweetHome3D-$version-portable"
+        "url": "https://downloads.sourceforge.net/project/sweethome3d/SweetHome3D/SweetHome3D-$version/SweetHome3D-$version-portable.7z#/dl.7z_"
     }
 }

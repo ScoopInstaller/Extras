@@ -1,5 +1,5 @@
 {
-    "version": "2.2.3",
+    "version": "2.2.4",
     "description": "A suite of tools for lossless audio/CUE sheet format conversion and verification.",
     "homepage": "http://cue.tools/wiki/Main_Page",
     "license": "GPL-2.0-or-later",
@@ -8,27 +8,18 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/gchudov/cuetools.net/releases/download/v2.2.3/CUETools_2.2.3.zip",
-            "hash": "017484aab76040737713a9a638eb696db63df0a5f792973744b36a41bd60fb98"
+            "url": "https://github.com/gchudov/cuetools.net/releases/download/v2.2.4/CUETools_2.2.4.zip",
+            "hash": "e7a1906b0edd247435aabcd56e4c0ff1076edf9b773951ac73dd9725816778ff"
         }
     },
-    "extract_dir": "CUETools_2.2.3",
-    "post_install": "Remove-Item \"$dir\\user_profiles_enabled\"",
+    "extract_dir": "CUETools_2.2.4",
     "pre_install": [
-        "if (Test-Path \"$persist_dir\\CUE Tools\\settings.txt\") {",
-        "    Copy-Item \"$persist_dir\\CUE Tools\\settings.txt\" \"$dir\\CUE Tools\\settings.txt\" -Force",
-        "}",
-        "if (Test-Path \"$persist_dir\\CUERipper\\settings.txt\") {",
-        "    Copy-Item \"$persist_dir\\CUERipper\\settings.txt\" \"$dir\\CUERipper\\settings.txt\" -Force",
-        "}"
+        "ensure \"$dir\\CUE Tools\" | Out-Null",
+        "ensure \"$dir\\CUERipper\" | Out-Null",
+        "if (!(Test-Path \"$persist_dir\\CUE Tools\\settings.txt\")) { New-Item \"$dir\\CUE Tools\\settings.txt\" | Out-Null }",
+        "if (!(Test-Path \"$persist_dir\\CUERipper\\settings.txt\")) { New-Item \"$dir\\CUERipper\\settings.txt\" | Out-Null }"
     ],
-    "uninstaller": {
-        "script": [
-            "ensure \"$persist_dir\" | Out-Null",
-            "Copy-Item \"$dir\\CUE Tools\\settings.txt\" \"$persist_dir\\CUE Tools\\settings.txt\" -Force",
-            "Copy-Item \"$dir\\CUERipper\\settings.txt\" \"$persist_dir\\CUERipper\\settings.txt\" -Force"
-        ]
-    },
+    "post_install": "Remove-Item \"$dir\\user_profiles_enabled\"",
     "bin": "CUETools.Ripper.Console.exe",
     "shortcuts": [
         [
@@ -39,6 +30,10 @@
             "CUETools.exe",
             "CUETools"
         ]
+    ],
+    "persist": [
+        "CUE Tools\\settings.txt",
+        "CUERipper\\settings.txt"
     ],
     "checkver": {
         "github": "https://github.com/gchudov/cuetools.net"
