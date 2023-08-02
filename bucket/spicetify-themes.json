@@ -4,31 +4,24 @@
     "homepage": "https://github.com/spicetify/spicetify-themes",
     "license": "MIT",
     "suggest": {
-        "Spicetify": "spicetify-cli"
+        "spicetify": "spicetify-cli",
+        "spotify": "extras/spotify"
     },
     "url": "https://github.com/spicetify/spicetify-themes/archive/master.zip",
     "hash": "031b0bd8fe5be0b444e8005613610ece792bcdbb5caa8be4fffd18c7c384f0d7",
     "extract_dir": "spicetify-themes-master",
     "installer": {
         "script": [
-            "$spctconf = $Env:AppData\\spicetify",
-            "if ($Env:SPICETIFY_CONFIG) {",
-            "    $spctconf = $Env:SPICETIFY_CONFIG",
-            "}",
-            "ensure $spctconf",
-            "Get-ChildItem $dir -Directory | ForEach-Object {",
-            "    Remove-Item -ErrorAction Ignore -Recurse \"$spctconf\\Themes\\$($_.Name)\"",
-            "    Copy-Item -Recurse $_.FullName -Destination \"$spctconf\\Themes\"",
-            "}"
+            "if (Get-Command 'spicetify' -ErrorAction SilentlyContinue) {",
+            "  Get-ChildItem \"$dir\" -Directory -Exclude '.github' | Copy-Item -Destination \"$(spicetify -c | Split-Path)\\Themes\" -Force -Recurse -ErrorAction SilentlyContinue",
+            "} else { warn \"'spicetify'' not detected, extracts to '$dir' only.\" }"
         ]
     },
     "uninstaller": {
         "script": [
-            "$spctconf = $Env:AppData\\spicetify",
-            "if ($Env:SPICETIFY_CONFIG) {",
-            "    $spctconf = $Env:SPICETIFY_CONFIG",
-            "}",
-            "Get-ChildItem \"$dir\" | ForEach-Object { Remove-Item -Recurse -ErrorAction Ignore \"$spctconf\\Themes\\$($_.Name)\" }"
+            "if (Get-Command 'spicetify' -ErrorAction SilentlyContinue) {",
+            "  foreach ($theme in (Get-ChildItem \"$dir\" -Directory '.github')) { Remove-Item \"$(spicetify -c | Split-Path)\\Themes\\$($theme.Name)\" -Recurse -Force -ErrorAction SilentlyContinue }",
+            "}"
         ]
     },
     "checkver": {
