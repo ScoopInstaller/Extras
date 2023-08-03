@@ -3,66 +3,70 @@
     "description": "Powerful and easy to use e-book manager",
     "homepage": "https://calibre-ebook.com",
     "license": "GPL-3.0-only",
+    "notes": "Calibre drops support for 32-bit after v6.0.0, if you are running a 32-bit system, please install 'versions/calibre5' from Versions bucket.",
     "architecture": {
         "64bit": {
-            "url": "https://download.calibre-ebook.com/6.23.0/calibre-portable-installer-6.23.0.exe",
-            "hash": "sha512:c8b6d0cdcd74e5433d4784e3630df574e2f112783c47f6422830de9916a29593e35a39ac61aa7d966ae8faffca39a1cae5cf01b13bd072e8de4ce97792e7df7e"
+            "url": "https://download.calibre-ebook.com/6.23.0/calibre-64bit-6.23.0.msi",
+            "hash": "sha512:40353ad17d0b9f8184b3b56838701f1328e88083b91e381434e5af3ddfe87528e031588d90a017924f8fcb947a687a45d85803cd93c5124beeb4c50c4cca5864",
+            "extract_dir": "PFiles\\Calibre2"
         }
     },
-    "installer": {
-        "script": [
-            "Start-Process \"$dir\\calibre-portable-installer-$version.exe\" @(\"$dir\") -Wait",
-            "Move-Item \"$dir\\Calibre Portable\\**\" \"$dir\"",
-            "Remove-Item \"$dir\\Calibre Portable\""
-        ]
+    "post_install": [
+        "$fresh = if (!(Test-Path \"$persist_dir\")) { $true }",
+        "# pre-create temp dir to avoid error when running calibre",
+        "ensure \"$persist_dir\\temp\" | Out-Null",
+        "# NOTE: Remove after 2024-02",
+        "# Migration",
+        "if ($fresh) {",
+        "  # ...",
+        "} else {",
+        "  # ...",
+        "}",
+        "# NOTE END"
+    ],
+    "env_set": {
+        "CALIBRE_CACHE_DIRECTORY": "$persist_dir\\cache",
+        "CALIBRE_CONFIG_DIRECTORY": "$persist_dir\\Calibre Settings",
+        "CALIBRE_OVERRIDE_DATABASE_PATH": "$persist_dir\\metadata.db",
+        "CALIBRE_TEMP_DIR ": "$persist_dir\\temp"
     },
     "bin": [
-        [
-            "calibre-portable.exe",
-            "calibre"
-        ],
-        "calibre-portable.exe",
-        "Calibre\\calibre-complete.exe",
-        "Calibre\\calibre-customize.exe",
-        "Calibre\\calibredb.exe",
-        "Calibre\\calibre-debug.exe",
-        "Calibre\\calibre-parallel.exe",
-        "Calibre\\calibre-server.exe",
-        "Calibre\\calibre-smtp.exe",
-        "Calibre\\ebook-convert.exe",
-        "Calibre\\ebook-device.exe",
-        "Calibre\\ebook-edit.exe",
-        "Calibre\\ebook-meta.exe",
-        "Calibre\\ebook-polish.exe",
-        "Calibre\\ebook-viewer.exe",
-        "Calibre\\fetch-ebook-metadata.exe",
-        "Calibre\\lrf2lrs.exe",
-        "Calibre\\lrs2lrf.exe",
-        "Calibre\\lrfviewer.exe",
-        "Calibre\\markdown-calibre.exe",
-        "Calibre\\web2disk.exe"
+        "calibre",
+        "calibre-customize",
+        "calibre-debug",
+        "calibre-server",
+        "calibre-smtp",
+        "calibredb",
+        "ebook-convert",
+        "ebook-device",
+        "ebook-edit",
+        "ebook-meta",
+        "ebook-polish",
+        "ebook-viewer",
+        "fetch-ebook-metadata",
+        "lrf2lrs",
+        "lrfviewer",
+        "lrs2lrf",
+        "markdown-calibre",
+        "web2disk"
     ],
     "shortcuts": [
         [
-            "calibre-portable.exe",
+            "calibre.exe",
             "Calibre"
         ],
         [
-            "Calibre\\ebook-edit.exe",
+            "ebook-edit.exe",
             "Calibre E-Book Editor"
         ],
         [
-            "Calibre\\ebook-viewer.exe",
+            "ebook-viewer.exe",
             "Calibre E-Book Viewer"
         ],
         [
-            "Calibre\\lrfviewer.exe",
+            "lrfviewer.exe",
             "Calibre LRF Viewer"
         ]
-    ],
-    "persist": [
-        "Calibre Library",
-        "Calibre Settings"
     ],
     "checkver": {
         "github": "https://github.com/kovidgoyal/calibre"
@@ -70,9 +74,9 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.calibre-ebook.com/$version/calibre-portable-installer-$version.exe",
+                "url": "https://download.calibre-ebook.com/$version/calibre-64bit-$version.msi",
                 "hash": {
-                    "url": "https://calibre-ebook.com/signatures/calibre-portable-installer-$version.exe.sha512"
+                    "url": "https://calibre-ebook.com/signatures/calibre-64bit-$version.msi.sha512"
                 }
             }
         }
