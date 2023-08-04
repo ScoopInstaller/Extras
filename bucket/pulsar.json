@@ -1,0 +1,44 @@
+{
+    "version": "1.107.1",
+    "description": "A community-led hyper-hackable text editor",
+    "homepage": "https://pulsar-edit.dev",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/pulsar-edit/pulsar/releases/download/v1.107.1/Windows.Pulsar-1.107.1-win.zip",
+            "hash": "feca39ecead369f5a8d4d324f99bbcd7998078c0c67cb4dcd4fc7db63ccb7547"
+        }
+    },
+    "extract_to": "pulsar",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\.pulsar\") -and (Test-Path \"$env:UserProfile\\.pulsar\")) {",
+        "    info '[Portable Mode]: Migrating user data...'",
+        "    Copy-Item \"$env:UserProfile\\.pulsar\" \"$persist_dir\\.pulsar\" -Recurse",
+        "}",
+        "ensure \"$persist_dir\\.pulsar\\electronUserData\" | Out-Null"
+    ],
+    "bin": [
+        "pulsar\\resources\\pulsar.cmd",
+        "pulsar\\resources\\app\\ppm\\bin\\apm.cmd"
+    ],
+    "shortcuts": [
+        [
+            "pulsar\\Pulsar.exe",
+            "Pulsar"
+        ]
+    ],
+    "persist": ".pulsar",
+    "checkver": {
+        "github": "https://github.com/pulsar-edit/pulsar"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/pulsar-edit/pulsar/releases/download/v$version/Windows.Pulsar-$version-win.zip"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/SHA256SUMS.txt"
+        }
+    }
+}
