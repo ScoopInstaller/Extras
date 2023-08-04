@@ -10,6 +10,13 @@
         }
     },
     "extract_to": "pulsar",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\.pulsar\") -and (Test-Path \"$env:UserProfile\\.pulsar\")) {",
+        "    info '[Portable Mode]: Migrating user data...'",
+        "    Copy-Item \"$env:UserProfile\\.pulsar\" \"$persist_dir\\.pulsar\" -Recurse",
+        "}",
+        "ensure \"$persist_dir\\.pulsar\\electronUserData\" | Out-Null"
+    ],
     "bin": [
         "pulsar\\resources\\pulsar.cmd",
         "pulsar\\resources\\app\\ppm\\bin\\apm.cmd"
@@ -21,15 +28,6 @@
         ]
     ],
     "persist": ".pulsar",
-    "post_install": [
-        "if (!(Test-Path \"$dir\\.pulsar\\*\") -and (Test-Path \"$env:UserProfile\\.pulsar\")) {",
-        "    info '[Portable Mode]: Copying user data...'",
-        "    Copy-Item \"$env:UserProfile\\.pulsar\\*\" \"$dir\\.pulsar\" -Recurse",
-        "}",
-        "if (!(Test-Path \"$dir\\.pulsar\\electronUserData\")) {",
-        "    New-Item -Type Directory \"$dir\\.pulsar\\electronUserData\" | Out-Null",
-        "}"
-    ],
     "checkver": {
         "github": "https://github.com/pulsar-edit/pulsar"
     },
