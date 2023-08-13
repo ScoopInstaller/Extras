@@ -8,8 +8,8 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://download.toolslib.net/download/direct/1/latest?channel=release#/adwcleaner.exe",
-            "hash": "4180ef83ba3d6dfdc6a233486437fc3f772b61dff85374072992bf024390aac2"
+            "url": "https://download.toolslib.net/download/file/1/2697?s=qf0hOJirlcuPMnv3IAYMEJUcgVB6urVN#/adwcleaner.exe",
+            "hash": "1f544da66675521a649e632108f86afb351ad336bd34b7b5c3d290827ebeef54"
         }
     },
     "bin": "adwcleaner.exe",
@@ -20,14 +20,25 @@
         ]
     ],
     "checkver": {
-        "url": "https://toolslib.net/downloads/viewdownload/1-adwcleaner/files/?t=release",
-        "regex": ">([\\d.]+)<\\/td>"
+        "script": [
+            "$content = (Invoke-WebRequest 'https://toolslib.net/downloads/viewdownload/1-adwcleaner/files/?t=release').Content",
+            "$content -match '1-adwcleaner/files/(?<release>\\d+)/'; $release = $Matches['release']",
+            "$content = (Invoke-WebRequest \"https://toolslib.net/downloads/finish/1-adwcleaner/$release/\").Content",
+            "$content -match 'AdwCleaner \\((?<version>[\\d.]+)\\)'; $version = $Matches['version']",
+            "$content -match \"$release\\?s=(?<s>\\w+)\"; $s = $Matches['s']",
+            "Write-Output $version $release $s"
+        ],
+        "regex": "([\\d.]+) (?<release>\\d+) (?<s>\\w+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.toolslib.net/download/direct/1/latest?channel=release#/adwcleaner.exe"
+                "url": "https://download.toolslib.net/download/file/1/$matchRelease?s=$matchS#/adwcleaner.exe"
             }
+        },
+        "hash": {
+            "url": "https://toolslib.net/downloads/viewdownload/1-adwcleaner/files/$matchRelease",
+            "regex": "$sha256"
         }
     }
 }
