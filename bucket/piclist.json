@@ -1,0 +1,49 @@
+{
+    "version": "1.9.9",
+    "description": "Image manage tool",
+    "homepage": "https://piclist.cn/en/",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Kuingsmile/PicList/releases/download/v1.9.9/PicList-Setup-1.9.9-x64.exe#/dl.7z",
+            "hash": "sha512:7a653525a6731fc2c98bc691e071cbd4dc500be630668673ac507a4db74c2223225e58af74c74005a3fb653d31b1ae86495b16f7a1e7a23f7ed50000763b0a96",
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Recurse"
+            ]
+        },
+        "32bit": {
+            "url": "https://github.com/Kuingsmile/PicList/releases/download/v1.9.9/PicList-Setup-1.9.9-ia32.exe#/dl.7z",
+            "hash": "sha512:e89aa00d563a7003b03c0381d45604e251bb33cf669699cb7606c65986467cbbf56854dc5823c9dc47ceb8b3a85d45a34638a428f5eb7039556691f08211c741",
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Recurse"
+            ]
+        }
+    },
+    "bin": "PicList.exe",
+    "shortcuts": [
+        [
+            "PicList.exe",
+            "PicList"
+        ]
+    ],
+    "checkver": {
+        "url": "https://github.com/Kuingsmile/PicList/releases",
+        "regex": "/PicList-Setup-([\\d.]+)-(x64|ia32)\\.exe"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Kuingsmile/PicList/releases/download/v$version/PicList-Setup-$version-x64.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://github.com/Kuingsmile/PicList/releases/download/v$version/PicList-Setup-$version-ia32.exe#/dl.7z"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "(?s)$basename.*?$base64"
+        }
+    }
+}
