@@ -9,8 +9,9 @@
     "url": "https://download.jetbrains.com/idea/ideaIU-2023.2.win.zip",
     "hash": "41b2319ffccf08360f9a0d12d4ee9369992522cc24385c71698117b619c77f6e",
     "extract_to": "IDE",
+    "pre_install": "Get-ChildItem \"$persist_dir\\IDE\\bin\\idea*.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$dir\\IDE\\bin\"",
     "installer": {
-        "script": "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" $dir $persist_dir"
+        "script": "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" \"$dir\" \"$persist_dir\""
     },
     "architecture": {
         "64bit": {
@@ -39,10 +40,9 @@
     },
     "persist": [
         "IDE\\bin\\idea.properties",
-        "IDE\\bin\\idea.exe.vmoptions",
-        "IDE\\bin\\idea64.exe.vmoptions",
         "profile"
     ],
+    "pre_uninstall": "Get-ChildItem \"$dir\\IDE\\bin\\idea*.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$persist_dir\\IDE\\bin\"",
     "checkver": {
         "url": "https://data.services.jetbrains.com/products/releases?code=IIU&latest=true&platform=zip&type=release",
         "regex": "version\":\"(?<ver>[\\d.]+)\".*\"build\":\"(?<build>[\\d.]+)\"",
