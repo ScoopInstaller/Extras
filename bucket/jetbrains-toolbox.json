@@ -15,15 +15,22 @@
     "post_install": [
         "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall.exe\" -Recurse",
         "$config = \"$env:LOCALAPPDATA\\JetBrains\\Toolbox\\.settings.json\"",
-        "if (-not (Test-Path $config)) {",
+        "if (!(Test-Path $config)) {",
         "    $settings = @{",
         "        'autostart' = $false",
-        "        'install_location' = \"$dir\"",
+        "        'install_location' = \"$dir\\apps\"",
         "        'update' = @{'install_automatically' = $false}",
         "    }",
         "    New-Item $config -Type File -Force | Out-Null",
         "    Set-Content $config ($settings | ConvertToPrettyJson) -Encoding ASCII -Force",
-        "}"
+        "} else { # NOTE: Remove the migration script after 6 months (2024-02-15)",
+        "  $conf_content = (Get-Content $config | ConvertFrom-Json)",
+        "  if ($conf_content.'install_location' -eq \"$dir\") {",
+        "    $conf_content.'install_location' = \"$dir\\apps\"",
+        "    Set-Content $config ($conf_content | ConvertToPrettyJson) -Encoding ASCII -Force",
+        "  }",
+        "}",
+        "# NOTE END"
     ],
     "bin": "jetbrains-toolbox.exe",
     "shortcuts": [
