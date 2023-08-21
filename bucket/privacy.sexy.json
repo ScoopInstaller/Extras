@@ -1,16 +1,18 @@
 {
     "version": "0.12.1",
-    "homepage": "https://privacy.sexy/",
     "description": "Enforce privacy & security on Windows.",
+    "homepage": "https://privacy.sexy/",
     "license": "GPL-3.0",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/undergroundwires/privacy.sexy/releases/download/0.12.1/privacy.sexy.Setup.0.12.1.exe#/dl.7z",
+            "url": "https://github.com/undergroundwires/privacy.sexy/releases/download/0.12.1/privacy.sexy-Setup-0.12.1.exe#/dl.7z",
             "hash": "sha512:bd446c36398900620c487f88b84a682e0cdc4acc85088091de8e57862c7b49f3cd23903fcbdadcb5f77f69a6e5ff919efa21b42c2c03722157206fb2477732d1"
         }
     },
-    "extract_dir": "$PLUGINSDIR",
-    "pre_install": "Expand-7zipArchive \"$dir\\app-64.7z\" \"$dir\" -Removal",
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+        "Remove-Item \"$dir\\`$*\" -Force -Recurse"
+    ],
     "bin": "privacy.sexy.exe",
     "shortcuts": [
         [
@@ -24,7 +26,7 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/undergroundwires/privacy.sexy/releases/download/$version/privacy.sexy.Setup.$version.exe#/dl.7z",
+                "url": "https://github.com/undergroundwires/privacy.sexy/releases/download/$version/privacy.sexy-Setup-$version.exe#/dl.7z",
                 "hash": {
                     "url": "$baseurl/latest.yml",
                     "regex": "sha512: $base64"
