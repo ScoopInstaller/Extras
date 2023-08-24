@@ -6,17 +6,29 @@
         "identifier": "LGPL-3.0",
         "url": "https://github.com/OpenTabletDriver/OpenTabletDriver/blob/master/LICENSE"
     },
+    "notes": "Only certain tablets require zadig, see https://opentabletdriver.net/Wiki/Install/Windows#winusb",
     "suggest": {
         ".NET SDK": "versions/dotnet6-sdk",
         "WinUSB": "nonportable/zadig-np"
     },
-    "notes": "Only certain tablets require zadig, see https://opentabletdriver.net/Wiki/Install/Windows#winusb",
     "architecture": {
         "64bit": {
             "url": "https://github.com/OpenTabletDriver/OpenTabletDriver/releases/download/v0.6.2.0/OpenTabletDriver.win-x64.zip",
             "hash": "70598a01f19bfd5ccb40852dda20a9f9b60bcbff0b7a63b9e4a01ec705c66dd1"
         }
     },
+    "pre_install": [
+        "# NOTE: Remove the migration script after 6 months (2024-02-24)",
+        "if (($cmd -eq 'update') -and !(Test-Path \"$persist_dir\\userdata\")) {",
+        "  if (Test-Path \"$env:LOCALAPPDATA\\OpenTabletDriver\") {",
+        "    info 'Migrating userdata to persist directory...'",
+        "    ensure \"$persist_dir\\userdata\"",
+        "    Copy-Item \"$env:LOCALAPPDATA\\OpenTabletDriver\\**\" \"$persist_dir\\userdata\"",
+        "    Set-Content -Path \"$env:LOCALAPPDATA\\OpenTabletDriver\\SCOOP_MIGRATION.txt\" -Value \"OpenTabletDriver's userdata has been migrated to '$persist_dir\\userdata'\"",
+        "  }",
+        "}",
+        "# NOTE END"
+    ],
     "bin": [
         "OpenTabletDriver.UX.Wpf.exe",
         "OpenTabletDriver.Daemon.exe"
