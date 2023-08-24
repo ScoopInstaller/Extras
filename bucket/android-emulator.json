@@ -1,0 +1,59 @@
+{
+    "version": "10330179",
+    "description": "The official emulator for Android development, based on QEMU.",
+    "homepage": "https://developer.android.com/studio/releases/emulator",
+    "license": {
+        "identifier": "GPL-2.0-only",
+        "url": "https://cs.android.com/android/platform/superproject/+/main:prebuilts/android-emulator/NOTICE"
+    },
+    "notes": [
+        "You can manually install assistant drivers within a Powershell terminal by running the following commands:",
+        "",
+        "  # Android USB Assistant Driver ",
+        "    pushd \"$dir\\drivers\"",
+        "    sudo \".\\Android_USB_Assistant_Install.bat\"",
+        "    popd",
+        "",
+        "  # Android Emulator USB Passthrough Assistance",
+        "    pushd \"$dir\\drivers\"",
+        "    sudo \".\\UsbAssist_Install.bat\"",
+        "    popd"
+    ],
+    "suggest": {
+        "Android SDK": "android-clt"
+    },
+    "extract_dir": "emulator",
+    "architecture": {
+        "64bit": {
+            "url": "https://redirector.gvt1.com/edgedl/android/repository/emulator-windows_x64-10330179.zip",
+            "hash": "d1d5f547db068ea94f9b2dc4f136fc46962cf8e8a9b4e57ca757fd30d332be42"
+        }
+    },
+    "bin": [
+        "emulator.exe",
+        "emulator-check.exe"
+    ],
+    "checkver": {
+        "script": [
+            "$android_emulator_resp = Invoke-WebRequest -Uri \"https://developer.android.com/studio/emulator_archive\"",
+            "$android_emulator_resp | Where-Object Content -match '<iframe\\s+src=\"(?<android_emulator_dev_url>[^\"]+)\"' | Out-Null",
+            "Write-Output (Invoke-WebRequest -Uri $matches['android_emulator_dev_url']).Content"
+        ],
+        "regex": "<p[^>]*>[\"]?Android Emulator \\([^\\)]+\\)\\s*[\"]?\\s*.+\\s*<\\/p>\\s*\\s*<div[^>]*>\\s*.+\\s*.+emulator-windows_x64-([0-9\\.]+)\\.zip"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://redirector.gvt1.com/edgedl/android/repository/emulator-windows_x64-$version_latest.zip",
+                "hash": {
+                    "script": [
+                        "$android_emulator_resp = Invoke-WebRequest -Uri \"https://developer.android.com/studio/emulator_archive\"",
+                        "$android_emulator_resp | Where-Object Content -match '<iframe\\s+src=\"(?<android_emulator_dev_url>[^\"]+)\"' | Out-Null",
+                        "Write-Output (Invoke-WebRequest -Uri $matches['android_emulator_dev_url']).Content"
+                    ],
+                    "regex": "SHA-256 Checksums\\s*([0-9a-f]{64})\\s*emulator-windows_x64-$version\\.zip"
+                }
+            }
+        }
+    }
+}
