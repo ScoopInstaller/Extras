@@ -5,27 +5,28 @@
     "description": "A Windows Explorer shell extension that allows users to easily change file and folder properties with a right-click.",
     "license": "Freeware",
     "notes": [
+        "SORRY BRAZILIAN PORTUGUESE SPEAKERS, THE DEVELOPER CUT SUPPORT FOR YOUR LANGUAGE.",
+        "",
         "IMPORTANT FOR NON-ENGLISH SPEAKERS!!!",
         "If you want this application translated to your native language, please run the following command:",
         "change-ac-language.ps1",
-        "**The powershell script will prompt you to enter the number that corresponds to your native language.**",
+        "** The powershell script will prompt you to enter the number that corresponds to your native language. **",
         "",
-        "1 = BRAZILIAN PORTUGUESE",
-        "2 = CZECH",
-        "3 = DANISH",
-        "4 = FRENCH",
-        "5 = GERMAN",
-        "6 = HUNGARIAN",
-        "7 = ITALIAN",
-        "8 = KOREAN",
-        "9 = POLISH",
-        "10 = SPANISH",
-        "11 = SWEDISH",
-        "12 = TURKISH",
-        "13 = ENGLISH   (ONLY IF YOU NEED TO RESET THE 'messages.ini' FILE BACK TO ENGLISH.)"
+        "1 = CZECH",
+        "2 = DANISH",
+        "3 = FRENCH",
+        "4 = GERMAN",
+        "5 = HUNGARIAN",
+        "6 = ITALIAN",
+        "7 = KOREAN",
+        "8 = POLISH",
+        "9 = SPANISH",
+        "10 = SWEDISH",
+        "11 = TURKISH",
+        "12 = ENGLISH   (ONLY IF YOU NEED TO RESET THE 'messages.ini' FILE BACK TO ENGLISH.)"
     ],
     "url": "https://www.petges.lu/pubfiles/ac-11_20b.exe",
-    "hash": "md5:71df2f283f64caaed919e40ef6b9f772",
+    "hash": "md5:1f00d9e2d8b6c3599f1f60bbe08fb170",
     "innosetup": true,
     "architecture": {
         "64bit": {
@@ -59,10 +60,16 @@
         "acmain.exe",
         "change-ac-language.ps1"
     ],
+    "shortcuts": [
+        [
+            "acmain.exe",
+            "Attribute Changer"
+        ]
+    ],
     "post_install": [
         "$documents = (Get-ChildItem $dir -Filter '*.pdf').Length; $subtract = $documents - 5",
-        "Copy-Item \"$dir\\template.ini\" \"$dir\\messages,$documents.ini\"; Copy-Item \"$dir\\template.ini\" \"$dir\\messages.ini\"; Copy-Item \"$dir\\ac,$(($documents - $subtract) - 1 ).pdf\" \"$dir\\ac.pdf\"",
-        "Remove-Item \"$dir\\ac,$(($documents - $subtract) - 1 ).pdf\"",
+        "Copy-Item \"$dir\\template.ini\" \"$dir\\messages,$documents.ini\"; Copy-Item \"$dir\\template.ini\" \"$dir\\messages.ini\"; Copy-Item \"$dir\\ac,$(($documents - $subtract) - 2).pdf\" \"$dir\\ac.pdf\"",
+        "Remove-Item \"$dir\\ac,$(($documents - $subtract) - 2).pdf\"",
         "$Value = $documents - $subtract",
         "for ($count = 0; $count -le ($documents - 3); $count++) {",
         "    $OriginalValue = $Value + $count; $NewValue = $OriginalValue - 1; Rename-Item \"$dir\\ac,$OriginalValue.pdf\" \"ac,$NewValue.pdf\" -ErrorAction 'SilentlyContinue'",
@@ -72,18 +79,14 @@
     "pre_uninstall": [
         "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
         "Start-Process 'regsvr32' -ArgumentList @('/u', \"$dir\\acshell.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -Force",
-        "Start-Sleep -Seconds 2"
+        "Stop-Process -Name 'dllhost' -ErrorAction 'SilentlyContinue' -Force; Start-Sleep -Seconds 2"
     ],
-    "checkver": {
-        "url": "https://www.petges.lu/download/",
-        "regex": "ac-([\\d]+)_([\\w]+)\\.exe",
-        "replace": "$1.$2"
-    },
+    "checkver": "Version\\s([\\w.]+)",
     "autoupdate": {
         "url": "https://www.petges.lu/pubfiles/ac-$underscoreVersion.exe",
         "hash": {
             "url": "https://www.petges.lu/download/",
-            "regex": "<p>MD5\\sChecksum:\\s$md5</p>"
+            "regex": "$version(?:\\s&#[\\d]+;\\sFULL\\sSETUP)\\</a\\>\\</div\\>\\n\\</div\\>\\n+<p>(?:Size\\:\\s[\\d,]+\\s[\\w]+\\s/\\s)MD5\\sChecksum\\:\\s$md5"
         }
     }
 }
