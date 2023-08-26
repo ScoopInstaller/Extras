@@ -5,24 +5,19 @@
     "description": "A Windows Explorer shell extension that allows users to easily change file and folder properties with a right-click.",
     "license": "Freeware",
     "notes": [
+        "BRAZILIAN PORTUGUESE is unavailable due to the developer removing support for the language.",
+        "",
         "IMPORTANT FOR NON-ENGLISH SPEAKERS!!!",
         "If you want this application translated to your native language, please run the following command:",
-        "change-ac-language.ps1",
-        "**The powershell script will prompt you to enter the number that corresponds to your native language.**",
+        "change-ac-language.ps1 <language_id>",
         "",
-        "1 = BRAZILIAN PORTUGUESE",
-        "2 = CZECH",
-        "3 = DANISH",
-        "4 = FRENCH",
-        "5 = GERMAN",
-        "6 = HUNGARIAN",
-        "7 = ITALIAN",
-        "8 = KOREAN",
-        "9 = POLISH",
-        "10 = SPANISH",
-        "11 = SWEDISH",
-        "12 = TURKISH",
-        "13 = ENGLISH   (ONLY IF YOU NEED TO RESET THE 'messages.ini' FILE BACK TO ENGLISH.)"
+        "1 = CZECH       5 = HUNGARIAN    9 = SPANISH",
+        "2 = DANISH      6 = ITALIAN     10 = SWEDISH",
+        "3 = FRENCH      7 = KOREAN      11 = TURKISH",
+        "4 = GERMAN      8 = POLISH      12 = ENGLISH   (Only if you need to reset the `messages.ini` file back to ENGLISH.)",
+        "",
+        "Ex. If you want the Attribute Changer interface language to Czech, you would run:",
+        "change-ac-language.ps1 1"
     ],
     "url": "https://www.petges.lu/pubfiles/ac-11_20b.exe",
     "hash": "md5:1f00d9e2d8b6c3599f1f60bbe08fb170",
@@ -31,7 +26,8 @@
         "64bit": {
             "pre_install": [
                 "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-                "Get-ChildItem \"$dir\\*,1*\" -Include '*.exe', '*.dll' | Remove-Item; Get-ChildItem \"$dir\\*,2*\" -Include '*.exe', '*.dll' | Rename-Item -NewName { $_ -replace '\\,2', '' }",
+                "Get-ChildItem \"$dir\\*,1*\" -Include '*.exe', '*.dll' | Remove-Item",
+                "Get-ChildItem \"$dir\\*,2*\" -Include '*.exe', '*.dll' | Rename-Item -NewName { $_ -replace '\\,2', '' }",
                 "Start-Process 'regsvr32' -ArgumentList @(\"$dir\\acshell.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
                 "Start-Sleep -Seconds 2"
             ]
@@ -39,7 +35,8 @@
         "32bit": {
             "pre_install": [
                 "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-                "Get-ChildItem \"$dir\\*,2*\" -Include '*.exe', '*.dll' | Remove-Item; Get-ChildItem \"$dir\\*,1*\" -Include '*.exe', '*.dll' | Rename-Item -NewName { $_ -replace '\\,1', '' }",
+                "Get-ChildItem \"$dir\\*,2*\" -Include '*.exe', '*.dll' | Remove-Item",
+                "Get-ChildItem \"$dir\\*,1*\" -Include '*.exe', '*.dll' | Rename-Item -NewName { $_ -replace '\\,1', '' }",
                 "Start-Process 'regsvr32' -ArgumentList @(\"$dir\\acshell.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
                 "Start-Sleep -Seconds 2"
             ]
@@ -48,7 +45,8 @@
     "installer": {
         "script": [
             "$value = @\"",
-            "`$ac_language = Read-Host -Prompt 'Please enter the number that corresponds to your native language'",
+            "if (!(`$args.Count -eq 1)) { Write-Host 'INVALID USAGE! Please run ``scoop info attribute-changer`` for help on proper command usage.'; exit }",
+            "`$ac_language = `$args[0].toString()",
             "Copy-Item \"$dir\\messages,`$ac_language.ini\" \"$dir\\messages.ini\" -Force",
             "Copy-Item \"$dir\\ac,`$ac_language.pdf\" \"$dir\\ac.pdf\" -Force",
             "\"@",
@@ -59,10 +57,16 @@
         "acmain.exe",
         "change-ac-language.ps1"
     ],
+    "shortcuts": [
+        [
+            "acmain.exe",
+            "Attribute Changer"
+        ]
+    ],
     "post_install": [
         "$documents = (Get-ChildItem $dir -Filter '*.pdf').Length; $subtract = $documents - 5",
-        "Copy-Item \"$dir\\template.ini\" \"$dir\\messages,$documents.ini\"; Copy-Item \"$dir\\template.ini\" \"$dir\\messages.ini\"; Copy-Item \"$dir\\ac,$(($documents - $subtract) - 1 ).pdf\" \"$dir\\ac.pdf\"",
-        "Remove-Item \"$dir\\ac,$(($documents - $subtract) - 1 ).pdf\"",
+        "Copy-Item \"$dir\\template.ini\" \"$dir\\messages,$documents.ini\"; Copy-Item \"$dir\\template.ini\" \"$dir\\messages.ini\"; Copy-Item \"$dir\\ac,$(($documents - $subtract) - 2).pdf\" \"$dir\\ac.pdf\"",
+        "Remove-Item \"$dir\\ac,$(($documents - $subtract) - 2).pdf\"; Copy-Item \"$dir\\messages,$(($documents - $subtract) - 2).ini\" \"$dir\\messages.ini\" -Force",
         "$Value = $documents - $subtract",
         "for ($count = 0; $count -le ($documents - 3); $count++) {",
         "    $OriginalValue = $Value + $count; $NewValue = $OriginalValue - 1; Rename-Item \"$dir\\ac,$OriginalValue.pdf\" \"ac,$NewValue.pdf\" -ErrorAction 'SilentlyContinue'",
@@ -72,18 +76,14 @@
     "pre_uninstall": [
         "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
         "Start-Process 'regsvr32' -ArgumentList @('/u', \"$dir\\acshell.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -Force",
-        "Start-Sleep -Seconds 2"
+        "Stop-Process -Name 'dllhost' -ErrorAction 'SilentlyContinue' -Force; Start-Sleep -Seconds 2"
     ],
-    "checkver": {
-        "url": "https://www.petges.lu/download/",
-        "regex": "ac-([\\d]+)_([\\w]+)\\.exe",
-        "replace": "$1.$2"
-    },
+    "checkver": "Version\\s([\\w.]+)",
     "autoupdate": {
         "url": "https://www.petges.lu/pubfiles/ac-$underscoreVersion.exe",
         "hash": {
             "url": "https://www.petges.lu/download/",
-            "regex": "<p>MD5\\sChecksum:\\s$md5</p>"
+            "regex": "(?s)$version.*?MD5\\sChecksum\\:\\s$md5"
         }
     }
 }
