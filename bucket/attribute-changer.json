@@ -26,7 +26,8 @@
         "64bit": {
             "pre_install": [
                 "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-                "Get-ChildItem \"$dir\\*,1*\" -Include '*.exe', '*.dll' | Remove-Item; Get-ChildItem \"$dir\\*,2*\" -Include '*.exe', '*.dll' | Rename-Item -NewName { $_ -replace '\\,2', '' }",
+                "Get-ChildItem \"$dir\\*,1*\" -Include '*.exe', '*.dll' | Remove-Item",
+                "Get-ChildItem \"$dir\\*,2*\" -Include '*.exe', '*.dll' | Rename-Item -NewName { $_ -replace '\\,2', '' }",
                 "Start-Process 'regsvr32' -ArgumentList @(\"$dir\\acshell.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
                 "Start-Sleep -Seconds 2"
             ]
@@ -34,7 +35,8 @@
         "32bit": {
             "pre_install": [
                 "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-                "Get-ChildItem \"$dir\\*,2*\" -Include '*.exe', '*.dll' | Remove-Item; Get-ChildItem \"$dir\\*,1*\" -Include '*.exe', '*.dll' | Rename-Item -NewName { $_ -replace '\\,1', '' }",
+                "Get-ChildItem \"$dir\\*,2*\" -Include '*.exe', '*.dll' | Remove-Item",
+                "Get-ChildItem \"$dir\\*,1*\" -Include '*.exe', '*.dll' | Rename-Item -NewName { $_ -replace '\\,1', '' }",
                 "Start-Process 'regsvr32' -ArgumentList @(\"$dir\\acshell.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
                 "Start-Sleep -Seconds 2"
             ]
@@ -43,8 +45,8 @@
     "installer": {
         "script": [
             "$value = @\"",
-            "`$ac_language = `$args[0]",
-            "if (`$ac_language.Count -ne 0) { Write-Host 'INVALID USAGE! Please run `scoop info attribute-changer` for help on proper command usage.'; exit }",
+            "if (!(`$args.Count -eq 1)) { Write-Host 'INVALID USAGE! Please run ``scoop info attribute-changer`` for help on proper command usage.'; exit }",
+            "`$ac_language = `$args[0].toString()",
             "Copy-Item \"$dir\\messages,`$ac_language.ini\" \"$dir\\messages.ini\" -Force",
             "Copy-Item \"$dir\\ac,`$ac_language.pdf\" \"$dir\\ac.pdf\" -Force",
             "\"@",
