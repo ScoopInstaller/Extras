@@ -26,7 +26,7 @@
         ]
     },
     "post_install": [
-        "$dirpath = \"$dir\".Replace('\\', '\\\\')",
+        "$dirpath = \"$original_dir\".Replace('\\', '\\\\')",
         "'install-context', 'uninstall-context' | ForEach-Object {",
         "    if (Test-Path \"$bucketsdir\\$bucket\\scripts\\$app\\$_.reg\") {",
         "        $content = Get-Content \"$bucketsdir\\$bucket\\scripts\\$app\\$_.reg\"",
@@ -38,10 +38,32 @@
         "        }",
         "        $content | Set-Content -Path \"$dir\\$_.reg\"",
         "    }",
+        "}",
+        "$regpath = 'Registry::HKEY_CURRENT_USER\\Software\\Classes\\powertoys'",
+        "if ($global) {",
+        "    $regpath = $regpath.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "}",
+        "if (Test-Path -Path $regpath) {",
+        "    Remove-Item -Path $regpath > $null 2>&1",
+        "    reg import \"$dir\\install-context.reg\"",
         "}"
     ],
     "uninstaller": {
-        "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }"
+        "script": [
+            "$regpath = 'Registry::HKEY_CURRENT_USER\\Software\\Classes\\powertoys'",
+            "if ($global) {",
+            "    $regpath = $regpath.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+            "}",
+            "if (Test-Path -Path $regpath) {",
+            "    reg import \"$dir\\uninstall-context.reg\"",
+            "    if ($cmd -ne 'uninstall') {",
+            "        New-Item -Path $regpath > $null 2>&1",
+            "    }",
+            "}",
+            "if ($cmd -eq 'uninstall') {",
+            "    Stop-Process -Name explorer",
+            "}"
+        ]
     },
     "shortcuts": [
         [
