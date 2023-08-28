@@ -5,7 +5,7 @@
     "license": "MIT",
     "notes": [
         "Add PowerToys context menu option by running:",
-        "reg import \"$dir\\install-context.reg\""
+        ".\"$dir\\install-context.ps1\""
     ],
     "architecture": {
         "64bit": {
@@ -26,38 +26,38 @@
         ]
     },
     "post_install": [
-        "$dirpath = \"$original_dir\".Replace('\\', '\\\\')",
         "'install-context', 'uninstall-context' | ForEach-Object {",
-        "    if (Test-Path \"$bucketsdir\\$bucket\\scripts\\$app\\$_.reg\") {",
-        "        $content = Get-Content \"$bucketsdir\\$bucket\\scripts\\$app\\$_.reg\"",
-        "        $content = $content.Replace('{{scoop_dir}}', $dirpath)",
+        "    if (Test-Path \"$bucketsdir\\$bucket\\scripts\\$app\\$_.ps1\") {",
+        "        $content = Get-Content \"$bucketsdir\\$bucket\\scripts\\$app\\$_.ps1\"",
+        "        $content = $content.Replace('{{scoop_dir}}', $original_dir)",
         "        if ($global) {",
-        "            $content = $content.Replace('perUser', 'perMachine')",
-        "            $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
-        "            $content = $content.Replace('HKEY_CURRENT_USER\\Software\\Classes', 'HKEY_CLASSES_ROOT')",
+        "            $content = $content.Replace('{{install_scope}}', 'perMachine')",
+        "            $content = $content.Replace('{{registry_scope}}', 'HKLM')",
         "        }",
-        "        $content | Set-Content -Path \"$dir\\$_.reg\"",
+        "        $content = $content.Replace('{{install_scope}}', 'perUser')",
+        "        $content = $content.Replace('{{registry_scope}}', 'HKCU')",
+        "        $content | Set-Content -Path \"$dir\\$_.ps1\"",
         "    }",
         "}",
-        "$regpath = 'Registry::HKEY_CURRENT_USER\\Software\\Classes\\powertoys'",
+        "$regpath = 'HKCU:\\Software\\Classes\\powertoys'",
         "if ($global) {",
-        "    $regpath = $regpath.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "    $regpath = $regpath.Replace('HKCU', 'HKLM')",
         "}",
         "if (Test-Path -Path $regpath) {",
-        "    Remove-Item -Path $regpath > $null 2>&1",
-        "    reg import \"$dir\\install-context.reg\"",
+        "    Remove-Item -Path $regpath -Force | Out-Null",
+        "    .\"$dir\\install-context.ps1\"",
         "}"
     ],
     "uninstaller": {
         "script": [
-            "$regpath = 'Registry::HKEY_CURRENT_USER\\Software\\Classes\\powertoys'",
+            "$regpath = 'HKCU:\\Software\\Classes\\powertoys'",
             "if ($global) {",
-            "    $regpath = $regpath.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+            "    $regpath = $regpath.Replace('HKCU', 'HKLM')",
             "}",
             "if (Test-Path -Path $regpath) {",
-            "    reg import \"$dir\\uninstall-context.reg\"",
+            "    .\"$dir\\uninstall-context.ps1\"",
             "    if ($cmd -ne 'uninstall') {",
-            "        New-Item -Path $regpath > $null 2>&1",
+            "        New-Item -Path $regpath -Force | Out-Null",
             "    }",
             "}",
             "if ($cmd -eq 'uninstall') {",
