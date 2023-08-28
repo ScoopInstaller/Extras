@@ -1,16 +1,17 @@
 {
-    "version": "2022.3.2-223.8617.56",
+    "version": "2023.2.1-232.9559.62",
     "description": "Cross-Platform IDE for Java by JetBrains.",
     "homepage": "https://www.jetbrains.com/idea/",
     "license": {
         "identifier": "Proprietary",
         "url": "https://www.jetbrains.com/store/license.html"
     },
-    "url": "https://download.jetbrains.com/idea/ideaIU-2022.3.2.win.zip",
-    "hash": "050a236427715e8cccfea74548bd48a54704fb1768446258d7fca33445933c90",
+    "url": "https://download.jetbrains.com/idea/ideaIU-2023.2.1.win.zip",
+    "hash": "4b17d3fa04d6fd95e0b31edabdccaf2fc4cfc50ec3e1c00e61f18989cf1e25b4",
     "extract_to": "IDE",
+    "pre_install": "Get-ChildItem \"$persist_dir\\IDE\\bin\\idea*.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$dir\\IDE\\bin\"",
     "installer": {
-        "script": "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" $dir $persist_dir"
+        "script": "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" \"$dir\" \"$persist_dir\""
     },
     "architecture": {
         "64bit": {
@@ -39,10 +40,9 @@
     },
     "persist": [
         "IDE\\bin\\idea.properties",
-        "IDE\\bin\\idea.exe.vmoptions",
-        "IDE\\bin\\idea64.exe.vmoptions",
         "profile"
     ],
+    "pre_uninstall": "Get-ChildItem \"$dir\\IDE\\bin\\idea*.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$persist_dir\\IDE\\bin\"",
     "checkver": {
         "url": "https://data.services.jetbrains.com/products/releases?code=IIU&latest=true&platform=zip&type=release",
         "regex": "version\":\"(?<ver>[\\d.]+)\".*\"build\":\"(?<build>[\\d.]+)\"",

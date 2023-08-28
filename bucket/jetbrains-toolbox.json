@@ -1,5 +1,5 @@
 {
-    "version": "1.27.2.13801",
+    "version": "2.0.2.16660",
     "description": "Toolbox App. A control panel for all JetBrains tools.",
     "homepage": "https://www.jetbrains.com/toolbox/",
     "license": {
@@ -10,20 +10,27 @@
         "By default all your tools are installed into '$dir\\apps' folder and are persisted.",
         "This could be changed inside settings menu."
     ],
-    "url": "https://download.jetbrains.com/toolbox/jetbrains-toolbox-1.27.2.13801.exe#/dl.7z",
-    "hash": "87fb1d38e811069898ffa8453434100d949fe6c926bba20c5a862cc9a0475458",
+    "url": "https://download.jetbrains.com/toolbox/jetbrains-toolbox-2.0.2.16660.exe#/dl.7z",
+    "hash": "4d642ac91ab7920086373d9b90574fc058fa50812ccad5d9853a6b5a27949acf",
     "post_install": [
         "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall.exe\" -Recurse",
         "$config = \"$env:LOCALAPPDATA\\JetBrains\\Toolbox\\.settings.json\"",
-        "if (-not (Test-Path $config)) {",
+        "if (!(Test-Path $config)) {",
         "    $settings = @{",
         "        'autostart' = $false",
-        "        'install_location' = \"$dir\"",
+        "        'install_location' = \"$dir\\apps\"",
         "        'update' = @{'install_automatically' = $false}",
         "    }",
         "    New-Item $config -Type File -Force | Out-Null",
         "    Set-Content $config ($settings | ConvertToPrettyJson) -Encoding ASCII -Force",
-        "}"
+        "} else { # NOTE: Remove the migration script after 6 months (2024-02-15)",
+        "  $conf_content = (Get-Content $config | ConvertFrom-Json)",
+        "  if ($conf_content.'install_location' -eq \"$dir\") {",
+        "    $conf_content.'install_location' = \"$dir\\apps\"",
+        "    Set-Content $config ($conf_content | ConvertToPrettyJson) -Encoding ASCII -Force",
+        "  }",
+        "}",
+        "# NOTE END"
     ],
     "bin": "jetbrains-toolbox.exe",
     "shortcuts": [

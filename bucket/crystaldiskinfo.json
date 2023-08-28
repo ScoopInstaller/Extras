@@ -1,16 +1,15 @@
 {
-    "version": "8.17.14",
-    "description": "HDD/SSD utility software which supports S.M.A.R.T and a part of USB-HDD",
-    "homepage": "https://osdn.net/projects/crystaldiskinfo/",
+    "version": "9.1.1",
+    "description": "A HDD/SSD utility software which supports a part of USB, Intel RAID and NVMe",
+    "homepage": "https://crystalmark.info/en/software/crystaldiskinfo/",
     "license": "MIT",
-    "url": "https://free.nchc.org.tw/osdn//crystaldiskinfo/78192/CrystalDiskInfo8_17_14.zip",
-    "hash": "17f046a7da3e7c0e6d7686d3890b023de8f4fac722bb61a702af0d8ab29ff18a",
+    "url": "https://crystalmark.info/download/zz/CrystalDiskInfo9_1_1.zip",
+    "hash": "b5ee4c97cdb7cae31ba1d6636646d02471457852b6855ecc81587d0a05460d62",
     "pre_install": [
         "if (!(Test-Path \"$persist_dir\\DiskInfo.ini\")) { New-Item \"$dir\\DiskInfo.ini\" | Out-Null }",
         "# Manually persist AMD RAID plugins (AMD_RC2t7x64.dll, AMD_RC2t7x86.dll)",
         "if (Test-Path \"$persist_dir\\AMD_RC2t7*.dll\") { Copy-Item \"$persist_dir\\AMD_RC2t7*.dll\" \"$dir\\\" }"
     ],
-    "pre_uninstall": "if (Test-Path \"$dir\\AMD_RC2t7*.dll\") { Copy-Item \"$dir\\AMD_RC2t7*.dll\" \"$persist_dir\\\" }",
     "architecture": {
         "64bit": {
             "bin": [
@@ -45,12 +44,12 @@
         "Smart",
         "DiskInfo.ini"
     ],
-    "checkver": "releases/(?<release>\\d+)\">CrystalDiskInfo\\s+([\\w.]+)<",
+    "pre_uninstall": "if (Test-Path \"$dir\\AMD_RC2t7*.dll\") { Copy-Item \"$dir\\AMD_RC2t7*.dll\" \"$persist_dir\\\" }",
+    "checkver": {
+        "url": "https://crystalmark.info/en/download/",
+        "regex": "CrystalDiskInfo\\s+([\\w.]+)\\s"
+    },
     "autoupdate": {
-        "url": "https://free.nchc.org.tw/osdn//crystaldiskinfo/$matchRelease/CrystalDiskInfo$underscoreVersion.zip",
-        "hash": {
-            "url": "https://osdn.net/projects/crystaldiskinfo/downloads/$matchRelease/CrystalDiskInfo$underscoreVersion.zip/",
-            "regex": "<dd>$sha256</dd>"
-        }
+        "url": "https://crystalmark.info/download/zz/CrystalDiskInfo$underscoreVersion.zip"
     }
 }

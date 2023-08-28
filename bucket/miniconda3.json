@@ -1,28 +1,30 @@
 {
-    "version": "4.12.0",
+    "version": "23.5.2-0",
     "description": "A cross-platform, Python-agnostic binary package manager",
     "homepage": "https://conda.io/miniconda.html",
     "license": "BSD-3-Clause",
     "notes": [
         "From 4.6.0, conda has built the support for Cmd, Powershell or other shells.",
-        "Use \"conda init powershell\" or \"conda init __your_favorite_shell__\""
+        "Use \"conda init powershell\" or \"conda init __your_favorite_shell__\"",
+        "",
+        "Miniconda3 drops support for 32-bit CPUs from v22.9.0. If you are running a 32-bit system, please install miniconda3-4.12.0 from the Versions bucket."
     ],
     "architecture": {
         "64bit": {
-            "url": "https://repo.anaconda.com/miniconda/Miniconda3-py39_4.12.0-Windows-x86_64.exe#/setup.exe",
-            "hash": "1acbc2e8277ddd54a5f724896c7edee112d068529588d944702966c867e7e9cc"
-        },
-        "32bit": {
-            "url": "https://repo.anaconda.com/miniconda/Miniconda3-py39_4.12.0-Windows-x86.exe#/setup.exe",
-            "hash": "4fb64e6c9c28b88beab16994bfba4829110ea3145baa60bda5344174ab65d462"
+            "url": "https://repo.anaconda.com/miniconda/Miniconda3-py310_23.5.2-0-Windows-x86_64.exe#/setup.exe",
+            "hash": "e15638645b34921098a3f760fd8af07e53a427f59b99a0f049420a7751cbbc05"
         }
     },
+    "pre_install": "if ($dir -match ' ') { error 'The installation directory cannot include a space'; break}",
     "installer": {
         "script": [
             "# Using Start-Process as a workaround because the installer will not work properly when args are quoted (e.g. \"`\"/S`\"\")",
-            "Start-Process \"$dir\\setup.exe\" -ArgumentList @('/S', '/InstallationType=JustMe', '/RegisterPython=0', '/AddToPath=0', '/NoRegistry=1', \"/D=$dir\") -Wait | Out-Null"
+            "# Move the installer to the upper directory to avoid the error \"The installatiom directory is not empty.\"",
+            "Move-Item \"$dir\\setup.exe\" \"$dir\\..\\setup.exe\" | Out-Null",
+            "Start-Process \"$dir\\..\\setup.exe\" -ArgumentList @('/S', '/InstallationType=JustMe', '/RegisterPython=0', '/AddToPath=0', '/NoRegistry=1', \"/D=$dir\") -Wait | Out-Null"
         ]
     },
+    "post_install": "Remove-Item \"$dir\\..\\setup.exe\" -Force | Out-Null",
     "uninstaller": {
         "script": [
             "Start-Process \"$dir\\Uninstall-Miniconda3.exe\" -ArgumentList '/S' -Wait | Out-Null",
@@ -45,15 +47,12 @@
     "persist": "envs",
     "checkver": {
         "url": "https://docs.conda.io/en/latest/miniconda.html",
-        "regex": "Miniconda3-py39_([\\d.]+)-Windows"
+        "regex": "Miniconda3-py310_([\\d.-]+)-Windows"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://repo.anaconda.com/miniconda/Miniconda3-py39_$version-Windows-x86_64.exe"
-            },
-            "32bit": {
-                "url": "https://repo.anaconda.com/miniconda/Miniconda3-py39_$version-Windows-x86.exe"
+                "url": "https://repo.anaconda.com/miniconda/Miniconda3-py310_$version-Windows-x86_64.exe#/setup.exe"
             }
         },
         "hash": {

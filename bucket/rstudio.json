@@ -1,5 +1,5 @@
 {
-    "version": "2022.12.0-353",
+    "version": "2023.06.2-561",
     "description": "An IDE for R with console, syntax-highlighting, editor that supports direct code execution, as well as tools for plotting, history, debugging and workspace management.",
     "homepage": "https://posit.co/products/open-source/rstudio/",
     "license": "AGPL-3.0-only",
@@ -7,16 +7,20 @@
     "depends": "r",
     "architecture": {
         "64bit": {
-            "url": "https://s3.amazonaws.com/rstudio-desktop/electron/windows/RStudio-2022.12.0-353.exe#/dl.7z",
-            "hash": "fd8ea4b45fd7382e628f01d7b55dcee3765a51323aed459789be7612798ccbe4",
+            "url": "https://s3.amazonaws.com/rstudio-desktop/electron/windows/RStudio-2023.06.2-561.exe#/dl.7z",
+            "hash": "0b6590be5799a248f05e3cf75dc8efe324c52bc1f86dcc5ea0108967358a0da6",
             "post_install": [
                 "Remove-Item \"$dir\\`$*\" -Recurse",
                 "if (!(Test-Path \"$env:Appdata\\RStudio\")) {",
                 "    New-Item \"$env:Appdata\\RStudio\" -ItemType Directory -Force | Out-Null",
+                "}",
+                "$conf = \"$env:Appdata\\RStudio\\desktop.ini\"",
+                "$rpath = \"$(appdir r $global)\\current\\bin\\x64\".Replace('\\', '/')",
+                "if (!(Test-Path $conf)) {",
                 "    @(",
                 "        '[General]'",
-                "        \"RBinDir=`\"$(appdir r $global)\\current\\bin\\x64`\"\".Replace('\\', '/')",
-                "    ) | Add-Content -Path \"$env:Appdata\\RStudio\\desktop.ini\" -Encoding UTF8 -Force",
+                "        \"RBinDir=$rpath\"",
+                "    ) | Add-Content -Path $conf -Encoding UTF8 -Force",
                 "}"
             ]
         }

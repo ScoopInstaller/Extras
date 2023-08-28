@@ -1,5 +1,5 @@
 {
-    "version": "2023.01.25",
+    "version": "2023.7.26",
     "description": "A set of utilities to manage, diagnose, troubleshoot, and monitor a Windows environment.",
     "homepage": "https://docs.microsoft.com/en-us/sysinternals/",
     "license": {
@@ -7,11 +7,18 @@
         "url": "https://docs.microsoft.com/en-us/sysinternals/license-terms"
     },
     "url": "https://download.sysinternals.com/files/SysinternalsSuite.zip",
-    "hash": "56e72eee9f3df153a702be5eeeaa3293560792d89e8824d26a182146f6e35aa9",
+    "hash": "1a07dc0f192efcccbf5dce3294254d04d7c7f9a94752ee07d63606606ef9ebbf",
     "checkver": {
-        "url": "https://raw.githubusercontent.com/MicrosoftDocs/sysinternals/main/sysinternals/downloads/sysinternals-suite.md",
-        "regex": "ms\\.date: (\\d+)/(\\d+)/(\\d+)",
-        "replace": "${3}.${1}.${2}"
+        "script": [
+            "$resp = Invoke-WebRequest 'https://techcommunity.microsoft.com/plugins/custom/microsoft/o365/custom-blog-rss?board=Sysinternals-Blog'",
+            "$resp.Content -match '(\\d{1,2}) (\\w{3}) (\\d{4})'",
+            "$year = $Matches[3]; $month = $Matches[2]; $day = $Matches[1] ",
+            "$months = @{'Jan'='1';'Feb'='2';'Mar'='3';'Apr'='4';'May'='5';'Jun'='6';'Jul'='7';'Aug'='8';'Sep'='9';'Oct'='10';'Nov'='11';'Dec'='12'}",
+            "$month = $months.$month",
+            "Write-Output $year $month $day"
+        ],
+        "regex": "(\\d+) (\\d+) (\\d+)",
+        "replace": "${1}.${2}.${3}"
     },
     "autoupdate": {
         "url": "https://download.sysinternals.com/files/SysinternalsSuite.zip"

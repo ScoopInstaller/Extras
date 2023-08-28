@@ -1,19 +1,19 @@
 {
-    "version": "3.15.0",
+    "version": "3.17.0",
     "description": "A Vim-inspired note-taking platform",
-    "homepage": "https://vnotex.github.io/vnote/en_us/",
+    "homepage": "https://app.vnote.fun",
     "license": "LGPL-3.0-only",
     "suggest": {
         "vcredist": "extras/vcredist2022"
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/vnotex/vnote/releases/download/v3.15.0/vnote-win-x64-qt5.15.2_v3.15.0.zip",
-            "hash": "93319acb6ae367c0dbf1b6e5f17585b2dd875dda9e8dc9dd0498173ca3515a31"
+            "url": "https://github.com/vnotex/vnote/releases/download/v3.17.0/vnote-win-x64-qt5.15.2_v3.17.0.zip",
+            "hash": "a19ee888d4302f21f593ff3f043ff9966448996e5ae92e4142a7b435d5de3c98"
         },
         "32bit": {
-            "url": "https://github.com/vnotex/vnote/releases/download/v3.15.0/vnote-win-x86-qt5.15.2_v3.15.0.zip",
-            "hash": "967f5aadf7851652851a0ff45059affa7d916fc14fb25b669c47d6a03726db1b"
+            "url": "https://github.com/vnotex/vnote/releases/download/v3.17.0/vnote-win-x86-qt5.15.2_v3.17.0.zip",
+            "hash": "089449a95a448d07b879c0b74ff49687978d7da204d242714c8a69afc8a08cf1"
         }
     },
     "pre_install": "Remove-Item \"$dir\\vcredist_*exe\"",
@@ -32,14 +32,16 @@
             "",
             "$cont = (Invoke-WebRequest $url).Content",
             "$r = 'tag/v([\\d.]+)'",
-            "if (!($cont -match $r)) { error \"Could not match $r in $url\"; break }",
+            "if (!($cont -match $r)) { error \"Could not match $r in $url\"; continue }",
             "$ver = $matches[1]",
             "",
+            "$assetUrl = \"https://github.com/vnotex/vnote/releases/expanded_assets/v$ver\"",
+            "$assetCont = (Invoke-WebRequest $assetUrl).Content",
             "$r = \"vnote-win-x64-qt([\\w.]+)_v$ver.zip\"",
-            "if (!($cont -match $r)) { error \"Could not match $r in $url\"; break }",
+            "if (!($assetCont -match $r)) { error \"Could not match $r in $url\"; continue }",
             "$qt64bit = $matches[1]",
             "$r = \"vnote-win-x86-qt([\\w.]+)_v$ver.zip\"",
-            "if (!($cont -match $r)) { error \"Could not match $r in $url\"; break }",
+            "if (!($assetCont -match $r)) { error \"Could not match $r in $url\"; continue }",
             "$qt32bit = $matches[1]",
             "Write-Output $ver $qt64bit $qt32bit"
         ],

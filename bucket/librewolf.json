@@ -1,64 +1,65 @@
 {
-    "version": "109.0.1-2",
+    "version": "116.0.3-1",
     "description": "A fork of Firefox, focused on privacy, security and freedom.",
     "homepage": "https://librewolf.net/",
     "license": "MPL-2.0",
     "architecture": {
         "64bit": {
-            "url": "https://gitlab.com/librewolf-community/browser/windows/uploads/57d8047683deafd009c94df4d7dabda3/librewolf-109.0.1-2.en-US.win64-portable.zip",
-            "hash": "80d69ececab07139c91c22d0a1202032c15719f99c4a3e2000a2f0ff8384ab6a"
+            "url": "https://gitlab.com/api/v4/projects/44042130/packages/generic/librewolf/116.0.3-1/librewolf-116.0.3-1-windows-x86_64-portable.zip",
+            "hash": "7fd9e2cd3d7b3928a471cf14567fb92bf6b125a6f9e1171c600bf7631a6f7e93"
+        },
+        "32bit": {
+            "url": "https://gitlab.com/api/v4/projects/44042130/packages/generic/librewolf/116.0.3-1/librewolf-116.0.3-1-windows-i686-portable.zip",
+            "hash": "9fe6523bbe4ca333568153ef43e727200889a2ccc111ceb21718416da06c4973"
         }
     },
+    "extract_dir": "librewolf-116.0.3-1",
     "pre_install": [
-        "$lw_name = (Get-Item \"$dir\\librewolf-*\").FullName",
-        "Move-Item \"$lw_name\\*\" \"$dir\"",
-        "Remove-Item \"$lw_name\"",
-        "if (Test-Path \"$persist_dir\\Librewolf\\*.js\") { Copy-Item \"$persist_dir\\Librewolf\\*.js\" \"$dir\\Librewolf\\\" }"
+        "Remove-Item \"$dir\\LibreWolf-WinUpdater.exe\"",
+        "# Customizing LibreWolf Using AutoConfig",
+        "# https://support.mozilla.org/en-US/kb/customizing-firefox-using-autoconfig",
+        "ensure \"$persist_dir\\LibreWolf\\defaults\\pref\" | Out-Null",
+        "Copy-Item \"$persist_dir\\LibreWolf\\defaults\\pref\\*\" \"$dir\\LibreWolf\\defaults\\pref\" -Exclude 'channel-prefs.js'",
+        "Copy-Item \"$persist_dir\\LibreWolf\\*.js\", \"$persist_dir\\LibreWolf\\*.cfg\" \"$dir\\LibreWolf\"",
+        "# Customizing LibreWolf Using policies.json",
+        "# https://support.mozilla.org/en-US/kb/customizing-firefox-using-policiesjson",
+        "# Used to override the default policies.json of LibreWolf, if you want",
+        "ensure \"$persist_dir\\LibreWolf\\distribution\" | Out-Null",
+        "Copy-Item \"$persist_dir\\LibreWolf\\distribution\\policies.json\" \"$dir\\LibreWolf\\distribution\" -ErrorAction SilentlyContinue"
     ],
-    "pre_uninstall": "if (Test-Path \"$dir\\Librewolf\\*.js\") { Copy-Item \"$dir\\Librewolf\\*.js\" \"$persist_dir\\Librewolf\\\" }",
     "bin": [
         [
-            "librewolf-portable.exe",
+            "LibreWolf-Portable.exe",
             "librewolf"
         ]
     ],
     "shortcuts": [
         [
-            "librewolf-portable.exe",
+            "LibreWolf-Portable.exe",
             "LibreWolf"
         ]
     ],
-    "persist": [
-        "Profiles",
-        "LibreWolf\\defaults\\prefs"
+    "persist": "Profiles",
+    "pre_uninstall": [
+        "Copy-Item \"$dir\\LibreWolf\\defaults\\pref\\*\" \"$persist_dir\\LibreWolf\\defaults\\pref\" -Exclude 'channel-prefs.js'",
+        "Copy-Item \"$dir\\LibreWolf\\*.js\", \"$dir\\LibreWolf\\*.cfg\" \"$persist_dir\\LibreWolf\" -Exclude 'librewolf.cfg'"
     ],
     "checkver": {
-        "script": [
-            "# using checkver script because checksum URL can be either above or below file URL",
-            "$url = 'https://gitlab.com/api/v4/projects/13852981/releases'",
-            "$regex1 = '/uploads/([a-f0-9]+)/sha256sums\\.txt'",
-            "$regex2 = '/uploads/([a-f0-9]+)/librewolf-([\\d.-]+)\\.en-US\\.win64-portable\\.zip;'",
-            "",
-            "$cont = (Invoke-WebRequest $url).Content | ConvertFrom-Json",
-            "$cont = $cont[0] | ConvertTo-Json",
-            "Write-Host $cont",
-            "if (!($cont -match $regex1)) { error \"Could not match $regex1\"; break }",
-            "$checksumid = $matches[1]",
-            "if (!($cont -match $regex2)) { error \"Could not match $regex2\"; break }",
-            "$zipid = $matches[1]; $ver = $matches[2]",
-            "Write-Output $ver $zipid $checksumid"
-        ],
-        "regex": "([\\d.-]+) (?<zipid>[0-9a-f]+) (?<checksumid>[0-9a-f]+)"
+        "url": "https://gitlab.com/api/v4/projects/44042130/releases/permalink/latest",
+        "jsonpath": "$.tag_name"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://gitlab.com/librewolf-community/browser/windows/uploads/$matchZipid/librewolf-$version.en-US.win64-portable.zip",
-                "hash": {
-                    "url": "https://gitlab.com/librewolf-community/browser/windows/uploads/$matchChecksumid/sha256sums.txt",
-                    "regex": "$sha256\\s+$basename"
-                }
+                "url": "https://gitlab.com/api/v4/projects/44042130/packages/generic/librewolf/$version/librewolf-$version-windows-x86_64-portable.zip"
+            },
+            "32bit": {
+                "url": "https://gitlab.com/api/v4/projects/44042130/packages/generic/librewolf/$version/librewolf-$version-windows-i686-portable.zip"
             }
-        }
+        },
+        "hash": {
+            "url": "$url.sha256sum"
+        },
+        "extract_dir": "librewolf-$version"
     }
 }

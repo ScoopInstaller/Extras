@@ -8,10 +8,11 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://download.toolslib.net/download/direct/1/latest?channel=release#/adwcleaner.exe",
+            "url": "https://www.fosshub.com/Malwarebytes-AdwCleaner.html/adwcleaner_8.4.0.exe",
             "hash": "1f544da66675521a649e632108f86afb351ad336bd34b7b5c3d290827ebeef54"
         }
     },
+    "pre_install": "Rename-Item \"$dir\\adwcleaner*.exe\" 'adwcleaner.exe'",
     "bin": "adwcleaner.exe",
     "shortcuts": [
         [
@@ -20,14 +21,24 @@
         ]
     ],
     "checkver": {
-        "url": "https://toolslib.net/downloads/viewdownload/1-adwcleaner/files/?t=release",
-        "regex": ">([\\d.]+)<\\/td>"
+        "script": [
+            "$content = (Invoke-WebRequest 'https://toolslib.net/downloads/viewdownload/1-adwcleaner/files/?t=release').Content",
+            "$content -match '1-adwcleaner/files/(?<release>\\d+)/'; $release = $Matches['release']",
+            "$content = (Invoke-WebRequest \"https://toolslib.net/downloads/finish/1-adwcleaner/$release/\").Content",
+            "$content -match 'AdwCleaner \\((?<version>[\\d.]+)\\)'; $version = $Matches['version']",
+            "Write-Output $version $release"
+        ],
+        "regex": "([\\d.]+) (?<release>\\d+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.toolslib.net/download/direct/1/latest?channel=release#/adwcleaner.exe"
+                "url": "https://www.fosshub.com/Malwarebytes-AdwCleaner.html/adwcleaner_$version.exe"
             }
+        },
+        "hash": {
+            "url": "https://toolslib.net/downloads/viewdownload/1-adwcleaner/files/$matchRelease",
+            "regex": "$sha256"
         }
     }
 }

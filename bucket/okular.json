@@ -1,20 +1,15 @@
 {
-    "version": "22.12.1-1265",
+    "version": "23.04.3-1494",
     "description": "Universal document viewer",
     "homepage": "https://okular.kde.org",
     "license": "LGPL-2.0-only",
     "notes": "If you want to get the latest development branch-based installer, please install `okular-nightly` from Versions bucket.",
     "architecture": {
         "64bit": {
-            "url": "https://download.kde.org/stable/release-service/22.12.1/windows/okular-22.12.1-1265-windows-cl-msvc2019-x86_64.exe#/dl.7z",
-            "hash": "73a891661ffe9f67772ca5116d50add54d1a827cebca921b797ae334d18ec75f"
+            "url": "https://binary-factory.kde.org/job/Okular_Release_win64/1494/artifact/okular-23.04.3-1494-windows-cl-msvc2019-x86_64.7z",
+            "hash": "d168ce22f6d6ba2de898a3705a1e8bcc54beec4e344bb3d4e488226eafbce3e4"
         }
     },
-    "pre_install": [
-        "Remove-Item \"$dir\\*\" -Exclude okular-*.7z -Recurse",
-        "Expand-7ZipArchive \"$dir\\okular-*.7z\" \"$dir\"",
-        "Remove-Item \"$dir\\okular-*.7z\""
-    ],
     "bin": "bin\\okular.exe",
     "shortcuts": [
         [
@@ -23,16 +18,15 @@
         ]
     ],
     "checkver": {
-        "url": "https://apps.kde.org/okular",
-        "regex": "release-service/(?<release>[\\d.]+)/windows/okular-(?<version>.*)-windows-(?<lib>.*)\\.exe"
+        "url": "https://binary-factory.kde.org/job/Okular_Release_win64/",
+        "regex": "okular-([\\d.-]+)-windows-cl-(?<lib>\\w+)-x86_64\\.7z"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.kde.org/stable/release-service/$matchRelease/windows/okular-$version-windows-$matchLib.exe#/dl.7z",
+                "url": "https://binary-factory.kde.org/job/Okular_Release_win64/$preReleaseVersion/artifact/okular-$version-windows-cl-$matchLib-x86_64.7z",
                 "hash": {
-                    "url": "https://apps.kde.org/okular",
-                    "regex": "sha256:</strong>\\s$sha256</div>"
+                    "url": "$url.sha256"
                 }
             }
         }

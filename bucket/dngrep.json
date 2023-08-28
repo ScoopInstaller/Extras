@@ -1,21 +1,22 @@
 {
-    "version": "3.2.242.0",
+    "version": "4.0.69.0",
     "description": "Graphical GREP tool to search across text files, Word and Excel documents, PDFs and archives",
     "homepage": "http://dngrep.github.io/",
     "license": "GPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/dnGrep/dnGrep/releases/download/v3.2.242.0/dnGREP.3.2.242.x64.msi",
-            "hash": "fd733e2f4f0f7cbfdf558143989d3be23d4b6c5098de82f418c151ce093b2a45"
+            "url": "https://github.com/dnGrep/dnGrep/releases/download/v4.0.69.0/dnGREP.4.0.69.x64.msi",
+            "hash": "50cf3c53456571acf40af81adcf9470f5617188a6a4db7528cba4394fd5cec6c"
         },
         "32bit": {
-            "url": "https://github.com/dnGrep/dnGrep/releases/download/v3.2.242.0/dnGREP.3.2.242.x86.msi",
-            "hash": "8b2b857ca8ad536612b74e6474ad16f324feead47b2fa0eb48014c35a24a8c6e"
+            "url": "https://github.com/dnGrep/dnGrep/releases/download/v4.0.69.0/dnGREP.4.0.69.x86.msi",
+            "hash": "22f150c57753235c42957f4b8efcae8112b6bb099db3e22945adbafb7a866952"
         }
     },
     "pre_install": [
         "$cont = '<?xml version=\"1.0\" encoding=\"utf-8\"?><dictionary version=\"2\"></dictionary>'",
-        "if (!(Test-Path \"$persist_dir\\dnGREP.Settings.dat\")) { Set-Content \"$dir\\dnGREP.Settings.dat\" $cont -Encoding ascii}"
+        "if (!(Test-Path \"$persist_dir\\dnGREP.Settings.dat\")) { Set-Content \"$dir\\dnGREP.Settings.dat\" $cont -Encoding 'ascii' }",
+        "Copy-Item \"$persist_dir\\Themes\\*\" \"$dir\\Themes\" -ErrorAction 'SilentlyContinue' -Recurse"
     ],
     "extract_dir": "dnGREP",
     "bin": "dnGREP.exe",
@@ -25,10 +26,8 @@
             "dnGREP"
         ]
     ],
-    "persist": [
-        "Themes",
-        "dnGREP.Settings.dat"
-    ],
+    "persist": "dnGREP.Settings.dat",
+    "pre_uninstall": "Copy-Item \"$dir\\Themes\\*\" \"$persist_dir\\Themes\" -ErrorAction 'SilentlyContinue' -Recurse",
     "checkver": {
         "github": "https://github.com/dnGrep/dnGrep"
     },

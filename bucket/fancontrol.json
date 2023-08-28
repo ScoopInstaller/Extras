@@ -1,24 +1,17 @@
 {
-    "version": "143",
+    "version": "168",
+    "description": "A highly customizable fan controlling software for Windows",
     "homepage": "https://getfancontrol.com/",
-    "description": "A highly customizable fan controlling software for the Windows OS.",
     "license": "Freeware",
     "suggest": {
-        ".NET Runtime": "extras/windowsdesktop-runtime"
+        ".NET Desktop Runtime": "extras/windowsdesktop-runtime"
     },
-    "notes": "Make sure to install both the 64bit & 32bit versions of Microsoft .NET Desktop Runtime before running the application.",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/Rem0o/FanControl.Releases/releases/download/V143/FanControl_net_4_8.zip",
-            "hash": "ce00b2a49942eac8915913ed5948918978f28c0d24212b5eeede60ed845e6f19"
+            "url": "https://github.com/Rem0o/FanControl.Releases/releases/download/V168/FanControl_net_7_0.zip",
+            "hash": "6c2bd1aa3a442e82f193926f158ffba92e2442baade9ad3c9aa85530925cb99c"
         }
     },
-    "pre_install": [
-        "'userConfig.json', 'CACHE' | ForEach-Object {",
-        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
-        "}"
-    ],
-    "bin": "FanControl.exe",
     "shortcuts": [
         [
             "FanControl.exe",
@@ -26,19 +19,18 @@
         ]
     ],
     "persist": [
-        "userConfig.json",
-        "CACHE",
+        "Configurations",
         "Plugins"
     ],
     "checkver": {
         "url": "https://api.github.com/repos/Rem0o/FanControl.Releases/releases/latest",
         "jsonpath": "$.assets..browser_download_url",
-        "regex": "/V([\\d.]+)/FanControl_net_(?<Release>[\\d?_|.]+)\\.zip"
+        "regex": "/V([\\d.]+)/FanControl_net_(?<netver>(?!4_8)[\\d_]+).zip"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/Rem0o/FanControl.Releases/releases/download/V$version/FanControl_net_$matchRelease.zip"
+                "url": "https://github.com/Rem0o/FanControl.Releases/releases/download/V$version/FanControl_net_$matchNetver.zip"
             }
         }
     }

@@ -1,10 +1,10 @@
 {
-    "version": "3.19",
+    "version": "3.22",
     "description": "Powerful and easy-to-use tool to edit metadata of audio files.",
-    "homepage": "https://www.mp3tag.de",
+    "homepage": "https://www.mp3tag.de/en/",
     "license": {
         "identifier": "Freeware",
-        "url": "http://help.mp3tag.de/misc_license.html"
+        "url": "https://docs.mp3tag.de/license/"
     },
     "notes": [
         "If you want 'mp3tag' as a context menu option run the following commands:",
@@ -23,8 +23,16 @@
         "To find out if you have a have 32bit or 64bit Windows OS, run the following command:",
         "(Get-CimInstance win32_operatingsystem).OSArchitecture"
     ],
-    "url": "https://download.mp3tag.de/mp3tagv319setup.exe#/dl.7z",
-    "hash": "033835d4a5e5af7ab872c58ce2dd8b0d719c5160e679e0f868bf4430f77f13e8",
+    "architecture": {
+        "64bit": {
+            "url": "https://download.mp3tag.de/mp3tagv322-x64-setup.exe#/dl.7z",
+            "hash": "503077f45c8bb1924905d1f5ecda836750e23ebb52462c25cc921c19183e7504"
+        },
+        "32bit": {
+            "url": "https://download.mp3tag.de/mp3tagv322setup.exe#/dl.7z",
+            "hash": "1f02b2adff24a6a5082ec4ec44903d59f050cd7519fc277813363f3b6c93765f"
+        }
+    },
     "pre_install": [
         "'mp3tag.cfg', 'data\\columns.ini' | ForEach-Object {",
         "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
@@ -51,14 +59,24 @@
     ],
     "pre_uninstall": [
         "Copy-Item \"$dir\\export\\*\" \"$persist_dir\\export\" -Recurse -ErrorAction SilentlyContinue",
-        "if (($cmd -eq 'uninstall') -and (Test-Path 'HKLM:\\SOFTWARE\\Classes\\Directory\\shellex\\ContextMenuHandlers\\Mp3tagShell\\')) {",
+        "if (Test-Path 'HKLM:\\SOFTWARE\\Classes\\Directory\\shellex\\ContextMenuHandlers\\Mp3tagShell\\') {",
         "    if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
         "    Start-Process 'regsvr32' -Wait -Verb RunAs -ArgumentList @('/u', \"$dir\\Mp3tagShell32.dll\", '/s')",
         "    Start-Process 'regsvr32' -Wait -Verb RunAs -ArgumentList @('/u', \"$dir\\Mp3tagShell.dll\", '/s')",
         "}"
     ],
-    "checkver": "Mp3tag\\s+v([\\w.]+)",
+    "checkver": {
+        "url": "https://www.mp3tag.de/en/download.html",
+        "regex": "(?i)<h\\d>Mp3tag\\s+v(?<version>[\\d.]+[a-z]{0,1})</h\\d>"
+    },
     "autoupdate": {
-        "url": "https://download.mp3tag.de/mp3tagv$cleanVersionsetup.exe#/dl.7z"
+        "architecture": {
+            "64bit": {
+                "url": "https://download.mp3tag.de/mp3tagv$cleanVersion-x64-setup.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://download.mp3tag.de/mp3tagv$cleanVersionsetup.exe#/dl.7z"
+            }
+        }
     }
 }

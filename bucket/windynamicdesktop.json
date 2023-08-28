@@ -1,0 +1,49 @@
+{
+    "version": "5.3.1",
+    "description": "Cycle through multiple wallpapers based on the times of sunrise and sunset.",
+    "homepage": "https://github.com/t1m0thyj/WinDynamicDesktop",
+    "license": "MPL-2.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/t1m0thyj/WinDynamicDesktop/releases/download/v5.3.1/WinDynamicDesktop_5.3.1_x64_Portable.exe#/WinDynamicDesktop.exe",
+            "hash": "d3f3bbada463e4bfd1bfa838f4c92f4deedb130cf0b585aaf56dc74dce2675f7"
+        },
+        "32bit": {
+            "url": "https://github.com/t1m0thyj/WinDynamicDesktop/releases/download/v5.3.1/WinDynamicDesktop_5.3.1_x86_Portable.exe#/WinDynamicDesktop.exe",
+            "hash": "0041689077c717f707322de9253c96219f4e47b537526db94fa21abfd15929f5"
+        }
+    },
+    "pre_install": [
+        "$current_dir = if (get_config NO_JUNCTIONS) { $dir } else { \"$(appdir $app $global)\\current\" }",
+        "if (!(Test-Path \"$persist_dir\\WinDynamicDesktop.pth\")) {",
+        "    Set-Content \"$dir\\WinDynamicDesktop.pth\" $current_dir -Encoding ASCII",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\settings.conf\")) { New-Item \"$dir\\settings.conf\" -Value '{\"disableAutoUpdate\": true}' | Out-Null }"
+    ],
+    "shortcuts": [
+        [
+            "WinDynamicDesktop.exe",
+            "WinDynamicDesktop"
+        ]
+    ],
+    "persist": [
+        "scripts",
+        "themes",
+        "WinDynamicDesktop.pth",
+        "settings.conf"
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/t1m0thyj/WinDynamicDesktop/releases/download/v$version/WinDynamicDesktop_$version_x64_Portable.exe#/WinDynamicDesktop.exe"
+            },
+            "32bit": {
+                "url": "https://github.com/t1m0thyj/WinDynamicDesktop/releases/download/v$version/WinDynamicDesktop_$version_x86_Portable.exe#/WinDynamicDesktop.exe"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/checksums.txt"
+        }
+    }
+}

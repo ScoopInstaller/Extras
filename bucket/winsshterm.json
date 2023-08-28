@@ -1,6 +1,6 @@
 {
-    "version": "2.24.0",
-    "description": "A tabbed SSH solution for Windows, combining PuTTY/KiTTY, WinSCP and VcXsrv",
+    "version": "2.29.1",
+    "description": "A tabbed SSH solution for Windows, combining PuTTY, WinSCP and VcXsrv",
     "homepage": "https://winsshterm.blogspot.com/",
     "license": {
         "identifier": "Freeware",
@@ -13,12 +13,12 @@
     },
     "architecture": {
         "64bit": {
-            "url": "http://dl.winsshterm.net/WinSSHTerm-2.24.0-64.zip",
-            "hash": "512fe8ac8c5bbc8ac206507ad6d9492185ddee54ccb5cfe765cdd2f6e3d3b469"
+            "url": "https://github.com/WinSSHTerm/WinSSHTerm/releases/download/2.29.1/WinSSHTerm-2.29.1-x64.zip",
+            "hash": "3cba8c29f9786d6aad35c0983b341f907a6062d063326931c0247e62da1bc1bf"
         },
-        "32bit": {
-            "url": "http://dl.winsshterm.net/WinSSHTerm-2.24.0.zip",
-            "hash": "68973f55dbd6d292fdad98e35a1e08f9e6500171f03e18441b283cd41d9bea25"
+        "arm64": {
+            "url": "https://github.com/WinSSHTerm/WinSSHTerm/releases/download/2.29.1/WinSSHTerm-2.29.1-arm64.zip",
+            "hash": "04774c9699bd65854a0f334f89b2a68a45e269597e5453539788aa2bc8d66885"
         }
     },
     "extract_dir": "WinSSHTerm",
@@ -30,31 +30,30 @@
         ]
     ],
     "post_install": [
-        "'lib', 'tools', 'config' | ForEach-Object { ensure \"$dir\\$_\" | Out-Null }",
-        "",
-        "$puttyDir = \"$(appdir putty $global)\\current\"",
+        "$puttyDir = currentdir putty $global",
         "'putty', 'pageant', 'plink' | ForEach-Object {",
         "    if (Test-Path \"$puttyDir\\$_.exe\") {",
-        "        cmd /c mklink /h \"$dir\\tools\\$_.exe\" \"$puttyDir\\$_.exe\"",
+        "        New-Item -Path \"$dir\\tools\\$_.exe\" -Value \"$puttyDir\\$_.exe\" -ItemType HardLink -Force | Out-Null",
         "    } else {",
         "         error \"$_.exe not found\"",
         "    }",
         "}",
-        "",
-        "$winscpDir = \"$(appdir winscp $global)\\current\"",
-        "if (Test-Path \"$winscpDir\\WinSCP.exe\") {",
-        "    cmd /c mklink /j \"$dir\\tools\\WinSCP\" \"$winscpDir\"",
-        "} else {",
-        "    info 'Install WinSCP for File Transfer support'",
+        "if (!(Test-Path \"$dir\\tools\\WinSCP\\WinSCP.exe\")) {",
+        "    $winscpDir = currentdir winscp $global",
+        "    if (Test-Path \"$winscpDir\\WinSCP.exe\") {",
+        "        New-Item -Path \"$dir\\tools\\WinSCP\" -Value \"$winscpDir\" -ItemType Junction -Force | Out-Null",
+        "    } else {",
+        "        info 'Install WinSCP for File Transfer support'",
+        "    }",
         "}",
-        "",
-        "$vcxsrvDir = \"$(appdir vcxsrv $global)\\current\"",
-        "if (Test-Path \"$vcxsrvDir\\vcxsrv.exe\") {",
-        "    cmd /c mklink /j \"$dir\\tools\\VcXsrv\" \"$vcxsrvDir\" ",
-        "} else {",
-        "    info 'Install VcXsrv for X-Server support'",
+        "if (!(Test-Path \"$dir\\tools\\VcXsrv\\vcxsrv.exe\")) {",
+        "    $vcxsrvDir = currentdir vcxsrv $global",
+        "    if (Test-Path \"$vcxsrvDir\\vcxsrv.exe\") {",
+        "        New-Item -Path \"$dir\\tools\\VcXsrv\" -Value \"$vcxsrvDir\" -ItemType Junction -Force | Out-Null",
+        "    } else {",
+        "        info 'Install VcXsrv for X-Server support'",
+        "    }",
         "}",
-        "",
         "if (!(Test-Path \"$dir\\config\\preferences.xml\")) { ",
         "    $preferencesXml = '<?xml version=\"1.0\" encoding=\"utf-8\"?><Settings><CheckForXServer>False</CheckForXServer><CheckForWinSCP>False</CheckForWinSCP><CheckForPageant>False</CheckForPageant></Settings>'",
         "    Set-Content -Path \"$dir\\config\\preferences.xml\" -Value $preferencesXml -Encoding Ascii",
@@ -64,23 +63,21 @@
         "config",
         "tools"
     ],
-    "checkver": "WinSSHTerm-([\\d.]+)\\.zip",
+    "checkver": {
+        "github": "https://github.com/WinSSHTerm/WinSSHTerm"
+    },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "http://dl.winsshterm.net/WinSSHTerm-$version-64.zip",
-                "hash": {
-                    "url": "https://winsshterm.blogspot.com/",
-                    "regex": "SHA256 \\(.ZIP64\\):\\s*$sha256"
-                }
+                "url": "https://github.com/WinSSHTerm/WinSSHTerm/releases/download/$version/WinSSHTerm-$version-x64.zip"
             },
-            "32bit": {
-                "url": "http://dl.winsshterm.net/WinSSHTerm-$version.zip",
-                "hash": {
-                    "url": "https://winsshterm.blogspot.com/",
-                    "regex": "SHA256 \\(.ZIP\\):\\s*$sha256"
-                }
+            "arm64": {
+                "url": "https://github.com/WinSSHTerm/WinSSHTerm/releases/download/$version/WinSSHTerm-$version-arm64.zip"
             }
+        },
+        "hash": {
+            "url": "https://winsshterm.blogspot.com/",
+            "regex": "(?s)$basename.*?$sha256"
         }
     }
 }

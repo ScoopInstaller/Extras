@@ -1,0 +1,51 @@
+{
+    "version": "6.4.1",
+    "description": "All-in-one messaging apps for various services",
+    "homepage": "https://ferdium.org/",
+    "license": "Apache-2.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/ferdium/ferdium-app/releases/download/v6.4.1/Ferdium-win-AutoSetup-6.4.1-x64.exe#/dl.7z",
+            "hash": "sha512:252114d2c8f726e04e614c8c3c50d3bf6cc62b53f470e83efb87af5acb7c72ba1f0aa3bcf96132c273a0565cd8ec22429c438c52ca6113dd3a4738d3e05710f6"
+        },
+        "32bit": {
+            "url": "https://github.com/ferdium/ferdium-app/releases/download/v6.4.1/Ferdium-win-AutoSetup-6.4.1-ia32.exe#/dl.7z",
+            "hash": "sha512:9b2942816ab0ac1f02d84f6984ab9aa58855d08ce604188f4135d4d96f7ef949d5897929067ef30f611642435ff9bde327c23b36b8bb9bd9e0814351de51abbd"
+        },
+        "arm64": {
+            "url": "https://github.com/ferdium/ferdium-app/releases/download/v6.4.1/Ferdium-win-AutoSetup-6.4.1-arm64.exe#/dl.7z",
+            "hash": "sha512:9e92ae8d3da6dc0fc44297cbf95f08a22512aa03cb54ac99cd8d872bb4e4d27cfc48142af5173b7412905a2a401190fb85ab2b2ddcf79abc9b2af37f24ad5dc7"
+        }
+    },
+    "pre_install": [
+        "Get-ChildItem \"$dir\\`$PLUGINSDIR\\app-*.7z\" | Rename-Item -NewName 'app.7z'",
+        "Expand-7zipArchive -Path \"$dir\\`$PLUGINSDIR\\app.7z\" \"$dir\"",
+        "Remove-Item \"$dir\\`$*\" -Force -Recurse"
+    ],
+    "shortcuts": [
+        [
+            "Ferdium.exe",
+            "Ferdium"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/ferdium/ferdium-app"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/ferdium/ferdium-app/releases/download/v$version/Ferdium-win-AutoSetup-$version-x64.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://github.com/ferdium/ferdium-app/releases/download/v$version/Ferdium-win-AutoSetup-$version-ia32.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/ferdium/ferdium-app/releases/download/v$version/Ferdium-win-AutoSetup-$version-arm64.exe#/dl.7z"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "$basename\\s+sha512:\\s+$base64"
+        }
+    }
+}
