@@ -6,13 +6,7 @@
     "url": "https://bitbucket.org/heldercorreia/speedcrunch/downloads/SpeedCrunch-0.12-win32.zip",
     "hash": "024362bccd7908b508192cd90c2f6a716b5aa4fa5c7ff2aea9a1bf49d6580175",
     "extract_dir": "SpeedCrunch-0.12-win32",
-    "pre_install": [
-        "# Manually create history and config files to allow to persist them (SpeedCrunch.ini is overwritten by Speedcrunch, so can't be persisted)",
-        "if (-not (Test-Path '$dir/history.json')) {",
-        "  set-content -path $dir/history.json    -value '{}' -encoding utf8 }",
-        "if (-not (Test-Path '$dir/SpeedCrunch.ini')) {",
-        "  set-content -path $dir/SpeedCrunch.ini -value ''   -encoding utf8 }"
-    ],
+    "pre_install": "Get-ChildItem \"$persist_dir\\*\" -Include 'history.json', 'SpeedCrunch.ini' -ErrorAction SilentlyContinue | Copy-Item -Destination \"$dir\" -ErrorAction SilentlyContinue",
     "bin": "speedcrunch.exe",
     "shortcuts": [
         [
@@ -20,7 +14,10 @@
             "SpeedCrunch"
         ]
     ],
-    "persist": ["history.json"],
+    "pre_uninstall": [
+        "ensure \"$persist_dir\"",
+        "Get-ChildItem \"$dir\\*\" -Include 'history.json', 'SpeedCrunch.ini' -ErrorAction SilentlyContinue | Copy-Item -Destination \"$persist_dir\" -ErrorAction SilentlyContinue"
+    ],
     "checkver": {
         "url": "https://heldercorreia.bitbucket.io/speedcrunch/download.html",
         "regex": "<h1>Version\\s+([\\d.]+)<\\/h1>"
