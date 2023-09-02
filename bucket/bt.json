@@ -1,15 +1,19 @@
 {
-    "version": "2.9.13",
+    "version": "3.5.0",
     "description": "Opens required browser based on configuration",
     "homepage": "https://www.aloneguid.uk/projects/bt/",
     "license": "Freeware",
     "architecture": {
         "64bit": {
-            "url": "https://www.aloneguid.uk/projects/bt/bin/bt-2.9.13.zip",
-            "hash": "6eec95040f9331caa25a581ff207e0b7a8fe6af2103c45209d277359c62cf729"
+            "url": "https://github.com/aloneguid/bt/releases/download/3.5.0/bt-3.5.0.zip",
+            "hash": "3125946d8a682f2aaefcffa92fb14a3d1d10b33bfce2463743f4a64592f6d699"
         }
     },
-    "pre_install": "if (!(Test-Path \"$persist_dir\\bt.ini\")) { New-Item \"$dir\\bt.ini\" -ItemType File | Out-Null }",
+    "pre_install": [
+        "# Portable",
+        "New-Item \"$dir\\.portable\" -ItemType File | Out-Null",
+        "if (!(Test-Path \"$persist_dir\\config.ini\")) { New-Item \"$dir\\config.ini\" -ItemType File | Out-Null }"
+    ],
     "bin": "bt.exe",
     "shortcuts": [
         [
@@ -19,13 +23,12 @@
     ],
     "persist": "bt.ini",
     "checkver": {
-        "url": "https://www.aloneguid.uk/projects/bt/bin/latest.txt",
-        "regex": "([\\d.]+)"
+        "github": "https://github.com/aloneguid/bt"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://www.aloneguid.uk/projects/bt/bin/bt-$version.zip"
+                "url": "https://github.com/aloneguid/bt/releases/download/$version/bt-$version.zip"
             }
         }
     }

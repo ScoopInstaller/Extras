@@ -1,0 +1,26 @@
+{
+    "version": "6.3.32-20230830103419",
+    "homepage": "https://www.metasploit.com/",
+    "description": "A popular framework used for penetration testing.",
+    "license": "BSD-3-Clause",
+    "architecture": {
+        "64bit": {
+            "url": "https://windows.metasploit.com/metasploit-framework-6.3.32+20230830103419-1rapid7-1-x64.msi",
+            "hash": "d1be914d7de97635b861cf49d9deeb4a22434f8ab58f017184f2ee7bf5a67638"
+        }
+    },
+    "pre_install": "Remove-Item \"$dir\\*\" -Exclude 'metasploit-framework.zip' -Recurse; Expand-7zipArchive \"$dir\\metasploit-framework.zip\" \"$dir\" -Removal",
+    "env_add_path": "bin",
+    "checkver": {
+        "url": "https://windows.metasploit.com/LATEST",
+        "regex": "-([\\d.]+)\\+(?<release>\\d+)-1rapid7-1-x64",
+        "replace": "${1}-${release}"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://windows.metasploit.com/metasploit-framework-$matchHead+$matchRelease-1rapid7-1-x64.msi"
+            }
+        }
+    }
+}

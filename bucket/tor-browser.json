@@ -1,28 +1,24 @@
 {
     "##": "Multiple components under various open source licenses. Included HTTPS Everywhere extension is the strictest.",
-    "version": "12.0.4",
+    "version": "12.5.3",
     "description": "Web browser that connects to the internet via the Tor anonymity network",
     "homepage": "https://www.torproject.org/",
     "license": "GPL-3.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://dist.torproject.org/torbrowser/12.0.4/torbrowser-install-win64-12.0.4_ALL.exe",
-            "hash": "ddad37d7324cc8ba3633528f8df1e7a27c0df11aa48d27c202a925bfefb4b390"
+            "url": "https://dist.torproject.org/torbrowser/12.5.3/torbrowser-install-win64-12.5.3_ALL.exe#/dl.7z",
+            "hash": "f56692ae0b1f6855a99aefc0211fb0d38dc24596693d961c97efb69e9e80aaa3"
         },
         "32bit": {
-            "url": "https://dist.torproject.org/torbrowser/12.0.4/torbrowser-install-12.0.4_ALL.exe",
-            "hash": "11b01f5065d360d0955bad51498555fe48502749cc111a44976436b61d2ba2bd"
+            "url": "https://dist.torproject.org/torbrowser/12.5.3/torbrowser-install-12.5.3_ALL.exe#/dl.7z",
+            "hash": "91dec78dbf0f38de66be538241da5837bfe180dae2b94bba11a1855d233ee0d9"
         }
     },
-    "installer": {
-        "script": [
-            "Start-Process \"$dir\\$fname\" \"/S /D=$dir\" -PassThru -NoNewWindow | Wait-Process",
-            "movedir \"$dir\\Browser\" \"$dir\" | Out-Null",
-            "Remove-Item \"$dir\\$fname\", \"$dir\\*.lnk\" -Force",
-            "# Update extensions in persisted profile",
-            "movedir \"$dir\\TorBrowser\\Data\\Browser\\profile.default\" \"$persist_dir\\TorBrowser\\Data\\Browser\\profile.default\" | Out-Null"
-        ]
-    },
+    "extract_dir": "Browser",
+    "pre_install": [
+        "# Update extensions in persisted profile",
+        "movedir \"$dir\\TorBrowser\\Data\\Browser\\profile.default\" \"$persist_dir\\TorBrowser\\Data\\Browser\\profile.default\" | Out-Null"
+    ],
     "persist": [
         "TorBrowser\\Data\\Browser\\profile.default",
         "TorBrowser\\Data\\Tor"
@@ -46,10 +42,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://dist.torproject.org/torbrowser/$version/torbrowser-install-win64-$version_ALL.exe"
+                "url": "https://dist.torproject.org/torbrowser/$version/torbrowser-install-win64-$version_ALL.exe#/dl.7z"
             },
             "32bit": {
-                "url": "https://dist.torproject.org/torbrowser/$version/torbrowser-install-$version_ALL.exe"
+                "url": "https://dist.torproject.org/torbrowser/$version/torbrowser-install-$version_ALL.exe#/dl.7z"
             }
         },
         "hash": {

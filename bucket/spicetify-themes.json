@@ -1,34 +1,27 @@
 {
-    "version": "2023-03-28T11.02.10",
+    "version": "2023-08-17T06.15.40",
     "description": "Community-created themes for Spicetify.",
     "homepage": "https://github.com/spicetify/spicetify-themes",
     "license": "MIT",
     "suggest": {
-        "Spicetify": "spicetify-cli"
+        "spicetify": "spicetify-cli",
+        "spotify": "extras/spotify"
     },
     "url": "https://github.com/spicetify/spicetify-themes/archive/master.zip",
-    "hash": "b90b7054a79761f8af97bcf63123e138a40b147999ef8c13c1503e337bbd26c1",
+    "hash": "b75df56b65598e4013b4c0dad9534a55b15af3cf2aaa6394d5cd50d761789f9f",
     "extract_dir": "spicetify-themes-master",
     "installer": {
         "script": [
-            "$spctconf = $Env:AppData\\spicetify",
-            "if ($Env:SPICETIFY_CONFIG) {",
-            "    $spctconf = $Env:SPICETIFY_CONFIG",
-            "}",
-            "ensure $spctconf",
-            "Get-ChildItem $dir -Directory | ForEach-Object {",
-            "    Remove-Item -ErrorAction Ignore -Recurse \"$spctconf\\Themes\\$($_.Name)\"",
-            "    Copy-Item -Recurse $_.FullName -Destination \"$spctconf\\Themes\"",
-            "}"
+            "if (Get-Command 'spicetify' -ErrorAction SilentlyContinue) {",
+            "  Get-ChildItem \"$dir\" -Directory -Exclude '.github' | Copy-Item -Destination \"$(spicetify -c | Split-Path)\\Themes\" -Force -Recurse -ErrorAction SilentlyContinue",
+            "} else { warn \"'spicetify'' not detected, extracts to '$dir' only.\" }"
         ]
     },
     "uninstaller": {
         "script": [
-            "$spctconf = $Env:AppData\\spicetify",
-            "if ($Env:SPICETIFY_CONFIG) {",
-            "    $spctconf = $Env:SPICETIFY_CONFIG",
-            "}",
-            "Get-ChildItem \"$dir\" | ForEach-Object { Remove-Item -Recurse -ErrorAction Ignore \"$spctconf\\Themes\\$($_.Name)\" }"
+            "if (Get-Command 'spicetify' -ErrorAction SilentlyContinue) {",
+            "  foreach ($theme in (Get-ChildItem \"$dir\" -Directory '.github')) { Remove-Item \"$(spicetify -c | Split-Path)\\Themes\\$($theme.Name)\" -Recurse -Force -ErrorAction SilentlyContinue }",
+            "}"
         ]
     },
     "checkver": {
