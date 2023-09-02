@@ -1,0 +1,64 @@
+{
+    "version": "feature_10",
+    "homepage": "https://github.com/arch1t3cht/Aegisub",
+    "description": "A fork of the advanced subtitle editor, with new feature branches.",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://github.com/arch1t3cht/Aegisub/blob/feature/LICENCE"
+    },
+    "notes": [
+        "To install associations, run:",
+        "reg import \"$(scoop prefix aegisub-fork)\\install-associations.reg\"",
+        "To install the context menu, run:",
+        "reg import \"$(scoop prefix aegisub-fork)\\install-context.reg\"",
+        "",
+        "To uninstall associations, run:",
+        "reg import \"$(scoop prefix aegisub-fork)\\uninstall-associations.reg\"",
+        "To uninstall the context menu, run:",
+        "reg import \"$(scoop prefix aegisub-fork)\\uninstall-context.reg\"",
+        ""
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/arch1t3cht/Aegisub/releases/download/feature_10/Windows.MSVC.Release.-.portable.zip",
+            "hash": "a95ceeedbab7b7ac71dd161fcf14cd46b5c9f7b141dfc887a36fe4bfa86ecf26"
+        }
+    },
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\Aegisub\")) { ensure \"$persist_dir\\Aegisub\" | Out-Null }",
+        "Expand-7zipArchive \"$dir\\aegisub-portable-64.zip\" \"$persist_dir\\Aegisub\" -ExtractDir 'aegisub-portable' -Removal",
+        "[System.IO.File]::WriteAllLines(\"$dir\\aegisub.cmd\", \"@start $persist_dir\\Aegisub\\aegisub.exe\", [System.text.UTF8Encoding]($false))",
+        "# This is just to give the shortcut an icon.",
+        "New-Item \"$dir\\icon\" -Type 'SymbolicLink' -Value \"$persist_dir\\Aegisub\\aegisub.exe\" | Out-Null"
+    ],
+    "shortcuts": [
+        [
+            "aegisub.cmd",
+            "Aegisub",
+            "",
+            "icon"
+        ]
+    ],
+    "post_install": [
+        "$scriptsDir = \"$bucketsdir\\MyScoop\\scripts\"",
+        "Get-ChildItem \"$scriptsDir\\aegisub\\*.reg\" | ForEach-Object {",
+        "   $content = Get-Content $_",
+        "   $content = $content.Replace('REPLACE_HERE', \"$persist_dir\\Aegisub\")",
+        "   if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "   Set-Content \"$dir\\$($_.Name)\" $content -Encoding 'unicode' -Force",
+        "}"
+    ],
+    "pre_uninstall": [
+        "if ($cmd -eq 'uninstall') {",
+        "   foreach ($regFile in 'uninstall-associations', 'uninstall-context') { reg import \"$dir\\$regFile.reg\" | Out-Null }",
+        "}"
+    ],
+    "checkver": "releases/tag/([\\w_]+)",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/arch1t3cht/Aegisub/releases/download/$version/Windows.MSVC.Release.-.portable.zip"
+            }
+        }
+    }
+}
