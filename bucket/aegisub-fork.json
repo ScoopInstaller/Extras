@@ -49,9 +49,11 @@
         "}"
     ],
     "pre_uninstall": [
+        "if (Get-Process -Name 'aegisub' -ErrorAction 'SilentlyContinue') { error 'Please kill any process of `aegisub` before trying to uninstall the program'; break }",
         "if ($cmd -eq 'uninstall') {",
         "   foreach ($regFile in 'uninstall-associations', 'uninstall-context') { reg import \"$dir\\$regFile.reg\" | Out-Null }",
-        "}"
+        "}",
+        "Remove-Item \"$persist_dir\\Aegisub\\*\" -Exclude 'config', 'feedDump', 'log', 'hotkey.json', 'config.json' -Recurse"
     ],
     "checkver": "releases/tag/([\\w_]+)",
     "autoupdate": {
