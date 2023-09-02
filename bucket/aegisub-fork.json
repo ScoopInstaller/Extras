@@ -26,7 +26,8 @@
     },
     "pre_install": [
         "if (!(Test-Path \"$persist_dir\\Aegisub\")) { ensure \"$persist_dir\\Aegisub\" | Out-Null }",
-        "Expand-7zipArchive \"$dir\\aegisub-portable-64.zip\" \"$persist_dir\\Aegisub\" -ExtractDir 'aegisub-portable' -Removal",
+        "Expand-7zipArchive \"$dir\\aegisub-portable-64.zip\" \"$dir\\extracted\" -ExtractDir 'aegisub-portable' -Removal",
+        "Move-Item \"$dir\\extracted\\*\" \"$persist_dir\\Aegisub\" -Force; Remove-Item \"$dir\\extracted\" -Recurse",
         "[System.IO.File]::WriteAllLines(\"$dir\\aegisub.cmd\", \"@start $persist_dir\\Aegisub\\aegisub.exe\", [System.text.UTF8Encoding]($false))",
         "# This is just to give the shortcut an icon.",
         "New-Item \"$dir\\icon\" -Type 'SymbolicLink' -Value \"$persist_dir\\Aegisub\\aegisub.exe\" | Out-Null"
