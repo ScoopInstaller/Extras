@@ -1,0 +1,38 @@
+{
+    "version": "v0.10.2",
+    "description": "SQLpage is an SQL-only webapp builder. It is meant for data scientists, analysts, and business intelligence teams to build powerful data-centric applications quickly, without worrying about any of the traditional web programming languages and concepts. With SQLPage, you write simple .sql files containing queries to your database to select, group, update, insert, and delete your data, and you get good-looking clean webpages displaying your data as text, lists, grids, plots, and forms.",
+    "homepage": "https://sql.ophir.dev/",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/lovasoa/SQLpage/releases/download/v0.10.2/sqlpage-windows.zip",
+            "hash": "2221ce764850984713c04f1a805ffc27b48093f48d8a83ccd5b28032e43c6568"
+        }
+    },
+    "post_install": [
+        "if (!(Test-Path \"$persist_dir\\sqlpage\\database\\sqlpage.db\")) {",
+        "    New-Item \"$persist_dir\\sqlpage\\database\\sqlpage.db\" -ItemType File -Force | Out-Null",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\sqlpage\\sqlpage.json\")) {",
+        "    $persist_database = @{ 'database_url' = 'sqlite://sqlpage/database/sqlpage.db' }",
+        "    $persist_database_json = $persist_database | ConvertTo-Json",
+        "    New-Item \"$persist_dir\\sqlpage\\sqlpage.json\" -ItemType File -Value $persist_database_json | Out-Null",
+        "}"
+    ],
+    "bin": "sqlpage.exe",
+    "shortcuts": [
+        [
+            "sqlpage.exe",
+            "SQLpage"
+        ]
+    ],
+    "persist": "sqlpage",
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/lovasoa/SQLpage/releases/download/$version/sqlpage-windows.zip"
+            }
+        }
+    }
+}
