@@ -1,21 +1,17 @@
 {
     "##": "This package should be updated manually. See #9179 for details",
-    "version": "3.60.2",
+    "version": "3.65.0",
     "description": "Fast and reliable cross-platform FTP, FTPS and SFTP client with lots of useful features and an intuitive graphical user interface.",
     "homepage": "https://filezilla-project.org/",
     "license": "GPL-2.0-or-later",
-    "architecture": {
-        "64bit": {
-            "url": "https://raw.githubusercontent.com/ScoopInstaller/Binary/master/filezilla/FileZilla_3.60.2_win64.zip",
-            "hash": "d6dd439e2aae2f950ee4c2a12cca3b20f3fa290b21db631c04fdd441846087d8"
-        },
-        "32bit": {
-            "url": "https://raw.githubusercontent.com/ScoopInstaller/Binary/master/filezilla/FileZilla_3.60.2_win32.zip",
-            "hash": "47b26d8eb1fc4c90c7f92d284bdf78701810cd3593bfabedeb0ef28cce7ccd3d"
-        }
-    },
-    "extract_dir": "filezilla-3.60.2",
+    "url": "https://packages.chocolatey.org/filezilla.3.65.0.nupkg",
+    "hash": "3dbe1d0408ac96abc69b30d9fe8491d6f31570cedb5584473898837fa1edc993",
+    "extract_dir": "tools",
     "pre_install": [
+        "$arch = 'x86'",
+        "if (\"$architecture\" -Match '64bit' -or \"$architecture\" -Match 'arm64') { $arch = 'x64' }",
+        "Expand-7zipArchive \"$dir\\FileZilla_*_$arch.exe\" \"$dir\" -Removal",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\uninstall.exe.nsis\", \"$dir\\*.ps1\", \"$dir\\FileZilla_*.exe\" -Recurse -Force",
         "@'",
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>",
         "<FileZilla3>",
@@ -49,5 +45,16 @@
             "FileZilla"
         ]
     ],
-    "persist": "config"
+    "persist": "config",
+    "checkver": {
+        "url": "https://community.chocolatey.org/packages/filezilla",
+        "regex": "<meta property=\"og:title\" content=\"FileZilla ([\\d.]+)\">"
+    },
+    "autoupdate": {
+        "url": "https://packages.chocolatey.org/filezilla.$version.nupkg",
+        "hash": {
+            "url": "https://community.chocolatey.org/packages/filezilla/$version",
+            "regex": "$sha256.*?$basename"
+        }
+    }
 }

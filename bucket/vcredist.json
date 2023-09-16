@@ -1,5 +1,5 @@
 {
-    "version": "14.34.31931.0",
+    "version": "14.36.32532.0",
     "description": "Microsoft Visual C++ Redistributables bundle for all major versions",
     "homepage": "https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist",
     "license": {
@@ -8,19 +8,19 @@
     },
     "notes": "You can now remove all vcredist installers with 'scoop uninstall vcredist2005 vcredist2008 vcredist2010 vcredist2012 vcredist2013 vcredist'",
     "depends": [
-        "vcredist2005",
-        "vcredist2008",
-        "vcredist2010",
-        "vcredist2012",
-        "vcredist2013"
+        "extras/vcredist2005",
+        "extras/vcredist2008",
+        "extras/vcredist2010",
+        "extras/vcredist2012",
+        "extras/vcredist2013"
     ],
     "url": [
-        "https://download.visualstudio.microsoft.com/download/pr/bcb0cef1-f8cb-4311-8a5c-650a5b694eab/2257B3FBE3C7559DE8B31170155A433FAF5B83829E67C589D5674FF086B868B9/VC_redist.x64.exe",
-        "https://download.visualstudio.microsoft.com/download/pr/6a4c74cd-8ee0-4757-9620-a11a5b48b1a7/CE4843A946EE3732EB2BFC098DB5741DC5495C7BEA204E11D379336DCC68E875/VC_redist.x86.exe"
+        "https://aka.ms/vs/17/release/vc_redist.x64.exe",
+        "https://aka.ms/vs/17/release/vc_redist.x86.exe"
     ],
     "hash": [
-        "2257b3fbe3c7559de8b31170155a433faf5b83829e67c589d5674ff086b868b9",
-        "ce4843a946ee3732eb2bfc098db5741dc5495c7bea204e11d379336dcc68e875"
+        "917c37d816488545b70affd77d6e486e4dd27e2ece63f6bbaaf486b178b2b888",
+        "5365a927487945ecb040e143ea770adbb296074ece4021b1d14213bde538c490"
     ],
     "post_install": [
         "# For error codes, see https://docs.microsoft.com/en-us/windows/win32/msi/error-codes",
@@ -30,5 +30,21 @@
         "}",
         "Invoke-ExternalCommand -FilePath \"$dir\\vc_redist.x64.exe\" -ArgumentList '/fo', '/quiet', '/norestart' -ContinueExitCodes $ec -RunAs | Out-Null",
         "Invoke-ExternalCommand -FilePath \"$dir\\vc_redist.x86.exe\" -ArgumentList '/fo', '/quiet', '/norestart' -ContinueExitCodes $ec -RunAs | Out-Null"
-    ]
+    ],
+    "checkver": {
+        "script": [
+            "# download 1 MB and extract version from the file itself",
+            "$wc = [System.Net.HttpWebRequest]::Create('https://aka.ms/vs/17/release/vc_redist.x64.exe')",
+            "$wc.AddRange(0, 1000000)",
+            "$sr = New-Object -TypeName System.IO.StreamReader -ArgumentList $wc.GetResponse().GetResponseStream()",
+            "if ($sr.ReadToEnd() -match \"P\\x00r\\x00o\\x00d\\x00u\\x00c\\x00t\\x00V\\x00e\\x00r\\x00s\\x00i\\x00o\\x00n\\x00\\x00\\x00(?<version>.*?)\\x00\\x00\\x00D\") { return $Matches['version'].Replace(\"`0\", '') } else { return '' }"
+        ],
+        "regex": "(.*)"
+    },
+    "autoupdate": {
+        "url": [
+            "https://aka.ms/vs/17/release/vc_redist.x64.exe",
+            "https://aka.ms/vs/17/release/vc_redist.x86.exe"
+        ]
+    }
 }

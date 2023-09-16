@@ -1,0 +1,51 @@
+{
+    "version": "2.7.3",
+    "description": "A tool to install, manage and use Progressive Web Apps (PWAs) in Mozilla Firefox (native component)",
+    "homepage": "https://pwasforfirefox.filips.si/",
+    "license": "MPL-2.0",
+    "notes": [
+        "You have successfully installed the native part of the PWAsForFirefox project",
+        "You should also install the Firefox extension if you haven't already",
+        "Download: https://addons.mozilla.org/firefox/addon/pwas-for-firefox/"
+    ],
+    "suggest": {
+        "vcredist": "extras/vcredist2022",
+        "firefox": "extras/firefox"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/filips123/PWAsForFirefox/releases/download/v2.7.3/firefoxpwa-2.7.3-x86_64.msi",
+            "hash": "2222ab932229af3b15b20be11b4509edaa16f2071d563676b03c02342bc16885"
+        },
+        "32bit": {
+            "url": "https://github.com/filips123/PWAsForFirefox/releases/download/v2.7.3/firefoxpwa-2.7.3-x86.msi",
+            "hash": "91142c369ec4d6dbab52284f4f58ed1851fe17b2367aabc5693df444393b8f1d"
+        }
+    },
+    "post_install": [
+        "$hive = switch ($global) { $true { \"HKLM\" } $false { \"HKCU\" }}",
+        "If (!(Test-Path(\"${hive}:\\Software\\filips\\FirefoxPWA\"))) { New-Item -Path \"${hive}:\\Software\\filips\\FirefoxPWA\" -Force | Out-Null }",
+        "New-ItemProperty -Path \"${hive}:\\Software\\filips\\FirefoxPWA\" -Name \"Path\" -Value \"${dir}\" -Force | Out-Null",
+        "New-ItemProperty -Path \"${hive}:\\Software\\filips\\FirefoxPWA\" -Name \"Version\" -Value \"${version}\" -Force | Out-Null",
+        "If (!(Test-Path(\"${hive}:\\Software\\Mozilla\\NativeMessagingHosts\\firefoxpwa\"))) { New-Item -Path \"${hive}:\\Software\\Mozilla\\NativeMessagingHosts\\firefoxpwa\" -Force | Out-Null }",
+        "New-ItemProperty -Path \"${hive}:\\Software\\Mozilla\\NativeMessagingHosts\\firefoxpwa\" -Name \"(Default)\" -Value \"${dir}\\firefoxpwa.json\" -Force | Out-Null"
+    ],
+    "post_uninstall": [
+        "$hive = switch ($global) { $true { \"HKLM\" } $false { \"HKCU\" }}",
+        "Remove-Item -Path \"${hive}:\\Software\\filips\\FirefoxPWA\" -Force | Out-Null",
+        "Remove-Item -Path \"${hive}:\\Software\\Mozilla\\NativeMessagingHosts\\firefoxpwa\" -Force | Out-Null"
+    ],
+    "extract_dir": "PFiles\\FirefoxPWA",
+    "bin": "firefoxpwa.exe",
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/filips123/PWAsForFirefox/releases/download/v$version/firefoxpwa-$version-x86_64.msi"
+            },
+            "32bit": {
+                "url": "https://github.com/filips123/PWAsForFirefox/releases/download/v$version/firefoxpwa-$version-x86.msi"
+            }
+        }
+    }
+}

@@ -1,0 +1,44 @@
+{
+    "version": "2.1.3",
+    "homepage": "https://ludwig.guru/",
+    "description": "A unique sentence search engine that assists with writing better English.",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://ludwig.guru/terms"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://desktop.ludwig.guru/download/2.1.3/windows_64#/dl.7z",
+            "hash": "a33bbb6ad8a37f014ad6af8d31c5f2abde32f5ad6bcaf4b91f0635449025fd0c"
+        },
+        "32bit": {
+            "url": "https://desktop.ludwig.guru/download/2.1.3/windows_32#/dl.7z",
+            "hash": "a33bbb6ad8a37f014ad6af8d31c5f2abde32f5ad6bcaf4b91f0635449025fd0c"
+        }
+    },
+    "pre_install": [
+        "Remove-Item \"$dir\\*\" -Exclude \"ludwig-*-full.nupkg\"; Expand-7zipArchive \"$dir\\ludwig-*-full.nupkg\" $dir -Removal",
+        "Remove-Item \"$dir\" -Include @('_rels', 'package', '*.xml', 'ludwig.nuspec') -Recurse; Move-Item \"$dir\\lib\\net45\\*\" $dir -Exclude 'Update.exe' | Out-Null",
+        "Remove-Item \"$dir\\lib\" -Recurse"
+    ],
+    "shortcuts": [
+        [
+            "Ludwig.exe",
+            "Ludwig"
+        ]
+    ],
+    "checkver": {
+        "url": "https://ludwig.guru/download",
+        "re": "download/([\\d.]+)/windows_"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://desktop.ludwig.guru/download/$version/windows_64#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://desktop.ludwig.guru/download/$version/windows_32#/dl.7z"
+            }
+        }
+    }
+}

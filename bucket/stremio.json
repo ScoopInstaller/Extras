@@ -1,21 +1,36 @@
 {
-    "version": "4.4.142",
+    "version": "4.4.160",
     "description": "A modern media center that's a one-stop solution for your video entertainment. You discover, watch and organize video content from easy to install addons.",
     "homepage": "https://www.stremio.com/",
     "license": "Proprietary",
-    "url": "https://dl.strem.io/shell-win/v4.4.142/Stremio+4.4.142.exe#/dl.7z",
-    "hash": "ff44d700f809071353ab3f6751bd257b5e6918a76288af1e5d086316a6e91b78",
+    "notes": "Register 'URL:Stremio Protocol' via `reg import \"$dir\\install-context.reg\"`",
+    "url": "https://dl.strem.io/shell-win/v4.4.160/Stremio+4.4.160.exe#/dl.7z",
+    "hash": "a03c976f6323d84eebe61026c94aa060b081689d9bd1031fa9511d885924d98c",
     "pre_install": "Remove-Item \"$dir\\`$*\" -Recurse",
-    "pre_uninstall": "Stop-Process -Name 'stremio.exe' -ErrorAction SilentlyContinue",
+    "post_install": [
+        "'install-context', 'uninstall-context' | ForEach-Object {",
+        "    if (Test-Path \"$bucketsdir\\extras\\scripts\\stremio\\$_.reg\") {",
+        "        $sPath = \"$dir\\stremio.exe\".Replace('\\', '\\\\')",
+        "        $content = (Get-Content \"$bucketsdir\\extras\\scripts\\stremio\\$_.reg\").Replace('$stremioexe', $sPath)",
+        "        if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "        Set-Content \"$dir\\$_.reg\" $content -Encoding Ascii -Force",
+        "    }",
+        "}"
+    ],
     "shortcuts": [
         [
             "stremio.exe",
             "Stremio"
         ]
     ],
-   "checkver": {
-        "url": "https://github.com/microsoft/winget-pkgs/tree/master/manifests/s/Stremio/Stremio",
-        "regex": "js-navigation-open Link--primary\" title=\"([\\d.]+)",
+    "pre_uninstall": [
+        "Stop-Process -Name 'stremio.exe' -ErrorAction SilentlyContinue",
+        "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }"
+    ],
+    "checkver": {
+        "url": "https://api.github.com/repos/microsoft/winget-pkgs/contents/manifests/s/Stremio/Stremio",
+        "jsonpath": "$..name",
+        "regex": "([\\d.]+)",
         "reverse": true
     },
     "autoupdate": {

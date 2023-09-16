@@ -1,27 +1,40 @@
 {
-    "version": "2021.5",
+    "version": "2023.1",
     "description": "Makes the Windows taskbar translucent/transparent.",
     "homepage": "https://github.com/TranslucentTB/TranslucentTB",
     "license": "GPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/TranslucentTB/TranslucentTB/releases/download/2021.5/TranslucentTB.appinstaller",
-            "hash": "68f73fda03f421612223c0f9fc616067c5b3b16e09c37ab4e7ad73ca0bbcd87b"
+            "url": "https://github.com/TranslucentTB/TranslucentTB/releases/download/2023.1/TranslucentTB-portable-x64.zip",
+            "hash": "5d2b8582a105003b4706dca23f7d4080cd238f0bab23065800ddd85e09298d85"
+        },
+        "arm64": {
+            "url": "https://github.com/TranslucentTB/TranslucentTB/releases/download/2023.1/TranslucentTB-portable-arm64.zip",
+            "hash": "ba5213d9ff7b60489be80fdb58a357f6d83dd02f1ff7bcf25c71a3cc3e10fc0f"
         }
     },
     "pre_install": [
-        "if($PSVersionTable.PSVersion.Major -ge 6) {Import-Module Appx -UseWindowsPowershell 3>$null | Out-Null}",
-        "Add-AppxPackage \"$dir\\TranslucentTB.appinstaller\" -AppInstaller"
+        "# Create settings.json if it does not exist",
+        "if (!(Test-Path \"$persist_dir\\settings.json\")) {",
+        "    Set-Content -Path \"$dir\\settings.json\" -Value \"{}\"",
+        "}"
     ],
-    "uninstaller": {
-        "script": [
-            "taskkill /F /IM TranslucentTB.exe /FI \"status eq running\" | Out-Null",
-            "if($PSVersionTable.PSVersion.Major -ge 6) {Import-Module Appx -UseWindowsPowershell 3>$null | Out-Null}",
-            "Get-AppxPackage '28017CharlesMilette.TranslucentTB' | Remove-AppxPackage"
+    "shortcuts": [
+        [
+            "TranslucentTB.exe",
+            "TranslucentTB"
         ]
-    },
+    ],
+    "persist": "settings.json",
     "checkver": "github",
     "autoupdate": {
-        "url": "https://github.com/TranslucentTB/TranslucentTB/releases/download/$version/TranslucentTB.appinstaller"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/TranslucentTB/TranslucentTB/releases/download/$version/TranslucentTB-portable-x64.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/TranslucentTB/TranslucentTB/releases/download/$version/TranslucentTB-portable-arm64.zip"
+            }
+        }
     }
 }
