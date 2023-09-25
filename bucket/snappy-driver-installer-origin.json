@@ -20,7 +20,10 @@
         }
     },
     "installer": {
-        "script": "if (-not (Test-Path \"$persist_dir\\sdi.cfg\")) { New-Item \"$dir\\sdi.cfg\" | Out-Null }"
+        "script": [
+            "if (Test-Path \"$persist_dir\\sdi.cfg\") { Move-Item \"$persist_dir\\sdi.cfg\" \"$persist_dir\\sdio.cfg\" | Out-Null }",
+            "if (-not (Test-Path \"$persist_dir\\sdio.cfg\")) { New-Item \"$dir\\sdio.cfg\" | Out-Null }"
+        ]
     },
     "bin": [
         "SDIO.exe",
@@ -41,7 +44,7 @@
         "logs",
         "scripts",
         "update",
-        "sdi.cfg"
+        "sdio.cfg"
     ],
     "checkver": {
         "url": "https://www.glenn.delahoy.com/snappy-driver-installer-origin/",
