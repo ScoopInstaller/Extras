@@ -1,10 +1,10 @@
 {
-    "version": "1.12.13.754",
+    "version": "1.12.17.757",
     "description": "Device drivers installer and updater",
     "homepage": "https://www.snappy-driver-installer.org",
     "license": "GPL-3.0-or-later",
-    "url": "https://www.glenn.delahoy.com/downloads/sdio/SDIO_1.12.13.754.zip",
-    "hash": "6a42a93c3dd3061405757b9d51e98bb57674ed3e930619c2a8e6f80c0f41ddb5",
+    "url": "https://www.glenn.delahoy.com/downloads/sdio/SDIO_1.12.17.757.zip",
+    "hash": "ae4d62a6a1fa595a843cb78b709e2abe665abf6ed648b6d809dc5cfca1e0b0b2",
     "architecture": {
         "64bit": {
             "pre_install": [
@@ -20,7 +20,10 @@
         }
     },
     "installer": {
-        "script": "if (-not (Test-Path \"$persist_dir\\sdi.cfg\")) { New-Item \"$dir\\sdi.cfg\" | Out-Null }"
+        "script": [
+            "if (Test-Path \"$persist_dir\\sdi.cfg\") { Move-Item \"$persist_dir\\sdi.cfg\" \"$persist_dir\\sdio.cfg\" | Out-Null }",
+            "if (-not (Test-Path \"$persist_dir\\sdio.cfg\")) { New-Item \"$dir\\sdio.cfg\" | Out-Null }"
+        ]
     },
     "bin": [
         "SDIO.exe",
@@ -41,7 +44,7 @@
         "logs",
         "scripts",
         "update",
-        "sdi.cfg"
+        "sdio.cfg"
     ],
     "checkver": {
         "url": "https://www.glenn.delahoy.com/snappy-driver-installer-origin/",
