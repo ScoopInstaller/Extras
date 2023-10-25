@@ -19,7 +19,11 @@
     "pre_install": [
         "Move-Item \"$dir\\syncthingtray-*-mingw32.exe\" \"$dir\\syncthingtray.exe\"",
         "Move-Item \"$dir\\syncthingtray-*-mingw32-cli.exe\" \"$dir\\syncthingtray-cli.exe\"",
-        "if (Test-Path $persist_dir\\syncthingtray.ini){ Move-Item -Path $persist_dir\\syncthingtray.ini -Destination $dir }"
+        "if (Test-Path $persist_dir\\syncthingtray.ini){",
+        "    Move-Item -Path $persist_dir\\syncthingtray.ini -Destination $dir",
+        "} else {",
+        "    New-Item -Path $dir\\syncthingtray.ini -ItemType File | Out-Null",
+        "}"
     ],
     "uninstaller":{
         "script": "Move-Item -Path $dir\\syncthingtray.ini -Destination $persist_dir"
