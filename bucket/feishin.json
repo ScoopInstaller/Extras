@@ -1,0 +1,38 @@
+{
+    "version": "0.4.1",
+    "description": "A modern self-hosted music player. Rewrite of Sonixd.",
+    "homepage": "https://github.com/jeffvli/feishin",
+    "license": "GPL-3.0-only",
+    "suggest": {
+      "MPV": "extras/mpv"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/jeffvli/feishin/releases/download/v0.4.1/Feishin-0.4.1-win-x64.exe#/dl.7z",
+            "hash": "sha512:83bd5adabe90175b8c95406221850ab8b4a2b3ddf1c0c6e5cd74369ff2a8a14acef3c79f04aec412eed80365480dca0406b30ef44ff3c212b45cfec2871868cf"
+        }
+    },
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\`$R0\\Uninst*\" -Force -Recurse"
+    ],
+    "shortcuts": [
+        [
+            "Feishin.exe",
+            "Feishin"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/jeffvli/feishin/releases/download/v$version/Feishin-$version-win-x64.exe#/dl.7z",
+                "hash": {
+                    "url": "https://github.com/jeffvli/feishin/releases/download/v$version/latest.yml",
+                    "mode": "extract",
+                    "regex": "(?sm)exe.*sha512: $base64"
+                }
+            }
+        }
+    }
+}
