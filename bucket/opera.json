@@ -8,11 +8,11 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://download1.operacdn.com/pub/opera/desktop/99.0.4788.9/win/Opera_99.0.4788.9_Setup_x64.exe#/dl.7z",
+            "url": "https://get.geo.opera.com/pub/opera/desktop/99.0.4788.9/win/Opera_99.0.4788.9_Setup_x64.exe#/dl.7z",
             "hash": "6e4b336edb2c074b76d4307bf9c15dea33fa14db6c3fd052412a8fc6d7f499e1"
         },
         "32bit": {
-            "url": "https://download1.operacdn.com/pub/opera/desktop/99.0.4788.9/win/Opera_99.0.4788.9_Setup.exe#/dl.7z",
+            "url": "https://get.geo.opera.com/pub/opera/desktop/99.0.4788.9/win/Opera_99.0.4788.9_Setup.exe#/dl.7z",
             "hash": "a1980aa1077ab916cbddd93e2db4156b9dacf8b9f33d514247ae10ac01698528"
         }
     },
@@ -35,17 +35,23 @@
     ],
     "persist": "profile",
     "checkver": {
-        "url": "http://get.opera.com/ftp/pub/opera/desktop/",
-        "regex": "([\\d.]+)/",
-        "reverse": true
+        "script": [
+            "$releases = 'https://get.geo.opera.com/pub/opera/desktop/'",
+            "$download_page = Invoke-WebRequest -Uri $releases -UseBasicParsing",
+            "$versionSort   = { [version]$_.href.TrimEnd('/') }",
+            "$last_ver = $download_page.links | Where-Object href -match '^[\\d]+[\\d\\.]+/$' | Sort-Object $versionSort -Descending | Select-Object -first 1 -expand href",
+            "$version = $last_ver -replace '/', ''",
+            "Write-Output $version"
+        ],
+        "regex": "(\\S+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download1.operacdn.com/pub/opera/desktop/$version/win/Opera_$version_Setup_x64.exe#/dl.7z"
+                "url": "https://get.geo.opera.com/pub/opera/desktop/$version/win/Opera_$version_Setup_x64.exe#/dl.7z"
             },
             "32bit": {
-                "url": "https://download1.operacdn.com/pub/opera/desktop/$version/win/Opera_$version_Setup.exe#/dl.7z"
+                "url": "https://get.geo.opera.com/pub/opera/desktop/$version/win/Opera_$version_Setup.exe#/dl.7z"
             }
         },
         "hash": {
