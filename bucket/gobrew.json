@@ -1,0 +1,55 @@
+{
+    "version": "v1.9.7",
+    "description": "Go version manager, written in Go. Super simple tool to install and manage Go versions. Install go without root. Gobrew doesn't require shell rehash. ",
+    "homepage": "https://github.com/kevincobain2000/gobrew",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/kevincobain2000/gobrew/releases/download/v1.9.7/gobrew-windows-amd64.exe",
+            "hash": "bb097b4cf10308ec89f41f5cb602d2a8acd349da8e08e0522d5b807c7ad9fa1a"
+        }
+    },
+    "bin": [
+        [
+            "gobrew-windows-amd64.exe",
+            "gobrew"
+        ]
+    ],
+    "env_add_path": [
+        ".gobrew\\current\\bin",
+        ".gobrew\\bin"
+    ],
+    "env_set": {
+        "GOBREW_ROOT": "$dir",
+        "GOROOT": "$dir\\.gobrew\\current\\go"
+    },
+    "persist": [
+        ".gobrew"
+    ],
+    "installer": {
+        "script": [
+            "$envgopath = \"$env:USERPROFILE\\go\"",
+            "if ($env:GOPATH) { $envgopath = $env:GOPATH }",
+            "info \"Adding '$envgopath\\bin' to PATH...\"",
+            "add_first_in_path \"$envgopath\\bin\" $global"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "$envgopath = \"$env:USERPROFILE\\go\"",
+            "if ($env:GOPATH) { $envgopath = $env:GOPATH }",
+            "info \"Removing '$envgopath\\bin' from PATH...\"",
+            "remove_from_path \"$envgopath\\bin\" $global"
+        ]
+    },
+    "checkver": {
+        "github": "https://github.com/kevincobain2000/gobrew"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/kevincobain2000/gobrew/releases/download/$version/gobrew-windows-amd64.exe"
+            }
+        }
+    }
+}
