@@ -1,0 +1,29 @@
+{
+  "version": "v0.0.2",
+  "description": "Clash Meta TUI Client",
+  "homepage": "https://github.com/JohanChane/clashtui",
+  "license": "MIT",
+  "architecture": {
+    "64bit": {
+      "url": "https://github.com/JohanChane/clashtui/releases/download/v0.0.2/clashtui-win.zip",
+      "hash": "fc144fd1ba7487007e144cdb8cd2c52ecd9f409d56e1c9062f8f3059a853788c"
+    }
+  },
+  "pre_install": "Move-Item -Path \"$dir/clashtui-win/clashtui*.exe\" -Destination \"$dir/\" -Force; Move-Item -Path \"$dir/clashtui-win/EnableLoopback.exe\" -Destination \"$dir/\" -Force; Remove-Item -Path \"$dir/clashtui-win\" -Force -Recurse; Get-ChildItem \"$dir/clashtui*.exe\" | Rename-Item -NewName \"clashtui.exe\"",
+  "bin": "clashtui.exe",
+  "suggest": {
+    "nssm": "nssm",
+    "clash.meta": "clash.meta"
+  },
+  "pre_uninstall": [
+    "echo 'Please make sure to remove the clash-meta service installed by clashtui before uninstalling.'"
+  ],
+  "checkver": "github",
+  "autoupdate": {
+    "architecture": {
+      "64bit": {
+        "url": "https://github.com/JohanChane/clashtui/releases/download/v$version/clashtui-win.zip"
+      }
+    }
+  }
+}
