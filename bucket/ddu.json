@@ -1,24 +1,31 @@
 {
-    "version": "18.0.6.4",
+    "version": "18.0.6.9",
     "description": "Driver removal utility that can help you completely uninstall AMD/NVIDIA graphics card drivers and packages from your system, without leaving leftovers behind (including registry keys, folders and files, driver store)",
-    "homepage": "https://www.wagnardsoft.com/",
-    "license": "Unknown",
-    "url": "https://www.wagnardsoft.com/DDU/download/DDU%20v18.0.6.4.exe#/dl.7z",
-    "hash": "ff3ffeae94d6e9667ac48fb46353f5b2e6f26b404920fefad31636ac7a153616",
-    "extract_dir": "DDU v18.0.6.4",
+    "homepage": "https://github.com/Wagnard/display-drivers-uninstaller",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://github.com/Wagnard/display-drivers-uninstaller/blob/WPF/LICENSE.md"
+    },
+    "url": "https://ftp.nluug.nl/pub/games/PC/guru3d/ddu/%5BGuru3D.com%5D-DDU.zip",
+    "hash": "2635a9ac22080fa53e55f5506e22357d35fe0b6b0a919a535dff93953fafe6d2",
+    "pre_install": [
+        "$ddu = \"DDU v$version\"",
+        "Expand-7zipArchive \"$dir/$ddu.exe\" \"$dir\" -ExtractDir $ddu -Removal",
+        "Remove-Item \"$dir/*Guru3D*\" -Recurse",
+        "if (!(Test-Path \"$persist_dir/Settings/Settings.xml\")) { New-Item \"$dir/Settings/Settings.xml\" | Out-Null }"
+    ],
+    "persist": "Settings\\Settings.xml",
     "shortcuts": [
         [
             "Display Driver Uninstaller.exe",
             "DDU - Display Driver Uninstaller"
         ]
     ],
-    "checkver": "\\(DDU\\) V([\\d.]+) Released",
+    "checkver": {
+        "url": "https://raw.githubusercontent.com/Wagnard/display-drivers-uninstaller/WPF/display-driver-uninstaller/Display%20Driver%20Uninstaller/My%20Project/AssemblyInfo.vb",
+        "regex": "<Assembly: AssemblyVersion\\(\"([\\d.]+)\"\\)>"
+    },
     "autoupdate": {
-        "url": "https://www.wagnardsoft.com/DDU/download/DDU%20v$version.exe#/dl.7z",
-        "hash": {
-            "url": "https://www.wagnardsoft.com/content/Display-Driver-Uninstaller-DDU-V$cleanVersion-Released",
-            "regex": "SHA1:\\s+$sha1"
-        },
-        "extract_dir": "DDU v$version"
+        "url": "https://ftp.nluug.nl/pub/games/PC/guru3d/ddu/%5BGuru3D.com%5D-DDU.zip"
     }
 }
