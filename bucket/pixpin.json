@@ -1,0 +1,41 @@
+{
+    "version": "1.0.9.1",
+    "description": "A powerful and easy-to-use screenshot/snipping tool that helps you improve efficiency.",
+    "homepage": "https://pixpinapp.com/",
+    "license": "Unknown",
+    "url": "https://download.pixpinapp.com/PixPin_1.0.9.1.zip",
+    "hash": "237a28da4effc86a6e4d8497f6fd31b76d6048aed3ef5850c70b728315fbbbc8",
+    "extract_dir": "PixPin",
+    "post_install":[
+        "$config = \"$persist_dir\\Config\\config.json\"",
+        "if (!(Test-Path $config)) {",
+        "    New-Item $config -Type File -Force | Out-Null",
+        "    @{",
+        "        'System.Update.AutoCheckUpdate' = @{",
+        "            'subConf' = @{",
+        "                'checkBeta' = $false",
+        "            }",
+        "            'value' = $false",
+        "         }",
+        "    } | ConvertToPrettyJson | Set-Content $config -Encoding ASCII -Force",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "PixPin.exe",
+            "PixPin"
+        ]
+    ],
+    "persist":[
+        "Config",
+        "Data",
+        "History"
+    ],
+    "checkver": {
+        "url": "https://pixpinapp.com/",
+        "regex": "PixPin_([\\d.]+).exe"
+    },
+    "autoupdate": {
+        "url": "https://download.pixpinapp.com/PixPin_$version.zip"
+    }
+}
