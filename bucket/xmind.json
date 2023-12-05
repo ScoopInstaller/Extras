@@ -1,24 +1,17 @@
 {
-    "version": "12.0.3",
+    "version": "23.11.04336",
     "description": "A full-featured mind mapping and brainstorming tool",
-    "homepage": "https://www.xmind.net/",
+    "homepage": "https://xmind.app/",
     "license": {
         "identifier": "Shareware",
-        "url": "https://www.xmind.net/terms/"
+        "url": "https://xmind.app/terms/"
     },
     "architecture": {
         "64bit": {
-            "url": "https://dl3.xmind.net/XMind-for-Windows-64bit-12.0.3-202206241736.exe#/dl.7z",
-            "hash": "3c2a264125e31a22a5b1d1b92e8d93671498b5f3d093bebdad2566362695c183",
+            "url": "https://dl3.xmind.net/Xmind-for-Windows-x64bit-23.11.04336-202311170132.exe#/dl.7z",
+            "hash": "17a39f2afa750cdda1d4041a624a45393a49b15c26603b70f7c7d89a94864f9f",
             "installer": {
                 "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
-            }
-        },
-        "32bit": {
-            "url": "https://dl3.xmind.net/XMind-for-Windows-32bit-11.1.2-202111072106.exe#/dl.7z",
-            "hash": "7099f476850e2a3a3d1a71dac1635af914412556dc3b1b3048fc68cec239d2cd",
-            "installer": {
-                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
             }
         }
     },
@@ -31,20 +24,16 @@
     ],
     "checkver": {
         "script": [
-            "$path_64bit = [System.Net.HttpWebRequest]::Create('https://www.xmind.net/zen/download/win64/').GetResponse().ResponseUri.LocalPath.TrimStart('/')",
-            "$path_32bit = [System.Net.HttpWebRequest]::Create('https://www.xmind.net/zen/download/win32/').GetResponse().ResponseUri.LocalPath.TrimStart('/')",
-            "$scriptver = $path_64bit -Replace '.*64bit-([\\d.]+)-\\d+\\.exe$', '$1'",
-            "Write-Output $scriptver $path_32bit $path_64bit"
+            "$url = 'https://www.xmind.app/zen/download/win64/'",
+            "$req = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -ErrorAction SilentlyContinue",
+            "Write-Output $req.Headers.Location"
         ],
-        "regex": "(?<version>[\\d.]+)\\s(?<path32bit>.+)\\s(?<path64bit>.+)"
+        "regex": "Xmind-for-Windows-x64bit-([\\d.]+)-(?<dt>\\d{12})\\.exe"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://dl3.xmind.net/$matchPath64bit#/dl.7z"
-            },
-            "32bit": {
-                "url": "https://dl3.xmind.net/$matchPath32bit#/dl.7z"
+                "url": "https://dl3.xmind.net/Xmind-for-Windows-x64bit-$version-$matchDt.exe#/dl.7z"
             }
         }
     }

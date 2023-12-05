@@ -1,27 +1,20 @@
 {
-    "version": "8.8.0",
+    "version": "9.5.0",
     "description": "A free file archiver utility, based on Open Source technologies",
-    "homepage": "https://www.peazip.org",
+    "homepage": "https://peazip.github.io",
     "license": "LGPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://dotsrc.dl.osdn.net/osdn/peazip/77653/peazip_portable-8.8.0.WIN64.zip",
-            "hash": "5ab7ee2d52ec718bb70bc8b81f88079778cfa4b88541d5f75912fca3812042b9",
-            "extract_dir": "peazip_portable-8.8.0.WIN64"
+            "url": "https://github.com/peazip/PeaZip/releases/download/9.5.0/peazip_portable-9.5.0.WIN64.zip",
+            "hash": "a0cac53a6f140acdca314e898e758c029f41d37deea89b925b85a0a4cdfe7e6a",
+            "extract_dir": "peazip_portable-9.5.0.WIN64"
         },
         "32bit": {
-            "url": "https://dotsrc.dl.osdn.net/osdn/peazip/77653/peazip_portable-8.8.0.WINDOWS.zip",
-            "hash": "8d497daa2c42faff82f61c6e7d44be9adfc607e546e4f0c2483f6cb4eca0c130",
-            "extract_dir": "peazip_portable-8.8.0.WINDOWS"
+            "url": "https://github.com/peazip/PeaZip/releases/download/9.5.0/peazip_portable-9.5.0.WINDOWS.zip",
+            "hash": "39d054ca0e301adbe5f526924be12926d6003c0f247a157d014a417bb40e677f",
+            "extract_dir": "peazip_portable-9.5.0.WINDOWS"
         }
     },
-    "pre_install": [
-        "$manifest.persist | ForEach-Object {",
-        "    if ([io.path]::GetExtension($_)) {",
-        "        if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
-        "    }",
-        "}"
-    ],
     "bin": "peazip.exe",
     "shortcuts": [
         [
@@ -29,31 +22,24 @@
             "PeaZip"
         ]
     ],
-    "persist": [
-        "res\\altconf.txt",
-        "res\\bookmarks.txt",
-        "res\\conf.txt",
-        "res\\conf-lastgood.txt",
-        "res\\custedit.txt"
-    ],
+    "persist": "res\\conf",
     "checkver": {
-        "url": "https://osdn.net/projects/peazip/",
-        "regex": "<a href=\"/projects/peazip/releases/(?<release>[\\d]*)\">peazip ([\\d.]+)</a>"
+        "github": "https://github.com/peazip/PeaZip"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://dotsrc.dl.osdn.net/osdn/peazip/$matchRelease/peazip_portable-$version.WIN64.zip",
+                "url": "https://github.com/peazip/PeaZip/releases/download/$version/peazip_portable-$version.WIN64.zip",
                 "extract_dir": "peazip_portable-$version.WIN64"
             },
             "32bit": {
-                "url": "https://dotsrc.dl.osdn.net/osdn/peazip/$matchRelease/peazip_portable-$version.WINDOWS.zip",
+                "url": "https://github.com/peazip/PeaZip/releases/download/$version/peazip_portable-$version.WINDOWS.zip",
                 "extract_dir": "peazip_portable-$version.WINDOWS"
             }
         },
         "hash": {
-            "url": "https://osdn.net/projects/peazip/downloads/$matchRelease/$basename",
-            "regex": "(?sm)SHA256.*?$sha256"
+            "url": "https://peazip.github.io/changelog.html",
+            "regex": "$sha256.*\\s+$basename"
         }
     }
 }

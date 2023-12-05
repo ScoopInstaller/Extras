@@ -1,26 +1,27 @@
 {
-    "version": "1.8.2",
+    "version": "1.9.6",
     "description": "MQTT 5.0 Desktop Client",
     "homepage": "https://mqttx.app",
     "license": "Apache-2.0",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/emqx/MQTTX/releases/download/v1.8.2/MQTTX-Setup-1.8.2-x64.exe#/dl.7z",
-            "hash": "sha512:62700f999c676d6bfe1468f099f4c1b629de784b424dd066ef981b6fefe86e27bc6bc321da0fd375f95e2b54894eaab87e272eca940dd35920229211db62c14b",
-            "pre_install": [
-                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse"
-            ]
+            "url": "https://github.com/emqx/MQTTX/releases/download/v1.9.6/MQTTX-Setup-1.9.6-x64.exe#/dl.7z",
+            "hash": "sha512:feaa5f23549d613b1614b7b7eab909da0ef878b37d9e04e5cf0918c0129c0777796bec31c543f93ec916a3638512a7546828ec64ce20737c35bdce2159e62b45"
         },
         "32bit": {
-            "url": "https://github.com/emqx/MQTTX/releases/download/v1.8.2/MQTTX-Setup-1.8.2-ia32.exe#/dl.7z",
-            "hash": "sha512:93b7b4ea5e0dd01c7ffdef3517325522614cb4dcf92db0d2a1e683e12b220276b9dba963aa7baf36db413b64aacaf83e7ddd7ef45e368fa1f6e904905c6931d4",
-            "pre_install": [
-                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\"",
-                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse"
-            ]
+            "url": "https://github.com/emqx/MQTTX/releases/download/v1.9.6/MQTTX-Setup-1.9.6-ia32.exe#/dl.7z",
+            "hash": "sha512:b02db245561ba36e7c5a632aa98dc909082cb46bdbf48f5d52102a5c6b66854a9b5449c60a339ffd811b4ded8d60cae870e5ed26c8ecd21a88836c760577ebfb"
+        },
+        "arm64": {
+            "url": "https://github.com/emqx/MQTTX/releases/download/v1.9.6/MQTTX-Setup-1.9.6-arm64.exe#/dl.7z",
+            "hash": "sha512:2cfc695299557dc781a9ff9d0a4d9870326baa37420a455b27f16c2fc796fd7901ce154c45b048646c4ebd04141c01f11a8a08cd426dd5709f6e93e614484cbc"
         }
     },
+    "pre_install": [
+        "Get-ChildItem \"$dir\\`$PLUGINSDIR\\app*.7z\" | Rename-Item -NewName 'app.7z'",
+        "Expand-7zipArchive -Path \"$dir\\`$PLUGINSDIR\\app.7z\" \"$dir\"",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse"
+    ],
     "shortcuts": [
         [
             "MQTTX.exe",
@@ -44,6 +45,13 @@
                 "hash": {
                     "url": "$baseurl/latest.yml",
                     "regex": "(?sm)ia32.*?sha512:\\s+$base64"
+                }
+            },
+            "arm64": {
+                "url": "https://github.com/emqx/MQTTX/releases/download/v$version/MQTTX-Setup-$version-arm64.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "(?sm)arm64.*?sha512:\\s+$base64"
                 }
             }
         }

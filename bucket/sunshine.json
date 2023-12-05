@@ -1,33 +1,20 @@
 {
-    "version": "0.14.1",
+    "version": "0.21.0",
     "description": "A Gamestream host for Moonlight",
     "homepage": "https://github.com/LizardByte/Sunshine",
     "license": "GPL-3.0-only",
     "notes": [
-        "Run '$dir\\install-service.bat' and '$dir\\uninstall-service.bat' to install and uninstall the service correspondingly.",
+        "Check the '$dir\\scripts' folder to setup the service and firewall rules.",
         "Sunshine can be configured at https://localhost:47990/ by default."
     ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/LizardByte/Sunshine/releases/download/v0.14.1/Sunshine-Windows.zip",
-            "hash": "af3eb039c40ea0bb76f534c7c892e4d46ca906ec8608262bff570ebfbb7ebee0"
+            "url": "https://github.com/LizardByte/Sunshine/releases/download/v0.21.0/sunshine-windows-portable.zip",
+            "hash": "73a73a440ac76dae6f639593d600cb889e0974ed1e044086901c373cd31ffbaa"
         }
     },
     "extract_dir": "Sunshine",
-    "pre_install": [
-        "Set-Content -Path \"$dir\\sunshine.bat\" -Value (@('@echo off', 'pushd %~dp0 && sunshine.exe %* && popd') -join \"`r`n\")",
-        "# Create sunshine_state.json if it does not exist",
-        "if (!(Test-Path \"$persist_dir\\sunshine_state.json\" -PathType Leaf)) {",
-        "    Set-Content -Path \"$dir\\sunshine_state.json\" -Value \"{}\"",
-        "}",
-        "'apps.json', 'sunshine.conf' | ForEach-Object {",
-        "    if (!(Test-Path \"$persist_dir\\$_\")) { Copy-Item \"$dir\\config\\$_\" \"$dir\\$_\" | Out-Null }",
-        "}",
-        "",
-        "# https://github.com/LizardByte/Sunshine/issues/197",
-        "Copy-Item \"$bucketsdir\\extras\\scripts\\sunshine\\install-service.bat\" \"$dir\" | Out-Null",
-        "Copy-Item \"$bucketsdir\\extras\\scripts\\sunshine\\uninstall-service.bat\" \"$dir\" | Out-Null"
-    ],
+    "pre_install": "Set-Content -Path \"$dir\\sunshine.bat\" -Value (@('@echo off', 'pushd %~dp0 && sunshine.exe %* && popd') -join \"`r`n\")",
     "bin": [
         "sunshine.bat",
         "tools\\dxgi-info.exe",
@@ -39,17 +26,12 @@
             "Sunshine"
         ]
     ],
-    "persist": [
-        "credentials",
-        "apps.json",
-        "sunshine.conf",
-        "sunshine_state.json"
-    ],
+    "persist": "config",
     "checkver": "github",
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/LizardByte/Sunshine/releases/download/v$version/Sunshine-Windows.zip"
+                "url": "https://github.com/LizardByte/Sunshine/releases/download/v$version/sunshine-windows-portable.zip"
             }
         }
     }

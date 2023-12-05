@@ -1,0 +1,44 @@
+{
+    "version": "1293-4.3",
+    "homepage": "https://processing.org/",
+    "description": "A flexible software sketchbook and a language for learning how to code.",
+    "license": "GPL-2.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/processing/processing4/releases/download/processing-1293-4.3/processing-4.3-windows-x64.zip",
+            "hash": "a6b5435581b8e69b0a25de8f62ba572daab85223e6bc10a3e19bd6295d1ea458"
+        }
+    },
+    "extract_dir": "processing-4.3",
+    "bin": [
+        "processing-java.exe",
+        [
+            "processing-java.exe",
+            "processing-cli"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "processing.exe",
+            "Processing"
+        ]
+    ],
+    "pre_uninstall": [
+        "if ($cmd -eq 'uninstall') {",
+        "   Remove-Item 'HKCU:\\SOFTWARE\\Classes\\pde', 'HKCU:\\SOFTWARE\\Classes\\Processing.Document' -ErrorAction 'SilentlyContinue' -Recurse -Force",
+        "   foreach ($item in 'Contribution', 'Sketch') { Remove-Item 'HKCU:\\SOFTWARE\\Classes\\Processing.$item.Document' -ErrorAction 'SilentlyContinue' -Recurse -Force }",
+        "}"
+    ],
+    "checkver": {
+        "github": "https://github.com/processing/processing4",
+        "regex": "tag/processing-([\\d-.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/processing/processing4/releases/download/processing-$version/processing-$preReleaseVersion-windows-x64.zip"
+            }
+        },
+        "extract_dir": "processing-$preReleaseVersion"
+    }
+}

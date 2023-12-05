@@ -1,19 +1,15 @@
 {
-    "version": "22.04.1",
+    "version": "23.08.3-2237",
     "description": "Multi-document editor",
     "homepage": "https://kate-editor.org",
     "license": "LGPL-2.0-only",
+    "notes": "If you want to get the latest development branch-based installer, please install `kate-nightly` from Versions bucket.",
     "architecture": {
         "64bit": {
-            "url": "https://download.kde.org/stable/release-service/22.04.1/windows/kate-22.04.1-1674-windows-msvc2019_64-cl.exe#/dl.7z",
-            "hash": "e56eabece1b022d7a31dabb245a06a474176a988c7ce505741401cd6e6c87853"
+            "url": "https://binary-factory.kde.org/job/Kate_Release_win64/2237/artifact/kate-23.08.3-2237-windows-cl-msvc2019-x86_64.7z",
+            "hash": "d33da11bb1bff9727f044cae818cd1bca9a79e5112ad5c23078f06d329687f3e"
         }
     },
-    "pre_install": [
-        "Remove-Item \"$dir\\*\" -Exclude kate-*.7z -Recurse",
-        "Expand-7ZipArchive \"$dir\\kate-*.7z\" \"$dir\"",
-        "Remove-Item \"$dir\\kate-*.7z\""
-    ],
     "bin": "bin\\kate.exe",
     "shortcuts": [
         [
@@ -22,16 +18,15 @@
         ]
     ],
     "checkver": {
-        "url": "https://apps.kde.org/kate",
-        "regex": "kate-([\\d.]+)-(?<build>[\\d]+)-windows-(?<lib>\\w+)-cl\\.exe"
+        "url": "https://binary-factory.kde.org/job/Kate_Release_win64/",
+        "regex": "kate-([\\d.-]+)-windows-cl-(?<lib>\\w+)-x86_64\\.7z"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.kde.org/stable/release-service/$version/windows/kate-$version-$matchBuild-windows-$matchLib-cl.exe#/dl.7z",
+                "url": "https://binary-factory.kde.org/job/Kate_Release_win64/$preReleaseVersion/artifact/kate-$version-windows-cl-$matchLib-x86_64.7z",
                 "hash": {
-                    "url": "https://apps.kde.org/kate",
-                    "regex": "sha256:</strong> $sha256</div>"
+                    "url": "$url.sha256"
                 }
             }
         }

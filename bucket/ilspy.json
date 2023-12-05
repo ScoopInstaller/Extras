@@ -1,10 +1,24 @@
 {
-    "version": "7.2.1.6856",
-    "description": ".NET assembly browser and decompiler",
+    "version": "8.2.0.7535",
+    "description": ".NET assembly browser and decompiler.",
     "homepage": "http://ilspy.net",
     "license": "MIT",
-    "url": "https://github.com/icsharpcode/ILSpy/releases/download/v7.2.1/ILSpy_binaries_7.2.1.6856.zip",
-    "hash": "8da077031a6075f5cb5edc2ce8b40cd8ac6e3d9b9c57e900277282fae41d887a",
+    "suggest": {
+        ".NET Desktop Runtime": [
+            "extras/windowsdesktop-runtime",
+            "extras/windowsdesktop-runtime-lts"
+        ]
+    },
+    "architecture": {
+        "arm64": {
+            "url": "https://github.com/icsharpcode/ILSpy/releases/download/v8.2/ILSpy_binaries_8.2.0.7535-arm64.zip",
+            "hash": "e33ee115d8fccabe4f78a8e1844308b6033b2f77668d81b5ed52c94532247fdd"
+        },
+        "64bit": {
+            "url": "https://github.com/icsharpcode/ILSpy/releases/download/v8.2/ILSpy_binaries_8.2.0.7535-x64.zip",
+            "hash": "400b488fcf4e4c909269e73d50db867741794258f7946f1a74db15896e6be99d"
+        }
+    },
     "bin": "ILSpy.exe",
     "shortcuts": [
         [
@@ -13,10 +27,18 @@
         ]
     ],
     "checkver": {
-        "github": "https://github.com/icsharpcode/ILSpy",
-        "regex": "ILSpy_binaries_([\\d.]+)\\.zip"
+        "url": "https://api.github.com/repositories/1327739/releases/latest",
+        "jsonpath": "$.assets..browser_download_url",
+        "regex": "download/v(?<tag>[\\d.]+)/ILSpy_binaries_([\\d.]+)-x64\\.zip"
     },
     "autoupdate": {
-        "url": "https://github.com/icsharpcode/ILSpy/releases/download/v$matchHead/ILSpy_binaries_$version.zip"
+        "architecture": {
+            "arm64": {
+                "url": "https://github.com/icsharpcode/ILSpy/releases/download/v$matchTag/ILSpy_binaries_$version-arm64.zip"
+            },
+            "64bit": {
+                "url": "https://github.com/icsharpcode/ILSpy/releases/download/v$matchTag/ILSpy_binaries_$version-x64.zip"
+            }
+        }
     }
 }

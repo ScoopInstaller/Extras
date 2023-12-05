@@ -1,5 +1,5 @@
 {
-    "version": "1.5.1",
+    "version": "1.7.3",
     "description": "Open-source FTP server software",
     "homepage": "https://filezilla-project.org/",
     "license": "GPL-2.0-or-later",
@@ -10,15 +10,17 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://download.filezilla-project.org/server/FileZilla_Server_1.5.1_win64-setup.exe#/dl.7z",
-            "hash": "sha512:8a3fd07e8a9e3e3b156ec70ee773f78916f9b05fb862693d9a13d65ff7cbb4b3bfcbf6cb0777f0b48abf78a2de6e14aa262675daf43de7f485c45b1d8400ff68"
+            "url": "https://packages.chocolatey.org/filezilla.server.1.7.3.nupkg",
+            "hash": "3cf95f61d1613a1456d4c4ffd74f4d742f5dfaa74a40bc51bff19b97dcd1e1b5"
         }
     },
+    "extract_dir": "tools",
     "pre_install": [
         "if (!(is_admin)) {error 'This package requires admin rights to install'; break}",
+        "Expand-7zipArchive \"$dir\\FileZilla_Server_*_win64-setup.exe\" \"$dir\" -Removal",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall.exe.nsis\", \"$dir\\*.ps1\", \"$dir\\*.xml\" -Force -Recurse",
         "Set-Content \"$dir\\start-filezilla-server.bat\" \"net start `\"FileZilla Server`\"\" -Encoding ascii",
-        "Set-Content \"$dir\\stop-filezilla-server.bat\" \"net stop `\"FileZilla Server`\"\" -Encoding ascii",
-        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall.exe.nsis\" -Force -Recurse"
+        "Set-Content \"$dir\\stop-filezilla-server.bat\" \"net stop `\"FileZilla Server`\"\" -Encoding ascii"
     ],
     "post_install": [
         "Write-Host 'Installing FileZilla Server service...'",
@@ -59,18 +61,18 @@
         ]
     ],
     "checkver": {
-        "url": "https://filezilla-project.org/download.php?show_all=1&type=server",
-        "regex": "The latest stable version of FileZilla Server is ([\\d.]+)"
+        "url": "https://community.chocolatey.org/packages/filezilla.server",
+        "regex": "<meta property=\"og:title\" content=\"FileZilla Server ([\\d.]+)\">"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.filezilla-project.org/server/FileZilla_Server_$version_win64-setup.exe#/dl.7z"
+                "url": "https://packages.chocolatey.org/filezilla.server.$version.nupkg",
+                "hash": {
+                    "url": "https://community.chocolatey.org/packages/filezilla.server/$version",
+                    "regex": "$sha256.*?$basename"
+                }
             }
-        },
-        "hash": {
-            "url": "$baseurl/FileZilla_Server_$version.sha512",
-            "regex": "$sha512\\s\\*$basename"
         }
     }
 }

@@ -1,5 +1,5 @@
 {
-    "version": "28.0.1",
+    "version": "30.0",
     "description": "Video recording and live streaming software",
     "homepage": "https://obsproject.com",
     "license": "GPL-2.0-only",
@@ -9,8 +9,8 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://cdn-fastly.obsproject.com/downloads/OBS-Studio-28.0.1-Full-x64.zip",
-            "hash": "9eced54529b3ed64b872730116322b073348a1a4c6503b3a488d8ff01958e878",
+            "url": "https://cdn-fastly.obsproject.com/downloads/OBS-Studio-30.0.zip",
+            "hash": "016d659a488df07f386e8f2ce7a7db977a788db4ac65e6af1119e326a76d44bf",
             "shortcuts": [
                 [
                     "bin\\64bit\\obs64.exe",
@@ -22,16 +22,22 @@
     "pre_install": "if (!(Test-Path \"$persist_dir\\portable_mode.txt\")) { New-Item \"$dir\\portable_mode.txt\" | Out-Null }",
     "persist": [
         "config",
-        "portable_mode.txt"
+        "portable_mode.txt",
+        "obs-plugins"
+    ],
+    "post_install": [
+        "if (!(Test-Path \"$dir\\obs-plugins.original\")) { return }",
+        "Copy-Item \"$dir\\obs-plugins.original\\*\" \"$dir\\obs-plugins\" -Recurse -Force",
+        "Remove-Item \"$dir\\obs-plugins.original\" -Recurse -Force"
     ],
     "checkver": {
         "url": "https://obsproject.com/download",
-        "regex": "OBS-Studio-([\\d.]+)-Full-x64\\.zip"
+        "regex": "OBS-Studio-([\\d.]+)(-Full)?\\.zip"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://cdn-fastly.obsproject.com/downloads/OBS-Studio-$version-Full-x64.zip"
+                "url": "https://cdn-fastly.obsproject.com/downloads/OBS-Studio-$version.zip"
             }
         }
     }

@@ -1,23 +1,29 @@
 {
-    "version": "1.2.1_2022-07-14",
+    "version": "1.3.1_2023-11-16_91b66b0783",
     "description": "Professional vector graphics editor",
     "homepage": "https://inkscape.org",
     "license": "GPL-3.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://media.inkscape.org/dl/resources/file/inkscape-1.2.1_2022-07-14_9c6d41e410-x64.7z",
-            "hash": "6a964aee3b411303a192d57e620f7f25d8a9b60758fc7d7ab6744393a3172eb9",
-            "extract_dir": "inkscape-1.2.1_2022-07-14_9c6d41e410-x64"
+            "url": "https://media.inkscape.org/dl/resources/file/inkscape-1.3.1_2023-11-16_91b66b0783-x64.7z",
+            "hash": "50d09677dae04c6d81bc041d5eddbe338e9587c8e40b186f3a67cdad7b0193a9",
+            "extract_dir": "inkscape-1.3.1_2023-11-16_91b66b0783-x64"
         },
         "32bit": {
-            "url": "https://media.inkscape.org/dl/resources/file/inkscape-1.2.1_2022-07-14_9c6d41e410-x86.7z",
-            "hash": "dd24ccc13dd5cc266fe9fa941b68afa91d4ab90852379cbdc7f7243f3f2700df",
-            "extract_dir": "inkscape-1.2.1_2022-07-14_9c6d41e410-x86"
+            "url": "https://media.inkscape.org/dl/resources/file/inkscape-1.3.1_2023-11-16_91b66b0783-x86.7z",
+            "hash": "89b9c345f38e2344175b8bca132d961a65c258547597fec2b96f79b82eb13691",
+            "extract_dir": "inkscape-1.3.1_2023-11-16_91b66b0783-x86"
         }
     },
     "bin": [
-        "bin\\inkscape.com",
-        "bin\\inkview.com"
+        [
+            "bin\\inkscape.com",
+            "inkscape"
+        ],
+        [
+            "bin\\inkview.com",
+            "inkview"
+        ]
     ],
     "shortcuts": [
         [
@@ -27,11 +33,11 @@
     ],
     "checkver": {
         "script": [
-            "$redirUrl = [System.Net.HttpWebRequest]::Create('https://inkscape.org/en/release').GetResponse().ResponseUri.AbsoluteUri",
-            "$test_dl = Invoke-WebRequest ($redirUrl + '/windows/64-bit/compressed-7z/dl/') -UseBasicParsing",
-            "$filename = ($test_dl.links | Where-Object href -match '\\.7z$' | Select-Object -first 1 -expand href) -split '/' | Select-Object -last 1",
-            "$clean_filename = $filename -replace '-(x86|x64)_\\w+\\.7z$'",
-            "$ink_version = $clean_filename -replace '^inkscape-([0-9_\\-.]+)_\\w+$','$1'",
+            "$redirUrl = [System.Net.HttpWebRequest]::Create('https://inkscape.org/release/').GetResponse().ResponseUri.AbsoluteUri",
+            "$test_dl = Invoke-WebRequest ($redirUrl + 'windows/64-bit/compressed-7z/dl/') -UseBasicParsing",
+            "$filename = ($test_dl.Links | Where-Object href -match '.7z$' | Select-Object -First 1 -ExpandProperty href) -split '/' | Select-Object -Last 1",
+            "$clean_filename = $filename -replace '-x64.7z'",
+            "$ink_version = $clean_filename -replace 'inkscape-'",
             "Write-Output $ink_version $clean_filename"
         ],
         "regex": "(?<version>.+)\\s(?<cleanfilename>.+)"

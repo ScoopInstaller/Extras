@@ -1,30 +1,31 @@
 {
-    "homepage": "https://www.tominlab.com/en/wonderpen",
+    "version": "2.4.1",
     "description": "Professional writing app with a focused and fluid writing experience.",
-    "version": "2.1.12",
+    "homepage": "https://www.tominlab.com/en/wonderpen",
     "license": {
         "identifier": "Proprietary",
         "url": "https://www.tominlab.com/en/term/privacy"
     },
-    "url": "https://www.tominlab.com/to/get-file/cdn?file=WonderPen/2.1/WonderPen_win_installer_2.1.12(6594).exe#/dl.7z",
-    "hash": "91cbc61e8d942111a1bbd95068c49e8c5f3201fd7f4dec31bb22b2b1f05c198e",
     "architecture": {
         "64bit": {
-            "installer": {
-                "script": [
-                    "Expand-7ZipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\" -Removal",
-                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse"
-                ]
-            }
+            "url": "https://file.tominlab.com/WonderPen/2.4/WonderPen_win_installer_x64_2.4.1(7250).exe#/dl.7z",
+            "hash": "84bd1fabd82461c499586049143b221663805ddbe597df09341af3d6583a2332"
         },
         "32bit": {
-            "installer": {
-                "script": [
-                    "Expand-7ZipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\" -Removal",
-                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse"
-                ]
-            }
+            "url": "https://file.tominlab.com/WonderPen/2.4/WonderPen_win_installer_ia32_2.4.1(7250).exe#/dl.7z",
+            "hash": "b0b893ca909442f8117e642a9b2a4743366cc0fc1ad85cf8642fdd57bde58244"
+        },
+        "arm64": {
+            "url": "https://file.tominlab.com/WonderPen/2.4/WonderPen_win_installer_arm64_2.4.1(7250).exe#/dl.7z",
+            "hash": "95cbbf2be9108e5af5c76b05a8f83d99874b04e910fbd8de20f372c9fd961b85"
         }
+    },
+    "installer": {
+        "script": [
+            "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Rename-Item -NewName 'app.7z'",
+            "Expand-7ZipArchive \"$dir\\`$PLUGINSDIR\\app.7z\" \"$dir\" -Removal",
+            "Remove-Item \"$dir\\`$*\" -Force -Recurse"
+        ]
     },
     "shortcuts": [
         [
@@ -37,6 +38,16 @@
         "regex": "([\\d.]+)\\((?<build>[\\d]+)\\)"
     },
     "autoupdate": {
-        "url": "https://www.tominlab.com/to/get-file/cdn?file=WonderPen/$majorVersion.$minorVersion/WonderPen_win_installer_$version($matchBuild).exe#/dl.7z"
+        "architecture": {
+            "64bit": {
+                "url": "https://file.tominlab.com/WonderPen/$majorVersion.$minorVersion/WonderPen_win_installer_x64_$version($matchBuild).exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://file.tominlab.com/WonderPen/$majorVersion.$minorVersion/WonderPen_win_installer_ia32_$version($matchBuild).exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://file.tominlab.com/WonderPen/$majorVersion.$minorVersion/WonderPen_win_installer_arm64_$version($matchBuild).exe#/dl.7z"
+            }
+        }
     }
 }

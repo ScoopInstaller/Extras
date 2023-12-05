@@ -1,5 +1,5 @@
 {
-    "version": "1.71.2",
+    "version": "1.84.2",
     "description": "Lightweight but powerful source code editor",
     "homepage": "https://code.visualstudio.com/",
     "license": {
@@ -7,17 +7,19 @@
         "url": "https://code.visualstudio.com/License/"
     },
     "notes": [
-        "Add Visual Studio Code as a context menu option by running: '$dir\\install-context.reg'",
-        "For file associations, run '$dir\\install-associations.reg'"
+        "Add Visual Studio Code as a context menu option by running:",
+        "'reg import \"$dir\\install-context.reg\"'",
+        "For file associations, run:",
+        "'reg import \"$dir\\install-associations.reg\"'"
     ],
     "architecture": {
         "64bit": {
-            "url": "https://update.code.visualstudio.com/1.71.2/win32-x64-archive/stable#/dl.7z",
-            "hash": "59b66921041c3be3c7942bb0607adaa74a558e351c33092a555fc7f06ca1a1c8"
+            "url": "https://update.code.visualstudio.com/1.84.2/win32-x64-archive/stable#/dl.7z",
+            "hash": "e4dd3d83cb46e6889b02d542d30da37547329fba238745bed8a863eb365059a7"
         },
-        "32bit": {
-            "url": "https://update.code.visualstudio.com/1.71.2/win32-archive/stable#/dl.7z",
-            "hash": "c90a5b91a9265994cab0fb6defb17dcc7be009b990444cab1e4082521ad34d7a"
+        "arm64": {
+            "url": "https://update.code.visualstudio.com/1.84.2/win32-arm64-archive/stable#/dl.7z",
+            "hash": "3e309006bb2336e52b189520097474cc5bedbb5052b0e498996e224f3903ceac"
         }
     },
     "env_add_path": "bin",
@@ -48,6 +50,11 @@
         "if (!(Test-Path \"$dir\\data\\user-data\") -and (Test-Path \"$env:AppData\\Code\")) {",
         "    info '[Portable Mode] Copying user data...'",
         "    Copy-Item \"$env:AppData\\Code\" \"$dir\\data\\user-data\" -Recurse",
+        "}",
+        "$extensions_file = \"$dir\\data\\extensions\\extensions.json\"",
+        "if ((Test-Path \"$extensions_file\")) {",
+        "    info 'Adjusting path in extensions file...'",
+        "    (Get-Content \"$extensions_file\") -replace '(?<=vscode(/|\\\\\\\\)).*?(?=(/|\\\\\\\\)data(/|\\\\\\\\)extensions)', $version | Set-Content \"$extensions_file\"",
         "}"
     ],
     "uninstaller": {
@@ -67,11 +74,11 @@
                     "jsonpath": "$.products[?(@.platform.os == 'win32-x64-archive')].sha256hash"
                 }
             },
-            "32bit": {
-                "url": "https://update.code.visualstudio.com/$version/win32-archive/stable#/dl.7z",
+            "arm64": {
+                "url": "https://update.code.visualstudio.com/$version/win32-arm64-archive/stable#/dl.7z",
                 "hash": {
                     "url": "https://code.visualstudio.com/sha?build=stable",
-                    "jsonpath": "$.products[?(@.platform.os == 'win32-archive')].sha256hash"
+                    "jsonpath": "$.products[?(@.platform.os == 'win32-arm64-archive')].sha256hash"
                 }
             }
         }

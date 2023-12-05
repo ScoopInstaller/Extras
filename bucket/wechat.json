@@ -1,16 +1,16 @@
 {
-    "version": "3.7.6.44",
+    "version": "3.9.8.15",
     "description": "Free messaging and calling app by Tencent",
     "homepage": "https://pc.weixin.qq.com/",
     "license": {
         "identifier": "Proprietary",
         "url": "https://www.wechat.com/en/service_terms.html"
     },
-    "url": "https://webcdn.m.qq.com/spcmgr/download/WeChat3.7.6.44.exe#/dl.7z",
-    "hash": "134646155a7d878d86de2333276e8fed68804928117609d31d44d2468b85418c",
+    "url": "https://webcdn.m.qq.com/spcmgr/download/WeChatSetup_3.9.8.15.exe#/dl.7z",
+    "hash": "749753d77418666f4f76a107fbf38cfbc8f7df9d19ff0e5218b03a02a6122583",
     "installer": {
         "script": [
-            "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\`$_15_\", \"$dir\\`$R5\" -Force -Recurse",
+            "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Force -Recurse",
             "$configpath = \"$env:APPDATA\\Tencent\\WeChat\\All Users\\config\"",
             "ensure \"$configpath\" | Out-Null",
             "Set-Content -NoNewline -Path \"$configpath\\3ebffe94.ini\" -Value \"$persist_dir\"",
@@ -35,10 +35,13 @@
         ]
     },
     "checkver": {
-        "url": "https://pc.qq.com/detail/8/detail_11488.html",
-        "regex": "WeChat([\\d.]+)\\.exe"
+        "script": [
+            "$resp = Invoke-WebRequest -UseBasicParsing -Uri 'https://luban.m.qq.com/api/public/software-manager/softwareProxy' -Body 'cmdid=3318&jprxReq%5Breq%5D%5Bsoft_id_list%5D%5B%5D=11488' -Method 'POST'",
+            "Write-Output $resp.Content"
+        ],
+        "regex": "(?<prefix>WeChat|WeChatSetup_)([\\d.]+)\\.exe"
     },
     "autoupdate": {
-        "url": "https://webcdn.m.qq.com/spcmgr/download/WeChat$version.exe#/dl.7z"
+        "url": "https://webcdn.m.qq.com/spcmgr/download/$matchPrefix$version.exe#/dl.7z"
     }
 }

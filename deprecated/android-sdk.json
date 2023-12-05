@@ -1,0 +1,51 @@
+{
+    "version": "4333796",
+    "description": "A component for the Android SDK, which includes the complete set of development and debugging tools for Android.",
+    "homepage": "https://developer.android.com/studio/",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://developer.android.com/studio/terms.html"
+    },
+    "depends": "adb",
+    "url": "https://dl.google.com/android/repository/sdk-tools-windows-4333796.zip",
+    "hash": "7e81d69c303e47a4f0e748a6352d85cd0c8fd90a5a95ae4e076b5e5f960d3c7a",
+    "notes": [
+        "This manifest is deprecated and no longer receiving updates. Instead, use the new Android SDK Command-Line tools: `android-clt`.",
+        "- Learn more: https://developer.android.com/tools/releases/sdk-tools"
+    ],
+    "post_install": [
+        "if (Test-Path \"$(appdir adb $global)\") {",
+        "    cmd /c mklink /j \"$dir\\platform-tools\" \"$(appdir adb $global)\\current\\platform-tools\" | out-null",
+        "    attrib \"$(appdir adb $global)\\current\\platform-tools\" +R /L",
+        "}",
+        "&\"$dir\\tools\\bin\\sdkmanager.bat\" '--install' '\"cmdline-tools;latest\"'"
+    ],
+    "env_add_path": "tools\\bin",
+    "env_set": {
+        "ANDROID_HOME": "$dir",
+        "PROGUARD_HOME": "$dir\\tools\\proguard"
+    },
+    "bin": [
+        "tools\\proguard\\bin\\proguard.bat",
+        "tools\\proguard\\bin\\proguardgui.bat",
+        "tools\\proguard\\bin\\retrace.bat",
+        "tools\\emulator.exe",
+        "tools\\emulator-check.exe",
+        "tools\\mksdcard.exe",
+        "tools\\monitor.bat"
+    ],
+    "persist": [
+        ".knownPackages",
+        "build-tools",
+        "cmdline-tools",
+        "emulator",
+        "extras",
+        "licenses",
+        "ndk",
+        "patcher",
+        "platforms",
+        "skiaparser",
+        "sources",
+        "system-images"
+    ]
+}

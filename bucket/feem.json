@@ -1,0 +1,25 @@
+{
+    "version": "4.3.0",
+    "homepage": "https://feem.io/",
+    "description": "An application that allows for sharing files offline.",
+    "license": "Proprietary",
+    "url": "https://f000.backblazeb2.com/file/feemdownloads/Feem_v4.3.0_beta_Windows_Installer.exe.zip",
+    "hash": "ff79a85a2949447a73103f0d2dfcac6d94cf9bc9ee8e30940d2eb7e49ff7e076",
+    "pre_install": [
+        "Get-ChildItem \"$dir\\Feem_*.exe\" | Rename-Item -NewName 'FeemSetup.exe'",
+        "Expand-InnoArchive \"$dir\\FeemSetup.exe\" \"$dir\" -Removal"
+    ],
+    "shortcuts": [
+        [
+            "Feem.exe",
+            "Feem"
+        ]
+    ],
+    "checkver": {
+        "script": "(Invoke-WebRequest 'https://feem.link/feem-for-windows-desktop' -Method Head).Headers['x-bz-file-name']",
+        "regex": "Feem_v([\\d.]+)_*"
+    },
+    "autoupdate": {
+        "url": "https://f000.backblazeb2.com/file/feemdownloads/Feem_v$version_beta_Windows_Installer.exe.zip"
+    }
+}

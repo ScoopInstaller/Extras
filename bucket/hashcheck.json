@@ -4,7 +4,6 @@
     "homepage": "https://github.com/gurnec/HashCheck",
     "license": "BSD-3-Clause",
     "notes": "Before uninstallation, please close Explorer (or other files management tool, e.g., Total Commander) windows where you've used HashCheck from.",
-    "depends": "sudo",
     "url": "https://github.com/gurnec/HashCheck/releases/download/v2.4.0/HashCheckSetup-v2.4.0.exe",
     "hash": "2d6067f00bbb93526d146d2228a46dc4851f0fa866e69250279c6b2f00b8f1b7",
     "installer": {
@@ -13,18 +12,19 @@
             "Rename-Item \"$dir\\`$0_1\" 'HashCheck32.dll' -Force",
             "Rename-Item \"$dir\\`$0\" 'HashCheck64.dll' -Force",
             "if ($architecture -eq '64bit') {",
-            "   sudo \"$env:COMSPEC\" /c \"regsvr32 /s \"$dir\\HashCheck64.dll\"\"",
+            "   Start-Process 'regsvr32' -Verb 'RunAs' -ArgumentList @(\"$dir\\HashCheck64.dll\", '/s') -Wait",
             "}",
-            "sudo \"$env:COMSPEC\" /c \"regsvr32 /s \"$dir\\HashCheck32.dll\"\"",
+            "Start-Process 'regsvr32' -Verb 'RunAs' -ArgumentList @(\"$dir\\HashCheck32.dll\", '/s') -Wait",
             "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse -Force"
         ]
     },
     "uninstaller": {
         "script": [
             "if ($architecture -eq '64bit') {",
-            "   sudo \"$env:COMSPEC\" /c \"regsvr32 /u /s \"$dir\\HashCheck64.dll\"\"",
+            "   Start-Process 'regsvr32' -Verb 'RunAs' -ArgumentList @('/u', \"$dir\\HashCheck64.dll\", '/s') -Wait",
             "}",
-            "sudo \"$env:COMSPEC\" /c \"regsvr32 /u /s \"$dir\\HashCheck32.dll\"\""
+            "Start-Process 'regsvr32' -Verb 'RunAs' -ArgumentList @('/u', \"$dir\\HashCheck32.dll\", '/s') -Wait",
+            "Stop-Process -Name 'explorer' -Force; Start-Sleep -Seconds 3;"
         ]
     },
     "checkver": "github",

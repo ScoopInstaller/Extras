@@ -1,0 +1,41 @@
+{
+    "version": "0.2.1",
+    "homepage": "https://github.com/SamuelTulach/VirusTotalUploader",
+    "description": "A simple application written in C# that allows for file uploading to the VirusTotal website. (Requires a VirusTotal API Key)",
+    "license": "GPL-3.0",
+    "notes": [
+        "For a guide on how to get your VirusTotal API Key, visit:",
+        "https://github.com/SamuelTulach/VirusTotalUploader#how-to-get-api-key"
+    ],
+    "url": "https://github.com/SamuelTulach/VirusTotalUploader/releases/download/0.2.1/vt_portable.zip",
+    "hash": "77574fd3a16c1ec695a8b85fef05f813edfa8277e5f39cee38b286fc8c261419",
+    "post_install": [
+        "$registryPath = 'HKCU\\Software\\Classes\\*\\shell\\Upload to VirusTotal\\command'",
+        "$registryValue = (\"\"\"$dir\\uploader.exe\"\" \"\"%1\"\"\").Replace('$dir', $dir)",
+        "if ($global) { REG ADD $registryPath.Replace('HKCU', 'HKLM') /f /d $registryValue }",
+        "else { REG ADD $registryPath /f /d $registryValue }"
+    ],
+    "bin": [
+        [
+            "uploader.exe",
+            "vt-uploader"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "uploader.exe",
+            "VirusTotalUploader"
+        ]
+    ],
+    "post_uninstall": [
+        "if ($cmd -eq 'uninstall') {",
+        "    $registryPath = 'HKCU\\Software\\Classes\\*\\shell\\Upload to VirusTotal'",
+        "    if ($global) { REG DELETE $registryPath.Replace('HKCU', 'HKLM') /f }",
+        "    else { REG DELETE $registryPath /f }",
+        "}"
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "url": "https://github.com/SamuelTulach/VirusTotalUploader/releases/download/$version/vt_portable.zip"
+    }
+}

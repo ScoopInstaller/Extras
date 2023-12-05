@@ -1,21 +1,21 @@
 {
-    "version": "2.1.6",
+    "version": "2.6.12",
     "description": "Open-source end-to-end encrypted note taking alternative to Evernote.",
     "homepage": "https://notesnook.com/",
-    "license": {
-        "identifier": "Shareware",
-        "url": "https://notesnook.com/tos"
-    },
+    "license": "GPL-3.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/streetwriters/notesnook/releases/download/v2.1.6/notesnook_x64.exe#/dl.7z",
-            "hash": "sha512:af64577782c32b66a6c3f18988e07f3cea8726a532140dfe415e336f076d64e8ea8c9a25c594d8ea89c2c12a2eb584e84fa78c5fcc5723a33c4ce51149aa3c7a"
+            "url": "https://github.com/streetwriters/notesnook/releases/download/v2.6.12/notesnook_win_x64.exe#/dl.7z",
+            "hash": "sha512:62dcfedb553092188ec1f30c6f4500017ca956aa9d855d276583b07575e5c4d9143a2f6826c6a9ebc0f309c9de3eadc0ed9538200eb0f583436a214717c334c0",
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+        },
+        "arm64": {
+            "url": "https://github.com/streetwriters/notesnook/releases/download/v2.6.12/notesnook_win_arm64.exe#/dl.7z",
+            "hash": "sha512:6be86aa00cf1740b72004bd6921910486ceabe156356ea57bce235cf062a047fb37ff15e01d592ec0db76a7b13f9c2520e8c86259bb4d6c4fbf5be3b5c0e9c27",
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" \"$dir\""
         }
     },
-    "pre_install": [
-        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\" | Out-Null",
-        "Remove-Item \"$dir\\`$*\" -Force -Recurse"
-    ],
+    "post_install": "Remove-Item \"$dir\\`$*\" -Force -Recurse",
     "shortcuts": [
         [
             "Notesnook.exe",
@@ -23,13 +23,17 @@
         ]
     ],
     "checkver": {
-        "url": "https://api.github.com/repos/streetwriters/notesnook/releases",
-        "regex": "Notesnook Desktop v([\\d.]+)"
+        "url": "https://api.github.com/repositories/353775942/releases",
+        "jsonpath": "$..browser_download_url",
+        "regex": "/v([\\d.]+)/notesnook_win_x64_portable.exe"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/streetwriters/notesnook/releases/download/v$version/notesnook_x64.exe#/dl.7z"
+                "url": "https://github.com/streetwriters/notesnook/releases/download/v$version/notesnook_win_x64.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/streetwriters/notesnook/releases/download/v$version/notesnook_win_arm64.exe#/dl.7z"
             }
         },
         "hash": {

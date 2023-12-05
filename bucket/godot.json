@@ -1,19 +1,22 @@
 {
-    "version": "3.5",
+    "version": "4.2",
     "description": "A feature-packed, cross-platform game engine to create 2D and 3D games from a unified interface.",
     "homepage": "https://godotengine.org/",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/godotengine/godot/releases/download/3.5-stable/Godot_v3.5-stable_win64.exe.zip",
-            "hash": "3dfa22b0bee84f0a924ce7c1c2ebe92c08c9c67b7dfd4d8582561faf5a5e01fe"
+            "url": "https://github.com/godotengine/godot/releases/download/4.2-stable/Godot_v4.2-stable_win64.exe.zip",
+            "hash": "sha512:54a6fe5ac74486af4bcedc9b801d0effc8018e5cf1b72eaca8a1d8433cd0916c3c4d2a1726e92c88d38c792569174b34ea2e914823ef20cadf754b61c288f044"
         },
         "32bit": {
-            "url": "https://github.com/godotengine/godot/releases/download/3.5-stable/Godot_v3.5-stable_win32.exe.zip",
-            "hash": "8b9ae7119c13a2a2c7d9c98fa78fe3e0c77d2b388f55b0268de5bf5478e0a937"
+            "url": "https://github.com/godotengine/godot/releases/download/4.2-stable/Godot_v4.2-stable_win32.exe.zip",
+            "hash": "sha512:462925c87a99d4edba5c6a8a95a057d4999ab39c9f00d91beb298472f36bba9054d9da8c3a2c2fc3cbfa718c3176b11aae87ec2efa5d34739722dd54e3197f3a"
         }
     },
-    "pre_install": "Get-ChildItem \"$dir\\Godot_*.exe\" | Rename-Item -NewName \"$dir\\godot.exe\"",
+    "pre_install": [
+        "Remove-Item \"$dir\\Godot_*_console.*\"",
+        "Get-Item \"$dir\\Godot_*.exe\" | Rename-Item -NewName 'godot.exe'"
+    ],
     "bin": "godot.exe",
     "shortcuts": [
         [
@@ -33,6 +36,9 @@
             "32bit": {
                 "url": "https://github.com/godotengine/godot/releases/download/$version-stable/Godot_v$version-stable_win32.exe.zip"
             }
+        },
+        "hash": {
+            "url": "$baseurl/SHA512-SUMS.txt"
         }
     }
 }
