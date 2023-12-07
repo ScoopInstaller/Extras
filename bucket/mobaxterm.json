@@ -19,6 +19,14 @@
         "}",
         "@('MobaXterm backup.zip', 'MobaXterm.ini') | ForEach-Object { PersistsFile $_ }"
     ],
+    "pre_uninstall": [
+        "function UpdatesFile([string] $file) {",
+        "    if ((Get-ChildItem \"$dir\\$file\").LastWriteTime -gt (Get-ChildItem \"$persist_dir\\$file\").LastWriteTime) {",
+        "        [System.IO.File]::WriteAllBytes(\"$persist_dir\\$file\", [System.IO.File]::ReadAllBytes(\"$dir\\$file\"))",
+        "    }",
+        "}",
+        "@('MobaXterm backup.zip', 'MobaXterm.ini') | ForEach-Object { UpdatesFile $_ }"
+    ],
     "bin": "MobaXterm.exe",
     "shortcuts": [
         [
