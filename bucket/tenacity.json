@@ -1,0 +1,71 @@
+{
+    "version": "1.3.3",
+    "homepage": "https://tenacityaudio.org/",
+    "description": "An easy-to-use, privacy-friendly, FLOSS, cross-platform multi-track audio editor.",
+    "license": "GPL-2.0",
+    "notes": [
+        "To add file associations, run:",
+        "$dir\\install-associations.ps1",
+        "To remove file associations, run:",
+        "$dir\\uninstall-associations.ps1"
+    ],
+    "architecture": {
+        "32bit": {
+            "url": "https://codeberg.org/tenacityteam/tenacity/releases/download/v1.3.3/tenacity-win-1.3.3-x86.exe",
+            "hash": "291589f0e134dcb8c0350dbba68330ee0b6d5e918310ac91b1aee0bcebf1faf3"
+        },
+        "64bit": {
+            "url": "https://codeberg.org/tenacityteam/tenacity/releases/download/v1.3.3/tenacity-win-1.3.3-x64.exe",
+            "hash": "e29c284789dd9692d4a9b7bbe143fa8451d8fdf9eecb3ea51e8c0dfeea89ac82"
+        }
+    },
+    "innosetup": true,
+    "shortcuts": [
+        [
+            "Tenacity.exe",
+            "Tenacity"
+        ]
+    ],
+    "post_install": [
+        "$v1 = @\"",
+        "foreach (`$key_part in '.AUP', '.AUP3') {",
+        "    if (!(Test-Path \"HKCU:\\SOFTWARE\\Classes\\`$key_part\")) { New-Item \"HKCU:\\SOFTWARE\\Classes\\`$key_part\" -Force | Out-Null }",
+        "    Set-ItemProperty \"HKCU:\\SOFTWARE\\Classes\\`$key_part\" -Name '(Default)' -Value 'Tenacity.Project' -Force",
+        "}",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\Tenacity.Project' -Value 'Tenacity Project File' -Force | Out-Null",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\Tenacity.Project\\shell\\open\\command' -Value \"$dir\\Tenacity.exe %1\" -Force | Out-Null",
+        "New-Item 'HKCU:\\SOFTWARE\\Classes\\Tenacity.Project\\OpenWithList\\Tenacity.exe' -Value \"$dir\\Tenacity.exe %1\" -Force | Out-Null",
+        "\"@",
+        "",
+        "$v2 = @\"",
+        "foreach (`$key_part in '.AUP', '.AUP3') {",
+        "    Remove-ItemProperty \"HKCU:\\SOFTWARE\\Classes\\`$key_part\" -Name '(Default)' -ErrorAction 'SilentlyContinue' -Force",
+        "}",
+        "Remove-Item 'HKCU:\\SOFTWARE\\Classes\\Tenacity.Project' -Force -Recurse | Out-Null",
+        "\"@",
+        "",
+        "Set-Content \"$dir\\install-associations.ps1\" $v1 -Encoding 'utf8' -Force",
+        "Set-Content \"$dir\\uninstall-associations.ps1\" $v2 -Encoding 'utf8' -Force"
+    ],
+    "pre_uninstall": [
+        "if ($cmd -eq 'uninstall') {",
+        "    foreach ($key_part in '.AUP', '.AUP3') {",
+        "        Remove-ItemProperty \"HKCU:\\SOFTWARE\\Classes\\$key_part\" -Name '(Default)' -ErrorAction 'SilentlyContinue' -Force",
+        "    }",
+        "    Remove-Item 'HKCU:\\SOFTWARE\\Classes\\Tenacity.Project' -Force -Recurse | Out-Null",
+        "}"
+    ],
+    "checkver": {
+        "github": "https://codeberg.org/tenacityteam/tenacity"
+    },
+    "autoupdate": {
+        "architecture": {
+            "32bit": {
+                "url": "https://codeberg.org/tenacityteam/tenacity/releases/download/v$version/tenacity-win-$version-x86.exe"
+            },
+            "64bit": {
+                "url": "https://codeberg.org/tenacityteam/tenacity/releases/download/v$version/tenacity-win-$version-x64.exe"
+            }
+        }
+    }
+}
