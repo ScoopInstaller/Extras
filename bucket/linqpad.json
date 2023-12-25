@@ -1,5 +1,5 @@
 {
-    "version": "8.0.14",
+    "version": "8.0.18",
     "description": "The .NET programmer’s playground",
     "homepage": "https://www.linqpad.net",
     "license": {
@@ -9,8 +9,8 @@
     "suggest": {
         ".Net SDK": "dotnet-sdk"
     },
-    "url": "https://linqpad.azureedge.net/public/LINQPad8.zip",
-    "hash": "577fcfaa7a665844602295ccfdcb82d47ec8844be4a87b930d4e4a9f35f9e441",
+    "url": "https://linqpad.azureedge.net/public/LINQPad8.zip?cache=8.0.18.3812502",
+    "hash": "d18e59baeb1f957c9691c2621dd4dc34cd7abc0196cb7e9083476a3bf54d687b",
     "architecture": {
         "64bit": {
             "bin": [
@@ -62,11 +62,19 @@
         }
     },
     "checkver": {
-        "url": "https://www.linqpad.net/Download.aspx",
-        "regex": "Version\">([\\d.]+)<"
+        "script": [
+            "try {",
+            "    $res = Invoke-WebRequest -Uri https://www.linqpad.net/GetFile.aspx?LINQPad8.zip -Method Head -MaximumRedirection 0 -ErrorAction Ignore",
+            "} catch [Microsoft.PowerShell.Commands.HttpResponseException] {",
+            "    $releaseUrl = $_.Exception.Response.Headers.Location.ToString()",
+            "}",
+            "$releaseUrl = if ($null -eq $releaseUrl) { $res.Headers['Location'] } else { $releaseUrl }",
+            "$releaseUrl"
+        ],
+        "regex": "\\.zip\\?cache=(?<ver>(?<version>\\d+\\.\\d+\\.\\d+)[\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://linqpad.azureedge.net/public/LINQPad$majorVersion.zip",
+        "url": "https://linqpad.azureedge.net/public/LINQPad$majorVersion.zip?cache=$matchVer",
         "architecture": {
             "64bit": {
                 "bin": [
