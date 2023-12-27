@@ -1,13 +1,14 @@
 {
-    "version": "1.7.95",
+    "version": "2.1.7",
     "description": "Downloads image albums from various websites in bulk.",
-    "homepage": "https://github.com/RipMeApp/ripme",
+    "homepage": "https://github.com/ripmeapp2/ripme",
     "license": "MIT",
     "suggest": {
-        "JRE": "java/temurin8-jre"
+        "JRE": "java/temurin17-jre"
     },
-    "url": "https://github.com/RipMeApp/ripme/releases/download/1.7.95/ripme.jar",
-    "hash": "008201e406f401b27248277a4188f26203bb9da0170872de900125f8a6c8b558",
+    "url": "https://github.com/ripmeapp2/ripme/releases/download/2.1.7/ripme-2.1.7-29-b080faae.jar#/ripme.jar",
+    "hash": "afb0b57cf726abab89943f69345fdffd7dae0ae813ca9ec07f40ac1f65d2413e",
+    "pre_install": "Set-Content \"$dir\\ripme.cmd\" '@start javaw.exe -jar \"%~dp0ripme.jar\" %*' -Encoding Ascii",
     "bin": "ripme.jar",
     "shortcuts": [
         [
@@ -16,8 +17,12 @@
         ]
     ],
     "persist": "rips",
-    "checkver": "github",
+    "checkver": {
+        "url": "https://api.github.com/repositories/330195520/releases/latest",
+        "jsonpath": "$..browser_download_url",
+        "regex": "download/(?<tag>[\\d.]+)/ripme-([\\d.]+)-(?<num>[\\d.]+)-(?<commit>[a-fA-F0-9]+)\\.jar"
+    },
     "autoupdate": {
-        "url": "https://github.com/RipMeApp/ripme/releases/download/$version/ripme.jar"
+        "url": "https://github.com/ripmeapp2/ripme/releases/download/$matchTag/ripme-$version-$matchNum-$matchCommit.jar#/ripme.jar"
     }
 }

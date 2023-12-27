@@ -8,7 +8,9 @@
         "$dir\\npcap-installer.exe",
         "",
         "You can also install USBPcap from the 'wireshark' directory if you need the USB packets capture funcionality.",
-        "$dir\\USBPcapSetup-installer.exe"
+        "$dir\\USBPcapSetup-installer.exe",
+        "",
+        "If this is the first time you opted to install USBPcap, please restart and run: $dir\\enable-usbpcap.ps1"
     ],
     "architecture": {
         "64bit": {
@@ -23,6 +25,10 @@
             "Get-ChildItem \"$dir\\USBPcapSetup-*.exe\" | Rename-Item -NewName 'USBPcapSetup-installer.exe'"
         ]
     },
+    "post_install": [
+        "Get-ChildItem \"$bucketsdir\\extras\\scripts\\wireshark\" | Copy-Item -Force -Destination \"$dir\"",
+        "& \"$dir\\enable-usbpcap.ps1\" 2>$null   # Attempt try to enable USBPcap if already installed"
+    ],
     "bin": [
         "capinfos.exe",
         "dumpcap.exe",
