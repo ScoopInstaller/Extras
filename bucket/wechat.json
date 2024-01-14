@@ -6,8 +6,14 @@
         "identifier": "Proprietary",
         "url": "https://www.wechat.com/en/service_terms.html"
     },
-    "url": "https://webcdn.m.qq.com/spcmgr/download/WeChat3.9.8.25.exe#/dl.7z",
-    "hash": "31ca72265d46110a4ec24f05ec3bfa99f0700895317396b89ec5f8d2e5f91950",
+    "architecture": {
+        "64bit": {
+            "url": "https://dldir1v6.qq.com/weixin/Windows/WeChatSetup.exe#/dl.7z"
+        },
+        "32bit": {
+            "url": "https://dldir1v6.qq.com/weixin/Windows/WeChatSetup_x86.exe#/dl.7z"
+        }
+    },
     "installer": {
         "script": [
             "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Force -Recurse",
@@ -39,9 +45,16 @@
             "$resp = Invoke-WebRequest -UseBasicParsing -Uri 'https://luban.m.qq.com/api/public/software-manager/softwareProxy' -Body 'cmdid=3318&jprxReq%5Breq%5D%5Bsoft_id_list%5D%5B%5D=11488' -Method 'POST'",
             "Write-Output $resp.Content"
         ],
-        "regex": "(?<prefix>WeChat|WeChatSetup_)([\\d.]+)\\.exe"
+        "jsonpath": "$..ver_name"
     },
     "autoupdate": {
-        "url": "https://webcdn.m.qq.com/spcmgr/download/$matchPrefix$version.exe#/dl.7z"
+        "architecture": {
+            "64bit": {
+                "url": "https://dldir1v6.qq.com/weixin/Windows/WeChatSetup.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://dldir1v6.qq.com/weixin/Windows/WeChatSetup_x86.exe#/dl.7z"
+            }
+        }
     }
 }
