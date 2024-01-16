@@ -1,0 +1,40 @@
+{
+    "version": "8.34",
+    "description": "The best freeware resource for PCB related calculations you can find",
+    "homepage": "https://saturnpcb.com/saturn-pcb-toolkit/",
+    "license": "Freeware",
+    "architecture": {
+        "64bit": {
+            "url": "https://www.saturnpcb.com/wp-content/Toolkit/Saturn_PCB_Toolkit_V8.34_Setup_MSI.msi",
+            "hash": "076df622d623484f5f85ce94fa2df9a2571c7dbcc8ecfa22ad53ee7137789b3e"
+        }
+    },
+    "pre_install": [
+        "Move-Item \"$dir\\PCB Toolkit V$version.exe\" \"$dir\\saturn.exe\""
+    ],
+    "post_install": [
+        "'install.reg', 'uninstall.reg' | ForEach-Object {",
+        "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\saturn\\$_\"",
+        "    Set-Content \"$dir\\$_\" $content -Encoding Ascii",
+        "}",
+        "reg import \"$dir\\install.reg\""
+    ],
+    "pre_uninstall": "reg import \"$dir\\uninstall.reg\"",
+    "shortcuts": [
+        [
+            "saturn.exe",
+            "Saturn PCB Toolkit"
+        ]
+    ],
+    "checkver": {
+        "url": "https://saturnpcb.com/saturn-pcb-toolkit/",
+        "regex": "<h1 class=\"entry-title\">Saturn PCB Design Toolkit Version ([\\d.]+)</h1>"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://www.saturnpcb.com/wp-content/Toolkit/Saturn_PCB_Toolkit_V$version_Setup_MSI.msi"
+            }
+        }
+    }
+}
