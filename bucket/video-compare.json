@@ -9,6 +9,20 @@
             "hash": "a9e86992abe9ca09c9bc642957779ce32a8a83bad8f072357cda3a3421ae6d07"
         }
     },
+    "post_install": [
+        "$LnkPath = Join-Path ([System.Environment]::GetFolderPath('SendTo')) video-compare.lnk",
+        "if (Test-Path $LnkPath){Remove-Item $LnkPath}",
+        "$WScriptShell = New-Object -ComObject WScript.Shell",
+        "$Shortcut = $WScriptShell.CreateShortcut($LnkPath)",
+        "$Shortcut.TargetPath = (Join-Path $DIR video-compare.exe)",
+        "$Shortcut.Save()"
+    ],
+    "uninstaller": {
+        "script": [
+            "$LnkPath = Join-Path ([System.Environment]::GetFolderPath('SendTo')) video-compare.lnk",
+            "if (Test-Path $LnkPath){Remove-Item $LnkPath}"
+        ]
+    },
     "bin": "video-compare.exe",
     "checkver": "github",
     "autoupdate": {
