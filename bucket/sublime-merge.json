@@ -6,13 +6,30 @@
         "identifier": "Shareware",
         "url": "https://www.sublimehq.com/eula"
     },
-    "notes": "Sublime Merge may be downloaded and evaluated for free, however a license must be purchased for continued use. There is currently no enforced time limit for the evaluation. For more information please see https://www.sublimemerge.com/",
+    "notes": [
+        "Sublime Merge may be downloaded and evaluated for free, however a license must be purchased for continued use. There is currently no enforced time limit for the evaluation. For more information please see https://www.sublimemerge.com/",
+        "Add Sublime Merge as a context menu option by running:",
+        "reg import \"$dir\\install-context.reg\""
+    ],
     "architecture": {
         "64bit": {
             "url": "https://download.sublimetext.com/sublime_merge_build_2091_x64.zip",
             "hash": "e6a1ed134da825fb7668ba91f82d73ada998acd97ddf2a57d18efd67b54b1ee9"
         }
     },
+    "post_install": [
+        "$exepath = \"$dir\\sublime_merge.exe\".Replace('\\', '\\\\')",
+        "'install-context.reg', 'uninstall-context.reg' | ForEach-Object {",
+        "    if (Test-Path \"$bucketsdir\\extras\\scripts\\$app\\$_\") {",
+        "        $content = Get-Content \"$bucketsdir\\extras\\scripts\\$app\\$_\"",
+        "        $content = $content.Replace('$sublime-merge-path', $exepath)",
+        "        if ($global) {",
+        "            $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "        }",
+        "    }",
+        "    $content | Set-Content -Path \"$dir\\$_\" -Encoding ascii",
+        "}"
+    ],
     "bin": "smerge.exe",
     "shortcuts": [
         [
@@ -21,6 +38,9 @@
         ]
     ],
     "persist": "Data",
+    "uninstaller": {
+        "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }"
+    },
     "checkver": {
         "url": "https://www.sublimemerge.com/updates/stable_update_check",
         "jsonpath": "$.latest_version"
