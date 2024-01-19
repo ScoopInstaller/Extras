@@ -15,9 +15,16 @@
         "32bit": {
             "url": "https://www.voidtools.com/Everything-1.4.1.1024.x86.zip",
             "hash": "febbdf9ffefd122e046163d23b3ce995b35bbee05964886d1db8c81b7fb5c34f"
+        },
+        "arm64": {
+            "url": "https://www.voidtools.com/Everything-1.4.1.1024.ARM64.zip",
+            "hash": "b3ce6df443270266b067c90e5c66b619372bc618c27d7b0aa57b0e19a8440f89"
         }
     },
     "pre_install": [
+        "# for arm64",
+        "if ($architecture -eq 'arm64') { Rename-Item \"$dir\\EverythingARM64.exe\" -NewName 'Everything.exe' }",
+        "# END",
         "ensure \"$persist_dir\" | Out-Null",
         "if (!(Test-Path \"$persist_dir\\Everything.ini\")) { Start-Process -Wait \"$dir\\Everything.exe\" -Args @('-install-config null') }",
         "Get-ChildItem \"$persist_dir\\*\" -Include 'Bookmarks.csv', 'Everything.db', 'Everything.ini', 'Filters.csv', 'Search History.csv' | Copy-Item -Destination \"$dir\" -ErrorAction SilentlyContinue"
@@ -66,6 +73,9 @@
             },
             "32bit": {
                 "url": "https://www.voidtools.com/Everything-$version.x86.zip"
+            },
+            "arm64": {
+                "url": "https://www.voidtools.com/Everything-$version.ARM64.zip"
             }
         },
         "hash": {

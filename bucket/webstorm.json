@@ -1,17 +1,21 @@
 {
-    "version": "2023.2.5-232.10227.9",
+    "version": "2023.3.2-233.13135.92",
     "description": "Cross-Platform IDE for JavaScript by JetBrains.",
     "homepage": "https://www.jetbrains.com/webstorm/",
     "license": {
         "identifier": "Proprietary",
         "url": "https://www.jetbrains.com/store/license.html"
     },
-    "url": "https://download.jetbrains.com/webstorm/WebStorm-2023.2.5.exe#/dl.7z",
-    "hash": "02fa1a1944aa7253bf6dec17baecae002c05dd3bc2da1ffd1719b860643f164c",
+    "url": "https://download.jetbrains.com/webstorm/WebStorm-2023.3.2.exe#/dl.7z",
+    "hash": "e5164e5108b82293a40ccf1d43b124f4e6f5e9db574122864948d048fb1b9511",
     "extract_to": "IDE",
+    "pre_install": [
+        "Get-ChildItem \"$persist_dir\\IDE\\bin\\webstorm*.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$dir\\IDE\\bin\"",
+        "Get-ChildItem \"$persist_dir\\IDE\\bin\\jetbrains_client64.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$dir\\IDE\\bin\""
+    ],
     "installer": {
         "script": [
-            "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" $dir $persist_dir",
+            "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" \"$dir\" \"$persist_dir\"",
             "Remove-Item \"$dir\\IDE\\`$*\" -Force -Recurse"
         ]
     },
@@ -42,9 +46,11 @@
     },
     "persist": [
         "IDE\\bin\\idea.properties",
-        "IDE\\bin\\webstorm.exe.vmoptions",
-        "IDE\\bin\\webstorm64.exe.vmoptions",
         "profile"
+    ],
+    "pre_uninstall": [
+        "Get-ChildItem \"$dir\\IDE\\bin\\webstorm*.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$persist_dir\\IDE\\bin\"",
+        "Get-ChildItem \"$dir\\IDE\\bin\\jetbrains_client64.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$persist_dir\\IDE\\bin\""
     ],
     "checkver": {
         "url": "https://data.services.jetbrains.com/products/releases?code=WS&latest=true&platform=zip&type=release",
