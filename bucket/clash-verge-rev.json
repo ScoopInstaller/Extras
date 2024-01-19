@@ -1,0 +1,36 @@
+{
+    "version": "1.4.9",
+    "description": "Continuation of Clash Verge - A Clash Meta GUI based on Tauri.",
+    "homepage": "https://github.com/clash-verge-rev/clash-verge-rev",
+    "license": "GPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v1.4.9/Clash.Verge_1.4.9_x64_portable.zip",
+            "hash": "9931e8d2aa56cc99e5f0334c237782c848464ea1ae0214abef4ac4e8fd1b4219"
+        }
+    },
+    "shortcuts": [
+        [
+            "Clash Verge.exe",
+            "Clash Verge"
+        ]
+    ],
+    "persist": ".config",
+    "post_install": [
+        "if (!(Test-Path \"$persist_dir\\.config\\PORTABLE\")) {",
+        "    New-Item -Path \"$persist_dir\\.config\\PORTABLE\" -ItemType file | Out-Null",
+        "}"
+    ],
+    "pre_uninstall": [
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+        "Start-Process \"$dir\\resources\\uninstall-service.exe\" -Wait -Verb 'RunAs' -WindowStyle 'Hidden'; Start-Sleep -Seconds 3"
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v$version/Clash.Verge_$version_x64_portable.zip"
+            }
+        }
+    }
+}

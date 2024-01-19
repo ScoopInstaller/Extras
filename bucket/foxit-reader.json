@@ -1,18 +1,14 @@
 {
-    "##": "Using cdn06.foxitsoftware.com for better speed worldwide. (redirects to cdn06.foxitsoftware.com.cdn.cloudflare.net)",
-    "version": "12.1.3.15356",
+    "##": "Using cdn78.foxitsoftware.com for better speed worldwide. Please keep foxit-reader and foxit-pdf-reader in sync.",
+    "version": "2023.3.0",
     "description": "Fast and feature rich PDF reader that offers a delightful reading experience.",
     "homepage": "https://www.foxit.com/pdf-reader/",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.foxit.com/pdf-editor/eula.html"
     },
-    "url": "https://cdn06.foxitsoftware.com/product/reader/desktop/win/12.1.3/FoxitPDFReader1213_L10N_Setup.msi",
-    "hash": "834e47c81fc4a2385fa75ac8b64f4819cc507b7470def7cb5a25f8e0103b7089",
-    "pre_install": [
-        "Copy-Item \"$dir\\Foxit Software\\Foxit PDF Reader\\*\" \"$dir\" -Force -Recurse | Out-Null",
-        "Remove-Item \"$dir\\Foxit Software\" -Force -Recurse | Out-Null"
-    ],
+    "url": "https://cdn78.foxitsoftware.com/product/reader/desktop/win/2023.3.0/FoxitPDFReader20233_enu_Setup_Prom.exe",
+    "hash": "9bf6b31d15784247b3fbd840e97a7a46987d04848bc04f84eed67e03b1607035",
     "bin": "FoxitPDFReader.exe",
     "shortcuts": [
         [
@@ -20,11 +16,12 @@
             "Foxit PDF Reader"
         ]
     ],
+    "innosetup": true,
     "checkver": {
-        "url": "https://www.foxit.com/pdf-reader/version-history.html",
-        "regex": ">Version ([\\d.]+)</"
+        "script": "(Invoke-WebRequest -Uri 'https://www.foxit.com/downloads/latest.html?product=Foxit-Reader&platform=Windows&version=&package_type=&language=English&distID=' -MaximumRedirection 0 -ErrorAction:SilentlyContinue -SkipHttpErrorCheck).Headers.Location",
+        "regex": "/win/(?<version>[\\d.]+)/(?<fname>FoxitPDFReader.*exe)$"
     },
     "autoupdate": {
-        "url": "https://cdn06.foxitsoftware.com/product/reader/desktop/win/$matchHead/FoxitPDFReader$majorVersion$minorVersion$patchVersion_L10N_Setup.msi"
+        "url": "https://cdn78.foxitsoftware.com/product/reader/desktop/win/$version/$matchFname"
     }
 }
