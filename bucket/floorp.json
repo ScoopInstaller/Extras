@@ -1,0 +1,53 @@
+{
+    "version": "11.7.1",
+    "description": "A Browser build for keeping the Open, Private and Sustainable Web alive. Based on Mozilla Firefox.",
+    "homepage": "https://github.com/Floorp-Projects",
+    "license": "MPL-2.0",
+    "notes": [
+        "To set profile 'Scoop' as *DEFAULT*, or profiles/settings was lost after update:",
+        "  - Run 'Floorp Profile Manager', choose 'Scoop' then click 'Start Floorp'.",
+        "  - Visit 'about:profiles' page in Floorp to check *DEFAULT* profile.",
+        "For details: https://support.mozilla.org/en-US/kb/profile-manager-create-remove-switch-firefox-profiles"
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Floorp-Projects/Floorp-Portable/releases/download/11.7.1-portable/floorp-11.7.1-portable-windows-x86_64.zip",
+            "hash": "sha512:02bc4d70d306f23177947812c0574c50f1a8f47d747f0d77c6b21815e23c5861d23c4db16b97e0ad6f20d856711c46721ac4416921a6b6a5e20bb5e4857782ef"
+        }
+    },
+    "extract_dir": "core",
+    "post_install": [
+        "floorp -CreateProfile \"Scoop $persist_dir\\profile\"",
+        "$Addition = \"$persist_dir\\addition\"",
+        "if (Test-Path $Addition) {",
+        "  info 'Copying additional items...'",
+        "  Copy-Item -Path $Addition\\* -Destination $dir -Force -Recurse -ErrorAction SilentlyContinue",
+        "}"
+    ],
+    "bin": "floorp.exe",
+    "shortcuts": [
+        [
+            "floorp.exe",
+            "Floorp"
+        ],
+        [
+            "floorp.exe",
+            "Floorp Profile Manager",
+            "-P"
+        ]
+    ],
+    "persist": [
+        "core",
+        "profile"
+    ],
+    "checkver": {
+        "github": "https://github.com/Floorp-Projects/Floorp-Portable"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Floorp-Projects/Floorp-Portable/releases/download/$version-portable/floorp-$version-portable-windows-x86_64.zip"
+            }
+        }
+    }
+}
