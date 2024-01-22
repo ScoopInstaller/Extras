@@ -1,6 +1,6 @@
 {
-    "version": "99.0.4788.86",
-    "description": "Gaming counterpart of Opera web browser",
+    "version": "106.0.4998.49",
+    "description": "Opera GX is a special version of the Opera browser built specifically for gamers.",
     "homepage": "https://www.opera.com/gx",
     "license": {
         "identifier": "Freeware",
@@ -8,23 +8,23 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://download3.operacdn.com/pub/opera_gx/99.0.4788.86/win/Opera_GX_99.0.4788.86_Setup_x64.exe#/dl.7z",
-            "hash": "a41a838357ce3e8d1c3b606847927da45fb1405dfed232a81e31806a5460f459"
+            "url": "https://get.opera.com/pub/opera_gx/106.0.4998.49/win/Opera_GX_106.0.4998.49_Setup_x64.exe#/dl.7z",
+            "hash": "654bd3800ad0d083b3f4b8113a3a1934b7c2f11e95991e08879c31dc4bfb6a6e"
         },
         "32bit": {
-            "url": "https://download3.operacdn.com/pub/opera_gx/99.0.4788.86/win/Opera_GX_99.0.4788.86_Setup.exe#/dl.7z",
-            "hash": "c4f1fb8db14081457594c10731a5a9173e7181e735d4c2af02ff7a34e86e20e5"
+            "url": "https://get.opera.com/pub/opera_gx/106.0.4998.49/win/Opera_GX_106.0.4998.49_Setup.exe#/dl.7z",
+            "hash": "cd8d61c393e503de99738e660c289f89566045cfed16cd7c4f46d65125652624"
         }
     },
     "installer": {
         "script": [
-            "Remove-Item \"$dir\\*_list\" -Force",
-            "Move-Item \"$dir\\*\" \"$dir\\$version\" -Exclude 'Assets', 'launcher*', 'Resources.pri' -ErrorAction Ignore",
-            "if (-not (Test-Path \"$dir\\$version\\localization\")) {",
+            "Remove-Item -Path \"$dir\\*_list\" -Force",
+            "Move-Item -Path \"$dir\\*\" -Destination \"$dir\\$version\" -Exclude 'Assets', 'launcher*', 'Resources.pri' -ErrorAction Ignore",
+            "if (!(Test-Path \"$dir\\$version\\localization\")) {",
             "   New-Item -Path \"$dir\\$version\\localization\" -ItemType Directory | Out-Null",
             "   Move-Item -Path \"$dir\\$version\\*.pak\" -Destination \"$dir\\$version\\localization\" -Exclude 'opera*' -ErrorAction Ignore",
             "}",
-            "@{ 'autoupdate'= $false; 'enable_stats' = $false; 'single_profile' = $true } | ConvertTo-Json -Depth 20 | Out-File \"$dir\\installer_prefs.json\" -Encoding ASCII"
+            "Set-Content -Path \"$dir\\installer_prefs.json\" -Value (@{ 'autoupdate'= $false; 'enable_stats' = $false; 'single_profile' = $true } | ConvertTo-Json) -Encoding ASCII"
         ]
     },
     "shortcuts": [
@@ -35,17 +35,23 @@
     ],
     "persist": "profile",
     "checkver": {
-        "url": "https://get.opera.com/ftp/pub/opera_gx/",
-        "regex": "([\\d.]+)/",
-        "reverse": true
+        "script": [
+            "$releases = 'https://get.opera.com/pub/opera_gx/'",
+            "$download_page = Invoke-WebRequest -Uri $releases -UseBasicParsing",
+            "$versionSort   = { [version]$_.href.TrimEnd('/') }",
+            "$last_ver = $download_page.links | Where-Object href -match '^[\\d]+[\\d\\.]+/$' | Sort-Object $versionSort -Descending | Select-Object -first 1 -expand href",
+            "$version = $last_ver -replace '/', ''",
+            "Write-Output $version"
+        ],
+        "regex": "(\\S+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download3.operacdn.com/pub/opera_gx/$version/win/Opera_GX_$version_Setup_x64.exe#/dl.7z"
+                "url": "https://get.opera.com/pub/opera_gx/$version/win/Opera_GX_$version_Setup_x64.exe#/dl.7z"
             },
             "32bit": {
-                "url": "https://download3.operacdn.com/pub/opera_gx/$version/win/Opera_GX_$version_Setup.exe#/dl.7z"
+                "url": "https://get.opera.com/pub/opera_gx/$version/win/Opera_GX_$version_Setup.exe#/dl.7z"
             }
         },
         "hash": {
