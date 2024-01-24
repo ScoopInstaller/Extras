@@ -8,11 +8,6 @@
             "url": "https://downloads.sourceforge.net/project/vidiot/Vidiot-0.3.38-win64.zip",
             "hash": "sha1:41e1a28fa3ac8861aee57d46be57cabe4872f47d",
             "extract_dir": "Vidiot-0.3.38-win64"
-        },
-        "32bit": {
-            "url": "https://downloads.sourceforge.net/project/vidiot/Vidiot-0.3.37-win32.zip",
-            "hash": "sha1:fb7396f291c1abb5add59f3bc9ddba7520dec3d0",
-            "extract_dir": "Vidiot-0.3.37-win32"
         }
     },
     "bin": "vidiot.exe",
@@ -23,28 +18,14 @@
         ]
     ],
     "checkver": {
-        "script": [
-            "$url = 'https://sourceforge.net/projects/vidiot/rss?path=/'",
-            "$cont = (Invoke-WebRequest $url).Content",
-            "$r = 'Vidiot-([\\d.]+)-win64.zip'",
-            "if (!($cont -match $r)) { error \"Could not match $r in $url\"; continue }",
-            "$version = $matches[1]",
-            "$r = 'Vidiot-([\\d.]+)-win32.zip'",
-            "if (!($cont -match $r)) { error \"Could not match $r in $url\"; continue }",
-            "$version32 = $matches[1]",
-            "Write-Output $version $version32"
-        ],
-        "regex": "([\\d.]+) (?<version32>[\\d.]+)"
+        "url": "https://sourceforge.net/projects/vidiot/files/",
+        "regex": "Release\\s+([\\d.]+)\\s+\\(r"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
                 "url": "https://downloads.sourceforge.net/project/vidiot/Vidiot-$version-win64.zip",
                 "extract_dir": "Vidiot-$version-win64"
-            },
-            "32bit": {
-                "url": "https://downloads.sourceforge.net/project/vidiot/Vidiot-$matchVersion32-win32.zip",
-                "extract_dir": "Vidiot-$matchVersion32-win32"
             }
         }
     }
