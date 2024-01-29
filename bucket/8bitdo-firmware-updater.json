@@ -1,0 +1,30 @@
+{
+    "version": "2.47",
+    "description": "Firmware updater for 8BitDo hardware",
+    "homepage": "https://support.8bitdo.com/firmware-updater.html",
+    "license": "Proprietary",
+    "url": "https://download.8bitdo.com/Tools/FirmwareUpdater/8BitDo_Firmware_Updater_Win.zip",
+    "hash": "d7db8d377c9287985da56b3a7aa8f6a4dc4a0aeec673f0ec73e29dc504500244",
+    "extract_dir": "8BitDo_Firmware_Updater_Win",
+    "shortcuts": [
+        [
+            "8BitDo Firmware Updater.exe",
+            "8BitDo Firmware Updater"
+        ]
+    ],
+    "checkver": {
+        "script": [
+            "$headers = @{",
+            "    'Version' = 1",
+            "    'Type'    = 1",
+            "}",
+            "$res = Invoke-WebRequest -Uri http://dl.8bitdo.com:8080/firmware/loadNewToolUpdateVersion -Method Post -Headers $headers -MaximumRedirection 0 -ErrorAction Ignore",
+            "$res.Content"
+        ],
+        "jsonpath": "$.list[0].fileName",
+        "regex": "8BitDoFirmwareUpdater_V([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://download.8bitdo.com/Tools/FirmwareUpdater/8BitDo_Firmware_Updater_Win.zip"
+    }
+}
