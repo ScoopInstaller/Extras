@@ -21,6 +21,24 @@
             "MediaElch"
         ]
     ],
+    "persist": [
+        "export_themes",
+        "advancedsettings.xml",
+        "MediaElch.ini"
+    ],
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\advancedsettings.xml\")){",
+        "   \"<advancedsettings>\" | Out-File \"$persist_dir\\advancedsettings.xml\"",
+        "   \"    <portableMode>true</portableMode>\" | Out-File \"$persist_dir\\advancedsettings.xml\" -Append",
+        "   \"</advancedsettings>\" | Out-File \"$persist_dir\\advancedsettings.xml\" -Append",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\MediaElch.ini\")){",
+        "   New-Item \"$persist_dir\\MediaElch.ini\" > $null",
+        "}"
+    ],
+    "pre_uninstall": [
+        "Copy-Item \"$dir\\MediaElch.ini\" \"$persist_dir\\MediaElch.ini\" -Force"
+    ],
     "checkver": {
         "url": "https://api.github.com/repositories/3618825/releases/latest",
         "regex": "MediaElch_win_10_or_later_Qt6_(?<version>[\\d\\.]+)(?<detail>[\\w\\d-_]+).zip"
