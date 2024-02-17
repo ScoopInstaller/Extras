@@ -1,0 +1,42 @@
+{
+    "version": "122.0.2",
+    "description": "Firefox fork with compiler optimizations and patches from Librewolf, Waterfox, and GNU IceCat.",
+    "homepage": "https://thorium.rocks/mercury",
+    "license": {
+        "identifier": "MPL-2.0",
+        "url": "https://github.com/Alex313031/Mercury/blob/main/LICENSE.md"
+    },
+    "url": "https://github.com/Alex313031/Mercury/releases/download/v.122.0.2/mercury_122.0.2_win64_AVX2.zip",
+    "hash": "F647CA5E3451FE18DA1D8BA112028D3FCA225E1A81338DD3323735EB3D9E0C2D",
+    "bin": [
+        [
+            "mercury\\mercury.exe",
+            "mercury",
+            "--user-data-dir=\"$dir\\USER_DATA\""
+        ]
+    ],
+    "shortcuts": [
+        [
+            "mercury\\mercury.exe",
+            "Mercury",
+            "--user-data-dir=\"$dir\\USER_DATA\""
+        ]
+    ],
+    "post_install": [
+        "if (!(Test-Path \"$dir\\USER_DATA\\*\") -and (Test-Path \"$env:LocalAppData\\Mercury\\User Data\")) {",
+        "    info '[Portable Mode]: Copying user data...'",
+        "    Copy-Item \"$env:LocalAppData\\Mercury\\User Data\\*\" \"$dir\\USER_DATA\" -Recurse",
+        "}"
+    ],
+    "env_set": {
+        "CHROME_EXECUTABLE": "$dir\\mercury.exe"
+    },
+    "persist": "USER_DATA",
+    "checkver": {
+        "github": "https://github.com/Alex313031/Mercury",
+        "regex": "/releases/tag/v.(?:v|V)?([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://github.com/Alex313031/Mercury/releases/tag/$version/mercury_$version_win64_AVX2.zip"
+    }
+}
