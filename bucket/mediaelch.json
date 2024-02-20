@@ -14,6 +14,21 @@
         }
     },
     "extract_dir": "MediaElch",
+    "pre_install": [
+        "# Portable",
+        "if (!(Test-Path \"$persist_dir\\advancedsettings.xml\")) {",
+        "    New-Item -Path \"$dir\\advancedsettings.xml\" -ItemType File -Value \"<advancedsettings><portableMode>true</portableMode></advancedsettings>\" | Out-Null",
+        "}",
+        "# Persist manually because symlinks don't work",
+        "if (Test-Path \"$persist_dir\\MediaElch.sqlite\") {",
+        "    Copy-Item -Path \"$persist_dir\\MediaElch.sqlite\" -Destination \"$dir\\MediaElch.sqlite\"",
+        "}",
+        "if (Test-Path \"$persist_dir\\MediaElch.ini\") {",
+        "    Copy-Item -Path \"$persist_dir\\MediaElch.ini\" -Destination \"$dir\\MediaElch.ini\"",
+        "} else {",
+        "    Set-Content \"$dir\\MediaElch.ini\" @('[General]', 'CheckForUpdates=false') -Encoding Ascii",
+        "}"
+    ],
     "bin": "MediaElch.exe",
     "shortcuts": [
         [
@@ -23,21 +38,13 @@
     ],
     "persist": [
         "export_themes",
-        "advancedsettings.xml",
-        "MediaElch.ini"
-    ],
-    "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\advancedsettings.xml\")){",
-        "   \"<advancedsettings>\" | Out-File \"$persist_dir\\advancedsettings.xml\"",
-        "   \"    <portableMode>true</portableMode>\" | Out-File \"$persist_dir\\advancedsettings.xml\" -Append",
-        "   \"</advancedsettings>\" | Out-File \"$persist_dir\\advancedsettings.xml\" -Append",
-        "}",
-        "if (!(Test-Path \"$persist_dir\\MediaElch.ini\")){",
-        "   New-Item \"$persist_dir\\MediaElch.ini\" > $null",
-        "}"
+        "images",
+        "advancedsettings.xml"
     ],
     "pre_uninstall": [
-        "Copy-Item \"$dir\\MediaElch.ini\" \"$persist_dir\\MediaElch.ini\" -Force"
+        "'MediaElch.ini', 'MediaElch.sqlite' | ForEach-Object {",
+        "    Copy-Item -Path \"$dir\\$_\" -Destination \"$persist_dir\\$_\" -ErrorAction SilentlyContinue -Force | Out-Null",
+        "}"
     ],
     "checkver": {
         "url": "https://api.github.com/repositories/3618825/releases/latest",
