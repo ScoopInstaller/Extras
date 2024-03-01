@@ -30,7 +30,11 @@
     "checkver": {
         "script": [
             "$url = 'https://www.foxmail.com/win/download'",
-            "$req = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -ErrorAction SilentlyContinue -SkipHttpErrorCheck",
+            "if ($PSVersionTable.PSVersion.Major -lt 7.0) {",
+            "    $req = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -ErrorAction SilentlyContinue",
+            "} else {",
+            "    $req = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -ErrorAction SilentlyContinue -SkipHttpErrorCheck",
+            "}",
             "Write-Output $req.Headers.Location"
         ],
         "regex": "FoxmailSetup_([\\d.]+)\\.exe"
