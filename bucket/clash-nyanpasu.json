@@ -1,0 +1,36 @@
+{
+    "version": "1.5.0",
+    "description": "Clash Nyanpasu! (∠・ω< )⌒☆​",
+    "homepage": "https://nyanpasu.elaina.moe/",
+    "license": "GPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/LibNyanpasu/clash-nyanpasu/releases/download/v1.5.0/Clash.Nyanpasu_1.5.0_x64_portable.zip",
+            "hash": "6d0e9fa7d34cfcb1530c867ecd2c0697f139d52cf1bc038c037f6324f1361018"
+        }
+    },
+    "shortcuts": [
+        [
+            "Clash Nyanpasu.exe",
+            "Clash Nyanpasu"
+        ]
+    ],
+    "persist": ".config",
+    "post_install": [
+        "if (!(Test-Path \"$persist_dir\\.config\\PORTABLE\")) {",
+        "    New-Item -Path \"$persist_dir\\.config\\PORTABLE\" -ItemType file | Out-Null",
+        "}"
+    ],
+    "pre_uninstall": [
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+        "Start-Process \"$dir\\resources\\uninstall-service.exe\" -Wait -Verb 'RunAs' -WindowStyle 'Hidden'; Start-Sleep -Seconds 3"
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/LibNyanpasu/clash-nyanpasu/releases/download/v$version/Clash.Nyanpasu_$version_x64_portable.zip"
+            }
+        }
+    }
+}
