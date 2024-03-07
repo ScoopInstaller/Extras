@@ -1,0 +1,46 @@
+{
+    "version": "23.0.1",
+    "homepage": "http://umezawa.dyndns.info/wordpress/",
+    "description": "A fast lossless video codec.",
+    "license": "GPL-2.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/umezawatakeshi/utvideo/releases/download/utvideo-23.0.1/utvideo-23.0.1-win.zip",
+            "hash": "dd3036c641f04e0e28cdb466c01f2c87f2145162a5ed27146307e51caee8c19b",
+            "extract_dir": "utvideo-23.0.1"
+        }
+    },
+    "post_install": [
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+        "# x86 version does not work, which is why it's being removed",
+        "Remove-Item $dir -Include 'utvideo-x86.reg', 'utvideo-x86-unreg.reg'",
+        "$value = Get-Content \"$dir\\install.bat\"",
+        "$value = $value.Replace('pause', '')",
+        "$value = $value.Replace('%windir%\\regedit.exe /s utvideo-x64.reg', 'reg import \"%~dp0utvideo-x64.reg\"')",
+        "$value = $value -replace ('start \"\" readme.*', '')",
+        "$value = $value -replace ('start \"\" http://umezawa.*', '')",
+        "$value = $value -replace ('start \"\" http://seiga.*', '')",
+        "Set-Content \"$dir\\install.bat\" $value -Encoding 'utf8'",
+        "$value = (Get-Content \"$dir\\uninstall.bat\").Replace('%windir%\\regedit.exe /s utvideo-x64-unreg.reg', 'reg import \"%~dp0utvideo-x64-unreg.reg\"')",
+        "Set-Content \"$dir\\uninstall.bat\" $value -Encoding 'utf8'",
+        "Start-Process 'cmd' -Wait -NoNewWindow -Args @('/C', \"$dir\\install.bat\")"
+    ],
+    "uninstaller": {
+        "script": [
+            "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+            "Start-Process 'cmd' -Wait -NoNewWindow -Args @('/C', \"$dir\\uninstall.bat\")"
+        ]
+    },
+    "checkver": {
+        "github": "https://github.com/umezawatakeshi/utvideo",
+        "regex": "tag/utvideo-([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/umezawatakeshi/utvideo/releases/download/utvideo-$version/utvideo-$version-win.zip",
+                "extract_dir": "utvideo-$version"
+            }
+        }
+    }
+}
