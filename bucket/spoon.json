@@ -1,0 +1,39 @@
+{
+    "version": "0.0.1",
+    "license": "BSD-3-Clause",
+    "description": "A wrapper around scoop, striving for better performance and better UX, such as tab completion.",
+    "homepage": "https://github.com/Bios-Marcel/spoon",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Bios-Marcel/spoon/releases/download/v0.0.1/spoon.exe",
+            "hash": "dc9bc9c36d1660248dcb01f587d5ed58b181cab4813407ab8188336dc38f5e15"
+        }
+    },
+    "post_install": [
+        "$BucketDir = Find-BucketDirectory -Root -Name $bucket",
+        "$UtilsPath = $BucketDir | Join-Path -ChildPath \"scripts\\ModifyPSProfile.psm1\"",
+        "Unblock-File $UtilsPath",
+        "Import-Module $UtilsPath",
+        "Add-ProfileContent -Content 'spoon completion powershell | Out-String | Invoke-Expression'",
+        "Remove-Module ModifyPSProfile -ErrorAction SilentlyContinue"
+    ],
+    "bin": "spoon.exe",
+    "pre_uninstall": [
+        "$BucketDir = Find-BucketDirectory -Root -Name $install.bucket",
+        "$UtilsPath = $BucketDir | Join-Path -ChildPath \"scripts\\ModifyPSProfile.psm1\"",
+        "Unblock-File $UtilsPath",
+        "Import-Module $UtilsPath",
+        "Remove-ProfileContent -Content 'spoon completion powershell \\| Out-String \\| Invoke-Expression'",
+        "Remove-Module ModifyPSProfile -ErrorAction SilentlyContinue"
+    ],
+    "checkver": {
+        "github": "https://github.com/Bios-Marcel/spoon"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Bios-Marcel/spoon/releases/download/v$version/spoon.exe"
+            }
+        }
+    }
+}
