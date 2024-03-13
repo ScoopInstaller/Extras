@@ -22,7 +22,15 @@
         ]
     ],
     "checkver": {
-        "script": "(Invoke-WebRequest -Uri 'https://work.weixin.qq.com/wework_admin/commdownload?platform=win&from=wwindex' -MaximumRedirection 0 -SkipHttpErrorCheck -ErrorAction:SilentlyContinue).Headers.Location",
+        "script": [
+            "$url = 'https://work.weixin.qq.com/wework_admin/commdownload?platform=win&from=wwindex'",
+            "if ($PSVersionTable.PSVersion.Major -lt 7.0) {",
+            "    $req = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -ErrorAction SilentlyContinue",
+            "} else {",
+            "    $req = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -ErrorAction SilentlyContinue -SkipHttpErrorCheck",
+            "}",
+            "Write-Output $req.Headers.Location"
+        ],
         "regex": "WeCom_([\\d.]+).exe"
     },
     "autoupdate": {
