@@ -1,14 +1,18 @@
 {
-    "version": "0.7.2",
+    "version": "0.13.1",
     "description": "A privacy-focussed, local-first, open-source, and ready-to-use alternative for Notion & Miro.",
     "homepage": "https://affine.pro/",
     "license": "MPL-2.0",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/toeverything/AFFiNE/releases/download/v0.7.2/affine-stable-windows-x64.zip",
-            "hash": "ad4e1e7deca51613c480fe41a0ebd204930a1a1c4a68ecc0b728f53722cffa15"
+            "url": "https://github.com/toeverything/AFFiNE/releases/download/v0.13.1/affine-0.13.1-stable-windows-x64.exe#/dl.7z",
+            "hash": "sha512:5df972c5317f435de19b973d9d3b3b5ec5a9d599263c35e77eb2d9db9a2a8d9d7f8f2649c9b58f5c955f2d209ad5e40a930c93065a7beaa29be17c644a76f2ae"
         }
     },
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\AFFiNE-*-full.nupkg\" -ExtractDir 'lib\\net45' -Removal",
+        "Remove-Item \"$dir\\lib\""
+    ],
     "shortcuts": [
         [
             "AFFiNE.exe",
@@ -21,7 +25,11 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/toeverything/AFFiNE/releases/download/v$version/affine-stable-windows-x64.zip"
+                "url": "https://github.com/toeverything/AFFiNE/releases/download/v$version/affine-$version-stable-windows-x64.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "sha512:\\s+$base64"
+                }
             }
         }
     }
