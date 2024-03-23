@@ -1,11 +1,11 @@
 {
-    "version": "2.47",
+    "version": "2.48",
     "description": "Firmware updater for 8BitDo hardware",
     "homepage": "https://support.8bitdo.com/firmware-updater.html",
     "license": "Proprietary",
-    "url": "https://download.8bitdo.com/Tools/FirmwareUpdater/8BitDo_Firmware_Updater_Win.zip",
-    "hash": "d7db8d377c9287985da56b3a7aa8f6a4dc4a0aeec673f0ec73e29dc504500244",
-    "extract_dir": "8BitDo_Firmware_Updater_Win",
+    "url": "http://dl.8bitdo.com:8080/firmwareFile/upload//f58bb106-c495-4baf-84f4-d8324d65dd54.zip",
+    "hash": "0b3ed363622024b5eea442719ce789f816b834fac3adf338f4c57fe49a07ba45",
+    "extract_dir": "8BitDoFirmwareUpdater_V2.48",
     "shortcuts": [
         [
             "8BitDo Firmware Updater.exe",
@@ -21,10 +21,11 @@
             "$res = Invoke-WebRequest -Uri http://dl.8bitdo.com:8080/firmware/loadNewToolUpdateVersion -Method Post -Headers $headers -MaximumRedirection 0 -ErrorAction Ignore",
             "$res.Content"
         ],
-        "jsonpath": "$.list[0].fileName",
-        "regex": "8BitDoFirmwareUpdater_V([\\d.]+)"
+        "jsonpath": "$.list[0]",
+        "regex": "8BitDoFirmwareUpdater_V([\\d.]+)[\\s\\S]*/var/lib/tomcat9/webapps//(?<path>[\\w/.-]+)\""
     },
     "autoupdate": {
-        "url": "https://download.8bitdo.com/Tools/FirmwareUpdater/8BitDo_Firmware_Updater_Win.zip"
+        "url": "http://dl.8bitdo.com:8080/$matchPath",
+        "extract_dir": "8BitDoFirmwareUpdater_V$version"
     }
 }
