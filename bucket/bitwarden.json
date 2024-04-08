@@ -3,29 +3,54 @@
     "description": "Password management solutions for individuals, teams, and business organizations",
     "homepage": "https://bitwarden.com",
     "license": "GPL-3.0-or-later",
-    "url": "https://github.com/bitwarden/clients/releases/download/desktop-v2024.3.2/Bitwarden-Portable-2024.3.2.exe",
-    "hash": "3c2b3bcd80409cd78c568cb5bc068d735a3c8c443d838f0e1e4964fbd77246a4",
+    "architecture": {
+        "32bit": {
+            "url": "https://github.com/bitwarden/clients/releases/download/desktop-v2024.3.2/bitwarden-2024.3.2-ia32.nsis.7z",
+            "hash": "3f2f113403e84ff14d8b88f7d5f36c9ee538def320c2602292872284faf8326f"
+        },
+        "64bit": {
+            "url": "https://github.com/bitwarden/clients/releases/download/desktop-v2024.3.2/bitwarden-2024.3.2-x64.nsis.7z",
+            "hash": "650f3b73352d35309b54182f15d55eca1bf3f3551e78a0e77d9490ddcbeb64c9"
+        },
+        "arm64": {
+            "url": "https://github.com/bitwarden/clients/releases/download/desktop-v2024.3.2/bitwarden-2024.3.2-arm64.nsis.7z",
+            "hash": "a6c07937901230912968ad34bb583d9b21136481ff21ca40414790f3ca7cf5f3"
+        }
+    },
     "pre_install": [
-        "Rename-Item \"$dir\\Bitwarden-Portable-$version.exe\" 'Bitwarden.exe'",
-        "# copy config from non-portable version",
-        "if (!(Test-Path \"$dir\\bitwarden-appdata\\*\") -and (Test-Path \"$env:Appdata\\Bitwarden\")) {",
-        "    if (!(Test-Path \"$dir\\bitwarden-appdata\")) { New-Item \"$dir\\bitwarden-appdata\" -ItemType Directory | Out-Null }",
-        "    Copy-Item \"$env:Appdata\\Bitwarden\\*\" \"$dir\\bitwarden-appdata\\\" -Recurse -Force",
-        "}"
+        "# copy config from portable data folder to Appdata folder",
+        "if (Test-Path \"$persist_dir\\bitwarden-appdata\") {",
+        "   Copy-Item \"$persist_dir\\bitwarden-appdata\\*\" \"$env:Appdata\\Bitwarden\" -Recurse -ErrorAction 'SilentlyContinue'",
+        "   Remove-Item $persist_dir -Recurse",
+        "}",
+        "Remove-Item \"$dir\\resources\\app-update.yml\""
     ],
-    "bin": "Bitwarden.exe",
     "shortcuts": [
         [
             "Bitwarden.exe",
             "Bitwarden"
         ]
     ],
-    "persist": "bitwarden-appdata",
     "checkver": {
-        "url": "https://api.github.com/repositories/53538899/releases",
-        "regex": "tag/desktop-v([\\d.]+)"
+        "url": "https://api.github.com/repos/bitwarden/clients/releases",
+        "jsonpath": "$[*].tag_name",
+        "regex": "desktop-v([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://github.com/bitwarden/clients/releases/download/desktop-v$version/Bitwarden-Portable-$version.exe"
+        "architecture": {
+            "32bit": {
+                "url": "https://github.com/bitwarden/clients/releases/download/desktop-v$version/bitwarden-$version-ia32.nsis.7z"
+            },
+            "64bit": {
+                "url": "https://github.com/bitwarden/clients/releases/download/desktop-v$version/bitwarden-$version-x64.nsis.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/bitwarden/clients/releases/download/desktop-v$version/bitwarden-$version-arm64.nsis.7z"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/sha256-checksums.txt",
+            "regex": "$sha256\\s+$basename"
+        }
     }
 }
