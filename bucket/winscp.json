@@ -5,12 +5,18 @@
     "license": "GPL-3.0-or-later",
     "url": "https://downloads.sourceforge.net/project/winscp/WinSCP/6.3.3/WinSCP-6.3.3-Portable.zip",
     "hash": "7f68f9cc324cc8a8195829c83d0443bd2cd73fdb253d776aa2aeb4ed2d42711d",
+    "notes": "You can download the translation file archive from https://winscp.net/eng/translations.php. When downloading the translation files for the first time, you need to copy the extracted translation files to both the $persist_dir\\TranslationsBackups and $dir\\Translations directories. The translation files in $persist_dir\\TranslationsBackups will be shared across multiple versions.",
     "pre_install": [
         "if (!(Test-Path \"$persist_dir\\winscp.ini\")) {",
         "    @(",
         "        '[Configuration\\Interface]'",
         "        'RandomSeedFile=.\\winscp.rnd'",
         "    ) | Add-Content -Path \"$dir\\winscp.ini\" -Encoding ASCII -Force",
+        "}"
+    ],
+    "post_install":[
+        "if (Test-Path \"$persist_dir\\TranslationsBackups\") {",
+        "    Copy-Item \"$persist_dir\\TranslationsBackups\" \"$dir\\Translations\\\" -Recurse -Force -ErrorAction 'SilentlyContinue'",
         "}"
     ],
     "bin": [
@@ -26,7 +32,10 @@
             "WinSCP"
         ]
     ],
-    "persist": "winscp.ini",
+    "persist": [
+        "winscp.ini",
+        "TranslationsBackups"
+    ],
     "checkver": {
         "url": "https://winscp.net/eng/downloads.php",
         "regex": "WinSCP-([\\d.]+)-Portable\\.zip"
