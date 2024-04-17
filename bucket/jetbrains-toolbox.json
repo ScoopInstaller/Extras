@@ -10,10 +10,14 @@
         "By default all your tools are installed into '$dir\\apps' folder and are persisted.",
         "This could be changed inside settings menu."
     ],
-    "url": "https://download.jetbrains.com/toolbox/jetbrains-toolbox-2.3.0.30876.exe#/dl.7z",
+    "url": "https://download.jetbrains.com/toolbox/jetbrains-toolbox-2.3.0.30876.exe",
     "hash": "38fe37627a93f2904bb2a77769b1ffe53e833d84f3e1ddca768c573c298d39fc",
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\jetbrains-toolbox-$version.exe\" \"$dir\\installer\" -Removal",
+        "Expand-7zipArchive \"$dir\\installer\\.text\" \"$dir\"",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\installer\" -Recurse"
+    ],
     "post_install": [
-        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall.exe\" -Recurse",
         "$config = \"$env:LOCALAPPDATA\\JetBrains\\Toolbox\\.settings.json\"",
         "if (!(Test-Path $config)) {",
         "    $settings = @{",
@@ -45,7 +49,7 @@
         "jsonpath": "$.TBA..build"
     },
     "autoupdate": {
-        "url": "https://download.jetbrains.com/toolbox/jetbrains-toolbox-$version.exe#/dl.7z",
+        "url": "https://download.jetbrains.com/toolbox/jetbrains-toolbox-$version.exe",
         "hash": {
             "url": "$url.sha256"
         }
