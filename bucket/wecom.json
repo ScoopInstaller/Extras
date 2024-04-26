@@ -1,13 +1,13 @@
 {
-    "version": "4.1.20.6006",
+    "version": "4.1.22.6009",
     "description": "WeCom/WXWork/企业微信/WeChat-Work, a professional office management tool for enterprises created by Tencent",
     "homepage": "https://work.weixin.qq.com/",
     "license": {
         "identifier": "Proprietary",
         "url": "https://work.weixin.qq.com/nl/eula"
     },
-    "url": "https://dldir1.qq.com/wework/work_weixin/WeCom_4.1.20.6006.exe#/dl.7z",
-    "hash": "4011bae96d8085cf27645821f50b1782d7fe724c3f3e39576c63181f19c9a8aa",
+    "url": "https://dldir1.qq.com/wework/work_weixin/WeCom_4.1.22.6009.exe#/dl.7z",
+    "hash": "98733142a8995c898273f2cda1cf62e6df76d6dc73e23c5fd99f0f09e530b8b4",
     "installer": {
         "script": [
             "Remove-Item \"$dir\\`$*\" -Recurse -Force -ErrorAction SilentlyContinue",
@@ -22,7 +22,15 @@
         ]
     ],
     "checkver": {
-        "script": "(Invoke-WebRequest -Uri 'https://work.weixin.qq.com/wework_admin/commdownload?platform=win&from=wwindex' -MaximumRedirection 0 -SkipHttpErrorCheck -ErrorAction:SilentlyContinue).Headers.Location",
+        "script": [
+            "$url = 'https://work.weixin.qq.com/wework_admin/commdownload?platform=win&from=wwindex'",
+            "if ($PSVersionTable.PSVersion.Major -lt 7.0) {",
+            "    $req = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -ErrorAction SilentlyContinue",
+            "} else {",
+            "    $req = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -ErrorAction SilentlyContinue -SkipHttpErrorCheck",
+            "}",
+            "Write-Output $req.Headers.Location"
+        ],
         "regex": "WeCom_([\\d.]+).exe"
     },
     "autoupdate": {
