@@ -1,0 +1,52 @@
+{
+    "version": "122.0.6261.85",
+    "description": "Chromium fork for Windows XP/2003 and up",
+    "homepage": "https://win32subsystem.live/supermium/",
+    "license": "BSD-3-Clause",
+    "architecture": {
+        "64bit": {
+            "url": "https://win32subsystem.live/supermium/downloads/supermium_122_64_setup.exe#/dl.7z",
+            "hash": "8c500966b7c644dbf40f57c8cc9fd14a60a2acdaf4c5f05425eafe7cc8f9c053"
+        },
+        "32bit": {
+            "url": "https://win32subsystem.live/supermium/downloads/supermium_122_32_setup.exe#/dl.7z",
+            "hash": "28f67289841f1ea2328c5071d6acf30b47fc108e2168cf9dbcb0effa670bed3b"
+        }
+    },
+    "extract_dir": "Supermium",
+    "bin": [
+        [
+            "chrome.exe",
+            "supermium",
+            "--user-data-dir=\"$dir\\User Data\""
+        ]
+    ],
+    "shortcuts": [
+        [
+            "chrome.exe",
+            "Supermium",
+            "--user-data-dir=\"$dir\\User Data\""
+        ]
+    ],
+    "post_install": [
+        "if (!(Test-Path \"$dir\\User Data\\*\") -and (Test-Path \"$env:LocalAppData\\Supermium\\User Data\")) {",
+        "    info '[Portable Mode]: Copying user data...'",
+        "    Copy-Item \"$env:LocalAppData\\Supermium\\User Data\\*\" \"$dir\\User Data\" -Recurse",
+        "}"
+    ],
+    "persist": "User Data",
+    "checkver": {
+        "url": "https://win32subsystem.live/supermium/",
+        "regex": ">Supermium ([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://win32subsystem.live/supermium/downloads/supermium_$majorVersion_64_setup.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://win32subsystem.live/supermium/downloads/supermium_$majorVersion_32_setup.exe#/dl.7z"
+            }
+        }
+    }
+}
