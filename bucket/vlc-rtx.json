@@ -1,0 +1,45 @@
+{
+    "version": "3.0.19-nvidia-upscaler2",
+    "description": "A free and open source cross-platform multimedia player and framework that plays most multimedia files as well as DVDs, Audio CDs, VCDs, and various streaming protocols.",
+    "homepage": "https://www.videolan.org/",
+    "license": "GPL-2.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://downloads.videolan.org/testing/vlc-rtx-upscaler/vlc-3.0.19-nvidia-upscaler2.7z",
+            "hash": "6afcf209f5eee890ae77e42e75f5f9bc425ba031d11f1ffc4ea416259e7a6a22"
+        }
+    },
+    "extract_dir": "vlc-3.0.19",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\portable\") -and (Test-Path \"$env:APPDATA\\vlc\")) {",
+        "    info \"Copying old '$env:APPDATA\\vlc' to '$persist_dir\\portable'\"",
+        "    ensure \"$dir\\portable\\vlc\" | Out-Null",
+        "    Copy-Item \"$env:APPDATA\\vlc\\*\" \"$dir\\portable\" -Recurse -Force",
+        "    Move-Item \"$dir\\portable\\vlc-qt-interface.ini\" \"$dir\\portable\\vlc\"",
+        "}"
+    ],
+    "bin": "vlc.exe",
+    "shortcuts": [
+        [
+            "vlc.exe",
+            "VLC media player"
+        ]
+    ],
+    "persist": "portable",
+    "checkver": {
+        "url": "https://downloads.videolan.org/testing/vlc-rtx-upscaler/",
+        "regex": "vlc-rtx-upscaler\/vlc-(?<version>[\\d.]+).7z"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://downloads.videolan.org/testing/vlc-rtx-upscaler/vlc-$version.7z"
+            }
+        },
+        "hash": {
+            "url": "$url.sha256"
+        },
+        "extract_dir": "vlc-$version"
+    }
+}
+
