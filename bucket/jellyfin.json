@@ -1,5 +1,5 @@
 {
-    "version": "10.8.13",
+    "version": "10.9.2",
     "description": "Software Media System",
     "homepage": "https://jellyfin.org",
     "license": "GPL-2.0-only",
@@ -9,11 +9,15 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://repo.jellyfin.org/releases/server/windows/versions/stable/combined/10.8.13/jellyfin_10.8.13.zip",
-            "hash": "2c9096c0dcffd38610a3a1d862610b38b86a8e8195475ad608e973033c4e10d5"
+            "url": "https://repo.jellyfin.org/files/server/windows/latest-stable/amd64/jellyfin_10.9.2-amd64.zip",
+            "hash": "md5:107f27c299c1872fbc8ccead3d9f5e3f"
+        },
+        "arm64": {
+            "url": "https://repo.jellyfin.org/files/server/windows/latest-stable/arm64/jellyfin_10.9.2-arm64.zip",
+            "hash": "md5:ab88c3ff56d10bad8e313d73104087c5"
         }
     },
-    "extract_dir": "jellyfin_10.8.13",
+    "extract_dir": "jellyfin",
     "extract_to": "system",
     "bin": [
         [
@@ -24,18 +28,25 @@
     ],
     "persist": "data",
     "checkver": {
-        "url": "https://repo.jellyfin.org/releases/server/windows/stable/",
-        "regex": "combined/jellyfin_([\\d+.]+).zip"
+        "url": "https://repo.jellyfin.org/?path=/server/windows",
+        "regex": "Current Stable \\(v([\\d+.]+)\\)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://repo.jellyfin.org/releases/server/windows/versions/stable/combined/$version/jellyfin_$version.zip"
+                "url": "https://repo.jellyfin.org/files/server/windows/latest-stable/amd64/jellyfin_$version-amd64.zip",
+                "hash": {
+                    "url": "https://repo.jellyfin.org/?path=/server/windows/latest-stable/amd64",
+                    "regex": "(?sm)$basename.*?$md5"
+                }
+            },
+            "arm64": {
+                "url": "https://repo.jellyfin.org/files/server/windows/latest-stable/arm64/jellyfin_$version-arm64.zip",
+                "hash": {
+                    "url": "https://repo.jellyfin.org/?path=/server/windows/latest-stable/arm64",
+                    "regex": "(?sm)$basename.*?$md5"
+                }
             }
-        },
-        "hash": {
-            "url": "$url.sha256sum"
-        },
-        "extract_dir": "jellyfin_$version"
+        }
     }
 }
