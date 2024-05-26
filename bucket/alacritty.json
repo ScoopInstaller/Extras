@@ -3,6 +3,24 @@
     "description": "GPU-accelerated terminal emulator",
     "homepage": "https://github.com/alacritty/alacritty",
     "license": "Apache-2.0",
+    "notes": [
+        "Add Open with Alacritty as a context menu option by running:",
+        "reg import \"$dir\\install-context.reg\""
+    ],
+    "post_install": [
+        "$alacrittypath = \"$dir\\alacritty.exe\".Replace('\\', '\\\\')",
+        "'install-context.reg', 'uninstall-context.reg' | ForEach-Object {",
+        "    if (Test-Path \"$bucketsdir\\extras\\scripts\\$app\\$_\") {",
+        "        $content = Get-Content \"$bucketsdir\\extras\\scripts\\$app\\$_\"",
+        "        $content = $content.Replace('$alacritty', $alacrittypath)",
+        "        if ($global) {",
+        "            $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "        }",
+        "    }",
+        "    $content | Set-Content -Path \"$dir\\$_\" -Encoding ascii",
+        "}"
+    ],
+    "pre_uninstall": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }",
     "suggest": {
         "vcredist": "extras/vcredist2022"
     },
