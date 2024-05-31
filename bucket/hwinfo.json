@@ -8,6 +8,17 @@
     "pre_install": [
         "foreach ($conf in 'HWiNFO64.INI', 'HWiNFO32.INI') {",
         "    if (!(Test-Path \"$persist_dir\\$conf\")) { Set-Content \"$dir\\$conf\" '[Settings]', 'AutoUpdate=0' -Encoding ASCII }",
+        "}",
+        "if (Test-PATH \"$persist_dir\\HWiNFO64_KEY.txt\" -PathType Leaf) {",
+        "    Copy-Item \"$persist_dir\\HWiNFO64_KEY.txt\" \"$dir\"",
+        "}"
+    ],
+    "pre_uninstall": [
+        "if (Test-PATH \"$dir\\HWiNFO64_KEY.txt\" -PathType Leaf) {",
+        "    if (Test-PATH \"$persist_dir\\HWiNFO64_KEY.txt\" -PathType Container) {",
+        "        Remove-Item \"$persist_dir\\HWiNFO64_KEY.txt\" -Recurse",
+        "    }",
+        "    Copy-Item \"$dir\\HWiNFO64_KEY.txt\" \"$persist_dir\"",
         "}"
     ],
     "architecture": {
@@ -42,8 +53,7 @@
     },
     "persist": [
         "HWiNFO64.INI",
-        "HWiNFO32.INI",
-        "HWiNFO64_KEY.txt"
+        "HWiNFO32.INI"
     ],
     "checkver": {
         "url": "https://www.hwinfo.com/ver.txt",
