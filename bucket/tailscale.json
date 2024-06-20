@@ -23,7 +23,7 @@
     },
     "pre_install": "if (!(is_admin)) {error 'This package requires admin rights to install'; break}",
     "post_install": [
-        "tailscale-ipn.exe /install",
+        "tailscaled.exe install-system-daemon",
         "$dirpath = $dir.Replace('\\', '\\\\')",
         "'add-startup.reg', 'remove-startup.reg' | ForEach-Object {",
         "    if (Test-Path \"$bucketsdir\\extras\\scripts\\$app\\$_\") {",
@@ -41,7 +41,7 @@
     ],
     "uninstaller": {
         "script": [
-            "tailscale-ipn.exe /uninstall",
+            "tailscaled.exe uninstall-system-daemon",
             "if ($cmd -eq 'uninstall') { reg import \"$dir\\remove-startup.reg\" }"
         ]
     },
