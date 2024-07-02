@@ -23,8 +23,12 @@
         "}"
     ],
     "pre_uninstall": [
-        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-        "Start-Process \"$dir\\resources\\uninstall-service.exe\" -Wait -Verb 'RunAs' -WindowStyle 'Hidden'; Start-Sleep -Seconds 3"
+        "if (Get-Service clash_verge_service -ErrorAction SilentlyContinue) {",
+        "    if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+        "    if ($cmd -eq \"uninstall\") {",
+        "        Start-Process \"$dir\\resources\\uninstall-service.exe\" -Wait -Verb 'RunAs' -WindowStyle 'Hidden'; Start-Sleep -Seconds 3",
+        "    }",
+        "}"
     ],
     "checkver": "github",
     "autoupdate": {
