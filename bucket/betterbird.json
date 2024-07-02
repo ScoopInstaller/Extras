@@ -1,0 +1,49 @@
+{
+    "version": "115.12.0-bb29",
+    "description": "A a fine-tuned version of Mozilla Thunderbird with new features, bug fixes and telemetry turned off. This variant makes sure the Scoop profile is used by default.",
+    "homepage": "https://www.betterbird.eu",
+    "license": "MPL-2.0",
+    "notes": "After installation, the profile manager will be run to choose the right default profile.",
+    "architecture": {
+        "64bit": {
+            "url": "https://www.betterbird.eu/downloads/WindowsInstaller/betterbird-115.12.0-bb29.en-US.win64.installer.exe#/dl.7z",
+            "hash": "3e3e9d9dc574877591b148b8d6c686b832348ade2f10ff7db1d66f89fea43a00"
+        }
+    },
+    "extract_dir": "core",
+    "post_install": [
+        "$Addition = \"$persist_dir\\addition\"",
+        "if (Test-Path $Addition) {",
+        "  info 'Copying additional items...'",
+        "  Copy-Item -Path $Addition\\* -Destination $dir -Force -Recurse -ErrorAction SilentlyContinue",
+        "}",
+        "betterbird -CreateProfile \"Scoop $persist_dir\\profile\"",
+        "start -NoNewWindow betterbird -ArgumentList '-P'"
+    ],
+    "bin": "betterbird.exe",
+    "shortcuts": [
+        [
+            "betterbird.exe",
+            "Betterbird"
+        ]
+    ],
+    "persist": [
+        "distribution",
+        "profile"
+    ],
+    "checkver": {
+        "url": "https://betterbird.eu/downloads/sha256-115.txt",
+        "regex": "betterbird-([\\d.]+-bb[^\\.]+)\\.en-US"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://www.betterbird.eu/downloads/WindowsInstaller/betterbird-$version.en-US.win64.installer.exe#/dl.7z",
+                "hash": {
+                    "url": "https://www.betterbird.eu/downloads/sha256-115.txt",
+                    "regex": "$sha256 betterbird-$version.en-US.win64.installer.exe"
+                }
+            }
+        }
+    }
+}
