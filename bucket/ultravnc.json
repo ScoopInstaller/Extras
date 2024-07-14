@@ -30,19 +30,21 @@
     "checkver": {
         "script": [
             "$uvnc_release_resp = Invoke-WebRequest -Uri 'https://uvnc.com/downloads/ultravnc.html'",
-            "$uvnc_release_page = $uvnc_release_resp.Links | Where-Object href -match '/downloads/ultravnc/(\\d+)' | Select-Object -first 1 -expand href",
+            "$uvnc_release_page = $uvnc_release_resp.Links | Where-Object href -match '/downloads/ultravnc/(\\d+)-ultravnc-[\\d-]+\\.html' | Select-Object -first 1 -expand href",
             "$uvnc_artifact_url = 'https://uvnc.com' + $uvnc_release_page",
             "$uvnc_artifact_resp = Invoke-WebRequest -Uri $uvnc_artifact_url",
-            "$uvnc_artifact_summary_url = $uvnc_artifact_resp.Links | Where-Object href -match '/(\\d+)-ultravnc-(\\d+)-(\\d+)-(\\d)(\\d)-bin-zip.html' | Select-Object -first 1 -expand href",
-            "$scriptver = $matches[2] + '.' + $matches[3] + '.' + $matches[4] + '.' + $matches[5]",
-            "$artifact_version = $matches[2] + '-' + $matches[3] + '-' + $matches[4] + $matches[5]",
-            "$filenum = $matches[1]",
-            "$download_path = $filenum + '-ultravnc-' + $artifact_version + '-bin-zip.html?Itemid=0'",
+            "$uvnc_artifact_resp.Links | Where-Object href -match '/(\\d+-[\\S]+-bin-zip.html)' | Select-Object -first 1 -expand href > $null",
+            "$uvnc_artifact_summary_url = $matches[1]",
+            "$uvnc_artifact_summary_url -match '\\d+-\\w+-(\\d+)-(\\d+)-(\\d)(\\d)' > $null",
+            "$scriptver = $matches[1] + '.' + $matches[2] + '.' + $matches[3] + '.' + $matches[4]",
+            "$download_path = 'https://uvnc.com/component/jdownloads/send/0-/' + $uvnc_artifact_summary_url + '?Itemid=0'",
+            "$uvnc_redirect_resp = Invoke-WebRequest -Uri $download_path",
+            "if ($uvnc_redirect_resp.Content -match 'href=''(\\S+?)'';') { $download_path = $matches[1] }",
             "Write-Output $scriptver $download_path"
         ],
         "regex": "(?<version>[\\d.]+)\\s(?<dlquerypath>.+)"
     },
     "autoupdate": {
-        "url": "https://uvnc.com/component/jdownloads/send/0-/$matchDlquerypath#/dl.zip"
+        "url": "$matchDlquerypath"
     }
 }
