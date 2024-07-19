@@ -1,10 +1,10 @@
 {
-    "version": "1.4.3.5",
+    "version": "1.4.3.6",
     "description": "UltraVNC Server and Viewer can display the screen of one computer (Server) on the screen of another (Viewer).",
     "homepage": "https://uvnc.com",
     "license": "GPL-3.0-or-later",
-    "url": "https://uvnc.com/component/jdownloads/send/0-/459-ultravnc-1-4-35-bin-zip.html?Itemid=0#/dl.zip",
-    "hash": "b5135801deacafc3edcbcc6cd77be2d892a55b62691d776a42db7e781485e600",
+    "url": "https://uvnc.eu/download/1436/UltraVNC_IPv6_1436.zip",
+    "hash": "bbb35b8199af7841080b5d34a559b76f9d824ff8c140a030db86dac5edccc7ae",
     "architecture": {
         "64bit": {
             "extract_dir": "x64"
@@ -28,21 +28,10 @@
         ]
     ],
     "checkver": {
-        "script": [
-            "$uvnc_release_resp = Invoke-WebRequest -Uri 'https://uvnc.com/downloads/ultravnc.html'",
-            "$uvnc_release_page = $uvnc_release_resp.Links | Where-Object href -match '/downloads/ultravnc/(\\d+)' | Select-Object -first 1 -expand href",
-            "$uvnc_artifact_url = 'https://uvnc.com' + $uvnc_release_page",
-            "$uvnc_artifact_resp = Invoke-WebRequest -Uri $uvnc_artifact_url",
-            "$uvnc_artifact_summary_url = $uvnc_artifact_resp.Links | Where-Object href -match '/(\\d+)-ultravnc-(\\d+)-(\\d+)-(\\d)(\\d)-bin-zip.html' | Select-Object -first 1 -expand href",
-            "$scriptver = $matches[2] + '.' + $matches[3] + '.' + $matches[4] + '.' + $matches[5]",
-            "$artifact_version = $matches[2] + '-' + $matches[3] + '-' + $matches[4] + $matches[5]",
-            "$filenum = $matches[1]",
-            "$download_path = $filenum + '-ultravnc-' + $artifact_version + '-bin-zip.html?Itemid=0'",
-            "Write-Output $scriptver $download_path"
-        ],
-        "regex": "(?<version>[\\d.]+)\\s(?<dlquerypath>.+)"
+        "url": "https://uvnc.com/downloads/ultravnc.html",
+        "regex": "Latest release version: ([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://uvnc.com/component/jdownloads/send/0-/$matchDlquerypath#/dl.zip"
+        "url": "https://uvnc.eu/download/$cleanVersion/UltraVNC_IPv6_$cleanVersion.zip"
     }
 }
