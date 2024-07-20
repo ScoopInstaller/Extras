@@ -1,14 +1,14 @@
 {
-    "version": "0.9.0",
+    "version": "0.11.0",
     "description": "Desktop client for Nostr written in Rust",
     "homepage": "https://github.com/mikedilger/gossip",
     "license": "MIT",
     "url": [
-        "https://github.com/mikedilger/gossip/releases/download/v0.9.0/gossip.0.9.0.msi",
-        "https://raw.githubusercontent.com/mikedilger/gossip/v0.9.0/packaging/windows/gossip.ico"
+        "https://github.com/mikedilger/gossip/releases/download/v0.11/gossip.0.11.0.msi",
+        "https://raw.githubusercontent.com/mikedilger/gossip/master/packaging/windows/gossip.ico"
     ],
     "hash": [
-        "b0fa1af9e5b98aaa13887cf8871850884e5fbc9031c85247cca4e6c9f54cf497",
+        "9d12dd45422e7ebaaa4950ffcf23a0e8cb0adf87afa371baaee22028ae4a813d",
         "001ebbd87b1c89463349d29e55b718f367cf0d97bf3cb3d5017ebb058aa8d186"
     ],
     "extract_dir": "PFiles/Gossip/Gossip",
@@ -21,11 +21,15 @@
             "gossip.ico"
         ]
     ],
-    "checkver": "github",
+    "checkver": {
+        "url": "https://api.github.com/repositories/567995175/releases/latest",
+        "jsonpath": "$..browser_download_url",
+        "regex": "download/v(?<tag>[\\d.]+)/gossip.([\\d.]+)\\.msi"
+    },
     "autoupdate": {
-        "url": [
-            "https://github.com/mikedilger/gossip/releases/download/v$version/gossip.$version.msi",
-            "https://raw.githubusercontent.com/mikedilger/gossip/v$version/packaging/windows/gossip.ico"
-        ]
+        "url": "https://github.com/mikedilger/gossip/releases/download/v$matchTag/gossip.$version.msi",
+        "hash": {
+            "url": "$baseurl/SHA256sums.txt"
+        }
     }
 }
