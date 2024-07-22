@@ -13,9 +13,20 @@
             "extract_dir": "32"
         }
     },
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\UltraVnc.ini\")) { New-Item \"$dir\\UltraVnc.ini\" | Out-Null }",
+        "if (!(Test-Path \"$persist_dir\\options.vnc\")) { New-Item \"$dir\\options.vnc\" | Out-Null }"
+    ],
+    "post_install": [
+        "if (!(Test-Path \"$persist_dir\\SecureVNCPlugin64.dsm\")) { Copy-Item \"$persist_dir\\SecureVNCPlugin64.dsm\" \"$dir\\SecureVNCPlugin64.dsm\" | Out-Null }"
+    ],
     "bin": [
         "vncviewer.exe",
         "winvnc.exe"
+    ],
+    "persist": [
+        "UltraVnc.ini",
+        "options.vnc"
     ],
     "shortcuts": [
         [
