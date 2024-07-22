@@ -1,26 +1,26 @@
 {
     "$schema": "https://raw.githubusercontent.com/ScoopInstaller/Scoop/master/schema.json",
     "version": "3.4.0",
-    "description": "A privacy-focused note-taking application for Mac OS, Windows and GNU/Linux",
+    "description": "A privacy-focused note-taking application",
     "homepage": "https://beavernotes.com/",
     "license": "MIT",
     "architecture": {
-        "arm64": {
-            "url": "https://github.com/Beaver-Notes/Beaver-Notes/releases/download/3.4.0/Beaver-notes.3.4.0.portable.arm64.exe",
-            "hash": "bce185ccc95896acd872fa654622cdcbdf38c94d97c18bb7d14e1fe85aea78ef"
-        },
         "64bit": {
-            "url": "https://github.com/Beaver-Notes/Beaver-Notes/releases/download/3.4.0/Beaver-notes.3.4.0.portable.exe",
+            "url": "https://github.com/Beaver-Notes/Beaver-Notes/releases/download/3.4.0/Beaver-notes.3.4.0.portable.exe#/dl.7z",
             "hash": "1db43e5bf3aa22afea43cb404dca51418a01417a28ffba6e75417ae1464fae90"
+        },
+        "arm64": {
+            "url": "https://github.com/Beaver-Notes/Beaver-Notes/releases/download/3.4.0/Beaver-notes.3.4.0.portable.arm64.exe#/dl.7z",
+            "hash": "bce185ccc95896acd872fa654622cdcbdf38c94d97c18bb7d14e1fe85aea78ef"
         }
     },
-    "installer": {
-        "script": "Rename-Item -Path \"$dir\\$fname\" -NewName \"beaver-notes.exe\""
-    },
-    "bin": "beaver-notes.exe",
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app*.7z\" \"$dir\"",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Force -Recurse"
+    ],
     "shortcuts": [
         [
-            "beaver-notes.exe",
+            "Beaver-notes.exe",
             "Beaver Notes"
         ]
     ],
@@ -42,20 +42,16 @@
     },
     "autoupdate": {
         "architecture": {
-            "arm64": {
-                "url": "https://github.com/Beaver-Notes/Beaver-Notes/releases/download/$version/Beaver-notes.$version.portable.arm64.exe",
-                "hash": {
-                    "url": "https://github.com/Beaver-Notes/Beaver-Notes/releases/tag/$version",
-                    "regex": "$sha256.*?$basename"
-                }
-            },
             "64bit": {
-                "url": "https://github.com/Beaver-Notes/Beaver-Notes/releases/download/$version/Beaver-notes.$version.portable.exe",
-                "hash": {
-                    "url": "https://github.com/Beaver-Notes/Beaver-Notes/releases/tag/$version",
-                    "regex": "$sha256.*?$basename"
-                }
+                "url": "https://github.com/Beaver-Notes/Beaver-Notes/releases/download/$version/Beaver-notes.$version.portable.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/Beaver-Notes/Beaver-Notes/releases/download/$version/Beaver-notes.$version.portable.arm64.exe#/dl.7z"
             }
+        },
+        "hash": {
+            "url": "https://github.com/Beaver-Notes/Beaver-Notes/releases/tag/$version",
+            "regex": "$sha256.*?$basename"
         }
     }
 }
