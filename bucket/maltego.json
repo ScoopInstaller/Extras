@@ -1,0 +1,59 @@
+{
+    "version":  "4.7.0",
+    "description": "Link analysis software used for open-source intelligence, forensics and other investigations.",
+    "homepage": "https://www.maltego.com/",
+    "license": {
+        "identifier": "Shareware",
+        "url": "https://www.maltego.com/license-agreement/"
+    },
+    "url": "https://downloads.maltego.com/maltego-v4/linux/Maltego.v4.7.0.linux.zip",
+    "hash": "88819103966e5a08ce82c30dc6506a3d1f6dbea14108fb4aefe5f420376b9150",
+    "autoupdate": {
+        "url": "https://downloads.maltego.com/maltego-v4/linux/Maltego.v$version.linux.zip",
+        "extract_dir": "maltego_$version"
+    },
+    "checkver": {
+        "url": "https://dolores.paterva.com/maltego/list-change-logs",
+        "jsonpath": "$..version"
+    },
+    "extract_dir": "maltego_4.7.0",
+    "extract_to": "maltego",
+    "persist": [
+        "userdir",
+        "cachedir"
+    ],
+    "post_install": [
+        "$confFile = \"$dir\\maltego\\etc\\maltego.conf\"",
+        "$userDir = \"$dir\\userdir\"",
+        "$cacheDir = \"$dir\\cachedir\"",
+
+        "New-Item -Path $userDir -ItemType Directory -Force | Out-Null",
+        "New-Item -Path $cacheDir -ItemType Directory -Force | Out-Null",
+
+        "$conf = Get-Content -Path $confFile",
+        "$conf = $conf.Replace('default_userdir=\"${DEFAULT_USERDIR_ROOT}/v4.7.0\"', \"default_userdir=`\"$userDir`\"\")",
+        "$conf = $conf.Replace('# default_cachedir=\"${DEFAULT_CACHEDIR_ROOT}/v4.7.0\"', \"default_cachedir=`\"$cacheDir`\"\")",    
+
+        "if ($env:JAVA_HOME) {",
+        "    $conf = $conf.Replace('#jdkhome=\"/path/to/jdk\"', \"jdkhome=`\"$env:JAVA_HOME`\"\")",
+        "    info \"Config entry 'jdkhome' has been set to '$env:JAVA_HOME'.\"",
+        "} else {",
+        "    warn \"Environment variable 'JAVA_HOME' is not detected, $app cannot run without JDK.\"",
+        "    warn 'Solutions:'",
+        "    warn ('- Reinstall {0} after installing JDK' -f $app)",
+        "    warn \"- Run: 'maltego.exe --jdkhome <path_to_jdk>'\"",
+        "    warn \"- Set config entry 'jdkhome' in file: '$dir\\maltego\\etc\\maltego.conf' manually.\"",
+        "}",
+
+        "Set-Content -Path \"$confFile\" -Value $conf -Encoding ascii"
+    ],
+    "shortcuts": [
+        [
+            "maltego\\bin\\maltego.exe",
+            "Maltego"
+        ]
+    ],
+    "suggest": {
+        "JDK17": "java/openjdk17"
+    }
+}
