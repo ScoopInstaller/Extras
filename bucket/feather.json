@@ -1,0 +1,38 @@
+{
+    "version":  "2.6.7",
+    "description": "A Free Monero Desktop Wallet.",
+    "homepage": "https://featherwallet.org/",
+    "license": {
+        "identifier": "BSD-3-Clause",
+        "url": "https://github.com/feather-wallet/feather/blob/master/LICENSE"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/feather-wallet/feather/releases/download/2.6.7/feather-2.6.7-win.zip",
+            "hash": "d2f5084b19f1174912d8cd8b6c00d1f02c5cb3a15f959fea0c97daea2f3af0aa"
+        }
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/feather-wallet/feather/releases/download/$matchTag/feather-$version-win.zip"
+            }
+        }
+    },
+    "checkver": {
+        "url": "https://api.github.com/repos/feather-wallet/feather/releases/latest",
+        "jsonpath": "$.assets..browser_download_url",
+        "regex": "/download/(?<tag>[\\d.]+)/feather-(?<version>[\\d.]+)-win\\.zip"
+    },
+    "persist": "feather_data",
+    "pre_install": [
+        "New-Item -Path \"$dir\\.portable\" -ItemType File -Force | Out-Null",
+        "Rename-Item \"$dir\\feather-$version.exe\" \"feather.exe\""
+    ],
+    "shortcuts": [
+        [
+            "feather.exe",
+            "Feather Wallet"
+        ]
+    ]
+}
