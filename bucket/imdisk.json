@@ -1,0 +1,29 @@
+{
+    "version": "2.1.1",
+    "homepage": "http://www.ltr-data.se/opencode.html/",
+    "description": "A virtual disk driver for Windows 32 and 64 bit editions. It can create virtual hard disk, floppy or CD/DVD drives using image files or system memory.",
+    "license": "GPL-2.0",
+    "url": "https://static.ltr-data.se/files/imdisk.zip",
+    "hash": "0558ddd7b751cc29b4530e5b85f86344a4e4fa5a91d16c5479f0a4470aadef23",
+    "pre_install": [
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+        "$value = (Get-Content \"$dir\\install.cmd\").Replace('.\\msgboxw.exe', 'echo')",
+        "Set-Content \"$dir\\install.cmd\" $value -Encoding 'utf8'",
+        "Start-Process 'cmd' -Wait -NoNewWindow -Args @('/C', \"$dir\\install.cmd\")"
+    ],
+    "bin": [
+        [
+            "install.cmd",
+            "install_imdisk"
+        ],
+        "uninstall_imdisk.cmd"
+    ],
+    "pre_uninstall": [
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+        "Start-Process 'cmd' -Wait -NoNewWindow -Args @('/C', \"$dir\\uninstall_imdisk.cmd\")"
+    ],
+    "checkver": "ImDisk\\sVirtual\\sDisk\\sDriver</h2>\\s\\n\\s+<h3>Current\\sversion\\s([\\d.]+)",
+    "autoupdate": {
+        "url": "https://static.ltr-data.se/files/imdisk.zip"
+    }
+}
