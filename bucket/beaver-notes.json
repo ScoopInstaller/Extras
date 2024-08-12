@@ -15,8 +15,9 @@
         }
     },
     "pre_install": [
-        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app*.7z\" \"$dir\"",
-        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Force -Recurse"
+        "Expand-7zipArchive -Path \"$dir\\`$PLUGINSDIR\\app*.7z\" -DestinationPath \"$dir\"",
+        "$ScriptBlock = [scriptblock]{Remove-Item -Path \"$dir\\`$*\", \"$dir\\Uninstall*\" -Force -Recurse}",
+        "Try {$ScriptBlock.Invoke()} Catch {Start-Sleep -Milliseconds 50; $ScriptBlock.Invoke()}"
     ],
     "shortcuts": [
         [
