@@ -5,14 +5,18 @@
     "license": "OSL-3.0",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/ArmCord/ArmCord/releases/download/v3.3.0/ArmCord.Setup.3.3.0.exe#/dl.7z",
-            "hash": "sha512:f7139dc502cb42a6a692974958e654aa26668c8a8b4a9adf14e87d0c763542617469d8b50c516d7f62c8e3c98598fb52c4300959feddc73d0dc4f2a88aba78c4",
-            "pre_install": [
-                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse"
-            ]
+            "url": "https://github.com/ArmCord/ArmCord/releases/download/v3.3.0/ArmCord-3.3.0-win-x64.exe#/dl.7z",
+            "hash": "sha512:cd7923a375ebf287c2fe8270fff38f48668d8aff9c6c7ae24a85d16429b0070377eb4146675e483b69bea3886455a4b1e4d982096b4779aa6eff2527ffbe3f0e"
+        },
+        "arm64": {
+            "url": "https://github.com/ArmCord/ArmCord/releases/download/v3.3.0/ArmCord-3.3.0-win-arm64.exe#/dl.7z",
+            "hash": "sha512:f7139dc502cb42a6a692974958e654aa26668c8a8b4a9adf14e87d0c763542617469d8b50c516d7f62c8e3c98598fb52c4300959feddc73d0dc4f2a88aba78c4"
         }
     },
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app*.7z\" \"$dir\"",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse"
+    ],
     "pre_uninstall": "Stop-Process -Name 'ArmCord' -ErrorAction SilentlyContinue",
     "bin": "ArmCord.exe",
     "shortcuts": [
@@ -25,12 +29,15 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/ArmCord/ArmCord/releases/download/v$version/ArmCord.Setup.$version.exe#/dl.7z"
+                "url": "https://github.com/ArmCord/ArmCord/releases/download/v$version/ArmCord-$version-win-x64.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/ArmCord/ArmCord/releases/download/v$version/ArmCord-$version-win-arm64.exe#/dl.7z"
             }
         },
         "hash": {
             "url": "$baseurl/latest.yml",
-            "regex": "sha512:\\s$base64"
+            "regex": "(?sm)$basename.*?sha512:\\s$base64"
         }
     }
 }
