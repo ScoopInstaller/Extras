@@ -1,0 +1,35 @@
+{
+    "version": "10.3.2",
+    "description": "A customizable desktop music player with a clean interface",
+    "homepage": "https://moosync.app",
+    "license": "GPL-3.0-or-later",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Moosync/Moosync/releases/download/v10.3.2/Moosync-10.3.2-win-x64.exe#/dl.7z",
+            "hash": "sha512:4e0c523012d41598ee8584e2830ccb53af1dbc00a88db673074e79d8b2109b982e1578c93ef172013b03da8be390a41fb454f493a642abc25fe8e30336c027e0",
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+        }
+    },
+    "post_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Force -Recurse",
+    "bin": "Moosync.exe",
+    "shortcuts": [
+        [
+            "Moosync.exe",
+            "Moosync"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/Moosync/Moosync"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Moosync/Moosync/releases/download/v$version/Moosync-$version-win-x64.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "sha512:\\s+$base64"
+                }
+            }
+        }
+    }
+}

@@ -1,16 +1,17 @@
 {
-    "version": "7.2.25.228",
+    "version": "7.2.25.306",
     "description": "Foxmail like you've never seen it before.",
     "homepage": "https://www.foxmail.com/",
     "license": {
         "identifier": "Proprietary",
         "url": "https://www.foxmail.com/mac/en/terms_of_service"
     },
-    "url": "https://dldir1.qq.com/foxmail/windows/FoxmailSetup_7.2.25.228.exe#/dl.7z",
-    "hash": "6cece42f31b7499b1e0f96adc579e1dbe8960c5f895363b2f2f489abe12b5abd",
+    "url": "https://dldir1.qq.com/foxmail/windows/FoxmailSetup_7.2.25.306.exe#/dl.7z",
+    "hash": "4f4498590e33731e790ec9e9c667cb49727047e28a158f72e4495dfcf9a4b770",
     "pre_install": [
         "$file = 'FMStorage.list'",
         "if (!(Test-Path \"$persist_dir\\$file\")) {",
+        "    Write-Host 'File' $file 'does not exist. Creating.' -f Yellow",
         "    $CONT = @('')",
         "    Set-Content \"$dir\\$file\" ($CONT -join \"`r`n\") -Encoding Ascii",
         "}"
@@ -28,8 +29,16 @@
         "FMStorage.list"
     ],
     "checkver": {
-        "url": "https://pc.qq.com/detail/14/detail_14.html",
-        "regex": "FoxmailSetup_([\\d.]+).exe"
+        "script": [
+            "$url = 'https://www.foxmail.com/win/download'",
+            "if ($PSVersionTable.PSVersion.Major -lt 7.0) {",
+            "    $req = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -ErrorAction SilentlyContinue",
+            "} else {",
+            "    $req = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -ErrorAction SilentlyContinue -SkipHttpErrorCheck",
+            "}",
+            "Write-Output $req.Headers.Location"
+        ],
+        "regex": "FoxmailSetup_([\\d.]+)\\.exe"
     },
     "autoupdate": {
         "url": "https://dldir1.qq.com/foxmail/windows/FoxmailSetup_$version.exe#/dl.7z"

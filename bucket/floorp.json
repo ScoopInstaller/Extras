@@ -1,0 +1,53 @@
+{
+    "version": "11.18.0",
+    "description": "A Browser build for keeping the Open, Private and Sustainable Web alive. Based on Mozilla Firefox.",
+    "homepage": "https://github.com/Floorp-Projects",
+    "license": "MPL-2.0",
+    "notes": [
+        "To set profile 'Scoop' as *DEFAULT*, or profiles/settings was lost after update:",
+        "  - Run 'Floorp Profile Manager', choose 'Scoop' then click 'Start Floorp'.",
+        "  - Visit 'about:profiles' page in Floorp to check *DEFAULT* profile.",
+        "For details: https://support.mozilla.org/en-US/kb/profile-manager-create-remove-switch-firefox-profiles"
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Floorp-Projects/Floorp-Portable/releases/download/11.18.0-portable/floorp-11.18.0-portable-windows-x86_64.zip",
+            "hash": "3e99e41891c69df60d5a003f947d22e3908bcbd3afb3b918d202e174b58406a1"
+        }
+    },
+    "extract_dir": "core",
+    "post_install": [
+        "floorp -CreateProfile \"Scoop $persist_dir\\profile\"",
+        "$Addition = \"$persist_dir\\addition\"",
+        "if (Test-Path $Addition) {",
+        "  info 'Copying additional items...'",
+        "  Copy-Item -Path $Addition\\* -Destination $dir -Force -Recurse -ErrorAction SilentlyContinue",
+        "}"
+    ],
+    "bin": "floorp.exe",
+    "shortcuts": [
+        [
+            "floorp.exe",
+            "Floorp"
+        ],
+        [
+            "floorp.exe",
+            "Floorp Profile Manager",
+            "-P"
+        ]
+    ],
+    "persist": [
+        "core",
+        "profile"
+    ],
+    "checkver": {
+        "github": "https://github.com/Floorp-Projects/Floorp-Portable"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Floorp-Projects/Floorp-Portable/releases/download/$version-portable/floorp-$version-portable-windows-x86_64.zip"
+            }
+        }
+    }
+}

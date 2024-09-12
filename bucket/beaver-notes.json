@@ -1,0 +1,58 @@
+{
+    "$schema": "https://raw.githubusercontent.com/ScoopInstaller/Scoop/master/schema.json",
+    "version": "3.6.0",
+    "description": "A privacy-focused note-taking application",
+    "homepage": "https://beavernotes.com/",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Beaver-Notes/Beaver-Notes/releases/download/3.6.0/Beaver-notes.3.6.0.portable.exe#/dl.7z",
+            "hash": "eae7d5cdd4dcd28eb055f21cd20f2556e8f5b975395f346096f2146669a42619"
+        },
+        "arm64": {
+            "url": "https://github.com/Beaver-Notes/Beaver-Notes/releases/download/3.6.0/Beaver-notes.3.6.0.portable.arm64.exe#/dl.7z",
+            "hash": "356e923d9d921e806d8338568103aaaecd8c429939eb359894da918f5964f160"
+        }
+    },
+    "pre_install": [
+        "Expand-7zipArchive -Path \"$dir\\`$PLUGINSDIR\\app*.7z\" -DestinationPath \"$dir\"",
+        "$ScriptBlock = [scriptblock]{Remove-Item -Path \"$dir\\`$*\", \"$dir\\Uninstall*\" -Force -Recurse}",
+        "Try {$ScriptBlock.Invoke()} Catch {Start-Sleep -Milliseconds 50; $ScriptBlock.Invoke()}"
+    ],
+    "shortcuts": [
+        [
+            "Beaver-notes.exe",
+            "Beaver Notes"
+        ]
+    ],
+    "persist": "data",
+    "post_uninstall": [
+        "if ($purge) {",
+        "    $Directories = [string[]](",
+        "        ('{0}\\Beaver-notes' -f $env:APPDATA)",
+        "    )",
+        "    $Directories.ForEach{",
+        "        if ([System.IO.Directory]::Exists($_)) {",
+        "            $null = [System.IO.Directory]::Delete($_,$true)",
+        "        }",
+        "    }",
+        "}"
+    ],
+    "checkver": {
+        "github": "https://github.com/Beaver-Notes/Beaver-Notes"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Beaver-Notes/Beaver-Notes/releases/download/$version/Beaver-notes.$version.portable.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/Beaver-Notes/Beaver-Notes/releases/download/$version/Beaver-notes.$version.portable.arm64.exe#/dl.7z"
+            }
+        },
+        "hash": {
+            "url": "https://github.com/Beaver-Notes/Beaver-Notes/releases/tag/$version",
+            "regex": "$sha256.*?$basename"
+        }
+    }
+}

@@ -1,13 +1,24 @@
 {
-    "version": "7.60-5170",
+    "version": "8.10-5520",
     "description": "Comprehensive Hardware Analysis, Monitoring and Reporting for Windows and DOS",
     "homepage": "https://www.hwinfo.com",
     "license": "Freeware",
-    "url": "https://www.fosshub.com/HWiNFO.html/hwi_760.zip",
-    "hash": "113c463b31f45644215ca4b8c66c84f2911cbd931e3dd493149fc7527466875e",
+    "url": "https://www.fosshub.com/HWiNFO.html/hwi_810.zip",
+    "hash": "cc770fbe023ebba1cf9f71f374a2594b4454ed2e28145d0902ee80e3cc3ced4e",
     "pre_install": [
         "foreach ($conf in 'HWiNFO64.INI', 'HWiNFO32.INI') {",
         "    if (!(Test-Path \"$persist_dir\\$conf\")) { Set-Content \"$dir\\$conf\" '[Settings]', 'AutoUpdate=0' -Encoding ASCII }",
+        "}",
+        "if (Test-PATH \"$persist_dir\\HWiNFO64_KEY.txt\" -PathType Leaf) {",
+        "    Copy-Item \"$persist_dir\\HWiNFO64_KEY.txt\" \"$dir\"",
+        "}"
+    ],
+    "pre_uninstall": [
+        "if (Test-PATH \"$dir\\HWiNFO64_KEY.txt\" -PathType Leaf) {",
+        "    if (Test-PATH \"$persist_dir\\HWiNFO64_KEY.txt\" -PathType Container) {",
+        "        Remove-Item \"$persist_dir\\HWiNFO64_KEY.txt\" -Recurse",
+        "    }",
+        "    Copy-Item \"$dir\\HWiNFO64_KEY.txt\" \"$persist_dir\"",
         "}"
     ],
     "architecture": {
@@ -42,8 +53,7 @@
     },
     "persist": [
         "HWiNFO64.INI",
-        "HWiNFO32.INI",
-        "HWiNFO64_KEY.txt"
+        "HWiNFO32.INI"
     ],
     "checkver": {
         "url": "https://www.hwinfo.com/ver.txt",

@@ -1,5 +1,5 @@
 {
-    "version": "2.0.2.16660",
+    "version": "2.4.2.32922",
     "description": "Toolbox App. A control panel for all JetBrains tools.",
     "homepage": "https://www.jetbrains.com/toolbox/",
     "license": {
@@ -10,10 +10,14 @@
         "By default all your tools are installed into '$dir\\apps' folder and are persisted.",
         "This could be changed inside settings menu."
     ],
-    "url": "https://download.jetbrains.com/toolbox/jetbrains-toolbox-2.0.2.16660.exe#/dl.7z",
-    "hash": "4d642ac91ab7920086373d9b90574fc058fa50812ccad5d9853a6b5a27949acf",
+    "url": "https://download.jetbrains.com/toolbox/jetbrains-toolbox-2.4.2.32922.exe",
+    "hash": "281f575872c5519b4d831f63783513d21e868e83a16711d72cc2f1c68776063e",
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\jetbrains-toolbox-$version.exe\" \"$dir\\installer\" -Removal",
+        "Expand-7zipArchive \"$dir\\installer\\.text\" \"$dir\"",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\installer\" -Recurse"
+    ],
     "post_install": [
-        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall.exe\" -Recurse",
         "$config = \"$env:LOCALAPPDATA\\JetBrains\\Toolbox\\.settings.json\"",
         "if (!(Test-Path $config)) {",
         "    $settings = @{",
@@ -45,7 +49,7 @@
         "jsonpath": "$.TBA..build"
     },
     "autoupdate": {
-        "url": "https://download.jetbrains.com/toolbox/jetbrains-toolbox-$version.exe#/dl.7z",
+        "url": "https://download.jetbrains.com/toolbox/jetbrains-toolbox-$version.exe",
         "hash": {
             "url": "$url.sha256"
         }

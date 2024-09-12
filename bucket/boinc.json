@@ -1,0 +1,65 @@
+{
+    "version": "8.0.4",
+    "description": "Volunteer scientific or grid computing client",
+    "homepage": "https://boinc.berkeley.edu/",
+    "license": "LGPL-3.0-or-later",
+    "depends": "isx",
+    "notes": [
+        "Set DATADIR and INSTALLDIR in:",
+        "Computer\\HKEY_LOCAL_MACHINE\\SOFTWARE\\Space Sciences Laboratory, U.C. Berkeley\\BOINC Setup"
+    ],
+    "persist": "data",
+    "architecture": {
+        "64bit": {
+            "url": "https://boinc.berkeley.edu/dl/boinc_8.0.4_windows_x86_64.exe#/dl.exe",
+            "hash": "10537b2267dc8d6a922439741bd6653ea4f5427e984949727b64c29af83b1183"
+        },
+        "32bit": {
+            "url": "https://boinc.berkeley.edu/dl/boinc_7.16.3_windows_intelx86.exe#/dl.exe",
+            "hash": ""
+        }
+    },
+    "installer": {
+        "script": [
+            "Invoke-ExternalCommand ((Get-Command 'isx' -CommandType Application).Source) -ArgumentList \"$dir\\$fname\" -LogPath \"$dir\\isx.log\" | Out-Null",
+            "$folder = Get-ChildItem \"$dir\" -Directory | Select-Object -First 1 -ExpandProperty FullName",
+            "$extract = if ($architecture -eq '64bit') { 'Program Files 64' } else { 'program files' }",
+            "Expand-MsiArchive \"$folder\\BOINC.msi\" \"$dir\" -ExtractDir \"$extract\\BOINC\" -Removal",
+            "Remove-Item $folder -Force -Recurse"
+        ]
+    },
+    "post_install": [
+        "Remove-Item \"$dir\\$fname\"",
+        "if (-not (is_admin)) {",
+        "error 'Administrator privileges are needed for registry entries'; ",
+        "} else {",
+        "$boincregpath = \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Space Sciences Laboratory, U.C. Berkeley\\BOINC Setup\"",
+        "reg add $boincregpath /v INSTALLDIR /t REG_SZ /d \"$dir\\\"",
+        "reg add $boincregpath /v DATADIR /t REG_SZ /d \"$dir\\data\\\" }"
+    ],
+    "bin": [
+        "boinc.exe",
+        "boinccmd.exe"
+    ],
+    "shortcuts": [
+        [
+            "boincmgr.exe",
+            "BOINC\\BOINC Manager"
+        ],
+        [
+            "boincscr.exe",
+            "BOINC\\BOINC Screensaver"
+        ]
+    ],
+    "checkver": {
+        "url": "https://boinc.berkeley.edu/dl/?C=M;O=D",
+        "regex": "boinc_([\\d.]+)_windows_x86_64.exe"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://boinc.berkeley.edu/dl/boinc_$version_windows_x86_64.exe#/dl.exe"
+            }
+        }
+    }
+}

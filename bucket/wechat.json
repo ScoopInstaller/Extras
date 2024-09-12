@@ -1,13 +1,21 @@
 {
-    "version": "3.9.6.33",
+    "version": "3.9.11.25",
     "description": "Free messaging and calling app by Tencent",
     "homepage": "https://pc.weixin.qq.com/",
     "license": {
         "identifier": "Proprietary",
         "url": "https://www.wechat.com/en/service_terms.html"
     },
-    "url": "https://webcdn.m.qq.com/spcmgr/download/WeChatSetup_3.9.6.33.exe#/dl.7z",
-    "hash": "38148311ea13440b64bd68647f7a06721f1af7f0c6fff9f3e07516162252c18c",
+    "architecture": {
+        "64bit": {
+            "url": "https://dldir1v6.qq.com/weixin/Windows/WeChatSetup.exe#/dl.7z",
+            "hash": "04a668ea0d36cd8963acc2b9c0f0aff0c0a7c73f46127863ea1f90e942664171"
+        },
+        "32bit": {
+            "url": "https://dldir1v6.qq.com/weixin/Windows/WeChatSetup_x86.exe#/dl.7z",
+            "hash": "cb602bb5c82c00cb1572100366352c72a6442aef498be1ca30a611c34b36818c"
+        }
+    },
     "installer": {
         "script": [
             "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Force -Recurse",
@@ -35,10 +43,20 @@
         ]
     },
     "checkver": {
-        "url": "https://pc.qq.com/detail/8/detail_11488.html",
-        "regex": "(?<prefix>WeChat|WeChatSetup_)([\\d.]+)\\.exe"
+        "script": [
+            "$resp = Invoke-WebRequest -UseBasicParsing -Uri 'https://luban.m.qq.com/api/public/software-manager/softwareProxy' -Body 'cmdid=3318&jprxReq%5Breq%5D%5Bsoft_id_list%5D%5B%5D=11488' -Method 'POST'",
+            "Write-Output $resp.Content"
+        ],
+        "jsonpath": "$..ver_name"
     },
     "autoupdate": {
-        "url": "https://webcdn.m.qq.com/spcmgr/download/$matchPrefix$version.exe#/dl.7z"
+        "architecture": {
+            "64bit": {
+                "url": "https://dldir1v6.qq.com/weixin/Windows/WeChatSetup.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://dldir1v6.qq.com/weixin/Windows/WeChatSetup_x86.exe#/dl.7z"
+            }
+        }
     }
 }

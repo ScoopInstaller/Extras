@@ -1,13 +1,27 @@
 {
-    "version": "20230807",
+    "version": "20240818",
     "description": "Split screen video comparison tool using FFmpeg and SDL2.",
     "homepage": "https://github.com/pixop/video-compare",
     "license": "GPL-2.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/pixop/video-compare/releases/download/20230807/video-compare-20230807-win10-x86_64.zip",
-            "hash": "d8e9a88cef2ea906c230d108468426280440a0a2a1910bb1d80d3aca77ba98c9"
+            "url": "https://github.com/pixop/video-compare/releases/download/20240818/video-compare-20240818-win10-x86_64.zip",
+            "hash": "44bb1ce47780a925542a5bc619792ddc96196cdb7033360589bcaee0fda78d27"
         }
+    },
+    "post_install": [
+        "$LnkPath = Join-Path ([System.Environment]::GetFolderPath('SendTo')) video-compare.lnk",
+        "if (Test-Path $LnkPath){Remove-Item $LnkPath}",
+        "$WScriptShell = New-Object -ComObject WScript.Shell",
+        "$Shortcut = $WScriptShell.CreateShortcut($LnkPath)",
+        "$Shortcut.TargetPath = (Join-Path $DIR video-compare.exe)",
+        "$Shortcut.Save()"
+    ],
+    "uninstaller": {
+        "script": [
+            "$LnkPath = Join-Path ([System.Environment]::GetFolderPath('SendTo')) video-compare.lnk",
+            "if (Test-Path $LnkPath){Remove-Item $LnkPath}"
+        ]
     },
     "bin": "video-compare.exe",
     "checkver": "github",

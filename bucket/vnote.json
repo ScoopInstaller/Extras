@@ -1,5 +1,5 @@
 {
-    "version": "3.17.0",
+    "version": "3.18.2",
     "description": "A Vim-inspired note-taking platform",
     "homepage": "https://app.vnote.fun",
     "license": "LGPL-3.0-only",
@@ -8,15 +8,11 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/vnotex/vnote/releases/download/v3.17.0/vnote-win-x64-qt5.15.2_v3.17.0.zip",
-            "hash": "a19ee888d4302f21f593ff3f043ff9966448996e5ae92e4142a7b435d5de3c98"
-        },
-        "32bit": {
-            "url": "https://github.com/vnotex/vnote/releases/download/v3.17.0/vnote-win-x86-qt5.15.2_v3.17.0.zip",
-            "hash": "089449a95a448d07b879c0b74ff49687978d7da204d242714c8a69afc8a08cf1"
+            "url": "https://github.com/vnotex/vnote/releases/download/v3.18.2/VNote-3.18.2-win64.zip",
+            "hash": "b4bce59562390b02e8e89f9d4f38e5ed6d780be843e24d4f8b44b8f4729fbc4a",
+            "extract_dir": "VNote-3.18.2-win64\\bin"
         }
     },
-    "pre_install": "Remove-Item \"$dir\\vcredist_*exe\"",
     "bin": "vnote.exe",
     "shortcuts": [
         [
@@ -25,35 +21,13 @@
         ]
     ],
     "checkver": {
-        "script": [
-            "# Using checkver script because 64-bit and 32-bit can use different version of Qt",
-            "# , and the 32-bit file can be above or below the 64-bit one",
-            "$url = 'https://github.com/vnotex/vnote/releases/latest'",
-            "",
-            "$cont = (Invoke-WebRequest $url).Content",
-            "$r = 'tag/v([\\d.]+)'",
-            "if (!($cont -match $r)) { error \"Could not match $r in $url\"; continue }",
-            "$ver = $matches[1]",
-            "",
-            "$assetUrl = \"https://github.com/vnotex/vnote/releases/expanded_assets/v$ver\"",
-            "$assetCont = (Invoke-WebRequest $assetUrl).Content",
-            "$r = \"vnote-win-x64-qt([\\w.]+)_v$ver.zip\"",
-            "if (!($assetCont -match $r)) { error \"Could not match $r in $url\"; continue }",
-            "$qt64bit = $matches[1]",
-            "$r = \"vnote-win-x86-qt([\\w.]+)_v$ver.zip\"",
-            "if (!($assetCont -match $r)) { error \"Could not match $r in $url\"; continue }",
-            "$qt32bit = $matches[1]",
-            "Write-Output $ver $qt64bit $qt32bit"
-        ],
-        "regex": "([\\d.]+) (?<qt64bit>[\\w.]+) (?<qt32bit>[\\w.]+)"
+        "github": "https://github.com/vnotex/vnote"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/vnotex/vnote/releases/download/v$version/vnote-win-x64-qt$matchQt64bit_v$version.zip"
-            },
-            "32bit": {
-                "url": "https://github.com/vnotex/vnote/releases/download/v$version/vnote-win-x86-qt$matchQt32bit_v$version.zip"
+                "url": "https://github.com/vnotex/vnote/releases/download/v$version/VNote-$version-win64.zip",
+                "extract_dir": "VNote-$version-win64\\bin"
             }
         }
     }
