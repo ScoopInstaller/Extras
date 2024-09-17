@@ -1,0 +1,43 @@
+{
+    "version": "2.3.1",
+    "description": "Multi-platform auto-proxy client, supporting Sing-box, X-ray, TUIC, Hysteria, Reality, Trojan, SSH etc. It’s an open-source, secure and ad-free.",
+    "homepage": "https://hiddify.com/",
+    "license": {
+        "identifier": "CC-BY-NC-SA-4.0",
+        "url": "https://github.com/hiddify/hiddify-next/blob/main/LICENSE.md"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/hiddify/hiddify-next/releases/download/v2.3.1/Hiddify-Windows-Portable-x64.zip",
+            "hash": "8150d3bae8b5eac91a3496ff46624454fbd3c41dfd06e6bc71d5273f474519bf"
+        }
+    },
+    "extract_dir": "hiddify-next-portable",
+    "installer": {
+        "script": [
+            "ensure \"$persist_dir\" | Out-Null",
+            "New-Item \"$env:APPDATA\\Hiddify\" -ItemType Junction -Target \"$persist_dir\" | Out-Null"
+        ]
+    },
+    "uninstaller": {
+        "script": "Remove-Item \"$env:APPDATA\\Hiddify\" -Recurse -Force -ErrorAction 'SilentlyContinue'"
+    },
+    "shortcuts": [
+        [
+            "HiddifyNext.exe",
+            "HiddifyNext"
+        ]
+    ],
+    "checkver": {
+        "url": "https://api.github.com/repos/hiddify/hiddify-next/releases",
+        "jsonpath": "$[0].assets[*].browser_download_url",
+        "regex": "/releases/download/v([\\w.]+)/(?<file>(?:hiddify|Hiddify)-(?:windows|Windows)-(?:portable|Portable)-x64\\.zip)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/hiddify/hiddify-next/releases/download/v$version/$matchFile"
+            }
+        }
+    }
+}
