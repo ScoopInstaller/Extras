@@ -25,7 +25,7 @@
     },
     "installer": {
         "script": [
-            "Remove-Item \"$dir\\`$*\", \"$dir\\uninstall.exe\" -Force -Recurse",
+            "Remove-Item \"$dir\\`$*\" -Force -Recurse",
             "New-Item \"$dir\\portable_mode_enabled\" -Force | Out-Null",
             "$EncodersDir = $(appdir foobar2000-encoders $global)",
             "if (Test-Path \"$EncodersDir\") {",
@@ -37,14 +37,10 @@
         "if (!(Test-Path \"$persist_dir\\profile\\*\")) {",
         "    Get-ChildItem -Path \"$persist_dir\" -Exclude \"profile\" | Move-Item -Destination \"$persist_dir\\profile\" -Force",
         "}",
-        "if (!(Test-Path \"$persist_dir\\profile\\*\") -and (Test-Path \"$env:AppData\\foobar2000\")) {",
+        "if (!(Test-Path \"$persist_dir\\profile\\*\") -and (Test-Path \"$env:AppData\\foobar2000-v2\")) {",
         "    info '[Portable Mode]: Copying user data...'",
-        "    Copy-Item \"$env:AppData\\foobar2000\\*\" -Destination \"$persist_dir\\profile\" -Force -Recurse",
-        "}",
-        "if (!(Test-Path \"$persist_dir\\profile\\playlists-v1.4\")) {",
-        "    Get-ChildItem -Path \"$persist_dir\\profile\" -Filter \"playlists\" -Directory | Rename-Item -NewName \"playlists-v1.4\" -Force",
-        "}",
-        "Get-ChildItem -Path \"$persist_dir\\profile\" -Filter \"playlists\" | Remove-Item -Force -Recurse"
+        "    Copy-Item \"$env:AppData\\foobar2000-v2\\*\" -Destination \"$persist_dir\\profile\" -Force -Recurse",
+        "}"
     ],
     "bin": "foobar2000.exe",
     "shortcuts": [
