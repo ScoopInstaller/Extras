@@ -1,0 +1,43 @@
+{
+    "version": "2-15-5",
+    "description": "PARI/GP is a widely used computer algebra system designed for fast computations in number theory.",
+    "homepage": "https://pari.math.u-bordeaux.fr/",
+    "license": "GPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://pari.math.u-bordeaux.fr/pub/pari/windows/Pari64-2-15-5.exe#/dl.7z",
+            "hash": "bd8d94230cf2f46af8eb4e403493a37c4a28ce7757cf8cb7cf847aaa35143333"
+        },
+        "32bit": {
+            "url": "https://pari.math.u-bordeaux.fr/pub/pari/windows/Pari32-2-15-5.exe#/dl.7z",
+            "hash": "8d15cfb2a43a3270f0f38e60afa61d7f5ce6d63eeb8a26a4c26651390ecb0c9b"
+        }
+    },
+    "pre_install": "Remove-Item \"$dir\\`$*\" -Recurse",
+	"bin": [
+		"gp.exe"
+	],
+    "checkver": {
+		"url": "https://pari.math.u-bordeaux.fr/download.html",
+		"regex": "pari-(\\d+).(\\d+).(\\d+).tar.gz",
+		"replace": "${1}-${2}-${3}"
+	},
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://pari.math.u-bordeaux.fr/pub/pari/windows/Pari64-$version.exe#/dl.7z",
+				"hash": {
+					"url": "https://pari.math.u-bordeaux.fr/download.html",
+					"find": "Stable 64-bit version: Pari64-$version.exe.+\\s+sha256sum:\\s+$sha256"
+				}
+            },
+            "32bit": {
+                "url": "https://pari.math.u-bordeaux.fr/pub/pari/windows/Pari32-$version.exe#/dl.7z",
+				"hash": {
+					"url": "https://pari.math.u-bordeaux.fr/download.html",
+					"find": "Stable 32-bit version: Pari32-$version.exe.+\\s+sha256sum:\\s+$sha256"
+				}
+            }
+        }
+    }
+}
