@@ -3,6 +3,13 @@
     "description": "A set of utilities for power users to tune and streamline their Windows experience for greater productivity.",
     "homepage": "https://github.com/microsoft/PowerToys",
     "license": "MIT",
+    "notes": [
+        "Add PowerToys context menu option by running:",
+        "Invoke-Expression -Command \"$dir\\install-context.ps1\"",
+        "",
+        "If an error occurs when updating or uninstalling, execute the following command then retry:",
+        "`Stop-Process -Name 'explorer'`"
+    ],
     "architecture": {
         "64bit": {
             "url": "https://github.com/microsoft/PowerToys/releases/download/v0.85.1/PowerToysUserSetup-0.85.1-x64.exe",
@@ -19,6 +26,43 @@
             "Get-ChildItem \"$dir\\.tmp\\AttachedContainer\\PowerToysUserSetup*.msi\" | Rename-Item -NewName 'PowerToysSetup.msi' -Force",
             "Expand-MsiArchive \"$dir\\.tmp\\AttachedContainer\\PowerToysSetup.msi\" \"$dir\" -ExtractDir 'PowerToys'",
             "Remove-Item \"$dir\\.tmp\", \"$dir\\$fname\" -Force -Recurse"
+        ]
+    },
+    "post_install": [
+        "'install-context', 'uninstall-context' | ForEach-Object {",
+        "    if (Test-Path \"$bucketsdir\\$bucket\\scripts\\$app\\$_.ps1\") {",
+        "        $content = Get-Content \"$bucketsdir\\$bucket\\scripts\\$app\\$_.ps1\"",
+        "        $content = $content.Replace('{{scoop_dir}}', $original_dir)",
+        "        if ($global) {",
+        "            $content = $content.Replace('{{install_scope}}', 'perMachine')",
+        "            $content = $content.Replace('{{registry_scope}}', 'HKLM')",
+        "        }",
+        "        $content = $content.Replace('{{install_scope}}', 'perUser')",
+        "        $content = $content.Replace('{{registry_scope}}', 'HKCU')",
+        "        $content | Set-Content -Path \"$dir\\$_.ps1\"",
+        "    }",
+        "}",
+        "$regpath = 'HKCU:\\Software\\Classes\\powertoys'",
+        "if ($global) {",
+        "    $regpath = $regpath.Replace('HKCU', 'HKLM')",
+        "}",
+        "if (Test-Path -Path $regpath) {",
+        "    Remove-Item -Path $regpath -Recurse -Force | Out-Null",
+        "    Invoke-Expression -Command \"$dir\\install-context.ps1\"",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "$regpath = 'HKCU:\\Software\\Classes\\powertoys'",
+            "if ($global) {",
+            "    $regpath = $regpath.Replace('HKCU', 'HKLM')",
+            "}",
+            "if (Test-Path -Path $regpath) {",
+            "    Invoke-Expression -Command \"$dir\\uninstall-context.ps1\"",
+            "    if ($cmd -ne 'uninstall') {",
+            "        New-Item -Path $regpath -Force | Out-Null",
+            "    }",
+            "}"
         ]
     },
     "shortcuts": [
