@@ -1,0 +1,49 @@
+{
+    "version": "1.5.1",
+    "description": "Customization marketplace for Windows programs.",
+    "homepage": "https://windhawk.net/",
+    "license": {
+        "identifier": "GPL-3.0-or-later",
+        "url": "https://github.com/ramensoftware/windhawk/blob/main/LICENSE"
+    },
+    "url": "https://github.com/ramensoftware/windhawk/releases/download/v1.5.1/windhawk_setup_offline.exe",
+    "hash": "a53a9f236ee8b19914208c3bcc64a55e222c5154899d104a5297dc34cee99a02",
+    "bin": "windhawk.exe",
+    "pre_install": [
+        "if(!(test-path \"$persist_dir\\AppData\\settings.ini\")) {",
+        "    New-Item -ItemType \"Directory\" -Path \"$dir\\AppData\" | Out-Null",
+        "    New-Item \"$dir\\AppData\\settings.ini\" | Out-Null",
+        "    Add-Content \"$dir\\AppData\\settings.ini\" \"[Settings]`r`nDisableUpdateCheck=1\"",
+        "}"
+    ],
+    "installer": {
+        "args": [
+            "/portable",
+            "/S",
+            "/D=$dir"
+        ]
+    },
+    "post_install": [
+        "if((test-path \"$dir\\AppData.original\")) {",
+        "    Copy-Item \"$dir\\AppData.original\\*\"  \"$dir\\AppData\" -Exclude \"*.ini\" -Recurse -Force",
+        "    Remove-Item \"$dir\\AppData.original\" -Recurse -Force | Out-Null",
+        "    Remove-Item \"$dir\\windhawk.ini.original\" -Recurse -Force | Out-Null",
+        "}"
+    ],
+    "persist": [
+        "AppData",
+        "windhawk.ini"
+    ],
+    "shortcuts": [
+        [
+            "windhawk.exe",
+            "Windhawk"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/ramensoftware/windhawk"
+    },
+    "autoupdate": {
+        "url": "https://github.com/ramensoftware/windhawk/releases/download/v$version/windhawk_setup_offline.exe"
+    }
+}

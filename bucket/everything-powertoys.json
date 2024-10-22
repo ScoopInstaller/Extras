@@ -1,0 +1,50 @@
+{
+    "version": "0.85.1",
+    "description": "This plugin adds Everything search results to PowerToys Run.",
+    "homepage": "https://github.com/lin-ycv/EverythingPowerToys",
+    "license": "EPL-2.0",
+    "suggest": {
+        "Everything": [
+            "everything",
+            "versions/everything-alpha"
+        ],
+        "PowerToys": "powertoys"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/lin-ycv/EverythingPowerToys/releases/download/v0.85.1/EverythingPT-0.85.1-x64.zip",
+            "hash": "40ffc65de62bf88362785dd6a2ccc2b4e732400adcfacd5942c4ecb02ed828be"
+        },
+        "arm64": {
+            "url": "https://github.com/lin-ycv/EverythingPowerToys/releases/download/v0.85.1/EverythingPT-0.85.1-ARM64.zip",
+            "hash": "b6e9a528b3abb1d60f6a1959bf2ea2e66767fbbf66ece7e5769539852bb5780e"
+        }
+    },
+    "post_install": "New-Item -ItemType Junction -Path \"$env:LOCALAPPDATA\\Microsoft\\PowerToys\\PowerToys Run\\Plugins\\Everything\" -Target \"$dir\\Everything\" | Out-Null",
+    "pre_uninstall": [
+        "if (!(Get-Process powertoys -ErrorAction Ignore)) {",
+        "  Remove-Item \"$env:LOCALAPPDATA\\Microsoft\\PowerToys\\PowerToys Run\\Plugins\\Everything\" -ErrorAction Stop",
+        "} else {",
+        "  abort 'PowerToys is still running, please close it before uninstalling everything-powertoys'",
+        "}"
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/lin-ycv/EverythingPowerToys/releases/download/v$version/EverythingPT-$version-x64.zip",
+                "hash": {
+                    "url": "https://github.com/lin-ycv/EverythingPowerToys/releases/tag/v$version",
+                    "regex": "(?s)x64-ZIP.*?$sha256"
+                }
+            },
+            "arm64": {
+                "url": "https://github.com/lin-ycv/EverythingPowerToys/releases/download/v$version/EverythingPT-$version-ARM64.zip",
+                "hash": {
+                    "url": "https://github.com/lin-ycv/EverythingPowerToys/releases/tag/v$version",
+                    "regex": "(?s)ARM64-ZIP.*?$sha256"
+                }
+            }
+        }
+    }
+}
