@@ -18,9 +18,18 @@
     },
     "pre_install": [
         "Move-Item \"$dir\\syncthingtray-*-mingw32.exe\" \"$dir\\syncthingtray.exe\"",
-        "Move-Item \"$dir\\syncthingtray-*-mingw32-cli.exe\" \"$dir\\syncthingtray-cli.exe\"",
+        "Move-Item \"$dir\\syncthingtray-*-mingw32-cli.exe\" \"$dir\\syncthingtray-cli.exe\""
+    ],
+    "##": "syncthingtray.ini will recreate by syncthingtray.exe",
+    "post_install": [
         "$config = \"syncthingtray.ini\"",
-        "if (!(Test-Path \"$persist_dir\\$config\")) { New-Item \"$dir\\$config\" -ItemType File | Out-Null }"
+        "ensure $persist_dir",
+        "if (!(Test-Path \"$persist_dir\\$config\")) { New-Item \"$persist_dir\\$config\" -ItemType File | Out-Null }",
+        "move-item \"$persist_dir\\$config\" \"$dir\""
+    ],
+    "pre_uninstall": [
+        "ensure $persist_dir",
+        "move-item \"$dir\\syncthingtray.ini\" \"$persist_dir\""
     ],
     "bin": "syncthingtray-cli.exe",
     "shortcuts": [
@@ -29,7 +38,6 @@
             "Syncthing Tray"
         ]
     ],
-    "persist": "syncthingtray.ini",
     "checkver": "github",
     "autoupdate": {
         "architecture": {
