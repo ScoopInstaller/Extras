@@ -1,5 +1,5 @@
 {
-    "version": "1.70.0",
+    "version": "1.76.3",
     "description": "Tailscale a WireGuard based mesh VPN, used to connect your computers and other devices together securely without proxies.",
     "homepage": "https://tailscale.com",
     "license": "BSD-3-Clause",
@@ -9,21 +9,21 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.70.0-amd64.msi",
-            "hash": "040b0c462976c2897fa75ae2a5966fb4be1f0a5493d8868f14184dca7825a044"
+            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.76.3-amd64.msi",
+            "hash": "2aa71dd3867c6f975ecfa039595556dbbf7236517f5d497d539e47b797cb7764"
         },
         "32bit": {
-            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.70.0-x86.msi",
-            "hash": "1685793a95b19d57f79b87d007837d308b66fd2d5e89dd049f9f76f94378245d"
+            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.76.3-x86.msi",
+            "hash": "272c28457b0aa323817ff773bbe57e24dc94f781978c0b7e600925920f478d1a"
         },
         "arm64": {
-            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.70.0-arm64.msi",
-            "hash": "f36a4e19cb7c2ab74fc5ca0f98f24b6841a4c185e7d1aeb4a2ec62abc7692cd5"
+            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.76.3-arm64.msi",
+            "hash": "0c72a73544981562e1ac3c23d6c807537eb538085d30942a4f5404919929954b"
         }
     },
     "pre_install": "if (!(is_admin)) {error 'This package requires admin rights to install'; break}",
     "post_install": [
-        "tailscale-ipn.exe /install",
+        "tailscaled.exe install-system-daemon",
         "$dirpath = $dir.Replace('\\', '\\\\')",
         "'add-startup.reg', 'remove-startup.reg' | ForEach-Object {",
         "    if (Test-Path \"$bucketsdir\\extras\\scripts\\$app\\$_\") {",
@@ -41,7 +41,7 @@
     ],
     "uninstaller": {
         "script": [
-            "tailscale-ipn.exe /uninstall",
+            "tailscaled.exe uninstall-system-daemon",
             "if ($cmd -eq 'uninstall') { reg import \"$dir\\remove-startup.reg\" }"
         ]
     },

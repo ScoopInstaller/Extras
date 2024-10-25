@@ -1,0 +1,44 @@
+{
+    "$schema": "https://raw.githubusercontent.com/ScoopInstaller/Scoop/master/schema.json",
+    "version": "1.0.2",
+    "description": "Easy-to-use image converter for modern formats. Supports multithreading, drag 'n drop, and downscaling.",
+    "homepage": "https://codepoems.eu/xl-converter/",
+    "license": "GPL-3.0",
+    "depends": "extras/vcredist2022",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/JacobDev1/xl-converter/releases/download/v1.0.2/xl-converter-win-1.0.2-x86_64.exe",
+            "hash": "60d388bbd8c06ad906f99383fb363627351e4003b6aeb1206bccf62aa263c95b"
+        }
+    },
+    "innosetup": true,
+    "bin": "xl-converter.exe",
+    "shortcuts": [
+        [
+            "xl-converter.exe",
+            "XL Converter"
+        ]
+    ],
+    "post_uninstall": [
+        "if ($purge) {",
+        "    $Directories = [string[]](",
+        "        ('{0}\\xl-converter' -f $env:LOCALAPPDATA)",
+        "    )",
+        "    $Directories.ForEach{",
+        "        if ([System.IO.Directory]::Exists($_)) {",
+        "            $null = [System.IO.Directory]::Delete($_,$true)",
+        "        }",
+        "    }",
+        "}"
+    ],
+    "checkver": {
+        "github": "https://github.com/JacobDev1/xl-converter"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/JacobDev1/xl-converter/releases/download/v$version/xl-converter-win-$version-x86_64.exe"
+            }
+        }
+    }
+}
