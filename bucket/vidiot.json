@@ -10,6 +10,14 @@
             "extract_dir": "Vidiot-1.0.0-win64"
         }
     },
+    "pre_install": "if (Test-Path \"$persist_dir\\vidiot.ini\") { Copy-Item \"$persist_dir\\vidiot.ini\" \"$dir\" }",
+    "pre_uninstall": [
+        "# Manually persist vidiot.ini",
+        "if (Test-Path \"$dir\\vidiot.ini\") {",
+        "    ensure \"$persist_dir\" | Out-Null",
+        "    Copy-Item \"$dir\\vidiot.ini\" \"$persist_dir\" -ErrorAction 'SilentlyContinue' -Force",
+        "}"
+    ],
     "bin": "vidiot.exe",
     "shortcuts": [
         [
