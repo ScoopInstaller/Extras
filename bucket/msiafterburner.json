@@ -18,9 +18,12 @@
         "FurMark": "extras/furmark"
     },
     "url": "https://download.msi.com/uti_exe/vga/MSIAfterburnerSetup.zip?__token__=exp=acl=/*~hmac=#/dl.zip",
-    "hash": "407cf0f38b4b6b3dc030e70329d35be5eabfef45829240cc6df0442768189cec",
+    "hash": "10de22e72500fdfbb533b4b048ed52aa88d2661d847eeba7cceec405490ca25a",
     "pre_install": [
-        "Expand-7zipArchive \"$dir\\MSIAfterburnerSetup*.exe\" -Removal",
+        "Expand-7zipArchive \"$dir\\MSIAfterburnerInstaller*.exe\" -DestinationPath \"$dir\\.exe.d\" -Removal",
+        "Expand-7zipArchive \"$dir\\.exe.d\\.text\" -DestinationPath \"$dir\\.text.d\" -Removal",
+        "Expand-7zipArchive \"$dir\\.text.d\\MSIAfterburnerSetup*.exe\" -DestinationPath \"$dir\" -Removal",
+        "Remove-Item \"$dir\\.exe.d\", \"$dir\\.text.d\" -Recurse",
         "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\", \"$dir\\Redist\" -Recurse"
     ],
     "post_install": [
@@ -40,7 +43,7 @@
     "persist": "Profiles",
     "checkver": {
         "url": "https://www.guru3d.com/files-details/msi-afterburner-beta-download.html",
-        "regex": ">Download\\s+([\\d.]+)\\s+Stable\\s+\\(Final\\)",
+        "regex": ">\\s*Download\\s+([\\d.]+)\\s+Stable\\s+\\(Final\\)",
         "reverse": true
     },
     "autoupdate": {
