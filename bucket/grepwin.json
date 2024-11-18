@@ -28,19 +28,27 @@
         "    }",
         "    $content | Set-Content -Path \"$dir\\$_\" -Encoding ascii",
         "}",
-        "if (-not (Test-Path \"$persist_dir\\grepwin.ini\")) {",
-        "    Set-Content \"$dir\\grepwin.ini\" (@('[global]', '[Software\\grepWin\\History]') -join \"`r`n\") -Encoding ASCII",
+        "if (Test-Path \"$persist_dir\\grepwin.ini\") {",
+        "    Copy-Item \"$persist_dir\\grepwin.ini\" \"$dir\"",
+        "} else {",
+        "    Set-Content \"$dir\\grepwin.ini\" (@('[global]', '[Software\\grepWin\\History]') -join \"`r`n\") -Encoding Ascii",
         "}"
     ],
-    "pre_uninstall": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }",
     "bin": "grepWin.exe",
-    "persist": "grepwin.ini",
     "shortcuts": [
         [
             "grepWin.exe",
             "grepWin",
             "/portable"
         ]
+    ],
+    "pre_uninstall": [
+        "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }",
+        "# Manually persist grepwin.ini",
+        "if (Test-Path \"$dir\\grepwin.ini\") {",
+        "    ensure \"$persist_dir\" | Out-Null",
+        "    Copy-Item \"$dir\\grepwin.ini\" \"$persist_dir\" -ErrorAction 'SilentlyContinue' -Force",
+        "}"
     ],
     "checkver": {
         "github": "https://github.com/stefankueng/grepWin"
