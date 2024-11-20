@@ -1,0 +1,51 @@
+{
+    "version": "1.11.1",
+    "description": "Jellyfin Desktop Client based on Plex Media Player ",
+    "homepage": "https://jellyfin.org",
+    "license": "GPL-2.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/jellyfin/jellyfin-media-player/releases/download/v1.11.1/JellyfinMediaPlayer-1.11.1-windows-x64.exe",
+            "hash": "80160fdacd333a3986cfe8d817dce77825bf91413d506d3b5fe628ed4f1d7774"
+        },
+        "32bit": {
+            "url": "https://github.com/jellyfin/jellyfin-media-player/releases/download/v1.11.1/JellyfinMediaPlayer-1.11.1-windows-x86.exe",
+            "hash": "e83e93e73534ba978881b52759eb9988f0f16d00104853b76337f62623d2b393"
+        }
+    },
+    "checkver": {
+        "github": "https://github.com/jellyfin/jellyfin-media-player"
+    },
+    "suggest": {
+        "vcredist": "extras/vcredist2022"
+    },
+    "shortcuts": [
+        [
+            "JellyfinMediaPlayer.exe",
+            "Jellyfin Media Player"
+        ]
+    ],
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/jellyfin/jellyfin-media-player/releases/download/v$version/JellyfinMediaPlayer-$version-windows-x64.exe"
+            },
+            "32bit": {
+                "url": "https://github.com/jellyfin/jellyfin-media-player/releases/download/v$version/JellyfinMediaPlayer-$version-windows-x86.exe"
+            }
+        }
+    },
+    "installer": {
+        "script": [
+            "$setup_file = (Get-ChildItem -Path $dir -Filter *.exe)[0].name",
+            "Expand-DarkArchive \"$dir\\$setup_file\" \"$dir\\_tmp\"",
+            "(Get-ChildItem \"$dir\\_tmp\\AttachedContainer\\*.msi\").FullName | ForEach-Object {",
+            "    # appendpath.msi does not contain any file, which causes 'msiexec /a' to fail",
+            "    if($((Get-Item $_).Basename) -eq 'appendpath') { return }",
+            "    Expand-MsiArchive $_ \"$dir\" ",
+            "}",
+            "Copy-Item -Path \"$dir\\Msi\\*\" -Destination $dir -Recurse -Force",
+            "Remove-Item \"$dir\\$setup_file\", \"$dir\\_tmp\", \"$dir\\Msi\" -Recurse -Force"
+        ]
+    }
+}
