@@ -6,13 +6,16 @@
     "architecture": {
         "64bit": {
             "url": "https://github.com/qishibo/AnotherRedisDesktopManager/releases/download/v1.7.0/Another-Redis-Desktop-Manager-win-1.7.0-x64.exe#/dl.7z",
-            "hash": "sha512:18b59199956c583bf4f96595dfa1bd40d5c5a827db1ee57bbf22f84e67479e355710987f9db2852016e584d4945aae6f94f3271b150308cd200ee492bae378f8"
+            "hash": "sha512:18b59199956c583bf4f96595dfa1bd40d5c5a827db1ee57bbf22f84e67479e355710987f9db2852016e584d4945aae6f94f3271b150308cd200ee492bae378f8",
+            "pre_install": "Expand-7ZipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\" -Removal"
+        },
+        "arm64": {
+            "url": "https://github.com/qishibo/AnotherRedisDesktopManager/releases/download/v1.7.0/Another-Redis-Desktop-Manager-win-1.7.0-arm64.exe#/dl.7z",
+            "hash": "sha512:e2418f72eb7cd8d00e6c2dad84d8b41532f4003f94a588e6b0d30dc08d3d42ba5b0113265415f68857582168e6833dbbd41f1ae20eb2ad304318e113371389a6",
+            "pre_install": "Expand-7ZipArchive \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" \"$dir\" -Removal"
         }
     },
-    "pre_install": [
-        "Expand-7ZipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\" -Removal",
-        "'$PLUGINSDIR', 'Uninstall*.exe' | ForEach-Object { Remove-Item \"$dir\\$_\" -Recurse -Force }"
-    ],
+    "post_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Force -Recurse",
     "shortcuts": [
         [
             "Another Redis Desktop Manager.exe",
@@ -23,12 +26,15 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/qishibo/AnotherRedisDesktopManager/releases/download/v$version/Another-Redis-Desktop-Manager-win-$version-x64.exe#/dl.7z",
-                "hash": {
-                    "url": "$baseurl/latest.yml",
-                    "regex": "sha512:\\s+$base64"
-                }
+                "url": "https://github.com/qishibo/AnotherRedisDesktopManager/releases/download/v$version/Another-Redis-Desktop-Manager-win-$version-x64.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/qishibo/AnotherRedisDesktopManager/releases/download/v$version/Another-Redis-Desktop-Manager-win-$version-arm64.exe#/dl.7z"
             }
+        },
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "(?sm)$basename.*?sha512:\\s+$base64"
         }
     }
 }
