@@ -1,0 +1,38 @@
+{
+    "version": "0.0.0+922",
+    "description": "Photo-editing software and raw developer for digital artists, designed to help you achieve your own interpretation of raw digital photographs.",
+    "homepage": "https://ansel.photos/",
+    "license": "GPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/aurelienpierreeng/ansel/releases/download/v0.0.0/ansel-0.0.0+922.g7f23d9d38-win64.exe#/dl.7z",
+            "hash": "5b9b2ce378ae46ca4c4674dbf3c3aeb9141159580dbb8b25f76ed3f2b5888159"
+        }
+    },
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\uninst*\" -Force -Recurse",
+    "bin": [
+        "bin\\ansel.exe",
+        "bin\\ansel-cli.exe",
+        "bin\\ansel-generate-cache.exe",
+        "bin\\ansel-cltest.exe"
+    ],
+    "shortcuts": [
+        [
+            "bin\\ansel.exe",
+            "Ansel"
+        ]
+    ],
+    "checkver": {
+        "url": "https://api.github.com/repos/aurelienpierreeng/ansel/releases/85945145",
+        "regex": "ansel-(?<vhead>[\\d\\.]+)(?:%2B|\\+)(?<vtail>[\\d]+)\\.g(?<commit>[a-fA-F0-9]{9})-win64",
+        "reverse": true,
+        "replace": "${vhead}+${vtail}"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/aurelienpierreeng/ansel/releases/download/v$matchHead/ansel-$version.g$matchCommit-win64.exe#/dl.7z"
+            }
+        }
+    }
+}
