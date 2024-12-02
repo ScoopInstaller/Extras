@@ -3,6 +3,10 @@
     "description": "Lossless trimming tool for video and audio files",
     "homepage": "https://github.com/mifi/lossless-cut",
     "license": "GPL-2.0-or-later",
+    "notes": [
+        "For .mp4 and .mkv file associations, run:",
+        "\"$dir\\install-associations.reg\""
+    ],
     "architecture": {
         "64bit": {
             "url": "https://github.com/mifi/lossless-cut/releases/download/v3.64.0/LosslessCut-win-x64.7z",
@@ -16,6 +20,25 @@
             "LosslessCut"
         ]
     ],
+    "post_install": [
+        "$dirpath = \"$dir\".Replace('\\', '\\\\')",
+        "'install-associations', 'uninstall-associations' | ForEach-Object {",
+        "  if (Test-Path \"$bucketsdir\\extras\\scripts\\losslesscut\\$_.reg\") {",
+        "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\losslesscut\\$_.reg\"",
+        "    $content = $content.Replace('$dirpath', $dirpath)",
+        "    $content | Set-Content -Path \"$dir\\$_.reg\"",
+        "  }",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "if ($cmd -eq 'uninstall') {",
+            "    $regkey = Get-ItemProperty -Path 'HKCU:\\SOFTWARE\\Classes\\Applications\\LosslessCut.exe' -ErrorAction SilentlyContinue",
+            "    if ($regkey) {",
+            "        reg import \"$dir\\uninstall-associations.reg\"",
+            "}"
+        ]
+    },
     "checkver": "github",
     "autoupdate": {
         "architecture": {
