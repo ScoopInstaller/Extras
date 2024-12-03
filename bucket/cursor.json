@@ -1,0 +1,67 @@
+{
+    "version": "0.43.5",
+    "description": "The AI Code Editor",
+    "homepage": "https://www.cursor.com/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.cursor.com/terms-of-service"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://download.todesktop.com/230313mzl4w4u92/Cursor%20Setup%200.43.5%20-%20Build%20241127pdg4cnbu2-x64.exe#/dl.7z",
+            "hash": "sha512:1dede899cdfff62cdcca458d3e41b9846178e45f20c9aa268906aa585ddfca655ff8eeda787d0431bb24e01cf8b9d67b1ff5214bab2aa4750c821a0c8c0aeb47",
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse"
+            ]
+        },
+        "arm64": {
+            "url": "https://download.todesktop.com/230313mzl4w4u92/Cursor%20Setup%200.43.5%20-%20Build%20241127pdg4cnbu2-arm64.exe#/dl.7z",
+            "hash": "sha512:862a1b301e3deeb32ff4835b5b5df77bbfeeab2482f8d3d1c493c3d220d24e7d1783eb64ede97173a7931ee8e7dd69e98d5d2ce19d8c85dc7d5a1e5eb82d9267",
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse"
+            ]
+        }
+    },
+    "post_install": [
+        "if (Test-Path $env:APPDATA\\Cursor) {",
+        "    Write-Host \"`r`nMove config from non-portable version...\"",
+        "    Copy-Item -Path $env:APPDATA\\Cursor\\* -Destination \"$persist_dir\\UserData\" -Force -Recurse | Out-Null",
+        "    Remove-Item $env:APPDATA\\Cursor -Force -Recurse",
+        "}",
+        "New-Item -ItemType Junction -Path $env:APPDATA\\Cursor -Target $persist_dir\\UserData | Out-Null"
+    ],
+    "uninstaller": {
+        "script": "Remove-Item $env:APPDATA\\Cursor -Force -Recurse"
+    },
+    "shortcuts": [
+        [
+            "Cursor.exe",
+            "Cursor"
+        ]
+    ],
+    "persist": "UserData",
+    "checkver": {
+        "url": "https://download.todesktop.com/230313mzl4w4u92/latest.yml",
+        "regex": "Setup\\s+([\\d.]+).*Build\\s+(?<Build>[\\w]+).exe"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download.todesktop.com/230313mzl4w4u92/Cursor%20Setup%20$version%20-%20Build%20$matchBuild-x64.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "(?sm)x64.*?sha512:\\s+$base64"
+                }
+            },
+            "arm64": {
+                "url": "https://download.todesktop.com/230313mzl4w4u92/Cursor%20Setup%20$version%20-%20Build%20$matchBuild-arm64.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "(?sm)arm64.*?sha512:\\s+$base64"
+                }
+            }
+        }
+    }
+}
