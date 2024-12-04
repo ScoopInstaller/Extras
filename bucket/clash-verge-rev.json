@@ -20,12 +20,16 @@
             "New-Item \"$env:USERPROFILE\\.config\\clash-verge\" -ItemType Junction -Target \"$persist_dir\" | Out-Null"
         ]
     },
+    "pre_uninstall": [
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+        "Start-Process \"$dir\\resources\\uninstall-service.exe\" -Wait -Verb 'RunAs' -WindowStyle 'Hidden'; Start-Sleep -Seconds 3"
+    ],
     "uninstaller": {
         "script": "Remove-Item \"$env:USERPROFILE\\.config\\clash-verge\" -Recurse -Force -ErrorAction 'SilentlyContinue'"
     },
     "shortcuts": [
         [
-            "Clash Verge.exe",
+            "clash-verge.exe",
             "Clash Verge"
         ]
     ],
