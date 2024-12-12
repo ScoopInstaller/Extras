@@ -1,5 +1,5 @@
 {
-    "version": "2.38.5",
+    "version": "2.38.6",
     "description": "A music streaming service that offers music with high fidelity sound quality",
     "homepage": "https://tidal.com/",
     "license": {
@@ -7,7 +7,7 @@
         "url": "https://tidal.com/terms"
     },
     "url": "https://download.tidal.com/desktop/TIDALSetup.exe#/dl.7z",
-    "hash": "b874eb9d282209fd3b4a2c19cdf621b69a256fb1b044e73b2116b1c6ba01ca3d",
+    "hash": "1454c91055acf4c72d84909665a83f6f2135d27620f84d9f06d5b8f5d9906935",
     "pre_install": "Expand-7zipArchive \"$dir\\TIDAL-$version-full.nupkg\" -ExtractDir 'lib\\net45' -Removal",
     "shortcuts": [
         [
@@ -16,8 +16,14 @@
         ]
     ],
     "checkver": {
-        "url": "https://download.tidal.com/desktop/mac/update-x64.json",
-        "jsonpath": "$.currentRelease"
+        "script": [
+            "$dl_url = 'https://download.tidal.com/desktop/TIDALSetup.exe'",
+            "$dl = cache_path 'Tidal' 'unknown' $dl_url",
+            "Invoke-WebRequest $dl_url -OutFile $dl",
+            "$ver = (Get-Item $dl).VersionInfo.ProductVersion",
+            "Write-Output $ver"
+        ],
+        "regex": "([\\d.]+)"
     },
     "autoupdate": {
         "url": "https://download.tidal.com/desktop/TIDALSetup.exe#/dl.7z"
