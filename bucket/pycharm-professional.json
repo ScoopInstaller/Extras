@@ -9,51 +9,25 @@
     "url": "https://download.jetbrains.com/python/pycharm-professional-2024.3.win.zip",
     "hash": "fb6ec911db0665493a9d9c769af84d34c8099e0f99cf4cbb392a94eb83353485",
     "extract_to": "IDE",
-    "pre_install": [
-        "Get-ChildItem \"$persist_dir\\IDE\\bin\\pycharm*.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$dir\\IDE\\bin\"",
-        "Get-ChildItem \"$persist_dir\\IDE\\bin\\jetbrains_client64.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$dir\\IDE\\bin\""
-    ],
     "installer": {
-        "script": [
-            "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" \"$dir\" \"$persist_dir\"",
-            "Remove-Item \"$dir\\IDE\\`$*\" -Force -Recurse",
-            "Set-Content \"$dir\\run_pycharm.bat\" \"start `\"`\" `\"$dir\\IDE\\bin\\pycharm64.exe`\"\" -Encoding ascii | Out-Null"
+        "script": "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" \"$dir\" \"$persist_dir\""
+    },
+    "bin": [
+        [
+            "IDE\\bin\\pycharm64.exe",
+            "pycharm"
         ]
-    },
-    "architecture": {
-        "64bit": {
-            "bin": [
-                [
-                    "run_pycharm.bat",
-                    "pycharm"
-                ]
-            ],
-            "shortcuts": [
-                [
-                    "run_pycharm.bat",
-                    "JetBrains\\PyCharm Professional",
-                    "",
-                    "IDE\\bin\\pycharm64.exe"
-                ]
-            ]
-        },
-        "32bit": {
-            "bin": "IDE\\bin\\pycharm.exe",
-            "shortcuts": [
-                [
-                    "IDE\\bin\\pycharm.exe",
-                    "JetBrains\\PyCharm Professional"
-                ]
-            ]
-        }
-    },
+    ],
+    "shortcuts": [
+        [
+            "IDE\\bin\\pycharm64.exe",
+            "JetBrains\\PyCharm Professional"
+        ]
+    ],
     "persist": [
         "IDE\\bin\\idea.properties",
+        "IDE\\bin\\pycharm64.exe.vmoptions",
         "profile"
-    ],
-    "pre_uninstall": [
-        "Get-ChildItem \"$dir\\IDE\\bin\\pycharm*.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$persist_dir\\IDE\\bin\"",
-        "Get-ChildItem \"$dir\\IDE\\bin\\jetbrains_client64.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$persist_dir\\IDE\\bin\""
     ],
     "checkver": {
         "url": "https://data.services.jetbrains.com/products/releases?code=PCP&latest=true&platform=zip&type=release",
