@@ -1,5 +1,5 @@
 {
-    "version": "2024.2.2-242.20224.431",
+    "version": "2024.3.2-243.22562.171",
     "description": "Cross-Platform IDE for .NET by JetBrains.",
     "homepage": "https://www.jetbrains.com/rider/",
     "license": {
@@ -8,15 +8,19 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://download.jetbrains.com/rider/JetBrains.Rider-2024.2.2.win.zip",
-            "hash": "12f29b8ee13140c65129ee1469311a97fb1476e6fd84118ed8ad40d7f28f28cf"
+            "url": "https://download.jetbrains.com/rider/JetBrains.Rider-2024.3.2.win.zip",
+            "hash": "4318746e67a5c90dac0f898454b38b94fb1b7096efcfdfe76d9075f96ae573bf"
         },
         "arm64": {
-            "url": "https://download.jetbrains.com/rider/JetBrains.Rider-2024.2.2-aarch64.win.zip",
-            "hash": "28519eec5cdb67def26a8f7208ced8f22169aa34ecfda9ef3bb8dcb6ca1791e5"
+            "url": "https://download.jetbrains.com/rider/JetBrains.Rider-2024.3.2-aarch64.win.zip",
+            "hash": "65ed5e35ec816076cd511ae291c131a74222f96b5a2d53f4e200f8cfaa551001"
         }
     },
     "extract_to": "IDE",
+    "pre_install": [
+        "Get-ChildItem \"$persist_dir\\IDE\\bin\\rider64.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$dir\\IDE\\bin\"",
+        "Get-ChildItem \"$persist_dir\\IDE\\bin\\jetbrains_client64.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$dir\\IDE\\bin\""
+    ],
     "installer": {
         "script": "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" \"$dir\" \"$persist_dir\""
     },
@@ -35,6 +39,10 @@
     "persist": [
         "IDE\\bin\\idea.properties",
         "profile"
+    ],
+    "pre_uninstall": [
+        "Get-ChildItem \"$dir\\IDE\\bin\\rider64.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$persist_dir\\IDE\\bin\"",
+        "Get-ChildItem \"$dir\\IDE\\bin\\jetbrains_client64.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$persist_dir\\IDE\\bin\""
     ],
     "checkver": {
         "url": "https://data.services.jetbrains.com/products/releases?code=RD&latest=true&platform=zip&type=release",
