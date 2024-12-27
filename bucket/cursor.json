@@ -27,21 +27,22 @@
     "post_install": [
         "if (Test-Path $env:APPDATA\\Cursor) {",
         "    Write-Host \"`r`nMove config from non-portable version...\"",
-        "    Copy-Item -Path $env:APPDATA\\Cursor\\* -Destination \"$persist_dir\\UserData\" -Force -Recurse | Out-Null",
-        "    Remove-Item $env:APPDATA\\Cursor -Force -Recurse",
+        "    Copy-Item -Path $env:APPDATA\\Cursor\\* -Destination \"$persist_dir\\data\" -Force -Recurse | Out-Null",
+        "    Remove-Item $env:APPDATA\\Cursor -Force -Recurse -Force -Recurse -ErrorAction SilentlyContinue",
         "}",
-        "New-Item -ItemType Junction -Path $env:APPDATA\\Cursor -Target $persist_dir\\UserData | Out-Null"
+        "New-Item -ItemType Junction -Path $env:APPDATA\\Cursor -Target $persist_dir\\data | Out-Null"
     ],
     "uninstaller": {
-        "script": "Remove-Item $env:APPDATA\\Cursor -Force -Recurse"
+        "script": "Remove-Item $env:APPDATA\\Cursor -Force -Recurse -ErrorAction SilentlyContinue"
     },
+    "bin": "resources\\app\\bin\\cursor.cmd",
     "shortcuts": [
         [
             "Cursor.exe",
             "Cursor"
         ]
     ],
-    "persist": "UserData",
+    "persist": "data",
     "checkver": {
         "url": "https://download.todesktop.com/230313mzl4w4u92/latest.yml",
         "regex": "Setup\\s+([\\d.]+).*Build\\s+(?<Build>[\\w]+).exe"
