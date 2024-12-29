@@ -1,0 +1,67 @@
+{
+    "version": "0.44.9",
+    "description": "The AI Code Editor",
+    "homepage": "https://www.cursor.com/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.cursor.com/terms-of-service"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://download.todesktop.com/230313mzl4w4u92/Cursor%20Setup%200.44.9%20-%20Build%202412268nc6pfzgo-x64.exe#/dl.7z",
+            "hash": "sha512:f94abeb04e6fde7f2dce061a3b80955ee3f7aac0fb85e11bdb8477c040ecff00d7c09b5e36a72e5ea638e817dee38a5fa4eb31fce9b2b748e4a558cacf46f3d7",
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+        },
+        "arm64": {
+            "url": "https://download.todesktop.com/230313mzl4w4u92/Cursor%20Setup%200.44.9%20-%20Build%202412268nc6pfzgo-arm64.exe#/dl.7z",
+            "hash": "sha512:df7007118aa458be65532fb401d45958d1074ead665115ba6051d8b6acc55b190857f974a88b2143ad2344183cccb604f34caca407e9a92d794b06b6c9a01fae",
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" \"$dir\""
+        }
+    },
+    "post_install": [
+        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse",
+        "if (!(Test-Path \"$dir\\data\\extensions\") -and (Test-Path \"$env:USERPROFILE\\.cursor\\extensions\")) {",
+        "    info '[Portable Mode] Copying extensions...'",
+        "    Copy-Item \"$env:USERPROFILE\\.cursor\\extensions\" \"$dir\\data\" -Recurse",
+        "}",
+        "if (!(Test-Path \"$dir\\data\\user-data\") -and (Test-Path \"$env:AppData\\Cursor\")) {",
+        "    info '[Portable Mode] Copying user data...'",
+        "    Copy-Item \"$env:AppData\\Cursor\" \"$dir\\data\\user-data\" -Recurse",
+        "}",
+        "$extensions_file = \"$dir\\data\\extensions\\extensions.json\"",
+        "if ((Test-Path \"$extensions_file\")) {",
+        "    info 'Adjusting path in extensions file...'",
+        "    (Get-Content \"$extensions_file\") -replace '(?<=cursor(/|\\\\\\\\)).*?(?=(/|\\\\\\\\)data(/|\\\\\\\\)extensions)', $version | Set-Content \"$extensions_file\"",
+        "}"
+    ],
+    "bin": "resources\\app\\bin\\cursor.cmd",
+    "shortcuts": [
+        [
+            "Cursor.exe",
+            "Cursor"
+        ]
+    ],
+    "persist": "data",
+    "checkver": {
+        "url": "https://download.todesktop.com/230313mzl4w4u92/latest.yml",
+        "regex": "Setup\\s+([\\d.]+).*Build\\s+(?<Build>[\\w]+).exe"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download.todesktop.com/230313mzl4w4u92/Cursor%20Setup%20$version%20-%20Build%20$matchBuild-x64.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "(?sm)x64.*?sha512:\\s+$base64"
+                }
+            },
+            "arm64": {
+                "url": "https://download.todesktop.com/230313mzl4w4u92/Cursor%20Setup%20$version%20-%20Build%20$matchBuild-arm64.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "(?sm)arm64.*?sha512:\\s+$base64"
+                }
+            }
+        }
+    }
+}
