@@ -6,6 +6,10 @@
         "identifier": "Freeware",
         "url": "https://www.gitkraken.com/eula"
     },
+    "notes": [
+        "Add GitKraken to directory context menu by running:",
+        "'reg import \"$dir\\install-context.reg\"'"
+    ],
     "architecture": {
         "64bit": {
             "url": "https://release.gitkraken.com/windows/gitkraken-10.6.0-full.nupkg",
@@ -20,6 +24,22 @@
             "GitKraken"
         ]
     ],
+    "post_install": [
+        "$exepath = \"$dir\\gitkraken.exe\".Replace('\\', '\\\\')",
+        "'install-context', 'uninstall-context' | ForEach-Object {",
+        "  if (Test-Path \"$bucketsdir\\extras\\scripts\\gitkraken\\$_.reg\") {",
+        "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\gitkraken\\$_.reg\"",
+        "    $content = $content.Replace('$gitkraken', $exepath)",
+        "    if ($global) {",
+        "      $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "    }",
+        "    $content | Set-Content -Path \"$dir\\$_.reg\"",
+        "  }",
+        "}"
+    ],
+    "uninstaller": {
+        "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }"
+    },
     "checkver": {
         "url": "https://release.gitkraken.com/windows/RELEASES?id=gitkraken&localVersion=0&arch=amd64",
         "regex": "gitkraken-([\\d.]+)-full\\.nupkg",
