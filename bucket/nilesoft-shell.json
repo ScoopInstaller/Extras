@@ -1,43 +1,41 @@
 {
-    "version": "1.9.15",
-    "description": "A context menu extender that lets you handpick the items to integrate into Windows File Explorer context menu.",
+    "version": "1.9.18",
+    "description": "Powerful context menu manager for Windows File Explorer",
     "homepage": "https://nilesoft.org/",
-    "license": "MIT",
-    "url": "https://nilesoft.org/download/shell/1.9.15/setup.exe",
-    "hash": "46e5afb96a092307725eb4503480ed4c894168884474df01b5a679bdae7e3e5e",
-    "innosetup": true,
+    "license": {
+        "identifier": "MIT",
+        "url": "https://github.com/moudey/Shell/blob/main/LICENSE"
+    },
     "architecture": {
-        "64bit": {
-            "pre_install": [
-                "if(!(Test-Path \"$persist_dir\\shell.log\")) { New-Item \"$dir\\shell.log\" | Out-Null }",
-                "Move-Item \"$dir\\shell,1.exe\" \"$dir\\shell.exe\"",
-                "Move-Item \"$dir\\shell,1.dll\" \"$dir\\shell.dll\"",
-                "Remove-Item \"$dir\\shell,2.*\"",
-                "Remove-Item \"$dir\\shell,3.*\""
-            ]
-        },
         "32bit": {
-            "pre_install": [
-                "if(!(Test-Path \"$persist_dir\\shell.log\")) { New-Item \"$dir\\shell.log\" | Out-Null }",
-                "Move-Item \"$dir\\shell,3.exe\" \"$dir\\shell.exe\"",
-                "Move-Item \"$dir\\shell,3.dll\" \"$dir\\shell.dll\"",
-                "Remove-Item \"$dir\\shell,1.*\"",
-                "Remove-Item \"$dir\\shell,2.*\""
-            ]
+            "url": "https://nilesoft.org/download/shell/1.9.18/setup-x86.msi",
+            "hash": "4e1f8f3dd4b39bd9c08b9443c1260fea069e1ce827eaaa312be3d657aaecee96",
+            "extract_dir": "PFiles\\Nilesoft Shell"
+        },
+        "64bit": {
+            "url": "https://nilesoft.org/download/shell/1.9.18/setup-x64.msi",
+            "hash": "06a44d6831e2aab27d8913b312ab65c3e0b1be739d02f6f88edfb8747c74d8a4",
+            "extract_dir": "PFiles64\\Nilesoft Shell"
+        },
+        "arm64": {
+            "url": "https://nilesoft.org/download/shell/1.9.18/setup-arm64.msi",
+            "hash": "46b64b58efd34af8139e3bb64ae02a6964a4e80d792be72abb3bca54db1edeff",
+            "extract_dir": "PFiles64\\Nilesoft Shell"
         }
     },
-    "uninstaller": {
-        "script": [
-            "if ($cmd -eq 'uninstall') {",
-            "    $regkey = Get-ItemProperty -Path 'HKLM:\\SOFTWARE\\Classes\\Directory\\background\\shellex\\ContextMenuHandlers\\nilesoft.shell' -ErrorAction SilentlyContinue",
-            "    if ($regkey) {",
-            "        if (!(is_admin)) { error 'Admin right is required to unregister nilesoft shell'; break }",
-            "        Invoke-ExternalCommand \"$dir\\shell.exe\" -ArgumentList @('-unregister', '-restart', '-silent') -RunAs | Out-Null",
-            "        if (Get-Process -Name 'shell' -ErrorAction SilentlyContinue) { Start-Sleep -Seconds 2 }",
-            "    }",
-            "}"
-        ]
-    },
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\shell.log\")) { New-Item -ItemType File -Path \"$dir\\shell.log\" | Out-Null }"
+    ],
+    "pre_uninstall": [
+        "if ($cmd -eq 'uninstall') {",
+        "    $regkey = Get-ItemProperty -Path 'HKLM:\\SOFTWARE\\Classes\\Directory\\background\\shellex\\ContextMenuHandlers\\ @nilesoft.shell' -ErrorAction SilentlyContinue",
+        "    if ($regkey) {",
+        "        if (!(is_admin)) { error 'Admin right is required to unregister Nilesoft Shell'; break }",
+        "        Start-Process \"$dir\\shell.exe\" -ArgumentList @('-unregister', '-restart', '-silent') -Verb RunAs -Wait | Out-Null",
+        "        if (Get-Process -Name 'shell' -ErrorAction SilentlyContinue) { Start-Sleep -Seconds 2 }",
+        "    }",
+        "}"
+    ],
     "bin": "shell.exe",
     "shortcuts": [
         [
@@ -54,6 +52,16 @@
         "regex": "Version ([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://nilesoft.org/download/shell/$version/setup.exe"
+        "architecture": {
+            "32bit": {
+                "url": "https://nilesoft.org/download/shell/$version/setup-x86.msi"
+            },
+            "64bit": {
+                "url": "https://nilesoft.org/download/shell/$version/setup-x64.msi"
+            },
+            "arm64": {
+                "url": "https://nilesoft.org/download/shell/$version/setup-arm64.msi"
+            }
+        }
     }
 }
