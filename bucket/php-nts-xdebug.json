@@ -1,44 +1,52 @@
 {
-    "version": "3.3.2-8.3",
-    "description": "An extension for PHP to assist with debugging and development. (Non-Thread Safe)",
+    "version": "3.4.0-8.4",
+    "description": "An extension for PHP to assist with debugging and development. (Non Thread Safe)",
     "homepage": "https://xdebug.org/",
     "license": {
         "identifier": "Xdebug-1.01",
         "url": "https://xdebug.org/license.php"
     },
     "notes": [
-        "Xdebug is already enabled if PHP was installed through scoop!",
+        "Xdebug is already enabled if PHP (Non Thread Safe) was installed through scoop!",
         "Otherwise add '$dir\\php_xdebug.dll' to your php.ini"
     ],
     "architecture": {
         "64bit": {
-            "url": "https://xdebug.org/files/php_xdebug-3.3.2-8.3-vs16-nts-x86_64.dll#/php_xdebug.dll",
-            "hash": "15c5031e3808a3d8e12f5c0756780abf356e7d80744423aecc0a5f77c36a9bbc"
+            "url": "https://xdebug.org/files/php_xdebug-3.4.0-8.4-vs17-nts-x86_64.dll#/php_xdebug.dll",
+            "hash": "da7017e5b67c8aa6edbc29ee3126413a3a282f05199b417c0d6d2d14624029b0"
         }
     },
     "post_install": [
-        "$phpconfd = \"$persist_dir\\..\\php-nts\\cli\\conf.d\"",
-        "$ini = \"zend_extension=$dir\\php_xdebug.dll`n[xdebug]`nxdebug.remote_enable=on`nxdebug.remote_autostart=on`nxdebug.remote_connect_back=on\"",
-        "if (!(Test-Path \"$phpconfd\\xdebug.ini\")) {",
-        "    ensure $phpconfd | Out-Null",
-        "    Write-Output \"Enabling extension '$phpconfd\\xdebug.ini'\"",
-        "    Add-Content -Value $ini -Path \"$phpconfd\\xdebug.ini\"",
+        "$ini = \"zend_extension=$dir\\php_xdebug.dll`n[xdebug]`nxdebug.mode=debug`nxdebug.start_with_request=yes`nxdebug.discover_client_host=true\"",
+        "if (installed php-nts $true) {",
+        "    $ini_path = \"$(persistdir php-nts $true)\\cli\\conf.d\\xdebug.ini\"",
+        "} elseif (installed php-nts $false) {",
+        "    $ini_path = \"$(persistdir php-nts)\\cli\\conf.d\\xdebug.ini\"",
         "} else {",
-        "    Write-Host -f Yellow \"PHP was not installed through scoop, you have to activate php_xdebug.dll manually! Add the following:`n\"",
-        "    Write-Host -f Cyan \"$ini`n`n\"",
+        "    Write-Host -f Yellow \"`nPHP (Non Thread Safe) was not installed through scoop, you have to activate php_xdebug.dll manually! Add the following:`n\"",
+        "    Write-Host -f Cyan \"$ini`n\"",
+        "    Write-Host -f Yellow \"to your php.ini file\"",
+        "}",
+        "if ($ini_path) {",
+        "    if (Test-Path $ini_path) {",
+        "        Write-Output \"`nNo XDebug config was added, as xdebug.ini already exists in $ini_path\"",
+        "    } else {",
+        "        Write-Output \"`nEnabling extension $ini_path\"",
+        "        Add-Content -Value $ini -Path $ini_path",
+        "    }",
         "}"
     ],
     "checkver": {
         "url": "https://xdebug.org/download",
-        "regex": "php_xdebug-([\\d.]+-8\\.3)-vs16-nts-x86_64\\.dll"
+        "regex": "php_xdebug-([\\d.]+-8\\.4)-vs17-nts-x86_64\\.dll"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://xdebug.org/files/php_xdebug-$version-vs16-nts-x86_64.dll#/php_xdebug.dll",
+                "url": "https://xdebug.org/files/php_xdebug-$version-vs17-nts-x86_64.dll#/php_xdebug.dll",
                 "hash": {
                     "url": "https://xdebug.org/download",
-                    "regex": "SHA256:&nbsp;([0-9a-f]+)\" href='\\/files/php_xdebug-$version-vs16-nts-x86_64\\.dll"
+                    "regex": "SHA256:&nbsp;([0-9a-f]+)\" href='\\/files/php_xdebug-$version-vs17-nts-x86_64\\.dll"
                 }
             }
         }
