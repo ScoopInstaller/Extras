@@ -15,19 +15,19 @@
     },
     "extract_dir": "librewolf-133.0.3-1",
     "pre_install": [
-        "Remove-Item \"$dir\\LibreWolf-WinUpdater.exe\"",
-        "Remove-Item \"$dir\\ScheduledTask-Create.ps1\"",
-        "Remove-Item \"$dir\\ScheduledTask-Remove.ps1\"",
+        "'LibreWolf-WinUpdater.exe', 'ScheduledTask-Create.ps1', 'ScheduledTask-Remove.ps1' | ForEach-Object { \"$dir/$_\" } | Remove-Item",
+        "",
         "# Customizing LibreWolf Using AutoConfig",
         "# https://support.mozilla.org/en-US/kb/customizing-firefox-using-autoconfig",
-        "ensure \"$persist_dir\\LibreWolf\\defaults\\pref\" | Out-Null",
-        "Copy-Item \"$persist_dir\\LibreWolf\\defaults\\pref\\*\" \"$dir\\LibreWolf\\defaults\\pref\" -Exclude 'channel-prefs.js'",
-        "Copy-Item \"$persist_dir\\LibreWolf\\*.js\", \"$persist_dir\\LibreWolf\\*.cfg\" \"$dir\\LibreWolf\"",
+        "$null = ensure \"$persist_dir/LibreWolf/defaults/pref\"",
+        "Copy-Item \"$persist_dir/LibreWolf/defaults/pref/*\" \"$dir/LibreWolf/defaults/pref\" -Exclude channel-prefs.js",
+        "Copy-Item \"$persist_dir/LibreWolf/*.js\", \"$persist_dir/LibreWolf/*.cfg\" \"$dir/LibreWolf\"",
+        "",
         "# Customizing LibreWolf Using policies.json",
         "# https://support.mozilla.org/en-US/kb/customizing-firefox-using-policiesjson",
         "# Used to override the default policies.json of LibreWolf, if you want",
-        "ensure \"$persist_dir\\LibreWolf\\distribution\" | Out-Null",
-        "Copy-Item \"$persist_dir\\LibreWolf\\distribution\\policies.json\" \"$dir\\LibreWolf\\distribution\" -ErrorAction SilentlyContinue"
+        "$null = ensure \"$persist_dir/LibreWolf/distribution\"",
+        "Copy-Item \"$persist_dir/LibreWolf/distribution/policies.json\" \"$dir/LibreWolf/distribution\" -ErrorAction SilentlyContinue"
     ],
     "bin": [
         [
@@ -43,8 +43,8 @@
     ],
     "persist": "Profiles",
     "pre_uninstall": [
-        "Copy-Item \"$dir\\LibreWolf\\defaults\\pref\\*\" \"$persist_dir\\LibreWolf\\defaults\\pref\" -Exclude 'channel-prefs.js'",
-        "Copy-Item \"$dir\\LibreWolf\\*.js\", \"$dir\\LibreWolf\\*.cfg\" \"$persist_dir\\LibreWolf\" -Exclude 'librewolf.cfg'"
+        "Copy-Item \"$dir/LibreWolf/defaults/pref/*\" \"$persist_dir/LibreWolf/defaults/pref\" -Exclude channel-prefs.js",
+        "Copy-Item \"$dir/LibreWolf/*.js\", \"$dir/LibreWolf/*.cfg\" \"$persist_dir/LibreWolf\" -Exclude librewolf.cfg"
     ],
     "checkver": {
         "url": "https://gitlab.com/api/v4/projects/44042130/releases/permalink/latest",
