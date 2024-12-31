@@ -1,0 +1,64 @@
+{
+    "version": "0.9.3",
+    "description": "🍒 Cherry Studio is a desktop client that supports for multiple LLM providers",
+    "homepage": "https://cherry-ai.com/",
+
+    "license": {
+        "identifier": "Apache-2.0",
+        "url": "https://github.com/CherryHQ/cherry-studio/raw/refs/heads/main/LICENSE"
+    },
+
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/CherryHQ/cherry-studio/releases/download/v0.9.3/Cherry-Studio-0.9.3-setup.exe",
+            "hash": "BA693FCE05D9E220139D417FD0B3EFE527461D16398FDE39AC5263564D88114E"
+        }
+    },
+
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\Cherry-Studio-$version-setup.exe\" \"$dir\\temp\\\" -Removal",
+            "Expand-7zipArchive \"$dir\\temp\\`$PLUGINSDIR\\app-64.7z\" \"$dir\\\" -Removal",
+            "Remove-Item \"$dir\\temp\" -Recurse",
+            "$appDataPath = \"$env:APPDATA\\CherryStudio\"",
+            "$persistPath = \"$persist_dir\\CherryStudio\"",
+            "if (Test-Path $appDataPath) {",
+            "    Copy-Item \"$appDataPath\\*\" -Destination $persistPath -Recurse -Force",
+            "    Remove-Item $appDataPath -Recurse -Force",
+            "}",
+            "New-Item -ItemType Junction -Path \"$appDataPath\" -Target \"$persistPath\""
+        ]
+    },
+
+    "shortcuts": [
+        [
+            "Cherry Studio.exe",
+            "Cherry Studio"
+        ]
+    ],
+
+    "persist": "CherryStudio",
+
+    "uninstaller": {
+        "script": [
+            "if (Test-Path \"$env:APPDATA\\CherryStudio\" -PathType Any) {",
+            "    Remove-Item -Recurse -Force \"$env:APPDATA\\CherryStudio\"",
+            "}",
+            "if (Test-Path \"$env:LOCALAPPDATA\\cherrystudio-updater\" -PathType Container) {",
+            "    Remove-Item -Recurse -Force \"$env:LOCALAPPDATA\\cherrystudio-updater\"",
+            "}"
+        ]
+    },
+
+    "checkver": {
+        "github": "https://github.com/CherryHQ/cherry-studio"
+    },
+
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/CherryHQ/cherry-studio/releases/download/v$version/Cherry-Studio-$version-setup.exe"
+            }
+        }
+    }
+}
