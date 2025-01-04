@@ -23,20 +23,15 @@
         "$datadir = \"$env:APPDATA\\lx-music-desktop\"",
         "ensure \"$persist_dir\\portable\\userData\" | Out-Null",
         "if (Test-Path $datadir) {",
-        "    Copy-Item -Path \"$datadir\\*\" -Destination \"$persist_dir\\portable\\userData\" -Recurse",
-        "    echo ''",
-        "    echo \"Copy existed lx-music data from $datadir to $persist_dir\"",
+        "    Copy-Item -Path \"$datadir\\*\" -Destination \"$persist_dir\\portable\\userData\" -Recurse | Out-Null",
         "}"
     ],
     "post_uninstall": [
         "$datadir = \"$env:AppData\\lx-music-desktop\"",
         "if (Test-Path \"$datadir\\logs\") {",
-        "    Remove-Item -Path \"$datadir\\logs\" -Recurse -Force",
-        "    echo ''",
-        "    echo 'Cleanup logs'",
+        "    Remove-Item -Path \"$datadir\\logs\" -Recurse -Force | Out-Null",
         "    if ((Get-ChildItem -Path \"$datadir\" -Force | Measure-Object).Count -eq 0) {",
-        "        Remove-Item -Path \"$datadir\" -Recurse -Force",
-        "        echo 'Cleanup runtime'",
+        "        Remove-Item -Path \"$datadir\" -Recurse -Force | Out-Null",
         "    }",
         "}"
     ],
