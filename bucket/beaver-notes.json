@@ -12,7 +12,9 @@
         "}",
         "else {",
         "    Expand-7zipArchive -Path \"$dir\\`$PLUGINSDIR\\app-64.7z\" -DestinationPath \"$dir\"",
-        "}"
+        "}",
+        "$ScriptBlock = [scriptblock]{Remove-Item -Path \"$dir\\`$PLUGINSDIR\" -Force -Recurse}",
+        "Try {$ScriptBlock.Invoke()} Catch {Start-Sleep -Milliseconds 50; $ScriptBlock.Invoke()}"
     ],
     "shortcuts": [
         [
@@ -20,7 +22,6 @@
             "Beaver Notes"
         ]
     ],
-    "persist": "data",
     "post_uninstall": [
         "if ($purge) {",
         "    $Directories = [string[]](",
