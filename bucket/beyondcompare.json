@@ -7,10 +7,6 @@
         "url": "https://www.scootersoftware.com/kb/licensev5"
     },
     "notes": [
-        "Add Beyond Compare as a context menu option by running: '$dir\\install-context.reg'",
-        "            - uninstall context menu option by running: '$dir\\uninstall-context.reg'",
-        "",
-        "---------------------------------------------------------------------------------",
         "The manifest already updated to v5, if you want to stay on v4 proceed as follows:",
         "",
         "- Install 'versions/beyondcompare4' instead. (Recommendation)",
@@ -19,32 +15,25 @@
         "",
         "Or maybe you want to upgrade license from v4 to v5: https://www.scootersoftware.com/kb/upgradepolicy"
     ],
-    "innosetup": true,
+    "url": "https://www.scootersoftware.com/files/BCompare-5.0.4.30422.exe",
+    "hash": "d74892601a50514b5636e27d4be4d3ac38597f2f6c7c7b6b5b169a48ffa1f341",
     "architecture": {
         "64bit": {
-            "url": "https://www.scootersoftware.com/files/BCompareSetup-5.0.4.30422.zip",
-            "hash": "2cfb571c94885fce248e6eac4da3f02c930db35176bd964f22b203a6833f5672",
             "installer": {
-                "file": "BCompareSetup.exe",
                 "args": [
                     "/DIR=\"$dir\"",
                     "/VERYSILENT",
-                    "/SUPPRESSMSGBOXES",
-                    "/NORESTART"
+                    "/PORTABLE"
                 ]
             }
         },
         "32bit": {
-            "url": "https://www.scootersoftware.com/files/BCompareSetup-5.0.4.30422.zip",
-            "hash": "2cfb571c94885fce248e6eac4da3f02c930db35176bd964f22b203a6833f5672",
             "installer": {
-                "file": "BCompareSetup.exe",
                 "args": [
                     "/32",
                     "/DIR=\"$dir\"",
                     "/VERYSILENT",
-                    "/SUPPRESSMSGBOXES",
-                    "/NORESTART"
+                    "/PORTABLE"
                 ]
             }
         }
@@ -57,31 +46,38 @@
         [
             "BCompare.exe",
             "Beyond Compare 5"
-        ],
-        [
-            "BCClipboard.exe",
-            "Clipboard Compare"
         ]
     ],
-    "post_install": [
-        "$dir_escaped = \"$dir\".Replace('\\', '\\\\')",
-        "\"install-context-$architecture\", \"uninstall-context\" | ForEach-Object {",
-        "  if (Test-Path \"$bucketsdir\\$bucket\\scripts\\beyondcompare\\$_.reg\") {",
-        "    $content = Get-Content \"$bucketsdir\\$bucket\\scripts\\beyondcompare\\$_.reg\"",
-        "    $content = $content.Replace('$install_dir', $dir_escaped)",
-        "    if ($global) {",
-        "      $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
-        "    }",
-        "    $outfile_no_arch = $_.Replace(\"-$architecture\", \"\")",
-        "    $content | Set-Content -Path \"$dir\\$outfile_no_arch.reg\"",
-        "  }",
+    "pre_install": [
+        "$file = 'BCPreferences.xml'",
+        "if (!(Test-Path \"$persist_dir\\$file\")) {",
+        "   $CONT = @('<BCPreferences Version=\"2\" MinVersion=\"2\"><TBcPrefs><CheckForUpdatesDayAmt Value=\"0\"/></TBcPrefs></BCPreferences>')",
+        "   Set-Content \"$dir\\$file\" $CONT -Encoding Ascii",
+        "}",
+        "$file = 'BCColors.xml'",
+        "if (!(Test-Path \"$persist_dir\\$file\")) {",
+        "   New-Item \"$dir\\$file\" -ItemType File | Out-Null",
+        "}"
+    ],
+    "persist": [
+        "BCPreferences.xml",
+        "BCState.xml",
+        "BCColors.xml"
+    ],
+    "pre_uninstall": [
+        "'BCPreferences.xml', 'BCState.xml', 'BCColors.xml' | ForEach-Object {",
+        "   if (Test-Path \"$dir\\$_\") {",
+        "       Move-Item \"$dir\\$_\" \"$persist_dir\\$_\" -Force -ErrorAction SilentlyContinue",
+        "   } else {",
+        "       Remove-Item \"$persist_dir\\$_\" -Force -ErrorAction SilentlyContinue",
+        "   }",
         "}"
     ],
     "checkver": {
-        "url": "https://www.scootersoftware.com/kb/dl5_winalternate",
-        "regex": "files/BCompareSetup-([\\d.]+)\\.zip"
+        "url": "https://www.scootersoftware.com/download",
+        "regex": "BCompare-([\\d.]+)\\.exe"
     },
     "autoupdate": {
-        "url": "https://www.scootersoftware.com/files/BCompareSetup-$version.zip"
+        "url": "https://www.scootersoftware.com/files/BCompare-$version.exe"
     }
 }
