@@ -4,15 +4,17 @@
     "description": "A privacy-focused note-taking application",
     "homepage": "https://beavernotes.com/",
     "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "pre_install": "Expand-7zipArchive -Path \"$dir\\`$PLUGINSDIR\\app-64.7z\" -DestinationPath \"$dir\""
+        },
+        "arm64": {
+            "pre_install": "Expand-7zipArchive -Path \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" -DestinationPath \"$dir\""
+        }
+    },
     "url": "https://github.com/Beaver-Notes/Beaver-Notes/releases/download/3.8.0/Beaver-notes-3.8.0-portable.exe#/dl.7z",
     "hash": "64b52605d04cfd3a8888fd4b1f12175e88fc9046450fa7fa171d366906ee412b",
-    "pre_install": [
-        "if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq 'Arm64') {",
-        "    Expand-7zipArchive -Path \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" -DestinationPath \"$dir\"",
-        "}",
-        "else {",
-        "    Expand-7zipArchive -Path \"$dir\\`$PLUGINSDIR\\app-64.7z\" -DestinationPath \"$dir\"",
-        "}",
+    "post_install": [
         "$ScriptBlock = [scriptblock]{Remove-Item -Path \"$dir\\`$PLUGINSDIR\" -Force -Recurse}",
         "Try {$ScriptBlock.Invoke()} Catch {Start-Sleep -Milliseconds 50; $ScriptBlock.Invoke()}"
     ],
