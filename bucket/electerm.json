@@ -5,26 +5,34 @@
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/electerm/electerm/releases/download/v1.51.18/electerm-1.51.18-win-x64.tar.gz",
-            "hash": "7ed05b4d4d2bf57dbc25fa2f0179cbb1bab7a846e4ef7d763f02a804e092d897",
-            "extract_dir": "electerm-1.51.18-win-x64"
+            "url": "https://github.com/electerm/electerm/releases/download/v1.51.18/electerm-1.51.18-win-x64-portable.tar.gz",
+            "hash": "f403a02f33e117a297236c58d17fb2c7fd7e71a6a7edba7adf149c4cad93db2f",
+            "extract_dir": "electerm-1.51.18-win-x64-portable"
         }
     },
+    "pre_install": [
+        "# copy config from non-portable version",
+        "if (!(Test-Path \"$persist_dir\\electerm\") -and (Test-Path \"$env:Appdata\\electerm\")) {",
+        "    if (!(Test-Path \"$dir\\electerm\")) { New-Item \"$dir\\electerm\" -ItemType Directory | Out-Null }",
+        "    Copy-Item \"$env:Appdata\\electerm\\*\" \"$dir\\electerm\\\" -Recurse -Force",
+        "}"
+    ],
     "bin": "electerm.exe",
     "shortcuts": [
         [
             "electerm.exe",
-            "electerm"
+            "Electerm"
         ]
     ],
+    "persist": "electerm",
     "checkver": {
         "github": "https://github.com/electerm/electerm"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/electerm/electerm/releases/download/v$version/electerm-$version-win-x64.tar.gz",
-                "extract_dir": "electerm-$version-win-x64"
+                "url": "https://github.com/electerm/electerm/releases/download/v$version/electerm-$version-win-x64-portable.tar.gz",
+                "extract_dir": "electerm-$version-win-x64-portable"
             }
         }
     }
