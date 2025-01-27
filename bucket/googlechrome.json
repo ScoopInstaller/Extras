@@ -17,7 +17,12 @@
         }
     },
     "installer": {
-        "script": "Expand-7zipArchive \"$dir\\chrome.7z\" -ExtractDir 'Chrome-bin' -Removal"
+        "script": [
+            "Expand-7zipArchive \"$dir\\chrome.7z\" -ExtractDir 'Chrome-bin' -Removal",
+            "if (!(Test-Path \"$Env:USERPROFILE\\AppData\\Local\\Google\\Chrome\\User Data\")) {",
+            "    New-Item -Type SymbolicLink -Path \"$Env:USERPROFILE\\AppData\\Local\\Google\\Chrome\\User Data\" -Target \"$Env:USERPROFILE\\scoop\\persist\\googlechrome\\User Data\"",
+            "}"
+        ]
     },
     "bin": [
         [
