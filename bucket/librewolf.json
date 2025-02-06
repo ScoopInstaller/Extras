@@ -1,33 +1,33 @@
 {
-    "version": "133.0-3",
+    "version": "134.0.2-1",
     "description": "A fork of Firefox, focused on privacy, security and freedom.",
     "homepage": "https://librewolf.net/",
     "license": "MPL-2.0",
     "architecture": {
         "64bit": {
-            "url": "https://gitlab.com/api/v4/projects/44042130/packages/generic/librewolf/133.0-3/librewolf-133.0-3-windows-x86_64-portable.zip",
-            "hash": "2fbfe0ebd9e31a84bfb30de15db4b37dcc78bd19ddd3498fc8bec3bbcafc548e"
+            "url": "https://gitlab.com/api/v4/projects/44042130/packages/generic/librewolf/134.0.2-1/librewolf-134.0.2-1-windows-x86_64-portable.zip",
+            "hash": "366a8f2029591e66c6623fc8356b47d832adcb796d43818ca7622995a4abf739"
         },
         "32bit": {
-            "url": "https://gitlab.com/api/v4/projects/44042130/packages/generic/librewolf/133.0-3/librewolf-133.0-3-windows-i686-portable.zip",
-            "hash": "1f82475d03763a66fa07e7924904debc260355107367670e6e65e398cf5d9ac6"
+            "url": "https://gitlab.com/api/v4/projects/44042130/packages/generic/librewolf/134.0.2-1/librewolf-134.0.2-1-windows-i686-portable.zip",
+            "hash": "a08e25beb57a274807a3e4a5a2e6271f07f928e59dbdc37831b4d19285579649"
         }
     },
-    "extract_dir": "librewolf-133.0-3",
+    "extract_dir": "librewolf-134.0.2-1",
     "pre_install": [
-        "Remove-Item \"$dir\\LibreWolf-WinUpdater.exe\"",
-        "Remove-Item \"$dir\\ScheduledTask-Create.ps1\"",
-        "Remove-Item \"$dir\\ScheduledTask-Remove.ps1\"",
+        "'LibreWolf-WinUpdater.exe', 'ScheduledTask-Create.ps1', 'ScheduledTask-Remove.ps1' | ForEach-Object { \"$dir/$_\" } | Remove-Item",
+        "",
         "# Customizing LibreWolf Using AutoConfig",
         "# https://support.mozilla.org/en-US/kb/customizing-firefox-using-autoconfig",
-        "ensure \"$persist_dir\\LibreWolf\\defaults\\pref\" | Out-Null",
-        "Copy-Item \"$persist_dir\\LibreWolf\\defaults\\pref\\*\" \"$dir\\LibreWolf\\defaults\\pref\" -Exclude 'channel-prefs.js'",
-        "Copy-Item \"$persist_dir\\LibreWolf\\*.js\", \"$persist_dir\\LibreWolf\\*.cfg\" \"$dir\\LibreWolf\"",
+        "$null = ensure \"$persist_dir/LibreWolf/defaults/pref\"",
+        "Copy-Item \"$persist_dir/LibreWolf/defaults/pref/*\" \"$dir/LibreWolf/defaults/pref\" -Exclude channel-prefs.js",
+        "Copy-Item \"$persist_dir/LibreWolf/*.js\", \"$persist_dir/LibreWolf/*.cfg\" \"$dir/LibreWolf\"",
+        "",
         "# Customizing LibreWolf Using policies.json",
         "# https://support.mozilla.org/en-US/kb/customizing-firefox-using-policiesjson",
         "# Used to override the default policies.json of LibreWolf, if you want",
-        "ensure \"$persist_dir\\LibreWolf\\distribution\" | Out-Null",
-        "Copy-Item \"$persist_dir\\LibreWolf\\distribution\\policies.json\" \"$dir\\LibreWolf\\distribution\" -ErrorAction SilentlyContinue"
+        "$null = ensure \"$persist_dir/LibreWolf/distribution\"",
+        "Copy-Item \"$persist_dir/LibreWolf/distribution/policies.json\" \"$dir/LibreWolf/distribution\" -ErrorAction SilentlyContinue"
     ],
     "bin": [
         [
@@ -43,8 +43,8 @@
     ],
     "persist": "Profiles",
     "pre_uninstall": [
-        "Copy-Item \"$dir\\LibreWolf\\defaults\\pref\\*\" \"$persist_dir\\LibreWolf\\defaults\\pref\" -Exclude 'channel-prefs.js'",
-        "Copy-Item \"$dir\\LibreWolf\\*.js\", \"$dir\\LibreWolf\\*.cfg\" \"$persist_dir\\LibreWolf\" -Exclude 'librewolf.cfg'"
+        "Copy-Item \"$dir/LibreWolf/defaults/pref/*\" \"$persist_dir/LibreWolf/defaults/pref\" -Exclude channel-prefs.js",
+        "Copy-Item \"$dir/LibreWolf/*.js\", \"$dir/LibreWolf/*.cfg\" \"$persist_dir/LibreWolf\" -Exclude librewolf.cfg"
     ],
     "checkver": {
         "url": "https://gitlab.com/api/v4/projects/44042130/releases/permalink/latest",

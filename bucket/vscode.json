@@ -1,5 +1,5 @@
 {
-    "version": "1.96.0",
+    "version": "1.96.4",
     "description": "Lightweight but powerful source code editor",
     "homepage": "https://code.visualstudio.com/",
     "license": {
@@ -10,16 +10,18 @@
         "Add Visual Studio Code as a context menu option by running:",
         "'reg import \"$dir\\install-context.reg\"'",
         "For file associations, run:",
-        "'reg import \"$dir\\install-associations.reg\"'"
+        "'reg import \"$dir\\install-associations.reg\"'",
+        "For github integration, run:",
+        "'reg import \"$dir\\install-github-integration.reg\"'"
     ],
     "architecture": {
         "64bit": {
-            "url": "https://update.code.visualstudio.com/1.96.0/win32-x64-archive/stable#/dl.7z",
-            "hash": "ceaca0168589ae30fab9c2cffeda6c5a50eb03ef09f5c04cfdefe2da6b2a116f"
+            "url": "https://update.code.visualstudio.com/1.96.4/win32-x64-archive/stable#/dl.7z",
+            "hash": "598b62c124f418f3c7a2893fb1c99772f951e60d017201f15044708d1d113ecd"
         },
         "arm64": {
-            "url": "https://update.code.visualstudio.com/1.96.0/win32-arm64-archive/stable#/dl.7z",
-            "hash": "c686c448c2606150f059f9b1dd47cc982402698c2916c94294630d38de9ed518"
+            "url": "https://update.code.visualstudio.com/1.96.4/win32-arm64-archive/stable#/dl.7z",
+            "hash": "3024bf3a6a42cbb5e2d6c2b0625ed81c37c971942d8a25f67a4008880d3f6bcc"
         }
     },
     "env_add_path": "bin",
@@ -32,7 +34,7 @@
     "post_install": [
         "$dirpath = \"$dir\".Replace('\\', '\\\\')",
         "$exepath = \"$dir\\Code.exe\".Replace('\\', '\\\\')",
-        "'install-associations', 'uninstall-associations', 'install-context', 'uninstall-context' | ForEach-Object {",
+        "'install-associations', 'uninstall-associations', 'install-context', 'uninstall-context', 'install-github-integration', 'uninstall-github-integration' | ForEach-Object {",
         "  if (Test-Path \"$bucketsdir\\extras\\scripts\\vscode\\$_.reg\") {",
         "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\vscode\\$_.reg\"",
         "    $content = $content.Replace('$codedir', $dirpath)",
@@ -58,7 +60,13 @@
         "}"
     ],
     "uninstaller": {
-        "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }"
+        "script": [
+            "if ($cmd -eq 'uninstall')",
+            "{",
+            "   reg import \"$dir\\uninstall-context.reg\" ",
+            "   reg import \"$dir\\uninstall-github-integration.reg\" ",
+            "}"
+        ]
     },
     "persist": "data",
     "checkver": {
