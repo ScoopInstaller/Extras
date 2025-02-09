@@ -1,0 +1,40 @@
+{
+    "$schema": "https://raw.githubusercontent.com/ScoopInstaller/Scoop/master/schema.json",
+    "version": "0.64.1",
+    "description": "Image optimizer for web",
+    "homepage": "https://css-ig.net/pinga",
+    "license": {
+        "identifier": "Unknown",
+        "url": "https://css-ig.net/submit/licenses"
+    },
+    "url": "https://css-ig.net/bin/pinga-win64.zip",
+    "hash": "63e5abb87a8c6a2d24666ff78a8660d8ea68374aee3aca0bc4ed93a49dca49d9",
+    "innosetup": true,
+    "pre_install": [
+        "Rename-Item -Path \"$dir\\pinga.exe\" -NewName \"pinga_setup.exe\"",
+        "Expand-InnoArchive \"$dir\\pinga_setup.exe\" \"$dir\" -Removal"
+    ],
+    "shortcuts": [
+        [
+            "pinga.exe",
+            "Pinga"
+        ]
+    ],
+    "post_uninstall": [
+        "$Files = [string[]](",
+        "    [System.IO.Path]::Combine($env:LOCALAPPDATA,'pinga.ini')",
+        ")",
+        "$Files.ForEach{",
+        "    if ([System.IO.File]::Exists($_)) {",
+        "        $null = [System.IO.File]::Delete($_)",
+        "    }",
+        "}"
+    ],
+    "checkver": {
+        "url": "https://css-ig.net/pinga",
+        "regex": "v([\\d+.]+)\\s"
+    },
+    "autoupdate": {
+        "url": "https://css-ig.net/bin/pinga-win64.zip"
+    }
+}
