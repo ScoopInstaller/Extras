@@ -30,7 +30,12 @@
     "checkver": {
         "url": "https://github.com/Mintplex-Labs/anything-llm/releases/latest",
         "script": [
-            "$release = (Invoke-WebRequest -Uri $url -UseBasicParsing -Method Head).BaseResponse.RequestMessage.RequestUri.Segments[-1]",
+            "$response = (Invoke-WebRequest -Uri $url -UseBasicParsing -Method Head).BaseResponse",
+            "$release = if ($response.RequestMessage) {",
+            "    $response.RequestMessage.RequestUri.Segments[-1]",
+            "} else {",
+            "    $response.ResponseUri.Segments[-1]",
+            "}",
             "$version_txt = 'https://github.com/Mintplex-Labs/anything-llm/releases/download/' + $release + '/version.txt'",
             "$version = (Invoke-RestMethod -Uri $version_txt -UseBasicParsing).Trim()",
             "Write-Output $version $release"
