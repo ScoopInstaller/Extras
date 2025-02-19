@@ -7,7 +7,8 @@
         "To set profile 'Scoop' as *DEFAULT*, or profiles/settings was lost after update:",
         "  - Run 'Floorp Profile Manager', choose 'Scoop' then click 'Start Floorp'.",
         "  - Visit 'about:profiles' page in Floorp to check *DEFAULT* profile.",
-        "For details: https://support.mozilla.org/en-US/kb/profile-manager-create-remove-switch-firefox-profiles"
+        "For details: https://support.mozilla.org/en-US/kb/profile-manager-create-remove-switch-firefox-profiles",
+        "To set or unset as default browser: run '$dir\\core\\floorp-set-default.vbs' script."
     ],
     "architecture": {
         "64bit": {
@@ -17,7 +18,10 @@
     },
     "extract_dir": "core",
     "extract_to": "core",
-    "post_install": "floorp -CreateProfile \"Scoop $persist_dir\\profile\"",
+    "post_install": [
+        "Copy-Item \"$bucketsdir\\extras\\scripts\\floorp\\floorp-set-default.vbs\" \"$dir\\core\\\" | Out-Null",
+        "floorp -CreateProfile \"Scoop $persist_dir\\profile\""
+    ],
     "bin": "core\\floorp.exe",
     "shortcuts": [
         [
