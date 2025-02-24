@@ -1,0 +1,53 @@
+{
+    "version": "0.9.27",
+    "description": "🍒 Cherry Studio is a desktop client that supports for multiple LLM providers",
+    "homepage": "https://cherry-ai.com/",
+    "license": {
+        "identifier": "Apache-2.0",
+        "url": "https://github.com/CherryHQ/cherry-studio/raw/refs/heads/main/LICENSE"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://cherrystudio.ocool.online/Cherry-Studio-0.9.27-setup.exe",
+            "hash": "f25f929ef970b61223dfcb0d83eb689c703584cbdc0d7eed4a7fa539b3964e38"
+        }
+    },
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\Cherry-Studio-$version-setup.exe\" \"$dir\\temp\\\" -Removal",
+            "Expand-7zipArchive \"$dir\\temp\\`$PLUGINSDIR\\app-64.7z\" \"$dir\\\" -Removal",
+            "Remove-Item \"$dir\\temp\" -Recurse",
+            "$appDataPath = \"$env:APPDATA\\CherryStudio\"",
+            "$persistPath = \"$persist_dir\\CherryStudio\"",
+            "if (Test-Path $appDataPath) {",
+            "    Remove-Item $appDataPath -Recurse -Force",
+            "}",
+            "New-Item -ItemType Junction -Path \"$appDataPath\" -Target \"$persistPath\""
+        ]
+    },
+    "notes": "You'd better turn off update detection in Settings->About Us in Cherry Studio and use scoop to manage updates, otherwise it will cause some errors.",
+    "shortcuts": [
+        [
+            "Cherry Studio.exe",
+            "Cherry Studio"
+        ]
+    ],
+    "persist": "CherryStudio",
+    "uninstaller": {
+        "script": [
+            "if (Test-Path \"$env:LOCALAPPDATA\\cherrystudio-updater\" -PathType Container) {",
+            "    Remove-Item -Recurse -Force \"$env:LOCALAPPDATA\\cherrystudio-updater\"",
+            "}"
+        ]
+    },
+    "checkver": {
+        "github": "https://github.com/CherryHQ/cherry-studio"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://cherrystudio.ocool.online/Cherry-Studio-$version-setup.exe"
+            }
+        }
+    }
+}
