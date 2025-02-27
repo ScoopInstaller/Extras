@@ -8,10 +8,20 @@
     },
     "notes": [
         "If you want 'mp3tag' as a context menu option run the following commands:",
+        "For 64bit Windows OS users run,",
         "To Install:",
-        "$dir\\install-mp3tag-context.cmd",
+        "start 'regsvr32' -Verb 'RunAs' -Args @(\"$dir\\Mp3tagShell.dll\", '/s')",
         "To Uninstall:",
-        "$dir\\uninstall-mp3tag-context.cmd"
+        "start 'regsvr32' -Verb 'RunAs' -Args @('/u', \"$dir\\Mp3tagShell.dll\", '/s')",
+        "",
+        "For 32bit Windows OS users run,",
+        "To Install:",
+        "start 'regsvr32' -Verb 'RunAs' -Args @(\"$dir\\Mp3tagShell32.dll\", '/s')",
+        "To Uninstall:",
+        "start 'regsvr32' -Verb 'RunAs' -Args @('/u', \"$dir\\Mp3tagShell32.dll\", '/s')",
+        "",
+        "To find out if you have a have 32bit or 64bit Windows OS, run the following command:",
+        "(Get-CimInstance win32_operatingsystem).OSArchitecture"
     ],
     "architecture": {
         "64bit": {
@@ -24,8 +34,8 @@
         }
     },
     "pre_install": [
-        "foreach ($i in @('mp3tag.cfg', 'data\\columns.ini')) {",
-        "    if (!(Test-Path \"$persist_dir\\$i\")) { New-Item $(Join-Path $dir $i) | Out-Null }",
+        "'mp3tag.cfg', 'data\\columns.ini' | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
         "}",
         "Remove-Item \"$dir\\`$*\", \"$dir\\Mp3tagUninst*\" -Recurse",
         "if (!(Test-Path \"$persist_dir\\data\\usrfields.ini\")) {",
@@ -33,38 +43,28 @@
         "}",
         "Copy-Item \"$persist_dir\\export\\*\" \"$dir\\export\" -Recurse -ErrorAction SilentlyContinue"
     ],
-    "bin": "Mp3tag.exe",
+    "bin": "mp3tag.exe",
     "shortcuts": [
         [
-            "Mp3tag.exe",
+            "mp3tag.exe",
             "Mp3tag"
         ]
     ],
     "persist": [
-        "data\\panels",
-        "data\\columns",
-        "data\\columns.ini",
-        "data\\usrfields.ini",
+        "data",
         "mp3tag.cfg"
     ],
-    "post_install": [
-        "$scriptsdir = Resolve-Path \"$bucketsdir\\*MyScoop*\\scripts\\mp3tag\"",
-        "$content = Get-Content \"$scriptsdir\\install-mp3tag-context.cmd\"",
-        "$content = $content.Replace('REPLACE_HERE', $dir)",
-        "[System.IO.File]::WriteAllLines(\"$dir\\install-mp3tag-context.cmd\", $content, [System.text.UTF8Encoding]($false))",
-        "Copy-Item \"$scriptsdir\\uninstall-mp3tag-context.cmd\" \"$dir\\uninstall-mp3tag-context.cmd\""
-    ],
     "pre_uninstall": [
-        "if ($cmd -eq 'uninstall') {",
-        "    reg delete 'HKCU\\SOFTWARE\\Classes\\*\\shell\\&Mp3tag' /f",
-        "    reg delete 'HKCU\\SOFTWARE\\Classes\\*\\shell\\Mp3tag' /f",
-        "    reg delete 'HKCU\\SOFTWARE\\Classes\\Directory\\shell\\&Mp3tag' /f",
-        "    reg delete 'HKCU\\SOFTWARE\\Classes\\Directory\\shell\\Mp3tag' /f",
+        "Copy-Item \"$dir\\export\\*\" \"$persist_dir\\export\" -Recurse -ErrorAction SilentlyContinue",
+        "if (Test-Path 'HKLM:\\SOFTWARE\\Classes\\Directory\\shellex\\ContextMenuHandlers\\Mp3tagShell\\') {",
+        "    if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+        "    Start-Process 'regsvr32' -Wait -Verb RunAs -ArgumentList @('/u', \"$dir\\Mp3tagShell32.dll\", '/s')",
+        "    Start-Process 'regsvr32' -Wait -Verb RunAs -ArgumentList @('/u', \"$dir\\Mp3tagShell.dll\", '/s')",
         "}"
     ],
     "checkver": {
         "url": "https://www.mp3tag.de/en/download.html",
-        "regex": "(?i)\\<h\\d\\>Mp3tag\\s+v(?<version>[\\d.]+[a-z]{0,1})\\</h\\d\\>"
+        "regex": "(?i)<h\\d>Mp3tag\\s+v(?<version>[\\d.]+[a-z]{0,1})</h\\d>"
     },
     "autoupdate": {
         "architecture": {
