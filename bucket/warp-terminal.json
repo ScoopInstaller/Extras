@@ -1,0 +1,52 @@
+{
+    "version": "0.2025.02.24.20.50.stable_04",
+    "description": "Modern, Rust-based terminal with AI built in so you and your team can build great software, faster.",
+    "homepage": "https://www.warp.dev/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.warp.dev/terms-of-service"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://releases.warp.dev/stable/v0.2025.02.24.20.50.stable_04/WarpSetup.exe",
+            "hash": "83e39bb4b1f9d627285d9f69d04ad3a07f725ca51e2be569b9a63b1b8f16774c"
+        },
+        "arm64": {
+            "url": "https://releases.warp.dev/stable/v0.2025.02.24.20.50.stable_04/WarpSetup-arm64.exe",
+            "hash": "f8606ba1221e5362f692bc4d9c4d9ae87a8e3c006128875413bd96ad6df2fc32"
+        }
+    },
+    "innosetup": true,
+    "shortcuts": [
+        [
+            "warp.exe",
+            "Warp"
+        ]
+    ],
+    "post_uninstall": [
+        "if ($purge) {",
+        "    $Directories = [string[]](",
+        "        [System.IO.Path]::Combine($env:LOCALAPPDATA,'warp')",
+        "    )",
+        "    $Directories.ForEach{",
+        "        if ([System.IO.Directory]::Exists($_)) {",
+        "            $null = [System.IO.Directory]::Delete($_,$true)",
+        "        }",
+        "    }",
+        "}"
+    ],
+    "checkver": {
+        "script": "[System.Net.HttpWebRequest]::Create('https://app.warp.dev/download?package=exe_x86_64').GetResponse().ResponseUri.AbsoluteUri",
+        "regex": "/v([\\d.]+stable_\\d+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://releases.warp.dev/stable/v$version/WarpSetup.exe"
+            },
+            "arm64": {
+                "url": "https://releases.warp.dev/stable/v$version/WarpSetup-arm64.exe"
+            }
+        }
+    }
+}

@@ -7,12 +7,15 @@
         "64bit": {
             "url": "https://updates.signal.org/desktop/signal-desktop-win-x64-7.44.0.exe#/dl.7z",
             "hash": "sha512:4f7cab24a016f9174534ce0728a024026ee2a3ccf915d5fd8c73bc6308ad7e1ce688879bce72a6e023fdebeb93bbbf44f0f88de2709ca9f50148923b86d01415",
-            "pre_install": [
-                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*.exe\" -Recurse -Force"
-            ]
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+        },
+        "arm64": {
+            "url": "https://updates.signal.org/desktop/signal-desktop-win-arm64-7.44.0.exe#/dl.7z",
+            "hash": "sha512:ce5ef9b81babfa90b74d6ca437db6d68e2197f5fbd7ec4b712b22f2d573d3eaebc5dfadd7dac08a7e43423b61b8dbb19ed9380c0aa7c3a9531fba65376360df3",
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" \"$dir\""
         }
     },
+    "post_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*.exe\" -Recurse -Force",
     "shortcuts": [
         [
             "Signal.exe",
@@ -27,11 +30,14 @@
         "architecture": {
             "64bit": {
                 "url": "https://updates.signal.org/desktop/signal-desktop-win-x64-$version.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://updates.signal.org/desktop/signal-desktop-win-arm64-$version.exe#/dl.7z"
             }
         },
         "hash": {
             "url": "$baseurl/latest.yml",
-            "regex": "sha512:\\s$base64"
+            "regex": "$basename\\s+sha512:\\s$base64"
         }
     }
 }
