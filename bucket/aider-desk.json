@@ -1,21 +1,35 @@
 {
-    "version": "0.3.1",
+    "version": "0.3.2",
     "description": "Desktop application for Aider AI assistant",
     "homepage": "https://github.com/hotovo/aider-desk/",
     "license": "Apache-2.0",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/hotovo/aider-desk/releases/download/v0.3.1/aider-desk-0.3.1-setup.exe#/dl.7z",
-            "hash": "sha512:52a8f0dcaa26d4abb2921f83513e5fadf14ec2a21b6df96e31eeee43e48665fdde4d0cfe88d3a76470186ec4e664cba85dc4dca19b76e3d6ed23ef7dc295cf2b",
+            "url": "https://github.com/hotovo/aider-desk/releases/download/v0.3.2/aider-desk-0.3.2-setup.exe#/dl.7z",
+            "hash": "sha512:ff958be3a9cf07b8f270d22ce3b71266f22056f9ad6f1f790409e6680135376e1f5baa5f2b5e5ae53c11b9771d120f4c1fd4a1cf5a76d24daad73b06033ab01f",
             "pre_install": [
                 "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" -DestinationPath \"$dir\"",
                 "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninst*\" -Recurse"
             ],
-            "post_uninstall": [
-                "Remove-Item \"$env:APPDATA\\aider-desk\" -Recurse -Force"
-            ]
+            "post_uninstall": "Remove-Item \"$env:APPDATA\\aider-desk\" -Recurse -Force"
         }
     },
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" -DestinationPath \"$dir\"",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninst*\" -Recurse"
+    ],
+    "post_install": [
+        "if (Test-Path \"$persist_dir\\data\\*\") {",
+        "    New-Item \"$Env:AppData\\aider-desk\" -ItemType Directory -Force | Out-Null",
+        "    Copy-Item \"$persist_dir\\data\\*\" \"$Env:AppData\\aider-desk\" -Recurse",
+        "}"
+    ],
+    "pre_uninstall": [
+        "if (Test-Path \"$Env:AppData\\aider-desk\\*\") {",
+        "    Remove-Item \"$persist_dir\\data\" -Recurse -Force",
+        "    Move-Item \"$Env:AppData\\aider-desk\" \"$persist_dir\\data\" -Force",
+        "}"
+    ],
     "shortcuts": [
         [
             "Aider-desk.exe",
