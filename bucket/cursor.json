@@ -10,16 +10,23 @@
         "64bit": {
             "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/x64/user-setup/CursorUserSetup-x64-0.47.5.exe",
             "hash": "5df2c647c4b4a195f27b61ca657b483bd8bf561053ecac2878d63b3d777b6d83",
-            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+            "installer": {
+                "script": [
+                    "Expand-InnoArchive -Path \"$dir\\CursorUserSetup-x64-$version.exe\" -Destination \"$dir\" -ExtractDir '{app}' -Removal"
+                ]
+            }
         },
         "arm64": {
             "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/arm64/user-setup/CursorUserSetup-arm64-0.47.5.exe",
             "hash": "b1fc1ed2535e187e2533595bc2b8fbfaaa0b61ce118b02aad586f1f3613bc28b",
-            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" \"$dir\""
+            "installer": {
+                "script": [
+                    "Expand-InnoArchive -Path \"$dir\\CursorUserSetup-arm64-$version.exe\" -Destination \"$dir\" -ExtractDir '{app}' -Removal"
+                ]
+            }
         }
     },
     "post_install": [
-        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse",
         "if (!(Test-Path \"$dir\\data\\extensions\") -and (Test-Path \"$env:USERPROFILE\\.cursor\\extensions\")) {",
         "    info '[Portable Mode] Copying extensions...'",
         "    Copy-Item \"$env:USERPROFILE\\.cursor\\extensions\" \"$dir\\data\" -Recurse",
@@ -34,7 +41,7 @@
         "    (Get-Content \"$extensions_file\") -replace '(?<=cursor(/|\\\\\\\\)).*?(?=(/|\\\\\\\\)data(/|\\\\\\\\)extensions)', $version | Set-Content \"$extensions_file\"",
         "}"
     ],
-    "bin": "resources\\app\\bin\\cursor.cmd",
+    "bin": "Cursor.exe",
     "shortcuts": [
         [
             "Cursor.exe",
