@@ -44,26 +44,17 @@
     "persist": "data",
     "checkver": {
         "url": "https://raw.githubusercontent.com/oslook/cursor-ai-downloads/main/version-history.json",
-        "regex": "\"version\":\\s*\"([\\d.]+)\",.*?\"win32-x64\":\\s*\"https://downloads\\.cursor\\.com/production/([\\w]+)/win32/x64/user-setup/CursorUserSetup-x64-[\\d.]+\\.exe\"",
-        "replace": "$1"
+        "jsonpath": "$.versions[0].version"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://downloads.cursor.com/production/$match2/win32/x64/user-setup/CursorUserSetup-x64-$version.exe",
-                "hash": {
-                    "url": "https://raw.githubusercontent.com/oslook/cursor-ai-downloads/main/version-history.json",
-                    "jsonpath": "$..versions[?(@.version=='$version')].hash.win32-x64",
-                    "find": "^(.+)$"
-                }
+                "url": "https://downloads.cursor.com/production/$matchCommit/win32/x64/user-setup/CursorUserSetup-x64-$version.exe",
+                "regex": "https://downloads\\.cursor\\.com/production/([\\w]+)/win32/x64/"
             },
             "arm64": {
-                "url": "https://downloads.cursor.com/production/$match2/win32/arm64/user-setup/CursorUserSetup-arm64-$version.exe",
-                "hash": {
-                    "url": "https://raw.githubusercontent.com/oslook/cursor-ai-downloads/main/version-history.json",
-                    "jsonpath": "$..versions[?(@.version=='$version')].hash.win32-arm64",
-                    "find": "^(.+)$"
-                }
+                "url": "https://downloads.cursor.com/production/$matchCommit/win32/arm64/user-setup/CursorUserSetup-arm64-$version.exe",
+                "regex": "https://downloads\\.cursor\\.com/production/([\\w]+)/win32/arm64/"
             }
         }
     }
