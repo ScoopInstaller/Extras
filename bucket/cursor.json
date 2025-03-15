@@ -12,7 +12,8 @@
             "hash": "5df2c647c4b4a195f27b61ca657b483bd8bf561053ecac2878d63b3d777b6d83",
             "installer": {
                 "script": [
-                    "Expand-InnoArchive -Path \"$dir\\CursorUserSetup-x64-$version.exe\" -Destination \"$dir\" -ExtractDir '{app}' -Removal"
+                    "Start-Process -Wait -WindowStyle Hidden -FilePath \"$dir\\CursorUserSetup-x64-$version.exe\" -ArgumentList \"/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- /DIR=`\"$dir`\"\"",
+                    "Remove-Item \"$dir\\CursorUserSetup-x64-$version.exe\""
                 ]
             }
         },
@@ -21,7 +22,8 @@
             "hash": "b1fc1ed2535e187e2533595bc2b8fbfaaa0b61ce118b02aad586f1f3613bc28b",
             "installer": {
                 "script": [
-                    "Expand-InnoArchive -Path \"$dir\\CursorUserSetup-arm64-$version.exe\" -Destination \"$dir\" -ExtractDir '{app}' -Removal"
+                    "Start-Process -Wait -WindowStyle Hidden -FilePath \"$dir\\CursorUserSetup-arm64-$version.exe\" -ArgumentList \"/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- /DIR=`\"$dir`\"\"",
+                    "Remove-Item \"$dir\\CursorUserSetup-arm64-$version.exe\""
                 ]
             }
         }
@@ -41,7 +43,12 @@
         "    (Get-Content \"$extensions_file\") -replace '(?<=cursor(/|\\\\\\\\)).*?(?=(/|\\\\\\\\)data(/|\\\\\\\\)extensions)', $version | Set-Content \"$extensions_file\"",
         "}"
     ],
-    "bin": "Cursor.exe",
+    "bin": [
+        [
+            "Cursor.exe",
+            "cursor"
+        ]
+    ],
     "shortcuts": [
         [
             "Cursor.exe",
