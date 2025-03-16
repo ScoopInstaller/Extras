@@ -13,7 +13,9 @@
             "hash": "5df2c647c4b4a195f27b61ca657b483bd8bf561053ecac2878d63b3d777b6d83",
             "installer": {
                 "script": [
-                    "Start-Process -Wait -WindowStyle Hidden -FilePath \"$dir\\CursorUserSetup-x64-$version.exe\" -ArgumentList \"/VERYSILENT\", \"/SUPPRESSMSGBOXES\", \"/NORESTART\", \"/SP-\", \"/DIR=`\"$dir`\"\", \"/NORUN\"",
+                    "Start-Process -Wait -WindowStyle Hidden -FilePath \"$dir\\CursorUserSetup-x64-$version.exe\" -ArgumentList \"/VERYSILENT\", \"/SUPPRESSMSGBOXES\", \"/NORESTART\", \"/SP-\", \"/DIR=`\"$dir`\"\"",
+                    "# Terminate any Cursor processes that may have started",
+                    "Get-Process -Name \"Cursor\" -ErrorAction SilentlyContinue | Stop-Process -Force",
                     "Remove-Item \"$dir\\CursorUserSetup-x64-$version.exe\""
                 ]
             }
@@ -23,7 +25,9 @@
             "hash": "b1fc1ed2535e187e2533595bc2b8fbfaaa0b61ce118b02aad586f1f3613bc28b",
             "installer": {
                 "script": [
-                    "Start-Process -Wait -WindowStyle Hidden -FilePath \"$dir\\CursorUserSetup-arm64-$version.exe\" -ArgumentList \"/VERYSILENT\", \"/SUPPRESSMSGBOXES\", \"/NORESTART\", \"/SP-\", \"/DIR=`\"$dir`\"\", \"/NORUN\"",
+                    "Start-Process -Wait -WindowStyle Hidden -FilePath \"$dir\\CursorUserSetup-arm64-$version.exe\" -ArgumentList \"/VERYSILENT\", \"/SUPPRESSMSGBOXES\", \"/NORESTART\", \"/SP-\", \"/DIR=`\"$dir`\"\"",
+                    "# Terminate any Cursor processes that may have started",
+                    "Get-Process -Name \"Cursor\" -ErrorAction SilentlyContinue | Stop-Process -Force",
                     "Remove-Item \"$dir\\CursorUserSetup-arm64-$version.exe\""
                 ]
             }
@@ -33,14 +37,17 @@
         "# Create portable marker file",
         "New-Item -ItemType Directory -Force -Path \"$dir\\data\" | Out-Null",
         "New-Item -ItemType File -Force -Path \"$dir\\data\\portable-data\" | Out-Null",
+
         "# Remove Start Menu shortcuts created by installer (with -Recurse)",
         "Remove-Item \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Cursor*\" -Force -Recurse -ErrorAction SilentlyContinue",
         "Remove-Item \"$env:ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Cursor*\" -Force -Recurse -ErrorAction SilentlyContinue",
+
         "# Copy data to portable location",
         "if (!(Test-Path \"$dir\\data\\extensions\") -and (Test-Path \"$env:USERPROFILE\\.cursor\\extensions\")) {",
         "    info '[Portable Mode] Copying extensions...'",
         "    Copy-Item \"$env:USERPROFILE\\.cursor\\extensions\" \"$dir\\data\" -Recurse",
         "}",
+
         "if (!(Test-Path \"$dir\\data\\user-data\") -and (Test-Path \"$env:AppData\\Cursor\")) {",
         "    info '[Portable Mode] Copying user data...'",
         "    Copy-Item \"$env:AppData\\Cursor\" \"$dir\\data\\user-data\" -Recurse",
@@ -50,6 +57,10 @@
         "        Remove-Item \"$env:AppData\\Cursor\" -Force -Recurse -ErrorAction SilentlyContinue",
         "    }",
         "}",
+
+        "# Kill any remaining Cursor processes (just to be sure)",
+        "Get-Process -Name \"Cursor\" -ErrorAction SilentlyContinue | Stop-Process -Force",
+
         "$extensions_file = \"$dir\\data\\extensions\\extensions.json\"",
         "if ((Test-Path \"$extensions_file\")) {",
         "    info 'Adjusting path in extensions file...'",
@@ -88,3 +99,4 @@
         }
     }
 }
+
