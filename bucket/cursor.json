@@ -8,43 +8,53 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/x64/user-setup/CursorUserSetup-x64-0.47.5.exe",
+            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/x64/user-setup/CursorUserSetup-x64-0.47.5.exe#/dl.7z",
             "hash": "5df2c647c4b4a195f27b61ca657b483bd8bf561053ecac2878d63b3d777b6d83",
-            "installer": {
-                "script": [
-                    "Start-Process -Wait -WindowStyle Hidden -FilePath \"$dir\\CursorUserSetup-x64-$version.exe\" -ArgumentList \"/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- /DIR=`\"$dir`\"\"",
-                    "Remove-Item \"$dir\\CursorUserSetup-x64-$version.exe\""
-                ]
-            }
+            "pre_install": [
+                "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Recurse -ErrorAction SilentlyContinue",
+                "Rename-Item \"$dir\\resources\\app\" \"$dir\\resources\\app.hold\" -ErrorAction SilentlyContinue",
+                "Expand-7zipArchive \"$dir\\resources\\app.asar\" \"$dir\\resources\\app\" -Removal",
+                "Join-Path \"$dir\\resources\\app.hold\" '*' | Copy-Item -Destination \"$dir\\resources\\app\" -Recurse -Force",
+                "Remove-Item \"$dir\\resources\\app.hold\" -Recurse -ErrorAction SilentlyContinue"
+            ]
         },
         "arm64": {
-            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/arm64/user-setup/CursorUserSetup-arm64-0.47.5.exe",
+            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/arm64/user-setup/CursorUserSetup-arm64-0.47.5.exe#/dl.7z",
             "hash": "b1fc1ed2535e187e2533595bc2b8fbfaaa0b61ce118b02aad586f1f3613bc28b",
-            "installer": {
-                "script": [
-                    "Start-Process -Wait -WindowStyle Hidden -FilePath \"$dir\\CursorUserSetup-arm64-$version.exe\" -ArgumentList \"/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- /DIR=`\"$dir`\"\"",
-                    "Remove-Item \"$dir\\CursorUserSetup-arm64-$version.exe\""
-                ]
-            }
+            "pre_install": [
+                "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Recurse -ErrorAction SilentlyContinue",
+                "Rename-Item \"$dir\\resources\\app\" \"$dir\\resources\\app.hold\" -ErrorAction SilentlyContinue",
+                "Expand-7zipArchive \"$dir\\resources\\app.asar\" \"$dir\\resources\\app\" -Removal",
+                "Join-Path \"$dir\\resources\\app.hold\" '*' | Copy-Item -Destination \"$dir\\resources\\app\" -Recurse -Force",
+                "Remove-Item \"$dir\\resources\\app.hold\" -Recurse -ErrorAction SilentlyContinue"
+            ]
         }
     },
     "post_install": [
-        "# Remove Start Menu shortcuts created by installer",
-        "Remove-Item \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Cursor*\" -Force -ErrorAction SilentlyContinue",
-        "Remove-Item \"$env:ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Cursor*\" -Force -ErrorAction SilentlyContinue",
-        "if (!(Test-Path \"$dir\\data\\extensions\") -and (Test-Path \"$env:USERPROFILE\\.cursor\\extensions\")) {",
-        "    info '[Portable Mode] Copying extensions...'",
-        "    Copy-Item \"$env:USERPROFILE\\.cursor\\extensions\" \"$dir\\data\" -Recurse",
+        "# Create portable data directory structure",
+        "New-Item -ItemType Directory -Force -Path \"$dir\\data\\user-data\" | Out-Null",
+        "New-Item -ItemType Directory -Force -Path \"$dir\\data\\extensions\" | Out-Null",
+        "# Create portable mode marker file",
+        "New-Item -ItemType File -Force -Path \"$dir\\data\\portable-data\" | Out-Null",
+        "# Copy existing extensions if available",
+        "if (!(Test-Path \"$dir\\data\\extensions\\*\") -and (Test-Path \"$env:USERPROFILE\\.cursor\\extensions\")) {",
+        "    info '[Portable Mode] Copying extensions from user profile...'",
+        "    Copy-Item \"$env:USERPROFILE\\.cursor\\extensions\\*\" \"$dir\\data\\extensions\" -Recurse",
         "}",
-        "if (!(Test-Path \"$dir\\data\\user-data\") -and (Test-Path \"$env:AppData\\Cursor\")) {",
-        "    info '[Portable Mode] Copying user data...'",
-        "    Copy-Item \"$env:AppData\\Cursor\" \"$dir\\data\\user-data\" -Recurse",
+        "# Copy existing user data if available",
+        "if (!(Test-Path \"$dir\\data\\user-data\\*\") -and (Test-Path \"$env:APPDATA\\Cursor\")) {",
+        "    info '[Portable Mode] Copying user data from AppData...'",
+        "    Copy-Item \"$env:APPDATA\\Cursor\\*\" \"$dir\\data\\user-data\" -Recurse",
         "}",
+        "# Update paths in extensions.json",
         "$extensions_file = \"$dir\\data\\extensions\\extensions.json\"",
         "if ((Test-Path \"$extensions_file\")) {",
-        "    info 'Adjusting path in extensions file...'",
+        "    info 'Adjusting paths in extensions file...'",
         "    (Get-Content \"$extensions_file\") -replace '(?<=cursor(/|\\\\\\\\)).*?(?=(/|\\\\\\\\)data(/|\\\\\\\\)extensions)', $version | Set-Content \"$extensions_file\"",
-        "}"
+        "}",
+        "# Remove Start Menu shortcuts created by installer",
+        "Remove-Item \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Cursor*\" -Force -ErrorAction SilentlyContinue",
+        "Remove-Item \"$env:ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Cursor*\" -Force -ErrorAction SilentlyContinue"
     ],
     "bin": [
         [
@@ -66,10 +76,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://downloads.cursor.com/production/$match2/win32/x64/user-setup/CursorUserSetup-x64-$version.exe"
+                "url": "https://downloads.cursor.com/production/$match2/win32/x64/user-setup/CursorUserSetup-x64-$version.exe#/dl.7z"
             },
             "arm64": {
-                "url": "https://downloads.cursor.com/production/$match2/win32/arm64/user-setup/CursorUserSetup-arm64-$version.exe"
+                "url": "https://downloads.cursor.com/production/$match2/win32/arm64/user-setup/CursorUserSetup-arm64-$version.exe#/dl.7z"
             }
         }
     }
