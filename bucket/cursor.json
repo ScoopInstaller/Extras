@@ -6,7 +6,10 @@
         "identifier": "Proprietary",
         "url": "https://www.cursor.com/terms-of-service"
     },
-    "notes": "This is a portable installation of Cursor. Your data is stored in the 'data' directory.",
+    "notes": [
+        "This is a portable installation of Cursor. Your data is stored in the 'data' directory.",
+        "After installation, your existing Cursor data has been migrated to the portable location."
+    ],
     "architecture": {
         "64bit": {
             "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/x64/user-setup/CursorUserSetup-x64-0.47.5.exe",
@@ -45,10 +48,10 @@
         "if (!(Test-Path \"$dir\\data\\user-data\\*\") -and (Test-Path \"$env:APPDATA\\Cursor\")) {",
         "    info '[Portable Mode] Copying user data...'",
         "    Copy-Item \"$env:APPDATA\\Cursor\\*\" \"$dir\\data\\user-data\" -Recurse -ErrorAction SilentlyContinue",
-        "    # Optional: Backup and rename original location",
-        "    if (Test-Path \"$env:APPDATA\\Cursor\") {",
-        "        info '[Portable Mode] Backing up original user data...'",
-        "        Rename-Item -Path \"$env:APPDATA\\Cursor\" -NewName \"$env:APPDATA\\Cursor.bak\" -Force -ErrorAction SilentlyContinue",
+        "    # Remove original data after successful copy",
+        "    if (Test-Path \"$dir\\data\\user-data\\*\") {",
+        "        info '[Portable Mode] Removing original AppData folder...'",
+        "        Remove-Item \"$env:APPDATA\\Cursor\" -Force -Recurse -ErrorAction SilentlyContinue",
         "    }",
         "}",
         "# Clean up installer-created shortcuts",
