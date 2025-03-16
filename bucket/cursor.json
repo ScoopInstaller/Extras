@@ -6,81 +6,65 @@
         "identifier": "Proprietary",
         "url": "https://www.cursor.com/terms-of-service"
     },
-    "notes": "This is a portable installation of Cursor. Your data is stored in the 'data' directory.",
+    "notes": [
+        "This is a portable installation of Cursor. Your data is stored in the 'data' directory.",
+        "To prevent Cursor from creating files in AppData, this version uses environment redirection."
+    ],
     "architecture": {
         "64bit": {
-            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/x64/user-setup/CursorUserSetup-x64-0.47.5.exe",
+            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/x64/user-setup/CursorUserSetup-x64-0.47.5.exe#/dl.7z",
             "hash": "5df2c647c4b4a195f27b61ca657b483bd8bf561053ecac2878d63b3d777b6d83",
-            "installer": {
-                "script": [
-                    "Start-Process -Wait -WindowStyle Hidden -FilePath \"$dir\\CursorUserSetup-x64-$version.exe\" -ArgumentList \"/VERYSILENT\", \"/SUPPRESSMSGBOXES\", \"/NORESTART\", \"/SP-\", \"/DIR=`\"$dir`\"\"",
-                    "# Terminate any Cursor processes that may have started",
-                    "Get-Process -Name \"Cursor\" -ErrorAction SilentlyContinue | Stop-Process -Force",
-                    "Remove-Item \"$dir\\CursorUserSetup-x64-$version.exe\""
-                ]
-            }
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\" -Removal"
         },
         "arm64": {
-            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/arm64/user-setup/CursorUserSetup-arm64-0.47.5.exe",
+            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/arm64/user-setup/CursorUserSetup-arm64-0.47.5.exe#/dl.7z",
             "hash": "b1fc1ed2535e187e2533595bc2b8fbfaaa0b61ce118b02aad586f1f3613bc28b",
-            "installer": {
-                "script": [
-                    "Start-Process -Wait -WindowStyle Hidden -FilePath \"$dir\\CursorUserSetup-arm64-$version.exe\" -ArgumentList \"/VERYSILENT\", \"/SUPPRESSMSGBOXES\", \"/NORESTART\", \"/SP-\", \"/DIR=`\"$dir`\"\"",
-                    "# Terminate any Cursor processes that may have started",
-                    "Get-Process -Name \"Cursor\" -ErrorAction SilentlyContinue | Stop-Process -Force",
-                    "Remove-Item \"$dir\\CursorUserSetup-arm64-$version.exe\""
-                ]
-            }
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" \"$dir\" -Removal"
         }
     },
     "post_install": [
-        "# Create portable marker file",
+        "# Create directories",
         "New-Item -ItemType Directory -Force -Path \"$dir\\data\" | Out-Null",
+        "New-Item -ItemType Directory -Force -Path \"$dir\\data\\user-data\" | Out-Null",
+        "New-Item -ItemType Directory -Force -Path \"$dir\\data\\extensions\" | Out-Null",
+        "# Create marker files",
         "New-Item -ItemType File -Force -Path \"$dir\\data\\portable-data\" | Out-Null",
-
-        "# Remove Start Menu shortcuts created by installer (with -Recurse)",
-        "Remove-Item \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Cursor*\" -Force -Recurse -ErrorAction SilentlyContinue",
-        "Remove-Item \"$env:ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Cursor*\" -Force -Recurse -ErrorAction SilentlyContinue",
-
-        "# Copy data to portable location",
-        "if (!(Test-Path \"$dir\\data\\extensions\") -and (Test-Path \"$env:USERPROFILE\\.cursor\\extensions\")) {",
+        "# Copy existing data",
+        "if (!(Test-Path \"$dir\\data\\extensions\\*\") -and (Test-Path \"$env:USERPROFILE\\.cursor\\extensions\")) {",
         "    info '[Portable Mode] Copying extensions...'",
-        "    Copy-Item \"$env:USERPROFILE\\.cursor\\extensions\" \"$dir\\data\" -Recurse",
+        "    Copy-Item \"$env:USERPROFILE\\.cursor\\extensions\\*\" \"$dir\\data\\extensions\" -Recurse -ErrorAction SilentlyContinue",
         "}",
-
-        "if (!(Test-Path \"$dir\\data\\user-data\") -and (Test-Path \"$env:AppData\\Cursor\")) {",
+        "if (!(Test-Path \"$dir\\data\\user-data\\*\") -and (Test-Path \"$env:APPDATA\\Cursor\")) {",
         "    info '[Portable Mode] Copying user data...'",
-        "    Copy-Item \"$env:AppData\\Cursor\" \"$dir\\data\\user-data\" -Recurse",
-        "    # Remove original data after successful copy",
-        "    if (Test-Path \"$dir\\data\\user-data\\*\") {",
-        "        info '[Portable Mode] Removing original AppData folder...'",
-        "        Remove-Item \"$env:AppData\\Cursor\" -Force -Recurse -ErrorAction SilentlyContinue",
-        "    }",
+        "    Copy-Item \"$env:APPDATA\\Cursor\\*\" \"$dir\\data\\user-data\" -Recurse -ErrorAction SilentlyContinue",
         "}",
-
-        "# Kill any remaining Cursor processes (just to be sure)",
-        "Get-Process -Name \"Cursor\" -ErrorAction SilentlyContinue | Stop-Process -Force",
-
-        "$extensions_file = \"$dir\\data\\extensions\\extensions.json\"",
-        "if ((Test-Path \"$extensions_file\")) {",
-        "    info 'Adjusting path in extensions file...'",
-        "    (Get-Content \"$extensions_file\") -replace '(?<=cursor(/|\\\\\\\\)).*?(?=(/|\\\\\\\\)data(/|\\\\\\\\)extensions)', $version | Set-Content \"$extensions_file\"",
-        "}"
+        "# Clean up installation files",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "Remove-Item \"$dir\\uninstall*\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "# Create wrapper script to enforce portable mode",
+        "$wrapper = \"$dir\\cursor-portable.cmd\"",
+        "@(",
+        "    \"@echo off\",",
+        "    \"setlocal\",",
+        "    \"set APPDATA=%~dp0data\\user-data\",",
+        "    \"set CURSOR_USER_DATA_DIR=%~dp0data\\user-data\",",
+        "    \"set CURSOR_EXTENSIONS_DIR=%~dp0data\\extensions\",",
+        "    \"start \"\" \"%~dp0Cursor.exe\" %*\",",
+        "    \"exit /b %errorlevel%\"",
+        ") | Set-Content -Path $wrapper -Encoding ASCII"
     ],
-    "env_set": {
-        "CURSOR_USER_DATA_DIR": "$dir\\data\\user-data",
-        "CURSOR_EXTENSIONS_DIR": "$dir\\data\\extensions"
-    },
     "bin": [
         [
-            "Cursor.exe",
+            "cursor-portable.cmd",
             "cursor"
         ]
     ],
     "shortcuts": [
         [
-            "Cursor.exe",
-            "Cursor"
+            "cursor-portable.cmd",
+            "Cursor",
+            "",
+            "Cursor.exe"
         ]
     ],
     "persist": "data",
@@ -91,12 +75,11 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://downloads.cursor.com/production/$match2/win32/x64/user-setup/CursorUserSetup-x64-$version.exe"
+                "url": "https://downloads.cursor.com/production/$match2/win32/x64/user-setup/CursorUserSetup-x64-$version.exe#/dl.7z"
             },
             "arm64": {
-                "url": "https://downloads.cursor.com/production/$match2/win32/arm64/user-setup/CursorUserSetup-arm64-$version.exe"
+                "url": "https://downloads.cursor.com/production/$match2/win32/arm64/user-setup/CursorUserSetup-arm64-$version.exe#/dl.7z"
             }
         }
     }
 }
-
