@@ -9,7 +9,7 @@
     "notes": "This is a portable installation of Cursor. Your data is stored in the 'data' directory.",
     "architecture": {
         "64bit": {
-            "url": "https://cursor.so/win",
+            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/x64/user-setup/CursorUserSetup-x64-0.47.5.exe#/cursor-installer.exe",
             "hash": "5df2c647c4b4a195f27b61ca657b483bd8bf561053ecac2878d63b3d777b6d83"
         },
         "arm64": {
@@ -19,55 +19,39 @@
     },
     "installer": {
         "script": [
-            "# Debug info for troubleshooting",
             "info 'Extracting installer...'",
-            "Expand-7zipArchive \"$dir\\$fname\" \"$dir\\extracted\" -Removal",
+            "Expand-7zipArchive \"$dir\\cursor-installer.exe\" \"$dir\\extracted\" -Removal",
 
-            "# List all files to help diagnose structure",
-            "info 'Listing extracted files for debugging:'",
-            "Get-ChildItem \"$dir\\extracted\" -Recurse | Select-Object -First 20 | ForEach-Object { info \"Found file: $_\" }",
+            "# Look for the app archive in the $PLUGINSDIR directory (handle special character $ in path)",
+            "$pluginsDir = Join-Path \"$dir\\extracted\" '$PLUGINSDIR'",
+            "$appArchivePath = Join-Path $pluginsDir 'app-64.7z'",
 
-            "# Look for all archives in the extracted files",
-            "info 'Looking for any archive files...'",
-            "$allArchives = Get-ChildItem \"$dir\\extracted\" -Recurse -File -Include *.7z,*.zip,*.tar,*.rar,*.nupkg | Select-Object -First 10",
-            "if ($allArchives.Count -gt 0) {",
-            "    $allArchives | ForEach-Object { info \"Found archive: $_\" }",
-            "}",
-
-            "# Try to find the app archive with multiple patterns",
-            "$appArchives = @()",
-            "$appArchives += Get-ChildItem \"$dir\\extracted\" -Recurse -File -Include \"app*.7z\", \"*.nupkg\", \"*cursor*.7z\", \"*app*.7z\"",
-
-            "# Check for files in $PLUGINSDIR which often contains the actual application files",
-            "$pluginsDir = Join-Path \"$dir\\extracted\" \"`$PLUGINSDIR\"",
-            "if (Test-Path $pluginsDir) {",
-            "    info \"Found `$PLUGINSDIR directory, checking contents...\"",
-            "    Get-ChildItem $pluginsDir -File | ForEach-Object { info \"Found in plugins dir: $_\" }",
+            "if (Test-Path -LiteralPath $appArchivePath) {",
+            "    info \"Found app archive: $appArchivePath\"",
+            "    # Extract directly to destination directory",
+            "    Expand-7zipArchive -Path $appArchivePath -DestinationPath \"$dir\" -Removal",
+            "} else {",
+            "    info \"App archive not found at expected location. Searching recursively...\"",
+            "    # Fallback to recursive search if not in expected location",
+            "    $files = Get-ChildItem \"$dir\\extracted\" -Recurse -File -Include \"*.7z\"",
+            "    $appArchives = $files | Where-Object { $_.Name -like 'app*.7z' }",
             "    ",
-            "    # Try to find larger files which might be the app archives",
-            "    $largeFiles = Get-ChildItem $pluginsDir -File | Where-Object { $_.Length -gt 10MB } | Sort-Object Length -Descending",
-            "    if ($largeFiles.Count -gt 0) {",
-            "        info \"Found large files that might be archives:\"",
-            "        $largeFiles | ForEach-Object { info \"$($_.Name) - $($_.Length/1MB) MB\" }",
-            "        $appArchives += $largeFiles | Select-Object -First 1",
+            "    if ($appArchives.Count -eq 0) {",
+            "        Write-Error \"Could not find any app archive in the installer.\"",
+            "        exit 1",
             "    }",
+            "    ",
+            "    info \"Found $($appArchives.Count) app archives. Using: $($appArchives[0].FullName)\"",
+            "    Expand-7zipArchive $appArchives[0].FullName \"$dir\" -Removal",
             "}",
 
-            "if ($appArchives.Count -eq 0) {",
-            "    Write-Error \"Could not find any app archive in the installer.\"",
-            "    exit 1",
-            "}",
-
-            "info \"Found $($appArchives.Count) app archives. Using the first one: $($appArchives[0].FullName)\"",
-            "Expand-7zipArchive $appArchives[0].FullName \"$dir\" -Removal",
-
-            "# Verify cursor.exe exists",
+            "# Verify the cursor.exe exists",
             "if (!(Test-Path \"$dir\\Cursor.exe\")) {",
             "    info \"Cursor.exe not found in root directory. Looking for it recursively...\"",
             "    $cursorExe = Get-ChildItem \"$dir\" -Recurse -File -Include \"Cursor.exe\" | Select-Object -First 1",
             "    if ($cursorExe) {",
             "        info \"Found Cursor.exe at: $($cursorExe.FullName)\"",
-            "        Copy-Item $cursorExe.FullName \"$dir\\Cursor.exe\" -Force",
+            "        Copy-Item $cursorExe.FullName \"$dir\\Cursor.exe\"",
             "    } else {",
             "        Write-Error \"Could not find Cursor.exe in the extracted files.\"",
             "    }",
@@ -75,6 +59,7 @@
 
             "# Clean up unnecessary files",
             "Remove-Item \"$dir\\extracted\" -Recurse -Force -ErrorAction SilentlyContinue",
+            "Remove-Item \"$dir\\`$*\" -Recurse -Force -ErrorAction SilentlyContinue",
             "Remove-Item \"$dir\\Uninst*\" -Recurse -Force -ErrorAction SilentlyContinue"
         ]
     },
@@ -86,6 +71,11 @@
         "if (!(Test-Path \"$dir\\data\\user-data\") -and (Test-Path \"$env:AppData\\Cursor\")) {",
         "    info '[Portable Mode] Copying user data...'",
         "    Copy-Item \"$env:AppData\\Cursor\" \"$dir\\data\\user-data\" -Recurse",
+        "}",
+        "$extensions_file = \"$dir\\data\\extensions\\extensions.json\"",
+        "if ((Test-Path \"$extensions_file\")) {",
+        "    info 'Adjusting path in extensions file...'",
+        "    (Get-Content \"$extensions_file\") -replace '(?<=cursor(/|\\\\\\\\)).*?(?=(/|\\\\\\\\)data(/|\\\\\\\\)extensions)', $version | Set-Content \"$extensions_file\"",
         "}"
     ],
     "shortcuts": [
