@@ -9,40 +9,45 @@
     "notes": "This is a portable installation of Cursor. Your data is stored in the 'data' directory.",
     "architecture": {
         "64bit": {
-            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/x64/user-setup/CursorUserSetup-x64-0.47.5.exe#/cursor-installer.exe",
+            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/x64/user-setup/CursorUserSetup-x64-0.47.5.exe#/dl.exe",
             "hash": "5df2c647c4b4a195f27b61ca657b483bd8bf561053ecac2878d63b3d777b6d83"
         },
         "arm64": {
-            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/arm64/user-setup/CursorUserSetup-arm64-0.47.5.exe#/cursor-installer.exe",
+            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/arm64/user-setup/CursorUserSetup-arm64-0.47.5.exe#/dl.exe",
             "hash": "b1fc1ed2535e187e2533595bc2b8fbfaaa0b61ce118b02aad586f1f3613bc28b"
         }
     },
     "installer": {
         "script": [
-            "info 'Extracting installer...'",
-            "Expand-7zipArchive \"$dir\\cursor-installer.exe\" \"$dir\\extracted\" -Removal",
+            "# First extract installer",
+            "info 'Extracting installer EXE...'",
+            "Expand-7zipArchive \"$dir\\dl.exe\" \"$dir\" -Removal",
 
-            "# Look for the app archive in the $PLUGINSDIR directory (handle special character $ in path)",
-            "$pluginsDir = Join-Path \"$dir\\extracted\" '$PLUGINSDIR'",
-            "$appArchivePath = Join-Path $pluginsDir 'app-64.7z'",
+            "# List all files to debug",
+            "info 'Listing extracted contents:'",
+            "Get-ChildItem \"$dir\" -Force | ForEach-Object { info $_.FullName }",
 
-            "if (Test-Path -LiteralPath $appArchivePath) {",
-            "    info \"Found app archive: $appArchivePath\"",
-            "    # Extract directly to destination directory",
-            "    Expand-7zipArchive -Path $appArchivePath -DestinationPath \"$dir\" -Removal",
+            "# List all 7z archives in the extracted files",
+            "info 'Looking for app archives:'",
+            "$appArchives = @(Get-ChildItem \"$dir\" -Recurse -Force -File -Include \"*.7z\")",
+            "foreach ($archive in $appArchives) {",
+            "    info \"Found archive: $($archive.FullName)\"",
+            "}",
+
+            "if ($appArchives.Count -gt 0) {",
+            "    $appArchive = $appArchives[0]",
+            "    info \"Using archive: $($appArchive.FullName)\"",
+            "    ",
+            "    # Extract app archive",
+            "    info 'Extracting app archive...'",
+            "    Expand-7zipArchive $appArchive.FullName \"$dir\\app\" -Removal",
+            "    ",
+            "    # Copy all files from app directory to main directory",
+            "    info 'Moving app files to main directory...'",
+            "    Get-ChildItem \"$dir\\app\" -Recurse | Move-Item -Destination \"$dir\" -Force",
             "} else {",
-            "    info \"App archive not found at expected location. Searching recursively...\"",
-            "    # Fallback to recursive search if not in expected location",
-            "    $files = Get-ChildItem \"$dir\\extracted\" -Recurse -File -Include \"*.7z\"",
-            "    $appArchives = $files | Where-Object { $_.Name -like 'app*.7z' }",
-            "    ",
-            "    if ($appArchives.Count -eq 0) {",
-            "        Write-Error \"Could not find any app archive in the installer.\"",
-            "        exit 1",
-            "    }",
-            "    ",
-            "    info \"Found $($appArchives.Count) app archives. Using: $($appArchives[0].FullName)\"",
-            "    Expand-7zipArchive $appArchives[0].FullName \"$dir\" -Removal",
+            "    Write-Error \"Could not find any app archive (*.7z) in the installer.\"",
+            "    exit 1",
             "}",
 
             "# Verify the cursor.exe exists",
@@ -58,7 +63,6 @@
             "}",
 
             "# Clean up unnecessary files",
-            "Remove-Item \"$dir\\extracted\" -Recurse -Force -ErrorAction SilentlyContinue",
             "Remove-Item \"$dir\\`$*\" -Recurse -Force -ErrorAction SilentlyContinue",
             "Remove-Item \"$dir\\Uninst*\" -Recurse -Force -ErrorAction SilentlyContinue"
         ]
@@ -92,10 +96,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://downloads.cursor.com/production/$match2/win32/x64/user-setup/CursorUserSetup-x64-$version.exe#/cursor-installer.exe"
+                "url": "https://downloads.cursor.com/production/$match2/win32/x64/user-setup/CursorUserSetup-x64-$version.exe#/dl.exe"
             },
             "arm64": {
-                "url": "https://downloads.cursor.com/production/$match2/win32/arm64/user-setup/CursorUserSetup-arm64-$version.exe#/cursor-installer.exe"
+                "url": "https://downloads.cursor.com/production/$match2/win32/arm64/user-setup/CursorUserSetup-arm64-$version.exe#/dl.exe"
             }
         }
     }
