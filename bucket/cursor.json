@@ -7,14 +7,15 @@
         "url": "https://www.cursor.com/terms-of-service"
     },
     "depends": "aki/innounpacker",
+    "notes": "This is a portable installation of Cursor. Your data is stored in the 'data' directory.",
     "architecture": {
         "64bit": {
             "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/x64/user-setup/CursorUserSetup-x64-0.47.5.exe#/dl.7z",
             "hash": "5df2c647c4b4a195f27b61ca657b483bd8bf561053ecac2878d63b3d777b6d83"
         },
         "arm64": {
-            "url": "https://anysphere-binaries.s3.us-east-1.amazonaws.com/production/ae378be9dc2f5f1a6a1a220c6e25f9f03c8d4e19/win32/arm64/user-setup/CursorUserSetup-arm64-0.46.11.exe#/dl.7z",
-            "hash": ""
+            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/arm64/user-setup/CursorUserSetup-arm64-0.47.5.exe#/dl.7z",
+            "hash": "b1fc1ed2535e187e2533595bc2b8fbfaaa0b61ce118b02aad586f1f3613bc28b"
         }
     },
     "pre_install": [
@@ -51,22 +52,16 @@
     ],
     "persist": "data",
     "checkver": {
-        "script": [
-            ". \"$pwd\\bin\\utils.ps1\"",
-            "$dl_info = get_installer_info 'Anysphere/Cursor'",
-            "\"ver:$($dl_info.PackageVersion);\"",
-            "\"x64:$($dl_info.x64_exe.InstallerUrl);\""
-        ],
-        "regex": "ver:(?<version>.+?); x64:(?<x64>.+?);"
+        "url": "https://raw.githubusercontent.com/oslook/cursor-ai-downloads/main/version-history.json",
+        "regex": "\"version\":\\s*\"([\\d.]+)\"[\\s\\S]*?\"win32-x64\":\\s*\"https://downloads\\.cursor\\.com/production/([\\w]+)/win32/x64/user-setup/CursorUserSetup-x64-[\\d.]+\\.exe\""
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "$matchX64#/dl.7z",
-                "hash": {
-                    "url": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/a/Anysphere/Cursor/$version/Anysphere.Cursor.installer.yaml",
-                    "regex": "Architecture: x64[\\s\\S]+?InstallerSha256:\\s?(.+)"
-                }
+                "url": "https://downloads.cursor.com/production/$match2/win32/x64/user-setup/CursorUserSetup-x64-$version.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://downloads.cursor.com/production/$match2/win32/arm64/user-setup/CursorUserSetup-arm64-$version.exe#/dl.7z"
             }
         }
     }
