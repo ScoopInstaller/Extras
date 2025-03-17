@@ -6,6 +6,7 @@
         "identifier": "Proprietary",
         "url": "https://www.cursor.com/terms-of-service"
     },
+    "depends": "innounp",
     "notes": "This is a portable installation of Cursor. Your data is stored in the 'data' directory.",
     "architecture": {
         "64bit": {
@@ -19,52 +20,35 @@
     },
     "installer": {
         "script": [
-            "# First extract installer",
-            "info 'Extracting installer EXE...'",
-            "Expand-7zipArchive \"$dir\\dl.exe\" \"$dir\" -Removal",
+            "# Use innounp to extract the installer",
+            "info 'Extracting installer using innounp...'",
+            "Start-Process -Wait \"$(scoop prefix innounp)\\innounp.exe\" -ArgumentList \"-x -d\"\"$dir\\extracted\"\" \"\"$dir\\dl.exe\"\"\"",
 
-            "# List all files to debug",
-            "info 'Listing extracted contents:'",
-            "Get-ChildItem \"$dir\" -Force | ForEach-Object { info $_.FullName }",
+            "# Show what we've extracted",
+            "info 'Files extracted from installer:'",
+            "Get-ChildItem \"$dir\\extracted\" -Recurse | ForEach-Object { info $_.FullName }",
 
-            "# List all 7z archives in the extracted files",
-            "info 'Looking for app archives:'",
-            "$appArchives = @(Get-ChildItem \"$dir\" -Recurse -Force -File -Include \"*.7z\")",
-            "foreach ($archive in $appArchives) {",
-            "    info \"Found archive: $($archive.FullName)\"",
-            "}",
-
-            "if ($appArchives.Count -gt 0) {",
-            "    $appArchive = $appArchives[0]",
-            "    info \"Using archive: $($appArchive.FullName)\"",
-            "    ",
-            "    # Extract app archive",
-            "    info 'Extracting app archive...'",
-            "    Expand-7zipArchive $appArchive.FullName \"$dir\\app\" -Removal",
-            "    ",
-            "    # Copy all files from app directory to main directory",
-            "    info 'Moving app files to main directory...'",
-            "    Get-ChildItem \"$dir\\app\" -Recurse | Move-Item -Destination \"$dir\" -Force",
+            "# Find the app directory in {app} inside the extracted content",
+            "$appDir = Join-Path \"$dir\\extracted\" '{app}'",
+            "if (Test-Path $appDir) {",
+            "    info \"Found app directory at: $appDir\"",
+            "    Get-ChildItem $appDir | Move-Item -Destination \"$dir\" -Force",
             "} else {",
-            "    Write-Error \"Could not find any app archive (*.7z) in the installer.\"",
-            "    exit 1",
-            "}",
-
-            "# Verify the cursor.exe exists",
-            "if (!(Test-Path \"$dir\\Cursor.exe\")) {",
-            "    info \"Cursor.exe not found in root directory. Looking for it recursively...\"",
-            "    $cursorExe = Get-ChildItem \"$dir\" -Recurse -File -Include \"Cursor.exe\" | Select-Object -First 1",
+            "    info \"App directory not found at expected path. Searching for Cursor.exe...\"",
+            "    $cursorExe = Get-ChildItem \"$dir\\extracted\" -Recurse -File -Filter \"Cursor.exe\" | Select-Object -First 1",
             "    if ($cursorExe) {",
             "        info \"Found Cursor.exe at: $($cursorExe.FullName)\"",
-            "        Copy-Item $cursorExe.FullName \"$dir\\Cursor.exe\"",
+            "        $appRootDir = Split-Path $cursorExe.FullName",
+            "        Get-ChildItem $appRootDir | Move-Item -Destination \"$dir\" -Force",
             "    } else {",
             "        Write-Error \"Could not find Cursor.exe in the extracted files.\"",
+            "        exit 1",
             "    }",
             "}",
 
-            "# Clean up unnecessary files",
-            "Remove-Item \"$dir\\`$*\" -Recurse -Force -ErrorAction SilentlyContinue",
-            "Remove-Item \"$dir\\Uninst*\" -Recurse -Force -ErrorAction SilentlyContinue"
+            "# Clean up extracted files",
+            "Remove-Item \"$dir\\extracted\" -Recurse -Force -ErrorAction SilentlyContinue",
+            "Remove-Item \"$dir\\dl.exe\" -Force -ErrorAction SilentlyContinue"
         ]
     },
     "post_install": [
