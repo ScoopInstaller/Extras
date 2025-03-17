@@ -9,29 +9,48 @@
     "notes": "This is a portable installation of Cursor. Your data is stored in the 'data' directory.",
     "architecture": {
         "64bit": {
-            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/x64/user-setup/CursorUserSetup-x64-0.47.5.exe",
+            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/x64/user-setup/CursorUserSetup-x64-0.47.5.exe#/cursor-installer.exe",
             "hash": "5df2c647c4b4a195f27b61ca657b483bd8bf561053ecac2878d63b3d777b6d83"
         },
         "arm64": {
-            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/arm64/user-setup/CursorUserSetup-arm64-0.47.5.exe",
+            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/arm64/user-setup/CursorUserSetup-arm64-0.47.5.exe#/cursor-installer.exe",
             "hash": "b1fc1ed2535e187e2533595bc2b8fbfaaa0b61ce118b02aad586f1f3613bc28b"
         }
     },
     "installer": {
         "script": [
-            "# Extract the installer exe",
-            "Expand-7zipArchive \"$dir\\$fname\" -Removal",
-            "# Handle the $PLUGINSDIR path properly",
-            "$pluginsDir = Join-Path $dir '$PLUGINSDIR'",
-            "$appArchive = Join-Path $pluginsDir 'app-64.7z'",
-            "if (Test-Path $appArchive) {",
-            "    # Extract the app archive to the destination directory",
-            "    Expand-7zipArchive $appArchive $dir",
-            "} else {",
-            "    Write-Error \"Could not find the application archive at $appArchive\"",
+            "# Debug info for troubleshooting",
+            "info 'Extracting installer...'",
+            "Expand-7zipArchive \"$dir\\cursor-installer.exe\" \"$dir\\extracted\" -Removal",
+            "info 'Looking for application archive...'",
+            "Get-ChildItem \"$dir\\extracted\" -Recurse -File -Include *.7z | ForEach-Object { info \"Found archive: $_\" }",
+
+            "# Try to find the app archive (different names possible depending on architecture)",
+            "$appArchives = @()",
+            "$appArchives += Get-ChildItem \"$dir\\extracted\" -Recurse -File -Include \"app*.7z\"",
+
+            "if ($appArchives.Count -eq 0) {",
+            "    Write-Error \"Could not find any app archive in the installer.\"",
+            "    exit 1",
             "}",
+
+            "info \"Found $($appArchives.Count) app archives. Using the first one: $($appArchives[0].FullName)\"",
+            "Expand-7zipArchive $appArchives[0].FullName \"$dir\" -Removal",
+
+            "# Verify the cursor.exe exists",
+            "if (!(Test-Path \"$dir\\Cursor.exe\")) {",
+            "    info \"Cursor.exe not found in root directory. Looking for it recursively...\"",
+            "    $cursorExe = Get-ChildItem \"$dir\" -Recurse -File -Include \"Cursor.exe\" | Select-Object -First 1",
+            "    if ($cursorExe) {",
+            "        info \"Found Cursor.exe at: $($cursorExe.FullName)\"",
+            "        Copy-Item $cursorExe.FullName \"$dir\\Cursor.exe\"",
+            "    } else {",
+            "        Write-Error \"Could not find Cursor.exe in the extracted files.\"",
+            "    }",
+            "}",
+
             "# Clean up unnecessary files",
-            "Remove-Item $pluginsDir -Recurse -Force -ErrorAction SilentlyContinue",
+            "Remove-Item \"$dir\\extracted\" -Recurse -Force -ErrorAction SilentlyContinue",
             "Remove-Item \"$dir\\Uninst*\" -Recurse -Force -ErrorAction SilentlyContinue"
         ]
     },
@@ -64,10 +83,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://downloads.cursor.com/production/$match2/win32/x64/user-setup/CursorUserSetup-x64-$version.exe"
+                "url": "https://downloads.cursor.com/production/$match2/win32/x64/user-setup/CursorUserSetup-x64-$version.exe#/cursor-installer.exe"
             },
             "arm64": {
-                "url": "https://downloads.cursor.com/production/$match2/win32/arm64/user-setup/CursorUserSetup-arm64-$version.exe"
+                "url": "https://downloads.cursor.com/production/$match2/win32/arm64/user-setup/CursorUserSetup-arm64-$version.exe#/cursor-installer.exe"
             }
         }
     }
