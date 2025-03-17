@@ -6,29 +6,25 @@
         "identifier": "Proprietary",
         "url": "https://www.cursor.com/terms-of-service"
     },
-    "depends": "Extras/innounpacker",
     "notes": "This is a portable installation of Cursor. Your data is stored in the 'data' directory.",
     "architecture": {
         "64bit": {
-            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/x64/user-setup/CursorUserSetup-x64-0.47.5.exe#/dl.7z",
+            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/x64/user-setup/CursorUserSetup-x64-0.47.5.exe",
             "hash": "5df2c647c4b4a195f27b61ca657b483bd8bf561053ecac2878d63b3d777b6d83"
         },
         "arm64": {
-            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/arm64/user-setup/CursorUserSetup-arm64-0.47.5.exe#/dl.7z",
+            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/arm64/user-setup/CursorUserSetup-arm64-0.47.5.exe",
             "hash": "b1fc1ed2535e187e2533595bc2b8fbfaaa0b61ce118b02aad586f1f3613bc28b"
         }
     },
-    "pre_install": [
-        "(Get-ChildItem $dir 'CursorUserSetup*exe').Fullname | Rename-Item -NewName 'Cursor_Setup.exe'",
-        "innounpack.exe -x -d\"$dir\" \"$dir\\Cursor_Setup.exe\" | Out-Null",
-        "Move-Item -Force -Path \"$dir\\{app}\\tools\\*\" -Destination \"$dir\"",
-        "Move-Item -Force -Path \"$dir\\{code_GetDestDir}\\*\" -Destination \"$dir\"",
-        "Remove-Item -Force -Path \"$dir\\{app}\" -Recurse",
-        "Remove-Item -Force -Path \"$dir\\{code_GetDestDir}\" -Recurse",
-        "Remove-Item -Force -Path \"$dir\\Cursor_Setup.exe\" -Recurse"
-    ],
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\$fname\" -Removal",
+            "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+            "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninst*\" -Recurse"
+        ]
+    },
     "post_install": [
-        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse",
         "if (!(Test-Path \"$dir\\data\\extensions\") -and (Test-Path \"$env:USERPROFILE\\.cursor\\extensions\")) {",
         "    info '[Portable Mode] Copying extensions...'",
         "    Copy-Item \"$env:USERPROFILE\\.cursor\\extensions\" \"$dir\\data\" -Recurse",
@@ -58,10 +54,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://downloads.cursor.com/production/$match2/win32/x64/user-setup/CursorUserSetup-x64-$version.exe#/dl.7z"
+                "url": "https://downloads.cursor.com/production/$match2/win32/x64/user-setup/CursorUserSetup-x64-$version.exe"
             },
             "arm64": {
-                "url": "https://downloads.cursor.com/production/$match2/win32/arm64/user-setup/CursorUserSetup-arm64-$version.exe#/dl.7z"
+                "url": "https://downloads.cursor.com/production/$match2/win32/arm64/user-setup/CursorUserSetup-arm64-$version.exe"
             }
         }
     }
