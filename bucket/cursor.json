@@ -13,18 +13,9 @@
             "hash": "5df2c647c4b4a195f27b61ca657b483bd8bf561053ecac2878d63b3d777b6d83",
             "installer": {
                 "script": [
-                    "# Start a background job to kill any Cursor processes that appear",
-                    "$job = Start-Job -ScriptBlock {",
-                    "    $startTime = Get-Date",
-                    "    while ((Get-Date).Subtract($startTime).TotalSeconds -lt 30) {",
-                    "        Get-Process -Name 'Cursor' -ErrorAction SilentlyContinue | Stop-Process -Force",
-                    "        Start-Sleep -Milliseconds 500",
-                    "    }",
-                    "}",
-                    "# Run installer silently",
-                    "Start-Process -Wait -WindowStyle Hidden -FilePath \"$dir\\CursorUserSetup-x64-$version.exe\" -ArgumentList \"/VERYSILENT\", \"/SUPPRESSMSGBOXES\", \"/NORESTART\", \"/SP-\", \"/DIR=`\"$dir`\"\"",
+                    "# Run installer silently with all needed parameters",
+                    "Start-Process -Wait -WindowStyle Hidden -FilePath \"$dir\\CursorUserSetup-x64-$version.exe\" -ArgumentList \"/VERYSILENT\", \"/NORESTART\", \"/NOCANCEL\", \"/NOICONS\", \"/TASKS=`\"addcontextmenufiles,addcontextmenufolders,associatewithfiles,addtopath`\"\", \"/DIR=`\"$dir`\"\"",
                     "# Clean up",
-                    "Stop-Job $job; Remove-Job $job",
                     "Remove-Item \"$dir\\CursorUserSetup-x64-$version.exe\""
                 ]
             }
@@ -34,18 +25,9 @@
             "hash": "b1fc1ed2535e187e2533595bc2b8fbfaaa0b61ce118b02aad586f1f3613bc28b",
             "installer": {
                 "script": [
-                    "# Start a background job to kill any Cursor processes that appear",
-                    "$job = Start-Job -ScriptBlock {",
-                    "    $startTime = Get-Date",
-                    "    while ((Get-Date).Subtract($startTime).TotalSeconds -lt 30) {",
-                    "        Get-Process -Name 'Cursor' -ErrorAction SilentlyContinue | Stop-Process -Force",
-                    "        Start-Sleep -Milliseconds 500",
-                    "    }",
-                    "}",
-                    "# Run installer silently",
-                    "Start-Process -Wait -WindowStyle Hidden -FilePath \"$dir\\CursorUserSetup-arm64-$version.exe\" -ArgumentList \"/VERYSILENT\", \"/SUPPRESSMSGBOXES\", \"/NORESTART\", \"/SP-\", \"/DIR=`\"$dir`\"\"",
+                    "# Run installer silently with all needed parameters",
+                    "Start-Process -Wait -WindowStyle Hidden -FilePath \"$dir\\CursorUserSetup-arm64-$version.exe\" -ArgumentList \"/VERYSILENT\", \"/NORESTART\", \"/NOCANCEL\", \"/NOICONS\", \"/TASKS=`\"addcontextmenufiles,addcontextmenufolders,associatewithfiles,addtopath`\"\", \"/DIR=`\"$dir`\"\"",
                     "# Clean up",
-                    "Stop-Job $job; Remove-Job $job",
                     "Remove-Item \"$dir\\CursorUserSetup-arm64-$version.exe\""
                 ]
             }
@@ -55,9 +37,6 @@
         "# Create portable marker file",
         "New-Item -ItemType Directory -Force -Path \"$dir\\data\" | Out-Null",
         "New-Item -ItemType File -Force -Path \"$dir\\data\\portable-data\" | Out-Null",
-        "# Remove Start Menu shortcuts created by installer (with -Recurse)",
-        "Remove-Item \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Cursor*\" -Force -Recurse -ErrorAction SilentlyContinue",
-        "Remove-Item \"$env:ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Cursor*\" -Force -Recurse -ErrorAction SilentlyContinue",
         "# Copy data to portable location",
         "if (!(Test-Path \"$dir\\data\\extensions\") -and (Test-Path \"$env:USERPROFILE\\.cursor\\extensions\")) {",
         "    info '[Portable Mode] Copying extensions...'",
