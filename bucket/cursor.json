@@ -1,12 +1,19 @@
 {
     "version": "0.47.5",
-    "description": "The AI Code Editor",
+    "description": "Built to make you extraordinarily productive, Cursor is the best way to code with AI.",
     "homepage": "https://www.cursor.com/",
     "license": {
         "identifier": "Proprietary",
         "url": "https://www.cursor.com/terms-of-service"
     },
-    "notes": "This is a portable installation of Cursor. Your data is stored in the 'data' directory.",
+    "notes": [
+        "Starting with version 0.45.17, Cursor has ceased accessing user data from the local data folder.",
+        "The file association and \"Open with\" context menu registry settings based on VSCode may not function as expected.",
+        "Add Cursor as a context menu option by running:",
+        "'reg import \"$dir\\install-context.reg\"'",
+        "For file associations, run:",
+        "'reg import \"$dir\\install-associations.reg\"'"
+    ],
     "architecture": {
         "64bit": {
             "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/x64/user-setup/CursorUserSetup-x64-0.47.5.exe",
@@ -34,34 +41,28 @@
         }
     },
     "post_install": [
-        "# Create portable marker file",
-        "New-Item -ItemType Directory -Force -Path \"$dir\\data\" | Out-Null",
-        "New-Item -ItemType File -Force -Path \"$dir\\data\\portable-data\" | Out-Null",
-        "# Copy data to portable location",
-        "if (!(Test-Path \"$dir\\data\\extensions\") -and (Test-Path \"$env:USERPROFILE\\.cursor\\extensions\")) {",
-        "    info '[Portable Mode] Copying extensions...'",
-        "    Copy-Item \"$env:USERPROFILE\\.cursor\\extensions\" \"$dir\\data\" -Recurse",
-        "}",
-        "if (!(Test-Path \"$dir\\data\\user-data\") -and (Test-Path \"$env:AppData\\Cursor\")) {",
-        "    info '[Portable Mode] Copying user data...'",
-        "    Copy-Item \"$env:AppData\\Cursor\" \"$dir\\data\\user-data\" -Recurse",
-        "    # Remove original data after successful copy",
-        "    if (Test-Path \"$dir\\data\\user-data\\*\") {",
-        "        info '[Portable Mode] Removing original AppData folder...'",
-        "        Remove-Item \"$env:AppData\\Cursor\" -Force -Recurse -ErrorAction SilentlyContinue",
+        "Copy-Item \"$bucketsdir\\extras\\scripts\\vscode\\*.reg\" \"$dir\" -Force",
+        "$dirpath = \"$dir\".Replace('\\', '\\\\')",
+        "$exepath = \"$dir\\Cursor.exe\".Replace('\\', '\\\\')",
+        "'install-associations', 'uninstall-associations', 'install-context', 'uninstall-context' | ForEach-Object {",
+        "    if (Test-Path \"$dir\\$_.reg\") {",
+        "        $content = Get-Content \"$dir\\$_.reg\"",
+        "        $content = $content.Replace('$codedir', $dirpath)",
+        "        $content = $content.Replace('$code', $exepath)",
+        "        $content = $content.Replace('Visual Studio Code', 'Cursor')",
+        "        $content = $content.Replace('Code.exe', 'Cursor.exe')",
+        "        $content = $content.Replace('vscode', 'cursor')",
+        "        $content = $content.Replace('VSCode', 'Cursor')",
+        "        $content = $content.Replace('Code', 'Cursor')",
+        "        if ($global) {",
+        "            $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "        }",
+        "        $content | Set-Content -Path \"$dir\\$_.reg\"",
         "    }",
-        "}",
-        "# Kill any remaining Cursor processes (just to be sure)",
-        "Get-Process -Name \"Cursor\" -ErrorAction SilentlyContinue | Stop-Process -Force",
-        "$extensions_file = \"$dir\\data\\extensions\\extensions.json\"",
-        "if ((Test-Path \"$extensions_file\")) {",
-        "    info 'Adjusting path in extensions file...'",
-        "    (Get-Content \"$extensions_file\") -replace '(?<=cursor(/|\\\\\\\\)).*?(?=(/|\\\\\\\\)data(/|\\\\\\\\)extensions)', $version | Set-Content \"$extensions_file\"",
         "}"
     ],
-    "env_set": {
-        "CURSOR_USER_DATA_DIR": "$dir\\data\\user-data",
-        "CURSOR_EXTENSIONS_DIR": "$dir\\data\\extensions"
+    "uninstaller": {
+        "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\"; reg import \"$dir\\uninstall-associations.reg\" }"
     },
     "bin": [
         [
@@ -75,7 +76,6 @@
             "Cursor"
         ]
     ],
-    "persist": "data",
     "checkver": {
         "url": "https://raw.githubusercontent.com/oslook/cursor-ai-downloads/main/version-history.json",
         "regex": "\"version\":\\s*\"([\\d.]+)\"[\\s\\S]*?\"win32-x64\":\\s*\"https://downloads\\.cursor\\.com/production/([\\w]+)/win32/x64/user-setup/CursorUserSetup-x64-[\\d.]+\\.exe\""
