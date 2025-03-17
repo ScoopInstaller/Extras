@@ -6,7 +6,7 @@
         "identifier": "Proprietary",
         "url": "https://www.cursor.com/terms-of-service"
     },
-    "depends": "7zip",
+    "depends": "Extras/innounpacker",
     "notes": "This is a portable installation of Cursor. Your data is stored in the 'data' directory.",
     "architecture": {
         "64bit": {
@@ -20,7 +20,7 @@
     },
     "pre_install": [
         "(Get-ChildItem $dir 'CursorUserSetup*exe').Fullname | Rename-Item -NewName 'Cursor_Setup.exe'",
-        "& \"$(scoop prefix 7zip)\\7z.exe\" x -o\"$dir\" \"$dir\\Cursor_Setup.exe\" -y",
+        "innounpack.exe -x -d\"$dir\" \"$dir\\Cursor_Setup.exe\" | Out-Null",
         "Move-Item -Force -Path \"$dir\\{app}\\tools\\*\" -Destination \"$dir\"",
         "Move-Item -Force -Path \"$dir\\{code_GetDestDir}\\*\" -Destination \"$dir\"",
         "Remove-Item -Force -Path \"$dir\\{app}\" -Recurse",
