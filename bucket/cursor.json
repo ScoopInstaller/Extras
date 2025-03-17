@@ -9,56 +9,25 @@
     "notes": "This is a portable installation of Cursor. Your data is stored in the 'data' directory.",
     "architecture": {
         "64bit": {
-            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/x64/user-setup/CursorUserSetup-x64-0.47.5.exe",
-            "hash": "5df2c647c4b4a195f27b61ca657b483bd8bf561053ecac2878d63b3d777b6d83",
-            "installer": {
-                "script": [
-                    "# Start a background job to kill any Cursor processes that appear",
-                    "$job = Start-Job -ScriptBlock {",
-                    "    $startTime = Get-Date",
-                    "    while ((Get-Date).Subtract($startTime).TotalSeconds -lt 30) {",
-                    "        Get-Process -Name 'Cursor' -ErrorAction SilentlyContinue | Stop-Process -Force",
-                    "        Start-Sleep -Milliseconds 500",
-                    "    }",
-                    "}",
-                    "# Run installer silently",
-                    "Start-Process -Wait -WindowStyle Hidden -FilePath \"$dir\\CursorUserSetup-x64-$version.exe\" -ArgumentList \"/VERYSILENT\", \"/SUPPRESSMSGBOXES\", \"/NORESTART\", \"/SP-\", \"/DIR=`\"$dir`\"\"",
-                    "# Clean up",
-                    "Stop-Job $job; Remove-Job $job",
-                    "Remove-Item \"$dir\\CursorUserSetup-x64-$version.exe\""
-                ]
-            }
+            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/x64/user-setup/CursorUserSetup-x64-0.47.5.exe#/dl.7z",
+            "hash": "5df2c647c4b4a195f27b61ca657b483bd8bf561053ecac2878d63b3d777b6d83"
         },
         "arm64": {
-            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/arm64/user-setup/CursorUserSetup-arm64-0.47.5.exe",
-            "hash": "b1fc1ed2535e187e2533595bc2b8fbfaaa0b61ce118b02aad586f1f3613bc28b",
-            "installer": {
-                "script": [
-                    "# Start a background job to kill any Cursor processes that appear",
-                    "$job = Start-Job -ScriptBlock {",
-                    "    $startTime = Get-Date",
-                    "    while ((Get-Date).Subtract($startTime).TotalSeconds -lt 30) {",
-                    "        Get-Process -Name 'Cursor' -ErrorAction SilentlyContinue | Stop-Process -Force",
-                    "        Start-Sleep -Milliseconds 500",
-                    "    }",
-                    "}",
-                    "# Run installer silently",
-                    "Start-Process -Wait -WindowStyle Hidden -FilePath \"$dir\\CursorUserSetup-arm64-$version.exe\" -ArgumentList \"/VERYSILENT\", \"/SUPPRESSMSGBOXES\", \"/NORESTART\", \"/SP-\", \"/DIR=`\"$dir`\"\"",
-                    "# Clean up",
-                    "Stop-Job $job; Remove-Job $job",
-                    "Remove-Item \"$dir\\CursorUserSetup-arm64-$version.exe\""
-                ]
-            }
+            "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/arm64/user-setup/CursorUserSetup-arm64-0.47.5.exe#/dl.7z",
+            "hash": "b1fc1ed2535e187e2533595bc2b8fbfaaa0b61ce118b02aad586f1f3613bc28b"
         }
     },
+    "pre_install": [
+        "(Get-ChildItem $dir 'CursorUserSetup*exe').Fullname | Rename-Item -NewName 'Cursor_Setup.exe'",
+        "innounpack.exe -x -d\"$dir\" \"$dir\\Cursor_Setup.exe\" | Out-Null",
+        "Move-Item -Force -Path \"$dir\\{app}\\tools\\*\" -Destination \"$dir\"",
+        "Move-Item -Force -Path \"$dir\\{code_GetDestDir}\\*\" -Destination \"$dir\"",
+        "Remove-Item -Force -Path \"$dir\\{app}\" -Recurse",
+        "Remove-Item -Force -Path \"$dir\\{code_GetDestDir}\" -Recurse",
+        "Remove-Item -Force -Path \"$dir\\Cursor_Setup.exe\" -Recurse"
+    ],
     "post_install": [
-        "# Create portable marker file",
-        "New-Item -ItemType Directory -Force -Path \"$dir\\data\" | Out-Null",
-        "New-Item -ItemType File -Force -Path \"$dir\\data\\portable-data\" | Out-Null",
-        "# Remove Start Menu shortcuts created by installer (with -Recurse)",
-        "Remove-Item \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Cursor*\" -Force -Recurse -ErrorAction SilentlyContinue",
-        "Remove-Item \"$env:ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Cursor*\" -Force -Recurse -ErrorAction SilentlyContinue",
-        "# Copy data to portable location",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse",
         "if (!(Test-Path \"$dir\\data\\extensions\") -and (Test-Path \"$env:USERPROFILE\\.cursor\\extensions\")) {",
         "    info '[Portable Mode] Copying extensions...'",
         "    Copy-Item \"$env:USERPROFILE\\.cursor\\extensions\" \"$dir\\data\" -Recurse",
@@ -66,30 +35,14 @@
         "if (!(Test-Path \"$dir\\data\\user-data\") -and (Test-Path \"$env:AppData\\Cursor\")) {",
         "    info '[Portable Mode] Copying user data...'",
         "    Copy-Item \"$env:AppData\\Cursor\" \"$dir\\data\\user-data\" -Recurse",
-        "    # Remove original data after successful copy",
-        "    if (Test-Path \"$dir\\data\\user-data\\*\") {",
-        "        info '[Portable Mode] Removing original AppData folder...'",
-        "        Remove-Item \"$env:AppData\\Cursor\" -Force -Recurse -ErrorAction SilentlyContinue",
-        "    }",
         "}",
-        "# Kill any remaining Cursor processes (just to be sure)",
-        "Get-Process -Name \"Cursor\" -ErrorAction SilentlyContinue | Stop-Process -Force",
         "$extensions_file = \"$dir\\data\\extensions\\extensions.json\"",
         "if ((Test-Path \"$extensions_file\")) {",
         "    info 'Adjusting path in extensions file...'",
         "    (Get-Content \"$extensions_file\") -replace '(?<=cursor(/|\\\\\\\\)).*?(?=(/|\\\\\\\\)data(/|\\\\\\\\)extensions)', $version | Set-Content \"$extensions_file\"",
         "}"
     ],
-    "env_set": {
-        "CURSOR_USER_DATA_DIR": "$dir\\data\\user-data",
-        "CURSOR_EXTENSIONS_DIR": "$dir\\data\\extensions"
-    },
-    "bin": [
-        [
-            "Cursor.exe",
-            "cursor"
-        ]
-    ],
+    "bin": "resources\\app\\bin\\cursor.cmd",
     "shortcuts": [
         [
             "Cursor.exe",
