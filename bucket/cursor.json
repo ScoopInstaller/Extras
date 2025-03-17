@@ -19,9 +19,20 @@
     },
     "installer": {
         "script": [
+            "# Extract the installer exe",
             "Expand-7zipArchive \"$dir\\$fname\" -Removal",
-            "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-            "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninst*\" -Recurse"
+            "# Handle the $PLUGINSDIR path properly",
+            "$pluginsDir = Join-Path $dir '$PLUGINSDIR'",
+            "$appArchive = Join-Path $pluginsDir 'app-64.7z'",
+            "if (Test-Path $appArchive) {",
+            "    # Extract the app archive to the destination directory",
+            "    Expand-7zipArchive $appArchive $dir",
+            "} else {",
+            "    Write-Error \"Could not find the application archive at $appArchive\"",
+            "}",
+            "# Clean up unnecessary files",
+            "Remove-Item $pluginsDir -Recurse -Force -ErrorAction SilentlyContinue",
+            "Remove-Item \"$dir\\Uninst*\" -Recurse -Force -ErrorAction SilentlyContinue"
         ]
     },
     "post_install": [
