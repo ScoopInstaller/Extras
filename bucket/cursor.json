@@ -17,11 +17,27 @@
     "architecture": {
         "64bit": {
             "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/x64/user-setup/CursorUserSetup-x64-0.47.5.exe",
-            "hash": "5df2c647c4b4a195f27b61ca657b483bd8bf561053ecac2878d63b3d777b6d83"
+            "hash": "5df2c647c4b4a195f27b61ca657b483bd8bf561053ecac2878d63b3d777b6d83",
+            "installer": {
+                "script": [
+                    "# Run installer silently with all needed parameters",
+                    "Start-Process -Wait -WindowStyle Hidden -FilePath \"$dir\\CursorUserSetup-x64-$version.exe\" -ArgumentList \"/VERYSILENT\", \"/NORESTART\", \"/NOCANCEL\", \"/NOICONS\", \"/TASKS=`\"`\"\", \"/DIR=`\"$dir`\"\"",
+                    "# Clean up",
+                    "Remove-Item \"$dir\\CursorUserSetup-x64-$version.exe\""
+                ]
+            }
         },
         "arm64": {
             "url": "https://downloads.cursor.com/production/53d6da1322f934a1058e7569ee0847b24879d18c/win32/arm64/user-setup/CursorUserSetup-arm64-0.47.5.exe",
-            "hash": "b1fc1ed2535e187e2533595bc2b8fbfaaa0b61ce118b02aad586f1f3613bc28b"
+            "hash": "b1fc1ed2535e187e2533595bc2b8fbfaaa0b61ce118b02aad586f1f3613bc28b",
+            "installer": {
+                "script": [
+                    "# Run installer silently with all needed parameters",
+                    "Start-Process -Wait -WindowStyle Hidden -FilePath \"$dir\\CursorUserSetup-arm64-$version.exe\" -ArgumentList \"/VERYSILENT\", \"/NORESTART\", \"/NOCANCEL\", \"/NOICONS\", \"/TASKS=`\"`\"\", \"/DIR=`\"$dir`\"\"",
+                    "# Clean up",
+                    "Remove-Item \"$dir\\CursorUserSetup-arm64-$version.exe\""
+                ]
+            }
         }
     },
     "post_install": [
@@ -48,7 +64,6 @@
     "uninstaller": {
         "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\"; reg import \"$dir\\uninstall-associations.reg\" }"
     },
-    "innosetup": true,
     "bin": [
         [
             "Cursor.exe",
@@ -76,4 +91,3 @@
         }
     }
 }
-
