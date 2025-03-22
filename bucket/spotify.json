@@ -1,13 +1,21 @@
 {
-    "version": "1.2.53.440.g7b2f582a",
+    "version": "1.2.59.514.g834e17d4",
     "description": "A digital music service that gives you access to millions of songs.",
     "homepage": "https://www.spotify.com/",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.spotify.com/legal/end-user-agreement/"
     },
-    "url": "https://download.scdn.co/SpotifyFullSetup.exe",
-    "hash": "c8f01ea8a1c8fce3bdb2664c2c5047f619ca75fa99e999f1ae81999f4ee01710",
+    "architecture": {
+        "64bit": {
+            "url": "https://download.scdn.co/SpotifyFullSetupX64.exe",
+            "hash": "0c5d3ac772be08186962d701205375202dcb21ce7f0a8735ffd5e31e5a3ecf67"
+        },
+        "arm64": {
+            "url": "https://download.scdn.co/SpotifyFullSetupARM64.exe",
+            "hash": "4ac28872b341b8d56d838f51548a9e22a0d16fe4a38fdd4897e043ea15be8383"
+        }
+    },
     "installer": {
         "script": [
             "Start-Process -Wait \"$dir\\$fname\" -ArgumentList '/extract', \"`\"$dir`\"\"",
@@ -34,7 +42,7 @@
     },
     "checkver": {
         "script": [
-            "$dl_url = 'https://download.scdn.co/SpotifyFullSetup.exe'",
+            "$dl_url = 'https://download.scdn.co/SpotifyFullSetupX64.exe'",
             "$dl = cache_path 'spotify' 'unknown' $dl_url",
             "Invoke-WebRequest $dl_url -OutFile $dl",
             "$ver = (Get-Item $dl).VersionInfo.ProductVersion",
@@ -44,6 +52,13 @@
         "regex": "(\\S+)"
     },
     "autoupdate": {
-        "url": "https://download.scdn.co/SpotifyFullSetup.exe"
+        "architecture": {
+            "64bit": {
+                "url": "https://download.scdn.co/SpotifyFullSetupX64.exe"
+            },
+            "arm64": {
+                "url": "https://download.scdn.co/SpotifyFullSetupARM64.exe"
+            }
+        }
     }
 }
