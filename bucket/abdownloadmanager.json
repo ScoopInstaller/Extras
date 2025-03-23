@@ -10,12 +10,20 @@
         }
     },
     "extract_dir": "ABDownloadManager",
+    "post_install": [
+        "if (Test-Path $env:USERPROFILE\\.abdm) {",
+        "    Write-Host \"`r`nMove config from non-portable version...\"",
+        "    Copy-Item -Path $env:USERPROFILE\\.abdm\\* -Destination \"$persist_dir\\.abdm\" -Force -Recurse | Out-Null",
+        "    Remove-Item $env:USERPROFILE\\.abdm -Force -Recurse",
+        "}"
+    ],
     "shortcuts": [
         [
             "ABDownloadManager.exe",
             "ABDownloadManager"
         ]
     ],
+    "persist": ".abdm",
     "checkver": {
         "github": "https://github.com/amir1376/ab-download-manager"
     },
