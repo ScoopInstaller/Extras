@@ -1,18 +1,21 @@
 {
-    "version": "7.41.0",
+    "version": "7.47.0",
     "description": "A cross-platform encrypted messaging service.",
     "homepage": "https://signal.org",
     "license": "GPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://updates.signal.org/desktop/signal-desktop-win-x64-7.41.0.exe#/dl.7z",
-            "hash": "sha512:9e6463d7dfbc7570b129cb497193157422ab64aa386b144d8ed852b8f0d50adc5ed949740daa52c4652d42faaff3e17a95657d426bddc1c98bc666aec5554929",
-            "pre_install": [
-                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*.exe\" -Recurse -Force"
-            ]
+            "url": "https://updates.signal.org/desktop/signal-desktop-win-x64-7.47.0.exe#/dl.7z",
+            "hash": "sha512:32d227ba0093da287f4af91300ff13715167463c15dab518c2275d32a2397d1cc59875c7be40b3aaca53de335487df21d98da4245ce78fc5a7a20bf74ebf8fce",
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+        },
+        "arm64": {
+            "url": "https://updates.signal.org/desktop/signal-desktop-win-arm64-7.47.0.exe#/dl.7z",
+            "hash": "sha512:baea04660045941937a8b6df271fd7141b71dd2569fbe4628f90475f20720863ec1c6ec89a62926ceb8ea6205ff97c9eed86f7c446211be61ccb23e99b1543fb",
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" \"$dir\""
         }
     },
+    "post_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*.exe\" -Recurse -Force",
     "shortcuts": [
         [
             "Signal.exe",
@@ -27,11 +30,14 @@
         "architecture": {
             "64bit": {
                 "url": "https://updates.signal.org/desktop/signal-desktop-win-x64-$version.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://updates.signal.org/desktop/signal-desktop-win-arm64-$version.exe#/dl.7z"
             }
         },
         "hash": {
             "url": "$baseurl/latest.yml",
-            "regex": "sha512:\\s$base64"
+            "regex": "$basename\\s+sha512:\\s$base64"
         }
     }
 }
