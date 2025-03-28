@@ -1,0 +1,45 @@
+name: Auto Update project-graph
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  check-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup jq
+        run: sudo apt-get install -y jq
+
+      - name: Get latest version
+        id: version-check
+        run: |
+          LATEST_VER=$(curl -s "https://api.github.com/repos/LiRenTech/project-graph/releases/latest" | jq -r '.tag_name | sub("^v"; "")')
+          CURRENT_VER=$(jq -r '.version' bucket/project-graph.json)
+          echo "latest_version=$LATEST_VER" >> $GITHUB_OUTPUT
+          echo "current_version=$CURRENT_VER" >> $GITHUB_OUTPUT
+          
+      - name: Update manifest
+        if: steps.version-check.outputs.current_version != steps.version-check.outputs.latest_version
+        run: |
+          DOWNLOAD_URL="https://github.com/LiRenTech/project-graph/releases/download/v${{ steps.version-check.outputs.latest_version }}/Project.Graph_${{ steps.version-check.outputs.latest_version }}_x64-setup.exe"
+          HASH=$(curl -L $DOWNLOAD_URL | sha256sum | cut -d' ' -f1)
+
+          jq --arg ver "${{ steps.version-check.outputs.latest_version }}" --arg hash "$HASH" '
+            .version = $ver |
+            .hash = $hash |
+            .url = "https://github.com/LiRenTech/project-graph/releases/download/v\($ver)/Project.Graph_\($ver)_x64-setup.exe" |
+            .architecture."64bit".installer.script |= (if . then gsub("1\\.4\\.35"; $ver) else . end)
+          ' bucket/project-graph.json > tmp.json && mv tmp.json bucket/project-graph.json
+
+      - name: Commit changes
+        if: steps.version-check.outputs.current_version != steps.version-check.outputs.latest_version
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add bucket/project-graph.json
+          git commit -m "chore: auto update project-graph to ${{ steps.version-check.outputs.latest_version }}"
+          git push

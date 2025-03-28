@@ -1,0 +1,15 @@
+on:
+  issue_comment:
+    types: [ created ]
+name: Commented Pull Request
+jobs:
+  pullRequestHandler:
+    name: PullRequestHandler
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@main
+    - name: PullRequestHandler
+      uses: ScoopInstaller/GithubActions@main
+      if: startsWith(github.event.comment.body, '/verify')
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
