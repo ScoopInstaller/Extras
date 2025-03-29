@@ -1,66 +1,78 @@
 {
-    "version": "0.45.14",
-    "description": "The AI Code Editor",
+    "version": "0.47.8",
+    "description": "Built to make you extraordinarily productive, Cursor is the best way to code with AI.",
     "homepage": "https://www.cursor.com/",
     "license": {
         "identifier": "Proprietary",
         "url": "https://www.cursor.com/terms-of-service"
     },
+    "notes": [
+        "Starting with version 0.45.17, Cursor has ceased accessing user data from the local data folder.",
+        "The file association and \"Open with\" context menu registry settings based on VSCode may not function as expected.",
+        "Add Cursor as a context menu option by running:",
+        "'reg import \"$dir\\install-context.reg\"'",
+        "For file associations, run:",
+        "'reg import \"$dir\\install-associations.reg\"'"
+    ],
     "architecture": {
         "64bit": {
-            "url": "https://download.todesktop.com/230313mzl4w4u92/Cursor%20Setup%200.45.14%20-%20Build%20250219jnihavxsz-x64.exe#/dl.7z",
-            "hash": "sha512:9c2a2f7064b071ee684201f021e792e5c5505076368038eb054bf109907ce2bfbc4044c8c45e279e57ca6593a22c248ad62f545aaf1a5fd4eb3e82de34c6fa89",
-            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+            "url": "https://downloads.cursor.com/production/82ef0f61c01d079d1b7e5ab04d88499d5af500e3/win32/x64/user-setup/CursorUserSetup-x64-0.47.8.exe",
+            "hash": "1544031a5e4f74fb362f7b212b23c4f878f6648108678655b6727636ed3b3f15"
         },
         "arm64": {
-            "url": "https://download.todesktop.com/230313mzl4w4u92/Cursor%20Setup%200.45.14%20-%20Build%20250219jnihavxsz-arm64.exe#/dl.7z",
-            "hash": "sha512:a718cc505ef19743863e2c0183e28460b05f9fe977e5019c36667edccc535a305ae14ec68db9ec6278754126d4a7b33173f6f0360147c1524b2299f35f3b7c22",
-            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" \"$dir\""
+            "url": "https://downloads.cursor.com/production/82ef0f61c01d079d1b7e5ab04d88499d5af500e3/win32/arm64/user-setup/CursorUserSetup-arm64-0.47.8.exe",
+            "hash": "fce31dcc34bd997b039938281b372d434465811f2bf7a1a5470cd491943ca90c"
         }
     },
     "post_install": [
-        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse",
-        "if (!(Test-Path \"$dir\\data\\extensions\") -and (Test-Path \"$env:USERPROFILE\\.cursor\\extensions\")) {",
-        "    info '[Portable Mode] Copying extensions...'",
-        "    Copy-Item \"$env:USERPROFILE\\.cursor\\extensions\" \"$dir\\data\" -Recurse",
-        "}",
-        "if (!(Test-Path \"$dir\\data\\user-data\") -and (Test-Path \"$env:AppData\\Cursor\")) {",
-        "    info '[Portable Mode] Copying user data...'",
-        "    Copy-Item \"$env:AppData\\Cursor\" \"$dir\\data\\user-data\" -Recurse",
-        "}",
-        "$extensions_file = \"$dir\\data\\extensions\\extensions.json\"",
-        "if ((Test-Path \"$extensions_file\")) {",
-        "    info 'Adjusting path in extensions file...'",
-        "    (Get-Content \"$extensions_file\") -replace '(?<=cursor(/|\\\\\\\\)).*?(?=(/|\\\\\\\\)data(/|\\\\\\\\)extensions)', $version | Set-Content \"$extensions_file\"",
+        "Copy-Item \"$bucketsdir\\extras\\scripts\\vscode\\*.reg\" \"$dir\" -Force",
+        "$dirpath = \"$dir\".Replace('\\', '\\\\')",
+        "$exepath = \"$dir\\Cursor.exe\".Replace('\\', '\\\\')",
+        "'install-associations', 'uninstall-associations', 'install-context', 'uninstall-context' | ForEach-Object {",
+        "    if (Test-Path \"$dir\\$_.reg\") {",
+        "        $content = Get-Content \"$dir\\$_.reg\"",
+        "        $content = $content.Replace('$codedir', $dirpath)",
+        "        $content = $content.Replace('$code', $exepath)",
+        "        $content = $content.Replace('Visual Studio Code', 'Cursor')",
+        "        $content = $content.Replace('Code.exe', 'Cursor.exe')",
+        "        $content = $content.Replace('vscode', 'cursor')",
+        "        $content = $content.Replace('VSCode', 'Cursor')",
+        "        $content = $content.Replace('Code', 'Cursor')",
+        "        if ($global) {",
+        "            $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "        }",
+        "        $content | Set-Content -Path \"$dir\\$_.reg\"",
+        "    }",
         "}"
     ],
-    "bin": "resources\\app\\bin\\cursor.cmd",
+    "uninstaller": {
+        "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\"; reg import \"$dir\\uninstall-associations.reg\" }"
+    },
+    "innosetup": true,
+    "extract_dir": "{code_GetDestDir}",
+    "bin": [
+        [
+            "Cursor.exe",
+            "cursor"
+        ]
+    ],
     "shortcuts": [
         [
             "Cursor.exe",
             "Cursor"
         ]
     ],
-    "persist": "data",
     "checkver": {
-        "url": "https://download.todesktop.com/230313mzl4w4u92/latest.yml",
-        "regex": "Setup\\s+([\\d.]+).*Build\\s+(?<Build>[\\w]+).exe"
+        "url": "https://raw.githubusercontent.com/oslook/cursor-ai-downloads/main/version-history.json",
+        "regex": "\"version\":\\s*\"([\\d.]+)\"[\\s\\S]*?\"win32-x64\":\\s*\"https://downloads\\.cursor\\.com/production/([\\w]+)/win32/x64/user-setup/CursorUserSetup-x64-[\\d.]+\\.exe\""
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.todesktop.com/230313mzl4w4u92/Cursor%20Setup%20$version%20-%20Build%20$matchBuild-x64.exe#/dl.7z",
-                "hash": {
-                    "url": "$baseurl/latest.yml",
-                    "regex": "(?sm)x64.*?sha512:\\s+$base64"
-                }
+                "url": "https://downloads.cursor.com/production/$match2/win32/x64/user-setup/CursorUserSetup-x64-$version.exe"
             },
             "arm64": {
-                "url": "https://download.todesktop.com/230313mzl4w4u92/Cursor%20Setup%20$version%20-%20Build%20$matchBuild-arm64.exe#/dl.7z",
-                "hash": {
-                    "url": "$baseurl/latest.yml",
-                    "regex": "(?sm)arm64.*?sha512:\\s+$base64"
-                }
+                "url": "https://downloads.cursor.com/production/$match2/win32/arm64/user-setup/CursorUserSetup-arm64-$version.exe"
             }
         }
     }
