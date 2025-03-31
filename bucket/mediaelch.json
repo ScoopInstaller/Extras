@@ -1,0 +1,63 @@
+{
+    "version": "2.12.0",
+    "description": "Media Manager for Kodi.",
+    "homepage": "https://mediaelch.github.io/mediaelch-doc/about.html",
+    "license": "LGPL-3.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Komet/MediaElch/releases/download/v2.12.0/MediaElch_win_10_or_later_Qt6_2.12.0_2024-10-13_git-80324653.zip",
+            "hash": "73eab1c4f1db8767124ba162da6cc96c11e963a570bfe485ba0c95301f525793"
+        },
+        "32bit": {
+            "url": "https://github.com/Komet/MediaElch/releases/download/v2.12.0/MediaElch_win_7_8_Qt5_2.12.0_2024-10-13_git-80324653.zip",
+            "hash": "9662c3f74d20e75cc69781c8938ed029481ad4bd06f7fa17b4f8d1750c0b80e6"
+        }
+    },
+    "extract_dir": "MediaElch",
+    "pre_install": [
+        "# Portable",
+        "if (!(Test-Path \"$persist_dir\\advancedsettings.xml\")) {",
+        "    New-Item -Path \"$dir\\advancedsettings.xml\" -ItemType File -Value \"<advancedsettings><portableMode>true</portableMode></advancedsettings>\" | Out-Null",
+        "}",
+        "# Persist manually because symlinks don't work",
+        "if (Test-Path \"$persist_dir\\MediaElch.sqlite\") {",
+        "    Copy-Item -Path \"$persist_dir\\MediaElch.sqlite\" -Destination \"$dir\\MediaElch.sqlite\"",
+        "}",
+        "if (Test-Path \"$persist_dir\\MediaElch.ini\") {",
+        "    Copy-Item -Path \"$persist_dir\\MediaElch.ini\" -Destination \"$dir\\MediaElch.ini\"",
+        "} else {",
+        "    Set-Content \"$dir\\MediaElch.ini\" @('[General]', 'CheckForUpdates=false') -Encoding Ascii",
+        "}"
+    ],
+    "bin": "MediaElch.exe",
+    "shortcuts": [
+        [
+            "MediaElch.exe",
+            "MediaElch"
+        ]
+    ],
+    "persist": [
+        "export_themes",
+        "images",
+        "advancedsettings.xml"
+    ],
+    "pre_uninstall": [
+        "'MediaElch.ini', 'MediaElch.sqlite' | ForEach-Object {",
+        "    Copy-Item -Path \"$dir\\$_\" -Destination \"$persist_dir\\$_\" -ErrorAction SilentlyContinue -Force | Out-Null",
+        "}"
+    ],
+    "checkver": {
+        "url": "https://api.github.com/repositories/3618825/releases/latest",
+        "regex": "MediaElch_win_10_or_later_Qt6_(?<version>[\\d\\.]+)(?<detail>[\\w\\d-_]+).zip"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Komet/MediaElch/releases/download/v$version/MediaElch_win_10_or_later_Qt6_$version$matchDetail.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/Komet/MediaElch/releases/download/v$version/MediaElch_win_7_8_Qt5_$version$matchDetail.zip"
+            }
+        }
+    }
+}

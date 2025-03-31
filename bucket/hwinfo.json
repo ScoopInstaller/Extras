@@ -1,13 +1,24 @@
 {
-    "version": "7.68-5300",
+    "version": "8.22-5670",
     "description": "Comprehensive Hardware Analysis, Monitoring and Reporting for Windows and DOS",
     "homepage": "https://www.hwinfo.com",
     "license": "Freeware",
-    "url": "https://www.fosshub.com/HWiNFO.html/hwi_768.zip",
-    "hash": "5e6c31ae957cd763caf044e3736f2df7dfe15c755ec932d7edb027bb0f1fd5df",
+    "url": "https://www.sac.sk/download/utildiag/hwi_822.zip",
+    "hash": "fca1f3c852c586abc786f14fb0822447bdfaee55e9425e65835a80cd5cda751c",
     "pre_install": [
         "foreach ($conf in 'HWiNFO64.INI', 'HWiNFO32.INI') {",
         "    if (!(Test-Path \"$persist_dir\\$conf\")) { Set-Content \"$dir\\$conf\" '[Settings]', 'AutoUpdate=0' -Encoding ASCII }",
+        "}",
+        "if (Test-PATH \"$persist_dir\\HWiNFO64_KEY.txt\" -PathType Leaf) {",
+        "    Copy-Item \"$persist_dir\\HWiNFO64_KEY.txt\" \"$dir\"",
+        "}"
+    ],
+    "pre_uninstall": [
+        "if (Test-PATH \"$dir\\HWiNFO64_KEY.txt\" -PathType Leaf) {",
+        "    if (Test-PATH \"$persist_dir\\HWiNFO64_KEY.txt\" -PathType Container) {",
+        "        Remove-Item \"$persist_dir\\HWiNFO64_KEY.txt\" -Recurse",
+        "    }",
+        "    Copy-Item \"$dir\\HWiNFO64_KEY.txt\" \"$persist_dir\"",
         "}"
     ],
     "architecture": {
@@ -38,18 +49,31 @@
                     "HWiNFO"
                 ]
             ]
+        },
+        "arm64": {
+            "bin": [
+                [
+                    "HWiNFO_ARM64.exe",
+                    "HWiNFO"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "HWiNFO_ARM64.exe",
+                    "HWiNFO"
+                ]
+            ]
         }
     },
     "persist": [
         "HWiNFO64.INI",
-        "HWiNFO32.INI",
-        "HWiNFO64_KEY.txt"
+        "HWiNFO32.INI"
     ],
     "checkver": {
         "url": "https://www.hwinfo.com/ver.txt",
         "regex": "([\\d-.]+)"
     },
     "autoupdate": {
-        "url": "https://www.fosshub.com/HWiNFO.html/hwi_$majorVersion$minorVersion.zip"
+        "url": "https://www.sac.sk/download/utildiag/hwi_$majorVersion$minorVersion.zip"
     }
 }

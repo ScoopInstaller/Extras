@@ -1,15 +1,15 @@
 {
-    "version": "2.28.5",
+    "version": "2.30.12",
     "description": "SDL (Simple DirectMedia Layer) is a cross-platform development library designed to provide low level access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D.",
     "homepage": "https://www.libsdl.org",
     "license": "Zlib",
     "url": [
-        "https://github.com/libsdl-org/SDL/releases/download/release-2.28.5/SDL2-devel-2.28.5-VC.zip",
-        "https://github.com/libsdl-org/SDL/releases/download/release-2.28.5/SDL2-2.28.5.zip"
+        "https://github.com/libsdl-org/SDL/releases/download/release-2.30.12/SDL2-devel-2.30.12-VC.zip",
+        "https://github.com/libsdl-org/SDL/releases/download/release-2.30.12/SDL2-2.30.12.zip"
     ],
     "hash": [
-        "4ac4ba2208410b7b984759ee12e13e0606bd62032b5ddc36fb7d96b9ade78871",
-        "97bd14ee0ec67494d2b93f1a4f7da2bf891103c57090d96fdcc2b019d885c76a"
+        "1ca980f9964fb44cf94be235c9818fa1dc8e3f76b08096d751b2d689e5e37d02",
+        "aa2808d0f2dc6b383c6689bf6d166e2de62db4d58be989e4b052acb31df0fba3"
     ],
     "installer": {
         "script": [
@@ -40,19 +40,19 @@
             "    -replace \"@PKGCONFIG_LIBS_PRIV@\",\"\" `",
             ")",
             "",
-            "rm -r \"$srcdir\"",
+            "Remove-Item -Recurse \"$srcdir\"",
             "",
             "$cmdir = if (get_config NO_JUNCTIONS) { $dir } else { \"$(appdir $app $global)\\current\" }",
             "$pcdir = \"$cmdir\\lib\\pkgconfig\"",
             "# future sessions",
-            "$null, $currpath = strip_path (env 'PKG_CONFIG_PATH' $global) $pcdir",
-            "env 'PKG_CONFIG_PATH' $global \"$pcdir;$currpath\"",
-            "$null, $currpath = strip_path (env 'CMAKE_PREFIX_PATH' $global) $cmdir",
-            "env 'CMAKE_PREFIX_PATH' $global \"$cmdir;$currpath\"",
+            "$null, $currpath = Split-PathLikeEnvVar -Pattern $pcdir -Path (Get-EnvVar -Name 'PKG_CONFIG_PATH' -Global:$global)",
+            "Set-EnvVar -Name 'PKG_CONFIG_PATH' -Value \"$pcdir;$currpath\" -Global:$global",
+            "$null, $currpath = Split-PathLikeEnvVar -Pattern $cmdir -Path (Get-EnvVar -Name 'CMAKE_PREFIX_PATH' -Global:$global)",
+            "Set-EnvVar -Name 'CMAKE_PREFIX_PATH' -Value \"$cmdir;$currpath\" -Global:$global",
             "# this session",
-            "$null, $env:PKG_CONFIG_PATH = strip_path $env:PKG_CONFIG_PATH $pcdir",
+            "$null, $env:PKG_CONFIG_PATH = Split-PathLikeEnvVar -Pattern $pcdir -Path $env:PKG_CONFIG_PATH",
             "$env:PKG_CONFIG_PATH = \"$pcdir;$env:PKG_CONFIG_PATH\"",
-            "$null, $env:CMAKE_PREFIX_PATH = strip_path $env:CMAKE_PREFIX_PATH $cmdir",
+            "$null, $env:CMAKE_PREFIX_PATH = Split-PathLikeEnvVar -Pattern $cmdir -Path $env:CMAKE_PREFIX_PATH",
             "$env:CMAKE_PREFIX_PATH = \"$cmdir;$env:CMAKE_PREFIX_PATH\""
         ]
     },
@@ -61,20 +61,20 @@
             "$cmdir = if (get_config NO_JUNCTIONS) { $dir } else { \"$(appdir $app $global)\\current\" }",
             "$pcdir = \"$cmdir\\lib\\pkgconfig\"",
             "# future sessions",
-            "$was_in_path, $newpath = strip_path (env 'PKG_CONFIG_PATH' $global) $pcdir",
+            "$was_in_path, $newpath = Split-PathLikeEnvVar -Pattern $pcdir -Path (Get-EnvVar -Name 'PKG_CONFIG_PATH' -Global:$global)",
             "if($was_in_path) {",
-            "    write-host \"Removing $(friendly_path $pcdir) from your path.\"",
-            "    env 'PKG_CONFIG_PATH' $global $newpath",
+            "    Write-Host \"Removing $(friendly_path $pcdir) from your path.\"",
+            "    Set-EnvVar -Name 'PKG_CONFIG_PATH' -Value $newpath -Global:$global",
             "}",
-            "$was_in_path, $newpath = strip_path (env 'CMAKE_PREFIX_PATH' $global) $cmdir",
+            "$was_in_path, $newpath = Split-PathLikeEnvVar -Pattern $cmdir -Path (Get-EnvVar -Name 'CMAKE_PREFIX_PATH' -Global:$global)",
             "if($was_in_path) {",
-            "    write-host \"Removing $(friendly_path $cmdir) from your path.\"",
-            "    env 'CMAKE_PREFIX_PATH' $global $newpath",
+            "    Write-Host \"Removing $(friendly_path $cmdir) from your path.\"",
+            "    Set-EnvVar -Name 'CMAKE_PREFIX_PATH' -Value $newpath -Global:$global",
             "}",
             "# current session",
-            "$was_in_path, $newpath = strip_path $env:PKG_CONFIG_PATH $pcdir",
+            "$was_in_path, $newpath = Split-PathLikeEnvVar -Pattern $pcdir -Path $env:PKG_CONFIG_PATH",
             "if($was_in_path) { $env:PKG_CONFIG_PATH = $newpath }",
-            "$was_in_path, $newpath = strip_path $env:CMAKE_PREFIX_PATH $cmdir",
+            "$was_in_path, $newpath = Split-PathLikeEnvVar -Pattern $cmdir -Path $env:CMAKE_PREFIX_PATH",
             "if($was_in_path) { $env:CMAKE_PREFIX_PATH = $newpath }"
         ]
     },

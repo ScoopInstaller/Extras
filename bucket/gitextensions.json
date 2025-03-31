@@ -1,10 +1,14 @@
 {
-    "version": "4.2.1.17611",
+    "version": "5.2.1.18061",
     "description": "A graphical user interface for Git that allows you to control Git without using the commandline.",
     "homepage": "https://gitextensions.github.io/",
     "license": "GPL-3.0-only",
-    "url": "https://github.com/gitextensions/gitextensions/releases/download/v4.2.1/GitExtensions-Portable-4.2.1.17611-b0c0b2848.zip",
-    "hash": "372c9cef9b2b19c8bba9ea9424b9262f68edfbe61e4711d6d5f0f904462f871b",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/gitextensions/gitextensions/releases/download/v5.2.1/GitExtensions-Portable-x64-5.2.1.18061-0d74cfdc3.zip",
+            "hash": "f57d76851b9b7f313a0f3425602e458520019905bb98e8314b3e7f0840221ef8"
+        }
+    },
     "pre_install": "if (!(Test-Path \"$persist_dir\\GitExtensions.settings\")) { New-Item \"$dir\\GitExtensions.settings\" | Out-Null }",
     "bin": [
         "GitExtensions.exe",
@@ -23,9 +27,13 @@
     "checkver": {
         "url": "https://api.github.com/repositories/85953/releases",
         "jsonpath": "$..browser_download_url",
-        "regex": "/v(?<tag>[\\d.]+)/GitExtensions-Portable-([\\d.]+)-(?<commit>[\\w]+)\\.zip"
+        "regex": "/v(?<tag>[\\d.]+)/GitExtensions-Portable-(?:x[\\d.]+)-(?<version>[\\d.]+)-(?<commit>[\\w]+).zip"
     },
     "autoupdate": {
-        "url": "https://github.com/gitextensions/gitextensions/releases/download/v$matchTag/GitExtensions-Portable-$version-$matchCommit.zip"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/gitextensions/gitextensions/releases/download/v$matchTag/GitExtensions-Portable-x64-$version-$matchCommit.zip"
+            }
+        }
     }
 }

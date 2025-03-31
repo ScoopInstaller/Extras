@@ -1,21 +1,21 @@
 {
-    "version": "8.6",
+    "version": "8.7.8",
     "description": "A free source code editor and Notepad replacement that supports several languages.",
     "homepage": "https://notepad-plus-plus.org",
     "license": "GPL-3.0-or-later",
     "notes": "Add Notepad++ as a context menu option by running: reg import \"$dir\\install-context.reg\"",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.6/npp.8.6.portable.x64.zip",
-            "hash": "71b4f18f319921c44e7dfec7e98e0981559845f5a8c980b1df2905bb3a9807da"
+            "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.7.8/npp.8.7.8.portable.x64.zip",
+            "hash": "42eed183d6806ae3761c3eb46f9142d702d9404ad9a419be4487b3e2a7816b8c"
         },
         "32bit": {
-            "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.6/npp.8.6.portable.zip",
-            "hash": "ada5ed4abf98d842624e7f86f9a6067872d42ca2f57b296949946b3bb3de4f16"
+            "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.7.8/npp.8.7.8.portable.zip",
+            "hash": "589826e10a803e1b4edf7eb251089c123a7e9589f39025223ddb08f2fe88202e"
         },
         "arm64": {
-            "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.6/npp.8.6.portable.arm64.zip",
-            "hash": "48273785d9884c17672a17301fc6a7dfe05edac9e4a31a6c699c8aacf3b33c63"
+            "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.7.8/npp.8.7.8.portable.arm64.zip",
+            "hash": "20685123ac5f3eca4d514586afdd13a3ad4f06c59295dfd1e9ee4b17a22e8b8f"
         }
     },
     "pre_install": [
@@ -32,6 +32,10 @@
         "        if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
         "        Set-Content \"$dir\\$_.reg\" $content -Encoding Ascii -Force",
         "    }",
+        "}",
+        "# Update shipped plugins",
+        "if (Test-Path \"$dir\\plugins.original\") {",
+        "    Copy-Item -Recurse \"$dir\\plugins.original\\*\" \"$dir\\plugins\\\" -Force",
         "}"
     ],
     "uninstaller": {

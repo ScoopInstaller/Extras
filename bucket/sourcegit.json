@@ -1,0 +1,43 @@
+{
+    "version": "2025.11",
+    "description": "Open-source GUI client for git users.",
+    "homepage": "https://github.com/sourcegit-scm/sourcegit",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/sourcegit-scm/sourcegit/releases/download/v2025.11/sourcegit_2025.11.win-x64.zip",
+            "hash": "45dc3ca90fa9c4efaaf3c73ed2810f603a67e3d982053e636ac3c1e538cf3b36"
+        },
+        "arm64": {
+            "url": "https://github.com/sourcegit-scm/sourcegit/releases/download/v2025.11/sourcegit_2025.11.win-arm64.zip",
+            "hash": "bca7ddf09c65bd58875fa3b5a5ea156a45e4d8b0a9a7b361d9c4eb6dfd9ee0d3"
+        }
+    },
+    "extract_dir": "SourceGit",
+    "post_install": [
+        "if (Test-Path $env:AppData\\SourceGit) {",
+        "    Write-Host \"`r`nMove config from non-portable version...\"",
+        "    Copy-Item -Path $env:AppData\\SourceGit\\* -Destination \"$persist_dir\\data\" -Force -Recurse | Out-Null",
+        "    Remove-Item $env:AppData\\SourceGit -Force -Recurse",
+        "}"
+    ],
+    "bin": "SourceGit.exe",
+    "shortcuts": [
+        [
+            "SourceGit.exe",
+            "SourceGit"
+        ]
+    ],
+    "persist": "data",
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/sourcegit-scm/sourcegit/releases/download/v$version/sourcegit_$version.win-x64.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/sourcegit-scm/sourcegit/releases/download/v$version/sourcegit_$version.win-arm64.zip"
+            }
+        }
+    }
+}

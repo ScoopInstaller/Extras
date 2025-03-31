@@ -1,24 +1,25 @@
 {
-    "version": "5.0.2",
+    "version": "5.0.3",
     "description": "The SD Memory Card Formatter formats SD Memory Card, SDHC Memory Card and SDXC Memory Card (respectively SD/SDHC/SDXC Cards) complying with the SD File System Specification created by the SD Association (SDA).",
     "homepage": "https://www.sdcard.org/downloads/formatter/",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.sdcard.org/downloads/formatter/sd-memory-card-formatter-for-windows-download/"
     },
-    "url": "https://www.sdcard.org/downloads/formatter/eula_windows/SDCardFormatterv5_WinEN.zip",
-    "hash": "df18843616643f53a613fd536eb4ff05a068de16b2902f48234706a2cfedc374",
-    "installer": {
-        "script": [
-            "Wait-Process -InputObject (Start-Process \"$dir\\SDCardFormatterv$($version.split('.')[0])_WinEN\\SD Card Formatter $version Setup EN.exe\" -ArgumentList \"/a /s /v/qn /vTARGETDIR=$dir\" -PassThru)",
-            "Move-Item \"$dir\\program files\\SDA\\SD Card Formatter\\*\" \"$dir\"",
-            "Get-ChildItem -Recurse \"$dir\" -Exclude ('format_sd.exe', 'SD Card Formatter.exe') | Remove-Item -Recurse"
-        ]
-    },
-    "bin": [
-        "format_sd.exe",
-        "SD Card Formatter.exe"
+    "depends": [
+        "main/isx",
+        "main/lessmsi"
     ],
+    "url": "https://www.sdcard.org/downloads/formatter/eula_windows/SDCardFormatterv5_WinEN.zip",
+    "hash": "89f77fc36f451fa16ad911145ea554f5651d9bc023ec1726fa66dbf54e1ae920",
+    "extract_dir": "SDCardFormatterv5_WinEN",
+    "pre_install": [
+        "$null = isx.exe \"$dir/SD Card Formatter $version Setup EN.exe\" \"$dir\"",
+        "$null = lessmsi.exe x \"$dir\\SD Card Formatter $version Setup EN_u\\SD Card Formatter Setup.msi\" \"$dir\\\"",
+        "Move-Item \"$dir/SourceDir/program files/SDA/SD Card Formatter/*\" \"$dir\"",
+        "Get-ChildItem -Recurse \"$dir\" -Exclude 'format_sd.exe','SD Card Formatter.exe' | Remove-Item -Recurse"
+    ],
+    "bin": "format_sd.exe",
     "shortcuts": [
         [
             "SD Card Formatter.exe",
@@ -29,6 +30,7 @@
         "regex": "SD Memory Card Formatter ([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://www.sdcard.org/downloads/formatter/eula_windows/SDCardFormatterv$majorVersion_WinEN.zip"
+        "url": "https://www.sdcard.org/downloads/formatter/eula_windows/SDCardFormatterv$majorVersion_WinEN.zip",
+        "extract_dir": "SDCardFormatterv$majorVersion_WinEN"
     }
 }

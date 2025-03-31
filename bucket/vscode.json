@@ -1,5 +1,5 @@
 {
-    "version": "1.85.1",
+    "version": "1.98.2",
     "description": "Lightweight but powerful source code editor",
     "homepage": "https://code.visualstudio.com/",
     "license": {
@@ -10,16 +10,18 @@
         "Add Visual Studio Code as a context menu option by running:",
         "'reg import \"$dir\\install-context.reg\"'",
         "For file associations, run:",
-        "'reg import \"$dir\\install-associations.reg\"'"
+        "'reg import \"$dir\\install-associations.reg\"'",
+        "For github integration, run:",
+        "'reg import \"$dir\\install-github-integration.reg\"'"
     ],
     "architecture": {
         "64bit": {
-            "url": "https://update.code.visualstudio.com/1.85.1/win32-x64-archive/stable#/dl.7z",
-            "hash": "8520a2f67d4d8d0871320ff65f4145a0a2e6167234c7a8af37f1ef43eda9a0ef"
+            "url": "https://update.code.visualstudio.com/1.98.2/win32-x64-archive/stable#/dl.7z",
+            "hash": "8e53f5792a206a7683353926bdb3beb6f3b098063088655955f4aafe5d9945ef"
         },
         "arm64": {
-            "url": "https://update.code.visualstudio.com/1.85.1/win32-arm64-archive/stable#/dl.7z",
-            "hash": "8a4d1d4ad7395c8ef20e9e59dab44093f9cdfdf4bfefba528747e30841734a84"
+            "url": "https://update.code.visualstudio.com/1.98.2/win32-arm64-archive/stable#/dl.7z",
+            "hash": "8487e1e90735a515b8df7bddc9a3816dc53c076e2cb1fd313823e31f7b3050a0"
         }
     },
     "env_add_path": "bin",
@@ -32,7 +34,7 @@
     "post_install": [
         "$dirpath = \"$dir\".Replace('\\', '\\\\')",
         "$exepath = \"$dir\\Code.exe\".Replace('\\', '\\\\')",
-        "'install-associations', 'uninstall-associations', 'install-context', 'uninstall-context' | ForEach-Object {",
+        "'install-associations', 'uninstall-associations', 'install-context', 'uninstall-context', 'install-github-integration', 'uninstall-github-integration' | ForEach-Object {",
         "  if (Test-Path \"$bucketsdir\\extras\\scripts\\vscode\\$_.reg\") {",
         "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\vscode\\$_.reg\"",
         "    $content = $content.Replace('$codedir', $dirpath)",
@@ -58,27 +60,33 @@
         "}"
     ],
     "uninstaller": {
-        "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }"
+        "script": [
+            "if ($cmd -eq 'uninstall')",
+            "{",
+            "   reg import \"$dir\\uninstall-context.reg\" ",
+            "   reg import \"$dir\\uninstall-github-integration.reg\" ",
+            "}"
+        ]
     },
     "persist": "data",
     "checkver": {
-        "url": "https://code.visualstudio.com/sha?build=stable",
-        "jsonpath": "$.products[?(@.platform.os == 'win32-x64-archive')].name"
+        "url": "https://update.code.visualstudio.com/api/update/win32-x64-archive/stable/latest",
+        "jsonpath": "$.name"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
                 "url": "https://update.code.visualstudio.com/$version/win32-x64-archive/stable#/dl.7z",
                 "hash": {
-                    "url": "https://code.visualstudio.com/sha?build=stable",
-                    "jsonpath": "$.products[?(@.platform.os == 'win32-x64-archive')].sha256hash"
+                    "url": "https://update.code.visualstudio.com/api/update/win32-x64-archive/stable/latest",
+                    "jsonpath": "$.sha256hash"
                 }
             },
             "arm64": {
                 "url": "https://update.code.visualstudio.com/$version/win32-arm64-archive/stable#/dl.7z",
                 "hash": {
-                    "url": "https://code.visualstudio.com/sha?build=stable",
-                    "jsonpath": "$.products[?(@.platform.os == 'win32-arm64-archive')].sha256hash"
+                    "url": "https://update.code.visualstudio.com/api/update/win32-arm64-archive/stable/latest",
+                    "jsonpath": "$.sha256hash"
                 }
             }
         }

@@ -1,35 +1,56 @@
 {
-    "version": "1.4.5",
+    "version": "2.2.2",
     "description": "Continuation of Clash Verge - A Clash Meta GUI based on Tauri.",
     "homepage": "https://github.com/clash-verge-rev/clash-verge-rev",
     "license": "GPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v1.4.5/Clash.Verge_1.4.5_x64_portable.zip",
-            "hash": "c7d58cff60b5d81cad238f5ca6fcb70c96395cb49f22a63b575d648e39d0ec44"
+            "url": "https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.2.2/Clash.Verge_2.2.2_x64-setup.exe#/dl.7z",
+            "hash": "ad532b4ea5dd83f0f8398fa41200a0980769db51207a56abc9e69659eb784909"
+        },
+        "arm64": {
+            "url": "https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.2.2/Clash.Verge_2.2.2_arm64-setup.exe#/dl.7z",
+            "hash": "b66aadc82f441b1a5cc65eb1c3e784d098260f939980c8417c4f328401f6839c"
         }
     },
-    "shortcuts": [
-        [
-            "Clash Verge.exe",
-            "Clash Verge"
+    "pre_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\uninst*\" -Force -Recurse",
+    "installer": {
+        "script": [
+            "ensure \"$persist_dir\" | Out-Null",
+            "$targetPath = \"$env:APPDATA\\io.github.clash-verge-rev.clash-verge-rev\"",
+            "$linkType = (Get-Item -Path $targetPath -ErrorAction SilentlyContinue).LinkType",
+            "if (Test-Path $targetPath) {",
+            "    if ($linkType -eq 'Junction') {",
+            "        Remove-Item -Path $targetPath -Force",
+            "    } else {",
+            "        Get-ChildItem -Path $targetPath -Force | Move-Item -Destination $persist_dir -Force",
+            "        Remove-Item -Path $targetPath -Force -Recurse",
+            "    }",
+            "}",
+            "New-Item \"$env:APPDATA\\io.github.clash-verge-rev.clash-verge-rev\" -ItemType Junction -Target \"$persist_dir\" | Out-Null"
         ]
-    ],
-    "persist": ".config",
-    "post_install": [
-        "if (!(Test-Path \"$persist_dir\\.config\\PORTABLE\")) {",
-        "    New-Item -Path \"$persist_dir\\.config\\PORTABLE\" -ItemType file | Out-Null",
-        "}"
-    ],
+    },
     "pre_uninstall": [
         "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
         "Start-Process \"$dir\\resources\\uninstall-service.exe\" -Wait -Verb 'RunAs' -WindowStyle 'Hidden'; Start-Sleep -Seconds 3"
+    ],
+    "uninstaller": {
+        "script": "Remove-Item \"$env:APPDATA\\io.github.clash-verge-rev.clash-verge-rev\" -Recurse -Force -ErrorAction 'SilentlyContinue'"
+    },
+    "shortcuts": [
+        [
+            "clash-verge.exe",
+            "Clash Verge"
+        ]
     ],
     "checkver": "github",
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v$version/Clash.Verge_$version_x64_portable.zip"
+                "url": "https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v$version/Clash.Verge_$version_x64-setup.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v$version/Clash.Verge_$version_arm64-setup.exe#/dl.7z"
             }
         }
     }

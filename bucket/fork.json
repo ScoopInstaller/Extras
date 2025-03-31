@@ -1,15 +1,32 @@
 {
-    "version": "1.92.0",
+    "version": "2.6.1",
     "description": "A fast and friendly git client for Mac and Windows",
     "homepage": "https://git-fork.com/",
     "license": {
         "identifier": "Shareware",
         "url": "https://git-fork.com/license"
     },
-    "url": "https://fork.dev/update/win/Fork-1.92.0-full.nupkg",
-    "hash": "sha1:899fa6ff53886af3e45859419c50e9c3e153e90d",
-    "extract_dir": "lib\\net45",
-    "post_install": "Remove-Item \"$dir\\*\" -Include 'Fork_ExecutionStub.exe', 'PortableGit-*.7z', 'lib', '7z.*' -Recurse",
+    "notes": [
+        "Add Fork as a context menu option by running:",
+        "reg import \"$dir\\install-context.reg\""
+    ],
+    "url": "https://cdn.fork.dev/update/win/Fork-2.6.1-full.nupkg",
+    "hash": "sha1:9d5a47de33786c2011db823c4e71cee477ddbb0c",
+    "extract_dir": "lib\\app",
+    "post_install": [
+        "Remove-Item \"$dir\\*\" -Include 'Fork_ExecutionStub.exe', 'PortableGit-*.7z', 'lib', '7z.*' -Recurse",
+        "$exepath = \"$dir\\Fork.exe\".Replace('\\', '\\\\')",
+        "'install-context.reg', 'uninstall-context.reg' | ForEach-Object {",
+        "    if (Test-Path \"$bucketsdir\\extras\\scripts\\$app\\$_\") {",
+        "        $content = Get-Content \"$bucketsdir\\extras\\scripts\\$app\\$_\"",
+        "        $content = $content.Replace('$fork-path', $exepath)",
+        "        if ($global) {",
+        "            $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "        }",
+        "    }",
+        "    $content | Set-Content -Path \"$dir\\$_\" -Encoding ascii",
+        "}"
+    ],
     "bin": "Fork.exe",
     "env_set": {
         "FORKGITINSTANCE": "$env:GIT_INSTALL_ROOT"
@@ -20,15 +37,18 @@
             "Fork"
         ]
     ],
+    "uninstaller": {
+        "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }"
+    },
     "checkver": {
         "url": "https://fork.dev/update/win/RELEASES",
         "regex": "Fork-([\\d.]+)-full.nupkg",
         "reverse": true
     },
     "autoupdate": {
-        "url": "https://fork.dev/update/win/Fork-$version-full.nupkg",
+        "url": "https://cdn.fork.dev/update/win/Fork-$version-full.nupkg",
         "hash": {
-            "url": "$baseurl/RELEASES"
+            "url": "https://fork.dev/update/win/RELEASES"
         }
     }
 }
