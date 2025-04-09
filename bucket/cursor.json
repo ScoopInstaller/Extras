@@ -6,18 +6,25 @@
         "identifier": "Proprietary",
         "url": "https://www.cursor.com/terms-of-service"
     },
+    "depends": "innounp",
     "architecture": {
         "64bit": {
-            "url": "https://downloads.cursor.com/production/7801a556824585b7f2721900066bc87c4a09b743/win32/x64/user-setup/CursorUserSetup-x64-0.48.8.exe#/dl.7z",
-            "hash": "34e113f5f6c7938dd1d150a4ae9fbabb32e2a634573e6fc7b9d754603b9a15f3",
-            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+            "url": "https://downloads.cursor.com/production/7801a556824585b7f2721900066bc87c4a09b743/win32/x64/user-setup/CursorUserSetup-x64-0.48.8.exe#/Cursor_Setup.exe",
+            "hash": "34e113f5f6c7938dd1d150a4ae9fbabb32e2a634573e6fc7b9d754603b9a15f3"
         },
         "arm64": {
-            "url": "https://downloads.cursor.com/production/7801a556824585b7f2721900066bc87c4a09b743/win32/arm64/user-setup/CursorUserSetup-arm64-0.48.8.exe#/dl.7z",
-            "hash": "76ffa7e45937354fa75dbabe687fa17c296657c46486d03327697b8fb628ee7c",
-            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" \"$dir\""
+            "url": "https://downloads.cursor.com/production/7801a556824585b7f2721900066bc87c4a09b743/win32/arm64/user-setup/CursorUserSetup-arm64-0.48.8.exe#/Cursor_Setup.exe",
+            "hash": "76ffa7e45937354fa75dbabe687fa17c296657c46486d03327697b8fb628ee7c"
         }
     },
+    "pre_install": [
+        "innounp -x -d\"$dir\" \"$dir\\Cursor_Setup.exe\" | Out-Null",
+        "Move-Item -Force -Path \"$dir\\{app}\\tools\\*\" -Destination \"$dir\"",
+        "Move-Item -Force -Path \"$dir\\{code_GetDestDir}\\*\" -Destination \"$dir\"",
+        "Remove-Item -Force -Path \"$dir\\{app}\" -Recurse",
+        "Remove-Item -Force -Path \"$dir\\{code_GetDestDir}\" -Recurse",
+        "Remove-Item -Force -Path \"$dir\\Cursor_Setup.exe\" -Recurse"
+    ],
     "post_install": [
         "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse",
         "if (!(Test-Path \"$dir\\data\\extensions\") -and (Test-Path \"$env:USERPROFILE\\.cursor\\extensions\")) {",
@@ -38,7 +45,8 @@
     "shortcuts": [
         [
             "Cursor.exe",
-            "Cursor"
+            "Cursor",
+            "--user-data-dir=\"$dir\\data\\user-data\" --extensions-dir=\"$dir\\data\\extensions\""
         ]
     ],
     "persist": "data",
