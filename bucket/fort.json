@@ -1,0 +1,56 @@
+{
+    "version": "3.17.0",
+    "description": "Fort Firewall for Windows",
+    "homepage": "https://github.com/tnodir/fort",
+    "license": "GPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/tnodir/fort/releases/download/v3.17.0/FortFirewall-3.17.0-windows10-x86_64.exe",
+            "hash": "a9f2ed83b27b5d59ff375d5008a724aa590c4adf50b019f09b6f82b7a7594c1d"
+        },
+        "32bit": {
+            "url": "https://github.com/tnodir/fort/releases/download/v3.17.0/FortFirewall-3.17.0-windows-x86.exe",
+            "hash": "ede7575b6f42665fd7e57173fbd25eda35a9caa62a350c4cc2a3cfa1d4cdf357"
+        },
+        "arm64": {
+            "url": "https://github.com/tnodir/fort/releases/download/v3.17.0/FortFirewall-3.17.0-windows10-arm64.exe",
+            "hash": "058082ffb9ea57883d23c347eb572fa439535c719ae04b7aca2251ecf504906e"
+        }
+    },
+    "innosetup": true,
+    "pre_install": [
+        "Copy-Item -ErrorAction Ignore \"$dir/FortFirewall.exe.example.ini\" \"$dir/FortFirewall.exe.ini\"",
+        "$null = New-Item \"$dir/README.portable\"",
+        "if (is_admin) { return & \"$dir/driver/scripts/install.bat\" }",
+        "warn 'Skipping driver installation due to the lack of admin privledges.'"
+    ],
+    "pre_uninstall": [
+        "if (is_admin) { return & \"$dir/driver/scripts/uninstall.bat\" }",
+        "warn 'Skipping driver uninstallation due to the lack of admin privledges.'"
+    ],
+    "bin": "FortFirewall.exe",
+    "shortcuts": [
+        [
+            "FortFirewall.exe",
+            "Fort Firewall"
+        ]
+    ],
+    "persist": [
+        "Data",
+        "FortFirewall.exe.ini"
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/tnodir/fort/releases/download/v$version/FortFirewall-$version-windows10-x86_64.exe"
+            },
+            "32bit": {
+                "url": "https://github.com/tnodir/fort/releases/download/v$version/FortFirewall-$version-windows-x86.exe"
+            },
+            "arm64": {
+                "url": "https://github.com/tnodir/fort/releases/download/v$version/FortFirewall-$version-windows10-arm64.exe"
+            }
+        }
+    }
+}
