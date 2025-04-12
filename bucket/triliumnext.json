@@ -1,0 +1,37 @@
+{
+    "version": "0.92.6",
+    "description": "Build your personal knowledge base with Trilium Notes",
+    "homepage": "https://github.com/zadam/trilium",
+    "license": "AGPL-3.0-or-later",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/TriliumNext/Notes/releases/download/v0.92.6/TriliumNextNotes-v0.92.6-windows-x64.zip",
+            "hash": "95a3401e2b4a3257a7f35c4f3da2234199df2cad3f79be7e12f690ce251841a9"
+        }
+    },
+    "shortcuts": [
+        [
+            "trilium.exe",
+            "TriliumNext"
+        ]
+    ],
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\trilium-data\") -and (Test-Path \"$env:APPDATA\\trilium-data\")) {",
+        "    info \"Copying old '$env:APPDATA\\trilium-data' to '$persist_dir\\trilium-data'\"",
+        "    ensure \"$persist_dir\\trilium-data\" | Out-Null",
+        "    Copy-Item \"$env:APPDATA\\trilium-data\\*\" \"$persist_dir\\trilium-data\" -Recurse -Force",
+        "}"
+    ],
+    "env_set": {
+        "TRILIUM_DATA_DIR": "$persist_dir\\trilium-data"
+    },
+    "persist": "trilium-data",
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/zadam/trilium/releases/download/v$version/trilium-windows-x64-$version.zip"
+            }
+        }
+    }
+}
