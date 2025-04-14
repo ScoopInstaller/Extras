@@ -18,16 +18,19 @@
             "hash": "373a93e9b5ffa3559938424a2aabd3338786cff7bef084641c2c5e5bfb44325e"
         }
     },
-    "installer": {
-        "script": [
-            "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\vc_redist*\", \"$dir\\uninstall-wireshark.exe\" -Recurse",
-            "Get-ChildItem \"$dir\\npcap-*.exe\" | Rename-Item -NewName 'npcap-installer.exe'",
-            "Get-ChildItem \"$dir\\USBPcapSetup-*.exe\" | Rename-Item -NewName 'USBPcapSetup-installer.exe'"
-        ]
-    },
+    "pre_install": [
+        "'$PLUGINSDIR', 'vc_redist*', 'uninstall-wireshark.exe' | ForEach-Object { \"$dir/$_\" } | Remove-Item -Recurse",
+        "'npcap', 'USBPcapSetup' | ForEach-Object { Rename-Item \"$dir/$_-*.exe\" \"$_-installer.exe\" }",
+        "$data = \"$persist_dir/Data\"",
+        "$preferences = \"$data/preferences\"",
+        "if (!(Test-Path $preferences)) {",
+        "    $null = New-Item -ItemType Directory $data -ErrorAction Ignore",
+        "    'gui.update.enabled: FALSE' | Out-File -Encoding utf8 $preferences",
+        "}"
+    ],
     "post_install": [
-        "Get-ChildItem \"$bucketsdir\\extras\\scripts\\wireshark\" | Copy-Item -Force -Destination \"$dir\"",
-        "& \"$dir\\enable-usbpcap.ps1\" 2>$null   # Attempt try to enable USBPcap if already installed"
+        "Copy-Item -Force \"$bucketsdir/extras/scripts/wireshark/*\" \"$dir\"",
+        "& \"$dir/enable-usbpcap.ps1\" 2>$null   # Attempt try to enable USBPcap if already installed"
     ],
     "bin": [
         "capinfos.exe",
