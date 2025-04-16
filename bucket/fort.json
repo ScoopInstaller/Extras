@@ -1,20 +1,20 @@
 {
-    "version": "3.17.0",
+    "version": "3.17.2",
     "description": "Fort Firewall for Windows",
     "homepage": "https://github.com/tnodir/fort",
     "license": "GPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/tnodir/fort/releases/download/v3.17.0/FortFirewall-3.17.0-windows10-x86_64.exe",
-            "hash": "a9f2ed83b27b5d59ff375d5008a724aa590c4adf50b019f09b6f82b7a7594c1d"
+            "url": "https://github.com/tnodir/fort/releases/download/v3.17.2/FortFirewall-3.17.2-windows10-x86_64.exe",
+            "hash": "bca34b01589d94015d378f1617e28677f6b6b38c4415f8119fcdb7c1f5693398"
         },
         "32bit": {
-            "url": "https://github.com/tnodir/fort/releases/download/v3.17.0/FortFirewall-3.17.0-windows-x86.exe",
-            "hash": "ede7575b6f42665fd7e57173fbd25eda35a9caa62a350c4cc2a3cfa1d4cdf357"
+            "url": "https://github.com/tnodir/fort/releases/download/v3.17.2/FortFirewall-3.17.2-windows-x86.exe",
+            "hash": "034b46ef5947548628b71aea117ae3b017c2c5c4b0a76e87c491d5f8b19df867"
         },
         "arm64": {
-            "url": "https://github.com/tnodir/fort/releases/download/v3.17.0/FortFirewall-3.17.0-windows10-arm64.exe",
-            "hash": "058082ffb9ea57883d23c347eb572fa439535c719ae04b7aca2251ecf504906e"
+            "url": "https://github.com/tnodir/fort/releases/download/v3.17.2/FortFirewall-3.17.2-windows10-arm64.exe",
+            "hash": "d4abd8ea90096320240dd6e94481de344b80421c7eb874229c563d10888ca92d"
         }
     },
     "innosetup": true,
@@ -24,7 +24,15 @@
         "if (is_admin) { return & \"$dir/driver/scripts/install.bat\" }",
         "warn 'Skipping driver installation due to the lack of admin privledges.'"
     ],
+    "post_install": [
+        "$com = New-Object -ComObject WScript.Shell",
+        "$shortcut = $com.CreateShortcut([Environment]::GetFolderPath([Environment+SpecialFolder]::Startup) + '/Fort Firewall.lnk')",
+        "$shortcut.TargetPath = \"$dir/FortFirewall.exe\"",
+        "$shortcut.Save()",
+        "$null = [System.Runtime.Interopservices.Marshal]::FinalReleaseComObject($com)"
+    ],
     "pre_uninstall": [
+        "Remove-Item ([Environment]::GetFolderPath([Environment+SpecialFolder]::Startup) + '/Fort Firewall.lnk')",
         "if (is_admin) { return & \"$dir/driver/scripts/uninstall.bat\" }",
         "warn 'Skipping driver uninstallation due to the lack of admin privledges.'"
     ],
