@@ -1,8 +1,14 @@
 {
+    "##": "Maintainer reminder: After major releases, update version number in notes, and variable in post install/uninstall scripts",
     "version": "3.0.2-1",
     "description": "GNU Image Manipulation Program",
     "homepage": "https://www.gimp.org",
     "license": "GPL-3.0-only",
+    "notes": [
+        "Scoop persists data since version 3.0.2-1. You may need to move data by yourself.",
+        "Before: %APPDATA%\\GIMP\\3.0",
+        "After : SCOOP_PERSIST_DIR\\gimp\\3.0"
+    ],
     "url": "https://download.gimp.org/mirror/pub/gimp/v3.0/windows/gimp-3.0.2-setup-1.exe",
     "hash": "0bbddfce63ff99ef3bcc4d8af9f4c6793af9902470722c018476f04c713e440b",
     "innosetup": true,
@@ -34,6 +40,10 @@
             "Pop-Location"
         ]
     },
+    "post_install": [
+      "if ($global) { $scope = 'Machine' } else { $scope = 'User' }",
+      "if (!$Env:GIMP3_DIRECTORY) { [Environment]::SetEnvironmentVariable('GIMP3_DIRECTORY', \"$persist_dir\\3.0\", $scope) }"
+    ],
     "bin": [
         "bin\\gimp-console-3.0.exe",
         [
@@ -55,6 +65,11 @@
             "bin\\gimp-3.0.exe",
             "GIMP"
         ]
+    ],
+    "persist": [ [ "_userdata", "3.0" ] ],
+    "post_uninstall": [
+      "if ($global) { $scope = 'Machine' } else { $scope = 'User' }",
+      "if ($Env:GIMP3_DIRECTORY -eq \"$persist_dir\\3.0\") { [Environment]::SetEnvironmentVariable('GIMP3_DIRECTORY', [NullString]::Value, $scope) }"
     ],
     "checkver": {
         "url": "https://www.gimp.org/downloads/",
