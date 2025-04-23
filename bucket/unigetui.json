@@ -3,14 +3,31 @@
     "description": "A GUI to manage Winget and Scoop packages",
     "homepage": "https://github.com/marticliment/UniGetUI",
     "license": "MIT",
+    "suggest": {
+        "scoop-search": "main/scoop-search"
+    },
     "url": "https://github.com/marticliment/UniGetUI/releases/download/3.1.8/UniGetUI.Installer.exe",
     "hash": "646abe5ba7a0f2cc5fd8dceccfbe6f58036fc542ba921f67eaabc4e488a444c2",
     "innosetup": true,
+    "pre_install": [
+        "$Files = [string[]](",
+        "    [System.IO.Path]::Combine($dir,'ForceUniGetUIPortable')",
+        ")",
+        "$Files.ForEach{",
+        "    if (-not [System.IO.File]::Exists($_)) {",
+        "        $null = [System.IO.File]::Create($_)",
+        "    }",
+        "}"
+    ],
     "shortcuts": [
         [
             "UniGetUI.exe",
             "UniGetUI"
         ]
+    ],
+    "persist": [
+        "ForceUniGetUIPortable",
+        "Settings"
     ],
     "checkver": {
         "github": "https://github.com/marticliment/UniGetUI"
