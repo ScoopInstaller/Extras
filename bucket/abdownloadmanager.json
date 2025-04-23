@@ -10,12 +10,19 @@
         }
     },
     "extract_dir": "ABDownloadManager",
+    "post_install": [
+        "if (!(Test-Path \"$persist_dir\\.abdm\") -and (Test-Path \"$env:USERPROFILE\\.abdm\")) {",
+        "    info \"Moving configs to persist directory...\"",
+        "    Copy-Item -Path \"$env:USERPROFILE\\.abdm\\*\" -Destination \"$persist_dir\\.abdm\" -Force -Recurse | Out-Null",
+        "}"
+    ],
     "shortcuts": [
         [
             "ABDownloadManager.exe",
             "ABDownloadManager"
         ]
     ],
+    "persist": ".abdm",
     "checkver": {
         "github": "https://github.com/amir1376/ab-download-manager"
     },
