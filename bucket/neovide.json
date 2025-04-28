@@ -1,15 +1,30 @@
 {
-    "version": "0.11.2",
+    "version": "0.15.0",
     "description": "A simple GUI for Neovim",
-    "homepage": "https://github.com/Kethku/neovide",
+    "homepage": "https://neovide.dev",
     "license": "MIT",
+    "notes": [
+        "Add Open with Neovide as a context menu option by running:",
+        "reg import \"$dir\\install-context.reg\""
+    ],
     "suggest": {
         "neovim": "neovim"
     },
+    "post_install": [
+        "$neovide = \"$dir\\neovide.exe\".Replace('\\', '\\\\')",
+        "'install-context', 'uninstall-context' | ForEach-Object {",
+        "    if (Test-Path \"$bucketsdir\\extras\\scripts\\$app\\$_.reg\") {",
+        "        $content = Get-Content \"$bucketsdir\\extras\\scripts\\$app\\$_.reg\"",
+        "        $content = $content.Replace('$neovide', $neovide)",
+        "        if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "        Set-Content \"$dir\\$_.reg\" $content -Encoding Ascii -Force",
+        "    }",
+        "}"
+    ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/Kethku/neovide/releases/download/0.11.2/neovide.exe.zip",
-            "hash": "7792d842e04c912ef20906ddfd36f8f855f11d12100d804e6e321b9a55a28d13"
+            "url": "https://github.com/neovide/neovide/releases/download/0.15.0/neovide.exe.zip",
+            "hash": "bec596a700acb4e88333404d91503669201bc269e1c7d40ebd4f0332a7b5bfaa"
         }
     },
     "bin": "neovide.exe",
@@ -19,11 +34,14 @@
             "Neovide"
         ]
     ],
-    "checkver": "github",
+    "pre_uninstall": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" *>nul }",
+    "checkver": {
+        "github": "https://github.com/neovide/neovide"
+    },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/Kethku/neovide/releases/download/$version/neovide.exe.zip"
+                "url": "https://github.com/neovide/neovide/releases/download/$version/neovide.exe.zip"
             }
         }
     }

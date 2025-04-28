@@ -1,0 +1,56 @@
+{
+    "version": "2025.4",
+    "description": "Halloy is an open-source IRC client written in Rust, with the iced GUI library.",
+    "homepage": "https://halloy.squidowl.org/",
+    "license": "GPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/squidowl/halloy/releases/download/2025.4/halloy-installer.msi",
+            "hash": "a59968c7788777931e2badf0611a9090a3d9b090973a0452607f2b2443906e03"
+        }
+    },
+    "extract_dir": "PFiles64/Halloy",
+    "installer": {
+        "script": [
+            "if (!(Test-Path \"$persist_dir\\config.toml\")) {",
+            "    $configContent = '# Halloy config.",
+            "# For a complete list of available options,",
+            "# please visit https://halloy.squidowl.org/configuration/index.html",
+            "[servers.liberachat]",
+            "    nickname = \"halloy8765\"",
+            "    server = \"irc.libera.chat\"",
+            "    channels = [\"#halloy\"]'",
+            "    Set-Content \"$dir\\config.toml\" $configContent -Encoding ASCII -Force",
+            "    if (Test-Path \"$env:AppData\\halloy\") {",
+            "        Copy-Item \"$env:AppData\\halloy\\*\" \"$dir\" -Recurse -Exclude '*config.toml' -ErrorAction SilentlyContinue",
+            "    }",
+            "} else { Move-Item \"$persist_dir\\*\" \"$dir\" -Include '*.log', '*.gz', '*.toml' }"
+        ]
+    },
+    "uninstaller": {
+        "script": "Move-Item \"$dir\\*\" \"$persist_dir\" -Include '*.log', '*.gz', '*.toml'"
+    },
+    "persist": [
+        "themes",
+        "history"
+    ],
+    "shortcuts": [
+        [
+            "halloy.exe",
+            "Halloy"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/squidowl/halloy"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/squidowl/halloy/releases/download/$version/halloy-installer.msi"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/checksums.txt"
+        }
+    }
+}

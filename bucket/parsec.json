@@ -1,0 +1,45 @@
+{
+    "version": "150-98",
+    "description": "Remote desktop software, Portable",
+    "homepage": "https://parsec.app",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://unity.com/legal/parsec-additional-terms"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://builds.parsec.app/package/parsec-flat-windows.zip#/dl.zip",
+            "hash": "74d2b2312365f7b2f71e095383985223bed16392c383e873e995e1178e8643a9"
+        }
+    },
+    "pre_install": [
+        "'hotkey.json', 'config.txt', 'config.json', 'log.txt' | ForEach-Object {",
+        "    if (!(Test-Path -Path \"$persist_dir\\$_\")) {",
+        "        New-Item -Type File \"$dir\\$_\" | Out-Null",
+        "    }",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "parsecd.exe",
+            "Parsec"
+        ]
+    ],
+    "persist": [
+        "hotkey.json",
+        "config.txt",
+        "config.json",
+        "log.txt"
+    ],
+    "checkver": {
+        "url": "https://parsec.app/changelog.xml",
+        "regex": "<parsec:build>([\\w-]+)</parsec:build>"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://builds.parsec.app/package/parsec-flat-windows.zip#/dl.zip"
+            }
+        }
+    }
+}

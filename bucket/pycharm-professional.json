@@ -1,17 +1,21 @@
 {
-    "version": "2023.2.1-232.9559.58",
+    "version": "2025.1-251.23774.444",
     "description": "Cross-Platform IDE for Python by JetBrains.",
     "homepage": "https://www.jetbrains.com/pycharm/",
     "license": {
         "identifier": "Proprietary",
         "url": "https://www.jetbrains.com/store/license.html"
     },
-    "url": "https://download.jetbrains.com/python/pycharm-professional-2023.2.1.exe#/dl.7z",
-    "hash": "f14fa0ca04333bc95ebce8e577c644d3ae5591c293292044da478ecb050aaea5",
+    "url": "https://download.jetbrains.com/python/pycharm-professional-2025.1.win.zip",
+    "hash": "01887d3aa860c21542a8b8671bbf7c4f8d1d4cf205ee46b58d42903b4376b0ef",
     "extract_to": "IDE",
+    "pre_install": [
+        "Get-ChildItem \"$persist_dir\\IDE\\bin\\pycharm*.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$dir\\IDE\\bin\"",
+        "Get-ChildItem \"$persist_dir\\IDE\\bin\\jetbrains_client64.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$dir\\IDE\\bin\""
+    ],
     "installer": {
         "script": [
-            "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" $dir $persist_dir",
+            "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" \"$dir\" \"$persist_dir\"",
             "Remove-Item \"$dir\\IDE\\`$*\" -Force -Recurse",
             "Set-Content \"$dir\\run_pycharm.bat\" \"start `\"`\" `\"$dir\\IDE\\bin\\pycharm64.exe`\"\" -Encoding ascii | Out-Null"
         ]
@@ -45,9 +49,11 @@
     },
     "persist": [
         "IDE\\bin\\idea.properties",
-        "IDE\\bin\\pycharm.exe.vmoptions",
-        "IDE\\bin\\pycharm64.exe.vmoptions",
         "profile"
+    ],
+    "pre_uninstall": [
+        "Get-ChildItem \"$dir\\IDE\\bin\\pycharm*.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$persist_dir\\IDE\\bin\"",
+        "Get-ChildItem \"$dir\\IDE\\bin\\jetbrains_client64.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$persist_dir\\IDE\\bin\""
     ],
     "checkver": {
         "url": "https://data.services.jetbrains.com/products/releases?code=PCP&latest=true&platform=zip&type=release",
@@ -55,7 +61,7 @@
         "replace": "${ver}-${build}"
     },
     "autoupdate": {
-        "url": "https://download.jetbrains.com/python/pycharm-professional-$matchHead.exe#/dl.7z",
+        "url": "https://download.jetbrains.com/python/pycharm-professional-$matchVer.win.zip",
         "hash": {
             "url": "$url.sha256"
         }

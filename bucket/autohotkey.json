@@ -1,5 +1,5 @@
 {
-    "version": "2.0.9",
+    "version": "2.0.19",
     "description": "The ultimate automation scripting language for Windows.",
     "homepage": "https://www.autohotkey.com/",
     "license": "GPL-2.0-or-later",
@@ -10,8 +10,8 @@
         "  - 'autohotkey /script \"$dir\\UX\\ui-uninstall.ahk\"'",
         "See also: https://github.com/ScoopInstaller/Extras/issues/10066"
     ],
-    "url": "https://www.autohotkey.com/download/2.0/AutoHotkey_2.0.9.zip",
-    "hash": "c36dd14fc322e1846a793797b758f5b0fb554f7f058da6a333c86f27cbf9ec01",
+    "url": "https://github.com/AutoHotkey/AutoHotkey/releases/download/v2.0.19/AutoHotkey_2.0.19.zip",
+    "hash": "4e0d0e65655066a646a210951320feaef0729a3597177131adaec4066bef5869",
     "extract_to": "installer",
     "installer": {
         "script": [
@@ -25,7 +25,7 @@
         "# Persistence",
         "if (Test-Path \"$persist_dir\\installed-files.csv\") {",
         "    Get-Content \"$persist_dir\\installed-files.csv\" | Add-Content \"$dir\\UX\\installed-files.csv\"",
-        "    Copy-Item \"$persist_dir\\installed-files\\*\" \"$dir\" -Recurse",
+        "    Copy-Item \"$persist_dir\\installed-files\\*\" \"$dir\" -Recurse -ErrorAction SilentlyContinue",
         "    # Remove old files",
         "    Remove-Item \"$persist_dir\\installed-files.csv\" -Force",
         "    Remove-Item \"$persist_dir\\installed-files\" -Force -Recurse",
@@ -66,7 +66,7 @@
         "            if (!($dirs.Contains($current)) -and ($_.'Path' -notlike '*.lnk')) { $dirs += $current }",
         "        }",
         "        $export | Out-File \"$persist_dir\\installed-files.csv\" -Encoding ASCII",
-        "        $dirs | ForEach-Object { Copy-Item \"$dir\\$_\" \"$persist_dir\\installed-files\" -Recurse }",
+        "        $dirs | ForEach-Object { Copy-Item \"$dir\\$_\" \"$persist_dir\\installed-files\" -Recurse -ErrorAction SilentlyContinue }",
         "    }",
         "}"
     ],
@@ -78,7 +78,7 @@
         "regex": "([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://www.autohotkey.com/download/$majorVersion.$minorVersion/AutoHotkey_$version.zip",
+        "url": "https://github.com/AutoHotkey/AutoHotkey/releases/download/v$version/AutoHotkey_$version.zip",
         "hash": {
             "url": "https://www.autohotkey.com/download/$majorVersion.$minorVersion/AutoHotkey_$version.zip.sha256"
         }

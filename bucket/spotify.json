@@ -1,13 +1,21 @@
 {
-    "version": "1.2.20.1216.ge7a7b92f",
+    "version": "1.2.62.580.gb27ad23e",
     "description": "A digital music service that gives you access to millions of songs.",
     "homepage": "https://www.spotify.com/",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.spotify.com/legal/end-user-agreement/"
     },
-    "url": "https://download.scdn.co/SpotifyFullSetup.exe",
-    "hash": "5a0b322e8451564454daa9b2e9d9d3631b18505b0db423dd8db1150e367c326d",
+    "architecture": {
+        "64bit": {
+            "url": "https://download.scdn.co/SpotifyFullSetupX64.exe",
+            "hash": "d869cd4f994711cc536d5c5c9e979213121c6c1cbbc6a8ecb5ff2c6442b375ec"
+        },
+        "arm64": {
+            "url": "https://download.scdn.co/SpotifyFullSetupARM64.exe",
+            "hash": "85c9ac2280d7f5c698bcd2333c3d7cec4060d16dac3de2b4599e479a27a63303"
+        }
+    },
     "installer": {
         "script": [
             "Start-Process -Wait \"$dir\\$fname\" -ArgumentList '/extract', \"`\"$dir`\"\"",
@@ -26,13 +34,15 @@
     ],
     "uninstaller": {
         "script": [
+            "$updateFile = \"$env:LOCALAPPDATA\\Spotify\\update\"",
+            "Remove-Item $updateFile -Force -ErrorAction SilentlyContinue",
             "if ($cmd -ne 'uninstall') { return }",
             "Start-Process -Wait \"$dir\\Spotify.exe\" -ArgumentList '/Uninstall', '/Silent'"
         ]
     },
     "checkver": {
         "script": [
-            "$dl_url = 'https://download.scdn.co/SpotifyFullSetup.exe'",
+            "$dl_url = 'https://download.scdn.co/SpotifyFullSetupX64.exe'",
             "$dl = cache_path 'spotify' 'unknown' $dl_url",
             "Invoke-WebRequest $dl_url -OutFile $dl",
             "$ver = (Get-Item $dl).VersionInfo.ProductVersion",
@@ -42,6 +52,13 @@
         "regex": "(\\S+)"
     },
     "autoupdate": {
-        "url": "https://download.scdn.co/SpotifyFullSetup.exe"
+        "architecture": {
+            "64bit": {
+                "url": "https://download.scdn.co/SpotifyFullSetupX64.exe"
+            },
+            "arm64": {
+                "url": "https://download.scdn.co/SpotifyFullSetupARM64.exe"
+            }
+        }
     }
 }

@@ -1,17 +1,21 @@
 {
-    "version": "2023.2.2-232.9921.42",
+    "version": "2025.1-251.23774.424",
     "description": "Cross-Platform IDE for JavaScript by JetBrains.",
     "homepage": "https://www.jetbrains.com/webstorm/",
     "license": {
         "identifier": "Proprietary",
         "url": "https://www.jetbrains.com/store/license.html"
     },
-    "url": "https://download.jetbrains.com/webstorm/WebStorm-2023.2.2.exe#/dl.7z",
-    "hash": "58c03f699298ee9e5bc65b0d96f987f3330c128bafd6469b84c54cb0d9317759",
+    "url": "https://download.jetbrains.com/webstorm/WebStorm-2025.1.win.zip",
+    "hash": "4309fe5dfdce55e64eabfbf7098e7efd480f139b472d49da281c8bdf6d642b68",
     "extract_to": "IDE",
+    "pre_install": [
+        "Get-ChildItem \"$persist_dir\\IDE\\bin\\webstorm*.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$dir\\IDE\\bin\"",
+        "Get-ChildItem \"$persist_dir\\IDE\\bin\\jetbrains_client64.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$dir\\IDE\\bin\""
+    ],
     "installer": {
         "script": [
-            "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" $dir $persist_dir",
+            "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" \"$dir\" \"$persist_dir\"",
             "Remove-Item \"$dir\\IDE\\`$*\" -Force -Recurse"
         ]
     },
@@ -42,9 +46,11 @@
     },
     "persist": [
         "IDE\\bin\\idea.properties",
-        "IDE\\bin\\webstorm.exe.vmoptions",
-        "IDE\\bin\\webstorm64.exe.vmoptions",
         "profile"
+    ],
+    "pre_uninstall": [
+        "Get-ChildItem \"$dir\\IDE\\bin\\webstorm*.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$persist_dir\\IDE\\bin\"",
+        "Get-ChildItem \"$dir\\IDE\\bin\\jetbrains_client64.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$persist_dir\\IDE\\bin\""
     ],
     "checkver": {
         "url": "https://data.services.jetbrains.com/products/releases?code=WS&latest=true&platform=zip&type=release",
@@ -52,7 +58,7 @@
         "replace": "${ver}-${build}"
     },
     "autoupdate": {
-        "url": "https://download.jetbrains.com/webstorm/WebStorm-$matchHead.exe#/dl.7z",
+        "url": "https://download.jetbrains.com/webstorm/WebStorm-$matchVer.win.zip",
         "hash": {
             "url": "$url.sha256"
         }

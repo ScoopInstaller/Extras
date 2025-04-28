@@ -1,18 +1,21 @@
 {
-    "version": "6.30.2",
+    "version": "7.52.0",
     "description": "A cross-platform encrypted messaging service.",
     "homepage": "https://signal.org",
     "license": "GPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://updates.signal.org/desktop/signal-desktop-win-6.30.2.exe#/dl.7z",
-            "hash": "sha512:50ae8df8bbc6301fe7608d96782bdb6c5a4ce52fe70524d4f6f27598b2989a4c959dc999c3a50cd527f7e5944a937f20cca22c6d2d0773a2c77dd46376ecfa9d",
-            "pre_install": [
-                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*.exe\" -Recurse -Force"
-            ]
+            "url": "https://updates.signal.org/desktop/signal-desktop-win-x64-7.52.0.exe#/dl.7z",
+            "hash": "sha512:6830ef68a2299b6525026a4c704ab16a506310197c0cbbc440c4b66e5437a1d9ba9b0e299127c32fefd2349caf2b295594a7cfd18aaff2e3af87a4023f37c43d",
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+        },
+        "arm64": {
+            "url": "https://updates.signal.org/desktop/signal-desktop-win-arm64-7.52.0.exe#/dl.7z",
+            "hash": "sha512:e4b36d6604587aab4fff46cc535cb50b3c28ba4238137930d389c2707e711184e6ea8d620b2084e375d4613c3e7534b8a0497c6f8e5ec9434458ddf867e61ad2",
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" \"$dir\""
         }
     },
+    "post_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*.exe\" -Recurse -Force",
     "shortcuts": [
         [
             "Signal.exe",
@@ -26,12 +29,15 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://updates.signal.org/desktop/signal-desktop-win-$version.exe#/dl.7z"
+                "url": "https://updates.signal.org/desktop/signal-desktop-win-x64-$version.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://updates.signal.org/desktop/signal-desktop-win-arm64-$version.exe#/dl.7z"
             }
         },
         "hash": {
             "url": "$baseurl/latest.yml",
-            "regex": "sha512:\\s$base64"
+            "regex": "$basename\\s+sha512:\\s$base64"
         }
     }
 }

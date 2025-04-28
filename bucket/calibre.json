@@ -1,19 +1,20 @@
 {
-    "version": "6.26.0",
+    "version": "8.3.0",
     "description": "Powerful and easy to use e-book manager",
     "homepage": "https://calibre-ebook.com",
     "license": "GPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://download.calibre-ebook.com/6.26.0/calibre-portable-installer-6.26.0.exe",
-            "hash": "d047a508e58c341ba3ef72f30e4f50e8114dee3715316b82034307f6e152b12d"
+            "url": "https://download.calibre-ebook.com/8.3.0/calibre-portable-installer-8.3.0.exe",
+            "hash": "sha512:b3d22705f3c775b4570a6ece440cd582b5b5f5df0584be93a99b1f29a3ae996c65e07293e33bbc6241fdfc420bd749393682ea0acd9f636bb8dd36edfa17c0e3"
         }
     },
     "installer": {
         "script": [
-            "Start-Process \"$dir\\calibre-portable-installer-$version.exe\" @(\"$dir\") -Wait",
-            "Move-Item \"$dir\\Calibre Portable\\**\" \"$dir\"",
-            "Remove-Item \"$dir\\Calibre Portable\""
+            "Start-Process \"$dir\\calibre-portable-installer-$version.exe\" @(\"$env:TEMP\") -Wait",
+            "Move-Item \"$env:TEMP\\Calibre Portable\\**\" \"$dir\"",
+            "Remove-Item \"$env:TEMP\\Calibre Portable\"",
+            "Icacls $dir /t /c /reset"
         ]
     },
     "bin": [

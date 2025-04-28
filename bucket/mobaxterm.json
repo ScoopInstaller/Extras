@@ -1,13 +1,13 @@
 {
-    "version": "23.2",
+    "version": "25.1",
     "description": "Enhanced terminal for Windows with X11 server, tabbed SSH client, network tools and much more.",
     "homepage": "https://mobaxterm.mobatek.net/",
     "license": {
         "identifier": "Freeware",
         "url": "https://mobaxterm.mobatek.net/license.html"
     },
-    "url": "https://download.mobatek.net/2322023060714555/MobaXterm_Portable_v23.2.zip",
-    "hash": "b74f6055eeb0f57632adeb5ae0371cb007d4baf60dd69e14461af19ac6293f6b",
+    "url": "https://download.mobatek.net/2512025030285413/MobaXterm_Portable_v25.1.zip",
+    "hash": "7fd63131bef59004c1702cffa8ea8f76122055e20ae413d9514b6ac346c8629c",
     "pre_install": [
         "    # Rename executable",
         "Get-ChildItem \"$dir\" 'mobaxterm*.exe' | Select-Object -First 1 | Rename-Item -NewName 'MobaXterm.exe'",
@@ -18,6 +18,14 @@
         "    }",
         "}",
         "@('MobaXterm backup.zip', 'MobaXterm.ini') | ForEach-Object { PersistsFile $_ }"
+    ],
+    "pre_uninstall": [
+        "function UpdatesFile([string] $file) {",
+        "    if ((Get-ChildItem \"$dir\\$file\").LastWriteTime -gt (Get-ChildItem \"$persist_dir\\$file\").LastWriteTime) {",
+        "        [System.IO.File]::WriteAllBytes(\"$persist_dir\\$file\", [System.IO.File]::ReadAllBytes(\"$dir\\$file\"))",
+        "    }",
+        "}",
+        "@('MobaXterm backup.zip', 'MobaXterm.ini') | ForEach-Object { UpdatesFile $_ }"
     ],
     "bin": "MobaXterm.exe",
     "shortcuts": [

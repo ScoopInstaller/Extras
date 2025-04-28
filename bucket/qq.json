@@ -1,5 +1,5 @@
 {
-    "version": "9.7.16.29187",
+    "version": "9.7.23.29406",
     "description": "An instant messaging tool that gives you the best way to keep in touch with your friends and family.",
     "homepage": "https://im.qq.com",
     "license": {
@@ -7,12 +7,12 @@
         "url": "https://ti.qq.com/agreement/index.html"
     },
     "notes": [
-        "Scoop doesn't persist your QQ data, by default they are stored in: ",
+        "Scoop doesn't persist your QQ data, by default they are stored in:",
         "'%UserProfile%\\Documents\\Tencent Files'.",
-        "Files produced at runtime leaves in '%AppData%\\Tencent'."
+        "Files produced at runtime are left in '%AppData%\\Tencent'."
     ],
-    "url": "https://webcdn.m.qq.com/spcmgr/download/QQ9.7.16.29187.exe#/dl.7z",
-    "hash": "c618ea0146a5906088cb4379a4e912bf6ea225bc4d8b0b7be47c8959384af390",
+    "url": "https://dldir1.qq.com/qqfile/qq/PCQQ9.7.23/QQ9.7.23.29406.exe#/dl.7z",
+    "hash": "8de2ab423b1a5fc49204d03fe922219a09194efbbdddcf154e632c3c4b9f8478",
     "shortcuts": [
         [
             "Bin\\QQScLauncher.exe",
@@ -32,10 +32,18 @@
         ]
     },
     "checkver": {
-        "url": "https://pc.qq.com/detail/2/detail_2.html",
-        "regex": "QQ([\\d.]+).exe"
+        "script": [
+            "$url = 'https://im.qq.com/pcqq/index.shtml'",
+            "$resp = Invoke-WebRequest -Uri $url",
+            "$cont = $resp.Content",
+            "$pattern = 'https://qq-web.cdn-go.cn.*windowsDownloadUrl.js'",
+            "$jsUrl = [regex]::Match($cont, $pattern).Value",
+            "Invoke-WebRequest -Uri $jsUrl"
+        ],
+        "regex": "PCQQ([\\d\\.]+)/QQ([\\d\\.]+).exe",
+        "replace": "${2}"
     },
     "autoupdate": {
-        "url": "https://webcdn.m.qq.com/spcmgr/download/QQ$version.exe#/dl.7z"
+        "url": "https://dldir1.qq.com/qqfile/qq/PCQQ$matchHead/QQ$version.exe#/dl.7z"
     }
 }

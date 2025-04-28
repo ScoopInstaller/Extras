@@ -1,5 +1,5 @@
 {
-    "version": "4.0.8",
+    "version": "4.4.6",
     "description": "A network protocol analyzer that lets you see what’s happening on your network at a microscopic level.",
     "homepage": "https://www.wireshark.org/",
     "license": "GPL-2.0-or-later",
@@ -8,12 +8,14 @@
         "$dir\\npcap-installer.exe",
         "",
         "You can also install USBPcap from the 'wireshark' directory if you need the USB packets capture funcionality.",
-        "$dir\\USBPcapSetup-installer.exe"
+        "$dir\\USBPcapSetup-installer.exe",
+        "",
+        "If this is the first time you opted to install USBPcap, please restart and run: $dir\\enable-usbpcap.ps1"
     ],
     "architecture": {
         "64bit": {
-            "url": "https://www.wireshark.org/download/win64/Wireshark-win64-4.0.8.exe#/dl.7z",
-            "hash": "8243e019d2bd73c81de53c67ddb23d877ecec2fc1699c9aa074ccaa2d7d9b267"
+            "url": "https://www.wireshark.org/download/win64/Wireshark-4.4.6-x64.exe#/dl.7z",
+            "hash": "d1925b045300c34ea8082b7ec0d79aeae31edf01eb9fdd9b69e069ece785ca93"
         }
     },
     "installer": {
@@ -23,6 +25,10 @@
             "Get-ChildItem \"$dir\\USBPcapSetup-*.exe\" | Rename-Item -NewName 'USBPcapSetup-installer.exe'"
         ]
     },
+    "post_install": [
+        "Get-ChildItem \"$bucketsdir\\extras\\scripts\\wireshark\" | Copy-Item -Force -Destination \"$dir\"",
+        "& \"$dir\\enable-usbpcap.ps1\" 2>$null   # Attempt try to enable USBPcap if already installed"
+    ],
     "bin": [
         "capinfos.exe",
         "dumpcap.exe",
@@ -53,7 +59,7 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://www.wireshark.org/download/win64/Wireshark-win64-$version.exe#/dl.7z",
+                "url": "https://www.wireshark.org/download/win64/Wireshark-$version-x64.exe#/dl.7z",
                 "hash": {
                     "url": "https://www.wireshark.org/download/SIGNATURES-$version.txt",
                     "regex": "SHA256\\($basename\\)=$sha256"
