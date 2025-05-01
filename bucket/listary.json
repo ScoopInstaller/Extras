@@ -2,15 +2,60 @@
     "version": "6.3.5.94",
     "description": "A revolutionary search utility.",
     "homepage": "https://www.listary.com",
-    "license": "Shareware",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://help.listary.com/license-agreement"
+    },
+    "notes": [
+        "Add Listary to startup by running:",
+        "reg import \"$dir\\add-startup.reg\""
+    ],
     "url": "https://www.listary.com/download/Listary.exe?version=6.3.5.94#/dl.exe",
     "hash": "c62249e0d4d49bd3f062d55635cf6a3ab089ea8ee7f6c03947f6febfafaa0288",
     "innosetup": true,
+    "pre_install": [
+        "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
+        "$currDir = \"$(appdir $app $global)\\current\".Replace('\\', '\\\\')",
+        "$versionDir = \"$(appdir $app $global)\\$version\".Replace('\\', '\\\\')",
+        "'add-startup.reg', 'remove-startup.reg', 'install.reg', 'uninstall.reg' | ForEach-Object {",
+        "    if (Test-Path \"$bucketsdir\\$bucket\\scripts\\$app\\$_\") {",
+        "        $content = Get-Content \"$bucketsdir\\$bucket\\scripts\\$app\\$_\"",
+        "        $content = $content.Replace('$currDir', $currDir)",
+        "        $content = $content.Replace('$versionDir', $versionDir)",
+        "        if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "        $content = $content.Replace('HKCU_DONOT_REPLACE', 'HKEY_CURRENT_USER')",
+        "        $content | Set-Content -Path \"$dir\\$_\"",
+        "    }",
+        "}",
+        "reg import \"$dir\\install.reg\" *>$null"
+    ],
+    "post_install": [
+        "sc.exe create ListaryServiceV2 binPath=\"$dir\\Listary.Service.exe\" start=auto group=\"Extended Base\" *>$null",
+        "Start-Service -Name 'ListaryServiceV2' | Out-Null",
+        "schtasks.exe /delete /tn Listary /f *>$null"
+    ],
     "shortcuts": [
         [
             "Listary.exe",
             "Listary"
         ]
+    ],
+    "pre_uninstall": [
+        "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
+        "",
+        "# Stop the main process and then its hook processes",
+        "Stop-Process -Name 'Listary' -Force -ErrorAction Ignore | Wait-Process | Out-Null",
+        "Stop-Process -Name 'ListaryHookHost32' -Force -ErrorAction Ignore | Wait-Process | Out-Null",
+        "Stop-Process -Name 'ListaryHookHost64' -Force -ErrorAction Ignore | Wait-Process | Out-Null",
+        "",
+        "# Stop the service and then remove it",
+        "Stop-Service -Name 'ListaryServiceV2' -Force -ErrorAction Ignore  | Out-Null",
+        "sc.exe delete ListaryServiceV2 *>$null",
+        "",
+        "if ($cmd -eq 'uninstall') {",
+        "    reg import \"$dir\\uninstall.reg\" *>$null",
+        "    reg import \"$dir\\remove-startup.reg\" *>$null",
+        "}"
     ],
     "checkver": {
         "url": "https://www.listary.com/download",
