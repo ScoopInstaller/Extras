@@ -3,8 +3,16 @@
     "description": "Lightweight, free, cross-platform BitTorrent client",
     "homepage": "https://deluge-torrent.org",
     "license": "GPL-3.0-only",
-    "url": "http://download.deluge-torrent.org/windows/deluge-2.2.0-win32-setup.exe#/dl.7z",
-    "hash": "c35dbaea459fad5a3e45910735c1fffdfbbeab24296a0820878312df7285c2be",
+    "architecture": {
+        "64bit": {
+            "url": "http://download.deluge-torrent.org/windows/deluge-2.2.0-win64-setup.exe#/dl.7z",
+            "hash": "b2e414dd9cf637d3ea9f5b783972bb36cbb801134b6df79d67c1c08f68f4e889"
+        },
+        "32bit": {
+            "url": "http://download.deluge-torrent.org/windows/deluge-2.2.0-win32-setup.exe#/dl.7z",
+            "hash": "c35dbaea459fad5a3e45910735c1fffdfbbeab24296a0820878312df7285c2be"
+        }
+    },
     "bin": [
         "deluge-console.exe",
         "deluge-web.exe",
@@ -18,9 +26,19 @@
     ],
     "checkver": {
         "url": "http://download.deluge-torrent.org/windows/?C=M;O=D",
-        "regex": "deluge-([\\d._-]+)-win32(.+?(?=\\.exe))"
+        "regex": "deluge-([\\d._-]+)-win(?:32|64)-setup\\.exe"
     },
     "autoupdate": {
-        "url": "http://download.deluge-torrent.org/windows/deluge-$version-win32$match2.exe#/dl.7z"
+        "architecture": {
+            "64bit": {
+                "url": "http://download.deluge-torrent.org/windows/deluge-$version-win64-setup.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "http://download.deluge-torrent.org/windows/deluge-$version-win32-setup.exe#/dl.7z"
+            }
+        },
+        "hash": {
+            "url": "$url.sha256"
+        }
     }
 }
