@@ -55,8 +55,9 @@
         "# Persistence",
         "ensure \"$persist_dir\" | Out-Null",
         "ensure \"$persist_dir\\installed-files\" | Out-Null",
+        "$old_version = Select-CurrentVersion -AppName $app -Global:$global",
         "if (Test-Path \"$dir\\UX\\installed-files.csv\") {",
-        "    $csv = Import-Csv \"$dir\\UX\\installed-files.csv\" | Where-Object 'Version' -ne $version",
+        "    $csv = Import-Csv \"$dir\\UX\\installed-files.csv\" | Where-Object 'Version' -ne $old_version",
         "    if ($csv) {",
         "        $export = @()",
         "        $dirs = @()",
@@ -80,7 +81,8 @@
     "autoupdate": {
         "url": "https://github.com/AutoHotkey/AutoHotkey/releases/download/v$version/AutoHotkey_$version.zip",
         "hash": {
-            "url": "https://www.autohotkey.com/download/$majorVersion.$minorVersion/AutoHotkey_$version.zip.sha256"
+            "url": "https://github.com/AutoHotkey/AutoHotkey/releases/tag/v$version",
+            "regex": "$sha256</code>[\\s]+AutoHotkey_$version\\.zip"
         }
     }
 }
