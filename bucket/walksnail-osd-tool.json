@@ -1,0 +1,52 @@
+{
+    "version": "0.3.0",
+    "description": "Cross-platform tool for rendering the flight controller OSD and SRT data from the Walksnail Avatar HD FPV system on top of the goggle or VRX recording.",
+    "homepage": "https://github.com/avsaase/walksnail-osd-tool",
+    "license": "GPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/avsaase/walksnail-osd-tool/releases/download/v0.3.0/walksnail-osd-tool-windows.zip",
+            "hash": "4159566b1f9e4f00202f16912e5a0eb51a351af3e95fe7e589f8dff167f96dcf",
+            "installer": {
+                "script": [
+                    "$installer = \"$dir\\walksnail-osd-tool-$version-x86_64.msi\"",
+                    "$logFile = \"$dir\\install.log\"",
+                    "Start-Process msiexec -ArgumentList @(\"ADDLOCAL=Binaries\", \"APPLICATIONFOLDER=`\"$dir`\"\", '/i', \"$installer\", '/l*vx', \"$logFile\", '/passive') -Wait",
+                    "Remove-Item \"$installer\" -Force",
+                    "$code = (Select-String -Path \"$dir\\install.log\" -Pattern 'ProductCode = ' | ForEach-Object { $_.Line -replace '.*=\\s*', '' })",
+                    "Remove-Item \"$logFile\" -Force",
+                    "Set-Content -Path \"$dir\\ProductCode\" -Value $code"
+                ]
+            },
+            "post_install": [
+                "$code = Get-Content -Path \"$dir\\ProductCode\"",
+                "$userStartMenu = [System.Environment]::GetFolderPath('StartMenu')",
+                "$WshShell = New-Object -ComObject WScript.Shell",
+                "$shortcutPath = \"$userStartMenu\\Programs\\Scoop Apps\\Walksnail OSD Tool.lnk\"",
+                "$shortcut = $WshShell.CreateShortcut($shortcutPath)",
+                "$iconFile = \"$env:WINDIR\\Installer\\$code\\ProductICO\"",
+                "$iconIndex = 0",
+                "$shortcut.IconLocation = \"$iconFile,$iconIndex\"",
+                "$shortcut.Save()"
+            ],
+            "pre_uninstall": [
+                "$code = Get-Content -Path \"$dir\\ProductCode\"",
+                "Start-Process msiexec -ArgumentList @('/x', \"$code\", '/passive') -Wait"
+            ]
+        }
+    },
+    "checkver": "github",
+    "shortcuts": [
+        [
+            "bin\\walksnail-osd-tool.exe",
+            "Walksnail OSD Tool"
+        ]
+    ],
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/avsaase/walksnail-osd-tool/releases/download/v$version/walksnail-osd-tool-windows.zip"
+            }
+    }
+    }
+}

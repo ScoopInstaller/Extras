@@ -57,7 +57,8 @@
         "$file = 'BCColors.xml'",
         "if (!(Test-Path \"$persist_dir\\$file\")) {",
         "   New-Item \"$dir\\$file\" -ItemType File | Out-Null",
-        "}"
+        "}",
+        "if (Test-Path \"$persist_dir\\BC5Key.txt\") { Copy-Item \"$persist_dir\\BC5Key.txt\" \"$dir\" }"
     ],
     "persist": [
         "BCPreferences.xml",
@@ -65,7 +66,7 @@
         "BCColors.xml"
     ],
     "pre_uninstall": [
-        "'BCPreferences.xml', 'BCState.xml', 'BCColors.xml' | ForEach-Object {",
+        "'BCPreferences.xml', 'BCState.xml', 'BCColors.xml', 'BC5Key.txt' | ForEach-Object {",
         "   if (Test-Path \"$dir\\$_\") {",
         "       Move-Item \"$dir\\$_\" \"$persist_dir\\$_\" -Force -ErrorAction SilentlyContinue",
         "   } else {",
