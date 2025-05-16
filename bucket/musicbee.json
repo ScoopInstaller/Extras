@@ -9,11 +9,17 @@
     "url": "https://www.videohelp.com/download/MusicBeePortable_3_6.zip",
     "hash": "aff35dc919b4a620847ca0c5269d1d75e93bf96bcabcbbdc0d058ce3e1d82c5d",
     "pre_install": [
-        "(Get-ChildItem \"$dir\" 'MusicBee*.exe').FullName | Expand-7zipArchive -DestinationPath \"$dir\" -Removal",
-        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse",
-        "foreach ($user_folders in 'BBplugin', 'Equaliser', 'Plugins', 'Skins') {",
-        "   Copy-Item \"$persist_dir\\$user_folders\\*\" \"$dir\\$user_folders\" -ErrorAction 'SilentlyContinue' -Recurse",
-        "}"
+        "(Get-ChildItem \"$dir\" 'MusicBee*.exe').FullName | Expand-7zipArchive -DestinationPath \"$dir\" -Removal"
+    ],
+    "post_install": [
+        "# If plugins, skins, eq presets, etc. have updates, ensure they're copied after persisting.",
+        "@('BBplugin', 'Equaliser', 'Plugins', 'Skins') | ForEach-Object {",
+        "    if (Test-Path \"$dir\\$_.original\") {",
+        "        Copy-Item \"$dir\\$_.original\\*\" \"$persist_dir\\$_\" -Force -Recurse",
+        "        Remove-Item \"$dir\\$_.original\" -Force -Recurse | Out-Null",
+        "    }",
+        "}",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse"
     ],
     "bin": "MusicBee.exe",
     "shortcuts": [
@@ -23,13 +29,12 @@
         ]
     ],
     "persist": [
+        "AppData",
+        "BBplugin",
+        "Equaliser",
         "Library",
-        "AppData"
-    ],
-    "pre_uninstall": [
-        "foreach ($user_folders in 'BBplugin', 'Equaliser', 'Plugins', 'Skins') {",
-        "   Copy-Item \"$dir\\$user_folders\\*\" \"$persist_dir\\$user_folders\" -ErrorAction 'SilentlyContinue' -Recurse",
-        "}"
+        "Plugins",
+        "Skins"
     ],
     "checkver": {
         "url": "https://www.videohelp.com/software/MusicBee",
