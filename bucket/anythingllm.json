@@ -1,0 +1,55 @@
+{
+    "version": "1.7.3-r2",
+    "description": "The all-in-one Desktop & Docker AI application with built-in RAG, AI agents, and more.",
+    "homepage": "https://anythingllm.com",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Mintplex-Labs/anything-llm/releases/download/v1.4.0/AnythingLLMDesktop.exe#/dl.7z",
+            "hash": "265b89855c776cc713ed2bc9bc878486a118460a11a60bea0e3f2aa76c07f9c2",
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$*\", \"$dir\\Unintall*\" -Recurse"
+            ]
+        },
+        "arm64": {
+            "url": "https://github.com/Mintplex-Labs/anything-llm/releases/download/v1.4.0/AnythingLLMDesktop-Arm64.exe#/dl.7z",
+            "hash": "b21b7b5fcad87110e9bd880946ad69daf4601ede4ce8c24874147e19db0ee8df",
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$*\", \"$dir\\Unintall*\" -Recurse"
+            ]
+        }
+    },
+    "shortcuts": [
+        [
+            "AnythingLLM.exe",
+            "AnythingLLM"
+        ]
+    ],
+    "checkver": {
+        "url": "https://github.com/Mintplex-Labs/anything-llm/releases/latest",
+        "script": [
+            "$response = (Invoke-WebRequest -Uri $url -UseBasicParsing -Method Head).BaseResponse",
+            "$release = if ($response.RequestMessage) {",
+            "    $response.RequestMessage.RequestUri.Segments[-1]",
+            "} else {",
+            "    $response.ResponseUri.Segments[-1]",
+            "}",
+            "$version_txt = 'https://github.com/Mintplex-Labs/anything-llm/releases/download/' + $release + '/version.txt'",
+            "$version = (Invoke-RestMethod -Uri $version_txt -UseBasicParsing).Trim()",
+            "Write-Output $version $release"
+        ],
+        "regex": "(\\S+) (?<release>\\S+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Mintplex-Labs/anything-llm/releases/download/$matchRelease/AnythingLLMDesktop.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/Mintplex-Labs/anything-llm/releases/download/$matchRelease/AnythingLLMDesktop-Arm64.exe#/dl.7z"
+            }
+        }
+    }
+}

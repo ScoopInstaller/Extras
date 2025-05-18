@@ -1,11 +1,15 @@
 {
-    "version": "12612114396",
+    "version": "15087293494",
     "description": "A free form data organizer and a replacement for spreadsheets, mind mappers, outliners, PIMs, text editors and small databases.",
     "homepage": "https://strlen.com/treesheets",
     "license": "ZLIB",
-    "url": "https://github.com/aardappel/treesheets/releases/download/12612114396/windows_treesheets_no_installer.zip",
-    "hash": "16bc6acd0ac3d1da49b0006e5bcae892c2a0e877bd61efcf8b71d35b8c9e5ea6",
-    "extract_dir": "TS",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/aardappel/treesheets/releases/download/15087293494/TreeSheets-250517.1705-win64.zip",
+            "hash": "d4473825e316d404034498665f25ed91a801fd8bd1afa7b5f2e4d9457bca4fe9",
+            "extract_dir": "TreeSheets-250517.1705-win64"
+        }
+    },
     "pre_install": [
         "ensure \"$persist_dir\" | Out-Null",
         "if (Test-Path \"$persist_dir\\TreeSheets.ini\") {",
@@ -21,9 +25,16 @@
     ],
     "pre_uninstall": "if (Test-Path \"$dir\\TreeSheets.ini\") { Copy-Item \"$dir\\TreeSheets.ini\" \"$persist_dir\" }",
     "checkver": {
-        "github": "https://github.com/aardappel/treesheets"
+        "url": "https://api.github.com/repositories/10671623/releases/latest",
+        "jsonpath": "$..browser_download_url",
+        "regex": "download/(\\d+)\\/TreeSheets-(?<date>[\\d.]+)-win64\\.zip"
     },
     "autoupdate": {
-        "url": "https://github.com/aardappel/treesheets/releases/download/$version/windows_treesheets_no_installer.zip"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/aardappel/treesheets/releases/download/$version/TreeSheets-$matchDate-win64.zip",
+                "extract_dir": "TreeSheets-$matchDate-win64"
+            }
+        }
     }
 }
