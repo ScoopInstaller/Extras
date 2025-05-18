@@ -19,10 +19,16 @@
     "installer": {
         "script": [
             "Start-Process -Wait \"$dir\\$fname\" -ArgumentList '/extract', \"`\"$dir`\"\"",
-            "# Disable built-in updater",
-            "Remove-Item -ErrorAction Ignore -Recurse \"$env:LOCALAPPDATA\\Spotify\\Update\" | Out-Null",
-            "$updateFile = New-Item -Path \"$env:LOCALAPPDATA\\Spotify\" -Name Update -ItemType File -Value \"Disabled by Scoop\" -Force",
-            "$updatefile.Attributes = 'ReadOnly', 'System'",
+            
+            "## Blocking the built-in autoupdater ##",
+            "# Delete any remnant file or directory called Update, if present (first grant delete privileges to self)",
+            "    $updateFile = \"$env:LOCALAPPDATA\\Spotify\\Update\"",
+            "    icacls \"$updateFile\" /grant \"${env:username}:d\" /c 2>&1 | Out-Null",
+            "    Remove-Item -Recurse -Force \"$updateFile\" -ErrorAction SilentlyContinue | Out-Null",
+            "# Create a file called Update and deny delete privileges to self",
+            "    New-Item -Path \"$updateFile\" -ItemType File -Value \"Created by Scoop to block the built-in autoupdater.\" -Force -ErrorAction SilentlyContinue | Out-Null",
+            "    icacls \"$updateFile\" /deny \"${env:username}:d\" /c 2>&1 | Out-Null",
+            
             "Remove-Item \"$dir\\$fname\", \"$dir\\SpotifyMigrator.exe\" -ErrorAction SilentlyContinue"
         ]
     },
@@ -34,8 +40,11 @@
     ],
     "uninstaller": {
         "script": [
-            "$updateFile = \"$env:LOCALAPPDATA\\Spotify\\update\"",
-            "Remove-Item $updateFile -Force -ErrorAction SilentlyContinue",
+            "# Delete any remnant file or directory called Update, if present (first grant delete privileges to self)",
+            "    $updateFile = \"$env:LOCALAPPDATA\\Spotify\\Update\"",
+            "    icacls \"$updateFile\" /grant \"${env:username}:d\" /c 2>&1 | Out-Null",
+            "    Remove-Item -Recurse -Force \"$updateFile\" -ErrorAction SilentlyContinue | Out-Null",
+            
             "if ($cmd -ne 'uninstall') { return }",
             "Start-Process -Wait \"$dir\\Spotify.exe\" -ArgumentList '/Uninstall', '/Silent'"
         ]
