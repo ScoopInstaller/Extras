@@ -108,3 +108,5 @@ if ($PSVersionTable.PSVersion.Major -ge 6) { Import-Module Appx -UseWindowsPower
 Add-AppxPackage -Path '{{scoop_dir}}\ImageResizerContextMenuPackage.msix' -ExternalLocation '{{scoop_dir}}' | Out-Null
 
 Add-AppxPackage -Path '{{scoop_dir}}\WinUI3Apps\PowerRenameContextMenuPackage.msix' -ExternalLocation '{{scoop_dir}}\WinUI3Apps' | Out-Null
+
+Add-AppxPackage -Path '{{scoop_dir}}\WinUI3Apps\CmdPal\Microsoft.CmdPal.UI_0.2.0.0_x64.msix' -ExternalLocation '{{scoop_dir}}\WinUI3Apps\CmdPal' | Out-Null
