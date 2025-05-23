@@ -23,8 +23,12 @@
     ],
     "persist": "profile",
     "checkver": {
-        "url": "https://www.betterbird.eu/downloads/sha256-128.txt",
-        "regex": "BetterbirdPortable-([\\d.]+esr-\\w{4}(-build[\\d]+)?).en-US.win64.zip"
+        "script": [
+            "$url = 'https://www.betterbird.eu/downloads/get.php?os=win&lang=en-US&version=release&portable=true'",
+            "$location = (Invoke-WebRequest -Uri $url -MaximumRedirection 0 -SkipHttpErrorCheck -ErrorAction SilentlyContinue).Headers.Location",
+            "Write-Output $location"
+        ],
+        "regex": "BetterbirdPortable-([\\d.]+.+).en-US.win64.zip"
     },
     "autoupdate": {
         "architecture": {
