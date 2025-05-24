@@ -11,15 +11,9 @@
         "}",
         "if (Test-PATH \"$persist_dir\\HWiNFO64_KEY.txt\" -PathType Leaf) {",
         "    Copy-Item \"$persist_dir\\HWiNFO64_KEY.txt\" \"$dir\"",
-        "}"
-    ],
-    "pre_uninstall": [
-        "if (Test-PATH \"$dir\\HWiNFO64_KEY.txt\" -PathType Leaf) {",
-        "    if (Test-PATH \"$persist_dir\\HWiNFO64_KEY.txt\" -PathType Container) {",
-        "        Remove-Item \"$persist_dir\\HWiNFO64_KEY.txt\" -Recurse",
-        "    }",
-        "    Copy-Item \"$dir\\HWiNFO64_KEY.txt\" \"$persist_dir\"",
-        "}"
+        "}",
+        "# Remove unwanted executable for x86/x64 installation",
+        "if ($architecture -ne 'arm64') { Remove-Item \"$dir\\HWiNFO_ARM64.exe\" }"
     ],
     "architecture": {
         "64bit": {
@@ -68,6 +62,14 @@
     "persist": [
         "HWiNFO64.INI",
         "HWiNFO32.INI"
+    ],
+    "pre_uninstall": [
+        "if (Test-PATH \"$dir\\HWiNFO64_KEY.txt\" -PathType Leaf) {",
+        "    if (Test-PATH \"$persist_dir\\HWiNFO64_KEY.txt\" -PathType Container) {",
+        "        Remove-Item \"$persist_dir\\HWiNFO64_KEY.txt\" -Recurse",
+        "    }",
+        "    Copy-Item \"$dir\\HWiNFO64_KEY.txt\" \"$persist_dir\"",
+        "}"
     ],
     "checkver": {
         "url": "https://www.hwinfo.com/ver.txt",
