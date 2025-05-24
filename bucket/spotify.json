@@ -19,7 +19,6 @@
     "installer": {
         "script": [
             "Start-Process -Wait \"$dir\\$fname\" -ArgumentList '/extract', \"`\"$dir`\"\"",
-            
             "## Blocking the built-in autoupdater ##",
             "# Delete any remnant file or directory called Update, if present (first grant delete privileges to self)",
             "    $updateFile = \"$env:LOCALAPPDATA\\Spotify\\Update\"",
@@ -29,7 +28,6 @@
             "    New-Item -Path \"$updateFile\" -ItemType File -Value \"Created by Scoop to block the built-in autoupdater.\" -Force -ErrorAction SilentlyContinue | Out-Null",
             "    Set-ItemProperty -Path \"$updateFile\" -Name IsReadOnly -Value $true -ErrorAction SilentlyContinue | Out-Null",
             "    icacls \"$updateFile\" /deny \"${env:username}:D\" /c 2>&1 | Out-Null",
-            
             "Remove-Item \"$dir\\$fname\", \"$dir\\SpotifyMigrator.exe\" -ErrorAction SilentlyContinue"
         ]
     },
@@ -45,7 +43,6 @@
             "    $updateFile = \"$env:LOCALAPPDATA\\Spotify\\Update\"",
             "    icacls \"$updateFile\" /grant \"${env:username}:D\" /c 2>&1 | Out-Null",
             "    Remove-Item -Recurse -Force \"$updateFile\" -ErrorAction SilentlyContinue | Out-Null",
-            
             "if ($cmd -ne 'uninstall') { return }",
             "Start-Process -Wait \"$dir\\Spotify.exe\" -ArgumentList '/Uninstall', '/Silent'"
         ]
