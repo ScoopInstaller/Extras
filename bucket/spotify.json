@@ -23,11 +23,12 @@
             "## Blocking the built-in autoupdater ##",
             "# Delete any remnant file or directory called Update, if present (first grant delete privileges to self)",
             "    $updateFile = \"$env:LOCALAPPDATA\\Spotify\\Update\"",
-            "    icacls \"$updateFile\" /grant \"${env:username}:d\" /c 2>&1 | Out-Null",
+            "    icacls \"$updateFile\" /grant \"${env:username}:D\" /c 2>&1 | Out-Null",
             "    Remove-Item -Recurse -Force \"$updateFile\" -ErrorAction SilentlyContinue | Out-Null",
-            "# Create a file called Update and deny delete privileges to self",
+            "# Create a readonly file called Update and deny delete privileges to self",
             "    New-Item -Path \"$updateFile\" -ItemType File -Value \"Created by Scoop to block the built-in autoupdater.\" -Force -ErrorAction SilentlyContinue | Out-Null",
-            "    icacls \"$updateFile\" /deny \"${env:username}:d\" /c 2>&1 | Out-Null",
+            "    Set-ItemProperty -Path \"$updateFile\" -Name IsReadOnly -Value $true -ErrorAction SilentlyContinue | Out-Null",
+            "    icacls \"$updateFile\" /deny \"${env:username}:D\" /c 2>&1 | Out-Null",
             
             "Remove-Item \"$dir\\$fname\", \"$dir\\SpotifyMigrator.exe\" -ErrorAction SilentlyContinue"
         ]
@@ -42,7 +43,7 @@
         "script": [
             "# Delete any remnant file or directory called Update, if present (first grant delete privileges to self)",
             "    $updateFile = \"$env:LOCALAPPDATA\\Spotify\\Update\"",
-            "    icacls \"$updateFile\" /grant \"${env:username}:d\" /c 2>&1 | Out-Null",
+            "    icacls \"$updateFile\" /grant \"${env:username}:D\" /c 2>&1 | Out-Null",
             "    Remove-Item -Recurse -Force \"$updateFile\" -ErrorAction SilentlyContinue | Out-Null",
             
             "if ($cmd -ne 'uninstall') { return }",
