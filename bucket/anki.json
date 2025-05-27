@@ -11,6 +11,12 @@
     },
     "pre_install": [
         "@(",
+        "    $appData = \"$env:APPDATA\\Anki2\"",
+        "    $persistData = \"$persist_dir\\data\"",
+        "    if (Test-Path $appData -PathType Container -and -not (Test-Path $persistData -PathType Container)) {",
+        "        Write-Host \"Linking $appData to $persistData...\"",
+        "        cmd /c mklink /D \"$persistData\" \"$appData\" | Out-Null",
+        "    }",
         "    '@echo off'",
         "    'SET _allParams=\"%*\"'",
         "    'IF /i %_allParams:-b =%==%_allParams% ('",
