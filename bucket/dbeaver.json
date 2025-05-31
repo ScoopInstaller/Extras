@@ -27,6 +27,27 @@
             "DBeaver"
         ]
     ],
+    "persist": ["DBeaverData"],
+    "post_install": [
+      "Write-Host \"Old config locations: ~/.dbeaver ~/.dbeaver4 . See more at https://dbeaver.com/docs/dbeaver/Workspace-Location/\"",
+      "Write-Host \"Testing if the persist directory exists at $persist_dir\\DBeaverData...\"",
+      "if (!(Test-Path \"$persist_dir\\DBeaverData\")) {",
+      "  if (Test-Path \"$env:APPDATA\\DBeaverData\") {",
+      "    Write-Host \"Moving existing DBeaverData from $env:APPDATA\\DBeaverData to $persist_dir\\DBeaverData...\"",
+      "    Move-Item \"$env:APPDATA\\DBeaverData\\*\" \"$persist_dir\\DBeaverData\" -Force",
+      "    Write-Host \"Removing original DBeaverData directory at $env:APPDATA\\DBeaverData...\"",
+      "    Remove-Item \"$env:APPDATA\\DBeaverData\" -Force",
+      "  }else{",
+      "    Write-Host \"Creating persist directory at $persist_dir\\DBeaverData...\"",
+      "    New-Item \"$persist_dir\\DBeaverData\" -ItemType Directory",
+      "  }",
+      "}",
+      "if (!(Test-Path \"$env:APPDATA\\DBeaverData\")) {",
+      "  Write-Host \"Creating symbolic link for DBeaverData at $env:APPDATA\\DBeaverData pointing to $persist_dir\\DBeaverData...\"",
+      "  New-Item \"$env:APPDATA\\DBeaverData\" -ItemType SymbolicLink -Target \"$persist_dir\\DBeaverData\"",
+      "}"
+    ],
+    "post_uninstall": ["Remove-Item \"$env:APPDATA\\DBeaverData\" -Force"],
     "checkver": {
         "github": "https://github.com/dbeaver/dbeaver"
     },
