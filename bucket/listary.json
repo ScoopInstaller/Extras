@@ -5,13 +5,32 @@
     "license": "Shareware",
     "url": "https://www.listary.com/download/Listary.exe?version=6.3.2.88#/dl.exe",
     "hash": "3a23a01c8fcc70298e9f6f9d7c070c88d1da5eb441bcb422ef97f86a5710eb71",
-    "innosetup": true,
     "shortcuts": [
         [
             "Listary.exe",
             "Listary"
         ]
     ],
+    "installer": {
+        "script": [
+            "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
+            "$install_args = @('/VERYSILENT', '/SUPPRESSMSGBOXES', \"/DIR=`\"$dir`\"\")",
+            "# The -Wait parameter cannot be used in this case, as the installer may spawn child processes",
+            "$install_process = Start-Process \"$dir\\$fname\" -ArgumentList $install_args -PassThru -ErrorAction SilentlyContinue",
+            "$install_process | Wait-Process -ErrorAction SilentlyContinue"
+        ]
+    },
+    "pre_uninstall": [
+        "if (!(is_admin)) {error \"$app requires admin rights to $cmd\"; break}",
+        "Stop-Process -Name 'Listary*' -Force -ErrorAction SilentlyContinue",
+        "Stop-Service -Name 'Listary*' -Force -ErrorAction SilentlyContinue",
+        "Start-Sleep -Seconds 3"
+    ],
+    "uninstaller": {
+        "script": [
+            "Start-Process \"$dir\\unins000.exe\" -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES') -Wait -ErrorAction SilentlyContinue"
+        ]
+    },
     "checkver": {
         "url": "https://www.listary.com/download",
         "regex": ">V([\\d.]+)"
