@@ -1,0 +1,41 @@
+{
+    "version": "3.0.0-preview.37",
+    "description": "Elegant audio player that simplifies organizing and listening to music",
+    "homepage": "https://digimezzo.github.io/site/",
+    "license": "MIT",
+    "url": "https://github.com/digimezzo/dopamine/releases/download/v3.0.0-preview.37/Dopamine-3.0.0-preview.37.exe",
+    "hash": "8cb4c6eaa82234d0f423ca7b787e635f40d38d6594002e741561527721630f3e",
+    "installer": {
+        "script": [
+            "Start-Process -Wait -FilePath \"$dir\\Dopamine-*.exe\" -ArgumentList \"/S\", \"/D=$dir\" -NoNewWindow -PassThru",
+            "Remove-Item \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Dopamine*.lnk\" -ErrorAction SilentlyContinue",
+            "Remove-Item \"$env:PROGRAMDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Dopamine*.lnk\" -ErrorAction SilentlyContinue",
+            "Remove-Item \"$env:USERPROFILE\\Desktop\\Dopamine*.lnk\" -ErrorAction SilentlyContinue",
+            "$UninstallPath = 'HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall';",
+            "Get-ChildItem -Path $UninstallPath | Where-Object {",
+            "    ($_ | Get-ItemProperty).DisplayName -like '*Dopamine*'",
+            "} | ForEach-Object {",
+            "    Remove-Item -Path $_.PSPath -Recurse -Force -ErrorAction SilentlyContinue",
+            "}",
+            "Remove-Item \"$dir\\Dopamine-*.exe\" -Force"
+        ]
+    },
+    "bin": [
+        "Dopamine.exe"
+    ],
+    "shortcuts": [
+        [
+            "Dopamine.exe",
+            "Dopamine"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/digimezzo/dopamine"
+    },
+    "autoupdate": {
+        "url": "https://github.com/digimezzo/dopamine/releases/download/v$version/Dopamine-$version.exe",
+        "hash": {
+            "url": "$baseurl.sha256"
+        }
+    }
+}
