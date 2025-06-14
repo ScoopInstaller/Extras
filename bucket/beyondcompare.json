@@ -54,23 +54,32 @@
         "   $CONT = @('<BCPreferences Version=\"2\" MinVersion=\"2\"><TBcPrefs><CheckForUpdatesDayAmt Value=\"0\"/></TBcPrefs></BCPreferences>')",
         "   Set-Content \"$dir\\$file\" $CONT -Encoding Ascii",
         "}",
-        "$file = 'BCColors.xml'",
-        "if (!(Test-Path \"$persist_dir\\$file\")) {",
-        "   New-Item \"$dir\\$file\" -ItemType File | Out-Null",
-        "}",
-        "if (Test-Path \"$persist_dir\\BC5Key.txt\") { Copy-Item \"$persist_dir\\BC5Key.txt\" \"$dir\" }"
+        "'BCColors.xml', 'BCCommands.xml', 'BCFileFormats.xml', 'BC5Key.txt' | ForEach-Object {",
+        "   if (!(Test-Path \"$persist_dir\\$_\")) {",
+        "      New-Item \"$dir\\$_\" -ItemType File | Out-Null",
+        "   }",
+        "}"
     ],
     "persist": [
+        "Helpers",
+        "Packers",
+        "BCColors.xml",
+        "BCCommands.xml",
+        "BCFileFormats.xml",
         "BCPreferences.xml",
         "BCState.xml",
-        "BCColors.xml"
+        "BC5Key.txt"
     ],
     "pre_uninstall": [
-        "'BCPreferences.xml', 'BCState.xml', 'BCColors.xml', 'BC5Key.txt' | ForEach-Object {",
+        "'Helpers', 'Packers' | ForEach-Object {",
+        "    if ((Test-Path \"$dir\\$_\") -And !((Get-Item -Path \"$dir\\$_\" -Force).LinkType -eq \"Junction\")) {",
+        "        New-Item \"$dir\\$_\" -ItemType Directory -ErrorAction Ignore | Out-Null",
+        "        Get-ChildItem -Path \"$dir\\$_\" -Recurse | Move-Item -Destination \"$persist_dir\\$_\" -Force",
+        "    }",
+        "}",
+        "'BCColors.xml', 'BCCommands.xml', 'BCFileFormats.xml', 'BCPreferences.xml', 'BCState.xml', 'BC5Key.txt' | ForEach-Object {",
         "   if (Test-Path \"$dir\\$_\") {",
-        "       Move-Item \"$dir\\$_\" \"$persist_dir\\$_\" -Force -ErrorAction SilentlyContinue",
-        "   } else {",
-        "       Remove-Item \"$persist_dir\\$_\" -Force -ErrorAction SilentlyContinue",
+        "       Move-Item \"$dir\\$_\" \"$persist_dir\\$_\" -Force",
         "   }",
         "}"
     ],
