@@ -1,0 +1,96 @@
+{
+    "version": "1.0.26062",
+    "description": "ADB Explorer – GUI file browser for ADB-connected devices",
+    "homepage": "https://github.com/Alex4SSB/ADB-Explorer",
+    "license": "MIT",
+    "depends": "main/adb",
+    "suggest": {
+        ".NET Desktop Runtime 10": "versions/windowsdesktop-runtime-10.0"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Alex4SSB/ADB-Explorer/releases/download/v1.0.26062/ADB_Explorer_1.0.26062_x64.7z",
+            "hash": "a8a548cc3137459be80deb43c13c8a22dafe6159ca482ae6e0c065e99661b5a6"
+        },
+        "arm64": {
+            "url": "https://github.com/Alex4SSB/ADB-Explorer/releases/download/v1.0.26062/ADB_Explorer_1.0.26062_ARM64.7z",
+            "hash": "c8d85e1cdc468ffb05e97263ee858db016e6e8306413a2b4c57c18c238cab3ed"
+        }
+    },
+    "pre_install": [
+        "$subdir = Get-ChildItem \"$dir\\net*\" -Directory | Select-Object -First 1",
+        "if (-not $subdir) { throw 'Expected extracted net* directory was not found.' }",
+        "Move-Item \"$($subdir.FullName)\\*\" $dir -Force",
+        "Remove-Item $subdir.FullName -Recurse -Force",
+        "if (!(Test-Path \"$dir\\settings.json\") -and !(Test-Path \"$persist_dir\\settings.json\")) { '{}' | Set-Content \"$dir\\settings.json\" }"
+    ],
+    "post_install": [
+        "$configPath = \"$dir\\settings.json\"",
+        "$adbPath = \"$scoopdir\\apps\\adb\\current\\platform-tools\\adb.exe\"",
+        "",
+        "if (Test-Path $configPath) {",
+        "    try {",
+        "        $json = Get-Content $configPath -Raw | ConvertFrom-Json",
+        "    } catch {",
+        "        $json = New-Object PSObject",
+        "    }",
+        "} else {",
+        "    $json = New-Object PSObject",
+        "}",
+        "",
+        "$settings = @{",
+        "    CheckForUpdates = $false",
+        "    ManualAdbPath = $adbPath",
+        "}",
+        "",
+        "foreach ($setting in $settings.GetEnumerator()) {",
+        "    if ($json.PSObject.Properties[$setting.Key]) {",
+        "        $json.($setting.Key) = $setting.Value",
+        "    } else {",
+        "        $json | Add-Member -MemberType NoteProperty -Name $setting.Key -Value $setting.Value",
+        "    }",
+        "}",
+        "",
+        "$json | ConvertTo-Json -Depth 10 -compress | Set-Content $configPath"
+    ],
+    "bin": [
+        [
+            "ADB Explorer.exe",
+            "adbexplorer",
+            "$persist_dir\\settings.json"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "ADB Explorer.exe",
+            "ADB Explorer",
+            "$persist_dir\\settings.json"
+        ]
+    ],
+    "persist": "settings.json",
+    "pre_uninstall": [
+        "Write-Host '  '",
+        "Write-Host '========================================'",
+        "Write-Host '    ADB Explorer uninstall warning'",
+        "Write-Host '========================================'",
+        "Write-Host '  If uninstall fails due to directory locking:'",
+        "Write-Host \"  Error message: Couldn't remove '~\\scoop\\apps\\adbexplorer\\...' it may be in use\"",
+        "Write-Host '  '",
+        "Write-Host '  Fix:'",
+        "Write-Host '  1. Close all adb.exe processes (Task Manager)'",
+        "Write-Host '  2. Retry uninstall:'",
+        "Write-Host '   scoop uninstall adbexplorer'",
+        "Write-Host '  '"
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Alex4SSB/ADB-Explorer/releases/download/v$version/ADB_Explorer_$version_x64.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/Alex4SSB/ADB-Explorer/releases/download/v$version/ADB_Explorer_$version_ARM64.7z"
+            }
+        }
+    }
+}
