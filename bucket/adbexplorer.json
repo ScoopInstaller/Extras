@@ -1,0 +1,60 @@
+{
+    "version": "0.9.25090",
+    "description": "ADB Explorer – GUI file browser for ADB-connected devices",
+    "homepage": "https://github.com/Alex4SSB/ADB-Explorer",
+    "license": "MIT",
+    "depends": "main/adb",
+    "suggest": {
+        ".NET Desktop Runtime 9.0": "extras/windowsdesktop-runtime"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Alex4SSB/ADB-Explorer/releases/download/v0.9.25090/ADB_Explorer_0.9.25090_x64.7z",
+            "hash": "5a409c45971b11b400c236d1450957e5762440ae68507e82622dd111d04f1466"
+        },
+        "arm64": {
+            "url": "https://github.com/Alex4SSB/ADB-Explorer/releases/download/v0.9.25090/ADB_Explorer_0.9.25090_ARM64.7z",
+            "hash": "6c49a0cb0fdc2268ccf957ab0f7e7038be4c0155d4ab7b4238f3efa0bb777e93"
+        }
+    },
+    "pre_install": [
+        "$subdir = Get-ChildItem \"$dir\\net*\" -Directory | Select-Object -First 1",
+        "Move-Item \"$($subdir.FullName)\\*\" $dir -Force",
+        "Remove-Item $subdir.FullName -Recurse -Force",
+        "if (!(Test-Path \"$dir\\App.txt\") -and !(Test-Path \"$persist_dir\\App.txt\")) { New-Item \"$dir\\App.txt\" -ItemType File | Out-Null }"
+    ],
+    "post_install": [
+        "$configPath = \"$dir\\App.txt\"",
+        "$lines = @()",
+        "if (Test-Path $configPath) { $lines = Get-Content $configPath | Where-Object { $_ -notmatch '^CheckForUpdates\\s*:' } }",
+        "$lines += 'CheckForUpdates:false;'",
+        "Set-Content -Path $configPath -Value $lines"
+    ],
+    "bin": [
+        [
+            "ADB Explorer.exe",
+            "adbexplorer",
+            "$dir"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "ADB Explorer.exe",
+            "ADB Explorer",
+            "$dir"
+        ]
+    ],
+    "persist": "App.txt",
+    "pre_uninstall": "Get-Process adb -ErrorAction SilentlyContinue | Stop-Process -Force",
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Alex4SSB/ADB-Explorer/releases/download/v$version/ADB_Explorer_$version_x64.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/Alex4SSB/ADB-Explorer/releases/download/v$version/ADB_Explorer_$version_ARM64.7z"
+            }
+        }
+    }
+}
