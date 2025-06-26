@@ -9,7 +9,7 @@
             "hash": "sha512:5df041345ad4829eab0971ac0cd21cf611fbbaf8c5b1074e1d635f5f8b604fdf5ead3c40c0ebdb9464af06955d1ec0aa376eaa6db4d5b800c191cda35ee4435a",
             "pre_install": [
                 "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-                "Remove-Item \"$dir\\`$*\", \"$dir\\Unintall*\" -Recurse"
+                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Recurse"
             ]
         },
         "arm64": {
@@ -17,7 +17,7 @@
             "hash": "70f9a490f3ce110dac565570a1aa59fb461aeaa5b8d9cbea2ae57a848fda8c6c",
             "pre_install": [
                 "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" \"$dir\"",
-                "Remove-Item \"$dir\\`$*\", \"$dir\\Unintall*\" -Recurse"
+                "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Recurse"
             ]
         }
     },
@@ -28,15 +28,13 @@
         ]
     ],
     "post_install": [
-        "if (Test-Path \"$persist_dir\\data\\*\") {",
-        "    New-Item \"$Env:AppData\\CherryStudio\" -ItemType Directory -Force | Out-Null",
-        "    Copy-Item \"$persist_dir\\data\\*\" \"$Env:AppData\\CherryStudio\" -Recurse",
+        "if (!(Test-Path \"$Env:AppData\\CherryStudio\")) {",
+        "    New-Item \"$Env:AppData\\CherryStudio\" -ItemType SymbolicLink -Target \"$persist_dir\\data\" -Force | Out-Null",
         "}"
     ],
     "pre_uninstall": [
-        "if (Test-Path \"$Env:AppData\\CherryStudio\\*\") {",
-        "    Remove-Item \"$persist_dir\\data\" -Recurse -Force",
-        "    Move-Item \"$Env:AppData\\CherryStudio\" \"$persist_dir\\data\" -Force",
+        "if (Test-Path \"$Env:AppData\\CherryStudio\") {",
+        "    Remove-Item \"$Env:AppData\\CherryStudio\" -Force",
         "}"
     ],
     "persist": "data",
