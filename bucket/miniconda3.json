@@ -27,6 +27,10 @@
     "post_install": "Remove-Item \"$dir\\..\\setup.exe\" -Force | Out-Null",
     "uninstaller": {
         "script": [
+            "# Workaround for https://github.com/ScoopInstaller/Scoop/issues/4075#issuecomment-3010866414",
+            "# Remove junction point before executing the uninstaller, otherwise all envs will be removed by the uninstaller.",
+            "Invoke-ExternalCommand cmd -ArgumentList @('/c', 'rmdir', '/s', '/q', \"`\"$dir\\envs`\"\")",
+            "# Executing the uninstaller:",
             "Start-Process \"$dir\\Uninstall-Miniconda3.exe\" -ArgumentList '/S' -Wait | Out-Null",
             "# Create a 'dummy' to avoid error because the uninstaller removes the symlink. The does not affect persist.",
             "if (!(Test-Path \"$dir\\envs\")) { New-Item \"$dir\\envs\" -ItemType Directory | Out-Null }"
