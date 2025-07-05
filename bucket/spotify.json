@@ -19,11 +19,25 @@
     "installer": {
         "script": [
             "Start-Process -Wait \"$dir\\$fname\" -ArgumentList '/extract', \"`\"$dir`\"\"",
-            "# Disable built-in updater",
-            "Remove-Item -ErrorAction Ignore -Recurse \"$env:LOCALAPPDATA\\Spotify\\Update\" | Out-Null",
-            "$updateFile = New-Item -Path \"$env:LOCALAPPDATA\\Spotify\" -Name Update -ItemType File -Value \"Disabled by Scoop\" -Force",
-            "$updatefile.Attributes = 'ReadOnly', 'System'",
-            "Remove-Item \"$dir\\$fname\", \"$dir\\SpotifyMigrator.exe\" -ErrorAction SilentlyContinue"
+            "Remove-Item \"$dir\\$fname\", \"$dir\\SpotifyMigrator.exe\" -ErrorAction SilentlyContinue",
+            "",
+            "## Steps to block the built-in autoupdater ##",
+            "    $updateFile = \"$env:LOCALAPPDATA\\Spotify\\Update\"",
+            "# Delete any remnant file or directory called Update (including modify-protected), unless it is readonly or hidden",
+            "    Remove-Item -Path \"$updateFile\" -Recurse -ErrorAction SilentlyContinue | Out-Null",
+            "# Delete any remnant file or directory called Update (including readonly), unless it is modify-protected",
+            "    Remove-Item -Path \"$updateFile\" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null",
+            "# Exit if there already exists an autoupdate-blocking file called Update",
+            "    if (Test-Path -Path \"$updateFile\") { return }",
+            "# Create a file called Update",
+            "    New-Item -Path \"$updateFile\" -ItemType File -Value \"Created by Scoop to block the built-in autoupdater.\" -Force -ErrorAction SilentlyContinue | Out-Null",
+            "# Make the file readonly",
+            "    Set-ItemProperty -Path \"$updateFile\" -Name IsReadOnly -Value $true -ErrorAction SilentlyContinue | Out-Null",
+            "# Make the file modify-protected from self",
+            "    $Ace = New-Object System.Security.AccessControl.FileSystemAccessRule(\"${env:username}\", \"Modify\", \"Deny\")",
+            "    $Acl = New-Object System.Security.AccessControl.FileSecurity",
+            "    $Acl.AddAccessRule($Ace)",
+            "    Set-Acl -Path \"$updateFile\" -AclObject $Acl -ErrorAction SilentlyContinue | Out-Null"
         ]
     },
     "shortcuts": [
@@ -34,9 +48,18 @@
     ],
     "uninstaller": {
         "script": [
-            "$updateFile = \"$env:LOCALAPPDATA\\Spotify\\update\"",
-            "Remove-Item $updateFile -Force -ErrorAction SilentlyContinue",
             "if ($cmd -ne 'uninstall') { return }",
+            "",
+            "## Undoing the steps to block the built-in autoupdater ##",
+            "    $updateFile = \"$env:LOCALAPPDATA\\Spotify\\Update\"",
+            "# Remove modify-protection for the Update file",
+            "    $Ace = New-Object System.Security.AccessControl.FileSystemAccessRule(\"${env:username}\", \"Modify\", \"Deny\")",
+            "    $Acl = New-Object System.Security.AccessControl.FileSecurity",
+            "    $Acl.RemoveAccessRule($Ace)",
+            "    Set-Acl -Path \"$updateFile\" -AclObject $Acl -ErrorAction SilentlyContinue | Out-Null",
+            "# Delete the Update file",
+            "    Remove-Item -Path \"$updateFile\" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null",
+            "",
             "Start-Process -Wait \"$dir\\Spotify.exe\" -ArgumentList '/Uninstall', '/Silent'"
         ]
     },
