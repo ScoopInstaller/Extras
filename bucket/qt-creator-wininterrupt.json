@@ -14,7 +14,7 @@
             "hash": "md5:497d5711539b61c9873777abd16293c3"
         }
     },
-    "post_install": "New-Item \"$(appdir qt-creator $global)\\current\\bin\\$((Get-Item $dir\\bin\\win*interrupt.exe).Name)\" -ItemType HardLink -Target \"$dir\\bin\\$((Get-Item $dir\\bin\\win*interrupt.exe).Name)\" -Force | Out-Null",
+    "post_install": "(Get-Item $dir\\bin\\win*interrupt.exe).Name | foreach { New-Item \"$(appdir qt-creator $global)\\current\\bin\\$_\" -ItemType HardLink -Target \"$dir\\bin\\$_\" -Force | Out-Null }",
     "checkver": {
         "url": "https://www.qt.io/offline-installers",
         "regex": "Qt Creator\\s+([\\d.]+)\\s+for Windows"
