@@ -26,9 +26,14 @@
         ]
     ],
     "checkver": {
-        "url": "https://www.paraview.org/files/listing.txt",
-        "regex": "ParaView-(?<version>[\\d.]+)-Windows-Python(?<pythonver>[\\d.]+)-msvc(?<msvcver>\\d+)-AMD64\\.zip",
-        "reverse": true
+        "script": [
+            "$resp = Invoke-WebRequest -Uri 'https://www.paraview.org/files/listing.txt'",
+            "$csv = $resp.Content | ConvertFrom-Csv -Delimiter ' ' -Header ('Path', 'Date', 'Time', 'Size')",
+            "$sorted = $csv | Sort-Object -Property 'Date' -Descending",
+            "$latest = ($sorted -match 'ParaView-([\\d.]+)-Windows-Python(?<pythonver>[\\d.]+)-msvc(?<msvcver>\\d+)-AMD64\\.zip' | Select-Object -First 1).Path",
+            "Write-Output $latest"
+        ],
+        "regex": "ParaView-([\\d.]+)-Windows-Python(?<pythonver>[\\d.]+)-msvc(?<msvcver>\\d+)-AMD64\\.zip"
     },
     "autoupdate": {
         "architecture": {
