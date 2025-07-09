@@ -9,13 +9,19 @@
     "architecture": {
         "64bit": {
             "url": "https://desktop-release.notion-static.com/Notion%20Setup%204.14.0.exe#/dl.7z",
-            "hash": "sha512:a7aedf0507c256312ef56b65295a09bdc7ef8e34ea9ba03f53fec8795d222d65529f0b99623ee833788de884c205d302b18ed2e3c37d0a535cb7f410f662cadc",
-            "pre_install": [
-                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-                "Remove-Item \"$dir\\`$*\" -Recurse"
-            ]
+            "hash": "sha512:a7aedf0507c256312ef56b65295a09bdc7ef8e34ea9ba03f53fec8795d222d65529f0b99623ee833788de884c205d302b18ed2e3c37d0a535cb7f410f662cadc"
         }
     },
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+        "Remove-Item \"$dir\\`$*\" -Recurse",
+        "# Disable auto-updates:",
+        "$yaml = \"$dir\\resources\\app-update.yml\"",
+        "$content = Get-Content $yaml | Foreach-Object {",
+        "  if ($_.StartsWith('url')) { \"$($_.Replace('url', '# url')) # Disabled by Scoop\" } else { $_ }",
+        "}",
+        "Set-Content $yaml -Value $content -Encoding ascii"
+    ],
     "shortcuts": [
         [
             "Notion.exe",
