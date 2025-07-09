@@ -36,14 +36,15 @@
         }
     },
     "pre_install": [
-        "@('mpc-be64.ini', 'mpc-be.ini', 'Default.mpcpl') | ForEach-Object {",
+        "@('mpc-be64.ini', 'mpc-be.ini', 'default.mpcpl', 'favorites.mpc_lst') | ForEach-Object {",
+        "    if ((Get-Item \"$persist_dir\\$_\" 2>$null).PSIsContainer) { Remove-Item \"$persist_dir\\$_\" }",
         "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
         "}"
     ],
     "persist": [
         "mpc-be64.ini",
         "mpc-be.ini",
-        "Default.mpcpl",
+        "default.mpcpl",
         "favorites.mpc_lst"
     ],
     "checkver": {
