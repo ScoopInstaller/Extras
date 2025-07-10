@@ -33,7 +33,8 @@
         }
     },
     "pre_install": [
-        "@('mpc-hc64.ini', 'mpc-hc.ini') | ForEach-Object {",
+        "@('mpc-hc64.ini', 'mpc-hc.ini', 'default.mpcpl') | ForEach-Object {",
+        "    if ((Get-Item \"$persist_dir\\$_\" 2>$null).PSIsContainer) { Remove-Item \"$persist_dir\\$_\" }",
         "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" -ItemType File | Out-Null }",
         "}"
     ],
