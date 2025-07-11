@@ -1,0 +1,87 @@
+{
+    "version": "8.0.2",
+    "description": "Automatically block unwanted, leeches and abnormal BT peers with support for customized and cloud rules.",
+    "homepage": "https://docs.pbh-btn.com/en/",
+    "license": "GPL-3.0-or-later",
+    "notes": [
+        "[Tutorial](https://docs.pbh-btn.com/en/docs/category/%E4%B8%8B%E8%BD%BD%E5%99%A8%E9%85%8D%E7%BD%AE)",
+        "Additional modes like \"Console Mode\" and \"Low-memory Mode\"",
+        "can be started via the shell with `peerbanhelper-cli`",
+        "and `peerbanhelper-lmm`.",
+        "",
+        "[教程](https://docs.pbh-btn.com/docs/category/%E4%B8%8B%E8%BD%BD%E5%99%A8%E9%85%8D%E7%BD%AE/)",
+        "更多模式（如”控制台模式“和”小内存模式“）可以在命令行中",
+        "使用`peerbanhelper-cli`和`peerbanhelper-lmm`启动。",
+        ""
+    ],
+    "suggest": {
+        "Java": "java/zulu-jre"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/PBH-BTN/PeerBanHelper/releases/download/v8.0.2/PeerBanHelper_8.0.2.zip",
+            "hash": "a6233a0f9c0f6d4fc37d9355177727f264be582b10cd54797f84b8801fd9f825"
+        },
+        "arm64": {
+            "url": "https://github.com/PBH-BTN/PeerBanHelper/releases/download/v8.0.2/PeerBanHelper_8.0.2.zip",
+            "hash": "a6233a0f9c0f6d4fc37d9355177727f264be582b10cd54797f84b8801fd9f825"
+        }
+    },
+    "extract_dir": "PeerBanHelper",
+    "pre_install": [
+        "invoke-RestMethod -Uri \"https://github.com/PBH-BTN/PeerBanHelper/raw/refs/tags/v$version/install4j/icon.ico\" -OutFile \"$dir\\icon.ico\"",
+        "",
+        "invoke-RestMethod -Uri \"https://github.com/PBH-BTN/PeerBanHelper/raw/refs/tags/v$version/pkg/portable/1.%20GUI%20Mode.bat\" -OutFile \"$dir\\1. GUI Mode.bat\"",
+        "invoke-RestMethod -Uri \"https://github.com/PBH-BTN/PeerBanHelper/raw/refs/tags/v$version/pkg/portable/2.%20GUI%20mode%20(silent).bat\" -OutFile \"$dir\\2. GUI mode (silent).bat\"",
+        "invoke-RestMethod -Uri \"https://github.com/PBH-BTN/PeerBanHelper/raw/refs/tags/v$version/pkg/portable/3.%20Console.bat\" -OutFile \"$dir\\3. Console.bat\"",
+        "invoke-RestMethod -Uri \"https://github.com/PBH-BTN/PeerBanHelper/raw/refs/tags/v$version/pkg/portable/4.%20Low-memory%20Mode%20(May%20cost%20more%20CPU%20and%20disk)%20.bat\" -OutFile \"$dir\\4. Low-memory Mode (May cost more CPU and disk) .bat\"",
+        "",
+        "Get-ChildItem -Path \"$dir\" -Filter *.bat -File -Recurse | ForEach-Object {",
+        "    $file = $_.FullName",
+        "    $content = Get-Content $file",
+        "    $newContent = $content `",
+        "        -replace '^start\\s+\\./jre/bin/java\\.exe', 'java.exe' `",
+        "        -replace '\\./jre/bin/', '' `",
+        "        -replace 'PeerBanHelper\\.jar', \"$dir\\PeerBanHelper.jar\"",
+        "    Set-Content -Path $file -Value $newContent",
+        "}"
+    ],
+    "bin": [
+        [
+            "3. Console.bat",
+            "peerbanhelper-cli"
+        ],
+        [
+            "4. Low-memory Mode (May cost more CPU and disk) .bat",
+            "peerbanhelper-lmm"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "1. GUI Mode.bat",
+            "PeerBanHelper/PeerBanHelper",
+            "",
+            "icon.ico"
+        ],
+        [
+            "2. GUI mode (silent).bat",
+            "PeerBanHelper/PeerBanHelper (Silent)",
+            "",
+            "icon.ico"
+        ]
+    ],
+    "persist": "data",
+    "checkver": {
+        "github": "https://github.com/PBH-BTN/PeerBanHelper"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/PBH-BTN/PeerBanHelper/releases/download/v$version/PeerBanHelper_$version.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/PBH-BTN/PeerBanHelper/releases/download/v$version/PeerBanHelper_$version.zip"
+            }
+        }
+    }
+}
