@@ -54,8 +54,9 @@
         "Notepad3.ini"
     ],
     "checkver": {
-        "url": "https://github.com/rizonesoft/Notepad3/releases",
-        "regex": "tag/RELEASE_([\\d.]+)"
+        "url": "https://api.github.com/repos/rizonesoft/Notepad3/releases/latest",
+        "jsonpath": "$.name",
+        "regex": "RELEASE_([\\d.]+)"
     },
     "autoupdate": {
         "architecture": {
@@ -65,6 +66,12 @@
             "32bit": {
                 "url": "https://github.com/rizonesoft/Notepad3/releases/download/RELEASE_$version/Notepad3_$version_x86_Portable.zip"
             }
+        },
+        "hash": {
+            "mode": "json",
+            "url": "https://api.github.com/repos/rizonesoft/Notepad3/releases/latest",
+            "jsonpath": "$.assets[?(@.name == '$basename')].digest",
+            "regex": "sha256:(\\w64)"
         }
     }
 }
