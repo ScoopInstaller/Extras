@@ -1,13 +1,13 @@
 {
-    "version": "5.13.0",
+    "version": "5.13.3",
     "description": "Open-source, multi-platform data analysis and visualization application.",
     "homepage": "https://www.paraview.org/",
     "license": "BSD-3-Clause",
     "architecture": {
         "64bit": {
-            "url": "https://www.paraview.org/paraview-downloads/download.php?submit=Download&version=v5.13&type=binary&os=Windows&downloadFile=ParaView-5.13.0-Windows-Python3.10-msvc2017-AMD64.zip#/dl.zip",
-            "hash": "md5:ff4a80cfa261b76ebe1239e285595872",
-            "extract_dir": "ParaView-5.13.0-Windows-Python3.10-msvc2017-AMD64"
+            "url": "https://www.paraview.org/paraview-downloads/download.php?submit=Download&version=v5.13&type=binary&os=Windows&downloadFile=ParaView-5.13.3-Windows-Python3.10-msvc2017-AMD64.zip#/dl.zip",
+            "hash": "md5:6d91d4c8684327ca9caaa94abe769925",
+            "extract_dir": "ParaView-5.13.3-Windows-Python3.10-msvc2017-AMD64"
         }
     },
     "bin": [
@@ -26,7 +26,13 @@
         ]
     ],
     "checkver": {
-        "url": "https://www.paraview.org/files/listing.txt",
+        "script": [
+            "$resp = Invoke-WebRequest -Uri 'https://www.paraview.org/files/listing.txt'",
+            "$csv = $resp.Content | ConvertFrom-Csv -Delimiter ' ' -Header ('Path', 'Date', 'Time', 'Size')",
+            "$sorted = $csv | Sort-Object -Property 'Date' -Descending",
+            "$latest = ($sorted -match 'ParaView-([\\d.]+)-Windows-Python(?<pythonver>[\\d.]+)-msvc(?<msvcver>\\d+)-AMD64\\.zip' | Select-Object -First 1).Path",
+            "Write-Output $latest"
+        ],
         "regex": "ParaView-([\\d.]+)-Windows-Python(?<pythonver>[\\d.]+)-msvc(?<msvcver>\\d+)-AMD64\\.zip"
     },
     "autoupdate": {
