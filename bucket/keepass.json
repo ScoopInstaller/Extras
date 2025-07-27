@@ -8,7 +8,10 @@
     "hash": "sha1:4a12b24889126db729f75aa8ab882369df7e504e",
     "pre_install": [
         "# Persistence, See: #13701, #15887",
-        "if (!($global)) {",
+        "# KeePass overrides hardlink, so we need to copy config manually while installing/uninstalling",
+        "if (Test-Path \"$persist_dir\\KeePass.config.xml\") { Copy-Item \"$persist_dir\\KeePass.config.xml\" \"$dir\" }",
+        "if (!($global) -and !(Test-Path \"$persist_dir\\KeePass.config.xml\")) {",
+        "  # Disable `PreferUserConfiguration` for non-global fresh installation",
         "  $config = [xml](Get-Content \"$dir\\KeePass.config.xml\")",
         "  $config.Configuration.Meta.PreferUserConfiguration = 'false'",
         "  $config.Save(\"$dir\\KeePass.config.xml\")",
@@ -23,9 +26,9 @@
     ],
     "persist": [
         "Plugins",
-        "Languages",
-        "KeePass.config.xml"
+        "Languages"
     ],
+    "pre_uninstall": "if (Test-Path \"$dir\\KeePass.config.xml\") { Copy-Item \"$dir\\KeePass.config.xml\" \"$persist_dir\" -Force }",
     "checkver": {
         "url": "https://keepass.info/update/version2x.txt",
         "regex": "KeePass:([\\d.]+)"
