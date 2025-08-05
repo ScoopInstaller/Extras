@@ -6,11 +6,14 @@
     "url": "https://download.ccleaner.com/portable/ccsetup638.zip",
     "hash": "5bd918bc8c2c8a9d280935263951984ac085ae7a3adbf5e827b984ffa078c504",
     "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\ccleaner.ini\")) {",
+        "if (-not $global) {",
+        "    abort \"`nCCleaner requires a global installation to work, please run 'scoop install extras/ccleaner --global' instead.`nNote that the global installation requires admin privleges.\"",
+        "}",
+        "if (-not (Test-Path \"$persist_dir\\ccleaner.ini\")) {",
         "   Set-Content \"$dir\\ccleaner.ini\" @('[Options]', 'UpdateAuto=0', 'UpdateNotify=0', 'UpdateCheck=0', 'HelpImproveCCleaner=0') -Encoding ASCII",
         "}",
         "'winapp.ini', 'winreg.ini', 'winsys.ini' | ForEach-Object {",
-        "   if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "   if (-not (Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
         "}",
         "Copy-Item \"$persist_dir\\*\" \"$dir\" -Include 'branding.dll', 'CCleaner.dat' -ErrorAction SilentlyContinue"
     ],
