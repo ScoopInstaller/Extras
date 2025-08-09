@@ -17,8 +17,9 @@
     "post_install": [
         "# Workaround for https://github.com/ScoopInstaller/Extras/issues/15946",
         "# Create shortcut and shim",
-        "startmenu_shortcut \"$original_dir/ccleaner64.exe\" 'CCleaner' $null $null $global",
-        "shim \"$original_dir\\ccleaner64.exe\" $false 'ccleaner'"
+        "$exe = if ($architecture -eq '32bit') { 'CCleaner.exe' } else { 'CCleaner64.exe' }",
+        "startmenu_shortcut \"$original_dir\\$exe\" 'CCleaner' $null $null $global",
+        "shim \"$original_dir\\$exe\" $global 'ccleaner'"
     ],
     "uninstaller": {
         "script": [
