@@ -14,33 +14,21 @@
         "}",
         "Copy-Item \"$persist_dir\\*\" \"$dir\" -Include 'branding.dll', 'CCleaner.dat' -ErrorAction SilentlyContinue"
     ],
+    "post_install": [
+        "# Workaround for https://github.com/ScoopInstaller/Extras/issues/15946",
+        "# Create shortcut and shim",
+        "$exe = if ($architecture -eq '32bit') { 'CCleaner.exe' } else { 'CCleaner64.exe' }",
+        "startmenu_shortcut \"$original_dir\\$exe\" 'CCleaner' $null $null $global",
+        "shim \"$original_dir\\$exe\" $global 'ccleaner'"
+    ],
     "uninstaller": {
-        "script": "Copy-Item \"$dir\\*\" \"$persist_dir\" -Include 'branding.dll', 'CCleaner.dat' -ErrorAction SilentlyContinue -Force"
-    },
-    "architecture": {
-        "64bit": {
-            "bin": [
-                [
-                    "CCleaner64.exe",
-                    "CCleaner"
-                ]
-            ],
-            "shortcuts": [
-                [
-                    "CCleaner64.exe",
-                    "CCleaner"
-                ]
-            ]
-        },
-        "32bit": {
-            "bin": "CCleaner.exe",
-            "shortcuts": [
-                [
-                    "CCleaner.exe",
-                    "CCleaner"
-                ]
-            ]
-        }
+        "script": [
+            "Copy-Item \"$dir\\*\" \"$persist_dir\" -Include 'branding.dll', 'CCleaner.dat' -ErrorAction SilentlyContinue -Force",
+            "# Remove shortcut and shim",
+            "$scoop_startmenu_folder = Join-Path $([Environment]::GetFolderPath($(if ($global) {'commonstartmenu'} else {'startmenu'}))) 'Programs\\Scoop Apps'",
+            "Remove-Item \"$scoop_startmenu_folder\\CCleaner.lnk\" -Force -ErrorAction SilentlyContinue",
+            "Get-Item \"$(shimdir $global)\\ccleaner.*\" | Remove-Item -Force -ErrorAction SilentlyContinue"
+        ]
     },
     "persist": [
         "ccleaner.ini",
