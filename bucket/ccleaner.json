@@ -21,20 +21,18 @@
         "startmenu_shortcut \"$original_dir\\$exe\" 'CCleaner' $null $null $global",
         "shim \"$original_dir\\$exe\" $global 'ccleaner'"
     ],
-    "uninstaller": {
-        "script": [
-            "Copy-Item \"$dir\\*\" \"$persist_dir\" -Include 'branding.dll', 'CCleaner.dat' -ErrorAction SilentlyContinue -Force",
-            "# Remove shortcut and shim",
-            "$scoop_startmenu_folder = Join-Path $([Environment]::GetFolderPath($(if ($global) {'commonstartmenu'} else {'startmenu'}))) 'Programs\\Scoop Apps'",
-            "Remove-Item \"$scoop_startmenu_folder\\CCleaner.lnk\" -Force -ErrorAction SilentlyContinue",
-            "Get-Item \"$(shimdir $global)\\ccleaner.*\" | Remove-Item -Force -ErrorAction SilentlyContinue"
-        ]
-    },
     "persist": [
         "ccleaner.ini",
         "winapp.ini",
         "winreg.ini",
         "winsys.ini"
+    ],
+    "pre_uninstall": "Copy-Item \"$dir\\*\" \"$persist_dir\" -Include 'branding.dll', 'CCleaner.dat' -ErrorAction SilentlyContinue -Force",
+    "post_uninstall": [
+        "# Remove shortcut and shim",
+        "rm_shim 'ccleaner' \"$(shimdir $global)\"",
+        "Write-Host \"Removing shortcut $(friendly_path \"$(shortcut_folder $global)\\CCleaner.lnk\")\"",
+        "Remove-Item \"$(shortcut_folder $global)\\CCleaner.lnk\" -Force -ErrorAction SilentlyContinue"
     ],
     "checkver": {
         "url": "https://www.ccleaner.com/ccleaner/builds",
