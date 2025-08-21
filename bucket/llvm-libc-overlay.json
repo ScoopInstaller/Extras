@@ -1,0 +1,79 @@
+{
+    "version": "20.1.0",
+    "description": "ARM Toolchain for Embedded LLVM libc overlay - Modern LLVM C library implementation for embedded ARM development",
+    "homepage": "https://github.com/arm/arm-toolchain",
+    "license": {
+        "identifier": "Apache-2.0",
+        "url": "https://github.com/arm/arm-toolchain/blob/arm-software/LICENSE.TXT"
+    },
+    "url": "https://github.com/arm/arm-toolchain/releases/download/release-20.1.0-ATfE/ATfE-llvmlibc-overlay-20.1.0.zip",
+    "hash": "sha256:f0f1736413fdbcb143410a96cc10e12a9586eb35c367a3ed08affc63ff26a883",
+    "depends": [
+        "llvm"
+    ],
+    "post_install": [
+        "$llvm_path = (scoop prefix llvm)",
+        "if (-not $llvm_path) { throw 'LLVM is not installed. Please install LLVM first.' }",
+        "Write-Host 'Installing LLVM libc overlay...'",
+        "",
+        "# Copy llvmlibc.cfg to LLVM bin directory",
+        "$cfg_source = Join-Path $dir 'bin\\llvmlibc.cfg'",
+        "$cfg_target = Join-Path $llvm_path 'bin\\llvmlibc.cfg'",
+        "if (Test-Path $cfg_source) {",
+        "    Copy-Item $cfg_source $cfg_target -Force",
+        "    Write-Host 'Copied: bin\\llvmlibc.cfg'",
+        "}",
+        "",
+        "# Copy lib/clang-runtimes/llvmlibc directory to LLVM",
+        "$lib_source = Join-Path $dir 'lib\\clang-runtimes\\llvmlibc'",
+        "$lib_target = Join-Path $llvm_path 'lib\\clang-runtimes\\llvmlibc'",
+        "if (Test-Path $lib_source) {",
+        "    # Ensure the clang-runtimes directory exists",
+        "    $clang_runtimes_dir = Join-Path $llvm_path 'lib\\clang-runtimes'",
+        "    if (-not (Test-Path $clang_runtimes_dir)) { ",
+        "        New-Item -ItemType Directory -Path $clang_runtimes_dir -Force | Out-Null",
+        "        Write-Host 'Created: lib\\clang-runtimes directory'",
+        "    }",
+        "    Copy-Item $lib_source $lib_target -Recurse -Force",
+        "    Write-Host 'Copied: lib\\clang-runtimes\\llvmlibc'",
+        "}",
+        "",
+        "Write-Host 'LLVM libc overlay installation completed!'"
+    ],
+    "pre_uninstall": [
+        "$llvm_path = (scoop prefix llvm)",
+        "if ($llvm_path) {",
+        "    Write-Host 'Removing LLVM libc overlay...'",
+        "    ",
+        "    # Remove llvmlibc.cfg from LLVM bin directory",
+        "    $cfg_target = Join-Path $llvm_path 'bin\\llvmlibc.cfg'",
+        "    if (Test-Path $cfg_target) {",
+        "        Remove-Item $cfg_target -Force",
+        "        Write-Host 'Removed: bin\\llvmlibc.cfg'",
+        "    }",
+        "    ",
+        "    # Remove lib/clang-runtimes/llvmlibc directory from LLVM",
+        "    $lib_target = Join-Path $llvm_path 'lib\\clang-runtimes\\llvmlibc'",
+        "    if (Test-Path $lib_target) {",
+        "        Remove-Item $lib_target -Recurse -Force",
+        "        Write-Host 'Removed: lib\\clang-runtimes\\llvmlibc'",
+        "    }",
+        "    ",
+        "    Write-Host 'LLVM libc overlay cleanup completed!'",
+        "}"
+    ],
+    "notes": [
+        "This overlay integrates with your LLVM installation",
+        "Installs: bin/llvmlibc.cfg and lib/clang-runtimes/llvmlibc/",
+        "Provides modern LLVM C library implementation for embedded systems",
+        "Use with LLVM-based ARM embedded toolchain"
+    ],
+    "checkver": {
+        "github": "https://github.com/arm/arm-toolchain",
+        "regex": "release-([\\d.]+)-ATfE"
+    },
+    "autoupdate": {
+        "url": "https://github.com/arm/arm-toolchain/releases/download/release-$version-ATfE/ATfE-llvmlibc-overlay-$version.zip",
+        "extract_dir": "ATfE-llvmlibc-overlay-$version"
+    }
+}
