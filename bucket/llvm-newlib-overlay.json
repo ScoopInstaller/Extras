@@ -1,0 +1,79 @@
+{
+    "version": "20.1.0",
+    "description": "ARM Toolchain for Embedded newlib overlay - LLVM-based toolchain for embedded ARM development",
+    "homepage": "https://github.com/ARM-software/LLVM-embedded-toolchain-for-Arm",
+    "license": {
+        "identifier": "Apache-2.0",
+        "url": "https://github.com/arm/arm-toolchain/blob/arm-software/LICENSE.TXT"
+    },
+    "url": "https://github.com/arm/arm-toolchain/releases/download/release-20.1.0-ATfE/ATfE-newlib-overlay-20.1.0.zip",
+    "hash": "sha256:fbb49891218d08d73fb00ec8b8dabe8160b88a4196aaabc7791973aa67fecb07",
+    "depends": [
+        "llvm"
+    ],
+    "post_install": [
+        "$llvm_path = (scoop prefix llvm)",
+        "if (-not $llvm_path) { throw 'LLVM is not installed. Please install LLVM first.' }",
+        "Write-Host 'Installing newlib overlay...'",
+        "",
+        "# Copy newlib.cfg to LLVM bin directory",
+        "$cfg_source = Join-Path $dir 'bin\\newlib.cfg'",
+        "$cfg_target = Join-Path $llvm_path 'bin\\newlib.cfg'",
+        "if (Test-Path $cfg_source) {",
+        "    Copy-Item $cfg_source $cfg_target -Force",
+        "    Write-Host 'Copied: bin\\newlib.cfg'",
+        "}",
+        "",
+        "# Copy lib/clang-runtimes/newlib directory to LLVM",
+        "$lib_source = Join-Path $dir 'lib\\clang-runtimes\\newlib'",
+        "$lib_target = Join-Path $llvm_path 'lib\\clang-runtimes\\newlib'",
+        "if (Test-Path $lib_source) {",
+        "    # Ensure the clang-runtimes directory exists",
+        "    $clang_runtimes_dir = Join-Path $llvm_path 'lib\\clang-runtimes'",
+        "    if (-not (Test-Path $clang_runtimes_dir)) { ",
+        "        New-Item -ItemType Directory -Path $clang_runtimes_dir -Force | Out-Null",
+        "        Write-Host 'Created: lib\\clang-runtimes directory'",
+        "    }",
+        "    Copy-Item $lib_source $lib_target -Recurse -Force",
+        "    Write-Host 'Copied: lib\\clang-runtimes\\newlib'",
+        "}",
+        "",
+        "Write-Host 'Newlib overlay installation completed!'"
+    ],
+    "pre_uninstall": [
+        "$llvm_path = (scoop prefix llvm)",
+        "if ($llvm_path) {",
+        "    Write-Host 'Removing newlib overlay...'",
+        "    ",
+        "    # Remove newlib.cfg from LLVM bin directory",
+        "    $cfg_target = Join-Path $llvm_path 'bin\\newlib.cfg'",
+        "    if (Test-Path $cfg_target) {",
+        "        Remove-Item $cfg_target -Force",
+        "        Write-Host 'Removed: bin\\newlib.cfg'",
+        "    }",
+        "    ",
+        "    # Remove lib/clang-runtimes/newlib directory from LLVM",
+        "    $lib_target = Join-Path $llvm_path 'lib\\clang-runtimes\\newlib'",
+        "    if (Test-Path $lib_target) {",
+        "        Remove-Item $lib_target -Recurse -Force",
+        "        Write-Host 'Removed: lib\\clang-runtimes\\newlib'",
+        "    }",
+        "    ",
+        "    Write-Host 'Newlib overlay cleanup completed!'",
+        "}"
+    ],
+    "notes": [
+        "This overlay integrates with your LLVM installation",
+        "Installs: bin/newlib.cfg and lib/clang-runtimes/newlib/",
+        "Provides standard C library support for embedded ARM development",
+        "Use with LLVM-based ARM embedded toolchain for C library support"
+    ],
+    "checkver": {
+        "github": "https://github.com/arm/arm-toolchain",
+        "regex": "release-([\\d.]+)-ATfE"
+    },
+    "autoupdate": {
+        "url": "https://github.com/arm/arm-toolchain/releases/download/release-$version-ATfE/ATfE-newlib-overlay-$version.zip",
+        "extract_dir": "ATfE-newlib-overlay-$version"
+    }
+}
