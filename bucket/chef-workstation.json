@@ -1,6 +1,6 @@
 {
-    "version": "23.12.1055",
-    "description": "Chef Workstation is Chef's modern developer tool kit that includes Chef Infra, InSpec and Habitat plus a host of resources, helpers and testing tools that make automating infrastructure, application and security testing easier than ever. Chef Workstation supercedes ChefDK.",
+    "version": "25.5.1084",
+    "description": "Chef Workstation is Chef's modern developer tool kit that includes Chef Infra, InSpec and Habitat plus a host of resources, helpers and testing tools that make automating infrastructure, application and security testing easier than ever. Chef Workstation supersedes ChefDK.",
     "homepage": "https://www.chef.io",
     "license": {
         "identifier": "Proprietary, BSD-2-Clause, MPL-2.0, Apache-2.0, BSD-3-Clause, MIT, Public Domain, OpenSSL, GPL-2.0, GPL-3.0, Zlib, ...",
@@ -8,10 +8,13 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://packages.chef.io/files/stable/chef-workstation/23.12.1055/windows/2022/chef-workstation-23.12.1055-1-x64.msi",
-            "hash": "71e42c1a766330940a61e72ff8e0f2b6e7b6fbbb65d19eb782236a89b115830a"
+            "url": "https://packages.chef.io/files/stable/chef-workstation/25.5.1084/windows/2022/chef-workstation-25.5.1084-1-x64.msi",
+            "hash": "82f4e737bb475b190ff8dcbce1191fbe228991f65b481275550a97ca32056dc9"
         }
     },
+    "depends": [
+        "7zip"
+    ],
     "extract_dir": "opscode",
     "pre_install": "Expand-7zipArchive \"$dir\\chef-workstation.zip\" -Removal",
     "env_add_path": "bin",
@@ -22,17 +25,26 @@
         ]
     ],
     "checkver": {
-        "url": "https://www.chef.io/downloads/tools/workstation",
-        "regex": "/stable/chef-workstation/([\\d.]+)/windows/"
+        "url": "https://docs.chef.io/release_notes_workstation/",
+        "regex": "id=[\\\"']?chef-workstation-release-notes[\\\"']?[\\s\\S]*?<h2\\s+id=[\\\"']?([0-9.]+)[\\\"']?"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://packages.chef.io/files/stable/chef-workstation/$version/windows/2022/chef-workstation-$version-1-x64.msi",
-                "hash": {
-                    "url": "$url.sha256"
-                }
+                "url": "https://packages.chef.io/files/stable/chef-workstation/$version/windows/2022/chef-workstation-$version-1-x64.msi"
             }
         }
-    }
+    },
+    "notes": [
+        "Run these commands in an elevated PowerShell to register Chef Workstation:",
+        "$p = (scoop prefix chef-workstation)",
+        "New-Item -Path 'HKLM:\\SOFTWARE\\Chef\\Chef Workstation' -Force",
+        "New-ItemProperty -Path 'HKLM:\\SOFTWARE\\Chef\\Chef Workstation' -Name 'BinDir' -Value (Join-Path $p 'bin') -PropertyType String -Force",
+        "New-ItemProperty -Path 'HKLM:\\SOFTWARE\\Chef\\Chef Workstation' -Name 'InstallDir' -Value $p -PropertyType String -Force",
+        "To permit Chef Workstation to write to HKLM\\SOFTWARE\\Progress, run (as Administrator):",
+        "$key = 'HKLM:\\SOFTWARE\\Progress'; New-Item -Path $key -Force",
+        "$user = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name",
+        "$acl = Get-Acl $key; $rule = New-Object System.Security.AccessControl.RegistryAccessRule($user, [System.Security.AccessControl.RegistryRights]::FullControl, [System.Security.AccessControl.InheritanceFlags]::ContainerInherit, [System.Security.AccessControl.PropagationFlags]::None, 'Allow'); $acl.SetAccessRule($rule); Set-Acl -Path $key -AclObject $acl",
+        "(Optional) To grant all users instead, replace $user with 'Authenticated Users'."
+    ]
 }
