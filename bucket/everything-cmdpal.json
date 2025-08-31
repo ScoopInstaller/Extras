@@ -10,25 +10,14 @@
         ],
         "PowerToys": "extras/powertoys"
     },
-    "autoupdate":{
-        "architecture":{
-            "64bit":{
-                "url":"https://github.com/lin-ycv/EverythingCommandPalette/releases/download/v$version/VictorLin.EverythingCP_$version_x64__yazqh14evg2ve.Msix#/ecp.msix",
-                "hash":{
-                    "url": "https://github.com/lin-ycv/EverythingCommandPalette/releases/tag/v$version",
-                    "regex": "(?s)msix-x64.*?$sha256"
-                }
-            }
+    "architecture": {
+        "64bit": {
+            "url":"https://github.com/lin-ycv/EverythingCommandPalette/releases/download/v0.2.0.0/VictorLin.EverythingCP_0.2.0.0_x64__yazqh14evg2ve.Msix#/ecp.msix",
+            "hash":"26ffc9f734d4bc767fe574f309bd40109d52ebf26928949f1408ec0a4c1c7899"
         }
-    }
-    "pre_install": [
-        "$package = Get-AppxPackage | Where-Object { ($_.Name -match 'Microsoft.WindowsAppRuntime.\\d+') -and ($_.Name -notlike '*CBS*') -and  ([version]$_.Version -ge [version]'6000.401.2352.0')}",
-        "if(-not ($package)) {switch($env:PROCESSOR_ARCHITECTURE){ 'ARM64' { $url = 'https://aka.ms/windowsappsdk/1.6/1.6.250228001/windowsappruntimeinstall-arm64.exe' } 'AMD64' { $url = 'https://aka.ms/windowsappsdk/1.6/1.6.250228001/windowsappruntimeinstall-x64.exe' } } Write-Host 'Windows App Runtime is NOT installed, installing package... (This may take a while)'; Invoke-WebRequest -Uri $url -OutFile 'war166.exe'; & '.\\war166.exe' --quiet}",
-        "Get-ChildItem -Path 'war166.exe' -ErrorAction SilentlyContinue | Remove-Item -Force"
-    ],
+    },
     "post_install": [
-        "Add-AppxPackage \"$dir\\ecp.msix\"",
-        "if(-not (get-appxpackage -Name VictorLin.EverythingCP*)) { get-appxpackage VictorLin.EverythingCP* | remove-appxpackage }"
+        "Add-AppxPackage \"$dir\\ecp.msix\""
     ],
     "pre_uninstall":[
         "get-appxpackage VictorLin.EverythingCP* | remove-appxpackage"
@@ -46,4 +35,3 @@
         }
     }
 }
-
