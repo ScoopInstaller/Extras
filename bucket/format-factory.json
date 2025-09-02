@@ -1,23 +1,35 @@
 {
-    "##": "Update is disabled because the installer cannot be properly extracted after version 5.9",
-    "version": "5.8.1.0",
+    "version": "5.12.0.0",
     "description": "Multifunctional, multimedia file conversion tool",
     "homepage": "http://www.pcfreetime.com/formatfactory/index.php",
     "license": {
         "identifier": "Freeware",
         "url": "http://www.pcfreetime.com/formatfactory/privacy_policy.php?language=en"
     },
-    "url": "http://public.pcfreetime.com/FFSetup5.8.1.0.exe#/dl.7z",
-    "hash": "f9dfb78aed3a76d2b54571acc5a69b15c4c85f45ab791b5502a63ab189bcd98c",
-    "pre_install": [
-        "Remove-Item \"$dir\\*\" -Exclude 'Carrier.exe' -Force -Recurse",
-        "Expand-7zipArchive \"$dir\\Carrier.exe\" -Removal",
-        "Remove-Item \"$dir\\`$*\" -Recurse"
-    ],
+    "url": "http://down.pcgeshi.com/FormatFactory_5.12.0.0_setup.exe#sourceforge.net.exe",
+    "hash": "cdf408a21e5f70a5ee1e3d094b44f8f2b5631a2f4f0fccfdd1239766a331b696",
+    "installer": {
+        "script": [
+            "Start-Process \"$dir\\$fname\" -ArgumentList @('/S', \"/D=$dir\") -Wait"
+        ]
+    },
+    "post_install": "Remove-Item \"$dir\\$fname\"",
+    "uninstaller": {
+        "script": [
+            "Start-Process \"$dir\\Uninstall.exe\" -ArgumentList '/S' -Wait"
+        ]
+    },
     "shortcuts": [
         [
             "FormatFactory.exe",
             "Format Factory"
         ]
-    ]
+    ],
+    "checkver": {
+        "url": "http://www.pcfreetime.com/formatfactory/index.php",
+        "regex": "版本：([\\d+.]+)"
+    },
+    "autoupdate": {
+        "url": "http://down.pcgeshi.com/FormatFactory_$version_setup.exe#sourceforge.net.exe"
+    }
 }
