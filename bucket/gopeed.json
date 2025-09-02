@@ -4,8 +4,8 @@
     "homepage": "https://github.com/GopeedLab/gopeed",
     "license": "GPL-3.0-only",
     "notes": [
-        "Starting from version 1.8.0, all user data is stored in the './storage' directory.",
-        "Upgrading Gopeed via Scoop will no longer result in the loss of user configuration."
+        "Starting with version 1.8.0, all user data is stored in the './storage' directory.",
+        "Upgrading Gopeed via Scoop will no longer result in loss of user configuration."
     ],
     "architecture": {
         "64bit": {
@@ -19,11 +19,18 @@
         "$parent_dir = Split-Path $dir -Parent",
         "$version_dirs = Get-ChildItem -Path $parent_dir -Directory | Where-Object {",
         "    $_.Name -notmatch '^_' -and ($_.Name -as [version])",
-        "} | Sort-Object LastWriteTime -Descending",
+        "} | Sort-Object { [version]$_.Name } -Descending",
         "if ($version_dirs.Count -lt 2) { return }",
         "$previous_version = [version]$version_dirs[1].Name",
-        "if ($previous_version -gt $threshold_version) { return }",
+        "info \"Detected previous version: $previous_version\"",
         "$storage_dir = Join-Path $persist_dir \"storage\"",
+        "if ($previous_version -gt $threshold_version) {",
+        "    info \"Previous version ($previous_version) is newer than threshold ($threshold_version).\"",
+        "    info \"User data for the previous version is already in $storage_dir. No copy is needed.\"",
+        "    return",
+        "}",
+        "info \"Previous version ($previous_version) is older than or equal to threshold ($threshold_version).\"",
+        "info \"Attempting to persist user data by copying to $storage_dir...\"",
         "if (-not (Test-Path $storage_dir)) {",
         "    New-Item -Path $storage_dir -ItemType Directory -Force | Out-Null",
         "}",
@@ -38,7 +45,6 @@
         "        info \"Item not found: $user_data_path (skipped).\"",
         "    }",
         "}"
-        
     ],
     "shortcuts": [
         [
