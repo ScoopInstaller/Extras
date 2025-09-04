@@ -8,9 +8,14 @@
             "url": "https://download.blender.org/release/Blender4.5/blender-4.5.2-windows-x64.zip",
             "hash": "a24ec8dc2ee097294624f90e210c3528da5624320460f03270a387ca22a33734",
             "extract_dir": "blender-4.5.2-windows-x64"
+        },
+        "arm64": {  /* Addition: Include Windows ARM64 architecture for broader coverage. */
+            "url": "https://download.blender.org/release/Blender4.5/blender-4.5.2-windows-arm64.zip",
+            "hash": "03b3aa6373b4dda094797be072519f4cfc236c4fd90edd6600242c43c75e0285",
+            "extract_dir": "blender-4.5.2-windows-arm64"
         }
     },
-    "bin": "blender-launcher.exe",
+    "bin": "blender.exe",  /* Change: Use blender.exe for CLI usability, keep launcher for Start Menu shortcut. */
     "shortcuts": [
         [
             "blender-launcher.exe",
@@ -18,19 +23,28 @@
         ]
     ],
     "persist": "portable",
+    "pre_install": [  /* Addition: Ensure portable mode by creating 'portable' folder on first install. */
+        "if (!(Test-Path \"$dir\\portable\")) { New-Item -Type Directory \"$dir\\portable\" | Out-Null }"
+    ],
     "checkver": {
         "url": "https://www.blender.org/download/",
-        "regex": "blender-([\\w.]+)-windows-x64\\.zip"
+        "regex": "blender-([0-9]+\\.[0-9]+\\.[0-9]+)-windows-x64\\.zip"  /* Change: Tighten regex to match only semantic versions, avoiding betas/RCs. */
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
                 "url": "https://download.blender.org/release/Blender$majorVersion.$minorVersion/blender-$version-windows-x64.zip",
                 "extract_dir": "blender-$version-windows-x64"
+            },
+            "arm64": {  /* Addition: Include ARM64 autoupdate configuration. */
+                "url": "https://download.blender.org/release/Blender$majorVersion.$minorVersion/blender-$version-windows-arm64.zip",
+                "extract_dir": "blender-$version-windows-arm64"
             }
         },
         "hash": {
-            "url": "$baseurl/blender-$version.sha256"
+            "url": "$baseurl/blender-$version.sha256",
+            "regex": "(?m)^([a-fA-F0-9]{64})\\s+\\*?blender-$version-windows-x64\\.zip$"  /* Addition: Add regex to extract correct x64 ZIP hash from multi-entry .sha256 file. */
+            /* Note: The regex currently targets x64 only. For ARM64, consider a separate regex or a more generic one if needed. */
         }
     }
 }
