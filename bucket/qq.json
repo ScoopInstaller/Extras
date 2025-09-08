@@ -32,7 +32,14 @@
         ]
     },
     "checkver": {
-        "url": "https://qq-web.cdn-go.cn/im.qq.com_new/latest/rainbow/windowsConfig.js",
+        "script": [
+            "# Please keep this script. An empty Accept-Encoding header can cause the CDN to deliver expired cache.",
+            "# See : https://github.com/ScoopInstaller/Extras/issues/15916",
+            "$headers = @{ 'Accept-Encoding' = 'gzip' }",
+            "$url = 'https://cdn-go.cn/qq-web/im.qq.com_new/latest/rainbow/windowsConfig.js'",
+            "$response = Invoke-WebRequest -Uri $url -UseBasicParsing -Headers $headers",
+            "Write-Output $response.Content"
+        ],
         "regex": "QQ(?<version>[\\d.]+)\\.exe"
     },
     "autoupdate": {
