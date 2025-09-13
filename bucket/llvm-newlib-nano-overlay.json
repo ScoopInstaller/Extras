@@ -1,0 +1,79 @@
+{
+    "version": "20.1.0",
+    "description": "ARM Toolchain for Embedded newlib-nano overlay - Minimal C library overlay for resource-constrained embedded systems",
+    "homepage": "https://github.com/arm/arm-toolchain",
+    "license": {
+        "identifier": "Apache-2.0",
+        "url": "https://github.com/arm/arm-toolchain/blob/arm-software/LICENSE.TXT"
+    },
+    "url": "https://github.com/arm/arm-toolchain/releases/download/release-20.1.0-ATfE/ATfE-newlib-nano-overlay-20.1.0.zip",
+    "hash": "sha256:a5be806da16fecbef28f54d790750040d46b44d22ec37227ff54ebcb4a0bb47b",
+    "depends": [
+        "llvm"
+    ],
+    "post_install": [
+        "$llvm_path = (scoop prefix llvm)",
+        "if (-not $llvm_path) { throw 'LLVM is not installed. Please install LLVM first.' }",
+        "Write-Host 'Installing newlib-nano overlay...'",
+        "",
+        "# Copy newlib-nano.cfg to LLVM bin directory",
+        "$cfg_source = Join-Path $dir 'bin\\newlib-nano.cfg'",
+        "$cfg_target = Join-Path $llvm_path 'bin\\newlib-nano.cfg'",
+        "if (Test-Path $cfg_source) {",
+        "    Copy-Item $cfg_source $cfg_target -Force",
+        "    Write-Host 'Copied: bin\\newlib-nano.cfg'",
+        "}",
+        "",
+        "# Copy lib/clang-runtimes/newlib-nano directory to LLVM",
+        "$lib_source = Join-Path $dir 'lib\\clang-runtimes\\newlib-nano'",
+        "$lib_target = Join-Path $llvm_path 'lib\\clang-runtimes\\newlib-nano'",
+        "if (Test-Path $lib_source) {",
+        "    # Ensure the clang-runtimes directory exists",
+        "    $clang_runtimes_dir = Join-Path $llvm_path 'lib\\clang-runtimes'",
+        "    if (-not (Test-Path $clang_runtimes_dir)) { ",
+        "        New-Item -ItemType Directory -Path $clang_runtimes_dir -Force | Out-Null",
+        "        Write-Host 'Created: lib\\clang-runtimes directory'",
+        "    }",
+        "    Copy-Item $lib_source $lib_target -Recurse -Force",
+        "    Write-Host 'Copied: lib\\clang-runtimes\\newlib-nano'",
+        "}",
+        "",
+        "Write-Host 'Newlib-nano overlay installation completed!'"
+    ],
+    "pre_uninstall": [
+        "$llvm_path = (scoop prefix llvm)",
+        "if ($llvm_path) {",
+        "    Write-Host 'Removing newlib-nano overlay...'",
+        "    ",
+        "    # Remove newlib-nano.cfg from LLVM bin directory",
+        "    $cfg_target = Join-Path $llvm_path 'bin\\newlib-nano.cfg'",
+        "    if (Test-Path $cfg_target) {",
+        "        Remove-Item $cfg_target -Force",
+        "        Write-Host 'Removed: bin\\newlib-nano.cfg'",
+        "    }",
+        "    ",
+        "    # Remove lib/clang-runtimes/newlib-nano directory from LLVM",
+        "    $lib_target = Join-Path $llvm_path 'lib\\clang-runtimes\\newlib-nano'",
+        "    if (Test-Path $lib_target) {",
+        "        Remove-Item $lib_target -Recurse -Force",
+        "        Write-Host 'Removed: lib\\clang-runtimes\\newlib-nano'",
+        "    }",
+        "    ",
+        "    Write-Host 'Newlib-nano overlay cleanup completed!'",
+        "}"
+    ],
+    "notes": [
+        "This overlay integrates with your LLVM installation",
+        "Installs: bin/newlib-nano.cfg and lib/clang-runtimes/newlib-nano/",
+        "Provides minimal C library optimized for memory-constrained embedded systems",
+        "Use with LLVM-based ARM embedded toolchain for reduced memory footprint"
+    ],
+    "checkver": {
+        "github": "https://github.com/arm/arm-toolchain",
+        "regex": "release-([\\d.]+)-ATfE"
+    },
+    "autoupdate": {
+        "url": "https://github.com/arm/arm-toolchain/releases/download/release-$version-ATfE/ATfE-newlib-nano-overlay-$version.zip",
+        "extract_dir": "ATfE-newlib-nano-overlay-$version"
+    }
+}
