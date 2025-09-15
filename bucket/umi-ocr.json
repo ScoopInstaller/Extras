@@ -10,11 +10,41 @@
             "extract_dir": "Umi-OCR_Rapid_v2.1.5"
         }
     },
+    "pre_install": [
+        "$data_dir = Join-Path $dir 'UmiOCR-data'",
+        "$persist_data_dir = Join-Path $persist_dir 'data'",
+        "if ($cmd -eq 'install' -and -not (Test-Path \"$data_dir\")) { return }",
+        "Get-ChildItem -Path \"$persist_data_dir\\*\" -File -Filter '*settings' | Copy-Item -Destination \"$data_dir\" -Force"
+    ],
+    "post_install": [
+        "$plugins_dir = Join-Path $dir 'UmiOCR-data' 'plugins'",
+        "$original_plugins_dir = Join-Path $dir 'UmiOCR-data' 'plugins.original'",
+        "if (Test-Path \"$original_plugins_dir\") {",
+        "    Copy-Item -Path \"$original_plugins_dir\\*\" -Destination \"$plugins_dir\" -Force -Recurse",
+        "}"
+    ],
+    "bin": "Umi-OCR.exe",
     "shortcuts": [
         [
             "Umi-OCR.exe",
             "Umi-OCR"
         ]
+    ],
+    "persist": [
+        [
+            "UmiOCR-data\\logs",
+            "data\\logs"
+        ],
+        [
+            "UmiOCR-data\\plugins",
+            "data\\plugins"
+        ]
+    ],
+    "pre_uninstall": [
+        "if ($cmd -eq 'uninstall' -and $purge) { return }",
+        "$data_dir = Join-Path $dir 'UmiOCR-data'",
+        "$persist_data_dir = Join-Path $persist_dir 'data'",
+        "Get-ChildItem -Path \"$data_dir\" -File -Filter '*settings' | Copy-Item -Destination \"$persist_data_dir\" -Force"
     ],
     "checkver": "github",
     "autoupdate": {
