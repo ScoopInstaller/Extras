@@ -13,13 +13,17 @@
     "pre_install": [
         "$data_dir = Join-Path $dir 'UmiOCR-data'",
         "$persist_data_dir = Join-Path $persist_dir 'data'",
-        "if ($cmd -eq 'install' -and -not (Test-Path \"$data_dir\")) { return }",
-        "Get-ChildItem -Path \"$persist_data_dir\\*\" -File -Filter '*settings' | Copy-Item -Destination \"$data_dir\" -Force"
+        "if ($cmd -eq 'install' -and -not (Test-Path \"$persist_data_dir\")) { return }",
+        "Get-ChildItem -Path \"$persist_data_dir\\*\" -File -Include '.settings', '.pre_settings' | Copy-Item -Destination \"$data_dir\" -Force"
     ],
     "post_install": [
         "$plugins_dir = Join-Path $dir 'UmiOCR-data' 'plugins'",
         "$original_plugins_dir = Join-Path $dir 'UmiOCR-data' 'plugins.original'",
         "if (Test-Path \"$original_plugins_dir\") {",
+        "    Write-Host \"`nINFO  Removing old bundled plugins from $plugins_dir...\" -ForegroundColor darkgray",
+        "    $paddlePlugins = Get-ChildItem -Path \"$plugins_dir\" -Directory -Filter '*Paddle*'",
+        "    $paddlePlugins | Remove-Item -Force -Recurse -ErrorAction SilentlyContinue",
+        "    Write-Host \"INFO  Updating bundled plugins to $plugins_dir...\" -ForegroundColor darkgray",
         "    Copy-Item -Path \"$original_plugins_dir\\*\" -Destination \"$plugins_dir\" -Force -Recurse",
         "}"
     ],
@@ -44,7 +48,7 @@
         "if ($cmd -eq 'uninstall' -and $purge) { return }",
         "$data_dir = Join-Path $dir 'UmiOCR-data'",
         "$persist_data_dir = Join-Path $persist_dir 'data'",
-        "Get-ChildItem -Path \"$data_dir\" -File -Filter '*settings' | Copy-Item -Destination \"$persist_data_dir\" -Force"
+        "Get-ChildItem -Path \"$data_dir\\*\" -File -Include '.settings', '.pre_settings' | Copy-Item -Destination \"$persist_data_dir\" -Force"
     ],
     "checkver": "github",
     "autoupdate": {
