@@ -5,17 +5,26 @@
 	"license": "MIT",
 	"architecture": {
 		"64bit": {
-			"url": "https://gh-proxy.com/https://github.com/moonrepo/proto/releases/download/v0.52.5/proto_cli-x86_64-pc-windows-msvc.zip",
+			"url": "https://github.com/moonrepo/proto/releases/download/v0.52.5/proto_cli-x86_64-pc-windows-msvc.zip",
 			"hash": "fdf3b65bb60930a7f454cb164ea86040ea28a62b8ee586b67672b9a145c01dc7"
 		}
 	},
-	"bin": [
-		"proto.exe",
-		"proto-shim.exe"
-	],
+	"installer": {
+		"script": [
+			"# Create bin directory",
+			"New-Item -ItemType Directory -Force -Path \"$dir\\bin\" | Out-Null",
+			"",
+			"# Move proto binaries into bin",
+			"Move-Item \"$dir\\proto.exe\" \"$dir\\bin\\proto.exe\" -Force",
+			"if (Test-Path \"$dir\\proto-shim.exe\") {",
+			"    Move-Item \"$dir\\proto-shim.exe\" \"$dir\\bin\\proto-shim.exe\" -Force",
+			"}"
+		]
+	},
 	"env_set": {
 		"PROTO_HOME": "$dir"
 	},
+	"env_add_path": "bin",
 	"checkver": {
 		"github": "https://github.com/moonrepo/proto"
 	},
