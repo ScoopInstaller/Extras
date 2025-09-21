@@ -1,0 +1,40 @@
+{
+    "version": "2025-08-16",
+    "description": "a cross-platform image super-resolution tool.",
+    "homepage": "https://github.com/EutropicAI/Final2x",
+    "license": {
+        "identifier": "BSD-3-Clause",
+        "url": "https://github.com/EutropicAI/Final2x/blob/main/LICENSE"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/EutropicAI/Final2x/releases/download/2025-08-16/Final2x-windows-x64-unpacked.7z",
+            "hash": "0374359223b852a5632740fda11a1838d7c8741e55a622f4919d2dce476ec933"
+        },
+        "arm64": {
+            "url": "https://github.com/EutropicAI/Final2x/releases/download/2025-08-16/Final2x-windows-arm64-unpacked.7z",
+            "hash": "2798fd680e74cb5d724304181dc7cd2292d4799ba03cfaf40eca38048d95a552"
+        }
+    },
+    "shortcuts": [
+        [
+            "Final2x.exe",
+            "Final2x"
+        ]
+    ],
+    "checkver": {
+        "url": "https://api.github.com/repositories/655489856/releases/latest",
+        "jsonpath": "$.assets[?(@.name =~ /windows.+(?:7z|zip)$/i)].browser_download_url",
+        "regex": "download/([\\d-]+)/(?<archarm64>[^\"/]+arm64[^\"/]+).+?(?<archx64>[^\"/]+x64[^\"/]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/EutropicAI/Final2x/releases/download/$version/$matchArchx64"
+            },
+            "arm64": {
+                "url": "https://github.com/EutropicAI/Final2x/releases/download/$version/$matchArcharm64"
+            }
+        }
+    }
+}
