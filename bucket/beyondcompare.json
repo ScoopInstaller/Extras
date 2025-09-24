@@ -49,15 +49,16 @@
         ]
     ],
     "pre_install": [
-        "$file = 'BCPreferences.xml'",
-        "if (!(Test-Path \"$persist_dir\\$file\")) {",
-        "   $CONT = @('<BCPreferences Version=\"2\" MinVersion=\"2\"><TBcPrefs><CheckForUpdatesDayAmt Value=\"0\"/></TBcPrefs></BCPreferences>')",
-        "   Set-Content \"$dir\\$file\" $CONT -Encoding Ascii",
+        "if (!(Test-Path \"$persist_dir\\BCPreferences.xml\")) {",
+        "    $CONT = @('<BCPreferences Version=\"2\" MinVersion=\"2\"><TBcPrefs><CheckForUpdatesDayAmt Value=\"0\"/></TBcPrefs></BCPreferences>')",
+        "    Set-Content \"$dir\\BCPreferences.xml\" $CONT -Encoding Ascii",
         "}",
-        "'BCColors.xml', 'BCCommands.xml', 'BCFileFormats.xml', 'BC5Key.txt' | ForEach-Object {",
-        "   if (!(Test-Path \"$persist_dir\\$_\")) {",
-        "      New-Item \"$dir\\$_\" -ItemType File | Out-Null",
-        "   }",
+        "$files_to_create = $manifest.persist",
+        "$files_to_create | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\$_\") -and !(Test-Path \"$dir\\$_\")) {",
+        "        if ($_.IndexOf('.') -eq -1) { return }",
+        "        New-Item \"$dir\\$_\" -ItemType File | Out-Null",
+        "    }",
         "}"
     ],
     "persist": [
@@ -68,20 +69,8 @@
         "BCFileFormats.xml",
         "BCPreferences.xml",
         "BCState.xml",
-        "BC5Key.txt"
-    ],
-    "pre_uninstall": [
-        "'Helpers', 'Packers' | ForEach-Object {",
-        "    if ((Test-Path \"$dir\\$_\") -And !((Get-Item -Path \"$dir\\$_\" -Force).LinkType -eq \"Junction\")) {",
-        "        New-Item \"$dir\\$_\" -ItemType Directory -ErrorAction Ignore | Out-Null",
-        "        Get-ChildItem -Path \"$dir\\$_\" -Recurse | Move-Item -Destination \"$persist_dir\\$_\" -Force",
-        "    }",
-        "}",
-        "'BCColors.xml', 'BCCommands.xml', 'BCFileFormats.xml', 'BCPreferences.xml', 'BCState.xml', 'BC5Key.txt' | ForEach-Object {",
-        "   if (Test-Path \"$dir\\$_\") {",
-        "       Move-Item \"$dir\\$_\" \"$persist_dir\\$_\" -Force",
-        "   }",
-        "}"
+        "BC5Key.txt",
+        "BCSessions.xml"
     ],
     "checkver": {
         "url": "https://www.scootersoftware.com/download",
