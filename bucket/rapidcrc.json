@@ -6,11 +6,55 @@
     "architecture": {
         "64bit": {
             "url": "http://dl.ov2.eu/programs/rapidcrc-unicode/rapidcrc_0.3.41_x64.zip",
-            "hash": "93f57f2c7382d7c7b6703330b7cc4dac966265da0c9c6f8e14325e0b19d55842"
+            "hash": "93f57f2c7382d7c7b6703330b7cc4dac966265da0c9c6f8e14325e0b19d55842",
+            "post_install": [
+                "$dll64 = 'rcrcshex64.dll'",
+                "if (Test-Path \"$dir\\$dll64\") {",
+                "   Write-Warning \"Shell extension registration requires elevation. Reinstall this package via elevated PowerShell if shell extension does not appear.\"",
+                "   & \"$env:windir\\System32\\regsvr32.exe\" /s \"`\"$dir\\$dll64`\"\"",
+                "} else {",
+                "   Write-Warning \"$dll64 not found; skipping shell extension registration.\"",
+                "}"
+            ],
+            "post_uninstall": [
+                "$dll64 = 'rcrcshex64.dll'",
+                "if (Test-Path \"$dir\\$dll64\") {",
+                "   Write-Warning \"Shell extension unregistration requires elevation. If this package uninstallation was not elevated, re-install and uninstall the package via elevated PowerShell to ensure unregistration.\"",
+                "   & \"$env:windir\\System32\\regsvr32.exe\" /u /s \"`\"$dir\\$dll64`\"\"",
+                "} else {",
+                "   Write-Warning \"$dll64 not present on uninstall; no shell extension to unregister.\"",
+                "}"
+            ]
         },
         "32bit": {
             "url": "http://dl.ov2.eu/programs/rapidcrc-unicode/rapidcrc_0.3.41.zip",
-            "hash": "25630df240a51c590bdbfea09f264b4e3f031d8c130691a7d394ce507a5a5091"
+            "hash": "25630df240a51c590bdbfea09f264b4e3f031d8c130691a7d394ce507a5a5091",
+            "post_install": [
+                "$dll32 = 'rcrcshex.dll'",
+                "if (Test-Path \"$dir\\$dll32\") {",
+                "   Write-Warning \"Shell extension registration requires elevation. Reinstall this package via elevated PowerShell if shell extension does not appear.\"",
+                "   if ([System.Environment]::Is64BitOperatingSystem) {",
+                "      & \"$env:windir\\SysWOW64\\regsvr32.exe\" /s \"`\"$dir\\$dll32`\"\"",
+                "   } else {",
+                "      & \"$env:windir\\System32\\regsvr32.exe\" /s \"`\"$dir\\$dll32`\"\"",
+                "   }",
+                "} else {",
+                "   Write-Warning \"$dll32 not found; skipping shell extension registration.\"",
+                "}"
+            ],
+            "post_uninstall": [
+                "$dll32 = 'rcrcshex.dll'",
+                "if (Test-Path \"$dir\\$dll32\") {",
+                "   Write-Warning \"Shell extension unregistration requires elevation. If this package uninstallation was not elevated, re-install and uninstall the package via elevated PowerShell to ensure unregistration.\"",
+                "   if ([System.Environment]::Is64BitOperatingSystem) {",
+                "      & \"$env:windir\\SysWOW64\\regsvr32.exe\" /u /s \"`\"$dir\\$dll32`\"\"",
+                "   } else {",
+                "      & \"$env:windir\\System32\\regsvr32.exe\" /u /s \"`\"$dir\\$dll32`\"\"",
+                "   }",
+                "} else {",
+                "   Write-Warning \"$dll32 not present on uninstall; no shell extension to unregister.\"",
+                "}"
+            ]
         }
     },
     "shortcuts": [
