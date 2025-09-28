@@ -1,5 +1,5 @@
 {
-    "version": "2025-08-16",
+    "version": "3.0.0",
     "description": "a cross-platform image super-resolution tool.",
     "homepage": "https://github.com/EutropicAI/Final2x",
     "license": {
@@ -24,16 +24,19 @@
     ],
     "checkver": {
         "url": "https://api.github.com/repositories/655489856/releases/latest",
-        "jsonpath": "$.assets[?(@.name =~ /windows.+(?:7z|zip)$/i)].browser_download_url",
-        "regex": "download/([\\d-]+)/(?<archarm64>[^\"/]+arm64[^\"/]+).+?(?<archx64>[^\"/]+x64[^\"/]+)"
+        "script": [
+            "$release = ConvertFrom-Json $page -ErrorAction Stop",
+            "$release.tag_name, $release.name"
+        ],
+        "regex": "(?<tag>[\\d-]+) v(?<version>[\\d.]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/EutropicAI/Final2x/releases/download/$version/$matchArchx64"
+                "url": "https://github.com/EutropicAI/Final2x/releases/download/$matchTag/Final2x-windows-x64-unpacked.7z"
             },
             "arm64": {
-                "url": "https://github.com/EutropicAI/Final2x/releases/download/$version/$matchArcharm64"
+                "url": "https://github.com/EutropicAI/Final2x/releases/download/$matchTag/Final2x-windows-arm64-unpacked.7z"
             }
         }
     }
