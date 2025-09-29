@@ -1,5 +1,5 @@
 {
-    "version": "9.9.20.250724",
+    "version": "9.9.21.250904",
     "description": "An instant messaging software service developed by Tencent",
     "homepage": "https://im.qq.com/pcqq/index.shtml",
     "license": {
@@ -8,16 +8,16 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.20_250724_x64_01.exe#/dl.7z",
-            "hash": "59b097078bd5b3bc6e1029a1dc617559c2d82a8d79fc60798fad5104dc44883c"
+            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.21_250904_x64_01.exe#/dl.7z",
+            "hash": "55fb4684d01316ecdbfcbd5ba82eceda5a6e4d6fc4aa8b0b3d2515c3d41a21d1"
         },
         "32bit": {
-            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.20_250724_x86_01.exe#/dl.7z",
-            "hash": "7a0d51871d2b5add030633b6b87a834119b60daad1098b3747cc7121da4278aa"
+            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.21_250904_x86_01.exe#/dl.7z",
+            "hash": "c5d6089b54a978fee2b5f25dbcccf676cd70ef18769420e09f247eb957d3bb02"
         },
         "arm64": {
-            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.20_250724_arm64_01.exe#/dl.7z",
-            "hash": "8f1a08f515e93585523412b9435f27e052a0d464eb53658a9e991b084965f64d"
+            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.21_250904_arm64_01.exe#/dl.7z",
+            "hash": "b241ba24e10610371dacb3358444fe168a3ae3d60fd5ad96c84b729e41697073"
         }
     },
     "extract_dir": "Files",
@@ -28,7 +28,14 @@
         ]
     ],
     "checkver": {
-        "url": "https://qq-web.cdn-go.cn/im.qq.com_new/latest/rainbow/windowsConfig.js",
+        "script": [
+            "# Please keep this script. An empty Accept-Encoding header can cause the CDN to deliver expired cache.",
+            "# See : https://github.com/ScoopInstaller/Extras/issues/15916",
+            "$headers = @{ 'Accept-Encoding' = 'gzip' }",
+            "$url = 'https://cdn-go.cn/qq-web/im.qq.com_new/latest/rainbow/windowsConfig.js'",
+            "$response = Invoke-WebRequest -Uri $url -UseBasicParsing -Headers $headers",
+            "Write-Output $response.Content"
+        ],
         "regex": "QQNT/Windows/QQ_([\\d\\.]+)_([\\d]+)_x86_01.exe",
         "replace": "${1}.${2}"
     },
