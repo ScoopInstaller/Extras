@@ -54,15 +54,8 @@
         "   $CONT = @('<BCPreferences Version=\"2\" MinVersion=\"2\"><TBcPrefs><CheckForUpdatesDayAmt Value=\"0\"/></TBcPrefs></BCPreferences>')",
         "   Set-Content \"$dir\\$file\" $CONT -Encoding Ascii",
         "}",
-        "Set-Content -Path \"$dir\\BC5Key.txt\" -Value ''",
-        "$files = $manifest.persist | Where-Object { $_ -match '\\.' }",
-        "$files | ForEach-Object {",
-        "    # If we have the file, rename, then copy from 'persist'",
-        "    if ((Test-Path \"$dir\\$_\") -and (Test-Path \"$persist_dir\\$_\")) {",
-        "       Move-Item \"$dir\\$_\" \"$dir\\$_.original\" -Force",
-        "    }",
-        "    Copy-Item \"$persist_dir\\$_\" \"$dir\\$_\" -Force -ErrorAction 'Ignore'",
-        "}"
+        "$files = $manifest.persist | Where-Object { [IO.Path]::HasExtension($_) }",
+        "$files | ForEach-Object { Set-Content -Path \"$dir\\$_\" -Value '' }"
     ],
     "persist": [
         "Helpers",
@@ -76,7 +69,7 @@
         "BCSessions.xml"
      ],
     "pre_uninstall": [
-        "$files = $manifest.persist | Where-Object { $_ -match '\\.' }",
+        "$files = $manifest.persist | Where-Object { [IO.Path]::HasExtension($_) }",
         "$files | ForEach-Object {",
         "   Copy-Item \"$dir\\$_\" \"$persist_dir\\$_\" -Force -ErrorAction 'Ignore'",
         "}"
