@@ -55,7 +55,8 @@
         "   Set-Content \"$dir\\$file\" $CONT -Encoding Ascii",
         "}",
         "Set-Content -Path \"$dir\\BC5Key.txt\" -Value ''",
-        "$manifest._files_to_persist | ForEach-Object {",
+        "$files = $manifest.persist | Where-Object { $_ -match '\\.' }",
+        "$files | ForEach-Object {",
         "    # If we have the file, rename, then copy from 'persist'",
         "    if ((Test-Path \"$dir\\$_\") -and (Test-Path \"$persist_dir\\$_\")) {",
         "       Move-Item \"$dir\\$_\" \"$dir\\$_.original\" -Force",
@@ -63,24 +64,21 @@
         "    Copy-Item \"$persist_dir\\$_\" \"$dir\\$_\" -Force -ErrorAction 'Ignore'",
         "}"
     ],
-    "_files_to_persist": [
+    "persist": [
+        "Helpers",
+        "Packers",
+        "BC5Key.txt",
         "BCColors.xml",
         "BCCommands.xml",
         "BCFileFormats.xml",
         "BCPreferences.xml",
         "BCState.xml",
         "BCSessions.xml"
-    ],
-    "persist": [
-        "Helpers",
-        "Packers",
-        "BC5Key.txt"
      ],
     "pre_uninstall": [
-        "$manifest._files_to_persist | ForEach-Object {",
-        "   if (Test-Path \"$dir\\$_\") {",
-        "       Copy-Item \"$dir\\$_\" \"$persist_dir\\$_\" -Force",
-        "   }",
+        "$files = $manifest.persist | Where-Object { $_ -match '\\.' }",
+        "$files | ForEach-Object {",
+        "   Copy-Item \"$dir\\$_\" \"$persist_dir\\$_\" -Force -ErrorAction 'Ignore'",
         "}"
     ],
     "checkver": {
