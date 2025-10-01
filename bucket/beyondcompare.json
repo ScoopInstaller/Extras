@@ -49,13 +49,10 @@
         ]
     ],
     "pre_install": [
-        "$file = 'BCPreferences.xml'",
-        "if (!(Test-Path \"$persist_dir\\$file\")) {",
-        "   $CONT = @('<BCPreferences Version=\"2\" MinVersion=\"2\"><TBcPrefs><CheckForUpdatesDayAmt Value=\"0\"/></TBcPrefs></BCPreferences>')",
-        "   Set-Content \"$dir\\$file\" $CONT -Encoding Ascii",
-        "}",
+        "# Create a default BCPreferences.xml that will skip update checks.",
+        "$contents = @{'BCPreferences.xml' = '<BCPreferences Version=\"2\" MinVersion=\"2\"><TBcPrefs><CheckForUpdatesDayAmt Value=\"0\"/></TBcPrefs></BCPreferences>'}",
         "$files = $manifest.persist | Where-Object { ([IO.Path]::HasExtension($_)) -and (-not (Test-Path \"$persist_dir\\$_\")) }",
-        "$files | ForEach-Object { Set-Content -Path \"$dir\\$_\" -Value $null }"
+        "$files | ForEach-Object { Set-Content -Path \"$dir\\$_\" -Value $content[$_] }"
     ],
     "persist": [
         "Helpers",
