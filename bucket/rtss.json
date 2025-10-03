@@ -7,7 +7,7 @@
         "vcredist": "extras/vcredist2022",
         "MSI Afterburner": "extras/msiafterburner"
     },
-    "url": "https://ftp.nluug.nl/pub/games/PC/guru3d/afterburner/[Guru3D]-RTSSSetup737Build28314.zip",
+    "url": "https://ftp.nluug.nl/pub/games/PC/guru3d/afterburner/%5BGuru3D%5D-RTSSSetup737Build28314.zip",
     "hash": "9b084a8cb3e53ec1a673894d0b66e22b16c9fd8785636b020b2d422f3f2a820e",
     "pre_install": [
         "Expand-7zipArchive \"$dir\\*RTSSSetup*.exe\" -Removal",
@@ -53,9 +53,10 @@
             "} else {",
             "    Invoke-WebRequest -Uri $Matches.redirect_url -MaximumRedirection 0 -ErrorAction SilentlyContinue -SkipHttpErrorCheck",
             "}",
-            "$version + ' ' + $response.Headers.Location"
+            "[string]($response.Headers.Location) -match 'https://ftp\\.nluug\\.nl/pub/games/PC/guru3d/(?<file_path>[^/]+?)/(?<file_name>.+)'",
+            "Write-Output \"$version $($Matches.file_path)/$([System.Net.WebUtility]::UrlEncode($Matches.file_name))\""
         ],
-        "regex": "(?<version>[\\d.]+) https://ftp\\.nluug\\.nl/pub/games/PC/guru3d/(?<file>.*)"
+        "regex": "(?<version>[\\d.]+) (?<file>.+)"
     },
     "autoupdate": {
         "url": "https://ftp.nluug.nl/pub/games/PC/guru3d/$matchFile"
