@@ -49,27 +49,31 @@
         ]
     ],
     "pre_install": [
-        "# Create a default BCPreferences.xml that will skip update checks.",
-        "$contents = @{'BCPreferences.xml' = '<BCPreferences Version=\"2\" MinVersion=\"2\"><TBcPrefs><CheckForUpdatesDayAmt Value=\"0\"/></TBcPrefs></BCPreferences>'}",
-        "$files = $manifest.persist | Where-Object { ([IO.Path]::HasExtension($_)) -and (-not (Test-Path \"$persist_dir\\$_\")) }",
-        "$files | ForEach-Object { Set-Content -Path \"$dir\\$_\" -Value $content[$_] }"
+        "$contents = @{",
+        "    # Create a default BCPreferences.xml that will skip update checks.",
+        "    'BCPreferences.xml' = '<BCPreferences Version=\"2\" MinVersion=\"2\"><TBcPrefs><CheckForUpdatesDayAmt Value=\"0\"/></TBcPrefs></BCPreferences>'",
+        "}",
+        "# Hardlinks won't work properly here to persist files, because this app creates a new file instead of writing to the existing one.",
+        "# Please keep the file list the same in both pre_install and post_install scripts.",
+        "'BC5Key.txt', 'BCColors.xml', 'BCCommands.xml', 'BCFileFormats.xml', 'BCPreferences.xml', 'BCState.xml', 'BCSessions.xml' | ForEach-Object {",
+        "    if (Test-Path \"$persist_dir\\$_\") {",
+        "        Copy-Item \"$persist_dir\\$_\" \"$dir\\$_\" -Force",
+        "    } else {",
+        "        Set-Content -Path \"$dir\\$_\" -Value $contents[$_]",
+        "    }",
+        "}"
     ],
-    "post_install": "dir \"$dir\\*.original\" -File | ? Length -not | rm",
     "persist": [
         "Helpers",
-        "Packers",
-        "BC5Key.txt",
-        "BCColors.xml",
-        "BCCommands.xml",
-        "BCFileFormats.xml",
-        "BCPreferences.xml",
-        "BCState.xml",
-        "BCSessions.xml"
+        "Packers"
     ],
     "pre_uninstall": [
-        "$files = $manifest.persist | Where-Object { [IO.Path]::HasExtension($_) }",
-        "$files | ForEach-Object {",
-        "   Copy-Item \"$dir\\$_\" \"$persist_dir\\$_\" -Force -ErrorAction 'Ignore'",
+        "# Hardlinks won't work properly here to persist files, because this app creates a new file instead of writing to the existing one.",
+        "# Please keep the file list the same in both pre_install and post_install scripts.",
+        "'BC5Key.txt', 'BCColors.xml', 'BCCommands.xml', 'BCFileFormats.xml', 'BCPreferences.xml', 'BCState.xml', 'BCSessions.xml' | ForEach-Object {",
+        "    if (Test-Path \"$dir\\$_\") {",
+        "        Copy-Item \"$dir\\$_\" \"$persist_dir\\$_\" -Force",
+        "    }",
         "}"
     ],
     "checkver": {
