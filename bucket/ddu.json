@@ -9,16 +9,20 @@
     "url": "https://ftp.nluug.nl/pub/games/PC/guru3d/ddu/%5BGuru3D%5D-DDU.zip",
     "hash": "1813bdfe0123d6b1c75a3b3971c715e602163669707618dac823f76aedc67bd3",
     "pre_install": [
-        "Expand-7zipArchive \"$dir\\*DDU*.exe\" -DestinationPath \"$dir\" -Removal",
-        "Remove-Item \"$dir\\`$*\", \"$dir/*Guru3D*\" -Recurse",
-        "if (!(Test-Path \"$persist_dir/Settings/Settings.xml\")) { New-Item \"$dir/Settings/Settings.xml\" | Out-Null }"
+        "Expand-7zipArchive \"$dir\\*DDU*.exe\" -DestinationPath \"$dir\" -ExtractDir \"DDU v$version\" -Removal",
+        "Remove-Item \"$dir\\*Guru3D*\" -Recurse",
+        "Copy-Item \"$persist_dir\\settings\\Settings.xml\" \"$dir\\settings\" -ErrorAction SilentlyContinue"
     ],
-    "persist": "Settings\\Settings.xml",
     "shortcuts": [
         [
             "Display Driver Uninstaller.exe",
             "DDU - Display Driver Uninstaller"
         ]
+    ],
+    "pre_uninstall": [
+        "# Hardlinks won't work properly here to persist files, because this app creates a new file instead of writing to the existing one.",
+        "ensure \"$persist_dir\\settings\" | Out-Null",
+        "Copy-Item \"$dir\\settings\\Settings.xml\" \"$persist_dir\\settings\" -ErrorAction SilentlyContinue"
     ],
     "checkver": {
         "url": "https://www.guru3d.com/download/display-driver-uninstaller-download/",
