@@ -1,10 +1,10 @@
 {
-    "version": "10.40",
+    "version": "10.41",
     "description": "Video game library manager and launcher with support for 3rd party libraries like Steam, GOG, Origin, Battle.net, ...",
     "homepage": "https://playnite.link",
     "license": "MIT",
-    "url": "https://github.com/JosefNemec/Playnite/releases/download/10.40/Playnite1040.7z",
-    "hash": "94d36a3f1cadb50114bf93d837c100408c0372adde45a02d6bb21174c61f0e4a",
+    "url": "https://github.com/JosefNemec/Playnite/releases/download/10.41/10.41.7z",
+    "hash": "c567ddfeff1834198d68f27a1013f6fab94f6baf67d41858711039a77b4a1dc8",
     "pre_install": [
         "Copy-Item \"$persist_dir\\config.json\" \"$dir\" -ErrorAction 'SilentlyContinue'",
         "if (Test-Path \"$persist_dir\\Themes\") {",
@@ -45,9 +45,11 @@
         "Themes"
     ],
     "checkver": {
-        "github": "https://github.com/JosefNemec/Playnite"
+        "url": "https://api.github.com/repos/JosefNemec/Playnite/releases/latest",
+        "jsonpath": "$..assets[?(@.browser_download_url =~ /download\\/[\\d.]+\\/.*?\\.(?:7z|zip)/)].browser_download_url",
+        "regex": "download/(?<version>[\\d.]+)/(?<file>.*?\\.(?:7z|zip))"
     },
     "autoupdate": {
-        "url": "https://github.com/JosefNemec/Playnite/releases/download/$version/Playnite$cleanVersion.7z"
+        "url": "https://github.com/JosefNemec/Playnite/releases/download/$version/$matchFile"
     }
 }
