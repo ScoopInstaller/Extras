@@ -11,7 +11,6 @@
     "pre_install": [
         "Expand-7zipArchive \"$dir\\*DDU*.exe\" -DestinationPath \"$dir\" -ExtractDir \"DDU v$version\" -Removal",
         "Remove-Item \"$dir\\*Guru3D*\" -Recurse",
-        "ensure \"$persist_dir\\settings\" | Out-Null",
         "Copy-Item \"$persist_dir\\settings\\Settings.xml\" \"$dir\\settings\" -ErrorAction SilentlyContinue"
     ],
     "shortcuts": [
@@ -20,7 +19,11 @@
             "DDU - Display Driver Uninstaller"
         ]
     ],
-    "pre_uninstall": "Copy-Item \"$dir\\settings\\Settings.xml\" \"$persist_dir\\settings\" -ErrorAction SilentlyContinue",
+    "pre_uninstall": [
+        "# Hardlinks won't work properly here to persist files, because this app creates a new file instead of writing to the existing one.",
+        "ensure \"$persist_dir\\settings\" | Out-Null",
+        "Copy-Item \"$dir\\settings\\Settings.xml\" \"$persist_dir\\settings\" -ErrorAction SilentlyContinue"
+    ],
     "checkver": {
         "url": "https://www.guru3d.com/download/display-driver-uninstaller-download/",
         "regex": "<title>Display Driver Uninstaller \\(DDU\\) download version ([\\d.]+)</title>"
