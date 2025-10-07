@@ -109,4 +109,4 @@ Add-AppxPackage -Path '{{scoop_dir}}\WinUI3Apps\ImageResizerContextMenuPackage.m
 
 Add-AppxPackage -Path '{{scoop_dir}}\WinUI3Apps\PowerRenameContextMenuPackage.msix' -ExternalLocation '{{scoop_dir}}\WinUI3Apps' | Out-Null
 
-Get-ChildItem '{{scoop_dir}}\WinUI3Apps\CmdPal\Microsoft.CmdPal.UI_*.msix\' | Add-AppxPackage -ExternalLocation '{{scoop_dir}}\WinUI3Apps\CmdPal' | Out-Null
+Get-ChildItem '{{scoop_dir}}\WinUI3Apps\CmdPal\Microsoft.CmdPal.UI_*.msix\' | ForEach-Object { Add-AppxPackage -Path $_.FullName | Out-Null }
