@@ -1,0 +1,62 @@
+{
+    "version": "0.65.1-68cb1",
+    "description": "Image optimizer for web",
+    "homepage": "https://css-ig.net/pinga",
+    "license": {
+        "identifier": "Unknown",
+        "url": "https://css-ig.net/submit/licenses"
+    },
+    "url": "https://css-ig.net/bin/pinga-win64.zip",
+    "hash": "68cb1bfcff8ccdbe3feb9a804f909f7ab88716fa2e167bf605668e54c5a42a34",
+    "innosetup": true,
+    "pre_install": [
+        "# Rename the installer because it is named the same as the executable inside it",
+        "Rename-Item -Path \"$dir\\pinga.exe\" -NewName \"pinga_setup.exe\"",
+        "# Extract the installer and delete it afterwards",
+        "Expand-InnoArchive -Path \"$dir\\pinga_setup.exe\" -DestinationPath \"$dir\" -Removal"
+    ],
+    "shortcuts": [
+        [
+            "pinga.exe",
+            "pinga"
+        ]
+    ],
+    "post_uninstall": [
+        "if ($purge) {",
+        "    $Files = [string[]](",
+        "        [System.IO.Path]::Combine($env:LOCALAPPDATA,'pinga.ini')",
+        "    )",
+        "    $Files.ForEach{",
+        "        if ([System.IO.File]::Exists($_)) {",
+        "            $null = [System.IO.File]::Delete($_)",
+        "        }",
+        "    }",
+        "}"
+    ],
+    "checkver": {
+        "script": [
+            "<#",
+            "   Create version with first 5ch of SHA256 checksum,",
+            "   because the author have multiple times updated the ZIP file,",
+            "   without incrementing the version number.",
+            "#>",
+            "# Get stated version from webpage",
+            "$Html = Invoke-RestMethod -Method 'Get' -Uri 'https://css-ig.net/pinga'",
+            "$Version = [string] [regex]::Matches($Html, 'v([\\d+.]+)')[0].'Value'.TrimStart('v')",
+            "# Get SHA256 checksum",
+            "$WebClient = [System.Net.WebClient]::new()",
+            "$Sha256 = [string](",
+            "    (Get-FileHash -InputStream ($WebClient.OpenRead('https://css-ig.net/bin/pinga-win64.zip')) -Algorithm 'SHA256').'Hash'.ToLower()",
+            ")",
+            "if ($null -ne $WebClient) {",
+            "    $WebClient.Dispose()",
+            "}",
+            "# Output stated version with first 5 characters of the SHA256 checksum",
+            "[string]::Format('{0}-{1}', $Version, $Sha256.Substring(0, 5))"
+        ],
+        "regex": "([\\d+.]+-[\\da-f]{5})"
+    },
+    "autoupdate": {
+        "url": "https://css-ig.net/bin/pinga-win64.zip"
+    }
+}
