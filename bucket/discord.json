@@ -1,39 +1,42 @@
 {
-    "version": "1.0.9208-23",
-    "description": "Free Voice and Text Chat",
-    "homepage": "https://discord.com/",
+    "version": "1.0.9211",
+    "description": "Group Chat That's All Fun & Games",
+    "homepage": "https://discord.com",
     "license": {
         "identifier": "Freeware",
         "url": "https://discord.com/terms"
     },
+    "notes": "User may need to re-login or re-enable startup in Discord settings",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/portapps/discord-portable/releases/download/1.0.9208-23/discord-portable-win64-1.0.9208-23.7z",
-            "hash": "3f865d535bccfbf437904211f9532eee0c3d5c5fa766cdf5447aa9ac9d2e361d"
+            "url": "https://stable.dl2.discordapp.net/distro/app/stable/win/x64/1.0.9211/DiscordSetup.exe#/dl.7z",
+            "hash": "bec671f0b3236bc072095300584c2def8fc9e4b7af4a0896cc9f1430e8cb6317"
         }
     },
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\Discord-$version-full.nupkg\" -ExtractDir 'lib\\net45' -DestinationPath \"$dir\\app-$version\" -Removal",
+        "Move-Item \"$dir\\app-$version\\installer.db\" \"$dir\"",
+        "Move-Item \"$dir\\app-$version\\app.ico\" \"$dir\"",
+        "New-Item \"$dir\\packages\" -ItemType Directory | Out-Null",
+        "Move-Item \"$dir\\RELEASES\" \"$dir\\packages\""
+    ],
     "shortcuts": [
         [
-            "discord-portable.exe",
-            "Discord"
+            "Update.exe",
+            "Discord",
+            "--processStart Discord.exe",
+            "app.ico"
         ]
     ],
-    "persist": [
-        "data",
-        "log"
-    ],
     "checkver": {
-        "url": "https://github.com/portapps/discord-portable",
-        "regex": "/releases/tag/(?:v|V)?([\\d.-]+)"
+        "url": "https://updates.discord.com/distributions/app/manifests/latest?channel=stable&platform=win&arch=x64",
+        "regex": "x64/([\\d.]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/portapps/discord-portable/releases/download/$version/discord-portable-win64-$version.7z"
+                "url": "https://stable.dl2.discordapp.net/distro/app/stable/win/x64/$version/DiscordSetup.exe#/dl.7z"
             }
-        },
-        "hash": {
-            "url": "$baseurl/checksums.txt"
         }
     }
 }
