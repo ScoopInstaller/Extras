@@ -17,6 +17,16 @@
         }
     },
     "extract_dir": "AIMP",
+    "post_install": [
+        "'Icons.original', 'Skins.original', 'Plugins.original' | ForEach-Object {",
+        "    $source_dir = Join-Path $dir $_",
+        "    $destination_dir = Join-Path $dir $($_ -ireplace '\\.original', '')",
+        "    if (Test-Path \"$source_dir\") {",
+        "        Copy-Item -Path \"$source_dir\\*\" -Destination $destination_dir -Force -Recurse",
+        "        Remove-Item -Path $source_dir -Recurse -Force -ErrorAction SilentlyContinue",
+        "    }",
+        "}"
+    ],
     "bin": [
         "AIMP.exe",
         "AIMPac.exe",
@@ -37,10 +47,10 @@
         ]
     ],
     "persist": [
-        "Profile",
-        "Plugins",
+        "Icons",
         "Skins",
-        "Icons"
+        "Plugins",
+        "Profile"
     ],
     "checkver": {
         "url": "https://www.aimp.ru/?do=download&os=windows",
