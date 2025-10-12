@@ -1,6 +1,6 @@
 {
     "version": "141.0.7390.77",
-    "description": "Fast, secure, and free web browser, built for the modern web",
+    "description": "The Fast & Secure Web Browser Built to be Yours",
     "homepage": "https://google.com/chrome",
     "license": {
         "identifier": "Freeware",
@@ -28,9 +28,10 @@
         "Expand-7zipArchive \"$inst\" \"$dir\\tmp\"",
         "Expand-7zipArchive \"$dir\\tmp\\chrome.7z\" -ExtractDir 'Chrome-bin' -DestinationPath \"$dir\""
     ],
-    "post_install": [
-        "Remove-Item \"$dir\\tmp\" -Recurse -Force"
-    ],
+    "post_install": "Remove-Item \"$dir\\tmp\" -Recurse -Force",
+    "env_set": {
+        "CHROME_EXECUTABLE": "$dir\\chrome.exe"
+    },
     "bin": [
         [
             "chrome.exe",
@@ -43,12 +44,11 @@
             "Google Chrome"
         ]
     ],
-    "env_set": {
-        "CHROME_EXECUTABLE": "$dir\\chrome.exe"
-    },
     "checkver": {
-        "url": "https://scoopinstaller.github.io/UpdateTracker/googlechrome/chrome.min.xml",
-        "regex": "<version>([\\d.]+)"
+        "url": "https://api.github.com/repositories/197275551/contents/manifests/g/Google/Chrome",
+        "jsonpath": "$..name",
+        "regex": "([\\d.]+)",
+        "reverse": true
     },
     "autoupdate": {
         "architecture": {
