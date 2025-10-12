@@ -29,16 +29,26 @@
             ]
         }
     },
-    "pre_install": "if (!(Test-Path \"$persist_dir\\portable_mode.txt\")) { New-Item \"$dir\\portable_mode.txt\" | Out-Null }",
-    "persist": [
-        "config",
-        "portable_mode.txt",
-        "obs-plugins"
+    "pre_install": [
+        "if (-not (Test-Path \"$persist_dir\\portable_mode.txt\")) {",
+        "    New-Item -Path \"$dir\\portable_mode.txt\" -ItemType File -Force | Out-Null",
+        "}"
     ],
     "post_install": [
-        "if (!(Test-Path \"$dir\\obs-plugins.original\")) { return }",
-        "Copy-Item \"$dir\\obs-plugins.original\\*\" \"$dir\\obs-plugins\" -Recurse -Force",
-        "Remove-Item \"$dir\\obs-plugins.original\" -Recurse -Force"
+        "'data', 'obs-plugins' | ForEach-Object {",
+        "    $source_dir = Join-Path $dir \"$_.original\"",
+        "    $destination_dir = Join-Path $dir $_",
+        "    if (Test-Path \"$source_dir\") {",
+        "        Copy-Item -Path \"$source_dir\\*\" -Destination $destination_dir -Force -Recurse",
+        "        Remove-Item -Path $source_dir -Recurse -Force -ErrorAction SilentlyContinue",
+        "    }",
+        "}"
+    ],
+    "persist": [
+        "data",
+        "config",
+        "obs-plugins",
+        "portable_mode.txt"
     ],
     "checkver": {
         "github": "https://github.com/obsproject/obs-studio"
