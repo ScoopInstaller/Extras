@@ -1,0 +1,60 @@
+{
+    "version": "0.1.182",
+    "description": "System tray utility for controlling the Ikea Idasen desk via BluetoothLE on Windows 10/11",
+    "homepage": "https://github.com/tschroedter/idasen-desk",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/tschroedter/idasen-desk/releases/download/v0.1.182/Idasen-SystemTray-0.1.182-win-x64.exe",
+            "hash": "c5a789f3160ad90b79692e2ce2030cc140fe0cb1e48eb2ba7d42e4d054664cfe"
+        }
+    },
+    "bin": [
+        [
+            "Idasen-SystemTray-0.1.182-win-x64.exe",
+            "idasen-systemtray"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "Idasen-SystemTray-0.1.182-win-x64.exe",
+            "Idasen System Tray"
+        ]
+    ],
+    "notes": "Ensure your Ikea Idasen desk is paired via Bluetooth before launching. The app runs in the system tray. It is installed as a startup app and will automatically run at startup.",
+    "checkver": {
+        "github": "https://github.com/tschroedter/idasen-desk",
+        "regex": "v(\\d+\\.\\d+\\.\\d+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/tschroedter/idasen-desk/releases/download/v$version/Idasen-SystemTray-$version-win-x64.exe"
+            }
+        },
+        "bin": [
+            [
+                "Idasen-SystemTray-$version-win-x64.exe",
+                "idasen-systemtray"
+            ]
+        ],
+        "shortcuts": [
+            [
+                "Idasen-SystemTray-$version-win-x64.exe",
+                "Idasen System Tray"
+            ]
+        ]
+    },
+    "installer": {
+        "script": [
+            "$startup = \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\"",
+            "$target = \"$env:USERPROFILE\\scoop\\shims\\idasen-systemtray.exe\"",
+            "$shortcut = Join-Path $startup \"Idasen System Tray.lnk\"",
+            "$wshell = New-Object -ComObject WScript.Shell",
+            "$sc = $wshell.CreateShortcut($shortcut)",
+            "$sc.TargetPath = $target",
+            "$sc.WorkingDirectory = Split-Path $target",
+            "$sc.Save()"
+        ]
+    }
+}
