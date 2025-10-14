@@ -1,5 +1,5 @@
 {
-    "version": "0.6.6",
+    "version": "0.6.7.2",
     "description": "RetroShare is a Free and Open Source cross-platform, Friend-2-Friend and secure decentralised communication platform.",
     "homepage": "https://retroshare.cc/",
     "license": "GPL-2.0-only",
@@ -9,8 +9,12 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/RetroShare/RetroShare/releases/download/v0.6.6/RetroShare-0.6.6-Windows-Portable-20210313-0-g751fffc30-Qt-5.15.2-x64.7z",
-            "hash": "870895241d8f43b63d90ed9a5f394b09533eb84951607f68fb75743372427527"
+            "url": "https://github.com/RetroShare/RetroShare/releases/download/v0.6.7.2/RetroShare-0.6.7a-4-ga1fdce2e5-Windows-Portable-20231126-Qt-5.15.2-x64.7z",
+            "hash": "5a89a746115f34312ace09a3ec84c1929f31ab680eb6892d72c71406a15bb3fb"
+        },
+        "32bit": {
+            "url": "https://github.com/RetroShare/RetroShare/releases/download/v0.6.7.2/RetroShare-0.6.7a-4-ga1fdce2e5-Windows-Portable-20231126-Qt-5.15.2-x86.7z",
+            "hash": "23f2b5d31a495839ea8a511a72f71711bf260b80c6592c68f2f68a672fccd164"
         }
     },
     "bin": [
@@ -25,13 +29,17 @@
     ],
     "persist": "Data",
     "checkver": {
-        "url": "https://retroshare.cc/downloads.html",
-        "regex": "RetroShare-([\\d.]+)-Windows-Portable-(?<build>[\\w-.]+)-x64\\.7z\""
+        "url": "https://api.github.com/repositories/40011265/releases/latest",
+        "jsonpath": "$.assets[?(@.name =~ /Windows-Portable/i)].browser_download_url",
+        "regex": "download/v([\\d.]+)/RetroShare-(?<commit>[^\"]+)-Windows-Portable-(?<build>[\\w.-]+?)(?<!-tor)(?=(?:-x64|-x86)?\\.7z)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/RetroShare/RetroShare/releases/download/v$version/RetroShare-$version-Windows-Portable-$matchBuild-x64.7z"
+                "url": "https://github.com/RetroShare/RetroShare/releases/download/v$version/RetroShare-$matchCommit-Windows-Portable-$matchBuild-x64.7z"
+            },
+            "32bit": {
+                "url": "https://github.com/RetroShare/RetroShare/releases/download/v$version/RetroShare-$matchCommit-Windows-Portable-$matchBuild-x86.7z"
             }
         },
         "hash": {
