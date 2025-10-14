@@ -41,11 +41,8 @@
     "persist": "User Data",
     "checkver": {
         "url": "https://api.github.com/repositories/638089306/releases/latest",
-        "script": [
-            "$release = ConvertFrom-Json $page -ErrorAction Stop",
-            "$release.tag_name + ', ' + $release.name"
-        ],
-        "regex": "(?i)(?<tag>v?[\\d]+(?<suffix>-.+)?),.+?(?<prefix>[\\d.]+)",
+        "jsonpath": "$..['tag_name', 'name']",
+        "regex": "(?i)\"(?<tag>v?[\\d]+(?<suffix>-[^\"]+)?)\",\"[^\"]+?(?<prefix>[\\d.]+)",
         "replace": "${prefix}${suffix}"
     },
     "autoupdate": {
