@@ -39,18 +39,10 @@
     ],
     "checkver": {
         "script": [
-            "$output = @()",
-            "'64', '32' | ForEach-Object {",
-            "    $req = $null",
-            "    $url = \"https://www.foxit.com/downloads/latest.html?product=Foxit-Reader&platform=Windows&operating_type=$_&package_type=exe&language=ML\"",
-            "    if ($PSVersionTable.PSVersion.Major -lt 7.0) {",
-            "        $req = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -ErrorAction SilentlyContinue",
-            "    } else {",
-            "        $req = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -ErrorAction SilentlyContinue -SkipHttpErrorCheck",
-            "    }",
-            "    $output += [string]($req.Headers.Location)",
-            "}",
-            "Write-Output ($output -join ', ')"
+            "$Uri = [System.Net.HttpWebRequest]::Create(",
+            "    'https://www.foxit.com/downloads/latest.html?product=Foxit-Reader&platform=Windows&operating_type=64&package_type=exe&language=ML'",
+            ").GetResponse().ResponseUri.AbsoluteUri",
+            "$Uri, $Uri.Replace('x64', 'x86') -join ', '"
         ],
         "regex": "/win/(?<version>[\\d.]+)/(?<fname64>FoxitPDFReader.*\\.exe), .*/win/\\k<version>/(?<fname32>FoxitPDFReader.*\\.exe)"
     },
