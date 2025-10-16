@@ -33,8 +33,8 @@
             "[string]::Format(",
             "    '{0}|{1}|{2}',",
             "    $LatestRelease.'tag_name'.TrimStart('v'),",
-            "    $LatestRelease.'assets'.Where{$_.'name'.StartsWith('fvim-win-x64-')}.'browser_download_url',",
-            "    $LatestRelease.'assets'.Where{$_.'name'.StartsWith('fvim-win-arm64-')}.'browser_download_url'",
+            "    ($LatestRelease.'assets'.Where{$_.'name'.StartsWith('fvim-win-x64-')}.'browser_download_url'.Split('/')[-2, -1] -join '/'),",
+            "    ($LatestRelease.'assets'.Where{$_.'name'.StartsWith('fvim-win-arm64-')}.'browser_download_url'.Split('/')[-2, -1] -join '/')",
             ")"
         ],
         "regex": "(?<version>.+)\\|(?<urlx64>.+)\\|(?<urlarm64>.+)"
@@ -42,10 +42,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "$matchUrlx64"
+                "url": "https://github.com/yatli/fvim/releases/download/$matchUrlx64"
             },
             "arm64": {
-                "url": "$matchUrlarm64"
+                "url": "https://github.com/yatli/fvim/releases/download/$matchUrlarm64"
             }
         }
     }
