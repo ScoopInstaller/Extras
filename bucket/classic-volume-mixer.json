@@ -9,8 +9,20 @@
     "shortcuts": [
         [
             "ClassicVolumeMixer.exe",
-            "Classic Volume Mixer"
+            "ClassicVolumeMixer"
         ]
+    ],
+    "post_uninstall": [
+        "if ($purge) {",
+        "    $Files = [string[]](",
+        "        ('{0}\\ClassicVolumeMixerSettings.json' -f $env:APPDATA)",
+        "    )",
+        "    $Files.ForEach{",
+        "       if ([System.IO.File]::Exists($_)) {",
+        "           $null = [System.IO.File]::Delete($_)",
+        "       }",
+        "    }",
+        "}"
     ],
     "checkver": "github",
     "autoupdate": {
