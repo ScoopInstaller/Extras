@@ -3,9 +3,21 @@
     "description": "Light-weight and easy-to-use password manager",
     "homepage": "https://keepass.info",
     "license": "GPL-2.0-or-later",
+    "innosetup": true,
     "url": "https://downloads.sourceforge.net/project/keepass/KeePass%202.x/2.59/KeePass-2.59-Setup.exe",
     "hash": "sha1:4a12b24889126db729f75aa8ab882369df7e504e",
-    "innosetup": true,
+    "pre_install": [
+        "# Persistence",
+        "# KeePass overrides hardlink, so we need to copy config manually while installing/uninstalling",
+        "# https://github.com/ScoopInstaller/Extras/issues/15887#issuecomment-3124309000",
+        "if (Test-Path \"$persist_dir\\KeePass.config.xml\") { Copy-Item \"$persist_dir\\KeePass.config.xml\" \"$dir\" }",
+        "# Disable `PreferUserConfiguration` for non-global fresh installation:",
+        "if (!($global) -and !(Test-Path \"$persist_dir\\KeePass.config.xml\")) {",
+        "  $config = [xml](Get-Content \"$dir\\KeePass.config.xml\")",
+        "  $config.Configuration.Meta.PreferUserConfiguration = 'false'",
+        "  $config.Save(\"$dir\\KeePass.config.xml\")",
+        "}"
+    ],
     "bin": "KeePass.exe",
     "shortcuts": [
         [
@@ -17,6 +29,7 @@
         "Plugins",
         "Languages"
     ],
+    "pre_uninstall": "if (Test-Path \"$dir\\KeePass.config.xml\") { Copy-Item \"$dir\\KeePass.config.xml\" \"$persist_dir\" -Force }",
     "checkver": {
         "url": "https://keepass.info/update/version2x.txt",
         "regex": "KeePass:([\\d.]+)"
