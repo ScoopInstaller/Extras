@@ -45,10 +45,12 @@
         ]
     ],
     "checkver": {
-        "url": "https://api.github.com/repositories/197275551/contents/manifests/g/Google/Chrome",
-        "jsonpath": "$..name",
-        "regex": "([\\d.]+)",
-        "reverse": true
+        "script": [
+            "$Body = '<?xml version=\"1.0\" encoding=\"UTF-8\"?><request protocol=\"3.0\"><os platform=\"win\" version=\"10.0.22000\" /><app appid=\"{8A69D345-D564-463C-AFF1-A69D9E530F96}\" version=\"\"><updatecheck /></app></request>'",
+            "$Response = Invoke-RestMethod -Uri 'https://update.googleapis.com/service/update2' -Method Post -Body $Body",
+            "Write-Output $Response.response.app.updatecheck.manifest.version"
+        ],
+        "regex": "([\\d.]+)"
     },
     "autoupdate": {
         "architecture": {
