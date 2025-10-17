@@ -1,0 +1,44 @@
+{
+    "version": "3.2.8",
+    "description": "Cross-platform GUI toolkit for creating native applications",
+    "homepage": "https://www.wxwidgets.org/",
+    "license": {
+        "identifier": "wxWindows Library Licence",
+        "url": "https://github.com/wxWidgets/wxWidgets/blob/master/docs/licence.txt"
+    },
+    "url": "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.8/wxMSW-3.2.8-Setup.exe",
+    "hash": "sha256:a525ed70885e5cf2cbc15b9f90a7b78962eccca199fbff6b9d58c0ad71e1a4aa",
+    "installer": {
+        "file": "wxMSW-3.2.8-Setup.exe",
+        "args": [
+            "/VERYSILENT",
+            "/NORESTART",
+            "/DIR=$dir"
+        ]
+    },
+    "post_install": [
+        "Write-Host 'wxWidgets installation completed successfully'",
+        "Write-Host \"Installation directory: $dir\"",
+        "if (Test-Path \"$dir\\include\") { Write-Host 'Headers found in include directory' }",
+        "if (Test-Path \"$dir\\lib\") { Write-Host 'Libraries found in lib directory' }"
+    ],
+    "env_set": {
+        "WXWIN": "$dir",
+        "wxWidgets_ROOT_DIR": "$dir"
+    },
+    "notes": [
+        "wxWidgets has been installed to $dir",
+        "Environment variables WXWIN and wxWidgets_ROOT_DIR have been set",
+        "Include headers are in: $dir\\include",
+        "Libraries are in: $dir\\lib",
+        "For development, use the libraries in lib\\vc_lib (static) or lib\\vc_dll (dynamic)",
+        "Common DLL files are in lib\\vc_dll - add this to your PATH if needed"
+    ],
+    "checkver": {
+        "github": "https://github.com/wxWidgets/wxWidgets",
+        "regex": "tag/v([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://github.com/wxWidgets/wxWidgets/releases/download/v$version/wxMSW-$version-Setup.exe"
+    }
+}
