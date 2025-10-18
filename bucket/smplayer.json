@@ -1,8 +1,11 @@
 {
     "version": "25.6.0.0",
     "description": "A video player forked from MPV. It can also play Youtube videos, search and download subtitles, and includes other features like a thumbnail generator and audio and video filters.",
-    "homepage": "https://www.smplayer.info/",
-    "license": "GPL-2.0-or-later",
+    "homepage": "https://www.smplayer.info",
+    "license": {
+        "identifier": "GPL-2.0-or-later",
+        "url": "https://github.com/smplayer-dev/smplayer/blob/master/setup/license.txt"
+    },
     "architecture": {
         "64bit": {
             "url": "https://github.com/smplayer-dev/smplayer/releases/download/v25.6.0/smplayer-portable-25.6.0.0-x64.7z",
@@ -15,10 +18,23 @@
     },
     "extract_dir": "smplayer-portable",
     "pre_install": [
-        "'hdpi.ini', 'playlist.ini', 'favorites.m3u8', 'radio.m3u8', 'tv.m3u8' | ForEach-Object {",
-        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "$cfg = @(",
+        "    '[%General]'",
+        "    'screenshot_folder={screenshots_dir}'",
+        "    '[update_checker]'",
+        "    'enabled=false'",
+        ")",
+        "$cfg_dir = Join-Path -Path $persist_dir -ChildPath 'config\\smplayer.ini'",
+        "# Disable automatic update checking and set a placeholder for the screenshots directory path",
+        "if (-not (Test-Path -Path $cfg_dir)) {",
+        "    info \"File $cfg_dir does not exist. Creating...\"",
+        "    ensure (Split-Path -Path $cfg_dir -Parent) | Out-Null",
+        "    Set-Content -Path $cfg_dir -Value $cfg -Encoding Ascii",
         "}",
-        "if (Test-Path \"$persist_dir\\smplayer.ini\") { Copy-Item \"$persist_dir\\smplayer.ini\" \"$dir\\smplayer.ini\" }"
+        "# Set the correct screenshots directory, ensuring it is not affected by the `no_junction` configuration",
+        "$content = Get-Content -Path $cfg_dir -Encoding Ascii",
+        "$screenshots_dir = (Join-Path -Path $dir -ChildPath 'screenshots') -replace '\\\\', '\\\\'",
+        "$content -replace '{screenshots_dir}', $screenshots_dir | Set-Content -Path $cfg_dir -Encoding Ascii"
     ],
     "shortcuts": [
         [
@@ -27,16 +43,14 @@
         ]
     ],
     "persist": [
-        "screenshots",
-        "hdpi.ini",
-        "playlist.ini",
-        "favorites.m3u8",
-        "radio.m3u8",
-        "tv.m3u8"
+        "config",
+        "screenshots"
     ],
     "pre_uninstall": [
-        "# The following must be done as SMPlayer deletes the original file which was linked to the persist folder when it saves settings, rather than editing the file.",
-        "Copy-Item \"$dir\\smplayer.ini\" \"$persist_dir\\smplayer.ini\""
+        "$cfg_dir = Join-Path -Path $persist_dir -ChildPath 'config\\smplayer.ini'",
+        "$config_entry = 'screenshot_folder={screenshots_dir}'",
+        "$content = Get-Content -Path $cfg_dir -Encoding Ascii",
+        "$content -replace 'screenshot_folder=.+', $config_entry | Set-Content -Path $cfg_dir -Encoding Ascii"
     ],
     "checkver": {
         "url": "https://www.smplayer.info/en/download-smplayer-portable",
