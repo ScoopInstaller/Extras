@@ -12,7 +12,14 @@
             "CompactGUI"
         ]
     ],
-    "checkver": "github",
+    "checkver": {
+        "script": [
+            "(Invoke-RestMethod -Method 'Get' -Uri 'https://api.github.com/repos/ImminentFate/CompactGUI/releases').'tag_name'.Where{",
+            "    $_ -match '(^v[\\d.]+[\\d]$)'",
+            "}[0]"
+        ],
+        "regex": "([\\d.]+)"
+    },
     "autoupdate": {
         "url": "https://github.com/ImminentFate/CompactGUI/releases/download/v$version/CompactGUI.exe",
         "hash": {
