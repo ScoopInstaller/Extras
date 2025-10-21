@@ -8,31 +8,22 @@
     },
     "url": "https://github.com/wxWidgets/wxWidgets/releases/download/v3.3.1/wxMSW-3.3.1-Setup.exe",
     "hash": "sha256:54e5a57a9d9275f7077acb50152b733a93ab1f9f08ddbf1d04bacbb4ee0d8e50",
-    "installer": {
-        "file": "wxMSW-3.3.1-Setup.exe",
-        "args": [
-            "/VERYSILENT",
-            "/NORESTART",
-            "/DIR=$dir"
-        ]
-    },
+    "innosetup": true,
     "post_install": [
-        "Write-Host 'wxWidgets installation completed successfully'",
-        "Write-Host \"Installation directory: $dir\"",
-        "if (Test-Path \"$dir\\include\") { Write-Host 'Headers found in include directory' }",
-        "if (Test-Path \"$dir\\lib\") { Write-Host 'Libraries found in lib directory' }"
+        "Write-Host 'Cleaning up installation files...'",
+        "Remove-Item \"$dir\\unins*\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "Write-Host 'wxWidgets has been successfully extracted and cleaned.'"
     ],
     "env_set": {
         "WXWIN": "$dir",
         "wxWidgets_ROOT_DIR": "$dir"
     },
     "notes": [
-        "wxWidgets has been installed to $dir",
-        "Environment variables WXWIN and wxWidgets_ROOT_DIR have been set",
+        "wxWidgets has been installed to $dir by extracting the installer.",
+        "Environment variables WXWIN and wxWidgets_ROOT_DIR have been set.",
         "Include headers are in: $dir\\include",
         "Libraries are in: $dir\\lib",
-        "For development, use the libraries in lib\\vc_lib (static) or lib\\vc_dll (dynamic)",
-        "Common DLL files are in lib\\vc_dll - add this to your PATH if needed"
+        "For development, use the libraries in lib\\vc_lib (static) or lib\\vc_dll (dynamic)"
     ],
     "checkver": {
         "github": "https://github.com/wxWidgets/wxWidgets",
