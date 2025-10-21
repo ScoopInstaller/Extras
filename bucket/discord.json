@@ -6,7 +6,14 @@
         "identifier": "Freeware",
         "url": "https://discord.com/terms"
     },
-    "notes": "User may need to re-enable startup in Discord settings",
+    "notes": [
+        "User may need to re-enable startup in Discord settings",
+        "Fix notification:",
+        "- Dowmload makelnk: https://github.com/Robertof/make-shortcut-with-appusermodelid/releases",
+        "- Run: makelnk.exe com.squirrel.Discord.Discord \"$dir\\Update.exe\" Discord \"--processStart Discord.exe\"",
+        "- Navigate to: $env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\"",
+        "- Right click Discord -> Properties -> Change icon -> \"$dir\\app.ico\""
+    ],
     "architecture": {
         "64bit": {
             "url": "https://stable.dl2.discordapp.net/distro/app/stable/win/x64/1.0.9211/DiscordSetup.exe#/dl.7z",
@@ -20,16 +27,6 @@
         "New-Item \"$dir\\packages\" -ItemType Directory | Out-Null",
         "Move-Item \"$dir\\RELEASES\" \"$dir\\packages\""
     ],
-    "post_install": [
-        "if (!(Test-Path \"$env:APPDATA\\discord\") -and (Test-Path \"$persist_dir\\data\")) {",
-        "    info '[Official Mode]: Copying user data from portapps data directory . . .'",
-        "    New-Item \"$env:APPDATA\\discord\" -ItemType Directory | Out-Null",
-        "    Copy-Item \"$persist_dir\\data\\*\" \"$env:APPDATA\\discord\" -Recurse",
-        "}",
-        "if (Test-Path \"$bucketsdir\\$bucket\\scripts\\$app\\Discord.lnk\") {",
-        "    Copy-Item \"$bucketsdir\\$bucket\\scripts\\$app\\Discord.lnk\" \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\"",
-        "}"
-    ],
     "shortcuts": [
         [
             "Update.exe",
@@ -38,7 +35,11 @@
             "app.ico"
         ]
     ],
-    "post_uninstall": "Remove-Item \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\"\\Discord.lnk\"",
+    "post_uninstall": [
+        "if (Test-Path \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Discord.lnk\") {",
+        "Remove-Item \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Discord.lnk\"",
+        "}"
+    ],
     "checkver": {
         "url": "https://updates.discord.com/distributions/app/manifests/latest?channel=stable&platform=win&arch=x64",
         "regex": "x64/([\\d.]+)"
