@@ -1,0 +1,41 @@
+{
+    "version": "2.0.0.3",
+    "description": "An all-in-one, free screenshot tool with annotation, pinning, OCR and recording features.",
+    "homepage": "https://pixpin.com/",
+    "license": "Unknown",
+    "url": "https://download.pixpinapp.com/PixPin_2.0.0.3.zip",
+    "hash": "b50edd16fc4ced4599d5bb7e80448d325e8f7adc348ae9bcd790a85ad43f241f",
+    "extract_dir": "PixPin",
+    "post_install": [
+        "$ConfigPath = Join-Path -Path \"$persist_dir\\Config\" -ChildPath \"PixPinConfig.json\"",
+        "if (-not (Test-Path $ConfigPath)) {",
+        "    $CurrentUnixTime = [int][Math]::Floor((Get-Date -Date (Get-Date).ToUniversalTime() -UFormat %s))",
+        "    $ConfigContent = @{",
+        "        'System.Update.UpgradeMode#s.win' = @{",
+        "            v = 0",
+        "            t = $CurrentUnixTime",
+        "        }",
+        "    }",
+        "    $ConfigContent | ConvertTo-Json -Depth 5 -Compress | Out-File -FilePath $ConfigPath -Encoding UTF8 -Force",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "PixPin.exe",
+            "PixPin"
+        ]
+    ],
+    "persist": [
+        "Config",
+        "Data",
+        "History",
+        "Temp"
+    ],
+    "checkver": {
+        "url": "https://pixpin.com/download/",
+        "regex": "PixPin_([\\d.]+).exe"
+    },
+    "autoupdate": {
+        "url": "https://download.pixpinapp.com/PixPin_$version.zip"
+    }
+}
