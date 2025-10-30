@@ -8,15 +8,10 @@
     "pre_install": [
         "# Hardlink is incompatible with app. Using copy workaround.",
         "'DmtMagicWords.xml', 'DmtSettings.xml' | ForEach-Object {",
-        "    if (-not (Test-Path \"$persist_dir\"))",
-        "    {",
-        "        New-Item \"$persist_dir\" -ItemType Directory | Out-Null",
-        "    }",
         "    if (Test-Path \"$persist_dir\\$_\") {",
         "        Copy-Item \"$persist_dir\\$_\" \"$dir\\$_\" -Force",
-        "    }",
-        "    else {",
-        "        Set-Content -Path \"$persist_dir\\$_\" -Value '<?xml version=\"1.0\" encoding=\"utf-8\"?>' -Encoding UTF8",
+        "    } else {",
+        "        Set-Content -Path \"$dir\\$_\" -Value '<?xml version=\"1.0\" encoding=\"utf-8\"?>' -Encoding UTF8",
         "    }",
         "}"
     ],
@@ -31,6 +26,7 @@
         "# Hardlink is incompatible with app. Using copy workaround.",
         "'DmtMagicWords.xml', 'DmtSettings.xml' | ForEach-Object {",
         "    if (Test-Path \"$dir\\$_\") {",
+        "        ensure $persist_dir | Out-Null",
         "        Copy-Item \"$dir\\$_\" \"$persist_dir\\$_\" -Force",
         "    }",
         "}"
