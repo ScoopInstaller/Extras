@@ -1,6 +1,6 @@
 {
     "version": "150-100e",
-    "description": "Remote desktop software, Portable",
+    "description": "Remote desktop software, Portable.",
     "homepage": "https://parsec.app",
     "license": {
         "identifier": "Proprietary",
@@ -19,17 +19,21 @@
         "    }",
         "}"
     ],
-    "shortcuts": [
-        [
-            "parsecd.exe",
-            "Parsec"
-        ]
+    "post_install": [
+        "# Parsec can't be started from a symlinked directory.",
+        "# See: https://github.com/ScoopInstaller/Extras/issues/16424",
+        "startmenu_shortcut \"$original_dir\\parsecd.exe\" 'Parsec' $null $null $global"
     ],
     "persist": [
         "hotkey.json",
         "config.txt",
         "config.json",
         "log.txt"
+    ],
+    "post_uninstall": [
+        "# Remove shortcut",
+        "Write-Host \"Removing shortcut $(friendly_path \"$(shortcut_folder $global)\\Parsec.lnk\")\"",
+        "Remove-Item \"$(shortcut_folder $global)\\Parsec.lnk\" -Force -ErrorAction Ignore"
     ],
     "checkver": {
         "url": "https://parsec.app/changelog.xml",
