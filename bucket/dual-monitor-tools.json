@@ -6,8 +6,19 @@
     "url": "https://downloads.sourceforge.net/project/dualmonitortool/dualmonitortool/2.12/DualMonitorTools-2.12.zip",
     "hash": "sha1:705cd7b8c56b4dfcef5f876ae88ca279bd4c7623",
     "pre_install": [
-        "if (-not (Test-Path \"$persist_dir\\DmtMagicWords.xml\")) { New-Item \"$dir\\DmtMagicWords.xml\" -ItemType File | Out-Null }",
-        "if (-not (Test-Path \"$persist_dir\\DmtSettings.xml\")) { New-Item \"$dir\\DmtSettings.xml\" -ItemType File | Out-Null }"
+        "# Hardlink is incompatible with app. Using copy workaround.",
+        "'DmtMagicWords.xml', 'DmtSettings.xml' | ForEach-Object {",
+        "    if (-not (Test-Path \"$persist_dir\"))",
+        "    {",
+        "        New-Item \"$persist_dir\" -ItemType Directory | Out-Null",
+        "    }",
+        "    if (Test-Path \"$persist_dir\\$_\") {",
+        "        Copy-Item \"$persist_dir\\$_\" \"$dir\\$_\" -Force",
+        "    }",
+        "    else {",
+        "        New-Item \"$persist_dir\\$_\" -ItemType File | Out-Null",
+        "    }",
+        "}"
     ],
     "bin": "DMT.exe",
     "shortcuts": [
@@ -15,10 +26,6 @@
             "DMT.exe",
             "Dual Monitor Tools"
         ]
-    ],
-    "persist": [
-        "DmtMagicWords.xml",
-        "DmtSettings.xml"
     ],
     "pre_uninstall": [
         "# Hardlink is incompatible with app. Using copy workaround.",
