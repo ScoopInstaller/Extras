@@ -1,8 +1,9 @@
 {
-    "version": "6.39.11548",
+    "version": "6.39",
     "description": "Number-one tool for cleaning PC",
     "homepage": "https://www.ccleaner.com/ccleaner",
     "license": "Freeware",
+    "depends": "gsudo",
     "url": "https://download.ccleaner.com/portable/ccsetup639.zip",
     "hash": "1a76f7d0d3eb7a0f1ed25e92d14a78d0dd431a85ba4a88022b7125d618da2afa",
     "pre_install": [
@@ -32,13 +33,19 @@
         "# Remove shortcut and shim",
         "rm_shim 'ccleaner' \"$(shimdir $global)\"",
         "Write-Host \"Removing shortcut $(friendly_path \"$(shortcut_folder $global)\\CCleaner.lnk\")\"",
-        "Remove-Item \"$(shortcut_folder $global)\\CCleaner.lnk\" -Force -ErrorAction SilentlyContinue"
+        "Remove-Item \"$(shortcut_folder $global)\\CCleaner.lnk\" -Force -ErrorAction SilentlyContinue",
+        "# Unregister scheduled task",
+        "gsudo Unregister-ScheduledTask -TaskName CCleanerCrashReporting -Confirm:0 -ErrorAction Continue"
     ],
     "checkver": {
         "url": "https://www.ccleaner.com/ccleaner/builds",
-        "regex": "CCleaner Free \\(v([\\d.]+)\\) - Latest official release"
+        "regex": "download.ccleaner.com/portable/ccsetup(\\d)(\\d+).zip",
+        "replace": "$1.$2"
     },
     "autoupdate": {
-        "url": "https://download.ccleaner.com/portable/ccsetup$majorVersion$minorVersion.zip"
+        "url": "https://download.ccleaner.com/portable/ccsetup$majorVersion$minorVersion.zip",
+        "hash": {
+            "url": ""
+        }
     }
 }
