@@ -1,23 +1,23 @@
 {
-    "version": "0.45.14",
+    "version": "2.0.54",
     "description": "The AI Code Editor",
     "homepage": "https://www.cursor.com/",
     "license": {
         "identifier": "Proprietary",
         "url": "https://www.cursor.com/terms-of-service"
     },
+    "innosetup": true,
     "architecture": {
         "64bit": {
-            "url": "https://download.todesktop.com/230313mzl4w4u92/Cursor%20Setup%200.45.14%20-%20Build%20250219jnihavxsz-x64.exe#/dl.7z",
-            "hash": "sha512:9c2a2f7064b071ee684201f021e792e5c5505076368038eb054bf109907ce2bfbc4044c8c45e279e57ca6593a22c248ad62f545aaf1a5fd4eb3e82de34c6fa89",
-            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+            "url": "https://downloads.cursor.com/production/7a31bffd467aa2d9adfda69076eb924e9062cb27/win32/x64/user-setup/CursorUserSetup-x64-2.0.54.exe",
+            "hash": "8e901f1cf2500a3b4e33e3f8743e2a99226c182d24e7402d62c63d0f476ca1e9"
         },
         "arm64": {
-            "url": "https://download.todesktop.com/230313mzl4w4u92/Cursor%20Setup%200.45.14%20-%20Build%20250219jnihavxsz-arm64.exe#/dl.7z",
-            "hash": "sha512:a718cc505ef19743863e2c0183e28460b05f9fe977e5019c36667edccc535a305ae14ec68db9ec6278754126d4a7b33173f6f0360147c1524b2299f35f3b7c22",
-            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" \"$dir\""
+            "url": "https://downloads.cursor.com/production/7a31bffd467aa2d9adfda69076eb924e9062cb27/win32/arm64/user-setup/CursorUserSetup-arm64-2.0.54.exe",
+            "hash": "625aea1e386efb961d5604c31c3ec09d4fa7213b981ed49707d07fced328828f"
         }
     },
+    "extract_dir": "{code_GetDestDir}",
     "post_install": [
         "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse",
         "if (!(Test-Path \"$dir\\data\\extensions\") -and (Test-Path \"$env:USERPROFILE\\.cursor\\extensions\")) {",
@@ -34,33 +34,32 @@
         "    (Get-Content \"$extensions_file\") -replace '(?<=cursor(/|\\\\\\\\)).*?(?=(/|\\\\\\\\)data(/|\\\\\\\\)extensions)', $version | Set-Content \"$extensions_file\"",
         "}"
     ],
-    "bin": "resources\\app\\bin\\cursor.cmd",
+    "bin": [
+        [
+            "resources\\app\\bin\\cursor.cmd",
+            "",
+            "--user-data-dir=\"$dir\\data\\user-data\" --extensions-dir=\"$dir\\data\\extensions\""
+        ]
+    ],
     "shortcuts": [
         [
             "Cursor.exe",
-            "Cursor"
+            "Cursor",
+            "--user-data-dir=\"$dir\\data\\user-data\" --extensions-dir=\"$dir\\data\\extensions\""
         ]
     ],
     "persist": "data",
     "checkver": {
-        "url": "https://download.todesktop.com/230313mzl4w4u92/latest.yml",
-        "regex": "Setup\\s+([\\d.]+).*Build\\s+(?<Build>[\\w]+).exe"
+        "url": "https://www.cursor.com/api/download?platform=win32-x64-user&releaseTrack=stable",
+        "regex": "production/(?<Code>[\\w]+)/win32.*-([\\d.]+)\\.exe"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.todesktop.com/230313mzl4w4u92/Cursor%20Setup%20$version%20-%20Build%20$matchBuild-x64.exe#/dl.7z",
-                "hash": {
-                    "url": "$baseurl/latest.yml",
-                    "regex": "(?sm)x64.*?sha512:\\s+$base64"
-                }
+                "url": "https://downloads.cursor.com/production/$matchCode/win32/x64/user-setup/CursorUserSetup-x64-$version.exe"
             },
             "arm64": {
-                "url": "https://download.todesktop.com/230313mzl4w4u92/Cursor%20Setup%20$version%20-%20Build%20$matchBuild-arm64.exe#/dl.7z",
-                "hash": {
-                    "url": "$baseurl/latest.yml",
-                    "regex": "(?sm)arm64.*?sha512:\\s+$base64"
-                }
+                "url": "https://downloads.cursor.com/production/$matchCode/win32/arm64/user-setup/CursorUserSetup-arm64-$version.exe"
             }
         }
     }

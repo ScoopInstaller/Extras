@@ -1,5 +1,5 @@
 {
-    "version": "9.9.18.250307",
+    "version": "9.9.21.250904",
     "description": "An instant messaging software service developed by Tencent",
     "homepage": "https://im.qq.com/pcqq/index.shtml",
     "license": {
@@ -8,16 +8,16 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.18_250307_x64_01.exe#/dl.7z",
-            "hash": "41e4580293bf6df3b81c100e6cb49a48d7f2fc7f29c49e8818afb9a03595187b"
+            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.21_250904_x64_01.exe#/dl.7z",
+            "hash": "55fb4684d01316ecdbfcbd5ba82eceda5a6e4d6fc4aa8b0b3d2515c3d41a21d1"
         },
         "32bit": {
-            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.18_250307_x86_01.exe#/dl.7z",
-            "hash": "1ae7d1f1cb02ddcf276c5ac372a7c02fd6a6f9a0c3c336defc44322f4e7e9071"
+            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.21_250904_x86_01.exe#/dl.7z",
+            "hash": "c5d6089b54a978fee2b5f25dbcccf676cd70ef18769420e09f247eb957d3bb02"
         },
         "arm64": {
-            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.18_250307_arm64_01.exe#/dl.7z",
-            "hash": "c0fe62b8ecdeb726aa58323a45652e8dee871d05d89aeed9d525042b6f75a51d"
+            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.21_250904_arm64_01.exe#/dl.7z",
+            "hash": "b241ba24e10610371dacb3358444fe168a3ae3d60fd5ad96c84b729e41697073"
         }
     },
     "extract_dir": "Files",
@@ -29,12 +29,12 @@
     ],
     "checkver": {
         "script": [
-            "$url = 'https://im.qq.com/pcqq/index.shtml'",
-            "$resp = Invoke-WebRequest -Uri $url",
-            "$cont = $resp.Content",
-            "$pattern = 'https://qq-web.cdn-go.cn.*windowsDownloadUrl.js'",
-            "$jsUrl = [regex]::Match($cont, $pattern).Value",
-            "Invoke-WebRequest -Uri $jsUrl"
+            "# Please keep this script. An empty Accept-Encoding header can cause the CDN to deliver expired cache.",
+            "# See : https://github.com/ScoopInstaller/Extras/issues/15916",
+            "$headers = @{ 'Accept-Encoding' = 'gzip' }",
+            "$url = 'https://cdn-go.cn/qq-web/im.qq.com_new/latest/rainbow/windowsConfig.js'",
+            "$response = Invoke-WebRequest -Uri $url -UseBasicParsing -Headers $headers",
+            "Write-Output $response.Content"
         ],
         "regex": "QQNT/Windows/QQ_([\\d\\.]+)_([\\d]+)_x86_01.exe",
         "replace": "${1}.${2}"

@@ -1,20 +1,59 @@
 {
-    "version": "2.1.4",
+    "version": "2.1.5",
     "homepage": "https://github.com/hiroi-sora/Umi-OCR",
     "description": "OCR software, free and offline. (Paddle)",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/hiroi-sora/Umi-OCR/releases/download/v2.1.4/Umi-OCR_Paddle_v2.1.4.7z.exe#/dl.7z",
-            "hash": "319edf4d58803ed5482174dcaf8713248cc377a77d9164fcc28796ade591348b",
-            "extract_dir": "Umi-OCR_Paddle_v2.1.4"
+            "url": "https://github.com/hiroi-sora/Umi-OCR/releases/download/v2.1.5/Umi-OCR_Paddle_v2.1.5.7z.exe#/dl.7z",
+            "hash": "abe00248d6e68dda75029739751ad7258f0ecc14d720b19240a844f5341859b2",
+            "extract_dir": "Umi-OCR_Paddle_v2.1.5"
         }
     },
+    "pre_install": [
+        "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
+        "'.settings', '.pre_settings' | ForEach-Object {",
+        "    if (Test-Path \"$persist_dir\\data\\$_\") {",
+        "        Copy-Item \"$persist_dir\\data\\$_\" \"$dir\\UmiOCR-data\\$_\" -Force",
+        "    }",
+        "}"
+    ],
+    "post_install": [
+        "$plugins_dir = Join-Path $dir 'UmiOCR-data\\plugins'",
+        "$original_plugins_dir = Join-Path $dir 'UmiOCR-data\\plugins.original'",
+        "if (Test-Path \"$original_plugins_dir\") {",
+        "    Write-Host \"`nINFO  Removing old bundled plugins from $plugins_dir...\" -ForegroundColor darkgray",
+        "    $paddlePlugins = Get-ChildItem -Path \"$plugins_dir\" -Directory -Filter '*Paddle*'",
+        "    $paddlePlugins | Remove-Item -Force -Recurse -ErrorAction SilentlyContinue",
+        "    Write-Host \"INFO  Updating bundled plugins to $plugins_dir...\" -ForegroundColor darkgray",
+        "    Copy-Item -Path \"$original_plugins_dir\\*\" -Destination \"$plugins_dir\" -Force -Recurse",
+        "    Remove-Item \"$original_plugins_dir\" -Force -Recurse | Out-Null",
+        "}"
+    ],
+    "bin": "Umi-OCR.exe",
     "shortcuts": [
         [
             "Umi-OCR.exe",
             "Umi-OCR"
         ]
+    ],
+    "persist": [
+        [
+            "UmiOCR-data\\logs",
+            "data\\logs"
+        ],
+        [
+            "UmiOCR-data\\plugins",
+            "data\\plugins"
+        ]
+    ],
+    "pre_uninstall": [
+        "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
+        "'.settings', '.pre_settings' | ForEach-Object {",
+        "    if (Test-Path \"$dir\\UmiOCR-data\\$_\") {",
+        "        Copy-Item \"$dir\\UmiOCR-data\\$_\" \"$persist_dir\\data\\$_\" -Force",
+        "    }",
+        "}"
     ],
     "checkver": "github",
     "autoupdate": {

@@ -1,5 +1,5 @@
 {
-    "version": "9.7.23.29400",
+    "version": "9.7.25.29415",
     "description": "An instant messaging tool that gives you the best way to keep in touch with your friends and family.",
     "homepage": "https://im.qq.com",
     "license": {
@@ -11,8 +11,8 @@
         "'%UserProfile%\\Documents\\Tencent Files'.",
         "Files produced at runtime are left in '%AppData%\\Tencent'."
     ],
-    "url": "https://dldir1.qq.com/qqfile/qq/PCQQ9.7.23/QQ9.7.23.29400.exe#/dl.7z",
-    "hash": "dc863cbb6be5d2edf76fa75c3fe7b565c9771f24bd37916a515e42436a6b9e0e",
+    "url": "https://dldir1.qq.com/qqfile/qq/PCQQ9.7.25/QQ9.7.25.29415.exe#/dl.7z",
+    "hash": "01f78c56eb85335e88ec5033bc8ac72eb1bc6e902a66eb7720c619faf05607d7",
     "shortcuts": [
         [
             "Bin\\QQScLauncher.exe",
@@ -33,15 +33,14 @@
     },
     "checkver": {
         "script": [
-            "$url = 'https://im.qq.com/pcqq/index.shtml'",
-            "$resp = Invoke-WebRequest -Uri $url",
-            "$cont = $resp.Content",
-            "$pattern = 'https://qq-web.cdn-go.cn.*windowsDownloadUrl.js'",
-            "$jsUrl = [regex]::Match($cont, $pattern).Value",
-            "Invoke-WebRequest -Uri $jsUrl"
+            "# Please keep this script. An empty Accept-Encoding header can cause the CDN to deliver expired cache.",
+            "# See : https://github.com/ScoopInstaller/Extras/issues/15916",
+            "$headers = @{ 'Accept-Encoding' = 'gzip' }",
+            "$url = 'https://cdn-go.cn/qq-web/im.qq.com_new/latest/rainbow/windowsConfig.js'",
+            "$response = Invoke-WebRequest -Uri $url -UseBasicParsing -Headers $headers",
+            "Write-Output $response.Content"
         ],
-        "regex": "PCQQ([\\d\\.]+)/QQ([\\d\\.]+).exe",
-        "replace": "${2}"
+        "regex": "QQ(?<version>[\\d.]+)\\.exe"
     },
     "autoupdate": {
         "url": "https://dldir1.qq.com/qqfile/qq/PCQQ$matchHead/QQ$version.exe#/dl.7z"
