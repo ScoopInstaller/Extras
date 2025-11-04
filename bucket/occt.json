@@ -1,0 +1,45 @@
+{
+    "version": "15.0.5",
+    "description": "OCCT is a comprehensive stability testing software suite.",
+    "homepage": "https://www.ocbase.com/occt/personal",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.ocbase.com/support/faq-licensing"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://dl.ocbase.com/per/stable/OCCT.exe",
+            "hash": "ed00b2bccc36335c23c482f380d6858ea04f67ab5628ea3fc69e23ee329d417c"
+        }
+    },
+    "pre_install": "$null = if (!(Test-Path \"$persist_dir$($cfg = '/OCCT.config.json')\")) { Set-Content \"$dir$cfg\" '{\"CheckForUpdates\":\"Disabled\",\"EnableSound\":false,\"AllowOcbaseUpload\":false}' -NoNewline }",
+    "persist": "OCCT.config.json",
+    "shortcuts": [
+        [
+            "OCCT.exe",
+            "OCCT"
+        ]
+    ],
+    "checkver": {
+        "script": [
+            "try {",
+            "    $null = (Invoke-WebRequest $url).Content -cmatch '/_next/static/([^/]+)/_buildManifest\\.js'",
+            "    $Matches[1],",
+            "    (Invoke-RestMethod \"https://www.ocbase.com/_next/data/$($Matches[1])/download.json\").pageProps.occtReleasesWindows[0].stable.release.version.versionStr -join ' '",
+            "}",
+            "catch { '' }"
+        ],
+        "regex": "\\A(?<buildid>[^/ ]+) ([\\d.]+)\\Z"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://dl.ocbase.com/per/stable/OCCT.exe",
+                "hash": {
+                    "url": "https://www.ocbase.com/_next/data/$matchBuildid/download.json",
+                    "jsonpath": "$.pageProps.occtReleasesWindows[0].stable.release.checksum"
+                }
+            }
+        }
+    }
+}
