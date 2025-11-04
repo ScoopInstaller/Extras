@@ -1,0 +1,53 @@
+{
+    "version": "1.3.21",
+    "description": "VacuumTube is an unofficial wrapper of YouTube Leanback (the console and Smart TV version of YouTube) for the desktop, with a built-in adblocker and minor enhancements.",
+    "homepage": "https://github.com/shy1132/VacuumTube",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/shy1132/VacuumTube/releases/latest/download/VacuumTube-x64-Portable.zip",
+            "hash": "443404f55fa3106766a373d4c35feb452ec2c7dc82752a68ef87ecefe1bf6dd6"
+        },
+        "arm64": {
+            "url": "https://github.com/shy1132/VacuumTube/releases/latest/download/VacuumTube-arm64-Portable.zip",
+            "hash": "b77bf97a8784f35e2fe6932224f5ce8458e467921022878f018fad85ab427619"
+        }
+    },
+    "persist": "data",
+    "post_install": [
+        "$appdata = \"$env:APPDATA\\VacuumTube\"",
+        "$persistData = \"$persist_dir\\data\"",
+        "if (Test-Path $appdata) {",
+        "    Write-Host 'Migrating existing data from AppData to persist directory...'",
+        "    if (!(Test-Path $persistData)) { New-Item -ItemType Directory -Path $persistData | Out-Null }",
+        "    Move-Item -Path (Join-Path $appdata '*') -Destination $persistData -Force -ErrorAction SilentlyContinue",
+        "    Remove-Item $appdata -Recurse -Force",
+        "}",
+        "if (!(Test-Path $persistData)) { New-Item -ItemType Directory -Path $persistData | Out-Null }",
+        "if (!(Test-Path $appdata)) {",
+        "    New-Item -ItemType Junction -Path $appdata -Target $persistData | Out-Null",
+        "}"
+    ],
+    "post_uninstall": [
+        "if ((Get-Item \"$env:APPDATA\\VacuumTube\" -ErrorAction SilentlyContinue)?.LinkType -eq 'Junction') {",
+        "    Remove-Item \"$env:APPDATA\\VacuumTube\" -Force",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "VacuumTube.exe",
+            "VacuumTube"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/shy1132/VacuumTube/releases/latest/download/VacuumTube-x64-Portable.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/shy1132/VacuumTube/releases/latest/download/VacuumTube-arm64-Portable.zip"
+            }
+        }
+    }
+}
