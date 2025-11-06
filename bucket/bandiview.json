@@ -1,35 +1,61 @@
 {
     "version": "7.23",
     "description": "A fast image viewer. BandiView is the succeeding image viewer to Honeyview.",
-    "homepage": "https://www.bandisoft.com/bandiview/",
+    "homepage": "https://en.bandisoft.com/bandiview/",
     "license": {
         "identifier": "Freeware",
-        "url": "https://www.bandisoft.com/bandiview/eula/"
+        "url": "https://en.bandisoft.com/bandiview/eula/"
     },
     "depends": [
         "main/7zip"
     ],
-    "url": "https://bandisoft.app/bandiview/BANDIVIEW-SETUP-X64.EXE",
-    "hash": "eb9c7273a262fac4fa2cfca3f94e8d636c9d1b9f2d4ad8e4fd209ebe0a55968e",
-    "pre_install": [
-        "Expand-7zipArchive \"$dir\\$fname\" -Overwrite Rename -Removal",
-        "Remove-Item \"$dir\\$*\" -Recurse",
-        "if (-not (Test-Path \"$persist_dir\\setting.ini\")) { New-Item \"$dir\\setting.ini\" -ItemType File | Out-Null }",
-        "# No portable mode in latest bandiview"
-    ],
-    "bin": "Bandiview.x64.exe",
+    "architecture": {
+        "64bit": {
+            "url": "https://bandisoft.app/bandiview/BANDIVIEW-SETUP-ALL.EXE",
+            "hash": "dd66fd18f0df1d93b523f9945923a42e85842cda975a8ac2200809f6b36c8db9",
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\$fname\" -Overwrite Rename -Removal",
+                "Remove-Item \"$dir\\$*\" -Recurse -Force -ErrorAction SilentlyContinue",
+                "Remove-Item -Path \"$dir\\Uninstall.exe\" -Force -ErrorAction SilentlyContinue",
+                "# Remove Ads",
+                "Remove-Item -Path \"$dir\\data\\coupang.exe\" -Force -ErrorAction SilentlyContinue",
+                "Remove-Item -Path \"$dir\\data\\local.html\" -Force -ErrorAction SilentlyContinue",
+                "Remove-Item -Path \"$dir\\data\\meta.html\" -Force -ErrorAction SilentlyContinue",
+                "Remove-Item -Path \"$dir\\data\\RegDLL.x64.exe\" -Force -ErrorAction SilentlyContinue",
+                "Remove-Item -Path \"$dir\\data\\WebView2.x64.dll\" -Force -ErrorAction SilentlyContinue",
+                "# Remove arm64 binaries",
+                "Get-ChildItem \"$dir\" -Recurse | Where{$_.Name -Match \"\\.a64\\.....?$\"} | Remove-Item",
+                "Rename-Item -Path \"$dir\\Bandiview.x64.exe\" -NewName \"$dir\\Bandiview.exe\""
+            ]
+        },
+        "arm64": {
+            "url": "https://bandisoft.app/bandiview/BANDIVIEW-SETUP-ALL.EXE",
+            "hash": "dd66fd18f0df1d93b523f9945923a42e85842cda975a8ac2200809f6b36c8db9",
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\$fname\" -Overwrite Rename -Removal",
+                "Remove-Item \"$dir\\$*\" -Recurse -Force -ErrorAction SilentlyContinue",
+                "Remove-Item -Path \"$dir\\Uninstall.exe\" -Force -ErrorAction SilentlyContinue",
+                "# Remove Ads",
+                "Remove-Item -Path \"$dir\\data\\coupang.exe\" -Force -ErrorAction SilentlyContinue",
+                "Remove-Item -Path \"$dir\\data\\local.html\" -Force -ErrorAction SilentlyContinue",
+                "Remove-Item -Path \"$dir\\data\\meta.html\" -Force -ErrorAction SilentlyContinue",
+                "Remove-Item -Path \"$dir\\data\\RegDLL.x64.exe\" -Force -ErrorAction SilentlyContinue",
+                "Remove-Item -Path \"$dir\\data\\WebView2.x64.dll\" -Force -ErrorAction SilentlyContinue",
+                "# Remove 64bit binaries",
+                "Get-ChildItem \"$dir\" -Recurse | Where{$_.Name -Match \"\\.x64\\.....?$\"} | Remove-Item",
+                "Rename-Item -Path \"$dir\\Bandiview.a64.exe\" -NewName \"$dir\\Bandiview.exe\""
+            ]
+        }
+    },
+    "bin": "Bandiview.exe",
     "shortcuts": [
         [
-            "Bandiview.x64.exe",
+            "Bandiview.exe",
             "Bandiview"
         ]
     ],
-    "persist": [
-        "config.ini",
-        "setting.ini"
-    ],
-    "checkver": "Download Bandiview \\(v([\\d.]+)\\)",
+    "checkver": "Version Info: v([\\d.]+)",
     "autoupdate": {
-        "url": "https://bandisoft.app/bandiview/BANDIVIEW-SETUP-X64.EXE"
+        "url": "https://bandisoft.app/bandiview/BANDIVIEW-SETUP-ALL.EXE"
     }
 }
