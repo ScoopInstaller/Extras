@@ -11,7 +11,7 @@
             "installer": {
                 "script": [
                     "Expand-7zipArchive -Path \"$dir\\`$PLUGINSDIR\\app-64.7z\" -DestinationPath \"$dir\"",
-                    "Remove-Item -Path \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse"
+                    "Remove-Item -Path \"$dir\\`$PLUGINSDIR\", \"$dir\\`$R0\" -Force -Recurse"
                 ]
             }
         }
@@ -21,6 +21,18 @@
             "sozi.exe",
             "Sozi"
         ]
+    ],
+    "post_uninstall": [
+        "if ($purge) {",
+        "    $Directories = [string[]](",
+        "        [System.IO.Path]::Combine($env:APPDATA, 'sozi')",
+        "    )",
+        "    $Directories.ForEach{",
+        "        if ([System.IO.Directory]::Exists($_)) {",
+        "            $null = [System.IO.Directory]::Delete($_,$true)",
+        "        }",
+        "    }",
+        "}"
     ],
     "checkver": {
         "url": "https://api.github.com/repos/sozi-projects/Sozi/releases",
