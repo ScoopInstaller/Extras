@@ -25,36 +25,28 @@
         ]
     ],
     "checkver": {
+        "url": "https://www.larksuite.com/api/downloads",
         "script": [
-            "$url = 'https://www.larksuite.com/api/downloads'",
-            "$response = Invoke-WebRequest -Uri $url -UseBasicParsing -ErrorAction Stop",
-            "$data = ConvertFrom-Json $response.Content",
-            "$link1 = $data.versions.Windows.download_link",
-            "if (-not $link1) { throw 'Windows download_link not found' }",
-            "$link1 -match 'storage/(?<ia32>[0-9a-fA-F]+)/[^/]+-(?<ver>[\\d.]+)'",
-            "if (-not $matches) { throw 'Failed to parse Windows link' }",
-            "$version = $matches['ver']",
-            "$ia32 = $matches['ia32']",
-            "$link2 = $data.versions.Windows_x64.download_link",
-            "if (-not $link2) { throw 'Windows_x64 download_link not found' }",
-            "$link2 -match 'storage/(?<x64>[0-9a-fA-F]+)/'",
-            "if (-not $matches) { throw 'Failed to parse Windows_x64 link' }",
-            "$x64 = $matches['x64']",
-            "Write-Output $version $ia32 $x64"
+            "$page -match '(?<arch64>[0-9a-f]+)/Lark-win32_x64-(?<version>[\\d.]+)-signed\\.exe'",
+            "$version = $Matches.version",
+            "$arch64 = $Matches.arch64",
+            "$page -match '(?<arch32>[0-9a-f]+)/Lark-win32_ia32-(?<version>[\\d.]+)-signed\\.exe'",
+            "$arch32 = $Matches.arch32",
+            "Write-Output \"$version $arch64 $arch32\""
         ],
-        "regex": "(?<version>[\\d.]+)\\s(?<ia32>.+)\\s(?<x64>.+)"
+        "regex": "(?<version>[\\d.]+) (?<arch64>[0-9a-f]+) (?<arch32>[0-9a-f]+)"
     },
     "autoupdate": {
         "architecture": {
             "32bit": {
-                "url": "https://sf16-sg.larksuitecdn.com/obj/lark-artifact-storage/$ia32/Lark-win32_ia32-$version-signed.exe#/dl.7z",
+                "url": "https://sf16-sg.larksuitecdn.com/obj/lark-artifact-storage/$matchArch32/Lark-win32_ia32-$version-signed.exe#/dl.7z",
                 "hash": {
                     "url": "https://www.larksuite.com/api/downloads",
                     "jsonpath": "$.versions.Windows.hash"
                 }
             },
             "64bit": {
-                "url": "https://sf16-sg.larksuitecdn.com/obj/lark-artifact-storage/$x64/Lark-win32_x64-$version-signed.exe#/dl.7z",
+                "url": "https://sf16-sg.larksuitecdn.com/obj/lark-artifact-storage/$matchArch64/Lark-win32_x64-$version-signed.exe#/dl.7z",
                 "hash": {
                     "url": "https://www.larksuite.com/api/downloads",
                     "jsonpath": "$.versions.Windows_x64.hash"
