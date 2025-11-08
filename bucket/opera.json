@@ -22,7 +22,7 @@
             "$version, 'autoupdate' | ForEach-Object { ensure \"$dir\\$_\" | Out-Null }",
             "Move-Item -Path \"$dir\\opera_autoupdate*\" -Destination \"$dir\\autoupdate\" -Force",
             "$exclude_list = @('Assets', $version, 'autoupdate', 'Resources.pri', 'opera.visualelementsmanifest.xml')",
-            "Get-ChildItem -Path $dir -Exclude $exclude_list | ForEach-Object {",
+            "Get-ChildItem -Path $dir | Where-Object { $exclude_list -notcontains $_.Name } | ForEach-Object {",
             "    $destination_dir = Join-Path $dir \"$version\\$($_.Name)\"",
             "    Move-Item -Path $_.FullName -Destination $destination_dir -Force -ErrorAction SilentlyContinue",
             "}",
