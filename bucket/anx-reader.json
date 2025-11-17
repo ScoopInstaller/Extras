@@ -15,7 +15,13 @@
             "Anx Reader"
         ]
     ],
-    "post_uninstall": "if ($purge) { Remove-Item \"$env:APPDATA\\com.anxcye\\anx_reader\", \"$env:LOCALAPPDATA\\com.anxcye\\anx_reader\" -Force -Recurse -ErrorAction SilentlyContinue }",
+    "post_uninstall": [
+        "if ($purge) {",
+        "    $env:APPDATA, $env:LOCALAPPDATA | ForEach-Object {",
+        "        Join-Path -Path $_ -ChildPath 'com.anxcye\\anx_reader' | Remove-Item -Force -Recurse -ErrorAction Ignore",
+        "    }",
+        "}"
+    ],
     "checkver": "github",
     "autoupdate": {
         "architecture": {
