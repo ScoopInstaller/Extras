@@ -23,23 +23,19 @@
         ]
     ],
     "post_uninstall": [
-        "if ($purge -and -not $global) {",
-        "    $LeftoverDirectories = [string[]](",
-        "        [System.IO.Path]::Combine($env:APPDATA, 'sozi') | Where-Object -FilterScript {[System.IO.Directory]::Exists($_)}",
+        "if ($purge) {",
+        "    $Directories = [string[]](",
+        "        [System.IO.Path]::Combine($env:APPDATA, 'sozi')",
         "    )",
-        "    if ($LeftoverDirectories.Count -gt 0) {",
-        "        $Message = [string] [System.Environment]::NewLine",
-        "        $Message += 'Found following leftover directories outside Scoop''s control:'",
-        "        $LeftoverDirectories.ForEach{",
-        "            $Message += [System.Environment]::NewLine",
-        "            $Message += '* {0}' -f $_",
+        "    $Directories.ForEach{",
+        "        if ([System.IO.Directory]::Exists($_)) {",
+        "            $null = [System.IO.Directory]::Delete($_,$true)",
         "        }",
-        "        info $Message",
         "    }",
         "}"
     ],
     "checkver": {
-        "url": "https://api.github.com/repos/sozi-projects/Sozi/releases",
+        "url": "https://api.github.com/repositories/940219/releases",
         "jsonpath": "$[?(@.prerelease == false)]",
         "regex": "/v(?<tag>[\\d.]+)/Sozi.Setup.([\\d.]+)-(?<build>[\\d]+).exe"
     },
