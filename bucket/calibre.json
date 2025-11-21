@@ -2,19 +2,22 @@
     "version": "8.15.0",
     "description": "Powerful and easy to use e-book manager",
     "homepage": "https://calibre-ebook.com",
-    "license": "GPL-3.0-only",
+    "license": {
+        "identifier": "GPL-3.0-only",
+        "url": "https://github.com/kovidgoyal/calibre/blob/master/LICENSE"
+    },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/kovidgoyal/calibre/releases/download/v8.15.0/calibre-portable-installer-8.15.0.exe",
+            "url": "https://download.calibre-ebook.com/8.15.0/calibre-portable-installer-8.15.0.exe",
             "hash": "sha512:98f52e2c401b1f2b612d559e042d6badb79d9ad1073e85c12d0e4c2be46e37fd5874fb5ea79b8057126867857c34e0917f8abdf7968411140fb4b08dee4aa0d3"
         }
     },
     "installer": {
         "script": [
-            "Start-Process \"$dir\\calibre-portable-installer-$version.exe\" @(\"$env:TEMP\") -Wait",
-            "Move-Item \"$env:TEMP\\Calibre Portable\\**\" \"$dir\"",
-            "Remove-Item \"$env:TEMP\\Calibre Portable\"",
-            "Icacls $dir /t /c /reset"
+            "Start-Process -FilePath \"$dir\\$fname\" -ArgumentList @($env:PUBLIC) -Wait",
+            "Move-Item -Path \"$env:PUBLIC\\Calibre Portable\\*\" -Destination $dir -Force",
+            "Remove-Item -Path \"$dir\\$fname\", \"$env:PUBLIC\\Calibre Portable\" -Recurse -Force -ErrorAction SilentlyContinue",
+            "Icacls $dir /t /c /reset | Out-Null"
         ]
     },
     "bin": [
@@ -71,9 +74,9 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/kovidgoyal/calibre/releases/download/v$version/calibre-portable-installer-$version.exe",
+                "url": "https://download.calibre-ebook.com/$version/calibre-portable-installer-$version.exe",
                 "hash": {
-                    "url": "https://calibre-ebook.com/signatures/calibre-portable-installer-$version.exe.sha512"
+                    "url": "https://calibre-ebook.com/signatures/$basename.sha512"
                 }
             }
         }
