@@ -18,32 +18,43 @@
     },
     "installer": {
         "script": [
-            "Remove-Item -Path \"$dir\\*_list\" -Force",
-            "Move-Item -Path \"$dir\\*\" -Destination \"$dir\\$version\" -Exclude 'Assets', 'launcher*', 'Resources.pri' -ErrorAction Ignore",
-            "if (!(Test-Path \"$dir\\$version\\localization\")) {",
-            "   New-Item -Path \"$dir\\$version\\localization\" -ItemType Directory | Out-Null",
-            "   Move-Item -Path \"$dir\\$version\\*.pak\" -Destination \"$dir\\$version\\localization\" -Exclude 'opera*' -ErrorAction Ignore",
+            "Remove-Item -Path \"$dir\\*_list\" -Force -ErrorAction SilentlyContinue",
+            "$version, 'autoupdate' | ForEach-Object { ensure \"$dir\\$_\" | Out-Null }",
+            "Move-Item -Path \"$dir\\opera_autoupdate*\" -Destination \"$dir\\autoupdate\" -Force",
+            "$exclude_list = @('Assets', $version, 'autoupdate', 'Resources.pri', 'opera.visualelementsmanifest.xml')",
+            "Get-ChildItem -Path $dir | Where-Object { $exclude_list -notcontains $_.Name } | ForEach-Object {",
+            "    $destination_dir = Join-Path $dir \"$version\\$($_.Name)\"",
+            "    Move-Item -Path $_.FullName -Destination $destination_dir -Force -ErrorAction SilentlyContinue",
             "}",
-            "Set-Content -Path \"$dir\\installer_prefs.json\" -Value (@{ 'autoupdate'= $false; 'enable_stats' = $false; 'single_profile' = $true } | ConvertTo-Json) -Encoding ASCII"
+            "Copy-Item -Path \"$dir\\$version\\opera.exe\" -Destination $dir -Force",
+            "$cfg = @{ 'autoupdate'= $false; 'enable_stats' = $false; 'single_profile' = $true } | ConvertTo-Json",
+            "Set-Content -Path \"$dir\\installer_prefs.json\" -Value $cfg -Encoding ASCII"
         ]
     },
     "shortcuts": [
         [
-            "launcher.exe",
+            "opera.exe",
             "Opera GX"
         ]
     ],
     "persist": "profile",
     "checkver": {
         "script": [
+            "$version_regex = '^(?!\\.)[\\d.]+/$'",
+            "$version_sort = { [version]$_.href.TrimEnd('/') }",
             "$releases = 'https://get.opera.com/pub/opera_gx/'",
             "$download_page = Invoke-WebRequest -Uri $releases -UseBasicParsing",
-            "$versionSort   = { [version]$_.href.TrimEnd('/') }",
-            "$last_ver = $download_page.links | Where-Object href -match '^[\\d]+[\\d\\.]+/$' | Sort-Object $versionSort -Descending | Select-Object -first 1 -expand href",
-            "$version = $last_ver -replace '/', ''",
-            "Write-Output $version"
+            "$version_segments = $download_page.links | Where-Object href -Match $version_regex | Sort-Object $version_sort -Descending | Select-Object -Expand href",
+            "foreach ($version_segment in $version_segments) {",
+            "    $version_url = $releases + $version_segment",
+            "    $version_page = Invoke-WebRequest -Uri $version_url -UseBasicParsing",
+            "    if ($null -ne $version_page -and $version_page.Content -match 'win') {",
+            "        Write-Output $version_segment",
+            "        break",
+            "    }",
+            "}"
         ],
-        "regex": "(\\S+)"
+        "regex": "([\\d.]+)/"
     },
     "autoupdate": {
         "architecture": {
