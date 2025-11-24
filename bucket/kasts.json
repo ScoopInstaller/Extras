@@ -1,12 +1,12 @@
 {
-    "version": "25.08-4023",
+    "version": "25.12-4040",
     "description": "Convergent podcast application",
     "homepage": "https://apps.kde.org/kasts/",
     "license": "LGPL-2.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://cdn.kde.org/ci-builds/multimedia/kasts/release-25.08/windows/kasts-release_25.08-4023-windows-cl-msvc2022-x86_64.7z",
-            "hash": "5aa0479c004c5774c48b894a17f02046b3508149cbb1f34ef2bfa9478fb6e4d4"
+            "url": "https://cdn.kde.org/ci-builds/multimedia/kasts/release-25.12/windows/kasts-release_25.12-4040-windows-cl-msvc2022-x86_64.7z",
+            "hash": "3c3ab258ad82f2fa7d79ccf71d2590d260252c1d1c3f8d1e5b7a45dc829d150f"
         }
     },
     "bin": "bin\\kasts.exe",
@@ -17,8 +17,23 @@
         ]
     ],
     "checkver": {
-        "url": "https://cdn.kde.org/ci-builds/multimedia/kasts/release-25.08/windows/",
-        "regex": "kasts-release_([\\d.-]+)-windows-cl-(?<lib>\\w+)-x86_64\\.7z"
+        "script": [
+            "$url = 'https://cdn.kde.org/ci-builds/multimedia/kasts/?C=N;O=D'",
+            "",
+            "$cont = (Invoke-WebRequest $url).Content",
+            "$regex = 'release-([\\d.]+)'",
+            "if (!($cont -match $regex)) { error \"Could not match $regex in $url\"; continue }",
+            "$ver = $matches[1]",
+            "",
+            "$nextUrl = \"https://cdn.kde.org/ci-builds/multimedia/kasts/release-$ver/windows/\"",
+            "$nextCont = (Invoke-WebRequest $nextUrl).Content",
+            "$nextRegex = \"kasts-release_$ver-([\\d]+)-windows-cl-([\\w]+)-x86_64\\.7z\"",
+            "if (!($nextCont -match $nextRegex)) { error \"Could not match $nextRegex in $nextUrl\"; continue }",
+            "$build = $matches[1]",
+            "$lib = $matches[2]",
+            "Write-Output $ver-$build $lib"
+        ],
+        "regex": "([\\d.-]+) (?<lib>[\\w]+)"
     },
     "autoupdate": {
         "architecture": {

@@ -1,5 +1,5 @@
 {
-    "version": "124.0.5705.15",
+    "version": "124.0.5705.42",
     "description": "Fast, secure, easy-to-use browser.",
     "homepage": "https://www.opera.com/",
     "license": {
@@ -8,24 +8,27 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://get.geo.opera.com/pub/opera/desktop/124.0.5705.15/win/Opera_124.0.5705.15_Setup_x64.exe#/dl.7z",
-            "hash": "527739259f2a53a1900e8e13a53502dba36c958bdaacf110d23495d0517ea753"
+            "url": "https://get.geo.opera.com/pub/opera/desktop/124.0.5705.42/win/Opera_124.0.5705.42_Setup_x64.exe#/dl.7z",
+            "hash": "f6c3ec0ff534ad7e629ff3f1b4161c26de468b4f36f4f86c69279b6faec7f8ad"
         },
         "32bit": {
-            "url": "https://get.geo.opera.com/pub/opera/desktop/124.0.5705.15/win/Opera_124.0.5705.15_Setup.exe#/dl.7z",
-            "hash": "9c862554b72fc5bcfd6ccb5fe1d4c6fb0a2762536ef5962f9ab7c774776a8835"
+            "url": "https://get.geo.opera.com/pub/opera/desktop/124.0.5705.42/win/Opera_124.0.5705.42_Setup.exe#/dl.7z",
+            "hash": "0861fe3ef75e4af070ef4b2adb14822ae70e891b01ceb05510210fa756a48227"
         }
     },
     "installer": {
         "script": [
-            "Remove-Item -Path \"$dir\\*_list\" -Force",
-            "Move-Item -Path \"$dir\\*\" -Destination \"$dir\\$version\" -Exclude 'Assets', 'launcher*', 'Resources.pri' -ErrorAction Ignore",
-            "if (!(Test-Path \"$dir\\$version\\localization\")) {",
-            "   New-Item -Path \"$dir\\$version\\localization\" -ItemType Directory | Out-Null",
-            "   Move-Item -Path \"$dir\\$version\\*.pak\" -Destination \"$dir\\$version\\localization\" -Exclude 'opera*' -ErrorAction Ignore",
+            "Remove-Item -Path \"$dir\\*_list\" -Force -ErrorAction SilentlyContinue",
+            "$version, 'autoupdate' | ForEach-Object { ensure \"$dir\\$_\" | Out-Null }",
+            "Move-Item -Path \"$dir\\opera_autoupdate*\" -Destination \"$dir\\autoupdate\" -Force",
+            "$exclude_list = @('Assets', $version, 'autoupdate', 'Resources.pri', 'opera.visualelementsmanifest.xml')",
+            "Get-ChildItem -Path $dir | Where-Object { $exclude_list -notcontains $_.Name } | ForEach-Object {",
+            "    $destination_dir = Join-Path $dir \"$version\\$($_.Name)\"",
+            "    Move-Item -Path $_.FullName -Destination $destination_dir -Force -ErrorAction SilentlyContinue",
             "}",
-            "Set-Content -Path \"$dir\\installer_prefs.json\" -Value (@{ 'autoupdate'= $false; 'enable_stats' = $false; 'single_profile' = $true } | ConvertTo-Json) -Encoding ASCII",
-            "Copy-Item \"$dir\\$version\\opera.exe\" \"$dir\""
+            "Copy-Item -Path \"$dir\\$version\\opera.exe\" -Destination $dir -Force",
+            "$cfg = @{ 'autoupdate'= $false; 'enable_stats' = $false; 'single_profile' = $true } | ConvertTo-Json",
+            "Set-Content -Path \"$dir\\installer_prefs.json\" -Value $cfg -Encoding ASCII"
         ]
     },
     "shortcuts": [
@@ -37,14 +40,21 @@
     "persist": "profile",
     "checkver": {
         "script": [
+            "$version_regex = '^(?!\\.)[\\d.]+/$'",
+            "$version_sort = { [version]$_.href.TrimEnd('/') }",
             "$releases = 'https://get.geo.opera.com/pub/opera/desktop/'",
             "$download_page = Invoke-WebRequest -Uri $releases -UseBasicParsing",
-            "$versionSort   = { [version]$_.href.TrimEnd('/') }",
-            "$last_ver = $download_page.links | Where-Object href -match '^[\\d]+[\\d\\.]+/$' | Sort-Object $versionSort -Descending | Select-Object -first 1 -expand href",
-            "$version = $last_ver -replace '/', ''",
-            "Write-Output $version"
+            "$version_segments = $download_page.links | Where-Object href -Match $version_regex | Sort-Object $version_sort -Descending | Select-Object -Expand href",
+            "foreach ($version_segment in $version_segments) {",
+            "    $version_url = $releases + $version_segment",
+            "    $version_page = Invoke-WebRequest -Uri $version_url -UseBasicParsing",
+            "    if ($null -ne $version_page -and $version_page.Content -match 'win') {",
+            "        Write-Output $version_segment",
+            "        break",
+            "    }",
+            "}"
         ],
-        "regex": "(\\S+)"
+        "regex": "([\\d.]+)/"
     },
     "autoupdate": {
         "architecture": {
