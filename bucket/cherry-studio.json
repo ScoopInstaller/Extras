@@ -5,48 +5,39 @@
     "license": "Apache-2.0",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/CherryHQ/cherry-studio/releases/download/v1.6.7/Cherry-Studio-1.6.7-x64-setup.exe#/dl.7z",
-            "hash": "sha512:2981b843b9f6383c8a2fa9dcc004e4635aeb8060edbdffdf58723f25c547d6aaab3c60e19439ce31d8418360f141d6ba10b7a60dace33d279cdbd1306bf12427",
-            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+            "url": "https://github.com/CherryHQ/cherry-studio/releases/download/v1.6.7/Cherry-Studio-1.6.7-x64-portable.exe#/Cherry-Studio.exe",
+            "hash": "30d70c878b7e4eca368fce08bd35d467e49a0289d16b2e25d3e5dc53b0a06d32"
         },
         "arm64": {
-            "url": "https://github.com/CherryHQ/cherry-studio/releases/download/v1.6.7/Cherry-Studio-1.6.7-arm64-setup.exe#/dl.7z",
-            "hash": "d3507089a4f4bb2e75077be43c0bca51c96e004a7acd7c49b4c4b8f6958c4a93",
-            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" \"$dir\""
+            "url": "https://github.com/CherryHQ/cherry-studio/releases/download/v1.6.7/Cherry-Studio-1.6.7-arm64-portable.exe#/Cherry-Studio.exe",
+            "hash": "012daeddf5a6bb3c4638ea216285f2c4471ef06062e5337c3c455b9f1e9305ca"
         }
     },
     "shortcuts": [
         [
-            "Cherry Studio.exe",
+            "Cherry-Studio.exe",
             "Cherry Studio"
         ]
     ],
-    "post_install": [
-        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Recurse",
-        "# Remove the following lines in 2026-01-01:",
-        "# Compatible with incorrect persistence method",
-        "if (Test-Path \"$persist_dir\\data\") {",
-        "  ensure \"$env:APPDATA\\CherryStudio\" | Out-Null",
-        "  Move-Item \"$persist_dir\\data\\*\" \"$env:APPDATA\\CherryStudio\" -Recurse",
-        "  Remove-Item \"$persist_dir\" -Recurse -Force",
-        "  info \"This manifest no longer provides persistence.\"",
-        "  info \"Your data has been moved to '$env:APPDATA\\CherryStudio'(default location).\"",
-        "}"
-    ],
+    "persist": "data",
     "checkver": {
         "github": "https://github.com/CherryHQ/cherry-studio"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/CherryHQ/cherry-studio/releases/download/v$version/Cherry-Studio-$version-x64-setup.exe#/dl.7z",
+                "url": "https://github.com/CherryHQ/cherry-studio/releases/download/v$version/Cherry-Studio-$version-x64-portable.exe#/Cherry-Studio.exe",
                 "hash": {
                     "url": "$baseurl/latest.yml",
-                    "regex": "sha512: $base64"
+                    "regex": "url: Cherry-Studio-$version-x64-portable\\.exe\\s+sha512: $base64"
                 }
             },
             "arm64": {
-                "url": "https://github.com/CherryHQ/cherry-studio/releases/download/v$version/Cherry-Studio-$version-arm64-setup.exe#/dl.7z"
+                "url": "https://github.com/CherryHQ/cherry-studio/releases/download/v$version/Cherry-Studio-$version-arm64-portable.exe#/Cherry-Studio.exe",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "url: Cherry-Studio-$version-arm64-portable\\.exe\\s+sha512: $base64"
+                }
             }
         }
     }
