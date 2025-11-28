@@ -3,6 +3,9 @@
     "description": "Windows X-server based on the xorg git sources (like xming or cygwin's xwin)",
     "homepage": "https://github.com/marchaesen/vcxsrv",
     "license": "GPL-3.0-only",
+    "notes": [
+        "To add file associations (.xlaunch), run 'reg import \"$dir\\install-associations.reg\"'"
+    ],
     "architecture": {
         "64bit": {
             "url": "https://github.com/marchaesen/vcxsrv/releases/download/21.1.16.1/vcxsrv-64.21.1.16.1.installer.exe#/dl.7z",
@@ -29,6 +32,20 @@
             "xlaunch.exe",
             "XLauncher"
         ]
+    ],
+    "post_install": [
+        "$dirpath = \"$dir\".Replace('\\', '\\\\')",
+        "$xlaunchexepath = \"$dir\\xlaunch.exe\".Replace('\\', '\\\\')",
+        "'install-associations', 'uninstall-associations' | ForEach-Object {",
+        "  if (Test-Path \"$bucketsdir\\extras\\scripts\\vcxsrv\\$_.reg\") {",
+        "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\vcxsrv\\$_.reg\"",
+        "    $content = $content.Replace('$xlaunch_exe_path', $xlaunchexepath)",
+        "    if ($global) {",
+        "      $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "    }",
+        "    $content | Set-Content -Path \"$dir\\$_.reg\"",
+        "  }",
+        "}"
     ],
     "checkver": {
         "url": "https://api.github.com/repositories/754309614/releases/latest",
