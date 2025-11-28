@@ -1,0 +1,65 @@
+{
+    "version": "1.3.21",
+    "description": "VacuumTube is an unofficial wrapper of YouTube Leanback (the console and Smart TV version of YouTube) for the desktop, with a built-in adblocker and minor enhancements.",
+    "homepage": "https://github.com/shy1132/VacuumTube",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/shy1132/VacuumTube/releases/download/v1.3.21/VacuumTube-x64-Portable.zip",
+            "hash": "443404f55fa3106766a373d4c35feb452ec2c7dc82752a68ef87ecefe1bf6dd6"
+        },
+        "arm64": {
+            "url": "https://github.com/shy1132/VacuumTube/releases/download/v1.3.21/VacuumTube-arm64-Portable.zip",
+            "hash": "b77bf97a8784f35e2fe6932224f5ce8458e467921022878f018fad85ab427619"
+        }
+    },
+    "persist": "data",
+    "post_install": [
+        "$appdata = \"$env:APPDATA\\VacuumTube\"",
+        "$persistData = \"$persist_dir\\data\"",
+        "if (!(Test-Path $persistData)) {",
+        "    New-Item -ItemType Directory -Path $persistData | Out-Null",
+        "}",
+        "if (Test-Path $appdata) {",
+        "    Write-Host \"Migrating existing data from AppData to persist directory...\"",
+        "    try {",
+        "        Get-ChildItem -Path $appdata | ForEach-Object {",
+        "            Move-Item -Path $_.FullName -Destination $persistData -Force -ErrorAction Stop",
+        "        }",
+        "        if ((Get-ChildItem -Path $appdata -Recurse -ErrorAction SilentlyContinue | Measure-Object).Count -eq 0) {",
+        "            Remove-Item $appdata -Recurse -Force",
+        "            Write-Host \"Migration completed successfully.\"",
+        "        }",
+        "    } catch {",
+        "        Write-Host \"Warning: Migration encountered an error: $_\" -ForegroundColor Yellow",
+        "    }",
+        "}",
+        "if (!(Test-Path $appdata)) {",
+        "    New-Item -ItemType Junction -Path $appdata -Target $persistData | Out-Null",
+        "}"
+    ],
+    "post_uninstall": [
+        "$appdata = \"$env:APPDATA\\VacuumTube\"",
+        "$item = Get-Item $appdata -ErrorAction SilentlyContinue",
+        "if ($item -and $item.LinkType -eq 'Junction') {",
+        "    Remove-Item $appdata -Force",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "VacuumTube.exe",
+            "VacuumTube"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/shy1132/VacuumTube/releases/download/v$version/VacuumTube-x64-Portable.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/shy1132/VacuumTube/releases/download/v$version/VacuumTube-arm64-Portable.zip"
+            }
+        }
+    }
+}
