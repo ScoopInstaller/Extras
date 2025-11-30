@@ -1,0 +1,50 @@
+{
+    "version": "144.0.7510.0-r1540236",
+    "description": "Chromium browser compiled with the Clang/LLVM compiler.",
+    "homepage": "https://github.com/RobRich999/Chromium_Clang",
+    "license": "BSD-3-Clause",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/RobRich999/Chromium_Clang/releases/download/v144.0.7510.0-r1540236-win64-avx2/chrome.zip",
+            "hash": "sha1:68d70d0f1719a04b06d3299346cff5c251b4bdcc"
+        }
+    },
+    "extract_dir": "chrome-win32",
+    "bin": [
+        [
+            "chrome.exe",
+            "chromium",
+            "--user-data-dir=\"$dir\\User Data\""
+        ]
+    ],
+    "shortcuts": [
+        [
+            "chrome.exe",
+            "Chromium",
+            "--user-data-dir=\"$dir\\User Data\""
+        ]
+    ],
+    "post_install": [
+        "if (!(Test-Path \"$dir\\User Data\\*\") -and (Test-Path \"$env:LocalAppData\\Chromium\\User Data\")) {",
+        "    info '[Portable Mode]: Copying user data...'",
+        "    Copy-Item \"$env:LocalAppData\\Chromium\\User Data\\*\" \"$dir\\User Data\" -Recurse",
+        "}"
+    ],
+    "persist": "User Data",
+    "checkver": {
+        "url": "https://api.github.com/repos/RobRich999/Chromium_Clang/tags",
+        "jsonpath": "$..name",
+        "regex": "v([\\d.\\-r]+)-win64-avx2"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/RobRich999/Chromium_Clang/releases/download/v$version-win64-avx2/chrome.zip",
+                "hash": {
+                    "url": "https://api.github.com/repos/RobRich999/Chromium_Clang/releases/tags/v$version-win64-avx2",
+                    "regex": "chrome.zip - $sha1\\\\r\\\\n"
+                }
+            }
+        }
+    }
+}
