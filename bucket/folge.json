@@ -2,22 +2,22 @@
     "version": "1.28.0",
     "description": "Simple, free, and powerful desktop tool for creating, managing, and sharing your processes and knowledge.",
     "homepage": "https://folge.me",
-    "license": "https://folge.me/eula",
-    "##": [
-        "No hash file for autoupdate available",
-        "Installer is 32-bit, but actual application is only 64-bit Windows"
-    ],
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://folge.me/eula"
+    },
     "architecture": {
         "64bit": {
             "url": "https://cdn.folge.me/Folge-1.28.0.exe#/dl.7z",
             "hash": "7d38d141b14c31e0c58cb305f810630c18f3422399d31b43bc80ae314b49f8b8"
         }
     },
-    "extract_dir": "$PLUGINSDIR",
-    "pre_install": [
-        "Get-Item \"$dir\\*\" -Exclude \"app-64.7z\" | Remove-Item",
-        "Expand-7zipArchive \"$dir\\app-64.7z\" \"$dir\" -Removal"
-    ],
+    "installer": {
+        "script": [
+            "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Expand-7zipArchive -DestinationPath \"$dir\"",
+            "Remove-Item \"$dir\\`$*\" -Force -Recurse"
+        ]
+    },
     "shortcuts": [
         [
             "Folge.exe",
