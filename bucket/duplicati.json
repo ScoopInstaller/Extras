@@ -4,7 +4,7 @@
     "homepage": "https://www.duplicati.com/",
     "license": "MIT",
     "notes": [
-        "If you want Dupilicati to run at the startup of your system, run: (requires administrator privileges)",
+        "If you want Duplicati to run at the startup of your system, run: (requires administrator privileges)",
         "start \"$dir\\Duplicati.WindowsService.exe\" -Verb 'RunAs' -ArgumentList 'install'",
         "",
         "To remove Duplicati from startup, run: (requires administrator privileges)",
@@ -27,6 +27,14 @@
             "extract_dir": "duplicati-2.2.0.1_stable_2025-11-09-win-arm64-gui"
         }
     },
+    "post_install": [
+        "if (($cmd -eq 'update') -and ($env:duplicati_svc_installed -eq $true)) {",
+        "    info 'Reinstalling service...'",
+        "    if (!(is_admin)) { error 'Admin rights required to install Duplicati service'; break }",
+        "    Start-Process \"$dir\\Duplicati.WindowsService.exe\" -Wait -Verb 'RunAs' -ArgumentList 'install' -WindowStyle 'Hidden'",
+        "    $env:duplicati_svc_installed = $null",
+        "}"
+    ],
     "bin": [
         "Duplicati.CommandLine.exe",
         [
@@ -46,7 +54,10 @@
     ],
     "pre_uninstall": [
         "if (Get-Service -Name 'Duplicati' -ErrorAction 'SilentlyContinue') {",
-        "    if (!(is_admin)) { error \"Admin rights required to remove Duplicati service\"; break }",
+        "    info 'Uninstalling service...'",
+        "    if (!(is_admin)) { error 'Admin rights required to remove Duplicati service'; break }",
+        "    Stop-Service duplicati",
+        "    if ($cmd -eq 'update') { $env:duplicati_svc_installed = $true }",
         "    Start-Process \"$dir\\Duplicati.WindowsService.exe\" -Wait -Verb 'RunAs' -ArgumentList 'uninstall' -WindowStyle 'Hidden'",
         "}"
     ],
