@@ -28,7 +28,7 @@
         }
     },
     "post_install": [
-        "if ($env:duplicati_svc_installed -eq $true) {",
+        "if (($cmd -eq 'update') -and ($env:duplicati_svc_installed -eq $true)) {",
         "    info 'Reinstalling service...'",
         "    if (!(is_admin)) { error 'Admin rights required to install Duplicati service'; break }",
         "    Start-Process \"$dir\\Duplicati.WindowsService.exe\" -Wait -Verb 'RunAs' -ArgumentList 'install' -WindowStyle 'Hidden'",
@@ -57,7 +57,7 @@
         "    info 'Uninstalling service...'",
         "    if (!(is_admin)) { error 'Admin rights required to remove Duplicati service'; break }",
         "    Stop-Service duplicati",
-        "    $env:duplicati_svc_installed = $true",
+        "    if ($cmd -eq 'update') { $env:duplicati_svc_installed = $true }",
         "    Start-Process \"$dir\\Duplicati.WindowsService.exe\" -Wait -Verb 'RunAs' -ArgumentList 'uninstall' -WindowStyle 'Hidden'",
         "}"
     ],
