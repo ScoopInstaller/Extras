@@ -1,5 +1,5 @@
 {
-    "version": "0.3.543",
+    "version": "0.3.549",
     "description": "Neovim front-end UI",
     "homepage": "https://github.com/yatli/fvim",
     "license": "MIT",
@@ -8,12 +8,12 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/yatli/fvim/releases/download/v0.3.543+g18454bc/fvim-win-x64-v0.3.543+g18454bc.zip",
-            "hash": "4008e194c4adeebaccbc2dd359043e2dba92e3cd2865174d18d083dc407a663e"
+            "url": "https://github.com/yatli/fvim/releases/download/v0.3.549%2Bee4316c/fvim-win-x64-v0.3.548%2Bg2e4087d-2-gee4316c.zip",
+            "hash": "96bdaa15a7557dfc70b984777d15b05caa25c1924847ea46bd7740f4fe4162c1"
         },
         "arm64": {
-            "url": "https://github.com/yatli/fvim/releases/download/v0.3.543+g18454bc/fvim-win-arm64-v0.3.543+g18454bc.zip",
-            "hash": "c885c9672990dd2b10c1f43cb776ee0c5c72aebbc9b2ca6b436d5e69033c41c4"
+            "url": "https://github.com/yatli/fvim/releases/download/v0.3.549%2Bee4316c/fvim-win-arm64-v0.3.548%2Bg2e4087d-2-gee4316c.zip",
+            "hash": "2bc73d0d14a0d138a5a66feac15720c09e41fb5a813d9fe25453a6adde455d24"
         }
     },
     "bin": "fvim.exe",
@@ -24,16 +24,29 @@
         ]
     ],
     "checkver": {
-        "github": "https://github.com/yatli/fvim",
-        "regex": "[/\"]v([\\d.]+)(?<commit>[+-]g?[\\w]{7})\"?"
+        "script": [
+            "$LatestRelease = [PSCustomObject](",
+            "    Invoke-RestMethod -Method 'Get' -Uri (",
+            "        'https://api.github.com/repos/yatli/fvim/releases/latest'",
+            "    )",
+            ")",
+            "[string]::Format(",
+            "    '{0}|{1}|{2}|{3}',",
+            "    $LatestRelease.'tag_name'.TrimStart('v'),",
+            "    $LatestRelease.'tag_name'.TrimStart('v').Split('+')[0],",
+            "    ($LatestRelease.'assets'.Where{$_.'name'.StartsWith('fvim-win-x64-')}.'browser_download_url'.Split('/')[-2, -1] -join '/'),",
+            "    ($LatestRelease.'assets'.Where{$_.'name'.StartsWith('fvim-win-arm64-')}.'browser_download_url'.Split('/')[-2, -1] -join '/')",
+            ")"
+        ],
+        "regex": "(?<tagname>.+)\\|(?<version>.+)\\|(?<urlx64>.+)\\|(?<urlarm64>.+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/yatli/fvim/releases/download/v$version$matchCommit/fvim-win-x64-v$version$matchCommit.zip"
+                "url": "https://github.com/yatli/fvim/releases/download/$matchUrlx64"
             },
             "arm64": {
-                "url": "https://github.com/yatli/fvim/releases/download/v$version$matchCommit/fvim-win-arm64-v$version$matchCommit.zip"
+                "url": "https://github.com/yatli/fvim/releases/download/$matchUrlarm64"
             }
         }
     }

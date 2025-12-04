@@ -1,13 +1,13 @@
 {
-    "version": "25.08-6660",
+    "version": "25.12-6962",
     "description": "Universal document viewer",
     "homepage": "https://okular.kde.org",
     "license": "LGPL-2.0-only",
     "notes": "If you want to get the latest development branch-based installer, please install `okular-nightly` from Versions bucket.",
     "architecture": {
         "64bit": {
-            "url": "https://cdn.kde.org/ci-builds/graphics/okular/release-25.08/windows/okular-release_25.08-6660-windows-cl-msvc2022-x86_64.7z",
-            "hash": "d69422f02e1251b580a232735373f1075e268a5dec0a2d6a0d4bed54074025ae"
+            "url": "https://cdn.kde.org/ci-builds/graphics/okular/release-25.12/windows/okular-release_25.12-6962-windows-cl-msvc2022-x86_64.7z",
+            "hash": "8ad6135d2cf894cc7beb2676ef1202f15b2105cbe5ba99dc7d7a81c6514a8169"
         }
     },
     "bin": "bin\\okular.exe",
@@ -18,8 +18,23 @@
         ]
     ],
     "checkver": {
-        "url": "https://cdn.kde.org/ci-builds/graphics/okular/release-25.08/windows/",
-        "regex": "okular-release_([\\d.-]+)-windows-cl-(?<lib>\\w+)-x86_64\\.7z"
+        "script": [
+            "$url = 'https://cdn.kde.org/ci-builds/graphics/okular/?C=N;O=D'",
+            "",
+            "$cont = (Invoke-WebRequest $url).Content",
+            "$regex = 'release-([\\d.]+)'",
+            "if (!($cont -match $regex)) { error \"Could not match $regex in $url\"; continue }",
+            "$ver = $matches[1]",
+            "",
+            "$nextUrl = \"https://cdn.kde.org/ci-builds/graphics/okular/release-$ver/windows/\"",
+            "$nextCont = (Invoke-WebRequest $nextUrl).Content",
+            "$nextRegex = \"okular-release_$ver-([\\d]+)-windows-cl-([\\w]+)-x86_64\\.7z\"",
+            "if (!($nextCont -match $nextRegex)) { error \"Could not match $nextRegex in $nextUrl\"; continue }",
+            "$build = $matches[1]",
+            "$lib = $matches[2]",
+            "Write-Output $ver-$build $lib"
+        ],
+        "regex": "([\\d.-]+) (?<lib>[\\w]+)"
     },
     "autoupdate": {
         "architecture": {

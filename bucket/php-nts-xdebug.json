@@ -1,10 +1,10 @@
 {
-    "version": "3.4.0-8.4",
+    "version": "3.5.0-85",
     "description": "An extension for PHP to assist with debugging and development. (Non Thread Safe)",
     "homepage": "https://xdebug.org/",
     "license": {
-        "identifier": "Xdebug-1.01",
-        "url": "https://xdebug.org/license.php"
+        "identifier": "Xdebug-1.03",
+        "url": "https://xdebug.org/license"
     },
     "notes": [
         "Xdebug is already enabled if PHP (Non Thread Safe) was installed through scoop!",
@@ -12,8 +12,8 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://xdebug.org/files/php_xdebug-3.4.0-8.4-vs17-nts-x86_64.dll#/php_xdebug.dll",
-            "hash": "da7017e5b67c8aa6edbc29ee3126413a3a282f05199b417c0d6d2d14624029b0"
+            "url": "https://xdebug.org/files/php_xdebug-3.5.0-8.5-nts-vs17-x86_64.dll#/php_xdebug.dll",
+            "hash": "cff7428ac179ada8f5c433012853edb4da443f642113a23be3f2bc3ff679c337"
         }
     },
     "post_install": [
@@ -37,16 +37,29 @@
         "}"
     ],
     "checkver": {
-        "url": "https://xdebug.org/download",
-        "regex": "php_xdebug-([\\d.]+-8\\.4)-vs17-nts-x86_64\\.dll"
+        "url": "https://xdebug.org/download/historical",
+        "script": [
+            "$xdebug_regex = 'php_xdebug(?=[^'']+nts)-(?<prefix>[\\d.]+)-(?<suffix>[\\d.]+)(?<=\\d)[^'']+dll'",
+            "$latest_xdebug = [regex]::Matches($page, $xdebug_regex) | ForEach-Object {",
+            "    [pscustomobject]@{",
+            "        FileName = $_.Value",
+            "        XdebugVersion = [version]$_.Groups['prefix'].Value",
+            "        PHPVersion = [version]$_.Groups['suffix'].Value",
+            "    }",
+            "} | Sort-Object XdebugVersion, PHPVersion -Descending | Select-Object -First 1",
+            "$version_prefix = $latest_xdebug.XdebugVersion.ToString()",
+            "$version_suffix = $latest_xdebug.PHPVersion.ToString().Split('.')[0..1] -join ''",
+            "Write-Output \"$version_prefix-$version_suffix / $($latest_xdebug.FileName)\""
+        ],
+        "regex": "([\\d.-]+) / (?<name>.+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://xdebug.org/files/php_xdebug-$version-vs17-nts-x86_64.dll#/php_xdebug.dll",
+                "url": "https://xdebug.org/files/$matchName#/php_xdebug.dll",
                 "hash": {
-                    "url": "https://xdebug.org/download",
-                    "regex": "SHA256:&nbsp;([0-9a-f]+)\" href='\\/files/php_xdebug-$version-vs17-nts-x86_64\\.dll"
+                    "url": "https://xdebug.org/download/historical",
+                    "regex": "\"SHA256:&nbsp;$sha256\" href='/files/$basename'"
                 }
             }
         }

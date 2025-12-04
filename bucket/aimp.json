@@ -1,5 +1,5 @@
 {
-    "version": "5.40.2691",
+    "version": "5.40.2700",
     "description": "Audio player",
     "homepage": "https://www.aimp.ru",
     "license": {
@@ -9,14 +9,24 @@
     "architecture": {
         "64bit": {
             "url": "https://www.aimp.ru/?do=download.file&id=31#/dl.zip",
-            "hash": "de786eb54f2303a35759626ee0df5f38e063fcaf2f91ff0b280865e68ef3dbf7"
+            "hash": "271c14fe614475831c6b259c2d631586e2391cabc86b4d1a37cc8fefb20652ef"
         },
         "32bit": {
             "url": "https://www.aimp.ru/?do=download.file&id=8#/dl.zip",
-            "hash": "867b6c0870849140ffefdf0c9d79da75f985b9ce20318d07d071b741254b573d"
+            "hash": "37aa4b00f0a2e54c50ef84aef76eeae8f1752662c521fa59590a5ce1da606206"
         }
     },
     "extract_dir": "AIMP",
+    "post_install": [
+        "'Icons', 'Skins', 'Plugins' | ForEach-Object {",
+        "    $source_dir = Join-Path $dir \"$_.original\"",
+        "    $destination_dir = Join-Path $dir $_",
+        "    if (Test-Path \"$source_dir\") {",
+        "        Copy-Item -Path \"$source_dir\\*\" -Destination $destination_dir -Force -Recurse",
+        "        Remove-Item -Path $source_dir -Recurse -Force -ErrorAction SilentlyContinue",
+        "    }",
+        "}"
+    ],
     "bin": [
         "AIMP.exe",
         "AIMPac.exe",
@@ -37,10 +47,10 @@
         ]
     ],
     "persist": [
-        "Profile",
-        "Plugins",
+        "Icons",
         "Skins",
-        "Icons"
+        "Plugins",
+        "Profile"
     ],
     "checkver": {
         "url": "https://www.aimp.ru/?do=download&os=windows",
