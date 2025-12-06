@@ -1,18 +1,18 @@
 {
-    "version": "4.5.3",
+    "version": "5.0.0",
     "description": "3D creation suite",
     "homepage": "https://www.blender.org",
     "license": "GPL-3.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://download.blender.org/release/Blender4.5/blender-4.5.3-windows-x64.zip",
-            "hash": "6b657c8bdd3a7b65b07b9e1ae17eb4be7dd4aa23121da7f3d3354fc2551330a7",
-            "extract_dir": "blender-4.5.3-windows-x64"
+            "url": "https://download.blender.org/release/Blender5.0/blender-5.0.0-windows-x64.zip",
+            "hash": "14d491b6e491c35950b89bac8caa4ab7115596cc056775f427806d3ea2eac698",
+            "extract_dir": "blender-5.0.0-windows-x64"
         },
         "arm64": {
-            "url": "https://download.blender.org/release/Blender4.5/blender-4.5.3-windows-arm64.zip",
-            "hash": "61246e957fe1591ac1df665a1dc8cb37b2986cb50be96be7b638c96a2528b655",
-            "extract_dir": "blender-4.5.3-windows-arm64"
+            "url": "https://download.blender.org/release/Blender5.0/blender-5.0.0-windows-arm64.zip",
+            "hash": "7b5c61ecc83b3506ce808b2b8cada0b7544e9b53e9418a879df75ecc2ebbdbdd",
+            "extract_dir": "blender-5.0.0-windows-arm64"
         }
     },
     "bin": "blender-launcher.exe",
@@ -24,8 +24,25 @@
     ],
     "persist": "portable",
     "checkver": {
-        "url": "https://www.blender.org/download/",
-        "regex": "blender-([\\w.]+)-windows-x64\\.zip"
+        "url": "https://download.blender.org/release/",
+        "script": [
+            "try {",
+            "    $baseVersion = [regex]::Matches($page, 'href=\"Blender(?<version>\\d+\\.\\d+)/\"') | ForEach-Object {",
+            "        [version]\"$($_.Groups['version'].Value)\"",
+            "    } | Sort-Object -Descending | Select-Object -First 1",
+            "    if (-not $baseVersion) { throw 'No base version found' }",
+            "    $latestVersion = (Invoke-WebRequest -Uri \"https://download.blender.org/release/Blender$($baseVersion.Major).$($baseVersion.Minor)/\" -UseBasicParsing).Links | ForEach-Object {",
+            "        if ($_.href -match '^blender-(?<version>\\d+\\.\\d+\\.\\d+)-windows-x64\\.zip$') {",
+            "            [version]$Matches['version']",
+            "        }",
+            "    } | Sort-Object -Descending | Select-Object -First 1",
+            "    Write-Output $latestVersion",
+            "}",
+            "catch {",
+            "    Write-Output ''",
+            "}"
+        ],
+        "regex": "(\\d+\\.\\d+\\.\\d+)"
     },
     "autoupdate": {
         "architecture": {
