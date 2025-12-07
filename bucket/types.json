@@ -1,0 +1,50 @@
+{
+    "version": "2.6.5",
+    "homepage": "https://ystr.github.io/types/",
+    "description": "A file type manager for Windows that allows you to edit program associations, icons, context menus and a few other things.",
+    "license": "GPL-3.0-or-later",
+    "url": [
+        "https://ystr.github.io/types/Types.zip#/Types-2.6.5.zip",
+        "https://ystr.github.io/types/CTypes.zip#/CTypes-2.6.5.zip"
+    ],
+    "hash": [
+        "531cb8f4af718b32c6d65da19afa8d2830ac8d88d70aa455d86f25d616efebc0",
+        "64a79982140364da2411d2d03513411cfd1a717a686a62f8de807e9bdb9db4a2"
+    ],
+    "bin": [
+        "Types.exe",
+        "CTypes.exe"
+    ],
+    "shortcuts": [
+        [
+            "Types.exe",
+            "Types"
+        ]
+    ],
+    "checkver": {
+        "script": [
+            "$tmp_dir = Join-Path -Path $cachedir -ChildPath 'tmp'",
+            "$download_url = 'https://ystr.github.io/types/Types.zip'",
+            "$download_dir = cache_path $app 'unknown' $download_url",
+            "New-Item -Path $tmp_dir -ItemType Directory -Force | Out-Null",
+            "$args_list = @('x', $download_dir, \"-o`\"$tmp_dir`\"\", '-aoa', '-y')",
+            "$output_options = @{",
+            "    NoNewWindow = $true",
+            "    RedirectStandardError = Join-Path -Path $tmp_dir -ChildPath 'err.txt'",
+            "    RedirectStandardOutput = Join-Path -Path $tmp_dir -ChildPath 'out.txt'",
+            "}",
+            "Invoke-WebRequest -Uri $download_url -OutFile $download_dir -UseBasicParsing",
+            "Start-Process -FilePath '7z.exe' -ArgumentList $args_list @output_options -Wait",
+            "$version_info = [System.Diagnostics.FileVersionInfo]::GetVersionInfo(\"$tmp_dir\\Types.exe\")",
+            "Remove-Item -Path $tmp_dir, $download_dir -Recurse -Force -ErrorAction SilentlyContinue",
+            "Write-Output $version_info.ProductVersion"
+        ],
+        "regex": "([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": [
+            "https://ystr.github.io/types/Types.zip#/Types-$version.zip",
+            "https://ystr.github.io/types/CTypes.zip#/CTypes-$version.zip"
+        ]
+    }
+}
