@@ -15,19 +15,15 @@
         "    Add-Content \"$dir\\AppData\\settings.ini\" \"[Settings]`r`nDisableUpdateCheck=1\"",
         "}"
     ],
-    "installer": {
-        "args": [
-            "/portable",
-            "/S",
-            "/D=$dir"
-        ]
-    },
-    "bin": "windhawk.exe",
-    "shortcuts": [
-        [
-            "windhawk.exe",
-            "Windhawk"
-        ]
+    "post_install": [
+        "# Windhawk needs to apply permissive access attributes to its persisted folders",
+        "Start-Process -FilePath \"$dir\\$fname\" -ArgumentList @('/S', '/portable', \"/D=$dir\") -Wait",
+        "Remove-Item -Path \"$dir\\$fname\" -Force",
+        "startmenu_shortcut \"$dir\\windhawk.exe\" 'Windhawk' $null $null $global"
+    ],
+    "post_uninstall": [
+        "Write-Host \"Removing shortcut $(friendly_path \"$(shortcut_folder $global)\\Windhawk.lnk\")\"",
+        "Remove-Item \"$(shortcut_folder $global)\\Windhawk.lnk\" -Force -ErrorAction Ignore"
     ],
     "persist": "AppData",
     "checkver": {
