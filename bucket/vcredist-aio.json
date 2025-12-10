@@ -1,31 +1,31 @@
 {
-    "version": "0.90.0",
+    "version": "0.103.0",
     "description": "All-in-one repack for latest Microsoft Visual C++ Redistributable Runtimes, without the original setup bloat payload.",
-    "homepage": "https://github.com/abbodi1406/vcredist",
-    "license": "Unlicense",
-    "url": "https://github.com/abbodi1406/vcredist/releases/download/v0.90.0/VisualCppRedist_AIO_x86_x64_90.zip",
-    "hash": "1bcc379e28e0df8ea27bb9c6a29556d5ef4b96a5f3fcec96f394b84403752209",
+    "homepage": "https://gitlab.com/stdout12/vcredist",
+    "license": {
+        "identifier": "Unlicense",
+        "url": "https://gitlab.com/stdout12/vcredist/-/blob/HEAD/LICENSE"
+    },
+    "notes": "View command-line options and usage examples by executing: `vcredist-aio.exe /?`",
+    "url": "https://gitlab.com/-/project/76069787/uploads/4431f3448fa76633cfd4983142f81952/VisualCppRedist_AIO_x86_x64.exe#/vcredist-aio.exe",
+    "hash": "3c188e4651bcc07df2bdb06d69585158797b1bafb91557b09217621628cd5b23",
     "installer": {
         "script": [
-            "if (!(is_admin)) { error 'This package requires admin rights to install'; break }",
-            "Start-Process -Wait \"$dir\\VisualCppRedist_AIO_x86_x64.exe\" -ArgumentList @('/ai', '/gm2') -Verb RunAs"
+            "if (-not (is_admin)) { error 'This package requires admin rights to install'; break }",
+            "Start-Process -FilePath \"$dir\\$fname\" -ArgumentList @('/ai', '/gm2') -Verb RunAs -Wait"
         ]
     },
-    "bin": "VisualCppRedist_AIO_x86_x64.exe",
-    "uninstaller": {
-        "script": [
-            "if (!(is_admin)) { error 'This package requires admin rights to uninstall'; break }",
-            "Start-Process -Wait \"$dir\\VisualCppRedist_AIO_x86_x64.exe\" -ArgumentList @('/ai', '/gm2') -Verb RunAs"
-        ]
-    },
+    "bin": "vcredist-aio.exe",
     "checkver": {
-        "github": "https://github.com/abbodi1406/vcredist"
+        "url": "https://gitlab.com/api/v4/projects/76069787/releases/permalink/latest",
+        "jsonpath": "$..['name', 'description']",
+        "regex": "\"v([\\d.]+)\",\"[^\"]+\\[.+?_x86_x64\\.exe\\]\\(/uploads/(?<hash>\\w+)/"
     },
     "autoupdate": {
-        "url": "https://github.com/abbodi1406/vcredist/releases/download/v$version/VisualCppRedist_AIO_x86_x64_$minorVersion.zip",
+        "url": "https://gitlab.com/-/project/76069787/uploads/$matchHash/VisualCppRedist_AIO_x86_x64.exe#/vcredist-aio.exe",
         "hash": {
-            "url": "https://github.com/abbodi1406/vcredist/releases/v$version",
-            "regex": "File: $basename[\\S\\s]*?SHA-256: $sha256"
+            "url": "https://gitlab.com/api/v4/projects/76069787/releases/permalink/latest",
+            "regex": "$basename.+?SHA-256:\\s*$sha256"
         }
     }
 }

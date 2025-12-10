@@ -1,0 +1,73 @@
+{
+    "version": "1.11.17",
+    "description": "AI-powered IDE developed by Google, designed for prioritizing AI agents platform for software development.",
+    "homepage": "https://antigravity.google/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://antigravity.google/terms"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/1.11.17-6639170008514560/windows-x64/Antigravity.exe#/dl.exe",
+            "hash": "549d117c89eb4087a335302c1259225d5e19c2528d613ed49d58207b6bc0c510"
+        },
+        "arm64": {
+            "url": "https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/1.11.17-6639170008514560/windows-arm64/Antigravity.exe#/dl.exe",
+            "hash": "c5b8ddf0c07349766abd8b6b9aca67884c883859f0989aefff2d630d268d1048"
+        }
+    },
+    "innosetup": true,
+    "extract_dir": "{code_GetDestDir}",
+    "post_install": [
+        "if (!(Test-Path \"$dir\\data\\extensions\") -and (Test-Path \"$env:USERPROFILE\\.antigravity\\extensions\")) {",
+        "    info '[Portable Mode] Copying extensions...'",
+        "    Copy-Item \"$env:USERPROFILE\\.antigravity\\extensions\" \"$dir\\data\" -Recurse",
+        "}",
+        "if (!(Test-Path \"$dir\\data\\user-data\") -and (Test-Path \"$env:AppData\\Antigravity\")) {",
+        "    info '[Portable Mode] Copying user data...'",
+        "    Copy-Item \"$env:AppData\\Antigravity\" \"$dir\\data\\user-data\" -Recurse",
+        "}",
+        "$extensions_file = \"$dir\\data\\extensions\\extensions.json\"",
+        "if ((Test-Path \"$extensions_file\")) {",
+        "    info 'Adjusting path in extensions file...'",
+        "    (Get-Content \"$extensions_file\") -replace '(?<=antigravity(/|\\\\\\\\)).*?(?=(/|\\\\\\\\)data(/|\\\\\\\\)extensions)', $version | Set-Content \"$extensions_file\"",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "antigravity.exe",
+            "Antigravity",
+            "--user-data-dir $dir\\data\\user-data --extensions-dir $dir\\data\\extensions"
+        ]
+    ],
+    "bin": [
+        [
+            "bin\\antigravity.cmd",
+            "antigravity",
+            "--user-data-dir $dir\\data\\user-data --extensions-dir $dir\\data\\extensions"
+        ]
+    ],
+    "persist": "data",
+    "checkver": {
+        "url": "https://antigravity-auto-updater-974169037036.us-central1.run.app/api/update/win32-x64-user/stable/latest",
+        "regex": ".+/antigravity/stable/([.\\d]+)-(?<build>\\d+)/"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/$version-$matchBuild/windows-x64/Antigravity.exe#/dl.exe",
+                "hash": {
+                    "url": "https://antigravity-auto-updater-974169037036.us-central1.run.app/api/update/win32-x64-user/stable/latest",
+                    "jsonpath": "$.sha256hash"
+                }
+            },
+            "arm64": {
+                "url": "https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/$version-$matchBuild/windows-arm64/Antigravity.exe#/dl.exe",
+                "hash": {
+                    "url": "https://antigravity-auto-updater-974169037036.us-central1.run.app/api/update/win32-arm64-user/stable/latest",
+                    "jsonpath": "$.sha256hash"
+                }
+            }
+        }
+    }
+}

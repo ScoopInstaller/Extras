@@ -1,10 +1,14 @@
 {
-    "version": "20230101",
+    "version": "20251009",
     "description": "A free (libre) font editor, which can create, edit and convert fonts in OpenType, TrueType, UFO, CID-keyed, Multiple Master, and many other formats.",
     "homepage": "https://fontforge.github.io",
     "license": "GPL-3.0-or-later",
-    "url": "https://github.com/fontforge/fontforge/releases/download/20230101/FontForge-2023-01-01-Windows.exe",
-    "hash": "fc6eb57495e737025efb37ad6f1effad7fef47f19a8a5f2656705687e4f43162",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/fontforge/fontforge/releases/download/20251009/FontForge-2025-10-09-Windows-x64.exe",
+            "hash": "548523f08834e344bda69abb759e30c0f84a1a5ef9a5e965eb946d86a11118a3"
+        }
+    },
     "innosetup": true,
     "shortcuts": [
         [
@@ -21,11 +25,15 @@
         "bin/ffpython.exe"
     ],
     "checkver": {
-        "github": "https://github.com/fontforge/fontforge",
-        "regex": "/download/(?<path>[\\d]{8}/FontForge-(?<year>[\\d]{4})-(?<month>[\\d]{2})-(?<day>[\\d]{2})-Windows(?<release>[-r\\d]*?).exe)",
-        "replace": "${year}${month}${day}${release}"
+        "url": "https://api.github.com/repositories/5390156/releases/latest",
+        "jsonpath": "$..browser_download_url",
+        "regex": "(\\d{8})/(?<fname>FontForge-\\d{4}-\\d{2}-\\d{2}-Windows(?<arch>-x64)?(?<release>[-r\\d]*?)?.exe)"
     },
     "autoupdate": {
-        "url": "https://github.com/fontforge/fontforge/releases/download/$matchPath"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/fontforge/fontforge/releases/download/$version/$matchFname"
+            }
+        }
     }
 }

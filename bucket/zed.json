@@ -1,15 +1,25 @@
 {
-    "version": "0.183.11",
+    "version": "0.215.3",
     "description": "Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter. It's also open source.",
     "homepage": "https://zed.dev/",
     "license": "AGPL-3.0, Apache-2.0, GPL-3.0",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/deevus/zed-windows-builds/releases/download/v0.183.11/zed.zip",
-            "hash": "d93020bf58a264e5d2ee36a8b01df0111e092d57edc0b690e0cc2a4c2099a4d5"
+            "url": "https://github.com/zed-industries/zed/releases/download/v0.215.3/Zed-x86_64.exe",
+            "hash": "bd28019c74d1d27350682489189185dc2750525ea1569d44284e8ebf1a370371"
+        },
+        "arm64": {
+            "url": "https://github.com/zed-industries/zed/releases/download/v0.215.3/Zed-aarch64.exe",
+            "hash": "252ed4a1efe5a45763e22b5cc3d8f19d17e845a925aff644695cdf63e943cac2"
         }
     },
-    "bin": "zed.exe",
+    "installer": {
+        "script": [
+            "Expand-InnoArchive -Path \"$dir\\$fname\" -ExtractDir '{app}'",
+            "Expand-InnoArchive -Path \"$dir\\$fname\" -ExtractDir '{code_GetInstallDir}' -Removal"
+        ]
+    },
+    "bin": "bin\\zed.exe",
     "shortcuts": [
         [
             "zed.exe",
@@ -17,12 +27,16 @@
         ]
     ],
     "checkver": {
-        "github": "https://github.com/deevus/zed-windows-builds"
+        "github": "https://github.com/zed-industries/zed"
     },
     "autoupdate": {
-        "url": "https://github.com/deevus/zed-windows-builds/releases/download/v$version/zed.zip",
-        "hash": {
-            "url": "https://github.com/deevus/zed-windows-builds/releases/download/v$version/sha256sums.txt"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/zed-industries/zed/releases/download/v$version/Zed-x86_64.exe"
+            },
+            "arm64": {
+                "url": "https://github.com/zed-industries/zed/releases/download/v$version/Zed-aarch64.exe"
+            }
         }
     }
 }

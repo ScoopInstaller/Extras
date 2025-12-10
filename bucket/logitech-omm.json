@@ -1,10 +1,10 @@
 {
-    "version": "2.4.8406",
+    "version": "2.5.358",
     "description": "OnBoard Memory Manager (OMM) is a utility for pro gamers to quickly view, customize, and fine-tune the onboard memory of a compatible Logitech G mouse.",
     "homepage": "https://support.logi.com/hc/en-us/articles/360059641133-Onboard-Memory-Manager",
     "license": "Freeware",
-    "url": "https://download01.logi.com/web/ftp/pub/techsupport/gaming/OnboardMemoryManager_2.4.8406.exe#/OnboardMemoryManager.exe",
-    "hash": "6a751bebddc7c05b9bc37ecceecadd81b2421b7223f417f772fcd5f593e603a9",
+    "url": "https://download01.logi.com/web/ftp/pub/techsupport/gaming/OnboardMemoryManager_2.5.358.exe#/OnboardMemoryManager.exe",
+    "hash": "cf9888c01fe9ec84e9b20346c300c0d9e809779421fab3898562750b5be0314a",
     "shortcuts": [
         [
             "OnboardMemoryManager.exe",
@@ -18,9 +18,21 @@
         ]
     ],
     "checkver": {
-        "url": "https://support.logi.com/api/v2/help_center/en-us/articles.json?label_names=webcontent=productdownload,websoftware=d3e2d42a-2b53-11eb-bf13-a5ea3d8273f5&per_page=1",
-        "jsonpath": "$.articles[0].body",
-        "regex": ">([\\d.]+)<"
+        "script": [
+            "$url = 'https://support.logi.com/api/v2/help_center/en-us/articles.json?label_names=webcontent=productdownload,websoftware=d3e2d42a-2b53-11eb-bf13-a5ea3d8273f5,webos=windows-Windows-10&page[size]=10'",
+            "$re = '>([\\d.]+)<'",
+            "$articles = (Invoke-RestMethod $url).articles",
+            "if (!$articles) { error \"No release articles found!\"; break }",
+            "$matchesList = @()",
+            "foreach ($article in $articles) {",
+            "    foreach ($match in [regex]::Matches($article.body, $re)) {",
+            "        $matchesList += $match.Groups[1].Value",
+            "    }",
+            "}",
+            "$ver = $matchesList | Sort-Object { $_ -split '\\.' | ForEach-Object { [int]$_ } } -Descending | Select-Object -First 1",
+            "Write-Output $ver"
+        ],
+        "regex": "([\\d.]+)"
     },
     "autoupdate": {
         "url": "https://download01.logi.com/web/ftp/pub/techsupport/gaming/OnboardMemoryManager_$version.exe#/OnboardMemoryManager.exe"

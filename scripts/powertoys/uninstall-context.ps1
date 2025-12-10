@@ -37,6 +37,7 @@ if ($PSVersionTable.PSVersion.Major -ge 6) { Import-Module Appx -UseWindowsPower
 @(
     'ImageResizerContextMenu'
     'PowerRenameContextMenu'
+    'CommandPalette'
 ) | ForEach-Object {
     $likeName = $_
     Get-AppxPackage |
