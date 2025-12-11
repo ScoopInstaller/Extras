@@ -1,18 +1,18 @@
 {
-    "version": "2025.2.4.99",
-    "homepage": "https://cascadeur.com/",
-    "description": "A physics‑based 3D animation software powered by artificial intelligence (A.I.). ",
+    "version": "2025.3.2.103",
+    "homepage": "https://cascadeur.com",
+    "description": "A physics-based 3D animation software powered by artificial intelligence (A.I.).",
     "license": {
         "identifier": "Shareware",
         "url": "https://cascadeur.com/help/cascadeur_end_user_agreement"
     },
     "architecture": {
         "64bit": {
-            "url": "https://cdn.cascadeur.com/builds/windows/99/Cascadeur_2025.2.4.exe#/dl.7z",
-            "hash": "448ee789f07d49fe9b29159cc2df020149c65146cf8b58cdcaf6b9b668c84223"
+            "url": "https://cdn.cascadeur.com/builds/windows/103/Cascadeur_2025.3.2.exe#/dl.7z",
+            "hash": "8a3183aef748d029ef2640ac597711077c09af6add7b960ff394cc9aa4a33e6b"
         }
     },
-    "pre_install": "Remove-Item \"$dir\" -Include 'uninstall.*', '$*' -Recurse",
+    "pre_install": "Remove-Item -Path $dir -Include '$*', 'unins*' -Force -Recurse -ErrorAction SilentlyContinue",
     "shortcuts": [
         [
             "cascadeur.exe",
@@ -21,13 +21,13 @@
     ],
     "checkver": {
         "url": "https://cascadeur.com/after-download?platform=windows",
-        "regex": "windows/(?<Build>[\\d]+)/(C|c)ascadeur_(?<Version>[\\w.]+)\\.exe",
-        "replace": "${Version}.${Build}"
+        "regex": "(?i)windows/(?<build>\\d+)/(?<name>Cascadeur_+(?<version>[\\d.]+\\w+?)\\.exe)",
+        "replace": "${version}.${build}"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://cdn.cascadeur.com/builds/windows/$matchBuild/Cascadeur_$matchVersion.exe#/dl.7z"
+                "url": "https://cdn.cascadeur.com/builds/windows/$matchBuild/$matchName#/dl.7z"
             }
         }
     }
