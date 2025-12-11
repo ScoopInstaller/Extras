@@ -15,15 +15,18 @@
         "}"
     ],
     "post_install": [
-        "# Windhawk needs to apply permissive access attributes to its persisted folders",
+        "# Windhawk needs to apply permissive access attributes to AppData folder in order to work properly",
         "Start-Process -FilePath \"$dir\\$fname\" -ArgumentList @('/S', '/portable', \"/D=$dir\") -Wait",
         "Remove-Item -Path \"$dir\\$fname\" -Force",
-        "startmenu_shortcut \"$dir\\windhawk.exe\" 'Windhawk' $null $null $global"
+        "startmenu_shortcut \"$dir\\windhawk.exe\" 'Windhawk' $null $null $global",
+        "shim \"$dir\\windhawk.exe\" $global 'windhawk'"
     ],
     "persist": "AppData",
     "post_uninstall": [
+        "# Remove shortcut and shim",
         "Write-Host \"`nRemoving shortcut $(friendly_path \"$(shortcut_folder $global)\\Windhawk.lnk\")\"",
-        "Remove-Item \"$(shortcut_folder $global)\\Windhawk.lnk\" -Force -ErrorAction Ignore"
+        "Remove-Item \"$(shortcut_folder $global)\\Windhawk.lnk\" -Force -ErrorAction Ignore",
+        "rm_shim 'windhawk' \"$(shimdir $global)\""
     ],
     "checkver": {
         "github": "https://github.com/ramensoftware/windhawk"
