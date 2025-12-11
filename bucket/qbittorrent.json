@@ -8,7 +8,7 @@
     },
     "notes": [
         "For file associations, run:",
-        "'reg import \"$dir\\install-associations.reg\"'"
+        "reg import \"$dir\\install-associations.reg\""
     ],
     "architecture": {
         "64bit": {
@@ -41,9 +41,9 @@
     ],
     "post_install": [
         "'install-associations', 'uninstall-associations' | ForEach-Object {",
-        "    if (Test-Path \"$bucketsdir\\extras\\scripts\\qbittorrent\\$_.reg\") {",
+        "    if (Test-Path \"$bucketsdir\\$bucket\\scripts\\qbittorrent\\$_.reg\") {",
         "        $qbitPath = \"$dir\".Replace('\\', '\\\\')",
-        "        $content = (Get-Content \"$bucketsdir\\extras\\scripts\\qbittorrent\\$_.reg\").Replace('$qbit', $qbitPath)",
+        "        $content = (Get-Content \"$bucketsdir\\$bucket\\scripts\\qbittorrent\\$_.reg\").Replace('$qbit', $qbitPath)",
         "        if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
         "        Set-Content \"$dir\\$_.reg\" $content -Encoding Ascii -Force",
         "    }",
@@ -57,6 +57,7 @@
         ]
     ],
     "persist": "profile",
+    "post_uninstall": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-associations.reg\" }",
     "checkver": {
         "sourceforge": "qbittorrent/qbittorrent-win32"
     },
