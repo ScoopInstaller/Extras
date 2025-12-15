@@ -1,14 +1,22 @@
 {
     "version": "0.103.0",
     "description": "All-in-one repack for latest Microsoft Visual C++ Redistributable Runtimes, without the original setup bloat payload.",
-    "homepage": "https://gitlab.com/stdout12/vcredist",
+    "homepage": "https://github.com/abbodi1406/vcredist",
     "license": {
         "identifier": "Unlicense",
-        "url": "https://gitlab.com/stdout12/vcredist/-/blob/HEAD/LICENSE"
+        "url": "https://github.com/abbodi1406/vcredist/blob/master/LICENSE"
     },
     "notes": "View command-line options and usage examples by executing: `vcredist-aio.exe /?`",
-    "url": "https://gitlab.com/-/project/76069787/uploads/4431f3448fa76633cfd4983142f81952/VisualCppRedist_AIO_x86_x64.exe#/vcredist-aio.exe",
-    "hash": "3c188e4651bcc07df2bdb06d69585158797b1bafb91557b09217621628cd5b23",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/abbodi1406/vcredist/releases/download/v0.103.0/VisualCppRedist_AIO_x86_x64.exe#/vcredist-aio.exe",
+            "hash": "3c188e4651bcc07df2bdb06d69585158797b1bafb91557b09217621628cd5b23"
+        },
+        "32bit": {
+            "url": "https://github.com/abbodi1406/vcredist/releases/download/v0.103.0/VisualCppRedist_AIO_x86only.exe#/vcredist-aio.exe",
+            "hash": "c8d5ea7e1681d35256c9a81fd039668e8a3c69d099a0b2f5e32d158f3939a16e"
+        }
+    },
     "installer": {
         "script": [
             "if (-not (is_admin)) { error 'This package requires admin rights to install'; break }",
@@ -16,16 +24,19 @@
         ]
     },
     "bin": "vcredist-aio.exe",
-    "checkver": {
-        "url": "https://gitlab.com/api/v4/projects/76069787/releases/permalink/latest",
-        "jsonpath": "$..['name', 'description']",
-        "regex": "\"v([\\d.]+)\",\"[^\"]+\\[.+?_x86_x64\\.exe\\]\\(/uploads/(?<hash>\\w+)/"
-    },
+    "checkver": "github",
     "autoupdate": {
-        "url": "https://gitlab.com/-/project/76069787/uploads/$matchHash/VisualCppRedist_AIO_x86_x64.exe#/vcredist-aio.exe",
-        "hash": {
-            "url": "https://gitlab.com/api/v4/projects/76069787/releases/permalink/latest",
-            "regex": "$basename.+?SHA-256:\\s*$sha256"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/abbodi1406/vcredist/releases/download/v$version/VisualCppRedist_AIO_x86_x64.exe#/vcredist-aio.exe",
+                "hash": {
+                    "url": "https://github.com/abbodi1406/vcredist/releases/v$version",
+                    "regex": "File: $basename[\\S\\s]*?SHA-256: $sha256"
+                }
+            },
+            "32bit": {
+                "url": "https://github.com/abbodi1406/vcredist/releases/download/v$version/VisualCppRedist_AIO_x86only.exe#/vcredist-aio.exe"
+            }
         }
     }
 }
