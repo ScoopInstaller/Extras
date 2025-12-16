@@ -9,8 +9,16 @@
             "hash": "1126aaecb151fe91140c39e247631c1043700bc8733b7a3b48e18525e124c578"
         }
     },
+    "notes": [
+        "Installer requires admin privileges.",
+        "Installs into Scoop's managed folder ($dir).",
+        "Installer updates system PATH for global CLI access.",
+        "Supports clean uninstallation via unins*.exe."
+    ],
+    "pre_install": "if (-not (is_admin)) { throw 'This package requires admin privileges to install' }",
     "installer": {
         "args": [
+            "/DIR=\"$dir\"",
             "/VERYSILENT",
             "/SUPPRESSMSGBOXES",
             "/NORESTART"
@@ -18,7 +26,7 @@
     },
     "uninstaller": {
         "script": [
-            "$installDir = Join-Path $env:ProgramFiles 'Servy'",
+            "$installDir = $dir",
             "if (Test-Path $installDir) {",
             "    $uninstaller = Get-ChildItem $installDir -Filter 'unins*.exe' -ErrorAction SilentlyContinue |",
             "                                 Sort-Object LastWriteTime -Descending |",
@@ -32,6 +40,17 @@
             "}"
         ]
     },
+    "bin": "servy-cli.exe",
+    "shortcuts": [
+        [
+            "Servy.exe",
+            "Servy"
+        ],
+        [
+            "Servy.Manager.exe",
+            "Servy Manager"
+        ]
+    ],
     "checkver": {
         "github": "https://github.com/aelassas/servy"
     },
