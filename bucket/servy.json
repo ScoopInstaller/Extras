@@ -1,6 +1,6 @@
 {
     "version": "4.0",
-    "description": "Servy lets you run any app as a native Windows service with full control over working directory, startup type, process priority, logging, health checks, pre-launch scripts and parameters.",
+    "description": "Servy lets you run any app as a native Windows service with full control over working directory, startup type, process priority, logging, health checks, pre-launch and post-launch scripts, and parameters.",
     "homepage": "https://servy-win.github.io",
     "license": "MIT",
     "architecture": {
@@ -9,18 +9,29 @@
             "hash": "1126aaecb151fe91140c39e247631c1043700bc8733b7a3b48e18525e124c578"
         }
     },
-    "innosetup": true,
-    "bin": "servy-cli.exe",
-    "shortcuts": [
-        [
-            "Servy.exe",
-            "Servy"
-        ],
-        [
-            "Servy.Manager.exe",
-            "Servy Manager"
+    "installer": {
+        "args": [
+            "/VERYSILENT",
+            "/SUPPRESSMSGBOXES",
+            "/NORESTART"
         ]
-    ],
+    },
+    "uninstaller": {
+        "script": [
+            "$installDir = Join-Path $env:ProgramFiles 'Servy'",
+            "if (Test-Path $installDir) {",
+            "    $uninstaller = Get-ChildItem $installDir -Filter 'unins*.exe' -ErrorAction SilentlyContinue |",
+            "                                 Sort-Object LastWriteTime -Descending |",
+            "                                 Select-Object -First 1",
+            "}",
+            "",
+            "if ($uninstaller) {",
+            "    Start-Process $uninstaller.FullName -ArgumentList '/VERYSILENT /NORESTART /SUPPRESSMSGBOXES' -Wait",
+            "} else {",
+            "    Write-Warning 'Servy uninstaller not found. It may have already been removed.'",
+            "}"
+        ]
+    },
     "checkver": {
         "github": "https://github.com/aelassas/servy"
     },
@@ -30,5 +41,8 @@
                 "url": "https://github.com/aelassas/servy/releases/download/v$version/servy-$version-x64-installer.exe"
             }
         }
+    },
+    "requires": {
+        "admin": true
     }
 }
