@@ -46,7 +46,7 @@
     },
     "post_install": [
         "$calibre_path = (Join-Path -Path $dir -ChildPath 'Calibre') -replace '\\\\', '\\\\'",
-        "Get-ChildItem -Path \"$bucketsdir\\extras\\scripts\\$app\" -Filter '*.reg' -File | ForEach-Object {",
+        "Get-ChildItem -Path \"$bucketsdir\\$bucket\\scripts\\$app\" -Filter '*.reg' -File | ForEach-Object {",
         "    $content = Get-Content -Path $_.FullName -Encoding utf8",
         "    if ($_.Name -ne 'unregister-file-associations.reg' `",
         "            -and $global) { $content = $content -replace 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE' }",
@@ -118,8 +118,8 @@
     "uninstaller": {
         "script": [
             "if ($cmd -eq 'uninstall') {",
-            "    reg import \"$dir\\unregister-url-handler.reg\"",
-            "    reg import \"$dir\\unregister-file-associations.reg\"",
+            "    reg import \"$dir\\unregister-url-handler.reg\" *> $null",
+            "    reg import \"$dir\\unregister-file-associations.reg\" *> $null",
             "}"
         ]
     },
