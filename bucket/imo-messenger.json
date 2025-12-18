@@ -1,22 +1,25 @@
 {
-    "version": "1.4.12.4",
+    "version": "1.5.2.3",
     "description": "Video calls and chat software",
     "homepage": "https://imo.im/",
-    "depends": "extras/uniextract2",
     "license": {
         "identifier": "Freeware",
         "url": "https://imo.im/policies/terms_of_service.html"
     },
-    "url": "https://static-web.imoim.net/as/indigo-static/winapp/1.4.12.4/ImoSetup_1.4.12.4_Release.exe#/dl.exe",
-    "hash": "454ce64dd88aa085482a920f2e194cc5b14f988a10057ea49eb59bdb7224686f",
-    "pre_install": [
-        "New-Item \"$dir\\extract\" -ItemType Directory | Out-Null",
-        "Invoke-ExternalCommand uniextract -ArgumentList @(\"$dir\\dl.exe\", \"$dir\\extract\", '/silent') | Out-Null",
-        "Expand-MsiArchive \"$dir\\extract\\AttachedContainer\\ImoInstaller.msi\" \"$dir\\extract\" | Out-Null",
-        "Move-Item \"$dir\\extract\\imo\\*\\*\" \"$dir\\\"",
-        "Remove-Item \"$dir\\dl.exe\", \"$dir\\extract\" -Force -Recurse"
+    "url": "https://static-web.imoim.net/as/indigo-static/winapp/1.5.2.3/ImoSetup_1.5.2.3_Release.exe#/dl.exe",
+    "hash": "80a53fcf5b06a5c903a080e54b5a9f6d5c38b8e1f2dbfe6a82527c0eb4b14329",
+    "installer": {
+        "script": [
+            "Expand-DarkArchive \"$dir\\$fname\" \"$dir\\tmp\" -Removal",
+            "Expand-MsiArchive \"$dir\\tmp\\AttachedContainer\\ImoInstaller.msi\" \"$dir\\tmp2\"",
+            "movedir \"$dir\\tmp2\\imo\\$version\" \"$dir\"",
+            "Remove-Item \"$dir\\tmp\", \"$dir\\tmp2\" -Recurse"
+        ]
+    },
+    "pre_uninstall": [
+        "Stop-Process -Name 'ImoDesktopApp' -ErrorAction SilentlyContinue",
+        "Wait-Process -Name 'ImoDesktopApp' -ErrorAction SilentlyContinue -Timeout 10"
     ],
-    "pre_uninstall": "Stop-Process -Name 'ImoDesktopApp' -ErrorAction SilentlyContinue | Out-Null",
     "shortcuts": [
         [
             "ImoDesktopApp.exe",
@@ -35,7 +38,7 @@
             "$latestVersion = $response.data.list | Sort-Object -Property {[int64]$_.pub_time} -Descending | Select-Object -First 1",
             "Write-Output $latestVersion.name"
         ],
-        "regex": "imo windows ([\\d.]+)"
+        "regex": "([\\d.]+)"
     },
     "autoupdate": {
         "url": "https://static-web.imoim.net/as/indigo-static/winapp/$version/ImoSetup_$version_Release.exe#/dl.exe"
