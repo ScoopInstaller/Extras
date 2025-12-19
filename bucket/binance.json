@@ -1,0 +1,39 @@
+{
+    "version": "2.1.0",
+    "description": "Cryptocurrency Exchange for Bitcoin, Ethereum & Altcoins",
+    "homepage": "https://www.binance.com/",
+    "license": "Proprietary",
+    "architecture": {
+        "64bit": {
+            "url": "https://ftp.binance.com/electron-desktop/windows/production/binance-setup-2.1.0.exe#/dl.7z",
+            "hash": "sha512:e676121acf837f530df4e2ab28dd0ad93fc1326eb69b9fa2c7173076beea5b73f606417d9c334c468a49b632c115f6e25c68c58b0e31ba5422566a27dff71a3b"
+        }
+    },
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+            "Remove-Item \"$dir\\`$*\" -Force -Recurse"
+        ]
+    },
+    "shortcuts": [
+        [
+            "Binance.exe",
+            "Binance"
+        ]
+    ],
+    "checkver": {
+        "url": "https://ftp.binance.com/electron-desktop/windows/production/latest.yml",
+        "regex": "binance-setup-([\\d.]+).exe"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://ftp.binance.com/electron-desktop/windows/production/binance-setup-$version.exe#/dl.7z"
+            }
+        },
+        "hash": {
+            "url": "https://ftp.binance.com/electron-desktop/windows/production/latest.yml",
+            "regex": "(?sm)$version.exe.*?sha512: $base64"
+        }
+    }
+}

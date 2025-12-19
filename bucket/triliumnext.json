@@ -1,0 +1,46 @@
+{
+    "##": "Deprecated the manifest after 2026-01-01",
+    "version": "0.100.0",
+    "description": "Build your personal knowledge base with Trilium Notes",
+    "homepage": "https://github.com/TriliumNext/Trilium",
+    "license": "AGPL-3.0-or-later",
+    "notes": "This manifest will be deprecated soon. Please install 'extras/trilium' instead.",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/TriliumNext/Trilium/releases/download/v0.100.0/TriliumNotes-v0.100.0-windows-x64.zip",
+            "hash": "161b4dbe948ed2635b27733629a9733312dead855cf361cf4b730161c96c9257"
+        },
+        "arm64": {
+            "url": "https://github.com/TriliumNext/Trilium/releases/download/v0.100.0/TriliumNotes-v0.100.0-windows-arm64.zip",
+            "hash": "09b804b3a5099a8386e1772cf64c5c8a691c2f4f517622fafe72026a571244cd"
+        }
+    },
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\trilium-data\") -and (Test-Path \"$env:APPDATA\\trilium-data\")) {",
+        "    info \"Copying old '$env:APPDATA\\trilium-data' to '$persist_dir\\trilium-data'\"",
+        "    ensure \"$persist_dir\\trilium-data\" | Out-Null",
+        "    Copy-Item \"$env:APPDATA\\trilium-data\\*\" \"$persist_dir\\trilium-data\" -Recurse -Force",
+        "}"
+    ],
+    "env_set": {
+        "TRILIUM_DATA_DIR": "$persist_dir\\trilium-data"
+    },
+    "shortcuts": [
+        [
+            "trilium.exe",
+            "Trilium"
+        ]
+    ],
+    "persist": "trilium-data",
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/TriliumNext/Trilium/releases/download/v$version/TriliumNotes-v$version-windows-x64.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/TriliumNext/Trilium/releases/download/v$version/TriliumNotes-v$version-windows-arm64.zip"
+            }
+        }
+    }
+}

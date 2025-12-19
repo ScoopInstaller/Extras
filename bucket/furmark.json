@@ -1,28 +1,47 @@
 {
-    "version": "1.38.1.0",
+    "version": "2.10.2",
     "description": "A GPU Stress Test and OpenGL Benchmark",
     "homepage": "https://geeks3d.com/furmark/",
     "license": "Freeware",
-    "url": "https://geeks3d.com/dl/get/738#/FurMark_1.38.1.0_Setup.exe",
-    "hash": "314df1c873a103f4c7297b254b11c48f51534bfbf46fc83b109fee97818418fc",
-    "notes": "This manifest may fail to download under Powershell 5.x for now.",
-    "innosetup": true,
-    "bin": "FurMark.exe",
+    "architecture": {
+        "64bit": {
+            "url": "https://geeks3d.com/dl/get/830#FurMark_2.10.2_win64.zip",
+            "hash": "27ab2e723e2e65df720bcafea681d2104744eda4a1e0a0374d7e61eaa820e63b",
+            "extract_dir": "FurMark_win64"
+        },
+        "32bit": {
+            "url": "https://geeks3d.com/dl/get/832#FurMark_2.10.2_win32.zip",
+            "hash": "e9231d78a1ae7192de811d0b3e0f4a7d7fcf404679be150da438c1f86b681614",
+            "extract_dir": "FurMark_win32"
+        }
+    },
+    "bin": "furmark.exe",
     "shortcuts": [
         [
-            "FurMark.exe",
+            "FurMark_GUI.exe",
             "FurMark"
         ]
     ],
     "checkver": {
         "url": "https://geeks3d.com/furmark/downloads/",
-        "regex": "(?sm)>FurMark 1<.*dl/show/(?<page>\\d+)\".*>v([\\d.]+) - win32"
+        "regex": "/dl/show/(?<arch64>\\d+).*?v(?<version>2\\.[\\d.]+) - win64 - \\(ZIP\\)(.*\\n)*?.*/dl/show/(?<arch32>\\d+).*?v\\k<version> - win32 - \\(ZIP\\)"
     },
     "autoupdate": {
-        "url": "https://geeks3d.com/dl/get/$matchPage#/FurMark_$version_Setup.exe",
-        "hash": {
-            "url": "https://geeks3d.com/dl/show/$matchPage",
-            "regex": "$sha256"
+        "architecture": {
+            "64bit": {
+                "url": "https://geeks3d.com/dl/get/$matchArch64#FurMark_$version_win64.zip",
+                "hash": {
+                    "url": "https://geeks3d.com/dl/show/$matchArch64",
+                    "regex": "SHA256.*?$sha256"
+                }
+            },
+            "32bit": {
+                "url": "https://geeks3d.com/dl/get/$matchArch32#FurMark_$version_win32.zip",
+                "hash": {
+                    "url": "https://geeks3d.com/dl/show/$matchArch32",
+                    "regex": "SHA256.*?$sha256"
+                }
+            }
         }
     }
 }

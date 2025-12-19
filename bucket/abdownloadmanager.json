@@ -1,0 +1,39 @@
+{
+    "version": "1.7.1",
+    "description": "A download manager that speeds up your downloads",
+    "homepage": "https://abdownloadmanager.com/",
+    "license": "Apache-2.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/amir1376/ab-download-manager/releases/download/v1.7.1/ABDownloadManager_1.7.1_windows_x64.zip",
+            "hash": "md5:359f7aecb828cf95fd894325bc552027"
+        }
+    },
+    "extract_dir": "ABDownloadManager",
+    "post_install": [
+        "if (!(Test-Path \"$persist_dir\\.abdm\") -and (Test-Path \"$env:USERPROFILE\\.abdm\")) {",
+        "    info \"Moving configs to persist directory...\"",
+        "    Copy-Item -Path \"$env:USERPROFILE\\.abdm\\*\" -Destination \"$persist_dir\\.abdm\" -Force -Recurse | Out-Null",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "ABDownloadManager.exe",
+            "ABDownloadManager"
+        ]
+    ],
+    "persist": ".abdm",
+    "checkver": {
+        "github": "https://github.com/amir1376/ab-download-manager"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/amir1376/ab-download-manager/releases/download/v$version/ABDownloadManager_$version_windows_x64.zip"
+            }
+        },
+        "hash": {
+            "url": "$url.md5"
+        }
+    }
+}

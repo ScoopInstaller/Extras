@@ -1,44 +1,32 @@
 {
-    "version": "1.5.1",
+    "version": "1.7.3",
     "description": "Customization marketplace for Windows programs.",
     "homepage": "https://windhawk.net/",
     "license": {
         "identifier": "GPL-3.0-or-later",
         "url": "https://github.com/ramensoftware/windhawk/blob/main/LICENSE"
     },
-    "url": "https://github.com/ramensoftware/windhawk/releases/download/v1.5.1/windhawk_setup_offline.exe",
-    "hash": "a53a9f236ee8b19914208c3bcc64a55e222c5154899d104a5297dc34cee99a02",
-    "bin": "windhawk.exe",
+    "url": "https://github.com/ramensoftware/windhawk/releases/download/v1.7.3/windhawk_setup_offline.exe",
+    "hash": "4d93016570f982326eebdfc9068e924ff21f6448534ea32672bb4c1d52a8193b",
     "pre_install": [
         "if(!(test-path \"$persist_dir\\AppData\\settings.ini\")) {",
         "    New-Item -ItemType \"Directory\" -Path \"$dir\\AppData\" | Out-Null",
-        "    New-Item \"$dir\\AppData\\settings.ini\" | Out-Null",
-        "    Add-Content \"$dir\\AppData\\settings.ini\" \"[Settings]`r`nDisableUpdateCheck=1\"",
+        "    Set-Content \"$dir\\AppData\\settings.ini\" \"[Settings]`r`nDisableUpdateCheck=1\" -Encoding Unicode",
         "}"
     ],
-    "installer": {
-        "args": [
-            "/portable",
-            "/S",
-            "/D=$dir"
-        ]
-    },
     "post_install": [
-        "if((test-path \"$dir\\AppData.original\")) {",
-        "    Copy-Item \"$dir\\AppData.original\\*\"  \"$dir\\AppData\" -Exclude \"*.ini\" -Recurse -Force",
-        "    Remove-Item \"$dir\\AppData.original\" -Recurse -Force | Out-Null",
-        "    Remove-Item \"$dir\\windhawk.ini.original\" -Recurse -Force | Out-Null",
-        "}"
+        "# Windhawk needs to apply permissive access attributes to AppData folder in order to work properly",
+        "Start-Process -FilePath \"$dir\\$fname\" -ArgumentList @('/S', '/portable', \"/D=$dir\") -Wait",
+        "Remove-Item -Path \"$dir\\$fname\" -Force",
+        "startmenu_shortcut \"$dir\\windhawk.exe\" 'Windhawk' $null $null $global",
+        "shim \"$dir\\windhawk.exe\" $global 'windhawk'"
     ],
-    "persist": [
-        "AppData",
-        "windhawk.ini"
-    ],
-    "shortcuts": [
-        [
-            "windhawk.exe",
-            "Windhawk"
-        ]
+    "persist": "AppData",
+    "post_uninstall": [
+        "# Remove shortcut and shim",
+        "Write-Host \"`nRemoving shortcut $(friendly_path \"$(shortcut_folder $global)\\Windhawk.lnk\")\"",
+        "Remove-Item \"$(shortcut_folder $global)\\Windhawk.lnk\" -Force -ErrorAction Ignore",
+        "rm_shim 'windhawk' \"$(shimdir $global)\""
     ],
     "checkver": {
         "github": "https://github.com/ramensoftware/windhawk"

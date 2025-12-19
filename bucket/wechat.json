@@ -1,61 +1,52 @@
 {
-    "version": "3.9.11.19",
+    "version": "4.1.6.14",
     "description": "Free messaging and calling app by Tencent",
-    "homepage": "https://pc.weixin.qq.com/",
+    "homepage": "https://www.wechat.com/",
     "license": {
         "identifier": "Proprietary",
         "url": "https://www.wechat.com/en/service_terms.html"
     },
     "architecture": {
         "64bit": {
-            "url": "https://dldir1v6.qq.com/weixin/Windows/WeChatSetup.exe#/dl.7z",
-            "hash": "04a668ea0d36cd8963acc2b9c0f0aff0c0a7c73f46127863ea1f90e942664171"
-        },
-        "32bit": {
-            "url": "https://dldir1v6.qq.com/weixin/Windows/WeChatSetup_x86.exe#/dl.7z",
-            "hash": "cb602bb5c82c00cb1572100366352c72a6442aef498be1ca30a611c34b36818c"
+            "url": "https://github.com/cscnk52/wechat-windows-versions/releases/download/v4.1.6.14/weixin_4.1.6.14.exe#/dl.7z",
+            "hash": "70c4b73c6ee306a916572193b4e1b9762516b93227af1a2b48b662148a140b8e"
         }
     },
     "installer": {
         "script": [
+            "Expand-7zipArchive \"$dir\\install.7z\" \"$dir\" -Removal",
             "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Force -Recurse",
-            "$configpath = \"$env:APPDATA\\Tencent\\WeChat\\All Users\\config\"",
-            "ensure \"$configpath\" | Out-Null",
-            "Set-Content -NoNewline -Path \"$configpath\\3ebffe94.ini\" -Value \"$persist_dir\"",
-            "$regpath = \"HKCU:Software\\Tencent\\WeChat\"",
-            "if (!(Test-Path \"$regpath\")) {",
-            "    New-Item -Path \"$regpath\" -Type Directory -Force | Out-Null",
+            "$config_path = \"$env:APPDATA\\Tencent\\xwechat\\config\"",
+            "ensure \"$config_path\" | Out-Null",
+            "Set-Content -NoNewline -Path \"$config_path\\51a1fffea11325a1e4104c6b3de47af7.ini\" -Value \"$persist_dir\"",
+            "$reg_path = \"HKCU:Software\\Tencent\\Wexin\"",
+            "if (!(Test-Path \"$reg_path\")) {",
+            "    New-Item -Path \"$reg_path\" -Type Directory -Force | Out-Null",
             "}",
-            "New-ItemProperty -Path $regpath -Name \"FileSavePath\" -Value \"$persist_dir\" -Force | Out-Null"
+            "New-ItemProperty -Path $reg_path -Name \"FileSavePath\" -Value \"$persist_dir\" -Force | Out-Null",
+            "New-Item -Path $reg_path -Name \"InstallPath\" -Value \"$dir\" -Force -ErrorAction SilentlyContinue | Out-Null"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "Remove-Item -Path \"$env:APPDATA\\Tencent\\xwechat\\config\\51a1fffea11325a1e4104c6b3de47af7.ini\" -Force | Out-Null",
+            "Remove-ItemProperty -Path \"HKCU:Software\\Tencent\\Wexin\" -Name \"FileSavePath\" -Force | Out-Null"
         ]
     },
     "shortcuts": [
         [
-            "wechat.exe",
+            "Weixin.exe",
             "WeChat"
         ]
     ],
-    "persist": "WeChat Files",
-    "uninstaller": {
-        "script": [
-            "Remove-Item -Path \"$env:APPDATA\\Tencent\\WeChat\\All Users\\config\\3ebffe94.ini\" -Force | Out-Null",
-            "Remove-ItemProperty -Path \"HKCU:Software\\Tencent\\WeChat\" -Name \"FileSavePath\" -Force | Out-Null"
-        ]
-    },
+    "persist": "xwechat_files",
     "checkver": {
-        "script": [
-            "$resp = Invoke-WebRequest -UseBasicParsing -Uri 'https://luban.m.qq.com/api/public/software-manager/softwareProxy' -Body 'cmdid=3318&jprxReq%5Breq%5D%5Bsoft_id_list%5D%5B%5D=11488' -Method 'POST'",
-            "Write-Output $resp.Content"
-        ],
-        "jsonpath": "$..ver_name"
+        "github": "https://github.com/cscnk52/wechat-windows-versions"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://dldir1v6.qq.com/weixin/Windows/WeChatSetup.exe#/dl.7z"
-            },
-            "32bit": {
-                "url": "https://dldir1v6.qq.com/weixin/Windows/WeChatSetup_x86.exe#/dl.7z"
+                "url": "https://github.com/cscnk52/wechat-windows-versions/releases/download/v$version/weixin_$version.exe#/dl.7z"
             }
         }
     }

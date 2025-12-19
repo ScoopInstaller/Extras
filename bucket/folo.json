@@ -1,0 +1,49 @@
+{
+    "version": "1.2.5",
+    "description": "Follow everything in one place",
+    "homepage": "https://folo.is/",
+    "license": "GPL-3.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/RSSNext/Folo/releases/download/desktop%2Fv1.2.5/Folo-1.2.5-windows-x64.exe#/dl.7z",
+            "hash": "sha512:61d0d8ce9aa7c4684531fbddd1014cf506356f7bf1956167cbcdc27d90277774a7a0ad935572b8b8071153511ba51bbd66cc27bfffafb7a39ebd1f6371226fa3"
+        }
+    },
+    "pre_install": [
+        "Get-ChildItem \"$dir\\*\" -Exclude 'Folo-*nupkg' | Remove-Item",
+        "Expand-7zipArchive \"$dir\\Folo-*-full.nupkg\" -ExtractDir 'lib\\net45' -Removal"
+    ],
+    "post_install": [
+        "if (Test-Path $env:APPDATA\\Folo) {",
+        "    Write-Host \"`r`nMove config from non-portable version...\"",
+        "    Copy-Item -Path $env:APPDATA\\Folo\\* -Destination \"$persist_dir\\UserData\" -Force -Recurse | Out-Null",
+        "    Remove-Item $env:APPDATA\\Folo -Force -Recurse",
+        "}",
+        "New-Item -ItemType Junction -Path $env:APPDATA\\Folo -Target $persist_dir\\UserData | Out-Null"
+    ],
+    "uninstaller": {
+        "script": "Remove-Item $env:APPDATA\\Folo -Force -Recurse"
+    },
+    "shortcuts": [
+        [
+            "Folo.exe",
+            "Folo"
+        ]
+    ],
+    "persist": "UserData",
+    "checkver": {
+        "url": "https://api.github.com/repositories/783512367/releases",
+        "regex": "desktop/v([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/RSSNext/Folo/releases/download/desktop%2Fv$version/Folo-$version-windows-x64.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "(?sm)x64.exe.*?sha512:\\s+$base64"
+                }
+            }
+        }
+    }
+}
