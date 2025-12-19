@@ -1,12 +1,12 @@
 {
-    "version": "23.08.4-1777",
+    "version": "25.12-4163",
     "description": "Simple and easy-to-use music player",
     "homepage": "https://apps.kde.org/elisa",
     "license": "LGPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://binary-factory.kde.org/job/Elisa_Release_win64/1777/artifact/elisa-23.08.4-1777-windows-cl-msvc2019-x86_64.7z",
-            "hash": "360cbefe2c30479b1cfe390ca50a20a56e8f8c7aa279fff383ca8cb5922b745f"
+            "url": "https://cdn.kde.org/ci-builds/multimedia/elisa/release-25.12/windows/elisa-release_25.12-4163-windows-cl-msvc2022-x86_64.7z",
+            "hash": "e872aba4a7207d00242f340e354341086d4f524f682b326f8a0ae06fe0bed8f1"
         }
     },
     "bin": "bin\\elisa.exe",
@@ -17,13 +17,28 @@
         ]
     ],
     "checkver": {
-        "url": "https://binary-factory.kde.org/job/Elisa_Release_win64/",
-        "regex": "elisa-([\\d.-]+)-windows-cl-(?<lib>\\w+)-x86_64\\.7z"
+        "script": [
+            "$url = 'https://cdn.kde.org/ci-builds/multimedia/elisa/?C=N;O=D'",
+            "",
+            "$cont = (Invoke-WebRequest $url).Content",
+            "$regex = 'release-([\\d.]+)'",
+            "if (!($cont -match $regex)) { error \"Could not match $regex in $url\"; continue }",
+            "$ver = $matches[1]",
+            "",
+            "$nextUrl = \"https://cdn.kde.org/ci-builds/multimedia/elisa/release-$ver/windows/\"",
+            "$nextCont = (Invoke-WebRequest $nextUrl).Content",
+            "$nextRegex = \"elisa-release_$ver-([\\d]+)-windows-cl-([\\w]+)-x86_64\\.7z\"",
+            "if (!($nextCont -match $nextRegex)) { error \"Could not match $nextRegex in $nextUrl\"; continue }",
+            "$build = $matches[1]",
+            "$lib = $matches[2]",
+            "Write-Output $ver-$build $lib"
+        ],
+        "regex": "([\\d.-]+) (?<lib>[\\w]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://binary-factory.kde.org/job/Elisa_Release_win64/$preReleaseVersion/artifact/elisa-$version-windows-cl-$matchLib-x86_64.7z",
+                "url": "https://cdn.kde.org/ci-builds/multimedia/elisa/release-$matchHead/windows/elisa-release_$version-windows-cl-$matchLib-x86_64.7z",
                 "hash": {
                     "url": "$url.sha256"
                 }

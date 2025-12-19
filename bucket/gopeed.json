@@ -1,20 +1,60 @@
 {
-    "version": "1.5.7",
+    "version": "1.8.3",
     "description": "A modern download manager that supports all platforms",
     "homepage": "https://github.com/GopeedLab/gopeed",
     "license": "GPL-3.0-only",
+    "notes": [
+        "Starting with version 1.8.0, all user data is stored in the './storage' directory.",
+        "Upgrading Gopeed via Scoop will no longer result in loss of user configuration."
+    ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/GopeedLab/gopeed/releases/download/v1.5.7/Gopeed-v1.5.7-windows-amd64-portable.zip",
-            "hash": "e4f83de61caa778295c7a9ba86ca6c4d05c3b095219eccb8669ba07b85851869"
+            "url": "https://github.com/GopeedLab/gopeed/releases/download/v1.8.3/Gopeed-v1.8.3-windows-amd64-portable.zip",
+            "hash": "071e90b53156414e73d87a6086808b34c8df208ac253f805bb68e09ae1720aef"
         }
     },
+    "pre_install": [
+        "if ($cmd -eq \"install\") { return }",
+        "$threshold_version = [version]\"1.7.1\"",
+        "$parent_dir = Split-Path $dir -Parent",
+        "# Get version directories, ignore '_' prefixed, sort by version descending",
+        "$version_dirs = Get-ChildItem -Path $parent_dir -Directory | Where-Object {",
+        "    $_.Name -notmatch '^_' -and ($_.Name -as [version])",
+        "} | Sort-Object { [version]$_.Name } -Descending",
+        "if ($version_dirs.Count -lt 2) { return }",
+        "$previous_version = [version]$version_dirs[1].Name",
+        "info \"Detected previous version: $previous_version\"",
+        "$storage_dir = Join-Path $persist_dir \"storage\"",
+        "if ($previous_version -gt $threshold_version) {",
+        "    info \"Previous version ($previous_version) is newer than threshold ($threshold_version).\"",
+        "    info \"User data from the previous version already exists in $storage_dir.\"",
+        "    info \"And it has been successfully persisted, therefore no additional copy operation is required.\"",
+        "    return",
+        "}",
+        "info \"Previous version ($previous_version) is older than or equal to threshold ($threshold_version).\"",
+        "info \"Attempting to copy data requiring persistence to $storage_dir...\"",
+        "if (-not (Test-Path $storage_dir)) {",
+        "    New-Item -Path $storage_dir -ItemType Directory -Force | Out-Null",
+        "}",
+        "'gopeed.db', 'logs', 'extensions' | ForEach-Object {",
+        "    $user_data_path = Join-Path $version_dirs[1].FullName $_",
+        "    if (Test-Path $user_data_path) {",
+        "        info \"Found $_ at $user_data_path.\"",
+        "        info \"Starting copy to $storage_dir...\"",
+        "        Copy-Item -Path $user_data_path -Destination $storage_dir -Force -Recurse",
+        "        info \"Successfully copied $_ to $storage_dir.\"",
+        "    } else {",
+        "        info \"Item not found: $user_data_path (skipped).\"",
+        "    }",
+        "}"
+    ],
     "shortcuts": [
         [
             "gopeed.exe",
             "Gopeed"
         ]
     ],
+    "persist": "storage",
     "checkver": "github",
     "autoupdate": {
         "architecture": {

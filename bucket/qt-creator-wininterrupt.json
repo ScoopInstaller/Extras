@@ -1,20 +1,20 @@
 {
-    "version": "13.0.2",
+    "version": "18.0.1",
     "description": "Qt Creator wininterupt",
     "homepage": "https://doc.qt.io/qtcreator/index.html",
     "license": "GPL-3.0-only",
     "depends": "extras/qt-creator",
     "architecture": {
         "64bit": {
-            "url": "https://download.qt.io/official_releases/qtcreator/13.0/13.0.2/installer_source/windows_x64/wininterrupt.7z",
-            "hash": "md5:c7f0810ed006039587b60cac418ade2f"
+            "url": "https://download.qt.io/official_releases/qtcreator/18.0/18.0.1/installer_source/windows_x64/wininterrupt.7z",
+            "hash": "md5:f4bde77fb1aa207692e42d324dfb7121"
         },
-        "32bit": {
-            "url": "https://download.qt.io/official_releases/qtcreator/13.0/13.0.2/installer_source/windows_x86/wininterrupt.7z",
-            "hash": "md5:57985b4779d294a434e22b7ad01e1745"
+        "arm64": {
+            "url": "https://download.qt.io/official_releases/qtcreator/18.0/18.0.1/installer_source/windows_arm64/wininterrupt.7z",
+            "hash": "md5:369acec26e091f81929117c42d016186"
         }
     },
-    "post_install": "New-Item \"$(appdir qt-creator $global)\\current\\bin\\$((Get-Item $dir\\bin\\win*interrupt.exe).Name)\" -ItemType HardLink -Target \"$dir\\bin\\$((Get-Item $dir\\bin\\win*interrupt.exe).Name)\" -Force | Out-Null",
+    "post_install": "(Get-Item $dir\\bin\\win*interrupt.exe).Name | foreach { New-Item \"$(appdir qt-creator $global)\\current\\bin\\$_\" -ItemType HardLink -Target \"$dir\\bin\\$_\" -Force | Out-Null }",
     "checkver": {
         "url": "https://www.qt.io/offline-installers",
         "regex": "Qt Creator\\s+([\\d.]+)\\s+for Windows"
@@ -24,8 +24,8 @@
             "64bit": {
                 "url": "https://download.qt.io/official_releases/qtcreator/$majorVersion.$minorVersion/$version/installer_source/windows_x64/wininterrupt.7z"
             },
-            "32bit": {
-                "url": "https://download.qt.io/official_releases/qtcreator/$majorVersion.$minorVersion/$version/installer_source/windows_x86/wininterrupt.7z"
+            "arm64": {
+                "url": "https://download.qt.io/official_releases/qtcreator/$majorVersion.$minorVersion/$version/installer_source/windows_arm64/wininterrupt.7z"
             }
         },
         "hash": {
