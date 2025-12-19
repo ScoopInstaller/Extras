@@ -1,5 +1,5 @@
 {
-    "version": "11.15.0",
+    "version": "12.8.2",
     "description": "A Browser build for keeping the Open, Private and Sustainable Web alive. Based on Mozilla Firefox.",
     "homepage": "https://github.com/Floorp-Projects",
     "license": "MPL-2.0",
@@ -11,42 +11,38 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/Floorp-Projects/Floorp-Portable/releases/download/11.15.0-portable/floorp-11.15.0-portable-windows-x86_64.zip",
-            "hash": "8700e0d2252dcd0044b3b26a5d2316c123c10b01bc8ff8519b2c1eafcca529d2"
+            "url": "https://github.com/Floorp-Projects/Floorp-Portable-v2/releases/download/v12.8.2/floorp-windows-x86_64.portable.7z",
+            "hash": "ee717d4d060f7015fbac169ca6d2747b49d4d64b9d4288251ff233f35bcf9f1a"
         }
     },
-    "extract_dir": "core",
-    "post_install": [
-        "floorp -CreateProfile \"Scoop $persist_dir\\profile\"",
-        "$Addition = \"$persist_dir\\addition\"",
-        "if (Test-Path $Addition) {",
-        "  info 'Copying additional items...'",
-        "  Copy-Item -Path $Addition\\* -Destination $dir -Force -Recurse -ErrorAction SilentlyContinue",
-        "}"
+    "post_install": "floorp.exe -CreateProfile \"Scoop $persist_dir\\data\\profile\\default\"",
+    "bin": [
+        "floorp-portable.exe",
+        "app\\floorp.exe"
     ],
-    "bin": "floorp.exe",
     "shortcuts": [
         [
-            "floorp.exe",
+            "floorp-portable.exe",
             "Floorp"
         ],
         [
-            "floorp.exe",
+            "app\\floorp.exe",
             "Floorp Profile Manager",
             "-P"
         ]
     ],
-    "persist": [
-        "core",
-        "profile"
-    ],
+    "persist": "data",
     "checkver": {
-        "github": "https://github.com/Floorp-Projects/Floorp-Portable"
+        "github": "https://github.com/Floorp-Projects/Floorp-Portable-v2"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/Floorp-Projects/Floorp-Portable/releases/download/$version-portable/floorp-$version-portable-windows-x86_64.zip"
+                "url": "https://github.com/Floorp-Projects/Floorp-Portable-v2/releases/download/v$version/floorp-windows-x86_64.portable.7z",
+                "hash": {
+                    "url": "$baseurl/checksums.txt",
+                    "find": "$sha256\\s+$basename"
+                }
             }
         }
     }

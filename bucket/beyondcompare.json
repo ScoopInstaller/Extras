@@ -1,23 +1,43 @@
 {
-    "version": "4.4.7.28397",
+    "version": "5.1.7.31736",
     "description": "Directory and file compare functions in one package",
     "homepage": "https://www.scootersoftware.com",
     "license": {
         "identifier": "Shareware",
-        "url": "https://www.scootersoftware.com/index.php?zz=kb_licensev4"
+        "url": "https://www.scootersoftware.com/kb/licensev5"
     },
-    "notes": "Add Beyond Compare as a context menu option by running: '$dir\\install-context.reg'",
+    "notes": [
+        "The manifest already updated to v5, if you want to stay on v4 proceed as follows:",
+        "",
+        "- Install 'versions/beyondcompare4' instead. (Recommendation)",
+        "- Execute 'scoop reset beyondcompare@4.x.y.z; scoop hold beyondcompare', you should have a v4 installation now.",
+        "- Check via `scoop info beyondcompare`",
+        "",
+        "Or maybe you want to upgrade license from v4 to v5: https://www.scootersoftware.com/kb/upgradepolicy"
+    ],
+    "url": "https://www.scootersoftware.com/files/BCompare-5.1.7.31736.exe",
+    "hash": "ac4220d3ef13a4253a7a4b408c14096e34da14027973b8f960f8b9b3945736aa",
     "architecture": {
         "64bit": {
-            "url": "https://www.scootersoftware.com/files/BCompare-4.4.7.28397_x64.msi",
-            "hash": "089b8acbe228e876f4847132ec71fe256b134703e2e6205619b28905cb69f881"
+            "installer": {
+                "args": [
+                    "/DIR=\"$dir\"",
+                    "/VERYSILENT",
+                    "/PORTABLE"
+                ]
+            }
         },
         "32bit": {
-            "url": "https://www.scootersoftware.com/files/BCompare-4.4.7.28397_x86.msi",
-            "hash": "7d722749e18309212f7d483b80e992b1c0f35dc437b93be6133cfe6b03574307"
+            "installer": {
+                "args": [
+                    "/32",
+                    "/DIR=\"$dir\"",
+                    "/VERYSILENT",
+                    "/PORTABLE"
+                ]
+            }
         }
     },
-    "extract_dir": "Beyond Compare 4",
     "bin": [
         "Bcomp.exe",
         "BCompare.exe"
@@ -25,39 +45,42 @@
     "shortcuts": [
         [
             "BCompare.exe",
-            "Beyond Compare 4"
-        ],
-        [
-            "BCClipboard.exe",
-            "Clipboard Compare"
+            "Beyond Compare 5"
         ]
     ],
-    "post_install": [
-        "$dir_escaped = \"$dir\".Replace('\\', '\\\\')",
-        "\"install-context-$architecture\", \"uninstall-context\" | ForEach-Object {",
-        "  if (Test-Path \"$bucketsdir\\extras\\scripts\\beyondcompare\\$_.reg\") {",
-        "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\beyondcompare\\$_.reg\"",
-        "    $content = $content.Replace('$install_dir', $dir_escaped)",
-        "    if ($global) {",
-        "      $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+    "pre_install": [
+        "$contents = @{",
+        "    # Create a default BCPreferences.xml that will skip update checks.",
+        "    'BCPreferences.xml' = '<BCPreferences Version=\"2\" MinVersion=\"2\"><TBcPrefs><CheckForUpdatesDayAmt Value=\"0\"/></TBcPrefs></BCPreferences>'",
+        "}",
+        "# Hardlinks won't work properly here to persist files, because this app creates a new file instead of writing to the existing one.",
+        "# Please keep the file list the same in both pre_install and post_install scripts.",
+        "'BC5Key.txt', 'BCColors.xml', 'BCCommands.xml', 'BCFileFormats.xml', 'BCPreferences.xml', 'BCState.xml', 'BCSessions.xml' | ForEach-Object {",
+        "    if (Test-Path \"$persist_dir\\$_\") {",
+        "        Copy-Item \"$persist_dir\\$_\" \"$dir\\$_\" -Force",
+        "    } else {",
+        "        Set-Content -Path \"$dir\\$_\" -Value $contents[$_]",
         "    }",
-        "    $outfile_no_arch = $_.Replace(\"-$architecture\", \"\")",
-        "    $content | Set-Content -Path \"$dir\\$outfile_no_arch.reg\"",
-        "  }",
+        "}"
+    ],
+    "persist": [
+        "Helpers",
+        "Packers"
+    ],
+    "pre_uninstall": [
+        "# Hardlinks won't work properly here to persist files, because this app creates a new file instead of writing to the existing one.",
+        "# Please keep the file list the same in both pre_install and post_install scripts.",
+        "'BC5Key.txt', 'BCColors.xml', 'BCCommands.xml', 'BCFileFormats.xml', 'BCPreferences.xml', 'BCState.xml', 'BCSessions.xml' | ForEach-Object {",
+        "    if (Test-Path \"$dir\\$_\") {",
+        "        Copy-Item \"$dir\\$_\" \"$persist_dir\\$_\" -Force",
+        "    }",
         "}"
     ],
     "checkver": {
-        "url": "https://www.scootersoftware.com/kb/dl4_winalternate",
-        "regex": "BCompare-([\\d.]+)_x64\\.msi"
+        "url": "https://www.scootersoftware.com/download",
+        "regex": "BCompare-([\\d.]+)\\.exe"
     },
     "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://www.scootersoftware.com/files/BCompare-$version_x64.msi"
-            },
-            "32bit": {
-                "url": "https://www.scootersoftware.com/files/BCompare-$version_x86.msi"
-            }
-        }
+        "url": "https://www.scootersoftware.com/files/BCompare-$version.exe"
     }
 }
