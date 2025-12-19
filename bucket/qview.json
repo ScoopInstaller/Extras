@@ -3,6 +3,10 @@
     "description": "Practical and minimal image viewer",
     "homepage": "https://interversehq.com/qview/",
     "license": "GPL-3.0-only",
+    "notes": [
+        "For file associations, run:",
+        "reg import \"$dir\\install-associations.reg\""
+    ],
     "architecture": {
         "64bit": {
             "url": "https://github.com/jurplel/qView/releases/download/7.1/qView-7.1-win64.zip",
@@ -14,6 +18,16 @@
         }
     },
     "extract_dir": "qView",
+    "post_install": [
+        "'install-associations', 'uninstall-associations' | ForEach-Object {",
+        "    if (Test-Path \"$bucketsdir\\$bucket\\scripts\\qview\\$_.reg\") {",
+        "        $qviewPath = \"$dir\".Replace('\\', '\\\\')",
+        "        $content = (Get-Content \"$bucketsdir\\$bucket\\scripts\\qview\\$_.reg\").Replace('$qview', $qviewPath)",
+        "        if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "        Set-Content \"$dir\\$_.reg\" $content -Encoding Ascii -Force",
+        "    }",
+        "}"
+    ],
     "bin": "qView.exe",
     "shortcuts": [
         [
@@ -21,36 +35,8 @@
             "qView"
         ]
     ],
-    "notes": "Added 'qView' to the 'Open With' context menu for images.",
-    "post_install": [
-        "$exePath = \"$dir\\qView.exe\"",
-        "if (!(Test-Path $exePath)) { throw \"qView.exe not found.\" }",
-        "$progId = 'qView.ImageFile'",
-        "$icon = \"$exePath,0\"",
-        "$command = \"`\"$exePath`\" `\"%1`\"\"",
-        "New-Item -Path \"HKCU:\\Software\\Classes\\$progId\" -Force | Out-Null",
-        "Set-Item -Path \"HKCU:\\Software\\Classes\\$progId\" -Value 'qView' -Force | Out-Null",
-        "New-Item -Path \"HKCU:\\Software\\Classes\\$progId\\DefaultIcon\" -Force | Out-Null",
-        "Set-Item -Path \"HKCU:\\Software\\Classes\\$progId\\DefaultIcon\" -Value $icon -Force | Out-Null",
-        "New-Item -Path \"HKCU:\\Software\\Classes\\$progId\\shell\\open\\command\" -Force | Out-Null",
-        "Set-Item -Path \"HKCU:\\Software\\Classes\\$progId\\shell\\open\\command\" -Value $command -Force | Out-Null",
-        "$exts = 'bmp', 'gif', 'jpg', 'jpeg', 'png', 'tif', 'tiff', 'webp', 'avif', 'heic', 'heif', 'jxl', 'svg', 'ico', 'psd'",
-        "foreach ($ext in $exts) {",
-        "    $path = \"HKCU:\\Software\\Classes\\.$ext\\OpenWithProgids\"",
-        "    if (-not (Test-Path $path)) { New-Item $path -Force | Out-Null }",
-        "    New-ItemProperty -Path $path -Name $progId -Value '' -PropertyType String -Force | Out-Null",
-        "}"
-    ],
     "uninstaller": {
-        "script": [
-            "$progId = 'qView.ImageFile'",
-            "Remove-Item -Path \"HKCU:\\Software\\Classes\\$progId\" -Recurse -Force -ErrorAction SilentlyContinue",
-            "$exts = 'bmp', 'gif', 'jpg', 'jpeg', 'png', 'tif', 'tiff', 'webp', 'avif', 'heic', 'heif', 'jxl', 'svg', 'ico', 'psd'",
-            "foreach ($ext in $exts) {",
-            "    $path = \"HKCU:\\Software\\Classes\\.$ext\\OpenWithProgids\"",
-            "    Remove-ItemProperty -Path $path -Name $progId -ErrorAction SilentlyContinue",
-            "}"
-        ]
+        "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-associations.reg\" }"
     },
     "checkver": {
         "github": "https://github.com/jurplel/qView"
