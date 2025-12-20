@@ -62,9 +62,12 @@
         }
     },
     "checkver": {
+        "url": "https://www.linqpad.net/Download.aspx",
         "script": [
+            "$match = $page -match 'Download LINQPad (?<majorVersion>\\d)'",
+            "if (-not $match) {return '' }",
             "try {",
-            "    $res = Invoke-WebRequest -Uri https://www.linqpad.net/GetFile.aspx?LINQPad9.zip -Method Head -MaximumRedirection 0 -ErrorAction Ignore",
+            "    $res = Invoke-WebRequest -Uri \"https://www.linqpad.net/GetFile.aspx?LINQPad$($Matches.majorVersion).zip\" -Method Head -MaximumRedirection 0 -ErrorAction Ignore",
             "} catch [Microsoft.PowerShell.Commands.HttpResponseException] {",
             "    $releaseUrl = $_.Exception.Response.Headers.Location.ToString()",
             "}",
