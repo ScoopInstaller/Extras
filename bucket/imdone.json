@@ -6,13 +6,6 @@
         "identifier": "Proprietary",
         "url": "https://imdone.io/eula"
     },
-    "extract_dir": "$PLUGINSDIR",
-    "shortcuts": [
-        [
-            "imdone.exe",
-            "imdone"
-        ]
-    ],
     "architecture": {
         "64bit": {
             "url": "https://imdone.io/downloads/imdone-1.54.2-x64-portable.exe#/dl.7z",
@@ -23,11 +16,18 @@
             "hash": "6c2f9357c9f835449ba07c88ea9d77bf69e1d2593b09c329fde0dbd1bce7b065"
         }
     },
-    "pre_install": "Get-ChildItem \"$dir\" -Exclude 'app-*.7z' | Remove-Item -Force -Recurse",
     "installer": {
-        "script": "Expand-7zipArchive \"$dir\\$PLUGINSDIR\\app-*.7z\" \"$dir\""
+        "script": [
+            "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Expand-7zipArchive -DestinationPath \"$dir\"",
+            "Remove-Item \"$dir\\`$*\" -Force -Recurse"
+        ]
     },
-    "post_install": "Remove-Item \"$dir\\app-*.7z\" -Force -ErrorAction SilentlyContinue",
+    "shortcuts": [
+        [
+            "imdone.exe",
+            "imdone"
+        ]
+    ],
     "checkver": {
         "url": "https://imdone.io/api/1.0/downloads",
         "regex": "imdone-([\\d.]+)-x64-portable\\.exe"
