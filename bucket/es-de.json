@@ -1,0 +1,67 @@
+{
+    "version": "3.4.0",
+    "description": "ES-DE is a frontend for browsing and launching games from your multi-platform collection.",
+    "homepage": "https://gitlab.com/es-de/emulationstation-de",
+    "license": "MIT",
+    "notes": "Check out this issue to solve HDR problems, https://gitlab.com/es-de/emulationstation-de/-/issues/1880",
+    "architecture": {
+        "64bit": {
+            "url": "https://gitlab.com/es-de/emulationstation-de/-/package_files/243196975/download",
+            "hash": "52B3C7A59839B4D44744B1E3FCCA1C6AE6386E8677196CA3B36876E597C07FF1"
+        }
+    },
+    "pre_install": [
+        "Rename-Item \"$dir\\download\" \"$dir\\_temp.zip\"",
+        "Expand-Archive \"$dir\\_temp.zip\" -DestinationPath \"$dir\"",
+        "Rename-Item \"$dir\\ES-DE\" \"$dir\\_temp\"",
+        "Move-Item \"$dir\\_temp\\*\" \"$dir\\\"",
+        "Remove-Item \"$dir\\_temp\" -Recurse -Force",
+        "Remove-Item \"$dir\\_temp.zip\"",
+        "Remove-Item \"$dir\\ES-DE\" -Recurse -Force",
+        "Remove-Item \"$dir\\Emulators\" -Recurse -Force",
+        "Remove-Item \"$dir\\ROMs\" -Recurse -Force"
+    ],
+    "persist": [
+        "ES-DE",
+        "Emulators",
+        "ROMs"
+    ],
+    "bin": [
+        [
+            "ES-DE.exe",
+            "es-de"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "ES-DE.exe",
+            "EmulationStation Desktop Edition"
+        ],
+        [
+            "ES-DE.exe",
+            "EmulationStation Desktop Edition (1080P)",
+            "--resolution 1921 1080"
+        ],
+        [
+            "ES-DE.exe",
+            "EmulationStation Desktop Edition (1440P)",
+            "--resolution 2561 1440"
+        ],
+        [
+            "ES-DE.exe",
+            "EmulationStation Desktop Edition (2160P)",
+            "--resolution 3841 2160"
+        ]
+    ],
+    "checkver": {
+        "url": "https://gitlab.com/api/v4/projects/es-de%2Femulationstation-de/releases",
+        "regex": "ES-DE_([\\d+.]+)-x64_Portable"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://gitlab.com/es-de/emulationstation-de/-/releases/$version/_temp.zip"
+            }
+        }
+    }
+}
