@@ -22,9 +22,19 @@
         "Remove-Item \"$dir\\`$*\" -Force -Recurse"
     ],
     "post_install": [
+        "$file = \"$persist_dir\\User Data\\config.json\"",
         "if (!(Test-Path \"$dir\\User Data\\*\") -and (Test-Path \"$env:APPDATA\\xyz.chatboxapp.app\")) {",
         "    info '[Portable Mode]: Copying user data...'",
         "    Copy-Item \"$env:APPDATA\\xyz.chatboxapp.app\\*\" \"$dir\\User Data\" -Recurse",
+        "    if ((Test-Path $file)) {",
+        "        warn \"Disabling incompatible autoUpdate\"",
+        "        (Get-Content $file) -replace '\"autoUpdate\": true', '\"autoUpdate\": false' | Set-Content $file -Encoding ASCII",
+        "    }",
+        "}",
+        " if (!(Test-Path $file)) {",
+        "   $json = \"{`n`t'settings': {`n`t`t'autoUpdate': false`n`t}`n}`n\"",
+        "   $json.Replace(\"'\", '\"') | Out-File -FilePath $file -Encoding ASCII",
+        "   warn \"Do not enable autoUpdate inside Chatbox, use scoop update instead\"",
         "}"
     ],
     "shortcuts": [
