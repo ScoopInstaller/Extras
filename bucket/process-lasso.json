@@ -1,0 +1,47 @@
+{
+    "version": "14.2.0.32",
+    "description": "Real-Time CPU Optimization and Automation",
+    "homepage": "https://bitsum.com/processlasso/",
+    "license": {
+        "identifier": "Shareware",
+        "url": "https://bitsum.com/howfree/"
+    },
+    "url": "https://dl.bitsum.com/files/processlassosetup64.exe#/dl.7z",
+    "hash": "de1358a2316eb39863b4fd9396dc3bc22a773e653f2d0488ac09e1a411280919",
+    "extract_to": "ProcessLasso",
+    "installer": {
+        "script": [
+            "Remove-Item \"$dir\\ProcessLasso\\`$PLUGINSDIR\" -Force -Recurse",
+            "Move-Item \"$dir\\ProcessLasso\\*\" -Destination \"$dir\"",
+            "Remove-Item \"$dir\\ProcessLasso\" -Force -Recurse"
+        ]
+    },
+    "post_install": [
+        "$config = \"${env:LOCALAPPDATA}\\ProcessLasso\\config\\prolasso.ini\"",
+        "If (!(Test-Path $config)) { New-Item $config -ItemType File -Force | Out-Null }",
+        "\"[Advanced]`nAutomaticUpdate=false\" | Out-File -File \"$config\" -Encoding utf8"
+    ],
+    "shortcuts": [
+        [
+            "ProcessLassoLauncher.exe",
+            "Process Lasso"
+        ]
+    ],
+    "persist": [
+        "config",
+        "logs"
+    ],
+    "post_uninstall": [
+        "If ($cmd -eq 'uninstall') {",
+        "  Remove-Item \"${env:LOCALAPPDATA}\\ProcessLasso\\config\\prolasso.ini\"",
+        "  Remove-Item \"${env:LOCALAPPDATA}\\ProcessLasso\\logs\\*\" -Force -Recurse",
+        "}"
+    ],
+    "checkver": {
+        "url": "https://bitsum.com/changes/processlasso/",
+        "regex": "<strong>v([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://dl.bitsum.com/files/processlassosetup64.exe#/dl.7z"
+    }
+}
