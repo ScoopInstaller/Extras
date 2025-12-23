@@ -43,12 +43,31 @@
         "        -replace '\\./jre/bin/', '' `",
         "        -replace 'PeerBanHelper\\.jar', \"$dir\\PeerBanHelper.jar\"",
         "    Set-Content -Path $file -Value $newContent",
+        "}",
+        "",
+        "Get-ChildItem -Path \"$dir\" -Filter *.bat -File -Recurse | ForEach-Object {",
+        "    $oldFile = $_.FullName",
+        "    $newFile = $oldFile `",
+        "        -replace '1\\.\\s+GUI\\s+Mode\\.bat$', 'gui-jbr.bat' `",
+        "        -replace '2\\.\\s+GUI\\s+mode\\s+\\(silent\\)\\.bat$', 'gui-silent-jbr.bat' `",
+        "        -replace '3\\.\\s+Console\\.bat$', 'cli-jbr.bat'",
+        "    Copy-Item $oldFile $newFile",
+        "    ",
+        "    $content = Get-Content $newFile",
+        "    $newContent = $content `",
+        "        -replace 'java\\.exe', \"$scoopdir/apps/intellij-jbr25/current/bin/java.exe\" `",
+        "        -replace 'javaw\\.exe', \"$scoopdir/apps/intellij-jbr25/current/bin/javaw.exe\"",
+        "    Set-Content -Path $newFile -Value $newContent",
         "}"
     ],
     "bin": [
         [
             "3. Console.bat",
             "peerbanhelper-cli"
+        ],
+        [
+            "cli-jbr.bat",
+            "peerbanhelper-cli-jbr"
         ]
     ],
     "shortcuts": [
@@ -61,6 +80,18 @@
         [
             "2. GUI mode (silent).bat",
             "PeerBanHelper/PeerBanHelper (Silent)",
+            "",
+            "icon.ico"
+        ],
+        [
+            "gui-jbr.bat",
+            "PeerBanHelper/PeerBanHelper (JBR)",
+            "",
+            "icon.ico"
+        ],
+        [
+            "gui-silent-jbr.bat",
+            "PeerBanHelper/PeerBanHelper (Silent, JBR)",
             "",
             "icon.ico"
         ]
