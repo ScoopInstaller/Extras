@@ -29,7 +29,9 @@
     '{{registry_scope}}:\Software\Classes\CLSID\{DD5CACDA-7C2E-4997-A62A-04A597B58F76}\LocalServer32'
     '{{registry_scope}}:\Software\Classes\CLSID\{DD5CACDA-7C2E-4997-A62A-04A597B58F76}'
 ) | ForEach-Object {
-    Remove-Item $_ -Recurse -Force | Out-Null
+    if (Test-Path $_) {
+        Remove-Item $_ -Recurse -Force | Out-Null
+    }
 }
 
 if ($PSVersionTable.PSVersion.Major -ge 6) { Import-Module Appx -UseWindowsPowershell 3>$null }
