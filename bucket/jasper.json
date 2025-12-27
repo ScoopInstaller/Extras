@@ -1,25 +1,39 @@
 {
     "version": "1.1.2",
-    "description": "Flexible and powerful issue reader for GitHub",
+    "description": "A flexible and powerful issue reader for GitHub.",
     "homepage": "https://jasperapp.io",
-    "license": "MIT",
+    "license": {
+        "identifier": "MIT",
+        "url": "https://github.com/jasperapp/jasper/blob/HEAD/LICENSE"
+    },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/jasperapp/jasper/releases/download/v1.1.2/jasper_v1.1.2_windows_setup.exe#/dl.7z",
+            "url": "https://github.com/jasperapp/jasper/releases/download/v1.1.2/jasper_v1.1.2_windows_setup.exe",
             "hash": "d3ff48f0cde1f4f4063c690ca9b89f788ebacde9bf6f081a7bd7d90cfd8ff57e"
         }
     },
-    "pre_install": "Expand-7zipArchive \"$dir\\jasper-$version-full.nupkg\" -ExtractDir 'lib\\net45' -Removal | Out-Null",
+    "installer": {
+        "script": [
+            "Expand-7zipArchive -Path \"$dir\\$fname\" -DestinationPath $dir -Switches '-x!*.gif' -Removal",
+            "$nupkg_file = Get-ChildItem -Path $dir -Filter '*.nupkg' -File | Select-Object -ExpandProperty FullName",
+            "Expand-7zipArchive -Path $nupkg_file -DestinationPath \"$dir\\app-$version\" -ExtractDir 'lib\\net45' -Removal",
+            "Move-Item -Path \"$dir\\app-$version\\jasper_ExecutionStub.exe\" -Destination \"$dir\\jasper.exe\"",
+            "New-Item -Path \"$dir\\packages\" -ItemType Directory -Force | Out-Null",
+            "Move-Item -Path \"$dir\\RELEASES\" -Destination \"$dir\\packages\""
+        ]
+    },
     "shortcuts": [
         [
-            "Jasper.exe",
+            "jasper.exe",
             "Jasper"
         ]
     ],
     "checkver": {
-        "github": "https://github.com/jasperapp/jasper"
+        "url": "https://api.github.com/repositories/58461278/releases",
+        "jsonpath": "$[?(@.prerelease == false && @.assets[?(@.browser_download_url =~ /windows/i)])].tag_name",
+        "regex": "(?<=\")(?<tag>v?([\\d.]+))(?=\")"
     },
     "autoupdate": {
-        "url": "https://github.com/jasperapp/jasper/releases/download/v$version/jasper_v$version_windows_setup.exe#/dl.7z"
+        "url": "https://github.com/jasperapp/jasper/releases/download/$matchTag/jasper_v$version_windows_setup.exe"
     }
 }
