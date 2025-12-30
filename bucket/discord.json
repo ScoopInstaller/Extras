@@ -1,23 +1,16 @@
 {
-    "version": "1.0.9211",
-    "description": "Group Chat That's All Fun & Games",
+    "version": "1.0.9219",
+    "description": "A voice, video and text communication platform",
     "homepage": "https://discord.com",
-    "license": {
-        "identifier": "Freeware",
-        "url": "https://discord.com/terms"
-    },
+    "license": "Freeware",
     "notes": [
-        "User may need to re-enable startup in Discord settings",
-        "Fix notification:",
-        "- Download makelnk: https://github.com/Robertof/make-shortcut-with-appusermodelid/releases",
-        "- Run: makelnk.exe com.squirrel.Discord.Discord \"$dir\\Update.exe\" Discord \"--processStart Discord.exe\"",
-        "- Navigate to: \"%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\"",
-        "- Right click Discord -> Properties -> Change icon -> \"$dir\\app.ico\""
+        "Fix autostart: re-enable startup in Discord settings",
+        "Fix notifications by running: $dir\\makelnk.ps1"
     ],
     "architecture": {
         "64bit": {
-            "url": "https://stable.dl2.discordapp.net/distro/app/stable/win/x64/1.0.9211/DiscordSetup.exe#/dl.7z",
-            "hash": "bec671f0b3236bc072095300584c2def8fc9e4b7af4a0896cc9f1430e8cb6317"
+            "url": "https://stable.dl2.discordapp.net/distro/app/stable/win/x64/1.0.9219/DiscordSetup.exe#/dl.7z",
+            "hash": "fd0f891e4d72bf23eb5f4bd79e9ffe85a4fe224df48ab021a4eae8e5422f4c2b"
         }
     },
     "pre_install": [
@@ -25,7 +18,8 @@
         "Move-Item \"$dir\\app-$version\\installer.db\" \"$dir\"",
         "Move-Item \"$dir\\app-$version\\app.ico\" \"$dir\"",
         "New-Item \"$dir\\packages\" -ItemType Directory | Out-Null",
-        "Move-Item \"$dir\\RELEASES\" \"$dir\\packages\""
+        "Move-Item \"$dir\\RELEASES\" \"$dir\\packages\"",
+        "Copy-Item \"$bucketsdir\\$bucket\\scripts\\$app\\makelnk.ps1\" \"$dir\""
     ],
     "shortcuts": [
         [
@@ -35,11 +29,7 @@
             "app.ico"
         ]
     ],
-    "post_uninstall": [
-        "if (Test-Path \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Discord.lnk\") {",
-            "Remove-Item \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Discord.lnk\"",
-        "}"
-    ],
+    "post_uninstall": "Remove-Item \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Discord.lnk\" -ErrorAction SilentlyContinue",
     "checkver": {
         "url": "https://updates.discord.com/distributions/app/manifests/latest?channel=stable&platform=win&arch=x64",
         "regex": "x64/([\\d.]+)"
