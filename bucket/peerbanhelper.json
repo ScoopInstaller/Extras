@@ -1,0 +1,111 @@
+{
+    "version": "9.2.3",
+    "description": "Automatically block unwanted, leeches and abnormal BT peers with support for customized and cloud rules.",
+    "homepage": "https://docs.pbh-btn.com/en/",
+    "license": "GPL-3.0-or-later",
+    "notes": [
+        "[Tutorial](https://docs.pbh-btn.com/en/docs/category/%E4%B8%8B%E8%BD%BD%E5%99%A8%E9%85%8D%E7%BD%AE)",
+        "Console mode can be started via the shell with `peerbanhelper-cli`",
+        "or `peerbanhelper-cli-jbr`.",
+        "",
+        "[教程](https://docs.pbh-btn.com/docs/category/%E4%B8%8B%E8%BD%BD%E5%99%A8%E9%85%8D%E7%BD%AE/)",
+        "控制台模式可以在命令行中使用`peerbanhelper-cli`或`peerbanhelper-cli-jbr`启动。",
+        ""
+    ],
+    "suggest": {
+        "Java": "java/intellij-jbr25"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/PBH-BTN/PeerBanHelper/releases/download/v9.2.3/PeerBanHelper_9.2.3.zip",
+            "hash": "ed8a7f4b9e974e15abbd2f353a49180fc7b33a8ac483b7e197778dd05077f2c2"
+        },
+        "arm64": {
+            "url": "https://github.com/PBH-BTN/PeerBanHelper/releases/download/v9.2.3/PeerBanHelper_9.2.3.zip",
+            "hash": "ed8a7f4b9e974e15abbd2f353a49180fc7b33a8ac483b7e197778dd05077f2c2"
+        }
+    },
+    "extract_dir": "PeerBanHelper",
+    "pre_install": [
+        "invoke-RestMethod -Uri \"https://github.com/PBH-BTN/PeerBanHelper/raw/refs/tags/v$version/install4j/icon.ico\" -OutFile \"$dir\\icon.ico\"",
+        "",
+        "invoke-RestMethod -Uri \"https://github.com/PBH-BTN/PeerBanHelper/raw/refs/tags/v$version/pkg/portable/1.%20GUI%20Mode.bat\" -OutFile \"$dir\\1. GUI Mode.bat\"",
+        "invoke-RestMethod -Uri \"https://github.com/PBH-BTN/PeerBanHelper/raw/refs/tags/v$version/pkg/portable/2.%20GUI%20mode%20(silent).bat\" -OutFile \"$dir\\2. GUI mode (silent).bat\"",
+        "invoke-RestMethod -Uri \"https://github.com/PBH-BTN/PeerBanHelper/raw/refs/tags/v$version/pkg/portable/3.%20Console.bat\" -OutFile \"$dir\\3. Console.bat\"",
+        "",
+        "Get-ChildItem -Path \"$dir\" -Filter *.bat -File -Recurse | ForEach-Object {",
+        "    $file = $_.FullName",
+        "    $content = Get-Content $file",
+        "    $newContent = $content `",
+        "        -replace '^start\\s+\\./jre/bin/java\\.exe', 'java.exe' `",
+        "        -replace '\\./jre/bin/', '' `",
+        "        -replace 'PeerBanHelper\\.jar', \"$dir\\PeerBanHelper.jar\"",
+        "    Set-Content -Path $file -Value $newContent",
+        "}",
+        "",
+        "Get-ChildItem -Path \"$dir\" -Filter *.bat -File -Recurse | ForEach-Object {",
+        "    $oldFile = $_.FullName",
+        "    $newFile = $oldFile `",
+        "        -replace '1\\.\\s+GUI\\s+Mode\\.bat$', 'gui-jbr.bat' `",
+        "        -replace '2\\.\\s+GUI\\s+mode\\s+\\(silent\\)\\.bat$', 'gui-silent-jbr.bat' `",
+        "        -replace '3\\.\\s+Console\\.bat$', 'cli-jbr.bat'",
+        "    Copy-Item $oldFile $newFile",
+        "    ",
+        "    $content = Get-Content $newFile",
+        "    $newContent = $content `",
+        "        -replace 'java\\.exe', \"$scoopdir/apps/intellij-jbr25/current/bin/java.exe\" `",
+        "        -replace 'javaw\\.exe', \"$scoopdir/apps/intellij-jbr25/current/bin/javaw.exe\"",
+        "    Set-Content -Path $newFile -Value $newContent",
+        "}"
+    ],
+    "bin": [
+        [
+            "3. Console.bat",
+            "peerbanhelper-cli"
+        ],
+        [
+            "cli-jbr.bat",
+            "peerbanhelper-cli-jbr"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "1. GUI Mode.bat",
+            "PeerBanHelper/PeerBanHelper",
+            "",
+            "icon.ico"
+        ],
+        [
+            "2. GUI mode (silent).bat",
+            "PeerBanHelper/PeerBanHelper (Silent)",
+            "",
+            "icon.ico"
+        ],
+        [
+            "gui-jbr.bat",
+            "PeerBanHelper/PeerBanHelper (JBR)",
+            "",
+            "icon.ico"
+        ],
+        [
+            "gui-silent-jbr.bat",
+            "PeerBanHelper/PeerBanHelper (Silent, JBR)",
+            "",
+            "icon.ico"
+        ]
+    ],
+    "persist": "data",
+    "checkver": {
+        "github": "https://github.com/PBH-BTN/PeerBanHelper"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/PBH-BTN/PeerBanHelper/releases/download/v$version/PeerBanHelper_$version.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/PBH-BTN/PeerBanHelper/releases/download/v$version/PeerBanHelper_$version.zip"
+            }
+        }
+    }
+}
