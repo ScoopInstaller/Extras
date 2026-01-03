@@ -16,7 +16,13 @@
             "hash": "a77c9297bd80dffcb7e2e7e6e89db674126c06a2fe8e769dcec06da2e66e8516"
         }
     },
-    "pre_install": "$null = 'results','prime' | ForEach-Object { $_ = \"/$_.txt\"; if (!(Test-Path \"$persist_dir$_\")) { New-Item \"$dir$_\" } }",
+    "pre_install": [
+        "'results.txt','prime.txt' | ForEach-Object {",
+        "    if (-not (Test-Path -Path (Join-Path -Path $persist_dir -ChildPath $_))) {",
+        "        New-Item -ItemType File -Path (Join-Path -Path $dir -ChildPath $_) | Out-Null",
+        "    }",
+        "}"
+    ],
     "bin": "prime95.exe",
     "shortcuts": [
         [
