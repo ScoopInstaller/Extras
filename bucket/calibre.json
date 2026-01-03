@@ -1,38 +1,83 @@
 {
     "version": "8.16.2",
-    "description": "Powerful and easy to use e-book manager",
+    "description": "Powerful and easy to use e-book manager.",
     "homepage": "https://calibre-ebook.com",
     "license": {
-        "identifier": "GPL-3.0-only",
-        "url": "https://github.com/kovidgoyal/calibre/blob/master/LICENSE"
+        "identifier": "GPL-3.0-or-later",
+        "url": "https://github.com/kovidgoyal/calibre/blob/HEAD/LICENSE"
     },
+    "notes": [
+        "To register file associations, please execute the following command:",
+        "reg import \"$dir\\install-associations.reg\"",
+        "To register the URL protocol handler, please execute the following command:",
+        "reg import \"$dir\\register-url-handler.reg\""
+    ],
     "architecture": {
         "64bit": {
-            "url": "https://download.calibre-ebook.com/8.16.2/calibre-portable-installer-8.16.2.exe",
-            "hash": "sha512:010ee58b53ecb9c208f7229b73e86c1b98a67e3b3ee7691a1e19c277fd34c0d434acbe367aab9389ad916b4d373adf34eb07a9ec35f14b1b3e69fa982de83073"
+            "url": "https://download.calibre-ebook.com/8.16.2/calibre-64bit-8.16.2.msi#/dl.msi_",
+            "hash": "sha512:e028a251b382dc91f34f7979cece2c48e65fb03c7d75a51d83afa37ce416d87c724f83d68e709cbe71c632dd5323925ddd553dba482282e200ce5c1b9327ad93"
         }
     },
+    "pre_install": [
+        "ensure \"$persist_dir\\Calibre Settings\" | Out-Null",
+        "if (Test-Path -Path \"$persist_dir\\Calibre Settings\\*\") { return }",
+        "$original_cfg_dir = $env:CALIBRE_CONFIG_DIRECTORY, \"$env:APPDATA\\calibre\" | Select-Object -First 1",
+        "if (Test-Path -Path \"$original_cfg_dir\\*\") {",
+        "    Write-Host \"`nINFO  Migrating Calibre Configurations to '$persist_dir\\Calibre Settings'...\" -ForegroundColor DarkGray",
+        "    Copy-Item -Path \"$original_cfg_dir\\*\" -Destination \"$persist_dir\\Calibre Settings\" -Force -Recurse",
+        "}"
+    ],
     "installer": {
         "script": [
-            "Start-Process -FilePath \"$dir\\$fname\" -ArgumentList @($env:PUBLIC) -Wait",
-            "Move-Item -Path \"$env:PUBLIC\\Calibre Portable\\*\" -Destination $dir -Force",
-            "Remove-Item -Path \"$dir\\$fname\", \"$env:PUBLIC\\Calibre Portable\" -Recurse -Force -ErrorAction SilentlyContinue",
-            "Icacls $dir /t /c /reset | Out-Null"
+            "$default_dir = \"$env:APPDATA\\calibre\"",
+            "$ErrorActionPreference = 'SilentlyContinue'",
+            "$configuration_dir = \"$persist_dir\\Calibre Settings\"",
+            "$config_link_target_dir = (Get-Item -Path $default_dir).Target",
+            "$is_different = $config_link_target_dir -ne $configuration_dir",
+            "$link_target_dir = @($config_link_target_dir) * $is_different",
+            "$is_different = $env:CALIBRE_CONFIG_DIRECTORY -ne $configuration_dir",
+            "$extra_config_dir = @($env:CALIBRE_CONFIG_DIRECTORY) * $is_different",
+            "@($default_dir) + $link_target_dir + $extra_config_dir | Remove-Item -Recurse -Force",
+            "Expand-MsiArchive -Path \"$dir\\$fname\" -DestinationPath \"$dir\\Calibre\" -ExtractDir 'PFiles64\\Calibre2' -Removal"
         ]
     },
+    "post_install": [
+        "$calibre_dir = \"$dir\\Calibre\" -replace '\\\\', '\\\\'",
+        "Get-ChildItem -Path \"$bucketsdir\\$bucket\\scripts\\$app\" -Filter '*.reg' -File | ForEach-Object {",
+        "    $content = Get-Content -Path $_.FullName -Encoding utf8",
+        "    if ($global) { $content = $content -replace 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE' }",
+        "    $content -replace '{{calibre_dir}}', $calibre_dir | Set-Content -Path \"$dir\\$($_.Name)\" -Encoding unicode",
+        "}",
+        "'.tmp', '.cache' | ForEach-Object { ensure \"$persist_dir\\$_\" | Out-Null }",
+        "if (-not (Test-Path -Path \"$persist_dir\\Calibre Settings\\global.py.json\" -PathType Leaf)) {",
+        "    New-Item -Path \"$persist_dir\\Calibre Settings\\global.py.json\" -ItemType File -Force | Out-Null",
+        "    $cfg = @{ 'library_path'= \"$persist_dir\\Calibre Library\" } | ConvertTo-Json -Depth 5",
+        "    Set-Content -Path \"$persist_dir\\Calibre Settings\\global.py.json\" -Value $cfg -Encoding utf8",
+        "} else {",
+        "    $cfg = Get-Content -Path \"$persist_dir\\Calibre Settings\\global.py.json\" -Encoding utf8 | ConvertFrom-Json",
+        "    if ($cfg.library_path -eq \"$persist_dir\\Calibre Library\") { return }",
+        "    if (-not (Test-Path -Path \"$persist_dir\\Calibre Library\\*\") -and (Test-Path -Path \"$($cfg.library_path)\\*\")) {",
+        "        Write-Host \"`nINFO  Migrating Calibre Library to '$persist_dir\\Calibre Library'...\" -ForegroundColor DarkGray",
+        "        Copy-Item -Path \"$($cfg.library_path)\\*\" -Destination \"$persist_dir\\Calibre Library\" -Force -Recurse",
+        "    }",
+        "    Remove-Item -Path $cfg.library_path -Recurse -Force -ErrorAction SilentlyContinue",
+        "    $cfg.library_path = \"$persist_dir\\Calibre Library\"",
+        "    $cfg | ConvertTo-Json -Depth 5 | Set-Content -Path \"$persist_dir\\Calibre Settings\\global.py.json\" -Encoding utf8",
+        "}"
+    ],
+    "env_set": {
+        "CALIBRE_NO_DEFAULT_PROGRAMS": "1",
+        "CALIBRE_TEMP_DIR": "$persist_dir\\.tmp",
+        "CALIBRE_CACHE_DIRECTORY": "$persist_dir\\.cache",
+        "CALIBRE_CONFIG_DIRECTORY": "$persist_dir\\Calibre Settings"
+    },
     "bin": [
-        [
-            "calibre-portable.exe",
-            "calibre"
-        ],
-        "calibre-portable.exe",
-        "Calibre\\calibre-complete.exe",
+        "Calibre\\calibre.exe",
         "Calibre\\calibre-customize.exe",
-        "Calibre\\calibredb.exe",
         "Calibre\\calibre-debug.exe",
-        "Calibre\\calibre-parallel.exe",
         "Calibre\\calibre-server.exe",
         "Calibre\\calibre-smtp.exe",
+        "Calibre\\calibredb.exe",
         "Calibre\\ebook-convert.exe",
         "Calibre\\ebook-device.exe",
         "Calibre\\ebook-edit.exe",
@@ -41,40 +86,48 @@
         "Calibre\\ebook-viewer.exe",
         "Calibre\\fetch-ebook-metadata.exe",
         "Calibre\\lrf2lrs.exe",
-        "Calibre\\lrs2lrf.exe",
         "Calibre\\lrfviewer.exe",
+        "Calibre\\lrs2lrf.exe",
         "Calibre\\markdown-calibre.exe",
         "Calibre\\web2disk.exe"
     ],
     "shortcuts": [
         [
-            "calibre-portable.exe",
-            "Calibre"
+            "Calibre\\calibre.exe",
+            "Calibre - E-book Management\\Calibre - E-book Management"
         ],
         [
             "Calibre\\ebook-edit.exe",
-            "Calibre E-Book Editor"
+            "Calibre - E-book Management\\E-Book Editor"
         ],
         [
             "Calibre\\ebook-viewer.exe",
-            "Calibre E-Book Viewer"
+            "Calibre - E-book Management\\E-Book Viewer"
         ],
         [
             "Calibre\\lrfviewer.exe",
-            "Calibre LRF Viewer"
+            "Calibre - E-book Management\\LRF Viewer"
         ]
     ],
     "persist": [
         "Calibre Library",
         "Calibre Settings"
     ],
+    "uninstaller": {
+        "script": [
+            "if ($cmd -eq 'uninstall') {",
+            "    reg import \"$dir\\uninstall-associations.reg\" *> $null",
+            "    reg import \"$dir\\unregister-url-handler.reg\" *> $null",
+            "}"
+        ]
+    },
     "checkver": {
         "github": "https://github.com/kovidgoyal/calibre"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.calibre-ebook.com/$version/calibre-portable-installer-$version.exe",
+                "url": "https://download.calibre-ebook.com/$version/calibre-64bit-$version.msi#/dl.msi_",
                 "hash": {
                     "url": "https://calibre-ebook.com/signatures/$basename.sha512"
                 }
