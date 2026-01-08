@@ -1,0 +1,78 @@
+{
+    "version": "1.7.4",
+    "description": "An IDE for Leslie Lamport's TLA+ (Temporal Logic of Actions) language and its tools",
+    "homepage": "https://lamport.azurewebsites.net/tla/toolbox.html",
+    "license": "MIT",
+    "notes": "Specify full path for the spec inputfile when running `tlc`.",
+    "suggest": {
+        "pretty printer": [
+            "miktex",
+            "latex"
+        ]
+    },
+    "url": "https://github.com/tlaplus/tlaplus/releases/download/v1.7.4/TLAToolbox-1.7.4-win32.win32.x86_64.zip",
+    "hash": "sha1:10b011fa0b31bc58d771f6b4cd9dd30b446d6d9d",
+    "extract_dir": "toolbox",
+    "pre_install": [
+        "$JDKDIR = Get-ChildItem -Attributes directory -Filter \"plugins/*openjdk*\" $dir  |",
+        "  Resolve-Path -Relative -RelativeBasePath $dir",
+        "@(",
+        "  \"@pushd `\"$dir`\"\"",
+        "  '@set TOOLS_JAR=.\\tla2tools.jar'",
+        "  \"@set THISJAVA=`\"${JDKDIR}\\jre\\bin\\java`\"\"",
+        "  '@%THISJAVA% -cp %TOOLS_JAR%  %*'",
+        "  '@popd'",
+        ")  | Set-Content \"$dir\\tla2tools.cmd\" -Encoding ASCII",
+        "Write-Output \"`nChecking if class-modules exist for use with 'tla2tools':\"",
+        "@( 'tlc2.TLC', 'tlc2.REPL', 'pcal.trans', 'tla2tex.TLA', 'tla2sany.SANY' )",
+        "  | ForEach-Object -PipelineVariable modulename { $_ }",
+        "  | ForEach-Object { ($_ -replace '\\.', '/') + '.class' }",
+        "  | Resolve-Path -Relative -RelativeBasePath \"$dir/plugins/*tlatools*/\"",
+        "  | ForEach-Object { \"`t* $modulename -> $_\" }"
+    ],
+    "bin": [
+        "toolbox.exe",
+        "tla2tools.cmd",
+        [
+            "tla2tools.cmd",
+            "tlc",
+            "tlc2.TLC"
+        ],
+        [
+            "tla2tools.cmd",
+            "pcal-trans",
+            "pcal.trans"
+        ],
+        [
+            "tla2tools.cmd",
+            "tla2sany",
+            "tla2sany.SANY"
+        ],
+        [
+            "tla2tools.cmd",
+            "tla2tex",
+            "tla2tex.TLA"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "toolbox.exe",
+            "TLA+ Toolbox"
+        ]
+    ],
+    "persist": "configuration",
+    "checkver": {
+        "github": "https://github.com/tlaplus/tlaplus"
+    },
+    "autoupdate": {
+        "url": "https://github.com/tlaplus/tlaplus/releases/download/v$version/TLAToolbox-$version-win32.win32.x86_64.zip",
+        "hash": {
+            "url": "https://api.github.com/repos/tlaplus/tlaplus/releases/tags/v$version",
+            "regex": "$sha1\\|$basename"
+        }
+    },
+    "##": [
+        "PowerShell's Quoting_Rules (*install fields): https://technet.microsoft.com/en-us/library/hh847740.aspx",
+        "https://github.com/tlaplus/tlaplus/blob/c8a59811fc90755b8f32f242f48ceca50c9a404b/README.md?plain=1#L16-L30"
+    ]
+}
