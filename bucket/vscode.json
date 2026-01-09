@@ -1,5 +1,5 @@
 {
-    "version": "1.107.1",
+    "version": "1.108.0",
     "description": "Visual Studio Code is a lightweight yet powerful, cross-platform source code editor providing rich support for development, debugging, and extension-based customization for modern web and cloud workloads.",
     "homepage": "https://code.visualstudio.com",
     "license": {
@@ -16,24 +16,24 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://update.code.visualstudio.com/1.107.1/win32-x64-archive/stable#/dl.7z",
-            "hash": "f2bdbb4acf43d9d2d721ab5b2dba7ba02ad214d71ec78ad3b3b43fede31187af"
+            "url": "https://update.code.visualstudio.com/1.108.0/win32-x64-archive/stable#/dl.7z",
+            "hash": "d386038cefc51e168ca26901c5076ea741090740aaae92e74b1db8603b4a0a3e"
         },
         "arm64": {
-            "url": "https://update.code.visualstudio.com/1.107.1/win32-arm64-archive/stable#/dl.7z",
-            "hash": "7797e80afb6a8b1f73003e47670576c7d9e1867ba86db77c87b1e4f92f1322e0"
+            "url": "https://update.code.visualstudio.com/1.108.0/win32-arm64-archive/stable#/dl.7z",
+            "hash": "0589afbfe3e29260ea1ad468586874daff5d100da9d71c289c36f218ede1ede6"
         }
     },
     "pre_install": [
-        "$data_path = (Join-Path -Path $dir -ChildPath 'data') -replace '\\\\', '/'",
+        "$data_dir = \"$dir\\data\" -replace '\\\\', '/'",
         "$extensions_file = \"$env:USERPROFILE\\.vscode\\extensions\\extensions.json\"",
-        "if (-not (Test-Path $extensions_file)) { return }",
+        "if (-not (Test-Path -Path $extensions_file -PathType Leaf)) { return }",
         "$cfg = Get-Content -Path $extensions_file -Encoding utf8 | ConvertFrom-Json",
-        "$cfg | ForEach-Object {",
+        "$cfg | ForEach-Object -Process {",
         "    $_.location.PSObject.Properties.Remove('_sep')",
         "    $_.location.PSObject.Properties.Remove('fsPath')",
         "    $_.location.PSObject.Properties.Remove('external')",
-        "    $_.location.path = $_.location.path -replace '(?<=/).+(?=/extensions)', $data_path",
+        "    $_.location.path = $_.location.path -replace '(?<=/).+(?=/extensions)', $data_dir",
         "    if (-not $_.identifier.uuid -and $_.metadata.id) {",
         "        $_.identifier | Add-Member -NotePropertyName uuid -NotePropertyValue $_.metadata.id",
         "    }",
@@ -41,30 +41,30 @@
         "$cfg | ConvertTo-Json -Depth 5 -Compress | Set-Content -Path $extensions_file -NoNewline -Encoding utf8"
     ],
     "post_install": [
-        "$vscode_path = $dir -replace '\\\\', '\\\\'",
-        "Get-ChildItem -Path \"$bucketsdir\\$bucket\\scripts\\$app\" -Filter '*.reg' -File | ForEach-Object {",
+        "$vscode_dir = $dir -replace '\\\\', '\\\\'",
+        "Get-ChildItem -Path \"$bucketsdir\\$bucket\\scripts\\$app\" -Filter '*.reg' -File | ForEach-Object -Process {",
         "    $content = Get-Content -Path $_.FullName -Encoding utf8",
         "    if ($global) {",
         "        $content = $content -replace 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE'",
         "        $content = $content -replace '(?<={).+(?=}_is1)', 'EA457B21-F73E-494C-ACAB-524FDE069978'",
+        "    }",
+        "    $content -replace '{{vscode_dir}}', $vscode_dir | Set-Content -Path \"$dir\\$($_.Name)\" -Encoding unicode",
         "}",
-        "    $content -replace '{{vscode_dir}}', $vscode_path | Set-Content -Path \"$dir\\$($_.Name)\" -Encoding unicode",
-        "}",
-        "if (-not (Test-Path \"$dir\\data\\user-data\\*\") -and (Test-Path \"$env:AppData\\Code\\*\")) {",
-        "    info \"[Portable Mode] Migrating user data to '$dir\\data'...\"",
+        "if (-not (Test-Path -Path \"$dir\\data\\user-data\\*\") -and (Test-Path -Path \"$env:AppData\\Code\\*\")) {",
+        "    Write-Host \"`nINFO  Migrating user data to '$dir\\data'...\" -ForegroundColor DarkGray",
         "    Copy-Item -Path \"$env:AppData\\Code\" -Destination \"$dir\\data\\user-data\" -Force -Recurse",
         "}",
         "'argv.json', 'extensions' | ForEach-Object {",
-        "    if (-not (Test-Path \"$dir\\data\\$_\") -and (Test-Path \"$env:USERPROFILE\\.vscode\\$_\")) {",
-        "        info \"[Portable Mode] Migrating $_ to '$dir\\data'...\"",
+        "    if (-not (Test-Path -Path \"$dir\\data\\$_\") -and (Test-Path -Path \"$env:USERPROFILE\\.vscode\\$_\")) {",
+        "        Write-Host \"INFO  Migrating $_ to '$dir\\data'...\" -ForegroundColor DarkGray",
         "        Copy-Item -Path \"$env:USERPROFILE\\.vscode\\$_\" -Destination \"$dir\\data\\$_\" -Force -Recurse",
         "    }",
         "}",
-        "$remove_list = 'argv.json', 'extensions' | ForEach-Object { \"$env:USERPROFILE\\.vscode\\$_\" }",
-        "$remove_list + @(\"$env:AppData\\Code\") | Remove-Item -Force -Recurse -ErrorAction SilentlyContinue",
+        "$remove_list = 'argv.json', 'extensions' | ForEach-Object -Process { \"$env:USERPROFILE\\.vscode\\$_\" }",
+        "$remove_list + @(\"$env:AppData\\Code\") | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue",
         "$extensions_file = \"$dir\\data\\extensions\\extensions.json\"",
-        "if (Test-Path $extensions_file) {",
-        "    info 'Adjusting path in extensions file...'",
+        "if (Test-Path -Path $extensions_file -PathType Leaf) {",
+        "    Write-Host \"`nINFO  Adjusting path in extensions file...\" -ForegroundColor DarkGray",
         "    $cfg = Get-Content -Path $extensions_file -Encoding utf8",
         "    $replace_regex = '(?<=vscode[/\\\\]+)[\\d.]+(?=[/\\\\]+data[/\\\\]+extensions)'",
         "    $cfg -replace $replace_regex, $version | Set-Content -Path $extensions_file -NoNewline -Encoding utf8",
@@ -96,14 +96,14 @@
             "64bit": {
                 "url": "https://update.code.visualstudio.com/$version/win32-x64-archive/stable#/dl.7z",
                 "hash": {
-                    "url": "https://update.code.visualstudio.com/api/update/win32-x64-archive/stable/latest",
+                    "url": "https://update.code.visualstudio.com/api/versions/$version/win32-x64-archive/stable",
                     "jsonpath": "$.sha256hash"
                 }
             },
             "arm64": {
                 "url": "https://update.code.visualstudio.com/$version/win32-arm64-archive/stable#/dl.7z",
                 "hash": {
-                    "url": "https://update.code.visualstudio.com/api/update/win32-arm64-archive/stable/latest",
+                    "url": "https://update.code.visualstudio.com/api/versions/$version/win32-arm64-archive/stable",
                     "jsonpath": "$.sha256hash"
                 }
             }
