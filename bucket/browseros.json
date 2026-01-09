@@ -1,19 +1,16 @@
 {
-    "version": "0.34.0",
+    "version": "0.36.1",
     "description": "BrowserOS is an open-source chromium fork that runs AI agents natively. Your open-source, privacy-first alternative to ChatGPT Atlas, Perplexity Comet, Dia.",
     "homepage": "https://github.com/browseros-ai/BrowserOS",
-    "license": {
-        "identifier": "AGPL-3.0-or-later",
-        "url": "https://github.com/browseros-ai/BrowserOS/blob/main/LICENSE"
-    },
+    "license": "AGPL-3.0-only, BSD-3-Clause",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/browseros-ai/BrowserOS/releases/download/v0.34.0/BrowserOS_v0.34.0_x64_installer.exe#/dl.7z",
-            "hash": "e94b215fe2f54a811a15baee53b7f48f51b4ebbbb4bf766a6ffd3bd43ad64b9b"
+            "url": "https://github.com/browseros-ai/BrowserOS/releases/download/v0.36.0/BrowserOS_v0.36.1_x64_installer.exe#/dl.7z",
+            "hash": "172a8f4657c70cbc08402eeb980e3e26b39571ea9ee9b7f856362cd39e1645b8"
         }
     },
     "installer": {
-        "script": "Expand-7zipArchive -Path \"$dir\\chrome.7z\" -DestinationPath \"$dir\" -ExtractDir \"Chrome-bin\" -Removal"
+        "script": "Expand-7zipArchive -Path \"$dir\\chrome.7z\" -DestinationPath $dir -ExtractDir 'Chrome-bin' -Removal"
     },
     "post_install": [
         "if (!(Test-Path \"$dir\\User Data\\*\") -and (Test-Path \"$env:LocalAppData\\BrowserOS\\BrowserOS\\User Data\")) {",
@@ -32,15 +29,14 @@
         ]
     ],
     "persist": "User Data",
-    "checkver": "github",
+    "checkver": {
+        "url": "https://api.github.com/repositories/985839104/releases/latest",
+        "regex": "download/(?<tag>[^/]+)/BrowserOS_v(?<version>[\\d.]+)_x64_installer\\.exe"
+    },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/browseros-ai/BrowserOS/releases/download/v$majorVersion.$minorVersion.$patchVersion/BrowserOS_v$version_x64_installer.exe#/dl.7z",
-                "hash": {
-                    "url": "https://api.github.com/repos/browseros-ai/BrowserOS/releases/tags/v$majorVersion.$minorVersion.$patchVersion",
-                    "regex": "sha256:([0-9a-z]+)[^}]+$url"
-                }
+                "url": "https://github.com/browseros-ai/BrowserOS/releases/download/$matchTag/BrowserOS_v$version_x64_installer.exe#/dl.7z"
             }
         }
     }
