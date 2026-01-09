@@ -1,0 +1,46 @@
+{
+    "version": "1.0.0",
+    "description": "CLI tool for uploading and sharing files",
+    "homepage": "https://github.com/laiduc1312209/pld-cli",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/laiduc1312209/pld-cli/archive/refs/tags/1.0.0.zip",
+            "hash": "FE24874AF44490B481C584C4D3A957969502953237E7B7A53E2E381CF8F4C10A"
+        }
+    },
+    "extract_dir": "pld-cli-1.0.0",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\.pld\")) {",
+        "    New-Item -ItemType Directory -Path \"$persist_dir\\.pld\" | Out-Null",
+        "}",
+        "@\"",
+        "@echo off",
+        "node \"%~dp0index.js\" %*",
+        "\"@ | Out-File -FilePath \"$dir\\pld.cmd\" -Encoding ASCII"
+    ],
+    "bin": "pld.cmd",
+    "shortcuts": [],
+    "persist": [
+        ".pld"
+    ],
+    "checkver": {
+        "github": "https://github.com/laiduc1312209/pld-cli"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/laiduc1312209/pld-cli/archive/refs/tags/$version.zip"
+            }
+        }
+    },
+    "post_install": [
+        "Write-Host 'Installing dependencies...' -ForegroundColor Yellow",
+        "Push-Location \"$dir\"",
+        "npm install --production --silent",
+        "Pop-Location",
+        "Write-Host 'pld installed successfully!' -ForegroundColor Green",
+        "Write-Host 'Run: pld -config to set up your  API key' -ForegroundColor Cyan"
+    ],
+    "depends": "nodejs"
+}
