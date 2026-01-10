@@ -1,13 +1,13 @@
 {
-    "version": "25.08-1920",
+    "version": "25.12-1971",
     "description": "Disk usage visualizer",
     "homepage": "https://apps.kde.org/filelight",
     "license": "GPL-2.0-or-later",
     "notes": "If you want to get the latest development branch-based installer, please install `filelight-nightly` from Versions bucket.",
     "architecture": {
         "64bit": {
-            "url": "https://cdn.kde.org/ci-builds/utilities/filelight/release-25.08/windows/filelight-release_25.08-1920-windows-cl-msvc2022-x86_64.7z",
-            "hash": "4bde745d9674db5f98bef9353e930517cac6fb8c26b4e4eadbbd9728dc9340f3"
+            "url": "https://cdn.kde.org/ci-builds/utilities/filelight/release-25.12/windows/filelight-release_25.12-1971-windows-cl-msvc2022-x86_64.7z",
+            "hash": "27c6140d897941fed9d8fda397984a76535c41dda3622df050e634a7f6899890"
         }
     },
     "bin": "bin\\filelight.exe",
@@ -18,8 +18,23 @@
         ]
     ],
     "checkver": {
-        "url": "https://cdn.kde.org/ci-builds/utilities/filelight/release-25.08/windows/",
-        "regex": "filelight-release_([\\d.-]+)-windows-cl-(?<lib>\\w+)-x86_64\\.7z"
+        "script": [
+            "$url = 'https://cdn.kde.org/ci-builds/utilities/filelight/?C=N;O=D'",
+            "",
+            "$cont = (Invoke-WebRequest $url).Content",
+            "$regex = 'release-([\\d.]+)'",
+            "if (!($cont -match $regex)) { error \"Could not match $regex in $url\"; continue }",
+            "$ver = $matches[1]",
+            "",
+            "$nextUrl = \"https://cdn.kde.org/ci-builds/utilities/filelight/release-$ver/windows/\"",
+            "$nextCont = (Invoke-WebRequest $nextUrl).Content",
+            "$nextRegex = \"filelight-release_$ver-([\\d]+)-windows-cl-([\\w]+)-x86_64\\.7z\"",
+            "if (!($nextCont -match $nextRegex)) { error \"Could not match $nextRegex in $nextUrl\"; continue }",
+            "$build = $matches[1]",
+            "$lib = $matches[2]",
+            "Write-Output $ver-$build $lib"
+        ],
+        "regex": "([\\d.-]+) (?<lib>[\\w]+)"
     },
     "autoupdate": {
         "architecture": {

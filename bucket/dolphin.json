@@ -1,5 +1,5 @@
 {
-    "version": "25.08-6467",
+    "version": "25.12-6945",
     "description": "A file manager developed by KDE that lets you navigate and browse the contents of your hard drives, USB sticks, SD cards, and more.",
     "homepage": "https://apps.kde.org/dolphin/",
     "license": "GPL-2.0-or-later",
@@ -11,8 +11,8 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://cdn.kde.org/ci-builds/system/dolphin/release-25.08/windows/dolphin-release_25.08-6467-windows-cl-msvc2022-x86_64.7z",
-            "hash": "b3c07fa37706097d808487db380bc64b24a31a0a4ef2dac353898101971d87cf"
+            "url": "https://cdn.kde.org/ci-builds/system/dolphin/release-25.12/windows/dolphin-release_25.12-6945-windows-cl-msvc2022-x86_64.7z",
+            "hash": "03af771323b878b432b02c13d71b3ed7ef8e7f7e3a290ef299081104cb072633"
         }
     },
     "bin": "bin\\dolphin.exe",
@@ -23,8 +23,23 @@
         ]
     ],
     "checkver": {
-        "url": "https://cdn.kde.org/ci-builds/system/dolphin/release-25.08/windows/",
-        "regex": "dolphin-release_([\\d.-]+)-windows-cl-(?<lib>\\w+)-x86_64\\.7z"
+        "script": [
+            "$url = 'https://cdn.kde.org/ci-builds/system/dolphin/?C=N;O=D'",
+            "",
+            "$cont = (Invoke-WebRequest $url).Content",
+            "$regex = 'release-([\\d.]+)'",
+            "if (!($cont -match $regex)) { error \"Could not match $regex in $url\"; continue }",
+            "$ver = $matches[1]",
+            "",
+            "$nextUrl = \"https://cdn.kde.org/ci-builds/system/dolphin/release-$ver/windows/\"",
+            "$nextCont = (Invoke-WebRequest $nextUrl).Content",
+            "$nextRegex = \"dolphin-release_$ver-([\\d]+)-windows-cl-([\\w]+)-x86_64\\.7z\"",
+            "if (!($nextCont -match $nextRegex)) { error \"Could not match $nextRegex in $nextUrl\"; continue }",
+            "$build = $matches[1]",
+            "$lib = $matches[2]",
+            "Write-Output $ver-$build $lib"
+        ],
+        "regex": "([\\d.-]+) (?<lib>[\\w]+)"
     },
     "autoupdate": {
         "architecture": {

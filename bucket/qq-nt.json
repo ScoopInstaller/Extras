@@ -1,5 +1,5 @@
 {
-    "version": "9.9.21.250904",
+    "version": "9.9.26.260108",
     "description": "An instant messaging software service developed by Tencent",
     "homepage": "https://im.qq.com/pcqq/index.shtml",
     "license": {
@@ -8,16 +8,16 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.21_250904_x64_01.exe#/dl.7z",
-            "hash": "55fb4684d01316ecdbfcbd5ba82eceda5a6e4d6fc4aa8b0b3d2515c3d41a21d1"
+            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.26_260108_x64_01.exe#/dl.7z",
+            "hash": "1d63aeff1fefb59892bda0b4313776f81cb7c12529c91b263b5f407386956860"
         },
         "32bit": {
-            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.21_250904_x86_01.exe#/dl.7z",
-            "hash": "c5d6089b54a978fee2b5f25dbcccf676cd70ef18769420e09f247eb957d3bb02"
+            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.26_260108_x86_01.exe#/dl.7z",
+            "hash": "ac46249dfe141a2e3a0827ba6be4207e709d60c3f5ee7e8a0760269176d2a73f"
         },
         "arm64": {
-            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.21_250904_arm64_01.exe#/dl.7z",
-            "hash": "b241ba24e10610371dacb3358444fe168a3ae3d60fd5ad96c84b729e41697073"
+            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.26_260108_arm64_01.exe#/dl.7z",
+            "hash": "926022a43c8db021de61f242daf63fb67ea0f70f14fce6cd3f16c1be7a547ed6"
         }
     },
     "extract_dir": "Files",
@@ -29,12 +29,13 @@
     ],
     "checkver": {
         "script": [
-            "# Please keep this script. An empty Accept-Encoding header can cause the CDN to deliver expired cache.",
-            "# See : https://github.com/ScoopInstaller/Extras/issues/15916",
-            "$headers = @{ 'Accept-Encoding' = 'gzip' }",
+            "# Please keep this script. Using 'cdn-go.cn' may result in receiving expired cache responses.",
             "$url = 'https://cdn-go.cn/qq-web/im.qq.com_new/latest/rainbow/windowsConfig.js'",
-            "$response = Invoke-WebRequest -Uri $url -UseBasicParsing -Headers $headers",
-            "Write-Output $response.Content"
+            "$hostname = ([Uri]$url).Host",
+            "$records = Resolve-DnsName 'cdn-go.cn.cloud.tc.qq.com' -Type A -DnsOnly -ErrorAction Ignore",
+            "$ip = $records | Where-Object { $_.QueryType -eq 'A' -and $_.IPAddress } | Select-Object -ExpandProperty IP4Address -First 1",
+            "$url = $url -Replace [regex]::Escape($hostname), $ip",
+            "Invoke-WebRequest -Uri $url -UseBasicParsing -Headers @{'Host' = $hostname} | Select-Object -ExpandProperty Content"
         ],
         "regex": "QQNT/Windows/QQ_([\\d\\.]+)_([\\d]+)_x86_01.exe",
         "replace": "${1}.${2}"

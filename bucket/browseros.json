@@ -1,0 +1,43 @@
+{
+    "version": "0.36.1",
+    "description": "BrowserOS is an open-source chromium fork that runs AI agents natively. Your open-source, privacy-first alternative to ChatGPT Atlas, Perplexity Comet, Dia.",
+    "homepage": "https://github.com/browseros-ai/BrowserOS",
+    "license": "AGPL-3.0-only,BSD-3-Clause",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/browseros-ai/BrowserOS/releases/download/v0.36.0/BrowserOS_v0.36.1_x64_installer.exe#/dl.7z",
+            "hash": "172a8f4657c70cbc08402eeb980e3e26b39571ea9ee9b7f856362cd39e1645b8"
+        }
+    },
+    "installer": {
+        "script": "Expand-7zipArchive -Path \"$dir\\chrome.7z\" -DestinationPath $dir -ExtractDir 'Chrome-bin' -Removal"
+    },
+    "post_install": [
+        "if (!(Test-Path \"$dir\\User Data\\*\") -and (Test-Path \"$env:LocalAppData\\BrowserOS\\BrowserOS\\User Data\")) {",
+        "    info '[Portable Mode]: Copying user data...'",
+        "    Copy-Item \"$env:LocalAppData\\BrowserOS\\BrowserOS\\User Data\\*\" \"$dir\\User Data\" -Recurse",
+        "}"
+    ],
+    "env_set": {
+        "CHROME_EXECUTABLE": "$dir\\chrome.exe"
+    },
+    "shortcuts": [
+        [
+            "chrome.exe",
+            "BrowserOS",
+            "--user-data-dir=\"$dir\\User Data\""
+        ]
+    ],
+    "persist": "User Data",
+    "checkver": {
+        "url": "https://api.github.com/repositories/985839104/releases/latest",
+        "regex": "download/(?<tag>[^/]+)/BrowserOS_v(?<version>[\\d.]+)_x64_installer\\.exe"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/browseros-ai/BrowserOS/releases/download/$matchTag/BrowserOS_v$version_x64_installer.exe#/dl.7z"
+            }
+        }
+    }
+}

@@ -1,16 +1,20 @@
 {
-    "version": "10.3.2",
-    "description": "A customizable desktop music player with a clean interface",
+    "version": "11.0.2",
+    "description": "A customizable desktop music player with a clean interface.",
     "homepage": "https://moosync.app",
-    "license": "GPL-3.0-or-later",
+    "license": {
+        "identifier": "GPL-3.0-or-later",
+        "url": "https://github.com/Moosync/Moosync/blob/HEAD/COPYING"
+    },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/Moosync/Moosync/releases/download/v10.3.2/Moosync-10.3.2-win-x64.exe#/dl.7z",
-            "hash": "sha512:4e0c523012d41598ee8584e2830ccb53af1dbc00a88db673074e79d8b2109b982e1578c93ef172013b03da8be390a41fb454f493a642abc25fe8e30336c027e0",
-            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+            "url": "https://github.com/Moosync/Moosync/releases/download/Moosync-v11.0.2/Moosync_11.0.2_x64-setup.exe",
+            "hash": "3798b8f46332bef419695044d2a34166d5402fde4289961a265b82d44214a4d3"
         }
     },
-    "post_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Force -Recurse",
+    "installer": {
+        "script": "Expand-7zipArchive -Path \"$dir\\$fname\" -DestinationPath $dir -Switches '-xr!$* -xr!unins*' -Removal"
+    },
     "bin": "Moosync.exe",
     "shortcuts": [
         [
@@ -19,16 +23,14 @@
         ]
     ],
     "checkver": {
-        "github": "https://github.com/Moosync/Moosync"
+        "url": "https://api.github.com/repositories/766659277/releases/latest",
+        "jsonpath": "$.assets[?(@.name =~ /x64.+\\.exe$/i)].browser_download_url",
+        "regex": "(?i)download/Moosync-v([\\d.]+)/(?<name>[^\"]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/Moosync/Moosync/releases/download/v$version/Moosync-$version-win-x64.exe#/dl.7z",
-                "hash": {
-                    "url": "$baseurl/latest.yml",
-                    "regex": "sha512:\\s+$base64"
-                }
+                "url": "https://github.com/Moosync/Moosync/releases/download/Moosync-v$version/$matchName"
             }
         }
     }

@@ -1,10 +1,10 @@
 {
-    "version": "2.2.0.0_stable_2025-10-23",
+    "version": "2.2.0.3_stable_2026-01-06",
     "description": "A free, open source, backup client that securely stores encrypted, incremental, compressed backups on cloud storage services and remote file servers.",
     "homepage": "https://www.duplicati.com/",
     "license": "MIT",
     "notes": [
-        "If you want Dupilicati to run at the startup of your system, run: (requires administrator privileges)",
+        "If you want Duplicati to run at the startup of your system, run: (requires administrator privileges)",
         "start \"$dir\\Duplicati.WindowsService.exe\" -Verb 'RunAs' -ArgumentList 'install'",
         "",
         "To remove Duplicati from startup, run: (requires administrator privileges)",
@@ -12,21 +12,29 @@
     ],
     "architecture": {
         "32bit": {
-            "url": "https://github.com/duplicati/duplicati/releases/download/v2.2.0.0_stable_2025-10-23/duplicati-2.2.0.0_stable_2025-10-23-win-x86-gui.zip",
-            "hash": "610d64ef86f863937fc21e349831de3157c6e025f0b71018bbca54de382cf5ac",
-            "extract_dir": "duplicati-2.2.0.0_stable_2025-10-23-win-x86-gui"
+            "url": "https://github.com/duplicati/duplicati/releases/download/v2.2.0.3_stable_2026-01-06/duplicati-2.2.0.3_stable_2026-01-06-win-x86-gui.zip",
+            "hash": "edbcdb9bc13d7fe915aa61670ee3d67afd468dd4675741d53828ecd7a51aad6a",
+            "extract_dir": "duplicati-2.2.0.3_stable_2026-01-06-win-x86-gui"
         },
         "64bit": {
-            "url": "https://github.com/duplicati/duplicati/releases/download/v2.2.0.0_stable_2025-10-23/duplicati-2.2.0.0_stable_2025-10-23-win-x64-gui.zip",
-            "hash": "3ddc3b0c10afa89dc6618fddb138d3e0521a1e75466c3399e5c07ab1e0cc3bb2",
-            "extract_dir": "duplicati-2.2.0.0_stable_2025-10-23-win-x64-gui"
+            "url": "https://github.com/duplicati/duplicati/releases/download/v2.2.0.3_stable_2026-01-06/duplicati-2.2.0.3_stable_2026-01-06-win-x64-gui.zip",
+            "hash": "162c63f111c7ac4ff57ded6a2d67fbe7b127bb173fbf589013a01a7c13a9587f",
+            "extract_dir": "duplicati-2.2.0.3_stable_2026-01-06-win-x64-gui"
         },
         "arm64": {
-            "url": "https://github.com/duplicati/duplicati/releases/download/v2.2.0.0_stable_2025-10-23/duplicati-2.2.0.0_stable_2025-10-23-win-arm64-gui.zip",
-            "hash": "be3213e0f86c198ac0c54573ee1a7bd1d42e534e740e5cc31775257a89ab3c8d",
-            "extract_dir": "duplicati-2.2.0.0_stable_2025-10-23-win-arm64-gui"
+            "url": "https://github.com/duplicati/duplicati/releases/download/v2.2.0.3_stable_2026-01-06/duplicati-2.2.0.3_stable_2026-01-06-win-arm64-gui.zip",
+            "hash": "7397751a242093460ac00c7c8586150070fd4f7e5ea49d40c46ab3b215106c8d",
+            "extract_dir": "duplicati-2.2.0.3_stable_2026-01-06-win-arm64-gui"
         }
     },
+    "post_install": [
+        "if (($cmd -eq 'update') -and ($env:duplicati_svc_installed -eq $true)) {",
+        "    info 'Reinstalling service...'",
+        "    if (!(is_admin)) { error 'Admin rights required to install Duplicati service'; break }",
+        "    Start-Process \"$dir\\Duplicati.WindowsService.exe\" -Wait -Verb 'RunAs' -ArgumentList 'install' -WindowStyle 'Hidden'",
+        "    $env:duplicati_svc_installed = $null",
+        "}"
+    ],
     "bin": [
         "Duplicati.CommandLine.exe",
         [
@@ -46,7 +54,10 @@
     ],
     "pre_uninstall": [
         "if (Get-Service -Name 'Duplicati' -ErrorAction 'SilentlyContinue') {",
-        "    if (!(is_admin)) { error \"Admin rights required to remove Duplicati service\"; break }",
+        "    info 'Uninstalling service...'",
+        "    if (!(is_admin)) { error 'Admin rights required to remove Duplicati service'; break }",
+        "    Stop-Service duplicati",
+        "    if ($cmd -eq 'update') { $env:duplicati_svc_installed = $true }",
         "    Start-Process \"$dir\\Duplicati.WindowsService.exe\" -Wait -Verb 'RunAs' -ArgumentList 'uninstall' -WindowStyle 'Hidden'",
         "}"
     ],
