@@ -1,15 +1,15 @@
 {
-    "version": "2.8.2",
+    "version": "2.8.8",
     "description": "SDL_image is an image loading library that is used with the SDL library, and almost as portable. It allows a programmer to use multiple image formats without having to code all the loading and conversion algorithms themselves.",
     "homepage": "https://github.com/libsdl-org/SDL_image",
     "license": "Zlib",
     "url": [
-        "https://github.com/libsdl-org/SDL_image/releases/download/release-2.8.2/SDL2_image-devel-2.8.2-VC.zip",
-        "https://github.com/libsdl-org/SDL_image/releases/download/release-2.8.2/SDL2_image-2.8.2.zip"
+        "https://github.com/libsdl-org/SDL_image/releases/download/release-2.8.8/SDL2_image-devel-2.8.8-VC.zip",
+        "https://github.com/libsdl-org/SDL_image/releases/download/release-2.8.8/SDL2_image-2.8.8.zip"
     ],
     "hash": [
-        "d8d593c1f3b2ffc8968b7ae0ba8d0ecf7e44b7476c4c5533a8d523f7039acdd4",
-        "2196ad6665b68fc453a659e172d67fbf18d548277aa07344dfd2deed9d9b84bd"
+        "076cebe070c5762bff0c854d2307078e53348d0225e04748feeb7c944453a86e",
+        "def4c7cba37a2f2cce83cfeff053220b2e1481c3c00d59638b1c526ae58545ac"
     ],
     "installer": {
         "script": [
@@ -36,7 +36,7 @@
             "#",
             "# 1.5 Move the header file",
             "mv \"$src_dir\\include\\*.h\"  \"$dir\\include\\SDL2_image\"",
-            "write-host \"Intalling the $app ($architecture) library to $dir.\"",
+            "Write-Host \"Intalling the $app ($architecture) library to $dir.\"",
             "#",
             "#",
             "#-------------------------------------------------------------------#",
@@ -62,19 +62,19 @@
             "# 2.3 Make the library discoverable by adding the path to the Env variables.",
             "# 2.3.1 Do it for the future sessions",
             "# 2.3.1.1 For pck-config user",
-            "$null, $currpath = strip_path (env 'PKG_CONFIG_PATH' $global) $pc_dir",
-            "write-host \"Adding $app to PKG_CONFIG_PATH.\"",
-            "env 'PKG_CONFIG_PATH' $global \"$pc_dir;$currpath\"",
+            "$null, $currpath = Split-PathLikeEnvVar -Pattern $pc_dir -Path (Get-EnvVar -Name 'PKG_CONFIG_PATH' -Global:$global)",
+            "Write-Host \"Adding $app to PKG_CONFIG_PATH.\"",
+            "Set-EnvVar -Name 'PKG_CONFIG_PATH' -Value \"$pc_dir;$currpath\" -Global:$global",
             "# 2.3.1.2 For cmake user",
-            "$null, $currpath = strip_path (env 'CMAKE_PREFIX_PATH' $global) $cm_dir",
-            "write-host \"Adding $app to CMAKE_PREFIX_PATH.\"",
-            "env 'CMAKE_PREFIX_PATH' $global \"$cm_dir;$currpath\"",
+            "$null, $currpath = Split-PathLikeEnvVAr -Pattern $cm_dir -Path (Get-EnvVar -Name 'CMAKE_PREFIX_PATH' -Global:$global)",
+            "Write-Host \"Adding $app to CMAKE_PREFIX_PATH.\"",
+            "Set-EnvVar -Name 'CMAKE_PREFIX_PATH' -Value \"$cm_dir;$currpath\" -Global:$global",
             "# 2.3.2 Do it for the this sessions",
             "# 2.3.2.1 For pck-config user",
-            "$null, $env:PKG_CONFIG_PATH = strip_path $env:PKG_CONFIG_PATH $pc_dir",
+            "$null, $env:PKG_CONFIG_PATH = Split-PathLikeEnvVar -Pattern $pc_dir -Path $env:PKG_CONFIG_PATH",
             "$env:PKG_CONFIG_PATH = \"$pc_dir;$env:PKG_CONFIG_PATH\"",
             "# 2.3.2.2 For cmake user",
-            "$null, $env:CMAKE_PREFIX_PATH = strip_path $env:CMAKE_PREFIX_PATH $cm_dir",
+            "$null, $env:CMAKE_PREFIX_PATH = Split-PathLikeEnvVar -Pattern $cm_dir -Path $env:CMAKE_PREFIX_PATH",
             "$env:CMAKE_PREFIX_PATH = \"$cm_dir;$env:CMAKE_PREFIX_PATH\"",
             "#",
             "#",
@@ -82,7 +82,7 @@
             "# 3) Final cleanup",
             "#-------------------------------------------------------------------#",
             "# 3.1 Remove the original source folder",
-            "rm -r \"$src_dir\"",
+            "Remove-Item -Recurse \"$src_dir\"",
             ""
         ]
     },
@@ -96,27 +96,27 @@
             "$pc_dir = \"$cm_dir\\lib\\pkgconfig\"",
             "#",
             "# 1.2 Delete env variables for future sessions",
-            "$was_in_path, $newpath = strip_path (env 'PKG_CONFIG_PATH' $global) $pc_dir",
+            "$was_in_path, $newpath = Split-PathLikeEnvVar -Pattern $pc_dir -Path (Get-EnvVar -Name 'PKG_CONFIG_PATH' -Global:$global)",
             "if($was_in_path) {",
-            "    write-host \"Removing $(friendly_path $pc_dir) from your path.\"",
-            "    env 'PKG_CONFIG_PATH' $global $newpath",
+            "    Write-Host \"Removing $(friendly_path $pc_dir) from your path.\"",
+            "    Set-EnvVar -Name 'PKG_CONFIG_PATH' -Value $newpath -Global:$global",
             "}",
-            "$was_in_path, $newpath = strip_path (env 'CMAKE_PREFIX_PATH' $global) $cm_dir",
+            "$was_in_path, $newpath = Split-PathLikeEnvVar -Pattern $cm_dir -Path (Get-EnvVar -Name 'CMAKE_PREFIX_PATH' -Global:$global)",
             "if($was_in_path) {",
-            "    write-host \"Removing $(friendly_path $cm_dir) from your path.\"",
-            "    env 'CMAKE_PREFIX_PATH' $global $newpath",
+            "    Write-Host \"Removing $(friendly_path $cm_dir) from your path.\"",
+            "    Set-EnvVar -Name 'CMAKE_PREFIX_PATH' -Value $newpath -Global:$global",
             "}",
             "#",
             "# 1.2 Delete env variables for this session",
-            "$was_in_path, $newpath = strip_path $env:PKG_CONFIG_PATH $pc_dir",
+            "$was_in_path, $newpath = Split-PathLikeEnvVar -Pattern $pc_dir -Path $env:PKG_CONFIG_PATH",
             "if($was_in_path) { $env:PKG_CONFIG_PATH = $newpath }",
-            "$was_in_path, $newpath = strip_path $env:CMAKE_PREFIX_PATH $cm_dir",
+            "$was_in_path, $newpath = Split-PathLikeEnvVar -Pattern $cm_dir -Path $env:CMAKE_PREFIX_PATH",
             "if($was_in_path) { $env:CMAKE_PREFIX_PATH = $newpath }"
         ]
     },
     "checkver": {
-        "url": "https://github.com/libsdl-org/SDL_image/releases",
-        "regex": "release-([\\d.]+)"
+        "url": "https://api.github.com/repositories/331517360/releases",
+        "regex": "release-(2.[\\d.]+)"
     },
     "autoupdate": {
         "url": [

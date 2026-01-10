@@ -1,5 +1,5 @@
 {
-    "version": "4.2.2",
+    "version": "4.6.2",
     "description": "A network protocol analyzer that lets you see what’s happening on your network at a microscopic level.",
     "homepage": "https://www.wireshark.org/",
     "license": "GPL-2.0-or-later",
@@ -7,27 +7,34 @@
         "Wireshark requires the installation of Npcap. Do it manually from the 'wireshark' directory.",
         "$dir\\npcap-installer.exe",
         "",
-        "You can also install USBPcap from the 'wireshark' directory if you need the USB packets capture funcionality.",
+        "You can also install USBPcap from the 'wireshark' directory if you need the USB packets capture functionality.",
         "$dir\\USBPcapSetup-installer.exe",
         "",
         "If this is the first time you opted to install USBPcap, please restart and run: $dir\\enable-usbpcap.ps1"
     ],
     "architecture": {
+        "arm64": {
+            "url": "https://www.wireshark.org/download/win64/Wireshark-4.6.2-arm64.exe#/dl.7z",
+            "hash": "ed0f03cc3d4a0815731ca3c8531a5ec05e5a0d965a2c868d1d4c995d025f3758"
+        },
         "64bit": {
-            "url": "https://www.wireshark.org/download/win64/Wireshark-4.2.2-x64.exe#/dl.7z",
-            "hash": "3bd13a521b1e9d100e800b666705da132e584cccbd4f30c88e9cf0d93289b2fa"
+            "url": "https://www.wireshark.org/download/win64/Wireshark-4.6.2-x64.exe#/dl.7z",
+            "hash": "373a93e9b5ffa3559938424a2aabd3338786cff7bef084641c2c5e5bfb44325e"
         }
     },
-    "installer": {
-        "script": [
-            "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\vc_redist*\", \"$dir\\uninstall-wireshark.exe\" -Recurse",
-            "Get-ChildItem \"$dir\\npcap-*.exe\" | Rename-Item -NewName 'npcap-installer.exe'",
-            "Get-ChildItem \"$dir\\USBPcapSetup-*.exe\" | Rename-Item -NewName 'USBPcapSetup-installer.exe'"
-        ]
-    },
+    "pre_install": [
+        "'$PLUGINSDIR', 'vc_redist*', 'uninstall-wireshark.exe' | ForEach-Object { \"$dir/$_\" } | Remove-Item -Recurse -ErrorAction Ignore",
+        "'npcap', 'USBPcapSetup' | ForEach-Object { Rename-Item \"$dir/$_-*.exe\" \"$_-installer.exe\" }",
+        "$data = \"$persist_dir/Data\"",
+        "$preferences = \"$data/preferences\"",
+        "if (!(Test-Path $preferences)) {",
+        "    $null = New-Item -ItemType Directory $data -ErrorAction Ignore",
+        "    'gui.update.enabled: FALSE' | Out-File -Encoding utf8 $preferences",
+        "}"
+    ],
     "post_install": [
-        "Get-ChildItem \"$bucketsdir\\extras\\scripts\\wireshark\" | Copy-Item -Force -Destination \"$dir\"",
-        "& \"$dir\\enable-usbpcap.ps1\" 2>$null   # Attempt try to enable USBPcap if already installed"
+        "Copy-Item -Force \"$bucketsdir/extras/scripts/wireshark/*\" \"$dir\"",
+        "& \"$dir/enable-usbpcap.ps1\" 2>$null   # Attempt try to enable USBPcap if already installed"
     ],
     "bin": [
         "capinfos.exe",
@@ -58,13 +65,16 @@
     },
     "autoupdate": {
         "architecture": {
+            "arm64": {
+                "url": "https://www.wireshark.org/download/win64/Wireshark-$version-arm64.exe#/dl.7z"
+            },
             "64bit": {
-                "url": "https://www.wireshark.org/download/win64/Wireshark-$version-x64.exe#/dl.7z",
-                "hash": {
-                    "url": "https://www.wireshark.org/download/SIGNATURES-$version.txt",
-                    "regex": "SHA256\\($basename\\)=$sha256"
-                }
+                "url": "https://www.wireshark.org/download/win64/Wireshark-$version-x64.exe#/dl.7z"
             }
+        },
+        "hash": {
+            "url": "https://www.wireshark.org/download/SIGNATURES-$version.txt",
+            "regex": "SHA256\\($basename\\)=$sha256"
         }
     }
 }

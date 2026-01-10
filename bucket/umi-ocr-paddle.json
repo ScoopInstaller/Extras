@@ -1,31 +1,71 @@
 {
-    "version": "2.0.2",
+    "version": "2.1.5",
     "homepage": "https://github.com/hiroi-sora/Umi-OCR",
     "description": "OCR software, free and offline. (Paddle)",
-    "license": "MIT License",
+    "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/hiroi-sora/Umi-OCR/releases/download/release/2.0.2/Umi-OCR_Paddle_v2.0.2.7z.exe",
-            "hash": "28875194a3c78d2d88ad7f2cb44a4da4a1976e372b84e7dd5864dddf220eba63",
-            "extract_dir": "Umi-OCR_Paddle_v2.0.2"
+            "url": "https://github.com/hiroi-sora/Umi-OCR/releases/download/v2.1.5/Umi-OCR_Paddle_v2.1.5.7z.exe#/dl.7z",
+            "hash": "abe00248d6e68dda75029739751ad7258f0ecc14d720b19240a844f5341859b2",
+            "extract_dir": "Umi-OCR_Paddle_v2.1.5"
         }
     },
+    "pre_install": [
+        "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
+        "'.settings', '.pre_settings' | ForEach-Object {",
+        "    if (Test-Path \"$persist_dir\\data\\$_\") {",
+        "        Copy-Item \"$persist_dir\\data\\$_\" \"$dir\\UmiOCR-data\\$_\" -Force",
+        "    }",
+        "}"
+    ],
+    "post_install": [
+        "$plugins_dir = Join-Path $dir 'UmiOCR-data\\plugins'",
+        "$original_plugins_dir = Join-Path $dir 'UmiOCR-data\\plugins.original'",
+        "if (Test-Path \"$original_plugins_dir\") {",
+        "    Write-Host \"`nINFO  Removing old bundled plugins from $plugins_dir...\" -ForegroundColor darkgray",
+        "    $paddlePlugins = Get-ChildItem -Path \"$plugins_dir\" -Directory -Filter '*Paddle*'",
+        "    $paddlePlugins | Remove-Item -Force -Recurse -ErrorAction SilentlyContinue",
+        "    Write-Host \"INFO  Updating bundled plugins to $plugins_dir...\" -ForegroundColor darkgray",
+        "    Copy-Item -Path \"$original_plugins_dir\\*\" -Destination \"$plugins_dir\" -Force -Recurse",
+        "    Remove-Item \"$original_plugins_dir\" -Force -Recurse | Out-Null",
+        "}"
+    ],
+    "bin": "Umi-OCR.exe",
     "shortcuts": [
         [
             "Umi-OCR.exe",
             "Umi-OCR"
         ]
     ],
-    "checkver": {
-        "url": "https://github.com/hiroi-sora/Umi-OCR/releases/",
-        "regex": "release/([\\d\\w.]+)"
-    },
+    "persist": [
+        [
+            "UmiOCR-data\\logs",
+            "data\\logs"
+        ],
+        [
+            "UmiOCR-data\\plugins",
+            "data\\plugins"
+        ]
+    ],
+    "pre_uninstall": [
+        "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
+        "'.settings', '.pre_settings' | ForEach-Object {",
+        "    if (Test-Path \"$dir\\UmiOCR-data\\$_\") {",
+        "        Copy-Item \"$dir\\UmiOCR-data\\$_\" \"$persist_dir\\data\\$_\" -Force",
+        "    }",
+        "}"
+    ],
+    "checkver": "github",
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/hiroi-sora/Umi-OCR/releases/download/release/$version/Umi-OCR_Paddle_v$version.7z.exe",
+                "url": "https://github.com/hiroi-sora/Umi-OCR/releases/download/v$version/Umi-OCR_Paddle_v$version.7z.exe#/dl.7z",
                 "extract_dir": "Umi-OCR_Paddle_v$version"
             }
+        },
+        "hash": {
+            "url": "https://github.com/hiroi-sora/Umi-OCR/releases/tag/v$version",
+            "find": "(?sm)Umi-OCR_Paddle.*?SHA256:.*?$sha256"
         }
     }
 }

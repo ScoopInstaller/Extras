@@ -1,5 +1,5 @@
 {
-    "version": "2.0.11",
+    "version": "2.0.19",
     "description": "The ultimate automation scripting language for Windows.",
     "homepage": "https://www.autohotkey.com/",
     "license": "GPL-2.0-or-later",
@@ -10,8 +10,8 @@
         "  - 'autohotkey /script \"$dir\\UX\\ui-uninstall.ahk\"'",
         "See also: https://github.com/ScoopInstaller/Extras/issues/10066"
     ],
-    "url": "https://github.com/AutoHotkey/AutoHotkey/releases/download/v2.0.11/AutoHotkey_2.0.11.zip",
-    "hash": "8e596f227367e273468b5833ab4169b6994bbfc5c1a2a3b85796a769f9444836",
+    "url": "https://github.com/AutoHotkey/AutoHotkey/releases/download/v2.0.19/AutoHotkey_2.0.19.zip",
+    "hash": "4e0d0e65655066a646a210951320feaef0729a3597177131adaec4066bef5869",
     "extract_to": "installer",
     "installer": {
         "script": [
@@ -55,8 +55,9 @@
         "# Persistence",
         "ensure \"$persist_dir\" | Out-Null",
         "ensure \"$persist_dir\\installed-files\" | Out-Null",
+        "$old_version = Select-CurrentVersion -AppName $app -Global:$global",
         "if (Test-Path \"$dir\\UX\\installed-files.csv\") {",
-        "    $csv = Import-Csv \"$dir\\UX\\installed-files.csv\" | Where-Object 'Version' -ne $version",
+        "    $csv = Import-Csv \"$dir\\UX\\installed-files.csv\" | Where-Object 'Version' -ne $old_version",
         "    if ($csv) {",
         "        $export = @()",
         "        $dirs = @()",
@@ -66,7 +67,7 @@
         "            if (!($dirs.Contains($current)) -and ($_.'Path' -notlike '*.lnk')) { $dirs += $current }",
         "        }",
         "        $export | Out-File \"$persist_dir\\installed-files.csv\" -Encoding ASCII",
-        "        $dirs | ForEach-Object { Copy-Item \"$dir\\$_\" \"$persist_dir\\installed-files\" -Recurse }",
+        "        $dirs | ForEach-Object { Copy-Item \"$dir\\$_\" \"$persist_dir\\installed-files\" -Recurse -ErrorAction SilentlyContinue }",
         "    }",
         "}"
     ],
@@ -74,13 +75,13 @@
         "script": "Start-Process \"$dir\\UX\\AutoHotkeyUX.exe\" -ArgumentList @('/script', \"`\"$dir\\UX\\install.ahk`\"\", '/uninstall', '/silent') -Wait"
     },
     "checkver": {
-        "url": "https://www.autohotkey.com/download/2.0/version.txt",
-        "regex": "([\\d.]+)"
+        "github": "https://github.com/AutoHotkey/AutoHotkey"
     },
     "autoupdate": {
         "url": "https://github.com/AutoHotkey/AutoHotkey/releases/download/v$version/AutoHotkey_$version.zip",
         "hash": {
-            "url": "https://www.autohotkey.com/download/$majorVersion.$minorVersion/AutoHotkey_$version.zip.sha256"
+            "url": "https://github.com/AutoHotkey/AutoHotkey/releases/tag/v$version",
+            "regex": "$sha256</code>[\\s]+AutoHotkey_$version\\.zip"
         }
     }
 }

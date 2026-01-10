@@ -1,5 +1,5 @@
 {
-    "version": "1.85.2",
+    "version": "1.108.0",
     "description": "Lightweight but powerful source code editor",
     "homepage": "https://code.visualstudio.com/",
     "license": {
@@ -8,18 +8,20 @@
     },
     "notes": [
         "Add Visual Studio Code as a context menu option by running:",
-        "'reg import \"$dir\\install-context.reg\"'",
+        "reg import \"$dir\\install-context.reg\"",
         "For file associations, run:",
-        "'reg import \"$dir\\install-associations.reg\"'"
+        "reg import \"$dir\\install-associations.reg\"",
+        "For github integration, run:",
+        "reg import \"$dir\\install-github-integration.reg\""
     ],
     "architecture": {
         "64bit": {
-            "url": "https://update.code.visualstudio.com/1.85.2/win32-x64-archive/stable#/dl.7z",
-            "hash": "a832fcc9b243d2fa0d21df6b19d6788da593c35ae8650c22dd0d8d8d8615b527"
+            "url": "https://update.code.visualstudio.com/1.108.0/win32-x64-archive/stable#/dl.7z",
+            "hash": "d386038cefc51e168ca26901c5076ea741090740aaae92e74b1db8603b4a0a3e"
         },
         "arm64": {
-            "url": "https://update.code.visualstudio.com/1.85.2/win32-arm64-archive/stable#/dl.7z",
-            "hash": "4d3f3e2f08be33f61fdb95a123e02e69ca96567a7a7faec530451aae5c5119bc"
+            "url": "https://update.code.visualstudio.com/1.108.0/win32-arm64-archive/stable#/dl.7z",
+            "hash": "0589afbfe3e29260ea1ad468586874daff5d100da9d71c289c36f218ede1ede6"
         }
     },
     "env_add_path": "bin",
@@ -32,7 +34,7 @@
     "post_install": [
         "$dirpath = \"$dir\".Replace('\\', '\\\\')",
         "$exepath = \"$dir\\Code.exe\".Replace('\\', '\\\\')",
-        "'install-associations', 'uninstall-associations', 'install-context', 'uninstall-context' | ForEach-Object {",
+        "'install-associations', 'uninstall-associations', 'install-context', 'uninstall-context', 'install-github-integration', 'uninstall-github-integration' | ForEach-Object {",
         "  if (Test-Path \"$bucketsdir\\extras\\scripts\\vscode\\$_.reg\") {",
         "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\vscode\\$_.reg\"",
         "    $content = $content.Replace('$codedir', $dirpath)",
@@ -58,27 +60,33 @@
         "}"
     ],
     "uninstaller": {
-        "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }"
+        "script": [
+            "if ($cmd -eq 'uninstall')",
+            "{",
+            "   reg import \"$dir\\uninstall-context.reg\" ",
+            "   reg import \"$dir\\uninstall-github-integration.reg\" ",
+            "}"
+        ]
     },
     "persist": "data",
     "checkver": {
-        "url": "https://code.visualstudio.com/sha?build=stable",
-        "jsonpath": "$.products[?(@.platform.os == 'win32-x64-archive')].name"
+        "url": "https://update.code.visualstudio.com/api/update/win32-x64-archive/stable/latest",
+        "jsonpath": "$.name"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
                 "url": "https://update.code.visualstudio.com/$version/win32-x64-archive/stable#/dl.7z",
                 "hash": {
-                    "url": "https://code.visualstudio.com/sha?build=stable",
-                    "jsonpath": "$.products[?(@.platform.os == 'win32-x64-archive')].sha256hash"
+                    "url": "https://update.code.visualstudio.com/api/versions/$version/win32-x64-archive/stable",
+                    "jsonpath": "$.sha256hash"
                 }
             },
             "arm64": {
                 "url": "https://update.code.visualstudio.com/$version/win32-arm64-archive/stable#/dl.7z",
                 "hash": {
-                    "url": "https://code.visualstudio.com/sha?build=stable",
-                    "jsonpath": "$.products[?(@.platform.os == 'win32-arm64-archive')].sha256hash"
+                    "url": "https://update.code.visualstudio.com/api/versions/$version/win32-arm64-archive/stable",
+                    "jsonpath": "$.sha256hash"
                 }
             }
         }

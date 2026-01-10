@@ -7,8 +7,7 @@
     "hash": "5bbab96d60704854efd8246a7d9371688b9102261544827fc8884126d70bcb3b",
     "pre_install": [
         "if (!(Test-Path \"$persist_dir\\Config\\Config.ini\")) {",
-        "    ensure \"$dir\\Config\" | Out-Null",
-        "    New-Item \"$dir\\Config\\Config.ini\" | Out-Null",
+        "    New-Item -Path \"$dir\\Config\\Config.ini\" -ItemType File -Force | Out-Null",
         "}"
     ],
     "architecture": {
@@ -41,13 +40,31 @@
                     "DISM++"
                 ]
             ]
+        },
+        "arm64": {
+            "bin": [
+                "DISM++ARM64.exe",
+                [
+                    "DISM++ARM64.exe",
+                    "DISM++"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "DISM++ARM64.exe",
+                    "DISM++"
+                ]
+            ]
         }
     },
-    "persist": "Config\\Config.ini",
+    "persist": [
+        "ActiveBackup",
+        "Config\\Config.ini"
+    ],
     "checkver": {
         "url": "https://api.github.com/repositories/74809720/releases/latest",
         "jsonpath": "$.assets[0].browser_download_url",
-        "regex": "v(?<tag>[\\d.]+)/Dism%2B%2B(?<version>[\\d.]+[a-z]?)\\.zip"
+        "regex": "v(?<tag>[\\d.]+)/Dism%2B%2B(?<version>[\\d.]+[\\w]?)\\.zip"
     },
     "autoupdate": {
         "url": "https://github.com/Chuyu-Team/Dism-Multi-language/releases/download/v$matchTag/Dism++$version.zip"

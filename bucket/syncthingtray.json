@@ -1,5 +1,5 @@
 {
-    "version": "1.4.12",
+    "version": "2.0.6",
     "description": "Tray application for Syncthing",
     "homepage": "https://github.com/Martchus/syncthingtray",
     "license": {
@@ -8,17 +8,32 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/Martchus/syncthingtray/releases/download/v1.4.12/syncthingtray-1.4.12-x86_64-w64-mingw32.exe.zip",
-            "hash": "d2fa1892a8810be9e249bf1a31347ebc15b010d23b9e246c72b7e243d252ae61"
+            "url": "https://github.com/Martchus/syncthingtray/releases/download/v2.0.6/syncthingtray-2.0.6-x86_64-w64-mingw32.exe.zip",
+            "hash": "22907bad29c29441dc6213c232dc75f5c379eb8fbf9dea21cb97f8faee03ed11"
         },
         "32bit": {
-            "url": "https://github.com/Martchus/syncthingtray/releases/download/v1.4.12/syncthingtray-1.4.12-i686-w64-mingw32.exe.zip",
-            "hash": "7e97625d8e11747f80cb39d7e321117cdd5bd254f5bb3925b0334ddd2fc898ca"
+            "url": "https://github.com/Martchus/syncthingtray/releases/download/v2.0.6/syncthingtray-qt5-2.0.6-i686-w64-mingw32.exe.zip",
+            "hash": "5a85e56e4bdc3926607f6649668099120c2f6bf26be6893ca01f499f39c3c028"
+        },
+        "arm64": {
+            "url": "https://github.com/Martchus/syncthingtray/releases/download/v2.0.6/syncthingtray-2.0.6-aarch64-w64-mingw32.exe.zip",
+            "hash": "ded118ae59662b662b646b27e889d6f09d1bf198d5febb89db8cf9fc62d7f150"
         }
     },
     "pre_install": [
         "Move-Item \"$dir\\syncthingtray-*-mingw32.exe\" \"$dir\\syncthingtray.exe\"",
         "Move-Item \"$dir\\syncthingtray-*-mingw32-cli.exe\" \"$dir\\syncthingtray-cli.exe\""
+    ],
+    "##": "syncthingtray.ini will recreate by syncthingtray.exe",
+    "post_install": [
+        "$config = \"syncthingtray.ini\"",
+        "ensure $persist_dir",
+        "if (!(Test-Path \"$persist_dir\\$config\")) { New-Item \"$persist_dir\\$config\" -ItemType File | Out-Null }",
+        "move-item \"$persist_dir\\$config\" \"$dir\""
+    ],
+    "pre_uninstall": [
+        "ensure $persist_dir",
+        "move-item \"$dir\\syncthingtray.ini\" \"$persist_dir\""
     ],
     "bin": "syncthingtray-cli.exe",
     "shortcuts": [
@@ -34,7 +49,10 @@
                 "url": "https://github.com/Martchus/syncthingtray/releases/download/v$version/syncthingtray-$version-x86_64-w64-mingw32.exe.zip"
             },
             "32bit": {
-                "url": "https://github.com/Martchus/syncthingtray/releases/download/v$version/syncthingtray-$version-i686-w64-mingw32.exe.zip"
+                "url": "https://github.com/Martchus/syncthingtray/releases/download/v$version/syncthingtray-qt5-$version-i686-w64-mingw32.exe.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/Martchus/syncthingtray/releases/download/v$version/syncthingtray-$version-aarch64-w64-mingw32.exe.zip"
             }
         }
     }

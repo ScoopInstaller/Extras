@@ -1,13 +1,13 @@
 {
-    "version": "23.08.4-1598",
+    "version": "25.12-1971",
     "description": "Disk usage visualizer",
     "homepage": "https://apps.kde.org/filelight",
     "license": "GPL-2.0-or-later",
     "notes": "If you want to get the latest development branch-based installer, please install `filelight-nightly` from Versions bucket.",
     "architecture": {
         "64bit": {
-            "url": "https://binary-factory.kde.org/job/Filelight_Release_win64/1598/artifact/filelight-23.08.4-1598-windows-cl-msvc2019-x86_64.7z",
-            "hash": "4e01fb53cd6debbe6db9c6925770d02fd6df634c1f13796bc67a5a015c621e20"
+            "url": "https://cdn.kde.org/ci-builds/utilities/filelight/release-25.12/windows/filelight-release_25.12-1971-windows-cl-msvc2022-x86_64.7z",
+            "hash": "27c6140d897941fed9d8fda397984a76535c41dda3622df050e634a7f6899890"
         }
     },
     "bin": "bin\\filelight.exe",
@@ -18,13 +18,28 @@
         ]
     ],
     "checkver": {
-        "url": "https://binary-factory.kde.org/job/Filelight_Release_win64/",
-        "regex": "filelight-([\\d.-]+)-windows-cl-(?<lib>\\w+)-x86_64\\.7z"
+        "script": [
+            "$url = 'https://cdn.kde.org/ci-builds/utilities/filelight/?C=N;O=D'",
+            "",
+            "$cont = (Invoke-WebRequest $url).Content",
+            "$regex = 'release-([\\d.]+)'",
+            "if (!($cont -match $regex)) { error \"Could not match $regex in $url\"; continue }",
+            "$ver = $matches[1]",
+            "",
+            "$nextUrl = \"https://cdn.kde.org/ci-builds/utilities/filelight/release-$ver/windows/\"",
+            "$nextCont = (Invoke-WebRequest $nextUrl).Content",
+            "$nextRegex = \"filelight-release_$ver-([\\d]+)-windows-cl-([\\w]+)-x86_64\\.7z\"",
+            "if (!($nextCont -match $nextRegex)) { error \"Could not match $nextRegex in $nextUrl\"; continue }",
+            "$build = $matches[1]",
+            "$lib = $matches[2]",
+            "Write-Output $ver-$build $lib"
+        ],
+        "regex": "([\\d.-]+) (?<lib>[\\w]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://binary-factory.kde.org/job/Filelight_Release_win64/$preReleaseVersion/artifact/filelight-$version-windows-cl-$matchLib-x86_64.7z",
+                "url": "https://cdn.kde.org/ci-builds/utilities/filelight/release-$matchHead/windows/filelight-release_$version-windows-cl-$matchLib-x86_64.7z",
                 "hash": {
                     "url": "$url.sha256"
                 }

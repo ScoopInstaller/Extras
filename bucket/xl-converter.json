@@ -1,0 +1,43 @@
+{
+    "version": "1.2.3",
+    "description": "Easy-to-use image converter for modern formats. Supports fast parallel encoding, lossless JPEG transcoding, JPEG XL, AVIF, JPEGLI, ExifTool, and more.",
+    "homepage": "https://codepoems.eu/xl-converter",
+    "license": "GPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/JacobDev1/xl-converter/releases/download/v1.2.3/xl-converter-win-1.2.3-x86_64-portable.7z",
+            "hash": "a3be46d277b87ef56f10b151cd530077e81b47620d84c5f9edbde1b1015c6b47",
+            "extract_dir": "xl-converter-win-1.2.3-x86_64-portable"
+        }
+    },
+    "bin": "xl-converter.exe",
+    "shortcuts": [
+        [
+            "xl-converter.exe",
+            "XL Converter"
+        ]
+    ],
+    "post_uninstall": [
+        "if ($purge) {",
+        "    $Directories = [string[]](",
+        "        ('{0}\\xl-converter' -f $env:LOCALAPPDATA)",
+        "    )",
+        "    $Directories.ForEach{",
+        "        if ([System.IO.Directory]::Exists($_)) {",
+        "            $null = [System.IO.Directory]::Delete($_,$true)",
+        "        }",
+        "    }",
+        "}"
+    ],
+    "checkver": {
+        "github": "https://github.com/JacobDev1/xl-converter"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/JacobDev1/xl-converter/releases/download/v$version/xl-converter-win-$version-x86_64-portable.7z",
+                "extract_dir": "xl-converter-win-$version-x86_64-portable"
+            }
+        }
+    }
+}

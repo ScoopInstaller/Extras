@@ -1,17 +1,20 @@
 {
-    "version": "0.4.7",
+    "version": "0.4.10",
     "description": "Cloud music player based on NetEase Player, featuring more elegant UI",
-    "homepage": "https://music.qier222.com/",
-    "license": "MIT",
+    "homepage": "https://music.qier222.com",
+    "license": {
+        "identifier": "MIT",
+        "url": "https://github.com/qier222/YesPlayMusic/blob/master/LICENSE"
+    },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/qier222/YesPlayMusic/releases/download/v0.4.7/YesPlayMusic-0.4.7.exe#/dl.7z",
-            "hash": "f18b0aa4c252f15c05cbf6dbb54707b149ffb7a06c960d538d89112d94932e4c"
+            "url": "https://github.com/qier222/YesPlayMusic/releases/download/v0.4.10/YesPlayMusic-Setup-0.4.10.exe#/dl.7z",
+            "hash": "sha512:d7dfbf49275475742b861e5da04b79cc82687dcc7c6221d7a8261f54d2c878a36d9f74f9793ef923091f6f70dbb38358cfdb13cac0c08b64712f33359de6a5e4"
         }
     },
     "pre_install": [
-        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\" | Out-Null",
-        "Remove-Item \"$dir\\`$PLUGINSDIR\" -Force -Recurse"
+        "Expand-7zipArchive -Path \"$dir\\`$PLUGINSDIR\\app-64.7z\" -DestinationPath \"$dir\"",
+        "Remove-Item -Path \"$dir\\`$*\" -Recurse -Force -ErrorAction SilentlyContinue"
     ],
     "shortcuts": [
         [
@@ -20,13 +23,19 @@
         ]
     ],
     "checkver": {
-        "github": "https://github.com/qier222/YesPlayMusic"
+        "url": "https://api.github.com/repositories/302603001/releases/latest",
+        "jsonpath": "$.assets[?(@.name =~ /Setup.+exe/i)].browser_download_url",
+        "regex": "download/v([\\d.-]+)/(?<name>[^\"]+)(?=\")"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/qier222/YesPlayMusic/releases/download/v$version/YesPlayMusic-$version.exe#/dl.7z"
+                "url": "https://github.com/qier222/YesPlayMusic/releases/download/v$version/$matchName#/dl.7z"
             }
+        },
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512:\\s+$base64"
         }
     }
 }

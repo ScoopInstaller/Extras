@@ -1,44 +1,50 @@
 {
-    "version": "119.0.6045.214",
+    "version": "138.0.7204.300",
     "description": "Chromium fork for Linux, Windows, MacOS, Android, and Raspberry Pi named after radioactive element No. 90.",
     "homepage": "https://thorium.rocks/",
     "license": {
         "identifier": "BSD 3-Clause",
         "url": "https://github.com/Alex313031/Thorium-Win/blob/main/LICENSE"
     },
-    "url": "https://github.com/Alex313031/Thorium-Win/releases/download/M119.0.6045.214/Thorium_119.0.6045.214.zip",
-    "hash": "0af9e4391dd67948732ffc1d8b8e194003163b757d7c84ae7191d814548dddac",
-    "extract_dir": "Thorium_119.0.6045.214",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Alex313031/Thorium-Win/releases/download/M138.0.7204.300/Thorium_SSE3_138.0.7204.300.zip",
+            "hash": "14a10ee825c0bb1bbc08e8a3083b2b196dbdfe5fb96fa14a186a0c5f509a4fa4"
+        }
+    },
     "bin": [
         [
-            "thorium.exe",
+            "bin\\thorium.exe",
             "thorium",
-            "--user-data-dir=\"$dir\\User Data\""
+            "--user-data-dir=\"$dir\\USER_DATA\""
         ]
     ],
     "shortcuts": [
         [
-            "thorium.exe",
+            "bin\\thorium.exe",
             "Thorium",
-            "--user-data-dir=\"$dir\\User Data\""
+            "--user-data-dir=\"$dir\\USER_DATA\""
         ]
     ],
     "post_install": [
-        "if (!(Test-Path \"$dir\\User Data\\*\") -and (Test-Path \"$env:LocalAppData\\Thorium\\User Data\")) {",
+        "if (!(Test-Path \"$dir\\USER_DATA\\*\") -and (Test-Path \"$env:LocalAppData\\Thorium\\User Data\")) {",
         "    info '[Portable Mode]: Copying user data...'",
-        "    Copy-Item \"$env:LocalAppData\\Thorium\\User Data\\*\" \"$dir\\User Data\" -Recurse",
+        "    Copy-Item \"$env:LocalAppData\\Thorium\\User Data\\*\" \"$dir\\USER_DATA\" -Recurse",
         "}"
     ],
     "env_set": {
-        "CHROME_EXECUTABLE": "$dir\\thorium.exe"
+        "CHROME_EXECUTABLE": "$dir\\bin\\thorium.exe"
     },
-    "persist": "User Data",
+    "persist": "USER_DATA",
     "checkver": {
-        "github": "https://github.com/Alex313031/Thorium-Win",
-        "regex": "/releases/tag/M(?:v|V)?([\\d.]+)"
+        "url": "https://api.github.com/repositories/424006400/releases",
+        "regex": "/releases/tag/M(?<version>(?:\\d+\\.){3}\\d+)"
     },
     "autoupdate": {
-        "url": "https://github.com/Alex313031/Thorium-Win/releases/download/M$version/Thorium_$version.zip",
-        "extract_dir": "Thorium_$version"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Alex313031/Thorium-Win/releases/download/M$version/Thorium_SSE3_$version.zip"
+            }
+        }
     }
 }

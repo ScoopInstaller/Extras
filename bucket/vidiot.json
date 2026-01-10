@@ -1,20 +1,23 @@
 {
-    "version": "0.3.37",
+    "version": "2.1.0",
     "description": "A non-linear video editor targeted for home video editing.",
     "homepage": "https://sourceforge.net/projects/vidiot",
     "license": "GPL-3.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://downloads.sourceforge.net/project/vidiot/Vidiot-0.3.37-win64.zip",
-            "hash": "8f015a725db0ba36e8c102c62ef2e158729a08ded70e8960f820fb1a41f589f0",
-            "extract_dir": "Vidiot-0.3.37-win64"
-        },
-        "32bit": {
-            "url": "https://downloads.sourceforge.net/project/vidiot/Vidiot-0.3.37-win32.zip",
-            "hash": "e82ec32ee141414f2c1d72334440b5f10cb8000236674a87642baf5819aa0660",
-            "extract_dir": "Vidiot-0.3.37-win32"
+            "url": "https://downloads.sourceforge.net/project/vidiot/Vidiot-2.1.0-win64.zip",
+            "hash": "sha1:36dc2ca47814417026a4474b90132c02b5752002",
+            "extract_dir": "Vidiot-2.1.0-win64"
         }
     },
+    "pre_install": "if (Test-Path \"$persist_dir\\vidiot.ini\") { Copy-Item \"$persist_dir\\vidiot.ini\" \"$dir\" }",
+    "pre_uninstall": [
+        "# Manually persist vidiot.ini",
+        "if (Test-Path \"$dir\\vidiot.ini\") {",
+        "    ensure \"$persist_dir\" | Out-Null",
+        "    Copy-Item \"$dir\\vidiot.ini\" \"$persist_dir\" -ErrorAction 'SilentlyContinue' -Force",
+        "}"
+    ],
     "bin": "vidiot.exe",
     "shortcuts": [
         [
@@ -23,18 +26,14 @@
         ]
     ],
     "checkver": {
-        "url": "https://sourceforge.net/projects/vidiot/files/",
-        "regex": "Release\\s+([\\d.]+)\\s+\\(r"
+        "sourceforge": "vidiot",
+        "regex": "Vidiot-([\\d.]+)-win64\\.zip"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
                 "url": "https://downloads.sourceforge.net/project/vidiot/Vidiot-$version-win64.zip",
                 "extract_dir": "Vidiot-$version-win64"
-            },
-            "32bit": {
-                "url": "https://downloads.sourceforge.net/project/vidiot/Vidiot-$version-win32.zip",
-                "extract_dir": "Vidiot-$version-win32"
             }
         }
     }

@@ -1,34 +1,36 @@
 {
-    "version": "2.10.0",
-    "homepage": "https://labplot.kde.org/",
+    "version": "2.12.1",
     "description": "A free, open source, and cross-platform Data Visualization and Analysis software accessible to everyone.",
+    "homepage": "https://labplot.org/",
     "license": "GPL-2.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://download.kde.org/stable/labplot/labplot-2.10.0.exe#/dl.7z",
-            "hash": "f48efcebd8d9fca59153e0ae08dade8708435f60f3e6233d5ef000e97ad6712c"
+            "url": "https://download.kde.org/stable/labplot/labplot-2.12.1-x86_64-setup.exe#/dl.7z",
+            "hash": "122f03b8939571e3951982376c4a7b11b6080eb8770ec35fdc4257215a4981a8"
         }
     },
-    "extract_to": "_EXTRACTED",
     "pre_install": [
-        "Expand-7zipArchive (Get-ChildItem \"$dir\\_EXTRACTED\\labplot-*.7z\").FullName \"$dir\"",
-        "Remove-Item \"$dir\\_EXTRACTED\" -Force -Recurse"
+        "Expand-7zipArchive \"$dir\\labplot*.7z\" -Removal",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\uninst*\", \"$dir\\7za.exe\" -Recurse"
     ],
     "shortcuts": [
         [
-            "bin\\labplot2.exe",
+            "bin\\labplot.exe",
             "LabPlot2"
         ]
     ],
     "checkver": {
-        "url": "https://download.kde.org/stable/labplot/",
-        "regex": "labplot-([\\d.]+)\\.exe"
+        "url": "https://download.kde.org/stable/labplot/?C=M;O=D",
+        "regex": "labplot-([\\d.]+)-(64bit|x86_64)-setup\\.exe"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.kde.org/stable/labplot/labplot-$version.exe#/dl.7z"
+                "url": "https://download.kde.org/stable/labplot/labplot-$version-x86_64-setup.exe#/dl.7z"
             }
+        },
+        "hash": {
+            "url": "$url.sha256"
         }
     }
 }

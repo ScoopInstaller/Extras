@@ -1,14 +1,32 @@
 {
-    "version": "5.30.2533",
+    "version": "5.40.2703",
     "description": "Audio player",
-    "homepage": "http://www.aimp.ru",
+    "homepage": "https://www.aimp.ru",
     "license": {
         "identifier": "Freeware",
-        "url": "http://www.aimp.ru/files/windows/EULA_lang-en.txt"
+        "url": "https://www.aimp.ru/?do=eula&os=windows"
     },
-    "url": "http://www.aimp.ru/?do=download.file&id=8#/dl.zip",
-    "hash": "4337eea3e3dbcc5b61309dce04f65d9231b4a5cd18ae4733854292328ba28d07",
+    "architecture": {
+        "64bit": {
+            "url": "https://www.aimp.ru/?do=download.file&id=31#/dl.zip",
+            "hash": "6908adcbeea4000b0219f86b783e9527598af5ea05f28da6e88af2b79fdc8e99"
+        },
+        "32bit": {
+            "url": "https://www.aimp.ru/?do=download.file&id=8#/dl.zip",
+            "hash": "50381afdc4c7b5bf7af0e2a82299e4444650ade91f06d2907b80a0246eaa8d05"
+        }
+    },
     "extract_dir": "AIMP",
+    "post_install": [
+        "'Icons', 'Skins', 'Plugins' | ForEach-Object {",
+        "    $source_dir = Join-Path $dir \"$_.original\"",
+        "    $destination_dir = Join-Path $dir $_",
+        "    if (Test-Path \"$source_dir\") {",
+        "        Copy-Item -Path \"$source_dir\\*\" -Destination $destination_dir -Force -Recurse",
+        "        Remove-Item -Path $source_dir -Recurse -Force -ErrorAction SilentlyContinue",
+        "    }",
+        "}"
+    ],
     "bin": [
         "AIMP.exe",
         "AIMPac.exe",
@@ -29,16 +47,31 @@
         ]
     ],
     "persist": [
-        "Profile",
-        "Plugins",
+        "Icons",
         "Skins",
-        "Icons"
+        "Plugins",
+        "Profile"
     ],
     "checkver": {
-        "url": "http://aimp.su/update.php?id=1234&b=2169&p=aimp&lng=english&u=1",
-        "regex": "aimp_([\\d.]+)"
+        "url": "https://www.aimp.ru/?do=download&os=windows",
+        "regex": ">AIMP v([\\d.]+)<"
     },
     "autoupdate": {
-        "url": "http://www.aimp.ru/?do=download.file&id=8#/dl.zip"
+        "architecture": {
+            "64bit": {
+                "url": "https://www.aimp.ru/?do=download.file&id=31#/dl.zip",
+                "hash": {
+                    "url": "https://www.aimp.ru/?do=download&os=windows",
+                    "regex": "(?sm)64-bit \\(No Installer\\).*?SHA256: $sha256"
+                }
+            },
+            "32bit": {
+                "url": "https://www.aimp.ru/?do=download.file&id=8#/dl.zip",
+                "hash": {
+                    "url": "https://www.aimp.ru/?do=download&os=windows",
+                    "regex": "(?sm)32-bit \\(No Installer\\).*?SHA256: $sha256"
+                }
+            }
+        }
     }
 }

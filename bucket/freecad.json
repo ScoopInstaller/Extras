@@ -1,35 +1,35 @@
 {
-    "version": "0.20.2-2",
+    "version": "1.0.2",
     "description": "A free and open-source multi-platform parametric 3D modeler.",
     "homepage": "https://www.freecadweb.org",
     "license": "LGPL-2.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/FreeCAD/FreeCAD/releases/download/0.20.2/FreeCAD-0.20.2-WIN-x64-portable-2.zip",
-            "hash": "d8af7454f43f1753fd6141fd2172aa9bc7513b4b9cbbac4cd7cee0567a1bca7f"
+            "url": "https://github.com/FreeCAD/FreeCAD/releases/download/1.0.2/FreeCAD_1.0.2-conda-Windows-x86_64-py311.7z",
+            "hash": "e89afe0433063c7f2484326b8b9a64e3027dc29d145ddb438a44046c960827a6"
         }
     },
-    "bin": "FreeCAD-portable\\bin\\FreeCADCmd.exe",
+    "pre_install": "pushd $dir ; mv */* . ; rm FreeCAD_* ; popd",
+    "bin": "bin\\FreeCADCmd.exe",
     "shortcuts": [
         [
-            "FreeCAD-portable\\bin\\FreeCAD.exe",
+            "bin\\FreeCAD.exe",
             "FreeCAD"
         ]
     ],
     "checkver": {
         "url": "https://api.github.com/repositories/5736080/releases",
-        "regex": "FreeCAD-([\\d.]+)-WIN-x64-portable((-\\d+)?)\\.zip",
-        "replace": "${1}${2}"
+        "regex": "FreeCAD_([\\d.]+)-conda-Windows-x86_64-(?<suffix>[\\w.-]+)\\.7z"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/FreeCAD/FreeCAD/releases/download/$matchHead/FreeCAD-$matchHead-WIN-x64-portable$matchTail.zip"
+                "url": "https://github.com/FreeCAD/FreeCAD/releases/download/$matchHead/FreeCAD_$version-conda-Windows-x86_64-$matchSuffix.7z"
             }
         },
         "hash": {
             "url": "$url-SHA256.txt",
-            "regex": "SHA256: $sha256"
+            "regex": "(?sm)$basename.*?$sha256"
         }
     }
 }

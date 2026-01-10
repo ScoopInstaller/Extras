@@ -1,13 +1,13 @@
 {
-    "version": "23.08.4-1646",
+    "version": "25.12-7068",
     "description": "Universal document viewer",
     "homepage": "https://okular.kde.org",
     "license": "LGPL-2.0-only",
     "notes": "If you want to get the latest development branch-based installer, please install `okular-nightly` from Versions bucket.",
     "architecture": {
         "64bit": {
-            "url": "https://binary-factory.kde.org/job/Okular_Release_win64/1646/artifact/okular-23.08.4-1646-windows-cl-msvc2019-x86_64.7z",
-            "hash": "232cfaa55e21bad2f10d8c867f093bf140302846abbb8ce9945cdb90e6f1071b"
+            "url": "https://cdn.kde.org/ci-builds/graphics/okular/release-25.12/windows/okular-release_25.12-7068-windows-cl-msvc2022-x86_64.7z",
+            "hash": "1416e7db9e8833fa5c13a45a84a4332e06bec61be991678e71fc2b198236476e"
         }
     },
     "bin": "bin\\okular.exe",
@@ -18,13 +18,28 @@
         ]
     ],
     "checkver": {
-        "url": "https://binary-factory.kde.org/job/Okular_Release_win64/",
-        "regex": "okular-([\\d.-]+)-windows-cl-(?<lib>\\w+)-x86_64\\.7z"
+        "script": [
+            "$url = 'https://cdn.kde.org/ci-builds/graphics/okular/?C=N;O=D'",
+            "",
+            "$cont = (Invoke-WebRequest $url).Content",
+            "$regex = 'release-([\\d.]+)'",
+            "if (!($cont -match $regex)) { error \"Could not match $regex in $url\"; continue }",
+            "$ver = $matches[1]",
+            "",
+            "$nextUrl = \"https://cdn.kde.org/ci-builds/graphics/okular/release-$ver/windows/\"",
+            "$nextCont = (Invoke-WebRequest $nextUrl).Content",
+            "$nextRegex = \"okular-release_$ver-([\\d]+)-windows-cl-([\\w]+)-x86_64\\.7z\"",
+            "if (!($nextCont -match $nextRegex)) { error \"Could not match $nextRegex in $nextUrl\"; continue }",
+            "$build = $matches[1]",
+            "$lib = $matches[2]",
+            "Write-Output $ver-$build $lib"
+        ],
+        "regex": "([\\d.-]+) (?<lib>[\\w]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://binary-factory.kde.org/job/Okular_Release_win64/$preReleaseVersion/artifact/okular-$version-windows-cl-$matchLib-x86_64.7z",
+                "url": "https://cdn.kde.org/ci-builds/graphics/okular/release-$matchHead/windows/okular-release_$version-windows-cl-$matchLib-x86_64.7z",
                 "hash": {
                     "url": "$url.sha256"
                 }

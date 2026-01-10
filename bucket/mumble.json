@@ -1,19 +1,21 @@
 {
-    "version": "1.4.287",
+    "version": "1.5.857",
     "description": "Low-latency and high quality voice chat primarily intended for use while gaming.",
     "homepage": "https://www.mumble.info/",
     "license": "BSD-3-Clause",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/mumble-voip/mumble/releases/download/v1.4.287/mumble_client-1.4.287.x64.msi",
-            "hash": "bbd8d57fd450c98e08553518c523a07ddadf3cff503f70db561f4b53fdb1c292",
-            "extract_dir": "ProgramFiles64Folder\\Mumble\\client"
-        },
-        "32bit": {
-            "url": "https://github.com/mumble-voip/mumble/releases/download/v1.4.287/mumble_client-1.4.287.x86.msi",
-            "hash": "e1e020e12bb8cc55176b0cbeed6d7abfbe8a138eb69418360ac159a3b46c0262",
-            "extract_dir": "ProgramFilesFolder\\Mumble\\client"
+            "url": "https://github.com/mumble-voip/mumble/releases/download/v1.5.857/mumble_client-1.5.857.x64.exe",
+            "hash": "ae42369b95a9aa9cd6fde8fbee29b70503a25028ec4f14abcecab41f5e23fe06"
         }
+    },
+    "installer": {
+        "script": [
+            "Expand-DarkArchive \"$dir\\$fname\" \"$dir\\tmp\" -Removal",
+            "Expand-MsiArchive \"$dir\\tmp\\AttachedContainer\\mumble_client-$version-x64.msi\" \"$dir\\tmp\\msi\"",
+            "Move-Item \"$dir\\tmp\\msi\\ProgramFiles64Folder\\Mumble\\client\\*\" \"$dir\" -Force",
+            "Remove-Item \"$dir\\tmp\" -Recurse"
+        ]
     },
     "bin": "mumble.exe",
     "shortcuts": [
@@ -28,10 +30,7 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/mumble-voip/mumble/releases/download/v$version/mumble_client-$version.x64.msi"
-            },
-            "32bit": {
-                "url": "https://github.com/mumble-voip/mumble/releases/download/v$version/mumble_client-$version.x86.msi"
+                "url": "https://github.com/mumble-voip/mumble/releases/download/v$version/mumble_client-$version.x64.exe"
             }
         }
     }

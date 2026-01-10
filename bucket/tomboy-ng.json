@@ -1,0 +1,34 @@
+{
+    "version": "0.42",
+    "description": "Tomboy-ng is a desktop simple note-taking application for Windows and other platforms",
+    "homepage": "https://github.com/tomboy-notes/tomboy-ng",
+    "license": "BSD-3-Clause-Clear",
+    "url": "https://github.com/tomboy-notes/tomboy-ng/releases/download/v0.42/tomboy-ng-setup-0.42.exe",
+    "hash": "7f3a6e34d4b52c57674db1fa7a51811e19613f0a53ec339ba969a794555ac2c1",
+    "innosetup": true,
+    "architecture": {
+        "64bit": {
+            "pre_install": [
+                "Get-ChildItem \"$dir\" '*,2.*' | Rename-Item -NewName { $_.FullName -replace ',2\\.', '.' }",
+                "Remove-Item \"$dir\\*,1.*\""
+            ]
+        },
+        "32bit": {
+            "pre_install": [
+                "Get-ChildItem \"$dir\" '*,1.*' | Rename-Item -NewName { $_.FullName -replace ',1\\.', '.' }",
+                "Remove-Item \"$dir\\*,2.*\""
+            ]
+        }
+    },
+    "bin": "tomboy-ng.exe",
+    "shortcuts": [
+        [
+            "tomboy-ng.exe",
+            "TomBoy NG"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "url": "https://github.com/tomboy-notes/tomboy-ng/releases/download/v$version/tomboy-ng-setup-$version.exe"
+    }
+}

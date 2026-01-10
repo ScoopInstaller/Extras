@@ -1,5 +1,5 @@
 {
-    "version": "1.58.0",
+    "version": "1.92.5",
     "description": "Tailscale a WireGuard based mesh VPN, used to connect your computers and other devices together securely without proxies.",
     "homepage": "https://tailscale.com",
     "license": "BSD-3-Clause",
@@ -9,21 +9,24 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.58.0-amd64.msi",
-            "hash": "6864741b6da73f9e8b739a43874a7822b9c23158ebffab30eabe4bf1652692cf"
+            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.92.5-amd64.msi",
+            "hash": "7180fa0b6bdfc129445ded5762cfd71226fbf471ecae3c5e332ea2dc3cbb9d78",
+            "extract_dir": "PFiles64\\Tailscale"
         },
         "32bit": {
-            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.58.0-x86.msi",
-            "hash": "c246cf7669177dd2fdad4c9c6985bb92b27924518ff1b783ecfad62e9efe5a03"
+            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.92.5-x86.msi",
+            "hash": "dd91420d7874173bc053b87ceaaa188d121d6fc169a67c2dcdbeb1eb1a0e3581",
+            "extract_dir": "PFiles\\Tailscale"
         },
         "arm64": {
-            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.58.0-arm64.msi",
-            "hash": "297d42e83dd976ea39a75e331b8e4738c4778c647fa6e733e402123a02dc5e44"
+            "url": "https://pkgs.tailscale.com/stable/tailscale-setup-1.92.5-arm64.msi",
+            "hash": "a6ce57fb42aee96385468b487df5d8d49020ee4e8f7937f267f541a5a0e4af28",
+            "extract_dir": "PFiles64\\Tailscale"
         }
     },
     "pre_install": "if (!(is_admin)) {error 'This package requires admin rights to install'; break}",
     "post_install": [
-        "tailscale-ipn.exe /install",
+        "tailscaled.exe install-system-daemon",
         "$dirpath = $dir.Replace('\\', '\\\\')",
         "'add-startup.reg', 'remove-startup.reg' | ForEach-Object {",
         "    if (Test-Path \"$bucketsdir\\extras\\scripts\\$app\\$_\") {",
@@ -41,11 +44,10 @@
     ],
     "uninstaller": {
         "script": [
-            "tailscale-ipn.exe /uninstall",
+            "tailscaled.exe uninstall-system-daemon",
             "if ($cmd -eq 'uninstall') { reg import \"$dir\\remove-startup.reg\" }"
         ]
     },
-    "extract_dir": "Tailscale",
     "bin": [
         "tailscale.exe",
         "tailscale-ipn.exe",

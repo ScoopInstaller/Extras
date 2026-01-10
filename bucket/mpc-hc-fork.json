@@ -1,12 +1,12 @@
 {
-    "version": "2.1.4",
+    "version": "2.6.0",
     "description": "An extremely light-weight, open source media player for Windows.",
     "homepage": "https://github.com/clsid2/mpc-hc",
     "license": "GPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/clsid2/mpc-hc/releases/download/2.1.4/MPC-HC.2.1.4.x64.zip",
-            "hash": "a4e2be52de1de734612482121d3fe78b5fdac42a6fbc4614d96a4a363ef496d7",
+            "url": "https://github.com/clsid2/mpc-hc/releases/download/2.6.0/MPC-HC.2.6.0.x64.zip",
+            "hash": "98a625d65212816fc97d75727739430389c7d1e0d904fd1ed8524b894712f90c",
             "bin": [
                 [
                     "mpc-hc64.exe",
@@ -21,8 +21,8 @@
             ]
         },
         "32bit": {
-            "url": "https://github.com/clsid2/mpc-hc/releases/download/2.1.4/MPC-HC.2.1.4.x86.zip",
-            "hash": "f58fca2ebea74c907a5c075be1120443b803d547ac45a62d3558258742e5faab",
+            "url": "https://github.com/clsid2/mpc-hc/releases/download/2.6.0/MPC-HC.2.6.0.x86.zip",
+            "hash": "9102bbd867391449424426d2016765c21d2cca7acc29ce47abf4946cc0e5a183",
             "bin": "mpc-hc.exe",
             "shortcuts": [
                 [
@@ -33,7 +33,8 @@
         }
     },
     "pre_install": [
-        "@('mpc-hc64.ini', 'mpc-hc.ini') | ForEach-Object {",
+        "@('mpc-hc64.ini', 'mpc-hc.ini', 'default.mpcpl') | ForEach-Object {",
+        "    if ((Get-Item \"$persist_dir\\$_\" 2>$null).PSIsContainer) { Remove-Item \"$persist_dir\\$_\" }",
         "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" -ItemType File | Out-Null }",
         "}"
     ],
@@ -43,8 +44,9 @@
         "default.mpcpl"
     ],
     "checkver": {
-        "github": "https://github.com/clsid2/mpc-hc",
-        "regex": "(?<tag>[\\d.]+)\\/MPC-HC.([\\d.]+).x64.exe"
+        "url": "https://api.github.com/repositories/91570348/releases/latest",
+        "jsonpath": "$..browser_download_url",
+        "regex": "download/(?<tag>[\\d.]+)\\/MPC-HC.([\\d.]+).x64.exe"
     },
     "autoupdate": {
         "architecture": {

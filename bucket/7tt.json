@@ -1,19 +1,19 @@
 {
-    "version": "5.15.1",
+    "version": "5.15.4",
     "description": "Allows you to configure various aspects of the Windows taskbar.",
     "homepage": "https://rammichael.com/7-taskbar-tweaker",
     "license": "Unknown",
-    "url": "https://rammichael.com/downloads/7tt_setup.exe",
-    "hash": "4d2c3cdcbaf151852ed35b77400411aa7e97f24cb87874e3d581b2baa9dcc634",
+    "url": "https://rammichael.com/downloads/7tt_setup.exe#/dl.7z",
+    "hash": "86e361f13f5394724a984e19e2534682de9575a021ebd1f1683455e8a37b57fc",
     "bin": "7+ Taskbar Tweaker.exe",
-    "pre_install": "if(!(test-path \"$persist_dir\\7+ Taskbar Tweaker.ini\")) { Add-Content \"$dir\\7+ Taskbar Tweaker.ini\" \"[Config]`r`nupdcheckauto=0`r`nupdcheck=0\" }",
-    "installer": {
-        "args": [
-            "/portable",
-            "/S",
-            "/D=$dir"
-        ]
-    },
+    "pre_install": [
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\inject.dll\", \"$dir\\uninstall.exe\" -ErrorAction SilentlyContinue -Recurse -Force",
+        "if (!(Test-Path \"$persist_dir\\7+ Taskbar Tweaker.ini\")) {",
+        "  Add-Content \"$dir\\7+ Taskbar Tweaker.ini\" \"[Config]`r`nupdcheckauto=0`r`nupdcheck=0\"",
+        "}"
+    ],
+    "post_install": "$null = New-ItemProperty -Path \"HK$(if ($global) { 'LM' } else { 'CU' }):/SOFTWARE/Microsoft/Windows/CurrentVersion/Run\" -Name '7 Taskbar Tweaker' -Value \"$([char][byte]34)$dir\\7+ Taskbar Tweaker.exe$([char][byte]34) -hidewnd\" -PropertyType String -Force",
+    "pre_uninstall": "Remove-ItemProperty \"HK$(if ($global) { 'LM' } else { 'CU' }):/SOFTWARE/Microsoft/Windows/CurrentVersion/Run\" '7 Taskbar Tweaker'",
     "persist": "7+ Taskbar Tweaker.ini",
     "shortcuts": [
         [
@@ -23,6 +23,6 @@
     ],
     "checkver": "Latest version: v([\\d.]+)",
     "autoupdate": {
-        "url": "https://rammichael.com/downloads/7tt_setup.exe"
+        "url": "https://rammichael.com/downloads/7tt_setup.exe#/dl.7z"
     }
 }

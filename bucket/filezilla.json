@@ -1,42 +1,50 @@
 {
-    "##": "This package should be updated manually. See #9179 for details",
-    "version": "3.66.4",
+    "##": [
+        "The author of FileZilla explicitly prohibits the use of package managers to download files, as this places undue load on their servers.",
+        "Consequently, Scoop must not use any FileZilla-related URLs for downloading or automatic updates.",
+        "For further information, please refer to the following resources:",
+        "- https://github.com/ScoopInstaller/Extras/issues/9179",
+        "- https://forum.filezilla-project.org/viewtopic.php?f=1&t=55635&p=192010&hilit=winget#p192010"
+    ],
+    "version": "3.69.5",
     "description": "Fast and reliable cross-platform FTP, FTPS and SFTP client with lots of useful features and an intuitive graphical user interface.",
-    "homepage": "https://filezilla-project.org/",
+    "homepage": "https://filezilla-project.org",
     "license": "GPL-2.0-or-later",
-    "url": "https://packages.chocolatey.org/filezilla.3.66.4.nupkg",
-    "hash": "d807010202d23fc85b48d76adc55ad45f044915deb40843d91005749ba74a404",
+    "url": "https://packages.chocolatey.org/filezilla.3.69.5.nupkg",
+    "hash": "614bfc4155a16c5c06ef2dce560b3676a0f002700d3c4cdb8d581ba00b8eb2dd",
     "extract_dir": "tools",
-    "pre_install": [
-        "$arch = 'x86'",
-        "if (\"$architecture\" -Match '64bit' -or \"$architecture\" -Match 'arm64') { $arch = 'x64' }",
-        "Expand-7zipArchive \"$dir\\FileZilla_*_$arch.exe\" \"$dir\" -Removal",
-        "Remove-Item \"$dir\\`$*\", \"$dir\\uninstall.exe.nsis\", \"$dir\\*.ps1\", \"$dir\\FileZilla_*.exe\" -Recurse -Force",
-        "@'",
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>",
-        "<FileZilla3>",
-        "  <Settings>",
-        "    <Setting name=\"Config Location\">config</Setting>",
-        "    <Setting name=\"Disable update check\">1</Setting>",
-        "  </Settings>",
-        "</FileZilla3>",
-        "'@ | Out-File \"$dir\\fzdefaults.xml\" -Encoding Ascii",
-        "",
-        "$oldfzdefault = \"$persist_dir\\fzdefaults.xml\"",
-        "if (Test-Path \"$oldfzdefault\") {",
-        "    Write-Host 'Adopting new persist configuration...' -f Yellow",
-        "    $oldConfigDir = \"$((Get-Item \"$persist_dir\").PSDrive.Root)filezilla\"",
-        "    $newConfigDir = \"$persist_dir\\config\"",
-        "    if (Test-Path \"$oldConfigDir\") {",
-        "        Write-Host \"Moving existing configuration from '$oldConfigDir' to '$newConfigDir'\" -f Yellow",
-        "        if (Test-Path \"$newConfigDir\") {",
-        "            Move-Item \"$oldConfigDir\\*\" \"$newConfigDir\"",
-        "        } else { ",
-        "            Move-Item \"$oldConfigDir\" \"$newConfigDir\"",
-        "        }",
-        "    }",
-        "    Rename-Item \"$oldfzdefault\" \"fzdefaults.xml.bak\"",
-        "}"
+    "architecture": {
+        "64bit": {
+            "pre_install": [
+                "Get-ChildItem -Path $dir -Exclude '*64*' -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue",
+                "Get-ChildItem -Path $dir -include '*.exe' -Recurse | Rename-Item -NewName 'setup.exe'"
+            ]
+        },
+        "32bit": {
+            "pre_install": [
+                "Get-ChildItem -Path $dir -Exclude '*32*' -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue",
+                "Get-ChildItem -Path $dir -include '*.exe' -Recurse | Rename-Item -NewName 'setup.exe'"
+            ]
+        }
+    },
+    "installer": {
+        "script": [
+            "Expand-7zipArchive -Path \"$dir\\setup.exe\" -DestinationPath $dir -Switches '-xr!$* -xr!unins*' -Removal",
+            "[xml]$xml = Get-Content -Path \"$dir\\docs\\fzdefaults.xml.example\" -Encoding ascii",
+            "$comments = $xml.ChildNodes | Where-Object { $_.NodeType.ToString() -eq 'Comment' }",
+            "$comments | ForEach-Object { $_.ParentNode.RemoveChild($_) | Out-Null }",
+            "$xml.SelectSingleNode('//Setting[@name=''Disable update check'']').InnerText = '1'",
+            "$xml.SelectSingleNode('//Setting[@name=''Cache directory'']').InnerText = 'data\\cache'",
+            "$xml.SelectSingleNode('//Setting[@name=''Config Location'']').InnerText = 'data\\config'",
+            "$xml.Save(\"$dir\\fzdefaults.xml\")"
+        ]
+    },
+    "post_install": [
+        "# Data Migration (Removed on 1 December 2026)",
+        "if (-not (Test-Path \"$persist_dir\\config\")) { return }",
+        "ensure \"$persist_dir\\data\\config\" | Out-Null",
+        "Copy-Item -Path \"$persist_dir\\config\\*\" -Destination \"$persist_dir\\data\\config\" -Force -Recurse",
+        "Remove-Item -Path \"$persist_dir\\config\" -Recurse -Force -ErrorAction SilentlyContinue"
     ],
     "bin": "filezilla.exe",
     "shortcuts": [
@@ -45,10 +53,10 @@
             "FileZilla"
         ]
     ],
-    "persist": "config",
+    "persist": "data",
     "checkver": {
         "url": "https://community.chocolatey.org/packages/filezilla",
-        "regex": "<meta property=\"og:title\" content=\"FileZilla ([\\d.]+)\">"
+        "regex": "FileZilla <span>([\\d.]+)<"
     },
     "autoupdate": {
         "url": "https://packages.chocolatey.org/filezilla.$version.nupkg",

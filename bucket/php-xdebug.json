@@ -1,10 +1,10 @@
 {
-    "version": "3.3.1-8.3",
+    "version": "3.5.0-85",
     "description": "An extension for PHP to assist with debugging and development. (Thread Safe)",
     "homepage": "https://xdebug.org/",
     "license": {
-        "identifier": "Xdebug-1.01",
-        "url": "https://xdebug.org/license.php"
+        "identifier": "Xdebug-1.03",
+        "url": "https://xdebug.org/license"
     },
     "notes": [
         "Xdebug is already enabled if PHP was installed through scoop!",
@@ -12,33 +12,54 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://xdebug.org/files/php_xdebug-3.3.1-8.3-vs16-x86_64.dll#/php_xdebug.dll",
-            "hash": "5f690a7955296efac292563ab52c2a30c6d51724a700acefb2987a8170d5cbaa"
+            "url": "https://xdebug.org/files/php_xdebug-3.5.0-8.5-ts-vs17-x86_64.dll#/php_xdebug.dll",
+            "hash": "41abcd0518920aed1016653be9fd6de2c63dad1f137b952fcff7526d28ca8644"
         }
     },
     "post_install": [
-        "$phpconfd = \"$persist_dir\\..\\php\\cli\\conf.d\"",
-        "$ini = \"zend_extension=$dir\\php_xdebug.dll`n[xdebug]`nxdebug.remote_enable=on`nxdebug.remote_autostart=on`nxdebug.remote_connect_back=on\"",
-        "if (!(Test-Path \"$phpconfd\\xdebug.ini\")) {",
-        "    ensure $phpconfd | Out-Null",
-        "    Write-Output \"Enabling extension '$phpconfd\\xdebug.ini'\"",
-        "    Add-Content -Value $ini -Path \"$phpconfd\\xdebug.ini\"",
+        "$ini = \"zend_extension=$dir\\php_xdebug.dll`n[xdebug]`nxdebug.mode=debug`nxdebug.start_with_request=yes`nxdebug.discover_client_host=true\"",
+        "if (installed php $true) {",
+        "    $ini_path = \"$(persistdir php $true)\\cli\\conf.d\\xdebug.ini\"",
+        "} elseif (installed php $false) {",
+        "    $ini_path = \"$(persistdir php)\\cli\\conf.d\\xdebug.ini\"",
         "} else {",
-        "    Write-Host -f Yellow \"PHP was not installed through scoop, you have to activate php_xdebug.dll manually! Add the following:`n\"",
-        "    Write-Host -f Cyan \"$ini`n`n\"",
+        "    Write-Host -f Yellow \"`nPHP was not installed through scoop, you have to activate php_xdebug.dll manually! Add the following:`n\"",
+        "    Write-Host -f Cyan \"$ini`n\"",
+        "    Write-Host -f Yellow \"to your php.ini file\"",
+        "}",
+        "if ($ini_path) {",
+        "    if (Test-Path $ini_path) {",
+        "        Write-Output \"`nNo XDebug config was added, as xdebug.ini already exists in $ini_path\"",
+        "    } else {",
+        "        Write-Output \"`nEnabling extension $ini_path\"",
+        "        Add-Content -Value $ini -Path $ini_path",
+        "    }",
         "}"
     ],
     "checkver": {
-        "url": "https://xdebug.org/download",
-        "regex": "php_xdebug-([\\d.]+-8\\.3)-vs16-x86_64\\.dll"
+        "url": "https://xdebug.org/download/historical",
+        "script": [
+            "$xdebug_regex = 'php_xdebug(?![^'']+nts)-(?<prefix>[\\d.]+)-(?<suffix>[\\d.]+)(?<=\\d)[^'']+dll'",
+            "$latest_xdebug = [regex]::Matches($page, $xdebug_regex) | ForEach-Object {",
+            "    [pscustomobject]@{",
+            "        FileName = $_.Value",
+            "        XdebugVersion = [version]$_.Groups['prefix'].Value",
+            "        PHPVersion = [version]$_.Groups['suffix'].Value",
+            "    }",
+            "} | Sort-Object XdebugVersion, PHPVersion -Descending | Select-Object -First 1",
+            "$version_prefix = $latest_xdebug.XdebugVersion.ToString()",
+            "$version_suffix = $latest_xdebug.PHPVersion.ToString().Split('.')[0..1] -join ''",
+            "Write-Output \"$version_prefix-$version_suffix / $($latest_xdebug.FileName)\""
+        ],
+        "regex": "([\\d.-]+) / (?<name>.+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://xdebug.org/files/php_xdebug-$version-vs16-x86_64.dll#/php_xdebug.dll",
+                "url": "https://xdebug.org/files/$matchName#/php_xdebug.dll",
                 "hash": {
-                    "url": "https://xdebug.org/download.php",
-                    "regex": "SHA256:&nbsp;([0-9a-f]+)\" href='\\/files\\/php_xdebug-$version-vs16-x86_64\\.dll"
+                    "url": "https://xdebug.org/download/historical",
+                    "regex": "\"SHA256:&nbsp;$sha256\" href='/files/$basename'"
                 }
             }
         }

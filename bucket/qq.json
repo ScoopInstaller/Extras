@@ -1,5 +1,5 @@
 {
-    "version": "9.7.21.29280",
+    "version": "9.7.25.29417",
     "description": "An instant messaging tool that gives you the best way to keep in touch with your friends and family.",
     "homepage": "https://im.qq.com",
     "license": {
@@ -11,8 +11,8 @@
         "'%UserProfile%\\Documents\\Tencent Files'.",
         "Files produced at runtime are left in '%AppData%\\Tencent'."
     ],
-    "url": "https://dldir1.qq.com/qqfile/qq/PCQQ9.7.21/QQ9.7.21.29280.exe#/dl.7z",
-    "hash": "04fc3f1e46938858a13714d4182d19f3542c04d8963c721db9dafbf8aaeeb1f6",
+    "url": "https://dldir1.qq.com/qqfile/qq/PCQQ9.7.25/QQ9.7.25.29417.exe#/dl.7z",
+    "hash": "804a72f08e692a6317abb31445990e4ddc66dbc163967b5d0c4db360b250ae05",
     "shortcuts": [
         [
             "Bin\\QQScLauncher.exe",
@@ -32,8 +32,16 @@
         ]
     },
     "checkver": {
-        "url": "https://im.qq.com/pcqq",
-        "regex": "QQ(?<version>[\\d\\.]+).exe\" class=\"download\""
+        "script": [
+            "# Please keep this script. Using 'cdn-go.cn' may result in receiving expired cache responses.",
+            "$url = 'https://cdn-go.cn/qq-web/im.qq.com_new/latest/rainbow/windowsConfig.js'",
+            "$hostname = ([Uri]$url).Host",
+            "$records = Resolve-DnsName 'cdn-go.cn.cloud.tc.qq.com' -Type A -DnsOnly -ErrorAction Ignore",
+            "$ip = $records | Where-Object { $_.QueryType -eq 'A' -and $_.IPAddress } | Select-Object -ExpandProperty IP4Address -First 1",
+            "$url = $url -Replace [regex]::Escape($hostname), $ip",
+            "Invoke-WebRequest -Uri $url -UseBasicParsing -Headers @{'Host' = $hostname} | Select-Object -ExpandProperty Content"
+        ],
+        "regex": "QQ(?<version>[\\d.]+)\\.exe"
     },
     "autoupdate": {
         "url": "https://dldir1.qq.com/qqfile/qq/PCQQ$matchHead/QQ$version.exe#/dl.7z"
