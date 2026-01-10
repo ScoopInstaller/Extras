@@ -6,25 +6,24 @@
     "notes": "Check out this issue to solve HDR problems, https://gitlab.com/es-de/emulationstation-de/-/issues/1880",
     "architecture": {
         "64bit": {
-            "url": "https://gitlab.com/es-de/emulationstation-de/-/package_files/243196975/download",
+            "url": "https://gitlab.com/es-de/emulationstation-de/-/package_files/243196975/download#/dl.7z",
             "hash": "52B3C7A59839B4D44744B1E3FCCA1C6AE6386E8677196CA3B36876E597C07FF1"
         }
     },
-    "pre_install": [
-        "Rename-Item \"$dir\\download\" \"$dir\\_temp.zip\"",
-        "Expand-Archive \"$dir\\_temp.zip\" -DestinationPath \"$dir\"",
-        "Rename-Item \"$dir\\ES-DE\" \"$dir\\_temp\"",
-        "Move-Item \"$dir\\_temp\\*\" \"$dir\\\"",
-        "Remove-Item \"$dir\\_temp\" -Recurse -Force",
-        "Remove-Item \"$dir\\_temp.zip\"",
-        "Remove-Item \"$dir\\ES-DE\" -Recurse -Force",
-        "Remove-Item \"$dir\\Emulators\" -Recurse -Force",
-        "Remove-Item \"$dir\\ROMs\" -Recurse -Force"
-    ],
-    "persist": [
-        "ES-DE",
-        "Emulators",
-        "ROMs"
+    "extract_dir": "ES-DE",
+    "post_install": [
+        "@('ES-DE', 'Emulators', 'ROMs') | ForEach-Object {",
+        "    if (Test-Path \"$dir\\$_.original\") {",
+        "        Copy-Item \"$dir\\$_.original\\*\" \"$persist_dir\\$_\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "        Remove-Item \"$dir\\$_.original\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "    }",
+        "    if (!(Test-Path \"$persist_dir\\$_\")) {",
+        "        New-Item -ItemType Directory -Path \"$persist_dir\\$_\" -Force | Out-Null",
+        "        if (Test-Path \"$dir\\$_\") {",
+        "            Copy-Item \"$dir\\$_\\*\" \"$persist_dir\\$_\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "        }",
+        "    }",
+        "}"
     ],
     "bin": [
         [
@@ -53,14 +52,20 @@
             "--resolution 3841 2160"
         ]
     ],
+    "persist": [
+        "ES-DE",
+        "Emulators",
+        "ROMs"
+    ],
     "checkver": {
-        "url": "https://gitlab.com/api/v4/projects/es-de%2Femulationstation-de/releases",
-        "regex": "\"ES-DE_([\\d.]+)-x64_Portable\\.zip\".*?\"url\":\"[^\"]*\\/package_files\\/(\\d+)\\/download\""
+        "url": "https://gitlab.com/api/v4/projects/18817634/releases/permalink/latest",
+        "jsonpath": "$..links[?(@.name =~ /.*x64_Portable\\.zip/)]",
+        "regex": "(?s)ES-DE_([\\d.]+)-x64_Portable\\.zip.*?/package_files/(?<url>[^\"]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://gitlab.com/es-de/emulationstation-de/-/package_files/$match2/download"
+                "url": "https://gitlab.com/es-de/emulationstation-de/-/package_files/$matchUrl#/dl.7z"
             }
         }
     }
