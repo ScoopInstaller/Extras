@@ -1,14 +1,21 @@
 {
-    "version": "1.5.735",
+    "version": "1.5.857",
     "description": "Low-latency and high quality voice chat primarily intended for use while gaming.",
     "homepage": "https://www.mumble.info/",
     "license": "BSD-3-Clause",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/mumble-voip/mumble/releases/download/v1.5.735/mumble_client-1.5.735.x64.msi",
-            "hash": "2778beac1a7970814372f6b688645cb67a831f52d79e008201461769fadc20bb",
-            "extract_dir": "ProgramFiles64Folder\\Mumble\\client"
+            "url": "https://github.com/mumble-voip/mumble/releases/download/v1.5.857/mumble_client-1.5.857.x64.exe",
+            "hash": "ae42369b95a9aa9cd6fde8fbee29b70503a25028ec4f14abcecab41f5e23fe06"
         }
+    },
+    "installer": {
+        "script": [
+            "Expand-DarkArchive \"$dir\\$fname\" \"$dir\\tmp\" -Removal",
+            "Expand-MsiArchive \"$dir\\tmp\\AttachedContainer\\mumble_client-$version-x64.msi\" \"$dir\\tmp\\msi\"",
+            "Move-Item \"$dir\\tmp\\msi\\ProgramFiles64Folder\\Mumble\\client\\*\" \"$dir\" -Force",
+            "Remove-Item \"$dir\\tmp\" -Recurse"
+        ]
     },
     "bin": "mumble.exe",
     "shortcuts": [
@@ -23,7 +30,7 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/mumble-voip/mumble/releases/download/v$version/mumble_client-$version.x64.msi"
+                "url": "https://github.com/mumble-voip/mumble/releases/download/v$version/mumble_client-$version.x64.exe"
             }
         }
     }

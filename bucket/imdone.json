@@ -1,37 +1,44 @@
 {
-    "version": "1.53.1",
+    "version": "1.54.2",
     "description": "Simple and powerful kanban board built on top of plain text markdown files or code.",
     "homepage": "https://imdone.io/",
     "license": {
         "identifier": "Proprietary",
         "url": "https://imdone.io/eula"
     },
-    "extract_dir": "$PLUGINSDIR",
-    "pre_install": "Get-ChildItem \"$dir\" -Exclude 'app-64.7z' | Remove-Item -Force -Recurse",
-    "post_install": "Remove-Item \"$dir\\app-64.7z\" -Force -ErrorAction SilentlyContinue",
+    "architecture": {
+        "64bit": {
+            "url": "https://imdone.io/downloads/imdone-1.54.2-x64-portable.exe#/dl.7z",
+            "hash": "040629db2944ec1b74a1e5bfdd8025d4a39f40acefd0841685cfa67d6653b374"
+        },
+        "arm64": {
+            "url": "https://imdone.io/downloads/imdone-1.54.2-arm64-portable.exe#/dl.7z",
+            "hash": "6c2f9357c9f835449ba07c88ea9d77bf69e1d2593b09c329fde0dbd1bce7b065"
+        }
+    },
+    "installer": {
+        "script": [
+            "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Expand-7zipArchive -DestinationPath \"$dir\"",
+            "Remove-Item \"$dir\\`$*\" -Force -Recurse"
+        ]
+    },
     "shortcuts": [
         [
             "imdone.exe",
             "imdone"
         ]
     ],
-    "architecture": {
-        "64bit": {
-            "url": "https://imdone.io/downloads/imdone-1.53.1-portable.exe#/dl.7z",
-            "hash": "4849ab06aea1e86b09c2b5787a203401f9f74f641f1c8acba818d2b4a3029f5f",
-            "installer": {
-                "script": "Expand-7zipArchive \"$dir\\$PLUGINSDIR\\app-64.7z\" \"$dir\""
-            }
-        }
-    },
     "checkver": {
-        "url": "https://imdone.io",
-        "regex": "/downloads/imdone-([\\d.]+)-portable\\.exe"
+        "url": "https://imdone.io/api/1.0/downloads",
+        "regex": "imdone-([\\d.]+)-x64-portable\\.exe"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://imdone.io/downloads/imdone-$version-portable.exe#/dl.7z"
+                "url": "https://imdone.io/downloads/imdone-$version-x64-portable.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://imdone.io/downloads/imdone-$version-arm64-portable.exe#/dl.7z"
             }
         }
     }

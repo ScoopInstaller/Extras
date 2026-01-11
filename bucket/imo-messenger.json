@@ -1,22 +1,20 @@
 {
-    "version": "1.4.12.4",
+    "version": "1.5.2.3",
     "description": "Video calls and chat software",
     "homepage": "https://imo.im/",
-    "depends": "extras/uniextract2",
     "license": {
         "identifier": "Freeware",
         "url": "https://imo.im/policies/terms_of_service.html"
     },
-    "url": "https://static-web.imoim.net/as/indigo-static/winapp/1.4.12.4/ImoSetup_1.4.12.4_Release.exe#/dl.exe",
-    "hash": "454ce64dd88aa085482a920f2e194cc5b14f988a10057ea49eb59bdb7224686f",
-    "pre_install": [
-        "New-Item \"$dir\\extract\" -ItemType Directory | Out-Null",
-        "Invoke-ExternalCommand uniextract -ArgumentList @(\"$dir\\dl.exe\", \"$dir\\extract\", '/silent') | Out-Null",
-        "Expand-MsiArchive \"$dir\\extract\\AttachedContainer\\ImoInstaller.msi\" \"$dir\\extract\" | Out-Null",
-        "Move-Item \"$dir\\extract\\imo\\*\\*\" \"$dir\\\"",
-        "Remove-Item \"$dir\\dl.exe\", \"$dir\\extract\" -Force -Recurse"
-    ],
-    "pre_uninstall": "Stop-Process -Name 'ImoDesktopApp' -ErrorAction SilentlyContinue | Out-Null",
+    "url": "https://static-web.imoim.net/as/indigo-static/winapp/1.5.2.3/ImoSetup_1.5.2.3_Release.exe",
+    "hash": "80a53fcf5b06a5c903a080e54b5a9f6d5c38b8e1f2dbfe6a82527c0eb4b14329",
+    "installer": {
+        "script": [
+            "Expand-DarkArchive -Path \"$dir\\$fname\" -DestinationPath \"$dir\\tmp\" -Removal",
+            "Expand-MsiArchive -Path \"$dir\\tmp\\AttachedContainer\\ImoInstaller.msi\" -DestinationPath $dir -ExtractDir \"imo\\$version\"",
+            "Remove-Item \"$dir\\tmp\" -Force -Recurse"
+        ]
+    },
     "shortcuts": [
         [
             "ImoDesktopApp.exe",
@@ -32,12 +30,12 @@
             "$url = 'https://apiact.imoim.net/imoweb-infrastructure-client/apk/version-list'",
             "$body = @{type = '2'; sub_type = '1'; limit = 1000} | ConvertTo-Json",
             "$response = Invoke-RestMethod -Uri $url -Method Post -Body $body -ContentType 'application/json'",
-            "$latestVersion = $response.data.list | Sort-Object -Property {[int64]$_.pub_time} -Descending | Select-Object -First 1",
+            "$latestVersion = $response.data.list | Sort-Object -Property {[version]$_.name} -Descending | Select-Object -First 1",
             "Write-Output $latestVersion.name"
         ],
-        "regex": "imo windows ([\\d.]+)"
+        "regex": "([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://static-web.imoim.net/as/indigo-static/winapp/$version/ImoSetup_$version_Release.exe#/dl.exe"
+        "url": "https://static-web.imoim.net/as/indigo-static/winapp/$version/ImoSetup_$version_Release.exe"
     }
 }

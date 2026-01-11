@@ -1,13 +1,16 @@
 {
-    "version": "2023.3.0",
+    "version": "2025.1.0",
     "description": "3D Reconstruction Software based on the AliceVision Photogrammetric Computer Vision framework.",
-    "homepage": "https://alicevision.org/",
-    "license": "MPL-2.0",
+    "homepage": "https://alicevision.org",
+    "license": {
+        "identifier": "MPL-2.0",
+        "url": "https://github.com/alicevision/Meshroom/blob/develop/LICENSE-MPL2.md"
+    },
     "architecture": {
         "64bit": {
-            "url": "https://www.fosshub.com/Meshroom.html/Meshroom-2023.3.0-win64.zip",
-            "extract_dir": "Meshroom-2023.3.0",
-            "hash": "2519565cd38e5d3433748cd09fcd835b7f1c709ed9b098eb6b29f4336c4e345f"
+            "url": "https://zenodo.org/records/16887472/files/Meshroom-2025.1.0-Windows.zip",
+            "hash": "md5:6af3282e0b6e739a36a2607d8e86fa82",
+            "extract_dir": "Meshroom-2025.1.0"
         }
     },
     "bin": "meshroom.exe",
@@ -18,12 +21,18 @@
         ]
     ],
     "checkver": {
-        "github": "https://github.com/alicevision/meshroom"
+        "url": "https://api.github.com/repositories/34405381/releases/latest",
+        "jsonpath": "$.body",
+        "regex": "(?i)\\[[^[]+-([\\d.]+)[^[]+Windows\\]\\(.+records/(?<doi>[\\d]+)/files/(?<name>[^]]+)\\)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://www.fosshub.com/Meshroom.html/Meshroom-$version-win64.zip",
+                "url": "https://zenodo.org/records/$matchDoi/files/$matchName",
+                "hash": {
+                    "url": "https://zenodo.org/api/records/$matchDoi",
+                    "regex": "(?msi)\"$basename\".+?\"md5:$md5\""
+                },
                 "extract_dir": "Meshroom-$version"
             }
         }

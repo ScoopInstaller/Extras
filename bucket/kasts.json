@@ -1,12 +1,12 @@
 {
-    "version": "24.08-3343",
+    "version": "25.12-4110",
     "description": "Convergent podcast application",
     "homepage": "https://apps.kde.org/kasts/",
     "license": "LGPL-2.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://cdn.kde.org/ci-builds/multimedia/kasts/release-24.08/windows/kasts-release_24.08-3343-windows-gcc-x86_64.7z",
-            "hash": "9b2e24edf9b2b1205ff7f8dd52e67d7e97de1ce6c78b6b7746b75b0a93595f92"
+            "url": "https://cdn.kde.org/ci-builds/multimedia/kasts/release-25.12/windows/kasts-release_25.12-4110-windows-cl-msvc2022-x86_64.7z",
+            "hash": "28b413176e39b9614af958b76b9beda1f8e146267d7a3044cb4fd10ee39369db"
         }
     },
     "bin": "bin\\kasts.exe",
@@ -17,13 +17,28 @@
         ]
     ],
     "checkver": {
-        "url": "https://cdn.kde.org/ci-builds/multimedia/kasts/release-24.08/windows/",
-        "regex": "kasts-release_([\\d.-]+)-windows-gcc-x86_64\\.7z"
+        "script": [
+            "$url = 'https://cdn.kde.org/ci-builds/multimedia/kasts/?C=N;O=D'",
+            "",
+            "$cont = (Invoke-WebRequest $url).Content",
+            "$regex = 'release-([\\d.]+)'",
+            "if (!($cont -match $regex)) { error \"Could not match $regex in $url\"; continue }",
+            "$ver = $matches[1]",
+            "",
+            "$nextUrl = \"https://cdn.kde.org/ci-builds/multimedia/kasts/release-$ver/windows/\"",
+            "$nextCont = (Invoke-WebRequest $nextUrl).Content",
+            "$nextRegex = \"kasts-release_$ver-([\\d]+)-windows-cl-([\\w]+)-x86_64\\.7z\"",
+            "if (!($nextCont -match $nextRegex)) { error \"Could not match $nextRegex in $nextUrl\"; continue }",
+            "$build = $matches[1]",
+            "$lib = $matches[2]",
+            "Write-Output $ver-$build $lib"
+        ],
+        "regex": "([\\d.-]+) (?<lib>[\\w]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://cdn.kde.org/ci-builds/multimedia/kasts/release-$matchHead/windows/kasts-release_$version-windows-gcc-x86_64.7z",
+                "url": "https://cdn.kde.org/ci-builds/multimedia/kasts/release-$matchHead/windows/kasts-release_$version-windows-cl-$matchLib-x86_64.7z",
                 "hash": {
                     "url": "$url.sha256"
                 }

@@ -1,25 +1,37 @@
 {
-    "version": "3.1.6",
-    "description": "A GUI to manage Winget and Scoop packages",
-    "homepage": "https://github.com/marticliment/UniGetUI",
+    "version": "3.3.6",
+    "description": "GUI for the most common CLI package managers, such as WinGet, Scoop, Chocolatey, Pip, Npm, .NET Tool, PowerShell Gallery and more.",
+    "homepage": "https://www.marticliment.com/unigetui/",
     "license": "MIT",
-    "url": "https://github.com/marticliment/UniGetUI/releases/download/3.1.6/UniGetUI.Installer.exe",
-    "hash": "d77959b5268b4850f8b98de02d7b7bf6ce25a7ea7a9a15ec764065f03f10ca97",
-    "innosetup": true,
+    "suggest": {
+        "scoop-search": "main/scoop-search"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/marticliment/UniGetUI/releases/download/3.3.6/UniGetUI.x64.zip",
+            "hash": "c9cf4969ef1d8a31925e9176116387e3843b42c88a3c5839590d9d4fe9d5dfa9"
+        }
+    },
+    "pre_install": "Set-Content -Value $null -Path \"$dir\\ForceUniGetUIPortable\"",
     "shortcuts": [
         [
             "UniGetUI.exe",
             "UniGetUI"
         ]
     ],
+    "persist": "Settings",
     "checkver": {
         "github": "https://github.com/marticliment/UniGetUI"
     },
     "autoupdate": {
-        "url": "https://github.com/marticliment/UniGetUI/releases/download/$version/UniGetUI.Installer.exe",
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/marticliment/UniGetUI/releases/download/$version/UniGetUI.x64.zip"
+            }
+        },
         "hash": {
             "url": "https://github.com/marticliment/UniGetUI/releases/tag/$version",
-            "regex": "sha256: <code>$sha256</code>"
+            "regex": "$basename.*?sha256: <code>$sha256</code>"
         }
     }
 }

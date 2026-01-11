@@ -1,7 +1,7 @@
 {
-    "version": "24.9.2-0",
+    "version": "25.11.1-1",
     "description": "A cross-platform, Python-agnostic binary package manager",
-    "homepage": "https://docs.anaconda.com/free/miniconda/",
+    "homepage": "https://docs.anaconda.com/miniconda/",
     "license": "BSD-3-Clause",
     "notes": [
         "From 4.6.0, conda has built the support for Cmd, Powershell or other shells.",
@@ -11,8 +11,8 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://repo.anaconda.com/miniconda/Miniconda3-py312_24.9.2-0-Windows-x86_64.exe#/setup.exe",
-            "hash": "3a8897cc5d27236ade8659f0e119f3a3ccaad68a45de45bfdd3102d8bec412ab"
+            "url": "https://repo.anaconda.com/miniconda/Miniconda3-py313_25.11.1-1-Windows-x86_64.exe#/setup.exe",
+            "hash": "19d90d5587eaa61b3899f1ad6b78ed3eb90b8e8d359cc07595c6cb76a90201bf"
         }
     },
     "pre_install": "if ($dir -match ' ') { error 'The installation directory cannot include a space'; break}",
@@ -27,6 +27,10 @@
     "post_install": "Remove-Item \"$dir\\..\\setup.exe\" -Force | Out-Null",
     "uninstaller": {
         "script": [
+            "# Workaround for https://github.com/ScoopInstaller/Scoop/issues/4075#issuecomment-3010866414",
+            "# Remove junction point before executing the uninstaller, otherwise all envs will be removed by the uninstaller.",
+            "Invoke-ExternalCommand cmd -ArgumentList @('/c', 'rmdir', '/s', '/q', \"`\"$dir\\envs`\"\")",
+            "# Executing the uninstaller:",
             "Start-Process \"$dir\\Uninstall-Miniconda3.exe\" -ArgumentList '/S' -Wait | Out-Null",
             "# Create a 'dummy' to avoid error because the uninstaller removes the symlink. The does not affect persist.",
             "if (!(Test-Path \"$dir\\envs\")) { New-Item \"$dir\\envs\" -ItemType Directory | Out-Null }"
@@ -46,8 +50,8 @@
     ],
     "persist": "envs",
     "checkver": {
-        "url": "https://docs.anaconda.com/free/miniconda/miniconda-other-installer-links/",
-        "regex": "Miniconda3-py(?<py>\\d+)_([\\d.-]+)-Windows"
+        "url": "https://repo.anaconda.com/miniconda/",
+        "regex": "Miniconda3-py(?<py>\\d{3})_([\\d.-]+)-Windows"
     },
     "autoupdate": {
         "architecture": {
@@ -56,7 +60,7 @@
             }
         },
         "hash": {
-            "url": "https://docs.anaconda.com/free/miniconda/miniconda-other-installer-links/",
+            "url": "https://repo.anaconda.com/miniconda/",
             "regex": "(?sm)$basename.*?>$sha256<"
         }
     }

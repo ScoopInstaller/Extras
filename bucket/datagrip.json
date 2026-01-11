@@ -1,14 +1,15 @@
 {
-    "version": "2024.3.4-243.23654.183",
+    "version": "2025.3.3-253.29346.270",
     "description": "Cross-Platform IDE for Databases & SQL by JetBrains.",
     "homepage": "https://www.jetbrains.com/datagrip/",
     "license": {
         "identifier": "Proprietary",
         "url": "https://www.jetbrains.com/store/license.html"
     },
-    "url": "https://download.jetbrains.com/datagrip/datagrip-2024.3.4.win.zip",
-    "hash": "4f18ee81372f28752ed85d95aae122642cf0f1b3660fea78ef9bc9374fbc082f",
+    "url": "https://download.jetbrains.com/datagrip/datagrip-2025.3.3.win.zip",
+    "hash": "a5e135e3f16976494180e8359cadfc8a83f57cbd68114d27cb2c1ab099ebc6b0",
     "extract_to": "IDE",
+    "pre_install": "Get-ChildItem \"$persist_dir\\IDE\\bin\\datagrip*.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$dir\\IDE\\bin\"",
     "installer": {
         "script": [
             "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" $dir $persist_dir",
@@ -42,10 +43,9 @@
     },
     "persist": [
         "IDE\\bin\\idea.properties",
-        "IDE\\bin\\datagrip.exe.vmoptions",
-        "IDE\\bin\\datagrip64.exe.vmoptions",
         "profile"
     ],
+    "pre_uninstall": "Get-ChildItem \"$dir\\IDE\\bin\\datagrip*.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$persist_dir\\IDE\\bin\"",
     "checkver": {
         "url": "https://data.services.jetbrains.com/products/releases?code=DG&latest=true&platform=zip&type=release",
         "regex": "version\":\"(?<ver>[\\d.]+)\".*\"build\":\"(?<build>[\\d.]+)\"",

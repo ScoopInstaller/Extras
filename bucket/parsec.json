@@ -1,6 +1,6 @@
 {
-    "version": "150-97d",
-    "description": "Remote desktop software, Portable",
+    "version": "150-101b",
+    "description": "Remote desktop software, Portable.",
     "homepage": "https://parsec.app",
     "license": {
         "identifier": "Proprietary",
@@ -9,7 +9,7 @@
     "architecture": {
         "64bit": {
             "url": "https://builds.parsec.app/package/parsec-flat-windows.zip#/dl.zip",
-            "hash": "6055a480bab0370c2cdc422b0412fa2f4d1d22e8e6a071c66563c0c884e7ff0c"
+            "hash": "0838748720c4348a1962e48467d8f95f610851bed5ebe691c12f3c6b86a7fe2b"
         }
     },
     "pre_install": [
@@ -19,17 +19,21 @@
         "    }",
         "}"
     ],
-    "shortcuts": [
-        [
-            "parsecd.exe",
-            "Parsec"
-        ]
+    "post_install": [
+        "# Parsec can't be started from a symlinked directory.",
+        "# See: https://github.com/ScoopInstaller/Extras/issues/16424",
+        "startmenu_shortcut \"$original_dir\\parsecd.exe\" 'Parsec' $null $null $global"
     ],
     "persist": [
         "hotkey.json",
         "config.txt",
         "config.json",
         "log.txt"
+    ],
+    "post_uninstall": [
+        "# Remove shortcut",
+        "Write-Host \"Removing shortcut $(friendly_path \"$(shortcut_folder $global)\\Parsec.lnk\")\"",
+        "Remove-Item \"$(shortcut_folder $global)\\Parsec.lnk\" -Force -ErrorAction Ignore"
     ],
     "checkver": {
         "url": "https://parsec.app/changelog.xml",

@@ -1,20 +1,21 @@
 {
-    "##": "Rename to #/dl.7z cannot be used as download is not stripping rename and fosshub cannot handle it",
-    "version": "2.38",
+    "version": "2.39",
     "description": "Lossless audio editor and recorder for MP3 files.",
     "homepage": "http://mpesch3.de",
     "license": "Freeware",
-    "url": "https://www.fosshub.com/mp3DirectCut.html/mp3DC238.exe",
-    "hash": "34004b9d2479546c8467a60d4c444a3e81372468de457f2c918b181b7832b53e",
+    "url": "https://www.fosshub.com/mp3DirectCut.html/mp3DC239.exe",
+    "hash": "6bc9cda080266f0dc5d6304712ff35f8227d37acac19bf49e3320836098c80b0",
     "installer": {
         "script": [
-            "Expand-7zipArchive \"$dir\\$fname\" -Removal",
+            "Expand-7zipArchive -Path \"$dir\\$fname\" -Removal",
             "if (-not (Test-Path \"$persist_dir\\mp3DirectCut.ini\")) {",
-            "    Set-Content \"$dir\\mp3DirectCut.ini\" @('[mp3DirectCut]', \"version=$version\") -Encoding Ascii",
+            "    $cfg = @('[mp3DirectCut]', \"file_savepath=$persist_dir\\Recording\", \"version=$version\")",
+            "    Set-Content -Path \"$dir\\mp3DirectCut.ini\" -Value $cfg -Encoding Ascii",
             "} else {",
-            "    (Get-Content \"$persist_dir\\mp3DirectCut.ini\") -replace 'version=.+', \"version=$version\" | Set-Content \"$persist_dir\\mp3DirectCut.ini\" -Encoding Ascii",
+            "    $cfg = Get-Content \"$persist_dir\\mp3DirectCut.ini\"",
+            "    $cfg -replace 'version=.+', \"version=$version\" | Set-Content -Path \"$persist_dir\\mp3DirectCut.ini\" -Encoding Ascii",
             "}",
-            "New-Item \"$dir\\mp3DClocal.ini\" | Out-Null"
+            "New-Item -Path \"$dir\\mp3DClocal.ini\" -ItemType File -Force | Out-Null"
         ]
     },
     "bin": "mp3DirectCut.exe",
@@ -24,13 +25,15 @@
             "mp3DirectCut"
         ]
     ],
-    "persist": "mp3DirectCut.ini",
-    "checkver": "Version ([\\d.]+)",
+    "persist": [
+        "Recording",
+        "mp3DirectCut.ini"
+    ],
+    "checkver": {
+        "url": "https://www.fosshub.com/mp3DirectCut.html",
+        "regex": "\"softwareVersion\">([\\d.]+)<"
+    },
     "autoupdate": {
-        "url": "https://www.fosshub.com/mp3DirectCut.html/mp3DC$cleanVersion.exe",
-        "hash": {
-            "url": "http://mpesch3.de",
-            "regex": "checksum:\\s*$md5"
-        }
+        "url": "https://www.fosshub.com/mp3DirectCut.html/mp3DC$cleanVersion.exe"
     }
 }

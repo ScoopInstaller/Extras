@@ -1,5 +1,5 @@
 {
-    "version": "3.13.4",
+    "version": "3.14.9.1",
     "description": "Async load test tool for web applications",
     "homepage": "https://gatling.io",
     "license": "Apache-2.0",
@@ -7,35 +7,40 @@
         "JDK": [
             "java/oraclejdk",
             "java/openjdk"
-        ]
+        ],
+        "Maven": "main/maven"
     },
-    "url": "https://repo1.maven.org/maven2/io/gatling/highcharts/gatling-charts-highcharts-bundle/3.13.4/gatling-charts-highcharts-bundle-3.13.4.zip",
-    "hash": "sha1:5ef5da8e2c35ef81f0ec8166d67b23386f1e2e64",
-    "extract_dir": "gatling-charts-highcharts-bundle-3.13.4",
+    "url": "https://repo1.maven.org/maven2/io/gatling/highcharts/gatling-charts-highcharts-bundle/3.14.9.1/gatling-charts-highcharts-bundle-3.14.9.1-bundle.zip",
+    "hash": "sha1:d40e7e065c1a39887ee7afe27613ef283725ac9b",
+    "extract_dir": "gatling-charts-highcharts-bundle-3.14.9.1",
+    "pre_install": [
+        "Set-Content -Path \"$dir\\gatling-test.bat\" -Value (@('pushd %~dp0', 'call \".\\mvnw.cmd\" gatling:test', 'popd') -join \"`r`n\")",
+        "Set-Content -Path \"$dir\\gatling-recorder.bat\" -Value (@('pushd %~dp0', 'call \".\\mvnw.cmd\" gatling:recorder', 'popd') -join \"`r`n\")"
+    ],
     "bin": [
-        "bin\\gatling.bat",
-        "bin\\recorder.bat"
-    ],
-    "shortcuts": [
-        [
-            "bin\\recorder.bat",
-            "Gatling Recorder"
-        ]
-    ],
-    "env_set": {
-        "GATLING_HOME": "$dir"
-    },
-    "persist": [
-        "conf",
-        "results",
-        "user-files"
+        "gatling-test.bat",
+        "gatling-recorder.bat"
     ],
     "checkver": {
-        "url": "https://search.maven.org/solrsearch/select/?q=g:io.gatling.highcharts+AND+a:gatling-charts-highcharts-bundle",
-        "jsonpath": "$.response.docs[0].latestVersion"
+        "script": [
+            "$version_regex = '^(?!\\.)[\\d.]+/$'",
+            "$version_sort = { [version]$_.href.TrimEnd('/') }",
+            "$releases = 'https://repo1.maven.org/maven2/io/gatling/highcharts/gatling-charts-highcharts-bundle/'",
+            "$download_page = Invoke-WebRequest -Uri $releases -UseBasicParsing",
+            "$version_segments = $download_page.links | Where-Object href -Match $version_regex | Sort-Object $version_sort -Descending | Select-Object -Expand href",
+            "foreach ($version_segment in $version_segments) {",
+            "    $version_url = $releases + $version_segment",
+            "    $version_page = Invoke-WebRequest -Uri $version_url -UseBasicParsing",
+            "    if ($null -ne $version_page -and $version_page.Content -match 'href=\"(?<name>.+?zip)\"') {",
+            "        Write-Output \"$version_segment, $($Matches['name'])\"",
+            "        break",
+            "    }",
+            "}"
+        ],
+        "regex": "([\\d.]+)/, (?<name>.+)"
     },
     "autoupdate": {
-        "url": "https://repo1.maven.org/maven2/io/gatling/highcharts/gatling-charts-highcharts-bundle/$version/gatling-charts-highcharts-bundle-$version.zip",
+        "url": "https://repo1.maven.org/maven2/io/gatling/highcharts/gatling-charts-highcharts-bundle/$version/$matchName",
         "hash": {
             "url": "$url.sha1"
         },

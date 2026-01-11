@@ -1,22 +1,22 @@
 {
-    "version": "15.0.1",
+    "version": "18.0.1",
     "description": "Qt Creator CDB Debugger Support",
     "homepage": "https://doc.qt.io/qtcreator/index.html",
     "license": "GPL-3.0-only",
     "depends": "extras/qt-creator",
     "architecture": {
         "64bit": {
-            "url": "https://download.qt.io/official_releases/qtcreator/15.0/15.0.1/installer_source/windows_x64/qtcreatorcdbext.7z",
-            "hash": "md5:89e8c976c88aa5904bb350c3104a0da7"
+            "url": "https://download.qt.io/official_releases/qtcreator/18.0/18.0.1/installer_source/windows_x64/qtcreatorcdbext.7z",
+            "hash": "md5:aa7bbfee8b8dd43dae8cc9e0f9c6ee44"
         },
         "arm64": {
-            "url": "https://download.qt.io/official_releases/qtcreator/15.0/15.0.1/installer_source/windows_arm64/qtcreatorcdbext.7z",
-            "hash": "md5:7eb9e921ed58782413ca423f103cfdc5"
+            "url": "https://download.qt.io/official_releases/qtcreator/18.0/18.0.1/installer_source/windows_arm64/qtcreatorcdbext.7z",
+            "hash": "md5:056bcc0111c97b819516fda403296ca1"
         }
     },
     "post_install": [
         "Remove-Item \"$(appdir qt-creator $global)\\current\\lib\\qtcreatorcdbext*\" -Force -Recurse",
-        "New-Item \"$(appdir qt-creator $global)\\current\\lib\\$((Get-Item $dir\\lib\\qtcreatorcdbext*).Name)\" -ItemType Junction -Target \"$dir\\lib\\$((Get-Item $dir\\lib\\qtcreatorcdbext*).Name)\" -Force | Out-Null"
+        "(Get-Item $dir\\lib\\qtcreatorcdbext*).Name | foreach { New-Item \"$(appdir qt-creator $global)\\current\\lib\\$_\" -ItemType Junction -Target \"$dir\\lib\\$_\" -Force | Out-Null }"
     ],
     "checkver": {
         "url": "https://www.qt.io/offline-installers",

@@ -1,23 +1,23 @@
 {
-    "version": "25.02",
+    "version": "25.09",
     "description": "Powerful and intelligent flash cards",
     "homepage": "https://apps.ankiweb.net",
     "license": "AGPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/ankitects/anki/releases/download/25.02/anki-25.02-windows-qt6.exe#/dl.7z",
-            "hash": "16e3076dde0048cf7247af001552682d96ca3d0e9ca8ce16a6bb2d63e6ac57c8"
+            "url": "https://github.com/ankitects/anki/releases/download/25.09/anki-launcher-25.09-windows.exe#/dl.7z",
+            "hash": "398f690a8208bd381dc2d4220720a82f6d2249c1fd1b38f46a90db356cb7c69e"
         }
     },
     "pre_install": [
         "@(",
-        "    '@echo off'",
-        "    'SET _allParams=\"%*\"'",
-        "    'IF /i %_allParams:-b =%==%_allParams% ('",
-        "    \"    start `\"anki`\" /D `\"%~dp0`\" `\"%~dp0anki.exe`\" -b `\"$persist_dir\\data`\" %*\"",
-        "    ') ELSE ('",
-        "    '    start \"anki\" /D \"%~dp0\" \"%~dp0anki.exe\" %*'",
-        "    ')'",
+        "   '@echo off'",
+        "   'echo Starting Anki...'",
+        "   'set \"USB_ROOT=%~dp0\"'",
+        "   'set \"ANKI_LAUNCHER_VENV_ROOT=%USB_ROOT%\\programfiles\"'",
+        "   'set \"ANKI_LAUNCHER=%USB_ROOT%\\anki\"'",
+        "   'set \"ANKI_BASE=%USB_ROOT%\\data\"'",
+        "   'start /b \"\" \"%ANKI_LAUNCHER%\"'",
         ") | Set-Content \"$dir\\anki.cmd\" -Encoding ASCII",
         "Remove-Item \"$dir\\`$*\" -Recurse"
     ],
@@ -30,18 +30,22 @@
             "anki.exe"
         ]
     ],
-    "persist": "data",
+    "persist": [
+        "data",
+        "programfiles"
+    ],
     "checkver": {
-        "github": "https://github.com/ankitects/anki"
+        "url": "https://api.github.com/repos/ankitects/anki/releases",
+        "regex": "download/(?<version>[\\d.]+)/anki-launcher-\\k<version>-windows\\.exe"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/ankitects/anki/releases/download/$version/anki-$version-windows-qt6.exe#/dl.7z"
+                "url": "https://github.com/ankitects/anki/releases/download/$version/anki-launcher-$version-windows.exe#/dl.7z"
             }
         },
         "hash": {
-            "url": "$baseurl/anki-$version-checksums.txt"
+            "url": "$baseurl/anki-launcher-$version-checksums.txt"
         }
     }
 }
