@@ -1,0 +1,38 @@
+{
+    "version": "0.25.1",
+    "description": "A node-based image processing GUI aimed at making chaining image processing tasks easy and customizable.",
+    "homepage": "https://github.com/chaiNNer-org/chaiNNer",
+    "license": "GPL-3.0-or-later",
+    "suggest": "Versions/python311",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/chaiNNer-org/chaiNNer/releases/download/v0.25.1/chaiNNer-windows-x64-0.25.1-portable.zip",
+            "hash": "ab06e3a8cf036ff76440fc162539b2c4c62abee99dd452ce0bf9c313d63450ed"
+        }
+    },
+    "shortcuts": [
+        [
+            "chaiNNer.exe",
+            "chaiNNer"
+        ]
+    ],
+    "pre_install": [
+        "$settingsFile = \"$dir\\settings.json\"",
+        "if (!(Test-Path $settingsFile)) {",
+        "    $defaultSettings = @{",
+        "        'useSystemPython' = $true",
+        "        'systemPythonLocation' = \"$env:SCOOP\\apps\\python311\\current\"",
+        "    } | ConvertTo-Json",
+        "    Set-Content -Path $settingsFile -Value $defaultSettings -Encoding UTF8",
+        "}"
+    ],
+    "persist": "settings.json",
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/chaiNNer-org/chaiNNer/releases/download/v$version/chaiNNer-windows-x64-$version-portable.zip"
+            }
+        }
+    }
+}
