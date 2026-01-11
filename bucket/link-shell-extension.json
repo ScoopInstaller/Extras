@@ -1,0 +1,53 @@
+{
+    "version": "3.9.3.5",
+    "description": "Link Shell Extension. Offers  the creation of Hardlinks, Junctions, Volume Mountpoints, Symbolic Links and a folder cloning or copy process.",
+    "homepage": "https://schinagl.priv.at/nt/hardlinkshellext/hardlinkshellext.html",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://schinagl.priv.at/nt/hardlinkshellext/license.txt"
+    },
+    "suggest": {
+        "vcredist": "extras/vcredist2022"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://schinagl.priv.at/nt/hardlinkshellext/save/3935/HardLinkShellExt_X64.exe#/HardLinkShellExt.exe",
+            "hash": "ca3f26ebf49dc4ea8b5d8c0154acca0de59a8689e5907fe748ffaeaa357ff3a0"
+        },
+        "32bit": {
+            "url": "https://schinagl.priv.at/nt/hardlinkshellext/save/3935/HardLinkShellExt_win32.exe#/HardLinkShellExt.exe",
+            "hash": "b7e7227e960f025be992c398dafacd03c416adf5210d3fc0ff1d5b5771afdc4b"
+        }
+    },
+    "installer": {
+        "script": "Invoke-ExternalCommand -FilePath \"$dir\\HardLinkShellExt.exe\" -Args @('/S', '/noredist', '/Language=English', \"/D=$dir\") -RunAs | Out-Null"
+    },
+    "uninstaller": {
+        "64bit": {
+            "script": "Invoke-ExternalCommand -FilePath \"$dir\\uninst-HardLinkShellExt_X64.exe\" -Args @('/S' , '/noredist') -RunAs | Out-Null"
+        },
+        "32bit": {
+            "script": "Invoke-ExternalCommand -FilePath \"$dir\\uninst-HardLinkShellExt_win32.exe\" -Args @('/S' , '/noredist') -RunAs | Out-Null"
+        }
+    },
+    "shortcuts": [
+        [
+            "LSEConfig.exe",
+            "Link Shell Extension Configuration"
+        ]
+    ],
+    "checkver": {
+        "url": "https://schinagl.priv.at/nt/hardlinkshellext/hardlinkshellext.html",
+        "regex": ">Last Updated .+ Version ([\\d.]+)<"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://schinagl.priv.at/nt/hardlinkshellext/save/$cleanVersion/HardLinkShellExt_X64.exe#/HardLinkShellExt.exe"
+            },
+            "32bit": {
+                "url": "https://schinagl.priv.at/nt/hardlinkshellext/save/$cleanVersion/HardLinkShellExt_win32.exe#/HardLinkShellExt.exe"
+            }
+        }
+    }
+}
