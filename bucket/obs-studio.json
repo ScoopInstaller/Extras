@@ -1,5 +1,5 @@
 {
-    "version": "31.1.1",
+    "version": "32.0.4",
     "description": "Video recording and live streaming software",
     "homepage": "https://obsproject.com",
     "license": "GPL-2.0-only",
@@ -9,8 +9,8 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://cdn-fastly.obsproject.com/downloads/OBS-Studio-31.1.1-Windows-x64.zip",
-            "hash": "9d8dceb77acd8af04af23f877061f63c9bef78ca73d2093d0ccba1bb9104173f",
+            "url": "https://cdn-fastly.obsproject.com/downloads/OBS-Studio-32.0.4-Windows-x64.zip",
+            "hash": "fd367a7f156319426f1a600720c1288ad0011da168dff41e0f94dbb18cc1dc0f",
             "shortcuts": [
                 [
                     "bin\\64bit\\obs64.exe",
@@ -19,8 +19,8 @@
             ]
         },
         "arm64": {
-            "url": "https://cdn-fastly.obsproject.com/downloads/OBS-Studio-31.1.1-Windows-arm64.zip",
-            "hash": "3c63ea4e92f3fa7887839e499d3ea697b4363f196b1df8f8558307b45fcba31e",
+            "url": "https://cdn-fastly.obsproject.com/downloads/OBS-Studio-32.0.4-Windows-arm64.zip",
+            "hash": "89ff3f7a065089d6527837663d5fda79df64cffce480a129abe04d49745a204b",
             "shortcuts": [
                 [
                     "bin\\64bit\\obs64.exe",
@@ -29,16 +29,26 @@
             ]
         }
     },
-    "pre_install": "if (!(Test-Path \"$persist_dir\\portable_mode.txt\")) { New-Item \"$dir\\portable_mode.txt\" | Out-Null }",
-    "persist": [
-        "config",
-        "portable_mode.txt",
-        "obs-plugins"
+    "pre_install": [
+        "if (-not (Test-Path \"$persist_dir\\portable_mode.txt\")) {",
+        "    New-Item -Path \"$dir\\portable_mode.txt\" -ItemType File -Force | Out-Null",
+        "}"
     ],
     "post_install": [
-        "if (!(Test-Path \"$dir\\obs-plugins.original\")) { return }",
-        "Copy-Item \"$dir\\obs-plugins.original\\*\" \"$dir\\obs-plugins\" -Recurse -Force",
-        "Remove-Item \"$dir\\obs-plugins.original\" -Recurse -Force"
+        "'data', 'obs-plugins' | ForEach-Object {",
+        "    $source_dir = Join-Path $dir \"$_.original\"",
+        "    $destination_dir = Join-Path $dir $_",
+        "    if (Test-Path \"$source_dir\") {",
+        "        Copy-Item -Path \"$source_dir\\*\" -Destination $destination_dir -Force -Recurse",
+        "        Remove-Item -Path $source_dir -Recurse -Force -ErrorAction SilentlyContinue",
+        "    }",
+        "}"
+    ],
+    "persist": [
+        "data",
+        "config",
+        "obs-plugins",
+        "portable_mode.txt"
     ],
     "checkver": {
         "github": "https://github.com/obsproject/obs-studio"

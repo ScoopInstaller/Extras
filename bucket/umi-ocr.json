@@ -10,11 +10,50 @@
             "extract_dir": "Umi-OCR_Rapid_v2.1.5"
         }
     },
+    "pre_install": [
+        "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
+        "'.settings', '.pre_settings' | ForEach-Object {",
+        "    if (Test-Path \"$persist_dir\\data\\$_\") {",
+        "        Copy-Item \"$persist_dir\\data\\$_\" \"$dir\\UmiOCR-data\\$_\" -Force",
+        "    }",
+        "}"
+    ],
+    "post_install": [
+        "$plugins_dir = Join-Path $dir 'UmiOCR-data\\plugins'",
+        "$original_plugins_dir = Join-Path $dir 'UmiOCR-data\\plugins.original'",
+        "if (Test-Path \"$original_plugins_dir\") {",
+        "    Write-Host \"`nINFO  Removing old bundled plugins from $plugins_dir...\" -ForegroundColor darkgray",
+        "    $paddlePlugins = Get-ChildItem -Path \"$plugins_dir\" -Directory -Filter '*Rapid*'",
+        "    $paddlePlugins | Remove-Item -Force -Recurse -ErrorAction SilentlyContinue",
+        "    Write-Host \"INFO  Updating bundled plugins to $plugins_dir...\" -ForegroundColor darkgray",
+        "    Copy-Item -Path \"$original_plugins_dir\\*\" -Destination \"$plugins_dir\" -Force -Recurse",
+        "    Remove-Item \"$original_plugins_dir\" -Force -Recurse | Out-Null",
+        "}"
+    ],
+    "bin": "Umi-OCR.exe",
     "shortcuts": [
         [
             "Umi-OCR.exe",
             "Umi-OCR"
         ]
+    ],
+    "persist": [
+        [
+            "UmiOCR-data\\logs",
+            "data\\logs"
+        ],
+        [
+            "UmiOCR-data\\plugins",
+            "data\\plugins"
+        ]
+    ],
+    "pre_uninstall": [
+        "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
+        "'.settings', '.pre_settings' | ForEach-Object {",
+        "    if (Test-Path \"$dir\\UmiOCR-data\\$_\") {",
+        "        Copy-Item \"$dir\\UmiOCR-data\\$_\" \"$persist_dir\\data\\$_\" -Force",
+        "    }",
+        "}"
     ],
     "checkver": "github",
     "autoupdate": {
