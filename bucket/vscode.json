@@ -1,18 +1,18 @@
 {
     "version": "1.108.0",
-    "description": "Lightweight but powerful source code editor",
-    "homepage": "https://code.visualstudio.com/",
+    "description": "Visual Studio Code is a lightweight yet powerful, cross-platform source code editor providing rich support for development, debugging, and extension-based customization for modern web and cloud workloads.",
+    "homepage": "https://code.visualstudio.com",
     "license": {
         "identifier": "Freeware",
-        "url": "https://code.visualstudio.com/License/"
+        "url": "https://code.visualstudio.com/License"
     },
     "notes": [
-        "Add Visual Studio Code as a context menu option by running:",
-        "reg import \"$dir\\install-context.reg\"",
-        "For file associations, run:",
+        "To register file associations, please execute the following command:",
         "reg import \"$dir\\install-associations.reg\"",
-        "For github integration, run:",
-        "reg import \"$dir\\install-github-integration.reg\""
+        "To register the context menu entry, please execute the following command:",
+        "reg import \"$dir\\install-context.reg\"",
+        "To register the installed program entry (required for integration with other applications), please execute the following command:",
+        "reg import \"$dir\\register-installed-program.reg\""
     ],
     "architecture": {
         "64bit": {
@@ -24,54 +24,72 @@
             "hash": "0589afbfe3e29260ea1ad468586874daff5d100da9d71c289c36f218ede1ede6"
         }
     },
+    "pre_install": [
+        "$data_dir = \"$dir\\data\" -replace '\\\\', '/'",
+        "$extensions_file = \"$env:USERPROFILE\\.vscode\\extensions\\extensions.json\"",
+        "if (-not (Test-Path -Path $extensions_file -PathType Leaf)) { return }",
+        "$cfg = Get-Content -Path $extensions_file -Encoding utf8 | ConvertFrom-Json",
+        "$cfg | ForEach-Object -Process {",
+        "    $_.location.PSObject.Properties.Remove('_sep')",
+        "    $_.location.PSObject.Properties.Remove('fsPath')",
+        "    $_.location.PSObject.Properties.Remove('external')",
+        "    $_.location.path = $_.location.path -replace '(?<=/).+(?=/extensions)', $data_dir",
+        "    if (-not $_.identifier.uuid -and $_.metadata.id) {",
+        "        $_.identifier | Add-Member -NotePropertyName uuid -NotePropertyValue $_.metadata.id",
+        "    }",
+        "}",
+        "$cfg | ConvertTo-Json -Depth 5 -Compress | Set-Content -Path $extensions_file -NoNewline -Encoding utf8"
+    ],
+    "post_install": [
+        "$vscode_dir = $dir -replace '\\\\', '\\\\'",
+        "Get-ChildItem -Path \"$bucketsdir\\$bucket\\scripts\\$app\" -Filter '*.reg' -File | ForEach-Object -Process {",
+        "    $content = Get-Content -Path $_.FullName -Encoding utf8",
+        "    if ($global) {",
+        "        $content = $content -replace 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE'",
+        "        $content = $content -replace '(?<={).+(?=}_is1)', 'EA457B21-F73E-494C-ACAB-524FDE069978'",
+        "    }",
+        "    $content -replace '{{vscode_dir}}', $vscode_dir | Set-Content -Path \"$dir\\$($_.Name)\" -Encoding unicode",
+        "}",
+        "if (-not (Test-Path -Path \"$dir\\data\\user-data\\*\") -and (Test-Path -Path \"$env:AppData\\Code\\*\")) {",
+        "    Write-Host \"`nINFO  Migrating user data to '$dir\\data'...\" -ForegroundColor DarkGray",
+        "    Copy-Item -Path \"$env:AppData\\Code\" -Destination \"$dir\\data\\user-data\" -Force -Recurse",
+        "}",
+        "'argv.json', 'extensions' | ForEach-Object {",
+        "    if (-not (Test-Path -Path \"$dir\\data\\$_\") -and (Test-Path -Path \"$env:USERPROFILE\\.vscode\\$_\")) {",
+        "        Write-Host \"INFO  Migrating $_ to '$dir\\data'...\" -ForegroundColor DarkGray",
+        "        Copy-Item -Path \"$env:USERPROFILE\\.vscode\\$_\" -Destination \"$dir\\data\\$_\" -Force -Recurse",
+        "    }",
+        "}",
+        "$remove_list = 'argv.json', 'extensions' | ForEach-Object -Process { \"$env:USERPROFILE\\.vscode\\$_\" }",
+        "$remove_list + @(\"$env:AppData\\Code\") | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue",
+        "$extensions_file = \"$dir\\data\\extensions\\extensions.json\"",
+        "if (Test-Path -Path $extensions_file -PathType Leaf) {",
+        "    Write-Host \"`nINFO  Adjusting path in extensions file...\" -ForegroundColor DarkGray",
+        "    $cfg = Get-Content -Path $extensions_file -Encoding utf8",
+        "    $replace_regex = '(?<=vscode[/\\\\]+)[\\d.]+(?=[/\\\\]+data[/\\\\]+extensions)'",
+        "    $cfg -replace $replace_regex, $version | Set-Content -Path $extensions_file -NoNewline -Encoding utf8",
+        "}"
+    ],
     "env_add_path": "bin",
     "shortcuts": [
         [
-            "code.exe",
+            "Code.exe",
             "Visual Studio Code"
         ]
     ],
-    "post_install": [
-        "$dirpath = \"$dir\".Replace('\\', '\\\\')",
-        "$exepath = \"$dir\\Code.exe\".Replace('\\', '\\\\')",
-        "'install-associations', 'uninstall-associations', 'install-context', 'uninstall-context', 'install-github-integration', 'uninstall-github-integration' | ForEach-Object {",
-        "  if (Test-Path \"$bucketsdir\\extras\\scripts\\vscode\\$_.reg\") {",
-        "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\vscode\\$_.reg\"",
-        "    $content = $content.Replace('$codedir', $dirpath)",
-        "    $content = $content.Replace('$code', $exepath)",
-        "    if ($global) {",
-        "      $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
-        "    }",
-        "    $content | Set-Content -Path \"$dir\\$_.reg\"",
-        "  }",
-        "}",
-        "if (!(Test-Path \"$dir\\data\\extensions\") -and (Test-Path \"$env:USERPROFILE\\.vscode\\extensions\")) {",
-        "    info '[Portable Mode] Copying extensions...'",
-        "    Copy-Item \"$env:USERPROFILE\\.vscode\\extensions\" \"$dir\\data\" -Recurse",
-        "}",
-        "if (!(Test-Path \"$dir\\data\\user-data\") -and (Test-Path \"$env:AppData\\Code\")) {",
-        "    info '[Portable Mode] Copying user data...'",
-        "    Copy-Item \"$env:AppData\\Code\" \"$dir\\data\\user-data\" -Recurse",
-        "}",
-        "$extensions_file = \"$dir\\data\\extensions\\extensions.json\"",
-        "if ((Test-Path \"$extensions_file\")) {",
-        "    info 'Adjusting path in extensions file...'",
-        "    (Get-Content \"$extensions_file\") -replace '(?<=vscode(/|\\\\\\\\)).*?(?=(/|\\\\\\\\)data(/|\\\\\\\\)extensions)', $version | Set-Content \"$extensions_file\"",
-        "}"
-    ],
+    "persist": "data",
     "uninstaller": {
         "script": [
-            "if ($cmd -eq 'uninstall')",
-            "{",
-            "   reg import \"$dir\\uninstall-context.reg\" ",
-            "   reg import \"$dir\\uninstall-github-integration.reg\" ",
+            "if ($cmd -eq 'uninstall') {",
+            "    reg import \"$dir\\uninstall-context.reg\" *> $null",
+            "    reg import \"$dir\\uninstall-associations.reg\" *> $null",
+            "    reg import \"$dir\\unregister-installed-program.reg\" *> $null",
             "}"
         ]
     },
-    "persist": "data",
     "checkver": {
         "url": "https://update.code.visualstudio.com/api/update/win32-x64-archive/stable/latest",
-        "jsonpath": "$.name"
+        "jsonpath": "$.productVersion"
     },
     "autoupdate": {
         "architecture": {
