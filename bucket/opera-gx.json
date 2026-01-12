@@ -8,27 +8,27 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://get.opera.com/pub/opera_gx/125.0.5729.58/win/Opera_GX_125.0.5729.58_Setup_x64.exe#/dl.7z",
+            "url": "https://get.opera.com/pub/opera_gx/125.0.5729.58/win/Opera_GX_125.0.5729.58_Setup_x64.exe",
             "hash": "22b4528b07dfc1dec2833b1f081128f83ab9f49128c030a35370cc95c36ff00e"
         },
         "32bit": {
-            "url": "https://get.opera.com/pub/opera_gx/125.0.5729.58/win/Opera_GX_125.0.5729.58_Setup.exe#/dl.7z",
+            "url": "https://get.opera.com/pub/opera_gx/125.0.5729.58/win/Opera_GX_125.0.5729.58_Setup.exe",
             "hash": "bb281e91708e86ec91c0f5a35c357e570423b3eb40fc457a8767b8742dad1c68"
         }
     },
     "installer": {
         "script": [
-            "Remove-Item -Path \"$dir\\*_list\" -Force -ErrorAction SilentlyContinue",
+            "Expand-7zipArchive -Path \"$dir\\$fname\" -DestinationPath $dir -Removal",
             "$version, 'autoupdate' | ForEach-Object { ensure \"$dir\\$_\" | Out-Null }",
             "Move-Item -Path \"$dir\\opera_autoupdate*\" -Destination \"$dir\\autoupdate\" -Force",
+            "Remove-Item -Path \"$dir\\*\" -Include '*_list' -Force -ErrorAction SilentlyContinue",
             "$exclude_list = @('Assets', $version, 'autoupdate', 'Resources.pri', 'opera.visualelementsmanifest.xml')",
             "Get-ChildItem -Path $dir | Where-Object { $exclude_list -notcontains $_.Name } | ForEach-Object {",
-            "    $destination_dir = Join-Path $dir \"$version\\$($_.Name)\"",
-            "    Move-Item -Path $_.FullName -Destination $destination_dir -Force -ErrorAction SilentlyContinue",
+            "    Move-Item -Path $_.FullName -Destination \"$dir\\$version\\$($_.Name)\" -Force -ErrorAction SilentlyContinue",
             "}",
-            "Copy-Item -Path \"$dir\\$version\\opera.exe\" -Destination $dir -Force",
-            "$cfg = @{ 'autoupdate'= $false; 'enable_stats' = $false; 'single_profile' = $true } | ConvertTo-Json",
-            "Set-Content -Path \"$dir\\installer_prefs.json\" -Value $cfg -Encoding ASCII"
+            "Copy-Item -Path \"$dir\\$version\\opera.exe\" -Destination $dir",
+            "$cfg = @{ 'autoupdate'= $false; 'enable_stats' = $false; 'single_profile' = $true } | ConvertTo-Json -Depth 5",
+            "Set-Content -Path \"$dir\\installer_prefs.json\" -Value $cfg -Encoding ascii"
         ]
     },
     "shortcuts": [
@@ -40,29 +40,29 @@
     "persist": "profile",
     "checkver": {
         "script": [
-            "$version_regex = '^(?!\\.)[\\d.]+/$'",
+            "$path_regex = '^(?!\\.)[\\d.]+/$'",
             "$version_sort = { [version]$_.href.TrimEnd('/') }",
-            "$releases = 'https://get.opera.com/pub/opera_gx/'",
-            "$download_page = Invoke-WebRequest -Uri $releases -UseBasicParsing",
-            "$version_segments = $download_page.links | Where-Object href -Match $version_regex | Sort-Object $version_sort -Descending | Select-Object -Expand href",
-            "foreach ($version_segment in $version_segments) {",
-            "    $version_url = $releases + $version_segment",
-            "    $version_page = Invoke-WebRequest -Uri $version_url -UseBasicParsing",
-            "    if ($null -ne $version_page -and $version_page.Content -match 'win') {",
-            "        Write-Output $version_segment",
-            "        break",
-            "    }",
+            "$releases_url = 'https://get.opera.com/pub/opera_gx/'",
+            "$releases_page = Invoke-WebRequest -Uri $releases_url -UseBasicParsing -ErrorAction Stop",
+            "$path_segments = $releases_page.links | Where-Object { $_.href -match $path_regex } |",
+            "        Sort-Object -Property $version_sort -Descending | ForEach-Object -MemberName href",
+            "foreach ($path_segment in $path_segments.TrimEnd('/')) {",
+            "    $release_url = 'https://get.opera.com/pub/opera_gx/{0}/win/' -f $path_segment",
+            "    $download_page = Invoke-WebRequest -Uri $release_url -UseBasicParsing -ErrorAction Stop",
+            "    $installer_name = $download_page.Links | Where-Object { $_.href -match '(?<=Setup\\w+)\\.exe$' } |",
+            "            Select-Object -ExpandProperty href -First 1",
+            "    if ($null -ne $installer_name) { Write-Output $installer_name; break }",
             "}"
         ],
-        "regex": "([\\d.]+)/"
+        "regex": "Opera_GX_([\\d.]+)_Setup"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://get.opera.com/pub/opera_gx/$version/win/Opera_GX_$version_Setup_x64.exe#/dl.7z"
+                "url": "https://get.opera.com/pub/opera_gx/$version/win/Opera_GX_$version_Setup_x64.exe"
             },
             "32bit": {
-                "url": "https://get.opera.com/pub/opera_gx/$version/win/Opera_GX_$version_Setup.exe#/dl.7z"
+                "url": "https://get.opera.com/pub/opera_gx/$version/win/Opera_GX_$version_Setup.exe"
             }
         },
         "hash": {
