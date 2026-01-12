@@ -1,5 +1,5 @@
 {
-    "version": "10.6.1.397",
+    "version": "10.8.2.407",
     "description": "A small, fast, and feature-rich PDF viewer/editor.",
     "homepage": "https://www.pdf-xchange.com/product/pdf-xchange-editor",
     "license": {
@@ -9,16 +9,22 @@
     "architecture": {
         "64bit": {
             "url": "https://www.pdf-xchange.com/downloads/PDFXEdit10_Portable_x64.zip",
-            "hash": "f6aaf5412f2f118a5915c6153e8e94ca1b5953f6704808dcecd2dd1a7f5276c8"
+            "hash": "83837415cd16bb166d2e3dac0c5dd42c471f70a646a1c5c36e0e92cdfb5afb34"
         },
         "32bit": {
             "url": "https://www.pdf-xchange.com/downloads/PDFXEdit10_Portable_x86.zip",
-            "hash": "b92e445a6c39a1fdce0761bd86c920d270b4e2c1ed56d640c483d8bac2c193b1"
+            "hash": "dc7b9c8bdd2e3078f4af754ad1b957a74475b86b30e69144f11e908d4e523c20"
         }
     },
-    "persist": [
-        "History.dat",
-        "Settings.dat"
+    "pre_install": [
+        "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
+        "'History.dat', 'Settings.dat' | ForEach-Object {",
+        "    if (Test-Path \"$persist_dir\\$_\") {",
+        "        Copy-Item \"$persist_dir\\$_\" \"$dir\\$_\" -Force -ErrorAction SilentlyContinue",
+        "    } else {",
+        "        New-Item \"$dir\\$_\" -ItemType File | Out-Null",
+        "    }",
+        "}"
     ],
     "bin": "PDFXEdit.exe",
     "shortcuts": [
@@ -27,9 +33,18 @@
             "PDF-XChange Editor"
         ]
     ],
-    "pre_install": [
-        "if(!(Test-Path \"$persist_dir\\History.dat\")) { New-Item \"$dir\\History.dat\" | Out-Null }",
-        "if(!(Test-Path \"$persist_dir\\Settings.dat\")) { New-Item \"$dir\\Settings.dat\" | Out-Null }"
+    "persist": [
+        "History.dat",
+        "Settings.dat"
+    ],
+    "pre_uninstall": [
+        "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
+        "ensure $persist_dir",
+        "'History.dat', 'Settings.dat' | ForEach-Object {",
+        "    if (Test-Path \"$dir\\$_\") {",
+        "        Copy-Item \"$dir\\$_\" \"$persist_dir\\$_\" -Force -ErrorAction SilentlyContinue",
+        "    }",
+        "}"
     ],
     "checkver": {
         "url": "https://www.pdf-xchange.com/product/pdf-xchange-editor/history/download-text-file",

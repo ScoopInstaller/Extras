@@ -1,5 +1,5 @@
 {
-    "version": "5.1.2.31185",
+    "version": "5.1.7.31736",
     "description": "Directory and file compare functions in one package",
     "homepage": "https://www.scootersoftware.com",
     "license": {
@@ -15,8 +15,8 @@
         "",
         "Or maybe you want to upgrade license from v4 to v5: https://www.scootersoftware.com/kb/upgradepolicy"
     ],
-    "url": "https://www.scootersoftware.com/files/BCompare-5.1.2.31185.exe",
-    "hash": "fdfa87d53640b59f9e16e3a0952ebad3f9b787788beaa656a1a00c64d48f5ca2",
+    "url": "https://www.scootersoftware.com/files/BCompare-5.1.7.31736.exe",
+    "hash": "ac4220d3ef13a4253a7a4b408c14096e34da14027973b8f960f8b9b3945736aa",
     "architecture": {
         "64bit": {
             "installer": {
@@ -49,38 +49,31 @@
         ]
     ],
     "pre_install": [
-        "$file = 'BCPreferences.xml'",
-        "if (!(Test-Path \"$persist_dir\\$file\")) {",
-        "   $CONT = @('<BCPreferences Version=\"2\" MinVersion=\"2\"><TBcPrefs><CheckForUpdatesDayAmt Value=\"0\"/></TBcPrefs></BCPreferences>')",
-        "   Set-Content \"$dir\\$file\" $CONT -Encoding Ascii",
+        "$contents = @{",
+        "    # Create a default BCPreferences.xml that will skip update checks.",
+        "    'BCPreferences.xml' = '<BCPreferences Version=\"2\" MinVersion=\"2\"><TBcPrefs><CheckForUpdatesDayAmt Value=\"0\"/></TBcPrefs></BCPreferences>'",
         "}",
-        "'BCColors.xml', 'BCCommands.xml', 'BCFileFormats.xml', 'BC5Key.txt' | ForEach-Object {",
-        "   if (!(Test-Path \"$persist_dir\\$_\")) {",
-        "      New-Item \"$dir\\$_\" -ItemType File | Out-Null",
-        "   }",
+        "# Hardlinks won't work properly here to persist files, because this app creates a new file instead of writing to the existing one.",
+        "# Please keep the file list the same in both pre_install and post_install scripts.",
+        "'BC5Key.txt', 'BCColors.xml', 'BCCommands.xml', 'BCFileFormats.xml', 'BCPreferences.xml', 'BCState.xml', 'BCSessions.xml' | ForEach-Object {",
+        "    if (Test-Path \"$persist_dir\\$_\") {",
+        "        Copy-Item \"$persist_dir\\$_\" \"$dir\\$_\" -Force",
+        "    } else {",
+        "        Set-Content -Path \"$dir\\$_\" -Value $contents[$_]",
+        "    }",
         "}"
     ],
     "persist": [
         "Helpers",
-        "Packers",
-        "BCColors.xml",
-        "BCCommands.xml",
-        "BCFileFormats.xml",
-        "BCPreferences.xml",
-        "BCState.xml",
-        "BC5Key.txt"
+        "Packers"
     ],
     "pre_uninstall": [
-        "'Helpers', 'Packers' | ForEach-Object {",
-        "    if ((Test-Path \"$dir\\$_\") -And !((Get-Item -Path \"$dir\\$_\" -Force).LinkType -eq \"Junction\")) {",
-        "        New-Item \"$dir\\$_\" -ItemType Directory -ErrorAction Ignore | Out-Null",
-        "        Get-ChildItem -Path \"$dir\\$_\" -Recurse | Move-Item -Destination \"$persist_dir\\$_\" -Force",
+        "# Hardlinks won't work properly here to persist files, because this app creates a new file instead of writing to the existing one.",
+        "# Please keep the file list the same in both pre_install and post_install scripts.",
+        "'BC5Key.txt', 'BCColors.xml', 'BCCommands.xml', 'BCFileFormats.xml', 'BCPreferences.xml', 'BCState.xml', 'BCSessions.xml' | ForEach-Object {",
+        "    if (Test-Path \"$dir\\$_\") {",
+        "        Copy-Item \"$dir\\$_\" \"$persist_dir\\$_\" -Force",
         "    }",
-        "}",
-        "'BCColors.xml', 'BCCommands.xml', 'BCFileFormats.xml', 'BCPreferences.xml', 'BCState.xml', 'BC5Key.txt' | ForEach-Object {",
-        "   if (Test-Path \"$dir\\$_\") {",
-        "       Move-Item \"$dir\\$_\" \"$persist_dir\\$_\" -Force",
-        "   }",
         "}"
     ],
     "checkver": {

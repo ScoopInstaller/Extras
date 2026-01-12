@@ -1,5 +1,5 @@
 {
-    "version": "9.9.20.250724",
+    "version": "9.9.26.260108",
     "description": "An instant messaging software service developed by Tencent",
     "homepage": "https://im.qq.com/pcqq/index.shtml",
     "license": {
@@ -8,16 +8,16 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.20_250724_x64_01.exe#/dl.7z",
-            "hash": "59b097078bd5b3bc6e1029a1dc617559c2d82a8d79fc60798fad5104dc44883c"
+            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.26_260108_x64_01.exe#/dl.7z",
+            "hash": "1d63aeff1fefb59892bda0b4313776f81cb7c12529c91b263b5f407386956860"
         },
         "32bit": {
-            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.20_250724_x86_01.exe#/dl.7z",
-            "hash": "7a0d51871d2b5add030633b6b87a834119b60daad1098b3747cc7121da4278aa"
+            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.26_260108_x86_01.exe#/dl.7z",
+            "hash": "ac46249dfe141a2e3a0827ba6be4207e709d60c3f5ee7e8a0760269176d2a73f"
         },
         "arm64": {
-            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.20_250724_arm64_01.exe#/dl.7z",
-            "hash": "8f1a08f515e93585523412b9435f27e052a0d464eb53658a9e991b084965f64d"
+            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.26_260108_arm64_01.exe#/dl.7z",
+            "hash": "926022a43c8db021de61f242daf63fb67ea0f70f14fce6cd3f16c1be7a547ed6"
         }
     },
     "extract_dir": "Files",
@@ -28,7 +28,15 @@
         ]
     ],
     "checkver": {
-        "url": "https://cdn-go.cn/qq-web/im.qq.com_new/latest/rainbow/windowsConfig.js",
+        "script": [
+            "# Please keep this script. Using 'cdn-go.cn' may result in receiving expired cache responses.",
+            "$url = 'https://cdn-go.cn/qq-web/im.qq.com_new/latest/rainbow/windowsConfig.js'",
+            "$hostname = ([Uri]$url).Host",
+            "$records = Resolve-DnsName 'cdn-go.cn.cloud.tc.qq.com' -Type A -DnsOnly -ErrorAction Ignore",
+            "$ip = $records | Where-Object { $_.QueryType -eq 'A' -and $_.IPAddress } | Select-Object -ExpandProperty IP4Address -First 1",
+            "$url = $url -Replace [regex]::Escape($hostname), $ip",
+            "Invoke-WebRequest -Uri $url -UseBasicParsing -Headers @{'Host' = $hostname} | Select-Object -ExpandProperty Content"
+        ],
         "regex": "QQNT/Windows/QQ_([\\d\\.]+)_([\\d]+)_x86_01.exe",
         "replace": "${1}.${2}"
     },

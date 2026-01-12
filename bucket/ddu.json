@@ -1,5 +1,5 @@
 {
-    "version": "18.1.2.2",
+    "version": "18.1.4.0",
     "description": "Driver removal utility that can help you completely uninstall AMD/NVIDIA graphics card drivers and packages from your system, without leaving leftovers behind (including registry keys, folders and files, driver store)",
     "homepage": "https://github.com/Wagnard/display-drivers-uninstaller",
     "license": {
@@ -7,23 +7,26 @@
         "url": "https://github.com/Wagnard/display-drivers-uninstaller/blob/WPF/LICENSE.md"
     },
     "url": "https://ftp.nluug.nl/pub/games/PC/guru3d/ddu/%5BGuru3D%5D-DDU.zip",
-    "hash": "1d5c7e8b7a47b3767c02394ff92f0e3c9084a0a0a4646c4eb548db136bceac02",
+    "hash": "0aa05e8097e068a78f4db15e0b7d914dca0b78d98aa07d0e11119da9dc597886",
     "pre_install": [
-        "$ddu = \"DDU v$version\"",
-        "Expand-7zipArchive \"$dir/$ddu.exe\" \"$dir\" -ExtractDir $ddu -Removal",
-        "Remove-Item \"$dir/*Guru3D*\" -Recurse",
-        "if (!(Test-Path \"$persist_dir/Settings/Settings.xml\")) { New-Item \"$dir/Settings/Settings.xml\" | Out-Null }"
+        "Expand-7zipArchive \"$dir\\*DDU*.exe\" -DestinationPath \"$dir\" -ExtractDir \"DDU v$version\" -Removal",
+        "Remove-Item \"$dir\\*Guru3D*\" -Recurse",
+        "Copy-Item \"$persist_dir\\settings\\Settings.xml\" \"$dir\\settings\" -ErrorAction SilentlyContinue"
     ],
-    "persist": "Settings\\Settings.xml",
     "shortcuts": [
         [
             "Display Driver Uninstaller.exe",
             "DDU - Display Driver Uninstaller"
         ]
     ],
+    "pre_uninstall": [
+        "# Hardlinks won't work properly here to persist files, because this app creates a new file instead of writing to the existing one.",
+        "ensure \"$persist_dir\\settings\" | Out-Null",
+        "Copy-Item \"$dir\\settings\\Settings.xml\" \"$persist_dir\\settings\" -ErrorAction SilentlyContinue"
+    ],
     "checkver": {
-        "url": "https://www.guru3d.com/download/display-driver-uninstaller-download/",
-        "regex": "<title>Display Driver Uninstaller \\(DDU\\) download version ([\\d.]+)</title>"
+        "url": "https://www.wagnardsoft.com/display-driver-uninstaller-ddu",
+        "regex": "Display Driver Uninstaller \\(DDU\\) (\\d+(?:\\.\\d+){3})"
     },
     "autoupdate": {
         "url": "https://ftp.nluug.nl/pub/games/PC/guru3d/ddu/%5BGuru3D%5D-DDU.zip"

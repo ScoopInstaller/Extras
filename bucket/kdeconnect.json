@@ -1,20 +1,15 @@
 {
-    "version": "25.04-4975",
+    "version": "25.08.3",
     "description": "Communications and data transfer between devices over local networks",
     "homepage": "https://kdeconnect.kde.org/",
     "license": "GPL-3.0-or-later",
     "notes": "If you want to get the latest development branch-based installer, please install `kdeconnect-nightly` from Versions bucket.",
     "architecture": {
         "64bit": {
-            "url": "https://download.kde.org/stable/release-service/25.04.0/windows/kdeconnect-kde-release_25.04-4975-windows-cl-msvc2022-x86_64.exe#/dl.7z",
-            "hash": "7b33e3a482d927fc34bc9bfbc81b4b62a5e728d6b123c884152c54589a6c5270"
+            "url": "https://download.kde.org/stable/release-service/25.08.3/windows/kdeconnect-kde-windows-cl-msvc2022-x86_64.7z",
+            "hash": "dc2b5e96351d5bd2bb8d15152a039225a6b7068c432c1c37f13250945aa3de31"
         }
     },
-    "pre_install": [
-        "Remove-Item \"$dir\\*\" -Exclude kdeconnect-*.7z -Recurse",
-        "Expand-7ZipArchive \"$dir\\kdeconnect-*.7z\" \"$dir\"",
-        "Remove-Item \"$dir\\kdeconnect-*.7z\""
-    ],
     "bin": "bin\\kdeconnect-cli.exe",
     "shortcuts": [
         [
@@ -24,15 +19,14 @@
     ],
     "checkver": {
         "url": "https://kdeconnect.kde.org/download.html",
-        "regex": "release-service/(?<release>[\\d.]+)/windows/kdeconnect-kde-release_(?<version>.*)-windows-(?<lib>.*)\\.exe"
+        "regex": "release-service/([\\d.]+)/windows/kdeconnect-kde-windows-cl-(?<lib>\\w+)-x86_64\\.exe"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.kde.org/stable/release-service/$matchRelease/windows/kdeconnect-kde-release_$version-windows-$matchLib.exe#/dl.7z",
+                "url": "https://download.kde.org/stable/release-service/$version/windows/kdeconnect-kde-windows-cl-$matchLib-x86_64.7z",
                 "hash": {
-                    "url": "https://apps.kde.org/kdeconnect",
-                    "regex": "sha256:</strong> $sha256</div>"
+                    "url": "$url.sha256"
                 }
             }
         }

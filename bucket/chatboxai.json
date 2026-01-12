@@ -1,0 +1,62 @@
+{
+    "version": "1.18.2",
+    "description": "Powerful AI desktop client with support for ChatGPT, Claude and other LLMs.",
+    "homepage": "https://chatboxai.app/",
+    "license": {
+        "identifier": "GPL-3.0-or-later",
+        "url": "https://github.com/chatboxai/chatbox/blob/main/LICENSE"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://download.chatboxai.app/releases/Chatbox-1.18.2-Setup.exe#/dl.7z",
+            "hash": "81130b31c2500ce5f93aaecf3c128fc41a4fa30cbc800d969b35e58dc6587b9f"
+        },
+        "arm64": {
+            "url": "https://download.chatboxai.app/releases/Chatbox-1.18.2-Setup.exe#/dl.7z",
+            "hash": "81130b31c2500ce5f93aaecf3c128fc41a4fa30cbc800d969b35e58dc6587b9f"
+        }
+    },
+    "pre_install": [
+        "$arch = $architecture -replace 'bit',''",
+        "Expand-7ZipArchive \"$dir\\`$PLUGINSDIR\\app-$arch.7z\" \"$dir\" -Removal",
+        "Remove-Item \"$dir\\`$*\" -Force -Recurse"
+    ],
+    "post_install": [
+        "$file = \"$persist_dir\\User Data\\config.json\"",
+        "if (!(Test-Path \"$dir\\User Data\\*\") -and (Test-Path \"$env:APPDATA\\xyz.chatboxapp.app\")) {",
+        "    info '[Portable Mode]: Copying user data...'",
+        "    Copy-Item \"$env:APPDATA\\xyz.chatboxapp.app\\*\" \"$dir\\User Data\" -Recurse",
+        "    if ((Test-Path $file)) {",
+        "        warn \"Disabling incompatible autoUpdate\"",
+        "        (Get-Content $file) -replace '\"autoUpdate\": true', '\"autoUpdate\": false' | Set-Content $file -Encoding ASCII",
+        "    }",
+        "}",
+        "if (!(Test-Path $file)) {",
+        "   $json = \"{`n`t'settings': {`n`t`t'autoUpdate': false`n`t}`n}`n\"",
+        "   $json.Replace(\"'\", '\"') | Out-File -FilePath $file -Encoding ASCII",
+        "   warn \"Do not enable autoUpdate inside Chatbox, use scoop update instead\"",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "Chatbox.exe",
+            "Chatbox",
+            "--user-data-dir=\"$dir\\User Data\""
+        ]
+    ],
+    "persist": "User Data",
+    "checkver": {
+        "url": "https://chatboxai.app/en/help-center/changelog",
+        "regex": "https://download\\.chatboxai\\.app/releases/Chatbox-([0-9.]+)-Setup.exe"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download.chatboxai.app/releases/Chatbox-$version-Setup.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://download.chatboxai.app/releases/Chatbox-$version-Setup.exe#/dl.7z"
+            }
+        }
+    }
+}

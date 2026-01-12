@@ -1,15 +1,25 @@
 {
-    "version": "0.196.6",
+    "version": "0.218.6",
     "description": "Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter. It's also open source.",
     "homepage": "https://zed.dev/",
     "license": "AGPL-3.0, Apache-2.0, GPL-3.0",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/deevus/zed-windows-builds/releases/download/v0.196.6/zed.zip",
-            "hash": "32a8231ed849fcd56ad3d9e6fd91e178c387afeeff7930933aa03b7326faf749"
+            "url": "https://github.com/zed-industries/zed/releases/download/v0.218.6/Zed-x86_64.exe",
+            "hash": "6c26faccfce64a2fdb06afbd7623fedca818051257fb1da7a88a11cbc8f61628"
+        },
+        "arm64": {
+            "url": "https://github.com/zed-industries/zed/releases/download/v0.218.6/Zed-aarch64.exe",
+            "hash": "f0ef52ccd06c9666a41ef59ddd98f9b7ad09a52228c5d3434eca170983c8e15e"
         }
     },
-    "bin": "zed.exe",
+    "installer": {
+        "script": [
+            "Expand-InnoArchive -Path \"$dir\\$fname\" -ExtractDir '{app}'",
+            "Expand-InnoArchive -Path \"$dir\\$fname\" -ExtractDir '{code_GetInstallDir}' -Removal"
+        ]
+    },
+    "bin": "bin\\zed.exe",
     "shortcuts": [
         [
             "zed.exe",
@@ -17,13 +27,16 @@
         ]
     ],
     "checkver": {
-        "url": "https://github.com/deevus/zed-windows-builds/releases",
-        "regex": "v(\\d+\\.\\d+\\.\\d+)"
+        "github": "https://github.com/zed-industries/zed"
     },
     "autoupdate": {
-        "url": "https://github.com/deevus/zed-windows-builds/releases/download/v$version/zed.zip",
-        "hash": {
-            "url": "https://github.com/deevus/zed-windows-builds/releases/download/v$version/sha256sums.txt"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/zed-industries/zed/releases/download/v$version/Zed-x86_64.exe"
+            },
+            "arm64": {
+                "url": "https://github.com/zed-industries/zed/releases/download/v$version/Zed-aarch64.exe"
+            }
         }
     }
 }
