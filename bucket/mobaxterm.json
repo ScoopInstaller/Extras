@@ -1,7 +1,7 @@
 {
     "version": "25.4",
     "description": "Enhanced terminal for Windows with X11 server, tabbed SSH client, network tools and much more.",
-    "homepage": "https://mobaxterm.mobatek.net/",
+    "homepage": "https://mobaxterm.mobatek.net",
     "license": {
         "identifier": "Freeware",
         "url": "https://mobaxterm.mobatek.net/license.html"
@@ -9,40 +9,46 @@
     "url": "https://download.mobatek.net/2542025111600034/MobaXterm_Portable_v25.4.zip",
     "hash": "d4c4bea83c5a17b574c3f067fe4b02fe33f57f30d50f01f26a23cb8b7212f822",
     "pre_install": [
-        "    # Rename executable",
-        "Get-ChildItem \"$dir\" 'mobaxterm*.exe' | Select-Object -First 1 | Rename-Item -NewName 'MobaXterm.exe'",
-        "    # Create files for persisting",
-        "function PersistsFile([String] $file) {",
-        "    if (!(Test-Path \"$persist_dir\\$file\")) {",
-        "        New-Item \"$dir\\$file\" -Type File | Out-Null",
+        "Get-ChildItem -Path $dir -Filter 'MobaXterm*.exe' -File | Select-Object -First 1 | Rename-Item -NewName 'MobaXterm.exe'",
+        "# Hard links are not applicable here because the application creates a new file instead of modifying the existing one in place.",
+        "'*.mxt3', '*.mxtpro', 'MobaXterm.ini', 'MobaXterm backup.zip' | ForEach-Object {",
+        "    if (Test-Path -Path \"$persist_dir\\$_\" -PathType Leaf) {",
+        "        Copy-Item -Path \"$persist_dir\\$_\" -Destination $dir -Force",
+        "        return",
         "    }",
-        "}",
-        "@('MobaXterm backup.zip', 'MobaXterm.ini') | ForEach-Object { PersistsFile $_ }"
-    ],
-    "pre_uninstall": [
-        "function UpdatesFile([string] $file) {",
-        "    if ((Get-ChildItem \"$dir\\$file\").LastWriteTime -gt (Get-ChildItem \"$persist_dir\\$file\").LastWriteTime) {",
-        "        [System.IO.File]::WriteAllBytes(\"$persist_dir\\$file\", [System.IO.File]::ReadAllBytes(\"$dir\\$file\"))",
+        "    if ($_ -eq 'MobaXterm.ini') {",
+        "        $cfg = @('[Misc]', 'HomeDir=_MobaFolder_\\home', 'SlashDir=_MobaFolder_\\slash')",
+        "        Set-Content -Path \"$dir\\MobaXterm.ini\" -Value $cfg -Encoding ascii",
         "    }",
-        "}",
-        "@('MobaXterm backup.zip', 'MobaXterm.ini') | ForEach-Object { UpdatesFile $_ }"
+        "}"
     ],
     "bin": "MobaXterm.exe",
     "shortcuts": [
         [
             "MobaXterm.exe",
-            "MobaXterm Personal"
+            "MobaXterm"
         ]
     ],
     "persist": [
-        "MobaXterm.ini",
-        "MobaXterm backup.zip"
+        "home",
+        "slash"
+    ],
+    "pre_uninstall": [
+        "# Hard links are not applicable here because the application creates a new file instead of modifying the existing one in place.",
+        "'*.mxt3', '*.mxtpro', 'MobaXterm.ini', 'MobaXterm backup.zip' | ForEach-Object {",
+        "    if (Test-Path -Path \"$dir\\$_\" -PathType Leaf) {",
+        "        Copy-Item -Path \"$dir\\$_\" -Destination $persist_dir -Force",
+        "    }",
+        "}",
+        "# Ensure background X server process is terminated to prevent resource lock.",
+        "Stop-Process -Name 'XWin_MobaX' -Force -ErrorAction SilentlyContinue",
+        "Start-Sleep -Milliseconds 1500"
     ],
     "checkver": {
         "url": "https://mobaxterm.mobatek.net/download-home-edition.html",
-        "regex": "//download.mobatek.net/(?<random>[\\d]+)/MobaXterm_Portable_v([\\d.]+)\\.zip"
+        "regex": "mobatek.net/(?<build>[^/]+)/MobaXterm_Portable_v([\\d.]+)\\.zip"
     },
     "autoupdate": {
-        "url": "https://download.mobatek.net/$matchRandom/MobaXterm_Portable_v$version.zip"
+        "url": "https://download.mobatek.net/$matchBuild/MobaXterm_Portable_v$version.zip"
     }
 }
