@@ -1,39 +1,40 @@
 {
-    "version": "4.4.168",
-    "description": "A modern media center that's a one-stop solution for your video entertainment. You discover, watch and organize video content from easy to install addons.",
-    "homepage": "https://www.stremio.com/",
+    "version": "5.0.16",
+    "description": "Next generation media center",
+    "homepage": "https://stremio.com",
     "license": "Proprietary",
-    "notes": "Register 'URL:Stremio Protocol' via `reg import \"$dir\\install-context.reg\"`",
-    "url": "https://dl.strem.io/shell-win/v4.4.168/Stremio+4.4.168.exe#/dl.7z",
-    "hash": "44ecc6a7624b2fdf03cb9b419f111892515fb036fe23f88e51456dce69066046",
-    "pre_install": "Remove-Item \"$dir\\`$*\" -Recurse",
-    "post_install": [
-        "'install-context', 'uninstall-context' | ForEach-Object {",
-        "    if (Test-Path \"$bucketsdir\\extras\\scripts\\stremio\\$_.reg\") {",
-        "        $sPath = \"$dir\\stremio.exe\".Replace('\\', '\\\\')",
-        "        $content = (Get-Content \"$bucketsdir\\extras\\scripts\\stremio\\$_.reg\").Replace('$stremioexe', $sPath)",
-        "        if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
-        "        Set-Content \"$dir\\$_.reg\" $content -Encoding Ascii -Force",
-        "    }",
-        "}"
-    ],
+    "suggest": {
+        "vcredist": "extras/vcredist2022"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://dl.strem.io/stremio-shell-ng/v5.0.16/StremioSetup-v5.0.16_x64.exe",
+            "hash": "42171f6636a6904baba044e59955124936b1117dda109614b71456d62425d016"
+        },
+        "arm64": {
+            "url": "https://dl.strem.io/stremio-shell-ng/v5.0.16/StremioSetup-v5.0.16_arm64.exe",
+            "hash": "722075494cfedc04cd59eb2a41e0525d74f5a769878a1eafbc44c58bb349c0b4"
+        }
+    },
+    "innosetup": true,
     "shortcuts": [
         [
-            "stremio.exe",
+            "stremio-shell-ng.exe",
             "Stremio"
         ]
     ],
-    "pre_uninstall": [
-        "Stop-Process -Name 'stremio.exe' -ErrorAction SilentlyContinue",
-        "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }"
-    ],
     "checkver": {
-        "url": "https://api.github.com/repositories/197275551/contents/manifests/s/Stremio/Stremio",
-        "jsonpath": "$..name",
-        "regex": "([\\d.]+)",
-        "reverse": true
+        "url": "https://stremio.com/updater/check?product=stremio-shell-ng",
+        "jsonpath": "$.version"
     },
     "autoupdate": {
-        "url": "https://dl.strem.io/shell-win/v$version/Stremio+$version.exe#/dl.7z"
+        "architecture": {
+            "64bit": {
+                "url": "https://dl.strem.io/stremio-shell-ng/v$version/StremioSetup-v$version_x64.exe"
+            },
+            "arm64": {
+                "url": "https://dl.strem.io/stremio-shell-ng/v$version/StremioSetup-v$version_arm64.exe"
+            }
+        }
     }
 }
