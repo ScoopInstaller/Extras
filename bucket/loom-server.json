@@ -1,0 +1,60 @@
+{
+  "version": "1.0.2",
+  "description": "Loom agent server with multi-agent orchestration and gRPC/HTTP APIs",
+  "homepage": "https://github.com/teradata-labs/loom",
+  "license": "Apache-2.0",
+  "architecture": {
+    "64bit": {
+      "url": "https://github.com/teradata-labs/loom/releases/download/v1.0.2/looms-windows-amd64.exe.zip",
+      "hash": "98198f3d06c86a35272d077a961878fdfb153fa30f018b23322b985e36d965a0",
+      "extract_dir": ""
+    }
+  },
+  "bin": "looms-windows-amd64.exe",
+  "checkver": {
+    "github": "https://github.com/teradata-labs/loom"
+  },
+  "autoupdate": {
+    "architecture": {
+      "64bit": {
+        "url": "https://github.com/teradata-labs/loom/releases/download/v$version/looms-windows-amd64.exe.zip"
+      }
+    }
+  },
+  "post_install": [
+    "Write-Host 'Creating Loom data directory...' -ForegroundColor Green",
+    "New-Item -ItemType Directory -Force -Path \"$env:USERPROFILE\\.loom\" | Out-Null",
+    "New-Item -ItemType Directory -Force -Path \"$env:USERPROFILE\\.loom\\patterns\" | Out-Null",
+    "",
+    "Write-Host 'Downloading patterns...' -ForegroundColor Green",
+    "$patternsUrl = 'https://github.com/teradata-labs/loom/archive/refs/heads/main.zip'",
+    "$tempZip = \"$env:TEMP\\loom-patterns.zip\"",
+    "Invoke-WebRequest -Uri $patternsUrl -OutFile $tempZip",
+    "Expand-Archive -Path $tempZip -DestinationPath \"$env:TEMP\\loom-temp\" -Force",
+    "Copy-Item -Path \"$env:TEMP\\loom-temp\\loom-main\\patterns\\*\" -Destination \"$env:USERPROFILE\\.loom\\patterns\\\" -Recurse -Force",
+    "Remove-Item -Path $tempZip -Force",
+    "Remove-Item -Path \"$env:TEMP\\loom-temp\" -Recurse -Force",
+    "",
+    "Write-Host 'Setting environment variables...' -ForegroundColor Green",
+    "[Environment]::SetEnvironmentVariable('LOOM_DATA_DIR', \"$env:USERPROFILE\\.loom\", 'User')"
+  ],
+  "notes": [
+    "Loom server (looms) installed successfully!",
+    "",
+    "Patterns installed to: $env:USERPROFILE\\.loom\\patterns",
+    "",
+    "Next steps:",
+    "  1. Configure an LLM provider:",
+    "     looms-windows-amd64 config set llm.provider anthropic",
+    "     looms-windows-amd64 config set-key anthropic_api_key",
+    "",
+    "  2. Start the server:",
+    "     looms-windows-amd64 serve",
+    "",
+    "  3. Connect with the TUI client:",
+    "     scoop install loom",
+    "     loom-windows-amd64 --thread weaver",
+    "",
+    "Documentation: https://github.com/teradata-labs/loom#readme"
+  ]
+}
