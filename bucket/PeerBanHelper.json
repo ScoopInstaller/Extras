@@ -68,6 +68,30 @@
         "",
         "Set-Content -Path $launcher -Value $content"
     ],
+    "post_install": [
+        "if (!((Get-ChildItem -Path \"$dir\\data\").Count -gt 0)) {",
+        "    $sourcePaths = @(",
+        "        \"${env:ProgramFiles}\\PeerBanHelper\\data\\\",",
+        "        \"${env:ProgramFiles(x86)}\\PeerBanHelper\\data\\\",",
+        "        \"${env:LOCALAPPDATA}\\PeerBanHelper\\\",",
+        "        \"${env:APPDATA}\\PeerBanHelper\\\",",
+        "        \"${env:USERPROFILE}\\AppData\\Local\\Programs\\PeerBanHelper\\data\\\",",
+        "        \"${env:WINDIR}\\System32\\config\\systemprofile\\AppData\\Local\\PeerBanHelper\\\"",
+        "    )",
+        "",
+        "    foreach ($path in $sourcePaths) {",
+        "        $configData = Join-Path $path \"config\"",
+        "        if ((Test-Path $path) -and ((Get-ChildItem -Path $path).Count -gt 0)) {",
+        "            $msg = \"[Portable Mode] Copying user data from $path...\"",
+        "            Write-Host \n",
+        "            info $msg",
+        "            Copy-Item \"$path\\*\" \"$dir\\data\\\" -Recurse",
+        "            break",
+        "        }",
+        "    }",
+        "}",
+        ""
+    ],
     "bin": [
         [
             "3. Console.bat",
