@@ -2,22 +2,29 @@
     "version": "1.1.6+23",
     "description": "A Flutter LLM Chat Client",
     "homepage": "https://kelivo.psycheas.top/",
-    "license": "AGPL-3.0",
+    "license": "AGPL-3.0-only",
     "architecture": {
         "64bit": {
             "url": "https://github.com/Chevey339/kelivo/releases/download/v1.1.6/Kelivo_windows_1.1.6+23.zip",
             "hash": "14fc86d393a6b882f3b1a98efbc68ce77cdcd8873a1c7f5406bac6c97202246c"
         }
     },
-    "shortcuts": [["kelivo.exe", "kelivo"]],
+    "shortcuts": [
+        [
+            "kelivo.exe",
+            "Kelivo"
+        ]
+    ],
     "checkver": {
-        "github": "https://github.com/Chevey339/kelivo",
-        "regex": "Kelivo_windows_(?<version>(?<tag>[\\d.]+)\\+(?<build>\\d+))\\.zip"
+        "url": "https://api.github.com/repos/Chevey339/kelivo/releases/latest",
+        "jsonpath": "$.assets[*].name",
+        "regex": "Kelivo_windows_(?<ver>[\\d.]+)\\+(?<build>\\d+)\\.zip",
+        "replace": "${ver}+${build}"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/Chevey339/kelivo/releases/download/v$matchTag/Kelivo_windows_$version.zip"
+                "url": "https://github.com/Chevey339/kelivo/releases/download/v$matchVer/Kelivo_windows_$matchVer+$matchBuild.zip"
             }
         }
     }
