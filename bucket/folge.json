@@ -1,5 +1,5 @@
 {
-    "version": "1.29.1",
+    "version": "1.29.2",
     "description": "Simple, free, and powerful desktop tool for creating, managing, and sharing your processes and knowledge.",
     "homepage": "https://folge.me",
     "license": {
@@ -8,8 +8,8 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://cdn.folge.me/Folge-1.29.1.exe#/dl.7z",
-            "hash": "e1769d0cc785c46e42d1f92ef1260d686536865f1564ae2980f5d8b8d382bf86"
+            "url": "https://cdn.folge.me/Folge-1.29.2.exe#/dl.7z",
+            "hash": "9edd48d512cd38c3ebd6c405878b506ca3ca487303b28d0610bae3d4ed90d9af"
         }
     },
     "installer": {
@@ -25,8 +25,12 @@
         ]
     ],
     "checkver": {
-        "url": "https://folge.me/changelog",
-        "regex": "v([\\d]+\\.[\\d]+\\.[\\d]+)"
+        "script": [
+            "$request = [System.Net.HttpWebRequest]::Create('https://folge.me/get-windows')",
+            "$response = $request.GetResponse()",
+            "Write-Output $response.ResponseUri.AbsoluteUri"
+        ],
+        "regex": "cdn\\.folge\\.me/Folge-(?<version>[\\w.]+)\\.exe"
     },
     "autoupdate": {
         "architecture": {
