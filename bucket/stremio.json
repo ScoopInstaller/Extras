@@ -29,10 +29,13 @@
             "Stremio"
         ]
     ],
-    "pre_uninstall": [
-        "Stop-Process -Name 'stremio.exe' -ErrorAction SilentlyContinue",
-        "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }"
-    ],
+    "uninstaller": {
+        "script": [
+            "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }",
+            "Stop-Process -Name 'stremio.exe' -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500"
+        ]
+    },
     "checkver": {
         "script": [
             "$request = [System.Net.HttpWebRequest]::Create('https://www.strem.io/download?platform=windows&four=true')",

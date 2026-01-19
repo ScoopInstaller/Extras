@@ -11,13 +11,18 @@
         }
     },
     "pre_install": "if ([environment]::OSVersion.Version.Major -lt 10) { error \"$app requires Windows 10 or above\"; break }",
-    "pre_uninstall": "Stop-Process -Name 'workspacer' -ErrorAction SilentlyContinue",
     "shortcuts": [
         [
             "workspacer.exe",
             "workspacer"
         ]
     ],
+    "uninstaller": {
+        "script": [
+            "Stop-Process -Name 'workspacer' -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500"
+        ]
+    },
     "checkver": {
         "github": "https://github.com/workspacer/workspacer"
     },

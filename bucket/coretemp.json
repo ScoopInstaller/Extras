@@ -6,7 +6,11 @@
         "identifier": "Freeware",
         "url": "https://www.alcpu.com/CoreTemp/terms.html"
     },
-    "notes": "Download language packs by running: \"$dir\\download-language-packs.ps1\" (\"powershell \"$dir\\download-language-packs.ps1\"\" under cmd)",
+    "notes": [
+        "Download the language packs by running either of the following commands:",
+        "- \"$dir\\download-language-packs.ps1\"",
+        "- powershell \"$dir\\download-language-packs.ps1\" (when using Command Prompt)"
+    ],
     "architecture": {
         "64bit": {
             "url": "https://www.alcpu.com/CoreTemp/CoreTemp64.zip",
@@ -18,18 +22,10 @@
         }
     },
     "pre_install": [
-        "Copy-Item \"$bucketsdir\\extras\\scripts\\coretemp\\download-language-packs.ps1\" \"$dir\\\" | Out-Null",
-        "if (Test-Path \"$persist_dir\\CoreTemp.ini\") { Copy-Item \"$persist_dir\\CoreTemp.ini\" \"$dir\\\" | Out-Null }"
+        "Copy-Item \"$bucketsdir\\$bucket\\scripts\\$app\\download-language-packs.ps1\" $dir",
+        "# Hard links are not applicable here because the application creates a new file instead of modifying the existing one in place.",
+        "if (Test-Path -Path \"$persist_dir\\CoreTemp.ini\" -PathType Leaf) { Copy-Item \"$persist_dir\\CoreTemp.ini\" $dir -Force }"
     ],
-    "pre_uninstall": "Stop-Process -Name 'Core Temp' -ErrorAction SilentlyContinue",
-    "uninstaller": {
-        "script": [
-            "if (Test-Path \"$dir\\CoreTemp.ini\") {",
-            "    ensure \"$persist_dir\" | Out-Null",
-            "    Copy-Item \"$dir\\CoreTemp.ini\" \"$persist_dir\\\" | Out-Null",
-            "}"
-        ]
-    },
     "shortcuts": [
         [
             "Core Temp.exe",
@@ -40,6 +36,16 @@
         "languages",
         "plugins"
     ],
+    "pre_uninstall": [
+        "# Hard links are not applicable here because the application creates a new file instead of modifying the existing one in place.",
+        "if (Test-Path -Path \"$dir\\CoreTemp.ini\" -PathType Leaf) { Copy-Item \"$dir\\CoreTemp.ini\" $persist_dir -Force }"
+    ],
+    "uninstaller": {
+        "script": [
+            "Stop-Process -Name 'Core Temp' -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500"
+        ]
+    },
     "checkver": {
         "url": "https://www.alcpu.com/CoreTemp/history.html",
         "regex": "Version ([\\d.]+)"

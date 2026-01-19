@@ -32,24 +32,24 @@
         "else { Copy-Item \"$dir\\sample-config\\*\" \"$dir\\config\\\" }",
         "Remove-Item \"$Env:Public\\Desktop\\OpenVPN*.lnk\""
     ],
+    "bin": "bin\\openvpn.exe",
+    "checkver": {
+        "url": "https://openvpn.net/index.php/open-source/downloads.html",
+        "regex": "OpenVPN-([\\d.]+-I[\\d]+)-amd64\\.msi"
+    },
     "pre_uninstall": [
         "# Persist manually because the uninstaller deletes the 'config' folder",
         "if (Test-Path \"$dir\\config\") {",
         "    ensure \"$persist_dir\" | Out-Null",
         "    Copy-Item \"$dir\\config\" \"$persist_dir\\\" -Force -Recurse",
-        "}",
-        "Stop-Process -Name 'openvpn*' -Force -ErrorAction SilentlyContinue"
+        "}"
     ],
     "uninstaller": {
         "script": [
+            "Stop-Process -Name 'openvpn*' -Force -ErrorAction SilentlyContinue",
             "if (-not (is_admin)) { error 'Admin privileges are needed.'; break }",
-            "Invoke-ExternalCommand msiexec -ArgumentList ('/x', \"`\"$dir\\setup.msi_`\"\", '/passive') -RunAs | Out-Null"
+            "Invoke-ExternalCommand msiexec -ArgumentList ('/x', \"`\"$dir\\setup.msi_`\"\", '/passive') | Out-Null"
         ]
-    },
-    "bin": "bin\\openvpn.exe",
-    "checkver": {
-        "url": "https://openvpn.net/index.php/open-source/downloads.html",
-        "regex": "OpenVPN-([\\d.]+-I[\\d]+)-amd64\\.msi"
     },
     "autoupdate": {
         "architecture": {
