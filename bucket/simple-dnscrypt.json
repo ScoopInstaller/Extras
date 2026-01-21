@@ -1,10 +1,13 @@
 {
     "version": "0.7.1",
-    "description": "An easy to use GUI for dnscrypt-proxy",
-    "homepage": "https://simplednscrypt.org/",
-    "license": "MIT",
+    "description": "A simple management tool to configure dnscrypt-proxy on windows based systems.",
+    "homepage": "https://simplednscrypt.org",
+    "license": {
+        "identifier": "MIT",
+        "url": "https://github.com/bitbeans/SimpleDnsCrypt/blob/HEAD/LICENSE.md"
+    },
     "suggest": {
-        "vcredist": "extras/vcredist2022"
+        "Microsoft Visual C++ 2015-2022 Redistributable": "extras/vcredist2022"
     },
     "architecture": {
         "64bit": {
@@ -17,9 +20,12 @@
         }
     },
     "pre_install": [
-        "if (!(Test-Path \"$env:LOCALAPPDATA\\SimpleDnsCrypt\")) { New-Item \"$env:LOCALAPPDATA\\SimpleDnsCrypt\" -ItemType Directory -Force | Out-Null }",
-        "'blacklist.txt', 'blocked.log', 'query.log', 'domain-blacklist.txt', 'domain-whitelist.txt' | ForEach-Object {",
-        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "if (Test-Path -Path \"$dir\\APPDIR\" -PathType Container) {",
+        "    Copy-Item -Path \"$dir\\APPDIR\\*\" -Destination $dir -Force -Recurse",
+        "    Remove-Item -Path \"$dir\\APPDIR\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "}",
+        "if (Test-Path -Path \"$persist_dir\\*\") {",
+        "    Get-ChildItem -Path $persist_dir -File | Copy-Item -Destination \"$dir\\dnscrypt-proxy\" -Force",
         "}"
     ],
     "shortcuts": [
@@ -28,30 +34,30 @@
             "Simple DnsCrypt"
         ]
     ],
-    "bin": "SimpleDnsCrypt.exe",
-    "persist": [
-        "dnscrypt-proxy\\dnscrypt-proxy.toml",
-        "dnscrypt-proxy\\blacklist.txt",
-        "dnscrypt-proxy\\blocked.log",
-        "dnscrypt-proxy\\query.log",
-        "dnscrypt-proxy\\domain-blacklist.txt",
-        "dnscrypt-proxy\\domain-whitelist.txt"
-    ],
+    "persist": "dnscrypt-proxy\\dnscrypt-proxy.toml",
     "pre_uninstall": [
-        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-        "",
-        "Start-Process -Wait \"$dir\\Uninstall.exe\" | Out-Null",
-        "if (Get-Process -Name 'SimpleDnsCrypt' -ErrorAction SilentlyContinue) { Stop-Process -Name 'SimpleDnsCrypt' | Out-Null }",
-        "$service = Get-Service -Name 'dnscrypt-proxy' -ErrorAction SilentlyContinue",
-        "if (($service) -and ($service.Status -ne 'Stopped')) {",
-        "    if (!(is_admin)) { error 'Admin rights are required to stop dnscrypt-proxy service'; break }",
-        "    Stop-Service -Name 'dnscrypt-proxy' | Out-Null",
-        "}",
-        "if (($service) -and ($cmd -eq 'uninstall')) {",
-        "    if (!(is_admin)) { error 'Admin rights are required to remove dnscrypt-proxy service'; break }",
-        "    Remove-Service -Name 'dnscrypt-proxy' | Out-Null",
-        "}"
+        "$file_filter = @('*.log', '*.txt')",
+        "$persist_file = Get-ChildItem -Path \"$dir\\dnscrypt-proxy\" -Include $file_filter -Recurse -File",
+        "$persist_file | Copy-Item -Destination $persist_dir -Force"
     ],
+    "uninstaller": {
+        "script": [
+            "$path_regex = [regex]::Escape((Split-Path -Path $dir -Parent))",
+            "Stop-Process -Name 'SimpleDnsCrypt' -Force -ErrorAction SilentlyContinue",
+            "$service = Get-Service -Include '*dnscrypt-proxy*' -ErrorAction SilentlyContinue",
+            "if ($null -eq $service -or $service.BinaryPathName -notmatch $path_regex) { return }",
+            "if (-not (is_admin)) { abort \"`n[ERROR]  $app requires admin rights to $cmd.\" }",
+            "Stop-Service -Name $service.Name -Force -ErrorAction SilentlyContinue",
+            "Stop-Process -Name $service.Name -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "if ($cmd -ne 'uninstall') { return }",
+            "if ($PSVersionTable.PSVersion -lt [version]::new(6, 0)) {",
+            "    Start-Process -FilePath 'sc.exe' -ArgumentList @('delete', 'dnscrypt-proxy') -NoNewWindow -Wait",
+            "} else {",
+            "    Remove-Service -Name 'dnscrypt-proxy' -ErrorAction SilentlyContinue",
+            "}"
+        ]
+    },
     "checkver": {
         "github": "https://github.com/bitbeans/SimpleDnsCrypt"
     },
