@@ -23,12 +23,9 @@
     "checkver": {
         "script": [
             "$url = 'https://work.weixin.qq.com/wework_admin/commdownload?platform=win&from=wwindex'",
-            "if ($PSVersionTable.PSVersion.Major -lt 7.0) {",
-            "    $req = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -ErrorAction SilentlyContinue",
-            "} else {",
-            "    $req = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -ErrorAction SilentlyContinue -SkipHttpErrorCheck",
-            "}",
-            "Write-Output $req.Headers.Location"
+            "$request = [System.Net.HttpWebRequest]::Create($url)",
+            "$response = $request.GetResponse()",
+            "Write-Output $response.ResponseUri.AbsoluteUri"
         ],
         "regex": "WeCom_([\\d.]+).exe"
     },
