@@ -24,13 +24,11 @@
     ],
     "checkver": {
         "script": [
-            "$url = 'https://www.xmind.app/zen/download/win64/'",
-            "if ($PSVersionTable.PSVersion.Major -lt 7.0) {",
-            "    $req = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -ErrorAction SilentlyContinue",
-            "} else {",
-            "    $req = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -ErrorAction SilentlyContinue -SkipHttpErrorCheck",
-            "}",
-            "Write-Output $req.Headers.Location"
+            "$url = 'https://www.xmind.app/zen/download/win64'",
+            "$request = [System.Net.HttpWebRequest]::Create($url)",
+            "$request.UserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'",
+            "$response = $request.GetResponse()",
+            "Write-Output $response.ResponseUri.AbsoluteUri"
         ],
         "regex": "Xmind-for-Windows-x64bit-([\\d.]+)-(?<dt>\\d{12})\\.exe"
     },
