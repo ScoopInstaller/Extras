@@ -53,12 +53,11 @@
     },
     "checkver": {
         "script": [
-            "$package_entry_url = 'https://download.geogebra.org/package/win-port6'",
-            "$request = [System.Net.HttpWebRequest]::Create($package_entry_url)",
+            "$url = 'https://download.geogebra.org/package/win-port6'",
+            "$request = [System.Net.HttpWebRequest]::Create($url)",
             "$response = $request.GetResponse()",
-            "$package_name = $response.ResponseUri.AbsoluteUri -replace '.+(?<=/)([^/]+)$', '$1'",
-            "$latest_version = $package_name -replace '[^\\d]+([\\d-]+).+', '$1' -replace '-', '.'",
-            "Write-Output $latest_version"
+            "$response.ResponseUri.AbsoluteUri -match 'Portable-(?<dashVersion>[\\d-]+)\\.zip'",
+            "Write-Output ($Matches['dashVersion'] -replace '-', '.')"
         ],
         "regex": "([\\d.]+)"
     },
