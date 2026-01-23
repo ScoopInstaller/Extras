@@ -3,6 +3,7 @@
     "description": "Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter. It's also open source.",
     "homepage": "https://zed.dev/",
     "license": "AGPL-3.0, Apache-2.0, GPL-3.0",
+    "notes": "Please manually disable Zed's auto-update feature in the settings to prevent the updater from installing the program in unintended locations.",
     "architecture": {
         "64bit": {
             "url": "https://github.com/zed-industries/zed/releases/download/v0.220.3/Zed-x86_64.exe",
@@ -19,28 +20,6 @@
             "Expand-InnoArchive -Path \"$dir\\$fname\" -ExtractDir '{code_GetInstallDir}' -Removal"
         ]
     },
-    "post_install": [
-        "# Turn off Auto Update",
-        "$zedSettingsPath = Join-Path $env:APPDATA \"Zed\\settings.json\"",
-        "$zedDir = Split-Path $zedSettingsPath",
-        "if (!(Test-Path $zedDir)) {",
-        "    New-Item -ItemType Directory -Path $zedDir | Out-Null",
-        "}",
-        "if (Test-Path $zedSettingsPath) {",
-        "    $jsonContent = Get-Content $zedSettingsPath -Raw | ConvertFrom-Json",
-        "}",
-        "if ($null -eq $jsonContent -or $false -ne $jsonContent.'auto_update') {",
-        "    $response = Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/zed-industries/zed/refs/heads/main/assets/settings/initial_user_settings.json'",
-        "    if ($response.StatusCode -eq 200) {",
-        "        $initialSettings = $response.Content",
-        "        if ($null -eq $jsonContent) {",
-        "            $jsonContent = $initialSettings | ConvertFrom-Json",
-        "        }",
-        "        $jsonContent | Add-Member -NotePropertyName 'auto_update' -NotePropertyValue $false -Force",
-        "        $jsonContent | ConvertTo-Json -Depth 10 | Out-File -FilePath $zedSettingsPath -Encoding UTF8",
-        "    }",
-        "}"
-    ],
     "bin": "bin\\zed.exe",
     "shortcuts": [
         [
