@@ -1,6 +1,6 @@
 {
     "version": "4.6.3",
-    "description": "A network protocol analyzer that lets you see what’s happening on your network at a microscopic level.",
+    "description": "A network protocol analyzer that lets you see what's happening on your network at a microscopic level.",
     "homepage": "https://www.wireshark.org/",
     "license": "GPL-2.0-or-later",
     "notes": [
@@ -8,7 +8,7 @@
         "$dir\\npcap-installer.exe",
         "",
         "You can also install USBPcap from the 'wireshark' directory if you need the USB packets capture functionality.",
-        "$dir\\USBPcapSetup-installer.exe",
+        "$dir\\USBPcap-installer.exe",
         "",
         "If this is the first time you opted to install USBPcap, please restart and run: $dir\\enable-usbpcap.ps1"
     ],
@@ -24,7 +24,8 @@
     },
     "pre_install": [
         "'$PLUGINSDIR', 'vc_redist*', 'uninstall-wireshark.exe' | ForEach-Object { \"$dir/$_\" } | Remove-Item -Recurse -ErrorAction Ignore",
-        "'npcap', 'USBPcapSetup' | ForEach-Object { Rename-Item \"$dir/$_-*.exe\" \"$_-installer.exe\" }",
+        "Get-ChildItem -Path \"$dir/npcap-*.exe\" | Select-Object -First 1 | Rename-Item -NewName 'npcap-installer.exe'",
+        "Get-ChildItem -Path \"$dir/USBPcapSetup-*.exe\" | Select-Object -First 1 | Rename-Item -NewName 'USBPcap-installer.exe'",
         "$data = \"$persist_dir/Data\"",
         "$preferences = \"$data/preferences\"",
         "if (!(Test-Path $preferences)) {",
