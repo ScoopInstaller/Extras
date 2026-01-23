@@ -1,8 +1,11 @@
 {
     "version": "1.4.1.1032",
-    "description": "Locate files and folders by name instantly.",
+    "description": "A file and folder search engine for Windows that instantly locates files and folders by name.",
     "homepage": "https://www.voidtools.com",
-    "license": "MIT",
+    "license": {
+        "identifier": "MIT",
+        "url": "https://www.voidtools.com/License.txt"
+    },
     "notes": [
         "To add Everything to right-click context menu, run:",
         "reg import \"$dir\\install-context.reg\""
@@ -22,24 +25,23 @@
         }
     },
     "pre_install": [
-        "# for arm64",
-        "if ($architecture -eq 'arm64') { Rename-Item \"$dir\\EverythingARM64.exe\" -NewName 'Everything.exe' }",
-        "# END",
-        "ensure \"$persist_dir\" | Out-Null",
-        "if (!(Test-Path \"$persist_dir\\Everything.ini\")) { Start-Process -Wait \"$dir\\Everything.exe\" -Args @('-install-config null') }",
-        "Get-ChildItem \"$persist_dir\\*\" -Include 'Bookmarks.csv', 'Everything.db', 'Everything.ini', 'Filters.csv', 'Search History.csv' | Copy-Item -Destination \"$dir\" -ErrorAction SilentlyContinue"
+        "if ($architecture -eq 'arm64') { Rename-Item -Path \"$dir\\EverythingARM64.exe\" -NewName 'Everything.exe' }",
+        "if (-not (Test-Path -Path \"$persist_dir\\*.ini\" -PathType Leaf)) {",
+        "    Start-Process -FilePath \"$dir\\Everything.exe\" -ArgumentList @('-install-config', 'null') -NoNewWindow -Wait",
+        "}",
+        "# Hard links are not applicable here because the application creates a new file instead of modifying the existing one in place.",
+        "'*.db', '*.csv', '*.ico', '*.ini', 'txt' | ForEach-Object {",
+        "    if (Test-Path -Path \"$persist_dir\\$_\" -PathType Leaf) {",
+        "        Copy-Item -Path \"$persist_dir\\$_\" -Destination $dir -Force",
+        "    }",
+        "}"
     ],
     "post_install": [
         "$app_path = \"$dir\\Everything.exe\".Replace('\\', '\\\\')",
-        "'install-context.reg', 'uninstall-context.reg' | ForEach-Object {",
-        "    if (Test-Path \"$bucketsdir\\extras\\scripts\\everything\\$_\") {",
-        "        $content = Get-Content \"$bucketsdir\\extras\\scripts\\everything\\$_\"",
-        "        $content = $content.Replace('$app_path', $app_path)",
-        "        if ($global) {",
-        "            $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
-        "        }",
-        "    }",
-        "    $content | Set-Content -Path \"$dir\\$_\" -Encoding ascii",
+        "Get-ChildItem -Path \"$bucketsdir\\$bucket\\scripts\\$app\" -Filter '*.reg' -File | ForEach-Object {",
+        "    $content = Get-Content -Path $_.FullName -Encoding utf8",
+        "    if ($global) { $content = $content -replace 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE' }",
+        "    $content.Replace('$app_path', $app_path) | Set-Content -Path \"$dir\\$($_.Name)\" -Encoding unicode",
         "}"
     ],
     "bin": "Everything.exe",
@@ -49,23 +51,55 @@
             "Everything"
         ]
     ],
-    "pre_uninstall": [
-        "Stop-Process -Name 'Everything' -Force -ErrorAction SilentlyContinue",
-        "$service_installed_in_current_dir_via_scoop = (sc.exe qc Everything) -match $dir.Replace('\\', '\\\\')",
-        "if ($service_installed_in_current_dir_via_scoop) {",
-        "    if ($(Get-Service -Name Everything -ErrorAction SilentlyContinue).Status -ne 'Stopped') {",
-        "        if (!(is_admin) -and $(Get-Service -Name Everything -ErrorAction SilentlyContinue)) { error 'Admin rights are required to stop Everything service'; break }",
-        "        Stop-Service -Name 'Everything' -Force -ErrorAction SilentlyContinue | Out-Null",
-        "    }",
-        "    if ((Get-Service -Name Everything -ErrorAction SilentlyContinue) -and ($cmd -eq 'uninstall')) {",
-        "        if (!(is_admin) -and $(Get-Service -Name Everything -ErrorAction SilentlyContinue)) { error 'Admin rights are required to remove Everything service'; break }",
-        "        sc.exe delete 'Everything'",
-        "    }",
-        "}",
-        "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }",
-        "Get-ChildItem \"$dir\\*\" -Include 'Bookmarks.csv', 'Everything.db', 'Everything.ini', 'Filters.csv', 'Search History.csv' | Copy-Item -Destination \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
+    "persist": [
+        "Logs",
+        "HTTP server"
     ],
-    "checkver": "Download Everything ([\\d.]+)",
+    "pre_uninstall": [
+        "# Hard links are not applicable here because the application creates a new file instead of modifying the existing one in place.",
+        "'*.db', '*.csv', '*.ico', '*.ini', 'txt' | ForEach-Object {",
+        "    if (Test-Path -Path \"$dir\\$_\" -PathType Leaf) {",
+        "        Copy-Item -Path \"$dir\\$_\" -Destination $persist_dir -Force",
+        "    }",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "if ($cmd -eq 'uninstall') {",
+            "    Get-ChildItem -Path $dir -Filter 'un*.reg' -File | ForEach-Object {",
+            "        $registry_file = \"`\"$($_.FullName)`\"\"",
+            "        Start-Process -FilePath 'reg.exe' -ArgumentList @('import', $registry_file) -WindowStyle Hidden -Wait",
+            "    }",
+            "}",
+            "$base_service_name = 'Everything'",
+            "$path_regex = [regex]::Escape((Split-Path -Path $dir -Parent))",
+            "Stop-Process -Name 'Everything' -Force -ErrorAction SilentlyContinue",
+            "if ($PSVersionTable.PSVersion -ge [version]::new(6, 0)) {",
+            "    $services = Get-Service -Name \"*$base_service_name*\" -ErrorAction SilentlyContinue",
+            "} else {",
+            "    $name_filter = \"Name like '%$base_service_name%'\"",
+            "    $services = Get-CimInstance -ClassName Win32_Service -Filter $name_filter -ErrorAction SilentlyContinue |",
+            "            Select-Object -Property *, @{ Name = 'BinaryPathName'; Expression = { $_.PathName } }",
+            "}",
+            "$service = $services | Where-Object { $_.BinaryPathName -match $path_regex }",
+            "if ($null -ne $service) {",
+            "    if (-not (is_admin)) { abort \"`n[ERROR]  $app requires admin rights to $cmd.\" }",
+            "    Stop-Service -Name $service.Name -Force -ErrorAction SilentlyContinue",
+            "    Stop-Process -Name 'Everything' -Force -ErrorAction SilentlyContinue",
+            "    Start-Sleep -Milliseconds 1500",
+            "    if ($cmd -ne 'uninstall') { return }",
+            "    if ($PSVersionTable.PSVersion -ge [version]::new(6, 0)) {",
+            "        Remove-Service -Name 'Everything' -ErrorAction SilentlyContinue",
+            "    } else {",
+            "        Start-Process -FilePath 'sc.exe' -ArgumentList @('delete', 'Everything') -NoNewWindow -Wait",
+            "    }",
+            "}"
+        ]
+    },
+    "checkver": {
+        "url": "https://www.voidtools.com/Changes.txt",
+        "regex": "Version\\s*([\\d.]+)(?=\\s)"
+    },
     "autoupdate": {
         "architecture": {
             "64bit": {
