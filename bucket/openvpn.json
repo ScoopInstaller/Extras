@@ -30,6 +30,7 @@
         "Invoke-ExternalCommand msiexec -ArgumentList @('/i', \"`\"$dir\\setup.msi_`\"\", \"PRODUCTDIR=`\"$dir`\"\", 'ADDLOCAL=OpenVPN.GUI,OpenVPN.Service,OpenVPN.Documentation,OpenVPN.SampleCfg,OpenSSL,EasyRSA,OpenVPN,OpenVPN.GUI.OnLogon,Drivers.TAPWindows6,Drivers,Drivers.Wintun', '/passive') -RunAs | Out-Null",
         "if (Test-Path \"$persist_dir\\config\") { Copy-Item \"$persist_dir\\config\" \"$dir\\\" -Force -Recurse }",
         "else { Copy-Item \"$dir\\sample-config\\*\" \"$dir\\config\\\" }",
+        "if (Test-Path \"$persist_dir\\config-auto\") { Copy-Item \"$persist_dir\\config-auto\" \"$dir\\\" -Force -Recurse }",
         "Remove-Item \"$Env:Public\\Desktop\\OpenVPN*.lnk\""
     ],
     "pre_uninstall": [
@@ -37,6 +38,10 @@
         "if (Test-Path \"$dir\\config\") {",
         "    ensure \"$persist_dir\" | Out-Null",
         "    Copy-Item \"$dir\\config\" \"$persist_dir\\\" -Force -Recurse",
+        "}",
+        "if (Test-Path \"$dir\\config-auto\") {",
+        "    ensure \"$persist_dir\" | Out-Null",
+        "    Copy-Item \"$dir\\config-auto\" \"$persist_dir\\\" -Force -Recurse",
         "}",
         "Stop-Process -Name 'openvpn*' -Force -ErrorAction SilentlyContinue"
     ],
