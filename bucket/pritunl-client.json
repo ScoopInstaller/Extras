@@ -1,33 +1,63 @@
 {
-    "version": "1.3.4392.66",
-    "description": "OpenVPN Client",
+    "version": "1.3.4466.51",
+    "description": "A free and open source cross platform OpenVPN client.",
     "homepage": "https://client.pritunl.com",
     "license": {
         "identifier": "Freeware",
-        "url": "https://github.com/pritunl/pritunl-client-electron/blob/master/LICENSE"
+        "url": "https://github.com/pritunl/pritunl-client-electron/blob/HEAD/LICENSE"
     },
+    "suggest": {
+        "Microsoft Visual C++ 2015-2022 Redistributable": "extras/vcredist2022"
+    },
+    "url": "https://github.com/pritunl/pritunl-client-electron/releases/download/1.3.4466.51/Pritunl.exe#/dl.exe",
+    "hash": "sha512:704afa0da898efc80aa9897b2cd0d5df8e4732382e0ee5d31461c3d3b80abb68a05a3c6f155039af264619e8a85014c60421400cd75d3d7db512e19040b74f40",
+    "innosetup": true,
     "architecture": {
         "64bit": {
-            "url": "https://github.com/pritunl/pritunl-client-electron/releases/download/1.3.4392.66/Pritunl.exe#/dl.exe",
-            "hash": "31f491e42f72cdf440e3b7e12780b507842e12ea5faa5456da459e6387201bf9"
+            "installer": {
+                "script": [
+                    "Get-ChildItem -Path $dir -Include '*,2*' -Recurse -File | Remove-Item -Force -ErrorAction SilentlyContinue",
+                    "Get-ChildItem -Path $dir -Include '*,1*' -Recurse -File | Rename-Item -NewName { $_.Name -replace ',\\d', '' }"
+                ]
+            }
+        },
+        "arm64": {
+            "installer": {
+                "script": [
+                    "Get-ChildItem -Path $dir -Include '*,1*' -Recurse -File | Remove-Item -Force -ErrorAction SilentlyContinue",
+                    "Get-ChildItem -Path $dir -Include '*,2*' -Recurse -File | Rename-Item -NewName { $_.Name -replace ',\\d', '' }"
+                ]
+            }
         }
     },
-    "innosetup": true,
-    "pre_install": "if (-not (is_admin)) { error 'This package requires admin privileges to install'; break }",
-    "post_install": "Invoke-ExternalCommand \"$dir\\post_install.exe\" -RunAs | Out-Null",
-    "uninstaller": {
-        "script": [
-            "if (-not (is_admin)) { error 'This package requires admin privileges to uninstall'; break }",
-            "Invoke-ExternalCommand \"$dir\\pre_uninstall.exe\" -RunAs | Out-Null",
-            "Remove-Item 'C:\\ProgramData\\Pritunl' -Recurse -Force"
-        ]
-    },
+    "pre_install": "if (-not (is_admin)) { abort \"`n[ERROR]  $app requires admin rights to $cmd.\" }",
+    "post_install": [
+        "$service_name = 'pritunl'",
+        "Start-Service -Name $service_name -ErrorAction SilentlyContinue",
+        "$service = Get-Service -Name $service_name -ErrorAction SilentlyContinue",
+        "$registry_path = \"HKLM:\\SYSTEM\\CurrentControlSet\\Services\\$service_name\"",
+        "if ($service -and $service.Status -eq 'Running') { return }",
+        "if ($service) { abort \"`n[ERROR]  Service '$service_name' exists but failed to start. Installation terminated.\" }",
+        "$service_config = @{",
+        "    Name = 'pritunl'",
+        "    BinaryPathName = \"`\"$dir\\pritunl-service.exe`\"\"",
+        "    DisplayName = 'Pritunl Client Helper Service'",
+        "    Description = 'Provides core helper functions for the Pritunl VPN client. Disabling this service will prevent the Pritunl client from functioning correctly.'",
+        "    StartupType = 'Automatic'",
+        "}",
+        "New-Service @service_config | Out-Null",
+        "$failure_actions = [byte[]](",
+        "    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00,",
+        "    0x14, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0xb8, 0x0b, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,",
+        "    0x88, 0x13, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x88, 0x13, 0x00, 0x00",
+        ")",
+        "Set-ItemProperty -Path $registry_path -Name 'FailureActions' -Value $failure_actions",
+        "Set-ItemProperty -Path $registry_path -Name 'FailureActionsOnNonCrashFailures' -Value 1",
+        "Start-Service -Name $service_name -ErrorAction SilentlyContinue"
+    ],
     "bin": [
-        [
-            "pritunl.exe",
-            "pritunl",
-            "--no-main"
-        ]
+        "pritunl.exe",
+        "pritunl-client.exe"
     ],
     "shortcuts": [
         [
@@ -35,16 +65,28 @@
             "Pritunl"
         ]
     ],
-    "checkver": "([\\d.]+)/Pritunl.exe",
+    "pre_uninstall": "if (-not (is_admin)) { abort \"`n[ERROR]  $app requires admin rights to $cmd.\" }",
+    "uninstaller": {
+        "script": [
+            "Stop-Service -Name 'pritunl' -Force -ErrorAction SilentlyContinue",
+            "Stop-Process -Name 'pritunl', 'pritunl-service' -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "if ($cmd -ne 'uninstall') { return }",
+            "if ($PSVersionTable.PSVersion -lt [Version]::new(6, 0)) {",
+            "    Start-Process -FilePath 'sc.exe' -ArgumentList @('delete', 'pritunl') -NoNewWindow -Wait",
+            "} else {",
+            "    Remove-Service -Name 'pritunl' -ErrorAction SilentlyContinue",
+            "}"
+        ]
+    },
+    "checkver": {
+        "github": "https://github.com/pritunl/pritunl-client-electron"
+    },
     "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://github.com/pritunl/pritunl-client-electron/releases/download/$version/Pritunl.exe#/dl.exe",
-                "hash": {
-                    "url": "https://raw.githubusercontent.com/pritunl/pritunl-client-electron/master/SHA256",
-                    "regex": "$version[\\r\\n]+$sha256.*?$basename"
-                }
-            }
+        "url": "https://github.com/pritunl/pritunl-client-electron/releases/download/$version/Pritunl.exe#/dl.exe",
+        "hash": {
+            "url": "https://raw.githubusercontent.com/pritunl/pritunl-client-electron/HEAD/SHA512",
+            "regex": "(?s)$version.+?$sha512.+?$basename"
         }
     }
 }
