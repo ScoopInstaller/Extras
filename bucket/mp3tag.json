@@ -54,18 +54,16 @@
         "data",
         "mp3tag.cfg"
     ],
-    "pre_uninstall": [
-        "Copy-Item \"$dir\\export\\*\" \"$persist_dir\\export\" -Recurse -ErrorAction SilentlyContinue",
-        "if (Test-Path 'HKLM:\\SOFTWARE\\Classes\\Directory\\shellex\\ContextMenuHandlers\\Mp3tagShell\\') {",
-        "    if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-        "    Start-Process 'regsvr32' -ArgumentList @('/u', \"$dir\\Mp3tagShell.dll\", '/s') -Wait",
-        "    Start-Process 'regsvr32' -ArgumentList @('/u', \"$dir\\Mp3tagShell32.dll\", '/s') -Wait",
-        "}"
-    ],
+    "pre_uninstall": "Copy-Item \"$dir\\export\\*\" \"$persist_dir\\export\" -Recurse -ErrorAction SilentlyContinue",
     "uninstaller": {
         "script": [
-            "Stop-Process -Name 'explorer' -Force -ErrorAction SilentlyContinue",
-            "Start-Sleep -Milliseconds 1500"
+            "if (Test-Path -Path 'HKLM:\\SOFTWARE\\Classes\\Directory\\shellex\\ContextMenuHandlers\\Mp3tagShell') {",
+            "    if (-not (is_admin)) { abort \"`n[ERROR]  $app requires admin rights to $cmd.\" }",
+            "    Start-Process 'regsvr32' -ArgumentList @('/u', \"$dir\\Mp3tagShell.dll\", '/s') -Wait",
+            "    Start-Process 'regsvr32' -ArgumentList @('/u', \"$dir\\Mp3tagShell32.dll\", '/s') -Wait",
+            "    Stop-Process -Name 'explorer' -Force -ErrorAction SilentlyContinue",
+            "    Start-Sleep -Milliseconds 1500",
+            "}"
         ]
     },
     "checkver": {

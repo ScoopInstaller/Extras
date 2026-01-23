@@ -5,7 +5,10 @@
     "license": "MIT",
     "notes": [
         "Add PowerToys context menu option by running:",
-        "Invoke-Expression -Command \"& `\"$dir\\install-context.ps1`\"\""
+        "Invoke-Expression -Command \"& `\"$dir\\install-context.ps1`\"\"",
+        "",
+        "If an error occurs when updating or uninstalling, execute the following command then retry:",
+        "`Stop-Process -Name 'explorer'`"
     ],
     "architecture": {
         "64bit": {
@@ -53,12 +56,6 @@
         "    Invoke-Expression -Command \"& `\"$dir\\install-context.ps1`\"\"",
         "}"
     ],
-    "shortcuts": [
-        [
-            "PowerToys.exe",
-            "PowerToys"
-        ]
-    ],
     "uninstaller": {
         "script": [
             "$regpath = 'HKCU:\\Software\\Classes\\powertoys'",
@@ -67,11 +64,18 @@
             "}",
             "if (Test-Path -Path $regpath) {",
             "    Invoke-Expression -Command \"& `\"$dir\\uninstall-context.ps1`\"\"",
-            "}",
-            "Stop-Process -Name 'explorer' -Force -ErrorAction SilentlyContinue",
-            "Start-Sleep -Milliseconds 1500"
+            "    if ($cmd -ne 'uninstall') {",
+            "        New-Item -Path $regpath -Force | Out-Null",
+            "    }",
+            "}"
         ]
     },
+    "shortcuts": [
+        [
+            "PowerToys.exe",
+            "PowerToys"
+        ]
+    ],
     "checkver": {
         "url": "https://api.github.com/repos/microsoft/PowerToys/releases",
         "jsonpath": "$[0].assets[*].browser_download_url",
