@@ -1,34 +1,39 @@
 {
-    "version": "2.0.5.18",
+    "version": "2.1.0.21",
     "description": "A tool application that lets you understand how folders and files are structured on your disks.",
     "homepage": "https://www.uderzo.it/main_products/space_sniffer/index.html",
-    "license": {
-        "identifier": "Freeware",
-        "url": "https://www.uderzo.it/main_products/space_sniffer/index.html"
-    },
+    "license": "Freeware",
     "architecture": {
         "64bit": {
-            "url": "https://www.uderzo.it/main_products/space_sniffer/files/spacesniffer_2_0_5_18_x64.zip",
-            "hash": "sha1:fe10c6b601f1ed7d89fd3c5807de7c63f294ee0b"
+            "url": "https://www.uderzo.it/main_products/space_sniffer/files/spacesniffer_2_1_0_21_x64.zip",
+            "hash": "sha1:ea8a8de988958f49615a919219ffe5982eb2e8a9"
         }
     },
-    "bin": "SpaceSniffer.exe",
+    "pre_install": [
+        "if (-not (Test-Path -Path \"$persist_dir\\SpaceSnifferConfig.xml\" -PathType Leaf)) {",
+        "    New-Item -Path \"$dir\\SpaceSnifferConfig.xml\" -ItemType File -Force | Out-Null",
+        "}"
+    ],
     "shortcuts": [
         [
             "SpaceSniffer.exe",
             "SpaceSniffer"
         ]
     ],
-    "checkver": "Latest release is ([\\d.]+)",
+    "persist": "SpaceSnifferConfig.xml",
+    "checkver": {
+        "url": "https://www.uderzo.it/main_products/space_sniffer/release_notes.html",
+        "regex": "Release\\s*([\\d.]+)"
+    },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://www.uderzo.it/main_products/space_sniffer/files/spacesniffer_$underscoreVersion_x64.zip",
-                "hash": {
-                    "url": "https://www.uderzo.it/main_products/space_sniffer/download_alt.html",
-                    "regex": "<td>$sha1</td>"
-                }
+                "url": "https://www.uderzo.it/main_products/space_sniffer/files/spacesniffer_$underscoreVersion_x64.zip"
             }
+        },
+        "hash": {
+            "url": "https://www.uderzo.it/main_products/space_sniffer/download_alt.html",
+            "regex": "(?s)$basename.+?>$sha1"
         }
     }
 }
