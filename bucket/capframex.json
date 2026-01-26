@@ -12,7 +12,15 @@
             "hash": "b3049c893016a6f467be2532559d72318ddf207b5c7c7d6ac8cd3cb1813a5e97"
         }
     },
-    "extract_dir": "release_1.8.3_portable",
+    "pre_install": [
+        "# The executable is sometimes nested within a subdirectory of the archive.",
+        "$topLevelItems = Get-ChildItem -Path $dir",
+        "if (($topLevelItems.Count -eq 1) -and ($topLevelItems[0].PSIsContainer)) {",
+        "    $subfolder = $topLevelItems[0].FullName",
+        "    Copy-Item -Path \"$subfolder\\*\" -Destination $dir -Recurse",
+        "    Remove-Item -Path $subfolder -Recurse -Force",
+        "}"
+    ],
     "bin": "CapFrameX.exe",
     "shortcuts": [
         [
@@ -30,7 +38,6 @@
             "64bit": {
                 "url": "https://github.com/CXWorld/CapFrameX/releases/download/$matchTag/release_$version_portable.zip"
             }
-        },
-        "extract_dir": "release_$version_portable"
+        }
     }
 }
