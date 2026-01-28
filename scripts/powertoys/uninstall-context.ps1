@@ -33,5 +33,6 @@
 if ($PSVersionTable.PSVersion.Major -ge 6) { Import-Module Appx -UseWindowsPowershell *> $null }
 
 @('CommandPalette', 'PowerRenameContextMenu', 'ImageResizerContextMenu') | ForEach-Object {
-    Get-AppxPackage | Where-Object { $_.PackageFullName -like "*$_*" } | Remove-AppxPackage | Out-Null
+    $name_filter = $_
+    Get-AppxPackage | Where-Object { $_.PackageFullName -like "*$name_filter*" } | Remove-AppxPackage | Out-Null
 }
