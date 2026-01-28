@@ -1,0 +1,146 @@
+{
+    "version": "9.2.5",
+    "description": "Automatically block unwanted, leeches and abnormal BT peers with support for customized and cloud rules.",
+    "homepage": "https://docs.pbh-btn.com/en/",
+    "license": "GPL-3.0-or-later",
+    "notes": [
+        "[Tutorial](https://docs.pbh-btn.com/en/docs/category/%E4%B8%8B%E8%BD%BD%E5%99%A8%E9%85%8D%E7%BD%AE)",
+        "PeerBanHelper recommends starting with JBR.",
+        "Launch it with name including \"JBR\" in Start menu.",
+        "Console mode can be started via the shell with `peerbanhelper-cli`",
+        "or `peerbanhelper-cli-jbr`.",
+        "",
+        "[教程](https://docs.pbh-btn.com/docs/category/%E4%B8%8B%E8%BD%BD%E5%99%A8%E9%85%8D%E7%BD%AE)",
+        "PeerBanHelper建议使用JBR启动。您可在开始菜单中，找到名字含有“JBR”的快捷方式。",
+        "控制台模式可以在命令行中，使用`peerbanhelper-cli`或`peerbanhelper-cli-jbr`启动。",
+        ""
+    ],
+    "suggest": {
+        "Java": "java/intellij-jbr25"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/PBH-BTN/PeerBanHelper/releases/download/v9.2.5/PeerBanHelper_Windows_9.2.5_Portable_nojava.zip",
+            "hash": "9447cd9f13bab4a1b19607c7790a46a832d0b494caf8120270cb88ee270e0ef0"
+        },
+        "arm64": {
+            "url": "https://github.com/PBH-BTN/PeerBanHelper/releases/download/v9.2.5/PeerBanHelper_Windows_9.2.5_Portable_nojava.zip",
+            "hash": "9447cd9f13bab4a1b19607c7790a46a832d0b494caf8120270cb88ee270e0ef0"
+        }
+    },
+    "extract_dir": "PeerBanHelper",
+    "pre_install": [
+        "# A script to start with JBR in Scoop",
+        "$jbrName = \"intellij-jbr25\"",
+        "$launcher = \"$dir\\start-with-scoop-jbr.bat\"",
+        "",
+        "$content = @\"",
+        "@echo off",
+        "setlocal enabledelayedexpansion",
+        "set \"MODE=%~1\"",
+        "",
+        ":: Set JBR path",
+        "set \"JAVA_HOME=$scoopdir\\apps\\$jbrName\\current\"",
+        "",
+        "if /i \"%MODE%\"==\"gui\" (",
+        "    set \"TARGET=1. GUI Mode.bat\"",
+        ") else if /i \"%MODE%\"==\"silent\" (",
+        "    set \"TARGET=2. GUI mode (silent).bat\"",
+        ") else if /i \"%MODE%\"==\"console\" (",
+        "    set \"TARGET=3. Console.bat\"",
+        ") else (",
+        "    echo Usage: %~nx0 [gui^|silent^|console]",
+        "    exit /b 1",
+        ")",
+        "",
+        "pushd \"%~dp0\"",
+        "call \"!TARGET!\"",
+        "set \"EXIT_CODE=!errorlevel!\"",
+        "popd",
+        "",
+        "if !EXIT_CODE! neq 0 (",
+        "    echo [Error] Did you install the ``$jbrName``?",
+        "    echo [Error] scoop install java/$jbrName",
+        "    exit /b !EXIT_CODE!",
+        ")",
+        "endlocal",
+        "\"@",
+        "",
+        "Set-Content -Path $launcher -Value $content"
+    ],
+    "post_install": [
+        "if (!((Get-ChildItem -Path \"$dir\\data\").Count -gt 0)) {",
+        "    $sourcePaths = @(",
+        "        \"${env:ProgramFiles}\\PeerBanHelper\\data\\\",",
+        "        \"${env:ProgramFiles(x86)}\\PeerBanHelper\\data\\\",",
+        "        \"${env:LOCALAPPDATA}\\PeerBanHelper\\\",",
+        "        \"${env:APPDATA}\\PeerBanHelper\\\",",
+        "        \"${env:USERPROFILE}\\AppData\\Local\\Programs\\PeerBanHelper\\data\\\",",
+        "        \"${env:WINDIR}\\System32\\config\\systemprofile\\AppData\\Local\\PeerBanHelper\\\"",
+        "    )",
+        "",
+        "    foreach ($path in $sourcePaths) {",
+        "        $configData = Join-Path $path \"config\"",
+        "        if ((Test-Path $path) -and ((Get-ChildItem -Path $path).Count -gt 0)) {",
+        "            $msg = \"[Portable Mode] Copying user data from $path...\"",
+        "            Write-Host ''",
+        "            info $msg",
+        "            Copy-Item \"$path\\*\" \"$dir\\data\\\" -Recurse",
+        "            break",
+        "        }",
+        "    }",
+        "}",
+        ""
+    ],
+    "bin": [
+        [
+            "3. Console.bat",
+            "peerbanhelper-cli"
+        ],
+        [
+            "start-with-scoop-jbr.bat",
+            "peerbanhelper-cli-jbr",
+            "console"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "1. GUI Mode.bat",
+            "PeerBanHelper/PeerBanHelper",
+            "",
+            "icon.ico"
+        ],
+        [
+            "2. GUI mode (silent).bat",
+            "PeerBanHelper/PeerBanHelper (Silent)",
+            "",
+            "icon.ico"
+        ],
+        [
+            "start-with-scoop-jbr.bat",
+            "PeerBanHelper/PeerBanHelper (JBR)",
+            "gui",
+            "icon.ico"
+        ],
+        [
+            "start-with-scoop-jbr.bat",
+            "PeerBanHelper/PeerBanHelper (Silent, JBR)",
+            "silent",
+            "icon.ico"
+        ]
+    ],
+    "persist": "data",
+    "checkver": {
+        "github": "https://github.com/PBH-BTN/PeerBanHelper"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/PBH-BTN/PeerBanHelper/releases/download/v$version/PeerBanHelper_Windows_$version_Portable_nojava.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/PBH-BTN/PeerBanHelper/releases/download/v$version/PeerBanHelper_Windows_$version_Portable_nojava.zip"
+            }
+        }
+    }
+}
