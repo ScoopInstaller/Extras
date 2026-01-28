@@ -18,17 +18,6 @@
         "    Invoke-ExternalCommand regsvr32 -ArgumentList @(\"$dir\\ShellExt64.dll\", '/s') -RunAs | Out-Null",
         "}"
     ],
-    "pre_uninstall": [
-        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-        "Invoke-ExternalCommand regsvr32 -ArgumentList @('/u', \"$dir\\FMADM.dll\", '/s') -RunAs | Out-Null",
-        "Invoke-ExternalCommand regsvr32 -ArgumentList @('/u', \"$dir\\ShellExt.dll\", '/s') -RunAs | Out-Null",
-        "if ($architecture -eq '64bit') {",
-        "    Invoke-ExternalCommand regsvr32 -ArgumentList @('/u', \"$dir\\ShellExt64.dll\", '/s') -RunAs | Out-Null",
-        "}",
-        "# Restart explorer so that ShellExt(-64).dll can be removed",
-        "Stop-Process -Name 'explorer'; Start-Sleep -Seconds 2",
-        "if (!(Get-Process -Name 'explorer' -ErrorAction SilentlyContinue)) { Start-Process 'explorer' }"
-    ],
     "env_set": {
         "FOLDER_MARKER_DIR": "$dir"
     },
@@ -38,6 +27,19 @@
             "Folder Marker"
         ]
     ],
+    "pre_uninstall": "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+    "uninstaller": {
+        "script": [
+            "Invoke-ExternalCommand regsvr32 -ArgumentList @('/u', \"$dir\\FMADM.dll\", '/s') -RunAs | Out-Null",
+            "Invoke-ExternalCommand regsvr32 -ArgumentList @('/u', \"$dir\\ShellExt.dll\", '/s') -RunAs | Out-Null",
+            "if ($architecture -eq '64bit') {",
+            "    Invoke-ExternalCommand regsvr32 -ArgumentList @('/u', \"$dir\\ShellExt64.dll\", '/s') -RunAs | Out-Null",
+            "}",
+            "# Restart explorer so that ShellExt(-64).dll can be removed",
+            "Stop-Process -Name 'explorer' -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500"
+        ]
+    },
     "checkver": {
         "url": "https://foldermarker.com/en/download/",
         "regex": "Version\\: ([\\d.]+)</p>"

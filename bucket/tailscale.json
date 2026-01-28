@@ -37,17 +37,6 @@
         "    }",
         "}"
     ],
-    "pre_uninstall": [
-        "if (!(is_admin)) { error 'Admin rights are required to uninstall'; break }",
-        "Stop-Process -Name 'tailscale-ipn' -Force -ErrorAction SilentlyContinue | Out-Null",
-        "Stop-Service -Name 'Tailscale' -Force -ErrorAction SilentlyContinue | Out-Null"
-    ],
-    "uninstaller": {
-        "script": [
-            "tailscaled.exe uninstall-system-daemon",
-            "if ($cmd -eq 'uninstall') { reg import \"$dir\\remove-startup.reg\" }"
-        ]
-    },
     "bin": [
         "tailscale.exe",
         "tailscale-ipn.exe",
@@ -59,6 +48,15 @@
             "Tailscale"
         ]
     ],
+    "pre_uninstall": "if (!(is_admin)) { error 'Admin rights are required to uninstall'; break }",
+    "uninstaller": {
+        "script": [
+            "Stop-Service -Name 'Tailscale' -Force -ErrorAction SilentlyContinue",
+            "Stop-Process -Name 'tailscale-ipn' -Force -ErrorAction SilentlyContinue",
+            "if ($cmd -eq 'uninstall') { reg import \"$dir\\remove-startup.reg\" }",
+            "tailscaled.exe uninstall-system-daemon"
+        ]
+    },
     "checkver": {
         "url": "https://pkgs.tailscale.com/stable/",
         "regex": "tailscale-setup-([\\d.]+)-amd64\\.msi"

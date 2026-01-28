@@ -8,10 +8,7 @@
     },
     "notes": [
         "Run 'add-smarttaskbar-startup' to add SmartTaskbar to startup programs.",
-        "Run 'remove-smarttaskbar-startup' to remove SmartTaskbar from startup programs.",
-        "",
-        "If an error occurs when updating or uninstalling, execute the following command then retry:",
-        "- `Stop-Process -Name 'explorer' -Force -ErrorAction SilentlyContinue`"
+        "Run 'remove-smarttaskbar-startup' to remove SmartTaskbar from startup programs."
     ],
     "url": "https://github.com/Oliviaophia/SmartTaskbar/releases/download/v1.4.5/SmartTaskbar_Setup.exe",
     "hash": "a7b08377906a3d41bfd54141f8bba8bd5c81cc07e157d7cdb63b23f71fde9a98",
@@ -43,7 +40,11 @@
         ]
     ],
     "uninstaller": {
-        "file": "remove-smarttaskbar-startup.ps1"
+        "script": [
+            "Invoke-Expression -Command \"& `\"$dir\\remove-smarttaskbar-startup.ps1`\"\"",
+            "Stop-Process -Name 'SmartTaskbar', 'explorer' -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500"
+        ]
     },
     "checkver": "github",
     "autoupdate": {
