@@ -1,14 +1,14 @@
 {
-    "version": "7.3.6",
+    "version": "7.3.7",
     "description": "Framerate monitoring, On-Screen Display and high-performance video capture service provider for other graphics card utilities.",
-    "homepage": "https://www.guru3d.com/files-details/rtss-rivatuner-statistics-server-download.html",
+    "homepage": "https://www.guru3d.com/page/rivatuner-rtss-homepage/",
     "license": "Freeware",
     "suggest": {
         "vcredist": "extras/vcredist2022",
         "MSI Afterburner": "extras/msiafterburner"
     },
-    "url": "https://ftp.nluug.nl/pub/games/PC/guru3d/rtss/%5BGuru3D.com%5D-RTSS.zip",
-    "hash": "e11fe1d98c2ee29a6e052efa804faa363774a09f8636073d0c81a7060de1c09f",
+    "url": "https://ftp.nluug.nl/pub/games/PC/guru3d/afterburner/%5BGuru3D%5D-RTSSSetup737Build28314.zip",
+    "hash": "9b084a8cb3e53ec1a673894d0b66e22b16c9fd8785636b020b2d422f3f2a820e",
     "pre_install": [
         "Expand-7zipArchive \"$dir\\*RTSSSetup*.exe\" -Removal",
         "Remove-Item \"$dir\\`$*\", \"$dir\\*Guru3D.com*\", \"$dir\\Uninstall*\", \"$dir\\Redist\" -Recurse",
@@ -41,10 +41,24 @@
         "Copy-Item \"$dir\\Plugins\\Client\\*.cfg\" \"$persist_dir\\Plugins\\Client\" -Force -ErrorAction SilentlyContinue"
     ],
     "checkver": {
-        "url": "https://rtss.guru3d.com/Update.txt",
-        "regex": "ProductVersion\\s+=\\s*([\\d.]+)"
+        "url": "https://www.guru3d.com/download/rtss-rivatuner-statistics-server-download/",
+        "script": [
+            "$page -match 'aform.*?value=\"(?<aform>[0-9a-f]+)\".*?Download Version (?<version>[\\d.]+)'",
+            "$version = $Matches.version",
+            "$body = @{ aform = $Matches.aform }",
+            "$response = Invoke-WebRequest -Uri $url -Method Post -Body $body",
+            "$response.Content -match 'location=\"(?<redirect_url>https://www.guru3d.com/getdownload/[0-9a-f]+)\"'",
+            "$response = if ($PSVersionTable.PSVersion.Major -lt 7.0) {",
+            "    Invoke-WebRequest -Uri $Matches.redirect_url -MaximumRedirection 0 -ErrorAction SilentlyContinue",
+            "} else {",
+            "    Invoke-WebRequest -Uri $Matches.redirect_url -MaximumRedirection 0 -ErrorAction SilentlyContinue -SkipHttpErrorCheck",
+            "}",
+            "[string]($response.Headers.Location) -match 'https://ftp\\.nluug\\.nl/pub/games/PC/guru3d/(?<file_path>[^/]+?)/(?<file_name>.+)'",
+            "Write-Output \"$version $($Matches.file_path)/$([System.Net.WebUtility]::UrlEncode($Matches.file_name))\""
+        ],
+        "regex": "(?<version>[\\d.]+) (?<file>.+)"
     },
     "autoupdate": {
-        "url": "https://ftp.nluug.nl/pub/games/PC/guru3d/rtss/%5BGuru3D.com%5D-RTSS.zip"
+        "url": "https://ftp.nluug.nl/pub/games/PC/guru3d/$matchFile"
     }
 }

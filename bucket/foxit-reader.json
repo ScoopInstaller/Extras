@@ -1,14 +1,35 @@
 {
-    "##": "Using cdn78.foxitsoftware.com for better speed worldwide. Please keep foxit-reader and foxit-pdf-reader in sync.",
-    "version": "2024.2.2",
+    "##": "Please keep foxit-reader and foxit-pdf-reader in sync.",
+    "version": "2025.3.0",
     "description": "Fast and feature rich PDF reader that offers a delightful reading experience.",
     "homepage": "https://www.foxit.com/pdf-reader/",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.foxit.com/pdf-editor/eula.html"
     },
-    "url": "https://cdn78.foxitsoftware.com/product/reader/desktop/win/2024.2.2/FoxitPDFReader202422_enu_Setup_Prom.exe",
-    "hash": "1f98113175bd5ba01f8abd109be22f3b71de8c5f347e83a43c764f70fdce7d97",
+    "architecture": {
+        "64bit": {
+            "url": "https://cdn01.foxitsoftware.com/product/reader/desktop/win/2025.3.0/FoxitPDFReader20253_L10N_Setup_Prom_x64.exe",
+            "hash": "b85efbbd5ae423fe13de8086ad5f96e9fc6382c42a5e619f14286440bd6b111f"
+        },
+        "32bit": {
+            "url": "https://cdn01.foxitsoftware.com/product/reader/desktop/win/2025.3.0/FoxitPDFReader20253_L10N_Setup_Prom_x86.exe",
+            "hash": "b71a50e8aa19a3338d2fe6e6aebe10d232892c363c433d5bc63c3430fe433b48"
+        }
+    },
+    "installer": {
+        "script": [
+            "# Lessmsi cannot handle .msp patches correctly in this case. So we use msiexec to extract the files.",
+            "Expand-7zipArchive \"$dir\\$fname\" \"$dir\\msi\" -ExtractDir '.rsrc\\1033\\PAYLOAD' -Removal",
+            "$succ = Invoke-ExternalCommand msiexec -ArgumentList @('/a', \"$dir\\msi\\500\", '/p', \"$dir\\msi\\700\", '/qn', \"TARGETDIR=$dir\\extracted\") -LogPath \"$dir\\install.log\"",
+            "if(-not $succ) {",
+            "    error \"Failed to extract files from `\"$dir\\msi`\".`nLog file:`n  $(friendly_path `\"$dir\\install.log`\")`n$(new_issue_msg $app $bucket 'decompress error')\"",
+            "    break",
+            "}",
+            "Move-Item \"$dir\\extracted\\Foxit Software\\Foxit PDF Reader\\*\" \"$dir\"",
+            "Remove-Item \"$dir\\msi\", \"$dir\\extracted\", \"$dir\\install.log\" -Force -Recurse"
+        ]
+    },
     "bin": "FoxitPDFReader.exe",
     "shortcuts": [
         [
@@ -16,20 +37,23 @@
             "Foxit PDF Reader"
         ]
     ],
-    "innosetup": true,
     "checkver": {
         "script": [
-            "$url = 'https://www.foxit.com/downloads/latest.html?product=Foxit-Reader&platform=Windows&version=&package_type=&language=English&distID='",
-            "if ($PSVersionTable.PSVersion.Major -lt 7.0) {",
-            "    $req = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -ErrorAction SilentlyContinue",
-            "} else {",
-            "    $req = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -ErrorAction SilentlyContinue -SkipHttpErrorCheck",
-            "}",
-            "Write-Output $req.Headers.Location"
+            "$Uri = [System.Net.HttpWebRequest]::Create(",
+            "    'https://www.foxit.com/downloads/latest.html?product=Foxit-Reader&platform=Windows&operating_type=64&package_type=exe&language=ML'",
+            ").GetResponse().ResponseUri.AbsoluteUri",
+            "$Uri, $Uri.Replace('x64', 'x86') -join ', '"
         ],
-        "regex": "/win/(?<version>[\\d.]+)/(?<fname>FoxitPDFReader.*exe)$"
+        "regex": "/win/(?<version>[\\d.]+)/(?<fname64>FoxitPDFReader.*\\.exe), .*/win/\\k<version>/(?<fname32>FoxitPDFReader.*\\.exe)"
     },
     "autoupdate": {
-        "url": "https://cdn78.foxitsoftware.com/product/reader/desktop/win/$version/$matchFname"
+        "architecture": {
+            "64bit": {
+                "url": "https://cdn01.foxitsoftware.com/product/reader/desktop/win/$version/$matchFname64"
+            },
+            "32bit": {
+                "url": "https://cdn01.foxitsoftware.com/product/reader/desktop/win/$version/$matchFname32"
+            }
+        }
     }
 }

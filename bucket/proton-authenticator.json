@@ -1,0 +1,36 @@
+{
+    "version": "1.1.4",
+    "description": "An open source and end-to-end encrypted 2FA app that's simple and free to use",
+    "homepage": "https://proton.me/authenticator",
+    "license": "GPL-3.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://proton.me/download/authenticator/windows/ProtonAuthenticator_1.1.4_x64_en-US.msi#setup.msi",
+            "hash": "fd6503822f1d1f2897964d1401be3abb3ff7f0d19cd3ac69e8897badb38120de"
+        }
+    },
+    "pre_install": [
+        "Move-Item \"$dir\\PFiles\\Proton Authenticator\\proton-authenticator.exe\" \"$dir\"",
+        "Remove-Item \"$dir\\PFiles\" -Force -Recurse"
+    ],
+    "installer": {
+        "script": "msiexec /i \"$dir\\setup.msi\" /qn /norestart TARGETDIR=\"$dir\""
+    },
+    "shortcuts": [
+        [
+            "proton-authenticator.exe",
+            "Proton Authenticator"
+        ]
+    ],
+    "checkver": {
+        "url": "https://proton.me/download/authenticator/windows/version.json",
+        "regex": "\"Version\"\\s*:\\s*\"([\\d.]+)\""
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://proton.me/download/authenticator/windows/ProtonAuthenticator_$version_x64_en-US.msi#setup.msi"
+            }
+        }
+    }
+}

@@ -1,18 +1,24 @@
 {
-    "version": "2.3",
+    "version": "4.1.1",
     "description": "A fast, free and fully customizable image viewer for Windows 10 and 11",
     "homepage": "https://picview.org",
     "license": "GPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/Ruben2776/PicView/releases/download/2.3/PicView-v.2.3.0-win-x64.zip",
-            "hash": "f1522533fd212ea5f8a9e6060ade9926f815d6d87e06c2879b1d837c2d767d8f"
+            "url": "https://github.com/Ruben2776/PicView/releases/download/4.1.1/PicView-v4.1.1-win-x64.zip",
+            "hash": "a284c3f75822016f6bc20910fa2717fbe1b2f0ae3cf058cc5d1f6060955e9382",
+            "extract_dir": "PicView-v4.1.1-win-x64"
         },
         "arm64": {
-            "url": "https://github.com/Ruben2776/PicView/releases/download/2.3/PicView-v.2.3.0-win-arm64.zip",
-            "hash": "ef27ab93e958bdba25bc1791315b36269af09ed3c1b662740523e4c63909c314"
+            "url": "https://github.com/Ruben2776/PicView/releases/download/4.1.1/PicView-v4.1.1-win-arm64.zip",
+            "hash": "7b5bb7b41b74c23dddc95867b918aa47364e6a8be226535ef92077cb8faf819a",
+            "extract_dir": "PicView-v4.1.1-win-arm64"
         }
     },
+    "post_install": [
+        "# i18n syncing",
+        "Copy-Item \"$dir\\Config.original\\Languages\\**\" \"$dir\\Config\\Languages\" -Force -ErrorAction SilentlyContinue"
+    ],
     "bin": "PicView.exe",
     "shortcuts": [
         [
@@ -20,16 +26,19 @@
             "PicView"
         ]
     ],
+    "persist": "Config",
     "checkver": {
         "github": "https://github.com/Ruben2776/PicView"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/Ruben2776/PicView/releases/download/$version/PicView-v.$version-win-x64.zip"
+                "url": "https://github.com/Ruben2776/PicView/releases/download/$version/PicView-v$version-win-x64.zip",
+                "extract_dir": "PicView-v$version-win-x64"
             },
             "arm64": {
-                "url": "https://github.com/Ruben2776/PicView/releases/download/$version/PicView-v.$version-win-arm64.zip"
+                "url": "https://github.com/Ruben2776/PicView/releases/download/$version/PicView-v$version-win-arm64.zip",
+                "extract_dir": "PicView-v$version-win-arm64"
             }
         }
     }

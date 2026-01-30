@@ -1,13 +1,25 @@
 {
-    "version": "6.0.848.0",
+    "version": "6.0.913.0",
     "description": "A dynamic mathematics software for education that brings together geometry, algebra, spreadsheets, graphing, statistics and calculus.",
-    "homepage": "https://www.geogebra.org/",
+    "homepage": "https://www.geogebra.org",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.geogebra.org/license"
     },
-    "url": "https://download.geogebra.org/installers/6.0/GeoGebra-Windows-Portable-6-0-848-0.zip",
-    "hash": "99d5e8eab2c4a906939dabd807af88ed4b9ea854700c3fe7f6f39934ce51f403",
+    "notes": [
+        "To register file associations, please execute the following command:",
+        "reg import \"$dir\\install-associations.reg\""
+    ],
+    "url": "https://download.geogebra.org/installers/6.0/GeoGebra-Windows-Portable-6-0-913-0.zip",
+    "hash": "2f9ef7e2b9eff92451f6d203fbed086642d4bb0f540dc3b65686a4c0363cdae6",
+    "post_install": [
+        "$geogebra_path = $dir -replace '\\\\', '\\\\'",
+        "Get-ChildItem -Path \"$bucketsdir\\$bucket\\scripts\\$app\" -Filter '*.reg' -File | ForEach-Object {",
+        "    $content = Get-Content -Path $_.FullName -Encoding ascii",
+        "    if ($global) { $content = $content -replace 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE' }",
+        "    $content -replace '{{geogebra_dir}}', $geogebra_path | Set-Content -Path \"$dir\\$($_.Name)\" -Encoding unicode",
+        "}"
+    ],
     "bin": [
         [
             "GeoGebra.exe",
@@ -17,28 +29,37 @@
     "shortcuts": [
         [
             "GeoGebra.exe",
-            "GeoGebra"
+            "GeoGebra\\GeoGebra Classic"
         ],
         [
             "GeoGebraCalculator.exe",
-            "GeoGebra Calculator"
+            "GeoGebra\\GeoGebra Calculator Suite"
         ],
         [
             "GeoGebraCAS.exe",
-            "GeoGebra CAS"
+            "GeoGebra\\GeoGebra CAS Calculator"
         ],
         [
             "GeoGebraGeometry.exe",
-            "GeoGebra Geometry"
+            "GeoGebra\\GeoGebra Geometry Calculator"
         ],
         [
             "GeoGebraGraphing.exe",
-            "GeoGebra Graphing"
+            "GeoGebra\\GeoGebra Graphing Calculator"
         ]
     ],
+    "uninstaller": {
+        "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-associations.reg\" *> $null }"
+    },
     "checkver": {
-        "url": "https://geogebra.github.io/docs/reference/en/Changelog_6_0/",
-        "regex": "([\\d.]+) \\([\\w. ]+ build\\)"
+        "script": [
+            "$url = 'https://download.geogebra.org/package/win-port6'",
+            "$request = [System.Net.HttpWebRequest]::Create($url)",
+            "$response = $request.GetResponse()",
+            "$response.ResponseUri.AbsoluteUri -match 'Portable-(?<dashVersion>[\\d-]+)\\.zip'",
+            "Write-Output ($Matches['dashVersion'] -replace '-', '.')"
+        ],
+        "regex": "([\\d.]+)"
     },
     "autoupdate": {
         "url": "https://download.geogebra.org/installers/$majorVersion.$minorVersion/GeoGebra-Windows-Portable-$dashVersion.zip"

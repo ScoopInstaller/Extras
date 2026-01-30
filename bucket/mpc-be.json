@@ -1,13 +1,13 @@
 {
-    "version": "1.7.2",
+    "version": "1.8.9",
     "description": "Fork of Media Player Classic containing additional features and bug fixes.",
     "homepage": "https://sourceforge.net/projects/mpcbe/",
     "license": "GPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/Aleksoid1978/MPC-BE/releases/download/1.7.2/MPC-BE.1.7.2.x64.7z",
-            "hash": "sha1:0af24cc826b90a98a6bfab558295f253abe2631c",
-            "extract_dir": "MPC-BE.1.7.2.x64",
+            "url": "https://github.com/Aleksoid1978/MPC-BE/releases/download/1.8.9/MPC-BE.1.8.9.x64.7z",
+            "hash": "sha1:84dca6327b2b91c7cd3ae82de59405ba9d729f10",
+            "extract_dir": "MPC-BE.1.8.9.x64",
             "bin": [
                 "mpc-be64.exe",
                 [
@@ -23,9 +23,9 @@
             ]
         },
         "32bit": {
-            "url": "https://github.com/Aleksoid1978/MPC-BE/releases/download/1.7.2/MPC-BE.1.7.2.x86.7z",
-            "hash": "sha1:7646e0ac44d3e7535fbfda0df736ecbf263f7cb3",
-            "extract_dir": "MPC-BE.1.7.2.x86",
+            "url": "https://github.com/Aleksoid1978/MPC-BE/releases/download/1.8.9/MPC-BE.1.8.9.x86.7z",
+            "hash": "sha1:dd2dc366027344445b5f094a672596a275aff113",
+            "extract_dir": "MPC-BE.1.8.9.x86",
             "bin": "mpc-be.exe",
             "shortcuts": [
                 [
@@ -36,14 +36,16 @@
         }
     },
     "pre_install": [
-        "@('mpc-be64.ini', 'mpc-be.ini', 'Default.mpcpl') | ForEach-Object {",
+        "@('mpc-be64.ini', 'mpc-be.ini', 'default.mpcpl', 'favorites.mpc_lst') | ForEach-Object {",
+        "    if ((Get-Item \"$persist_dir\\$_\" 2>$null).PSIsContainer) { Remove-Item \"$persist_dir\\$_\" }",
         "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
         "}"
     ],
     "persist": [
         "mpc-be64.ini",
         "mpc-be.ini",
-        "Default.mpcpl"
+        "default.mpcpl",
+        "favorites.mpc_lst"
     ],
     "checkver": {
         "github": "https://github.com/Aleksoid1978/MPC-BE"
