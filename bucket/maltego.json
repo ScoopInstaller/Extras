@@ -1,5 +1,5 @@
 {
-    "version": "4.8.0",
+    "version": "4.11.1",
     "description": "Link analysis software used for open-source intelligence, forensics and other investigations.",
     "homepage": "https://www.maltego.com/",
     "license": {
@@ -9,19 +9,19 @@
     "suggest": {
         "JDK17": "java/openjdk17"
     },
-    "url": "https://downloads.maltego.com/maltego-v4/linux/Maltego.v4.8.0.linux.zip",
-    "hash": "780219ab03d947ffe019d237696ebfb76f9a092a293d5a5473e192206003529c",
-    "extract_dir": "maltego_4.8.0",
-    "extract_to": "maltego",
+    "url": "https://downloads.maltego.com/maltego-v4/windows/MaltegoSetup.v4.11.1.exe#/dl.7z",
+    "hash": "e3d195ea333b571a7d4e608627f95b216c96d82ebdc9a64a0fa69f0d98b71392",
+    "extract_dir": "v4.11.1",
+    "extract_to": "app",
     "post_install": [
-        "$confFile = \"$dir\\maltego\\etc\\maltego.conf\"",
+        "$confFile = \"$dir\\app\\etc\\maltego.conf\"",
         "$userDir = \"$dir\\userdir\"",
         "$cacheDir = \"$dir\\cachedir\"",
         "New-Item -Path $userDir -ItemType Directory -Force | Out-Null",
         "New-Item -Path $cacheDir -ItemType Directory -Force | Out-Null",
         "$conf = Get-Content -Path $confFile",
-        "$conf = $conf.Replace('default_userdir=\"${DEFAULT_USERDIR_ROOT}/v$version\"', \"default_userdir=`\"$userDir`\"\")",
-        "$conf = $conf.Replace('# default_cachedir=\"${DEFAULT_CACHEDIR_ROOT}/v$version\"', \"default_cachedir=`\"$cacheDir`\"\")",
+        "$conf = $conf.Replace(\"default_userdir=\"\"`${DEFAULT_USERDIR_ROOT}/v$version\"\"\", \"default_userdir=\"\"$userDir\"\"\")",
+        "$conf = $conf.Replace(\"# default_cachedir=\"\"`${DEFAULT_CACHEDIR_ROOT}/v$version\"\"\", \"default_cachedir=\"\"$cacheDir\"\"\")",
         "if ($env:JAVA_HOME) {",
         "    $conf = $conf.Replace('#jdkhome=\"/path/to/jdk\"', \"jdkhome=`\"$env:JAVA_HOME`\"\")",
         "    info \"Config entry 'jdkhome' has been set to '$env:JAVA_HOME'.\"",
@@ -30,13 +30,13 @@
         "    warn 'Solutions:'",
         "    warn ('- Reinstall {0} after installing JDK' -f $app)",
         "    warn \"- Run via command: 'maltego --jdkhome <path_to_jdk>'\"",
-        "    warn \"- Set config entry 'jdkhome' in file: '$dir\\maltego\\etc\\maltego.conf' manually.\"",
+        "    warn \"- Set config entry 'jdkhome' in file: '$dir\\etc\\maltego.conf' manually.\"",
         "}",
         "Set-Content -Path \"$confFile\" -Value $conf -Encoding ascii"
     ],
     "shortcuts": [
         [
-            "maltego\\bin\\maltego.exe",
+            "app\\bin\\maltego.exe",
             "Maltego"
         ]
     ],
@@ -47,15 +47,15 @@
     "checkver": {
         "url": "https://downloads.maltego.com/maltego-v4/info.json",
         "jsonpath": "$..filename",
-        "regex": "Maltego\\.v([\\d.]+)\\.linux\\.zip"
+        "regex": "MaltegoSetup\\.v([\\d.]+)\\.exe"
     },
     "autoupdate": {
-        "url": "https://downloads.maltego.com/maltego-v4/linux/Maltego.v$version.linux.zip",
+        "url": "https://downloads.maltego.com/maltego-v4/windows/MaltegoSetup.v$version.exe#/dl.7z",
         "hash": {
             "mode": "json",
-            "jsonpath": "$[?(@.filename == 'Maltego.v$version.linux.zip')].hash_sha256",
-            "url": "https://downloads.maltego.com/maltego-v4/info.json"
+            "url": "https://downloads.maltego.com/maltego-v4/info.json",
+            "jsonpath": "$[?(@.filename == 'MaltegoSetup.v$version.exe')].hash_sha256"
         },
-        "extract_dir": "maltego_$version"
+        "extract_dir": "v$version"
     }
 }
