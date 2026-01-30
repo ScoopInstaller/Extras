@@ -1,16 +1,25 @@
 {
-    "version": "1.11.1",
+    "version": "1.25.1",
     "description": "Manage Podman and other container engines from a single UI and tray",
     "homepage": "https://github.com/containers/podman-desktop",
     "license": "Apache-2.0",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/containers/podman-desktop/releases/download/v1.11.1/podman-desktop-1.11.1.exe#/dl.7z",
-            "hash": "0e0a82d559efc951323a70f2d0e3bf0ce832bd6285f5d4bb816599d38c56695d",
+            "url": "https://github.com/containers/podman-desktop/releases/download/v1.25.1/podman-desktop-1.25.1.exe#/dl.7z",
+            "hash": "e5c4013a6a2d9980cf2958c951a311bf100876c379f8daaa615fef837bfd0111",
             "pre_install": [
                 "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
                 "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Force -Recurse"
             ],
+            "post_install": [
+                "if ((Test-Path \"$Env:UserProfile\\.local\\share\\containers\\podman-desktop\\*\") -and !(Test-Path \"$dir\\config\\*\")) {",
+                "    info '[Persist Data]: Moving data from default data directory to scoop persist directory . . .'",
+                "    Move-Item \"$Env:UserProfile\\.local\\share\\containers\\podman-desktop\\*\" \"$dir\\config\" -ErrorAction Ignore",
+                "}"
+            ],
+            "env_set": {
+                "PODMAN_DESKTOP_HOME_DIR": "$dir\\config"
+            },
             "shortcuts": [
                 [
                     "Podman Desktop.exe",
@@ -19,6 +28,7 @@
             ]
         }
     },
+    "persist": "config",
     "checkver": "github",
     "autoupdate": {
         "architecture": {

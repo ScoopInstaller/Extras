@@ -1,5 +1,5 @@
 {
-    "version": "1.7.2",
+    "version": "1.8.3",
     "description": "Frametimes analysis tool compatible with OCAT",
     "homepage": "https://github.com/CXWorld/CapFrameX",
     "license": "MIT",
@@ -8,10 +8,19 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/CXWorld/CapFrameX/releases/download/v1.7.2/release_1.7.2_portable.zip",
-            "hash": "e66f77d1862e96572657d5f2739a582ca21e0770b8f64801ac50540c6eca02b8"
+            "url": "https://github.com/CXWorld/CapFrameX/releases/download/v1.8.3/release_1.8.3_portable.zip",
+            "hash": "b3049c893016a6f467be2532559d72318ddf207b5c7c7d6ac8cd3cb1813a5e97"
         }
     },
+    "pre_install": [
+        "# The executable is sometimes nested within a subdirectory of the archive.",
+        "$topLevelItems = Get-ChildItem -Path $dir",
+        "if (($topLevelItems.Count -eq 1) -and ($topLevelItems[0].PSIsContainer)) {",
+        "    $subfolder = $topLevelItems[0].FullName",
+        "    Copy-Item -Path \"$subfolder\\*\" -Destination $dir -Recurse",
+        "    Remove-Item -Path $subfolder -Recurse -Force",
+        "}"
+    ],
     "bin": "CapFrameX.exe",
     "shortcuts": [
         [
@@ -19,11 +28,15 @@
             "CapFrameX"
         ]
     ],
-    "checkver": "github",
+    "checkver": {
+        "url": "https://api.github.com/repositories/142042657/releases",
+        "jsonpath": "$[?(@.tag_name =~ /^(?!.*beta).+$/)].tag_name",
+        "regex": "(?<tag>v(?<version>[\\d.]+)[^\"]*)"
+    },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/CXWorld/CapFrameX/releases/download/v$version/release_$version_portable.zip"
+                "url": "https://github.com/CXWorld/CapFrameX/releases/download/$matchTag/release_$version_portable.zip"
             }
         }
     }

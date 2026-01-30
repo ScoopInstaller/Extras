@@ -1,0 +1,44 @@
+{
+    "version": "4.2.0",
+    "description": "A privacy-focused note-taking application",
+    "homepage": "https://beavernotes.com/",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "pre_install": "Expand-7zipArchive -Path \"$dir\\`$PLUGINSDIR\\app-64.7z\" -DestinationPath \"$dir\""
+        },
+        "arm64": {
+            "pre_install": "Expand-7zipArchive -Path \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" -DestinationPath \"$dir\""
+        }
+    },
+    "url": "https://github.com/Beaver-Notes/Beaver-Notes/releases/download/4.2.0/Beaver.Notes-4.2.0-portable.exe#/dl.7z",
+    "hash": "e1d4aaf8ce1c935f188d979188311e2a738a9d4b576a4fc2effffdbe660ca7db",
+    "post_install": [
+        "$ScriptBlock = [scriptblock]{Remove-Item -Path \"$dir\\`$PLUGINSDIR\" -Force -Recurse}",
+        "Try {$ScriptBlock.Invoke()} Catch {Start-Sleep -Milliseconds 50; $ScriptBlock.Invoke()}"
+    ],
+    "shortcuts": [
+        [
+            "Beaver Notes.exe",
+            "Beaver Notes"
+        ]
+    ],
+    "post_uninstall": [
+        "if ($purge) {",
+        "    $Directories = [string[]](",
+        "        ('{0}\\Beaver-notes' -f $env:APPDATA)",
+        "    )",
+        "    $Directories.ForEach{",
+        "        if ([System.IO.Directory]::Exists($_)) {",
+        "            $null = [System.IO.Directory]::Delete($_,$true)",
+        "        }",
+        "    }",
+        "}"
+    ],
+    "checkver": {
+        "github": "https://github.com/Beaver-Notes/Beaver-Notes"
+    },
+    "autoupdate": {
+        "url": "https://github.com/Beaver-Notes/Beaver-Notes/releases/download/$version/Beaver.Notes-$version-portable.exe#/dl.7z"
+    }
+}

@@ -1,5 +1,5 @@
 {
-    "version": "10.3.1.387",
+    "version": "10.8.2.407",
     "description": "A small, fast, and feature-rich PDF viewer/editor.",
     "homepage": "https://www.pdf-xchange.com/product/pdf-xchange-editor",
     "license": {
@@ -8,17 +8,23 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://www.pdf-xchange.com/downloads/PDFXEdit10_Portable_x64.zip",
-            "hash": "96bd6f6ded63b50ca6acf65fd0552c6f0eab7db50bf3b5def12cbbd07d1d2cc2"
+            "url": "https://downloads.pdf-xchange.com/10.8.2.407/PDFXEdit10_Portable_x64.zip",
+            "hash": "83837415cd16bb166d2e3dac0c5dd42c471f70a646a1c5c36e0e92cdfb5afb34"
         },
         "32bit": {
-            "url": "https://www.pdf-xchange.com/downloads/PDFXEdit10_Portable_x86.zip",
-            "hash": "16191c318e63aba5a86add79d628be23dd744c7d1c3e65103b0b877ac7199434"
+            "url": "https://downloads.pdf-xchange.com/10.8.2.407/PDFXEdit10_Portable_x86.zip",
+            "hash": "dc7b9c8bdd2e3078f4af754ad1b957a74475b86b30e69144f11e908d4e523c20"
         }
     },
-    "persist": [
-        "History.dat",
-        "Settings.dat"
+    "pre_install": [
+        "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
+        "'History.dat', 'Settings.dat' | ForEach-Object {",
+        "    if (Test-Path \"$persist_dir\\$_\") {",
+        "        Copy-Item \"$persist_dir\\$_\" \"$dir\\$_\" -Force -ErrorAction SilentlyContinue",
+        "    } else {",
+        "        New-Item \"$dir\\$_\" -ItemType File | Out-Null",
+        "    }",
+        "}"
     ],
     "bin": "PDFXEdit.exe",
     "shortcuts": [
@@ -27,9 +33,18 @@
             "PDF-XChange Editor"
         ]
     ],
-    "pre_install": [
-        "if(!(Test-Path \"$persist_dir\\History.dat\")) { New-Item \"$dir\\History.dat\" | Out-Null }",
-        "if(!(Test-Path \"$persist_dir\\Settings.dat\")) { New-Item \"$dir\\Settings.dat\" | Out-Null }"
+    "persist": [
+        "History.dat",
+        "Settings.dat"
+    ],
+    "pre_uninstall": [
+        "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
+        "ensure $persist_dir",
+        "'History.dat', 'Settings.dat' | ForEach-Object {",
+        "    if (Test-Path \"$dir\\$_\") {",
+        "        Copy-Item \"$dir\\$_\" \"$persist_dir\\$_\" -Force -ErrorAction SilentlyContinue",
+        "    }",
+        "}"
     ],
     "checkver": {
         "url": "https://www.pdf-xchange.com/product/pdf-xchange-editor/history/download-text-file",
@@ -38,10 +53,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://www.pdf-xchange.com/downloads/PDFXEdit10_Portable_x64.zip"
+                "url": "https://downloads.pdf-xchange.com/$version/PDFXEdit10_Portable_x64.zip"
             },
             "32bit": {
-                "url": "https://www.pdf-xchange.com/downloads/PDFXEdit10_Portable_x86.zip"
+                "url": "https://downloads.pdf-xchange.com/$version/PDFXEdit10_Portable_x86.zip"
             }
         }
     }

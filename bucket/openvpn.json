@@ -1,39 +1,53 @@
 {
     "##": "Renaming .msi to .msi_ to avoid auto extraction",
-    "version": "2.6.12-I001",
+    "version": "2.6.17-I001",
     "description": "A flexible virtual private network (VPN) solution to secure data communications.",
     "homepage": "https://openvpn.net",
     "license": "GPL-2.0-only",
     "suggest": {
-        "openssl": "openssl"
+        "openssl": [
+            "openssl",
+            "openssl-light"
+        ]
     },
     "architecture": {
         "64bit": {
-            "url": "https://swupdate.openvpn.org/community/releases/OpenVPN-2.6.12-I001-amd64.msi#/setup.msi_",
-            "hash": "525759fe9e52a77a7d2cad99f5af1923d7d3027cab775ccfb7469ce0fd2b1758"
+            "url": "https://swupdate.openvpn.org/community/releases/OpenVPN-2.6.17-I001-amd64.msi#/setup.msi_",
+            "hash": "961e38b4872f022cc63160bd1490af74e3adc88ec1f2e366964f1bbfaff6fce8"
         },
         "32bit": {
-            "url": "https://swupdate.openvpn.org/community/releases/OpenVPN-2.6.12-I001-x86.msi#/setup.msi_",
-            "hash": "bf602bc08b9231dc59c19019ee91e35b9a70e66b2a076a170950380c91e80562"
+            "url": "https://swupdate.openvpn.org/community/releases/OpenVPN-2.6.17-I001-x86.msi#/setup.msi_",
+            "hash": "e5bc8fe5464ca5412d502505a0aa025a35436776f4df07ae2c436ecc973b2638"
         },
         "arm64": {
-            "url": "https://swupdate.openvpn.org/community/releases/OpenVPN-2.6.12-I001-arm64.msi#/setup.msi_",
-            "hash": "4c37a6d855c5f63ff5988d2bc24b619f55338f98799e1497f657e5e777544c8b"
+            "url": "https://swupdate.openvpn.org/community/releases/OpenVPN-2.6.17-I001-arm64.msi#/setup.msi_",
+            "hash": "1e24a1148bb16ba2d337b49110332b04848df1835aca8e4e70b7a6754e212593"
         }
     },
     "pre_install": [
         "if ([Environment]::OSVersion.Version.Major -lt 10) { error 'Windows 10 is required since version 2.4.8. Use \"versions/openvpn-w7\" instead'; break }",
         "if (-not (is_admin)) { error 'Administrator privileges are needed for installation'; break }",
         "Invoke-ExternalCommand msiexec -ArgumentList @('/i', \"`\"$dir\\setup.msi_`\"\", \"PRODUCTDIR=`\"$dir`\"\", 'ADDLOCAL=OpenVPN.GUI,OpenVPN.Service,OpenVPN.Documentation,OpenVPN.SampleCfg,OpenSSL,EasyRSA,OpenVPN,OpenVPN.GUI.OnLogon,Drivers.TAPWindows6,Drivers,Drivers.Wintun', '/passive') -RunAs | Out-Null",
-        "if (Test-Path \"$persist_dir\\config\") { Copy-Item \"$persist_dir\\config\" \"$dir\\\" -Force -Recurse }",
-        "else { Copy-Item \"$dir\\sample-config\\*\" \"$dir\\config\\\" }",
         "Remove-Item \"$Env:Public\\Desktop\\OpenVPN*.lnk\""
     ],
+    "post_install": [
+        "# Persist manually because the uninstaller deletes the 'config' and 'config-auto' folder",
+        "'config', 'config-auto' | ForEach-Object {",
+        "    if (Test-Path -Path \"$persist_dir\\$_\") {",
+        "        Copy-Item -Path \"$persist_dir\\$_\" -Destination $dir -Force -Recurse",
+        "    }",
+        "}",
+        "if (-not (Test-Path -Path \"$persist_dir\\config\")) {",
+        "    Copy-Item -Path \"$dir\\sample-config\\*\" -Destination \"$dir\\config\\\" -Force -Recurse",
+        "}"
+    ],
     "pre_uninstall": [
-        "# Persist manually because the uninstaller deletes the 'config' folder",
-        "if (Test-Path \"$dir\\config\") {",
-        "    ensure \"$persist_dir\" | Out-Null",
-        "    Copy-Item \"$dir\\config\" \"$persist_dir\\\" -Force -Recurse",
+        "# Persist manually because the uninstaller deletes the 'config' and 'config-auto' folder",
+        "'config', 'config-auto' | ForEach-Object {",
+        "    if (Test-Path -Path \"$dir\\$_\") {",
+        "        ensure $persist_dir | Out-Null",
+        "        Copy-Item -Path \"$dir\\$_\" -Destination $persist_dir -Force -Recurse",
+        "    }",
         "}",
         "Stop-Process -Name 'openvpn*' -Force -ErrorAction SilentlyContinue"
     ],
