@@ -53,16 +53,6 @@
             "Set-Content \"$dir\\change-ac-language.ps1\" $value -Encoding 'utf8' -Force"
         ]
     },
-    "bin": [
-        "acmain.exe",
-        "change-ac-language.ps1"
-    ],
-    "shortcuts": [
-        [
-            "acmain.exe",
-            "Attribute Changer"
-        ]
-    ],
     "post_install": [
         "$documents = (Get-ChildItem $dir -Filter '*.pdf').Length; $subtract = $documents - 5",
         "Copy-Item \"$dir\\template.ini\" \"$dir\\messages,$documents.ini\"; Copy-Item \"$dir\\template.ini\" \"$dir\\messages.ini\"; Copy-Item \"$dir\\ac,$(($documents - $subtract) - 2).pdf\" \"$dir\\ac.pdf\"",
@@ -73,11 +63,24 @@
         "}",
         "Copy-Item \"$dir\\ac.pdf\" \"$dir\\ac,$documents.pdf\""
     ],
-    "pre_uninstall": [
-        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-        "Start-Process 'regsvr32' -ArgumentList @('/u', \"$dir\\acshell.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -Force",
-        "Stop-Process -Name 'dllhost' -ErrorAction 'SilentlyContinue' -Force; Start-Sleep -Seconds 2"
+    "bin": [
+        "acmain.exe",
+        "change-ac-language.ps1"
     ],
+    "shortcuts": [
+        [
+            "acmain.exe",
+            "Attribute Changer"
+        ]
+    ],
+    "pre_uninstall": "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+    "uninstaller": {
+        "script": [
+            "Start-Process 'regsvr32' -ArgumentList @('/u', \"$dir\\acshell.dll\", '/s') -Wait",
+            "Stop-Process -Name 'dllhost', 'explorer' -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500"
+        ]
+    },
     "checkver": "(?:v|V)ersion\\s([\\w.]+)",
     "autoupdate": {
         "url": "https://www.petges.lu/pubfiles/ac-$underscoreVersion.exe",

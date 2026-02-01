@@ -6,10 +6,6 @@
         "identifier": "Freeware",
         "url": "https://fastcopy.jp/help/fastcopy_eng.htm#license"
     },
-    "notes": [
-        "If an error occurs when updating or uninstalling, execute the following command then retry:",
-        "`Stop-Process -Name 'explorer'`"
-    ],
     "url": "https://fastcopy.jp/archive/FastCopy5.11.2_installer.exe",
     "hash": "70b273dd08c15d40fac59a217b93be195bacfa47acabd031463a6df800d29fea",
     "pre_install": [
@@ -34,9 +30,15 @@
     ],
     "pre_uninstall": [
         "ensure \"$persist_dir\\Log\" | Out-Null",
-        "Copy-Item \"$dir\\FastCopy.log\", \"$dir\\FastCopy2.ini\", \"$dir\\Log\" -Destination \"$persist_dir\" -Force -Recurse -ErrorAction SilentlyContinue",
-        "Start-Process \"$dir\\setup.exe\" -Args @('/SILENT', '/r') -Wait"
+        "Copy-Item \"$dir\\FastCopy.log\", \"$dir\\FastCopy2.ini\", \"$dir\\Log\" -Destination \"$persist_dir\" -Force -Recurse -ErrorAction SilentlyContinue"
     ],
+    "uninstaller": {
+        "script": [
+            "Start-Process \"$dir\\setup.exe\" -Args @('/SILENT', '/r') -Wait",
+            "Stop-Process -Name 'explorer' -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500"
+        ]
+    },
     "checkver": "Download v([\\d.]+)",
     "autoupdate": {
         "url": "https://fastcopy.jp/archive/FastCopy$version_installer.exe"

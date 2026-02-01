@@ -6,17 +6,20 @@
     "url": "https://github.com/Jackett/Jackett/releases/download/v0.24.1003/Jackett.Binaries.Windows.zip",
     "hash": "e50f61ca9e016587769529566a82e706be15c47fb4496f1269d960f9ff6f90e7",
     "extract_dir": "Jackett",
-    "pre_uninstall": [
-        "'JacketTray', 'JacketConsole', 'JacketService' | ForEach-Object {",
-        "    Stop-Process -Name $_ -ErrorAction SilentlyContinue",
-        "}"
-    ],
     "shortcuts": [
         [
             "JackettTray.exe",
             "Jackett"
         ]
     ],
+    "uninstaller": {
+        "script": [
+            "'JackettTray', 'JackettConsole', 'JackettService' | ForEach-Object {",
+            "    Stop-Process -Name $_ -Force -ErrorAction SilentlyContinue",
+            "}",
+            "Start-Sleep -Milliseconds 1500"
+        ]
+    },
     "checkver": "github",
     "autoupdate": {
         "url": "https://github.com/Jackett/Jackett/releases/download/v$version/Jackett.Binaries.Windows.zip"

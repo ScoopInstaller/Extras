@@ -8,15 +8,6 @@
     },
     "url": "https://download.teamviewer.com/download/version_15x/TeamViewerPortable.zip",
     "hash": "8a83508d1beeb3065016edf640162f89ee6c7c639ac83e2eb3c06e01e9c1679d",
-    "pre_uninstall": [
-        "# For details, see: https://community.teamviewer.com/English/discussion/49721",
-        "Stop-Process -Name 'teamviewer' -ErrorAction SilentlyContinue",
-        "if (Test-Path \"$dir\\rolloutfile.tv13\") {",
-        "    Write-Host 'Removing rolloutfile.tv13.' -f Yellow",
-        "    icacls \"$dir\\rolloutfile.tv13\" /reset",
-        "    Remove-Item \"$dir\\rolloutfile.tv13\" -Force",
-        "}"
-    ],
     "bin": "teamviewer.exe",
     "shortcuts": [
         [
@@ -25,6 +16,20 @@
         ]
     ],
     "persist": "teamviewer.ini",
+    "pre_uninstall": [
+        "# For details, see: https://community.teamviewer.com/English/discussion/49721",
+        "if (Test-Path \"$dir\\rolloutfile.tv13\") {",
+        "    Write-Host 'Removing rolloutfile.tv13.' -f Yellow",
+        "    icacls \"$dir\\rolloutfile.tv13\" /reset",
+        "    Remove-Item \"$dir\\rolloutfile.tv13\" -Force",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "Stop-Process -Name 'teamviewer' -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500"
+        ]
+    },
     "checkver": {
         "useragent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.26 Safari/537.36",
         "url": "https://www.teamviewer.com/en/download/portal/windows/",
