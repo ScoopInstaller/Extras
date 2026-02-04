@@ -1,41 +1,42 @@
 {
-    "version": "8.34-5870",
-    "description": "Comprehensive Hardware Analysis, Monitoring and Reporting for Windows and DOS",
-    "homepage": "https://www.hwinfo.com/",
+    "version": "8.40-5900",
+    "description": "Comprehensive Hardware Analysis, Monitoring and Reporting for Windows and DOS.",
+    "homepage": "https://www.hwinfo.com",
     "license": {
         "identifier": "Freeware",
-        "url": "https://www.hwinfo.com/licenses"
+        "url": "https://www.hwinfo.com/licenses/"
     },
-    "url": "https://downloads.sourceforge.net/project/hwinfo/Windows_Portable/hwi_834.zip",
-    "hash": "sha1:56336618ff7766e38e9afa79fe2b31ef41522eea",
+    "url": "https://www.sac.sk/download/utildiag/hwi_840.zip",
+    "hash": "c06212d303dfe49f454620321e0ae54eea2557b78a2515aa940a51d67365863c",
     "architecture": {
         "64bit": {
             "pre_install": [
-                "Get-ChildItem -Path $dir -Include '*32*', '*ARM*' -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue",
-                "Get-ChildItem -Path \"$dir\\*64*\" -Recurse | Rename-Item -NewName { $_.FullName -replace '\\d{2}\\.', '.' }"
+                "Get-ChildItem -Path $dir -Include '*32*', '*ARM*' -Recurse -File | Remove-Item -Force -ErrorAction SilentlyContinue",
+                "Get-ChildItem -Path $dir -Include '*64*' -Recurse -File | Rename-Item -NewName { $_.Name -replace '\\d{2}(?=\\.exe)', '' }"
             ]
         },
         "32bit": {
             "pre_install": [
-                "Get-ChildItem -Path \"$dir\\*32*\" -Recurse | Rename-Item -NewName { $_.FullName -replace '\\d{2}\\.', '.' }",
-                "Get-ChildItem -Path $dir -Include '*64*' -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue"
+                "Get-ChildItem -Path $dir -Include '*64*' -Recurse -File | Remove-Item -Force -ErrorAction SilentlyContinue",
+                "Get-ChildItem -Path $dir -Include '*32*' -Recurse -File | Rename-Item -NewName { $_.Name -replace '\\d{2}(?=\\.exe)', '' }"
             ]
         },
         "arm64": {
             "pre_install": [
-                "Get-ChildItem -Path \"$dir\\*ARM*\" -Recurse | Rename-Item -NewName { $_.FullName -replace '_.+\\.', '.' }",
-                "Get-ChildItem -Path $dir -Include '*32*', '*64*' -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue"
+                "Get-ChildItem -Path $dir -Include '*ARM*' -Recurse -File | Rename-Item -NewName { $_.Name -replace '_.+(?=\\.exe)', '' }",
+                "Get-ChildItem -Path $dir -Include '*32*', '*64*' -Recurse -File | Remove-Item -Force -ErrorAction SilentlyContinue"
             ]
         }
     },
     "installer": {
         "script": [
             "$setting_name = if ($architecture -match '\\d{2}(?=bit)') { 'HWiNFO{0}.INI' -f $matches[0] } else { 'HWiNFO_ARM64.INI' }",
-            "if (-not (Test-Path \"$persist_dir\\$setting_name\")) {",
-            "    Set-Content -Path \"$dir\\$setting_name\" -Value '[Settings]', 'AutoUpdate=0' -Encoding ASCII",
+            "if (-not (Test-Path -Path \"$persist_dir\\$setting_name\" -PathType Leaf)) {",
+            "    $cfg = @('[Settings]', 'AutoUpdate=0', 'AutoUpdateBetaDisable=1')",
+            "    Set-Content -Path \"$dir\\$setting_name\" -Value $cfg -Encoding ascii",
             "}",
-            "persist_data @{ persist = \"$setting_name\" } $original_dir $persist_dir",
-            "Get-ChildItem -Path $persist_dir -File -Include '*64_KEY.txt' -Recurse | Copy-Item -Destination $dir -Force"
+            "persist_data @{ persist = $setting_name } $original_dir $persist_dir",
+            "Get-ChildItem -Path $persist_dir -Include '*64_KEY.txt' -Recurse -File | Copy-Item -Destination $dir -Force"
         ]
     },
     "bin": "HWiNFO.exe",
@@ -46,15 +47,15 @@
         ]
     ],
     "pre_uninstall": [
-        "Get-ChildItem -Path $dir -File -Include '*64_KEY.txt' -Recurse | Copy-Item -Destination $persist_dir -Force",
+        "Get-ChildItem -Path $dir -Include '*64_KEY.txt' -Recurse -File | Copy-Item -Destination $persist_dir -Force",
         "$setting_name = if ($architecture -match '\\d{2}(?=bit)') { 'HWiNFO{0}.INI' -f $matches[0] } else { 'HWiNFO_ARM64.INI' }",
-        "unlink_persist_data @{ persist = \"$setting_name\" } $dir"
+        "unlink_persist_data @{ persist = $setting_name } $dir"
     ],
     "checkver": {
         "url": "https://www.hwinfo.com/ver.txt",
-        "regex": "^([\\d.-]+)"
+        "regex": "([\\d.-]+)"
     },
     "autoupdate": {
-        "url": "https://downloads.sourceforge.net/project/hwinfo/Windows_Portable/hwi_$majorVersion$minorVersion.zip"
+        "url": "https://www.sac.sk/download/utildiag/hwi_$majorVersion$minorVersion.zip"
     }
 }

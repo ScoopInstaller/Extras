@@ -1,5 +1,5 @@
 {
-    "version": "6.0.909.9",
+    "version": "6.0.915.1",
     "description": "A dynamic mathematics software for education that brings together geometry, algebra, spreadsheets, graphing, statistics and calculus.",
     "homepage": "https://www.geogebra.org",
     "license": {
@@ -10,8 +10,8 @@
         "To register file associations, please execute the following command:",
         "reg import \"$dir\\install-associations.reg\""
     ],
-    "url": "https://download.geogebra.org/installers/6.0/GeoGebra-Windows-Portable-6-0-909-9.zip",
-    "hash": "d5b8d37d4326da11b4eb225659faf3b2b8af8dd48c857b151cec82467e5f241d",
+    "url": "https://download.geogebra.org/installers/6.0/GeoGebra-Windows-Portable-6-0-915-1.zip",
+    "hash": "fc7993b9b30bebf793a42bb25abf4d9993a048d2aced84a80228e76d892b32eb",
     "post_install": [
         "$geogebra_path = $dir -replace '\\\\', '\\\\'",
         "Get-ChildItem -Path \"$bucketsdir\\$bucket\\scripts\\$app\" -Filter '*.reg' -File | ForEach-Object {",
@@ -53,13 +53,11 @@
     },
     "checkver": {
         "script": [
-            "$name_filter = 'GeoGebra-Windows-Portable-*.zip'",
-            "$release_url = 'https://download.geogebra.org/installers/6.0/'",
-            "$download_page = Invoke-WebRequest -Uri $release_url -UseBasicParsing",
-            "$version_sort = { if ($_.href -match '(?!-)[\\d-]+') { [version]($Matches[0] -replace '-', '.') } }",
-            "$name_list = $download_page.links | Where-Object href -Like $name_filter | Sort-Object $version_sort -Descending | Select-Object -ExpandProperty href",
-            "$latest_version = $name_list[0] -replace '[^\\d]+([\\d-]+).+', '$1' -replace '-', '.'",
-            "Write-Output $latest_version"
+            "$url = 'https://download.geogebra.org/package/win-port6'",
+            "$request = [System.Net.HttpWebRequest]::Create($url)",
+            "$response = $request.GetResponse()",
+            "$response.ResponseUri.AbsoluteUri -match 'Portable-(?<dashVersion>[\\d-]+)\\.zip'",
+            "Write-Output ($Matches['dashVersion'] -replace '-', '.')"
         ],
         "regex": "([\\d.]+)"
     },

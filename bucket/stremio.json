@@ -1,11 +1,17 @@
 {
-    "version": "4.4.168",
+    "version": "4.4.171",
     "description": "A modern media center that's a one-stop solution for your video entertainment. You discover, watch and organize video content from easy to install addons.",
     "homepage": "https://www.stremio.com/",
-    "license": "Proprietary",
-    "notes": "Register 'URL:Stremio Protocol' via `reg import \"$dir\\install-context.reg\"`",
-    "url": "https://dl.strem.io/shell-win/v4.4.168/Stremio+4.4.168.exe#/dl.7z",
-    "hash": "44ecc6a7624b2fdf03cb9b419f111892515fb036fe23f88e51456dce69066046",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.stremio.com/tos"
+    },
+    "notes": [
+        "For the URL protocol (used to launch the app from web pages), run:",
+        "reg import \"$dir\\install-context.reg\""
+    ],
+    "url": "https://dl.strem.io/shell-win/v4.4.171/Stremio+4.4.171.exe#/dl.7z",
+    "hash": "1a773648245937821f24d2fec1c0b630b5844c4447efc86d2dd0f6710c7ff892",
     "pre_install": "Remove-Item \"$dir\\`$*\" -Recurse",
     "post_install": [
         "'install-context', 'uninstall-context' | ForEach-Object {",
@@ -28,10 +34,12 @@
         "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }"
     ],
     "checkver": {
-        "url": "https://api.github.com/repositories/197275551/contents/manifests/s/Stremio/Stremio",
-        "jsonpath": "$..name",
-        "regex": "([\\d.]+)",
-        "reverse": true
+        "script": [
+            "$request = [System.Net.HttpWebRequest]::Create('https://www.strem.io/download?platform=windows&four=true')",
+            "$response = $request.GetResponse()",
+            "Write-Output $response.ResponseUri.AbsoluteUri"
+        ],
+        "regex": "shell-win/v(?<version>[\\d.]+)/Stremio\\+\\k<version>\\.exe"
     },
     "autoupdate": {
         "url": "https://dl.strem.io/shell-win/v$version/Stremio+$version.exe#/dl.7z"
