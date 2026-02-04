@@ -1,42 +1,50 @@
 {
-    "version": "0.4.1.r1722",
-    "description": "EventGhost is an advanced, event-driven automation tool for Windows.",
-    "homepage": "https://eventghost.net/",
-    "license": "GPL-2.0",
-    "architecture": {
-        "64bit": {
-            "url": "https://github.com/EventGhost/EventGhost/releases/download/v0.4.1.r1722/EventGhost_0.4.1.r1722_Setup.exe",
-            "hash": "43824b90ccd778ba9b1780e0916548896a0287ce110aa98aecee0aa9d3cdcfb2"
-        }
-    },
-    "installer": {
-        "script": [
-            "Start-Process \"$dir\\EventGhost_0.4.1.r1722_Setup.exe\" \"/S\" -Wait"
-        ]
-    },
-    "uninstaller": {
-        "script": [
-            "Start-Process \"$env:ProgramFiles\\EventGhost\\unins000.exe\" \"/VERYSILENT\" -Wait"
-        ]
-    },
-    "shortcuts": [
-        [
-            "EventGhost.exe",
-            "EventGhost"
-        ]
-    ],
-    "persist": [
-        "config",
-        "plugins"
-    ],
-    "checkver": {
-        "github": "EventGhost/EventGhost"
-    },
-    "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://github.com/EventGhost/EventGhost/releases/download/v$version/EventGhost_$version_Setup.exe"
-            }
-        }
+  "version": "0.4.1.r1722",
+  "description": "EventGhost is an advanced, event-driven automation tool for Windows.",
+  "homepage": "https://eventghost.net/",
+  "license": "GPL-2.0",
+  "architecture": {
+    "64bit": {
+      "url": "https://github.com/EventGhost/EventGhost/releases/download/v0.4.1.r1722/EventGhost_0.4.1.r1722_Setup.exe",
+      "hash": "sha256-HASH_HERE"
     }
+  },
+  "installer": {
+    "script": [
+      "if (-not (Test-Path \"$dir\\EventGhost_0.4.1.r1722_Setup.exe\")) { throw 'Installer not found' }",
+      "$exe = \"$dir\\EventGhost_0.4.1.r1722_Setup.exe\"",
+      "# Run Inno Setup silently with logging",
+      "Start-Process -FilePath $exe -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/LOG=\"$env:TEMP\\EventGhost-install.log\"' -Wait -NoNewWindow",
+      "Start-Sleep -Seconds 2",
+      "# Verify install in Program Files or Program Files (x86)",
+      "if (-not (Test-Path \"$env:ProgramFiles\\EventGhost\\EventGhost.exe\") -and -not (Test-Path \"$env:ProgramFiles(x86)\\EventGhost\\EventGhost.exe\")) { throw 'Silent install failed: EventGhost executable not found' }"
+    ]
+  },
+  "uninstaller": {
+    "script": [
+      "if (Test-Path \"$env:ProgramFiles\\EventGhost\\unins000.exe\") { Start-Process \"$env:ProgramFiles\\EventGhost\\unins000.exe\" -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART' -Wait }",
+      "elseif (Test-Path \"$env:ProgramFiles(x86)\\EventGhost\\unins000.exe\") { Start-Process \"$env:ProgramFiles(x86)\\EventGhost\\unins000.exe\" -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART' -Wait }"
+    ]
+  },
+  "shortcuts": [
+    [
+      "EventGhost.exe",
+      "EventGhost"
+    ]
+  ],
+  "persist": [
+    "config",
+    "plugins"
+  ],
+  "checkver": {
+    "github": "EventGhost/EventGhost"
+  },
+  "autoupdate": {
+    "architecture": {
+      "64bit": {
+        "url": "https://github.com/EventGhost/EventGhost/releases/download/v$version/EventGhost_$version_Setup.exe"
+      }
+    }
+  }
 }
+
