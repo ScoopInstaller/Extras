@@ -9,23 +9,43 @@
       "hash": "43824b90ccd778ba9b1780e0916548896a0287ce110aa98aecee0aa9d3cdcfb2"
     }
   },
-  "installer": {
-    "script": [
-      "if (-not (Test-Path \"$dir\\EventGhost_0.4.1.r1722_Setup.exe\")) { throw 'Installer not found' }",
-      "$exe = \"$dir\\EventGhost_0.4.1.r1722_Setup.exe\"",
-      "# Run Inno Setup silently with logging",
-      "Start-Process -FilePath $exe -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/LOG=\"$env:TEMP\\EventGhost-install.log\"' -Wait -NoNewWindow",
-      "Start-Sleep -Seconds 2",
-      "# Verify install in Program Files or Program Files (x86)",
-      "if (-not (Test-Path \"$env:ProgramFiles\\EventGhost\\EventGhost.exe\") -and -not (Test-Path \"$env:ProgramFiles(x86)\\EventGhost\\EventGhost.exe\")) { throw 'Silent install failed: EventGhost executable not found' }"
-    ]
-  },
-  "uninstaller": {
-    "script": [
-      "if (Test-Path \"$env:ProgramFiles\\EventGhost\\unins000.exe\") { Start-Process \"$env:ProgramFiles\\EventGhost\\unins000.exe\" -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART' -Wait }",
-      "elseif (Test-Path \"$env:ProgramFiles(x86)\\EventGhost\\unins000.exe\") { Start-Process \"$env:ProgramFiles(x86)\\EventGhost\\unins000.exe\" -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART' -Wait }"
-    ]
-  },
+ "installer": {
+  "script": [
+    "$exe = \"$dir\\EventGhost_0.4.1.r1722_Setup.exe\"",
+    "if (-not (Test-Path $exe)) { throw 'Installer not found' }",
+    "# Resolve canonical folders",
+    "$systemPF = [Environment]::GetFolderPath('ProgramFiles')",
+    "$systemPFx86 = [Environment]::GetFolderPath('ProgramFilesX86')",
+    "$userPrograms = Join-Path $env:LOCALAPPDATA 'Programs\\EventGhost'",
+    "# Try system install to Program Files",
+    "$systemDir = Join-Path $systemPF 'EventGhost'",
+    "Start-Process -FilePath $exe -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/LOG=\"$env:TEMP\\EventGhost-install.log\"','/DIR=\"'+$systemDir+'\"' -Wait -NoNewWindow",
+    "Start-Sleep -Seconds 2",
+    "if (Test-Path (Join-Path $systemDir 'EventGhost.exe')) { exit 0 }",
+    "# Try system install to Program Files (x86)",
+    "$systemDirX86 = Join-Path $systemPFx86 'EventGhost'",
+    "Start-Process -FilePath $exe -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/LOG=\"$env:TEMP\\EventGhost-install.log\"','/DIR=\"'+$systemDirX86+'\"' -Wait -NoNewWindow",
+    "Start-Sleep -Seconds 2",
+    "if (Test-Path (Join-Path $systemDirX86 'EventGhost.exe')) { exit 0 }",
+    "# Fallback to per-user install",
+    "Start-Process -FilePath $exe -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/LOG=\"$env:TEMP\\EventGhost-install.log\"','/DIR=\"'+$userPrograms+'\"' -Wait -NoNewWindow",
+    "Start-Sleep -Seconds 2",
+    "if (-not (Test-Path (Join-Path $userPrograms 'EventGhost.exe'))) { throw 'Silent install failed: EventGhost executable not found in system or user paths' }"
+  ]
+},
+"uninstaller": {
+  "script": [
+    "$systemPF = [Environment]::GetFolderPath('ProgramFiles')",
+    "$systemPFx86 = [Environment]::GetFolderPath('ProgramFilesX86')",
+    "$userPrograms = Join-Path $env:LOCALAPPDATA 'Programs\\EventGhost'",
+    "$systemUnins = Join-Path (Join-Path $systemPF 'EventGhost') 'unins000.exe'",
+    "$systemUninsX86 = Join-Path (Join-Path $systemPFx86 'EventGhost') 'unins000.exe'",
+    "$userUnins = Join-Path $userPrograms 'unins000.exe'",
+    "if (Test-Path $systemUnins) { Start-Process $systemUnins -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART' -Wait }",
+    "elseif (Test-Path $systemUninsX86) { Start-Process $systemUninsX86 -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART' -Wait }",
+    "elseif (Test-Path $userUnins) { Start-Process $userUnins -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART' -Wait }"
+  ]
+},
   "shortcuts": [
     [
       "EventGhost.exe",
