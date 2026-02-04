@@ -9,59 +9,15 @@
       "hash": "43824b90ccd778ba9b1780e0916548896a0287ce110aa98aecee0aa9d3cdcfb2"
     }
   },
-"installer": {
-  "script": [
-    "$exe = \"$dir\\EventGhost_0.4.1.r1722_Setup.exe\"",
-    "if (-not (Test-Path $exe)) { throw 'Installer not found' }",
-    "$pf = [Environment]::GetFolderPath('ProgramFiles')",
-    "$pf86 = [Environment]::GetFolderPath('ProgramFilesX86')",
-    "$userDir = Join-Path $env:LOCALAPPDATA 'Programs\\EventGhost'",
-    "$candidates = @(",
-    "  Join-Path $pf 'EventGhost\\EventGhost.exe',",
-    "  Join-Path $pf86 'EventGhost\\EventGhost.exe',",
-    "  Join-Path $userDir 'EventGhost.exe',",
-    "  Join-Path $pf86 'EventGhost\\bin\\EventGhost.exe',",
-    "  Join-Path $pf 'EventGhost\\bin\\EventGhost.exe'",
-    ")",
-    "# Helper to test candidates",
-    "function Test-Candidates { param($list) foreach ($p in $list) { if (Test-Path $p) { return $p } } return $null }",
-    "# Try system install to Program Files (x86) first (installer is 32-bit)",
-    "$target = Join-Path $pf86 'EventGhost'",
-    "Start-Process -FilePath $exe -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/LOG=\"$env:TEMP\\EventGhost-install.log\"','/DIR=`\"$target`\"') -Wait -NoNewWindow",
-    "Start-Sleep -Seconds 2",
-    "$found = Test-Candidates $candidates",
-    "if ($found) { exit 0 }",
-    "# Try system install to Program Files (x64)",
-    "$target = Join-Path $pf 'EventGhost'",
-    "Start-Process -FilePath $exe -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/LOG=\"$env:TEMP\\EventGhost-install.log\"','/DIR=`\"$target`\"') -Wait -NoNewWindow",
-    "Start-Sleep -Seconds 2",
-    "$found = Test-Candidates $candidates",
-    "if ($found) { exit 0 }",
-    "# Fallback to per-user install",
-    "Start-Process -FilePath $exe -ArgumentList @('/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/LOG=\"$env:TEMP\\EventGhost-install.log\"','/DIR=`\"$userDir`\"') -Wait -NoNewWindow",
-    "Start-Sleep -Seconds 2",
-    "$found = Test-Candidates $candidates",
-    "if (-not $found) {",
-    "  # Dump last 200 lines of the Inno log to the console for debugging",
-    "  if (Test-Path \"$env:TEMP\\EventGhost-install.log\") { Get-Content \"$env:TEMP\\EventGhost-install.log\" -Tail 200 | Out-String | Write-Output }",
-    "  throw 'Silent install failed: EventGhost executable not found in system or user paths. See %TEMP%\\EventGhost-install.log for details.'",
-    "}"
-  ]
-},
-"uninstaller": {
-  "script": [
-    "# Stop EventGhost if running",
-    "Get-Process -Name EventGhost -ErrorAction SilentlyContinue | ForEach-Object { Try { Stop-Process -Id $_.Id -Force -ErrorAction Stop } Catch {} }",
-    "taskkill /IM EventGhost.exe /F /T 2>$null",
-    "# Locate uninstaller",
-    "$pf = [Environment]::GetFolderPath('ProgramFiles')",
-    "$pf86 = [Environment]::GetFolderPath('ProgramFilesX86')",
-    "$userDir = Join-Path $env:LOCALAPPDATA 'Programs\\EventGhost'",
-    "$unins = @(Join-Path $pf86 'EventGhost\\unins000.exe', Join-Path $pf 'EventGhost\\unins000.exe', Join-Path $userDir 'unins000.exe') | Where-Object { Test-Path $_ } | Select-Object -First 1",
-    "if ($unins) { Start-Process -FilePath $unins -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/LOG=\"$env:TEMP\\EventGhost-uninstall.log\"' -Wait -NoNewWindow }",
-    "else { Write-Output 'Uninstaller not found; attempting forced folder removal'; foreach ($p in @(Join-Path $pf86 'EventGhost', Join-Path $pf 'EventGhost', $userDir)) { if (Test-Path $p) { Remove-Item -LiteralPath $p -Recurse -Force -ErrorAction SilentlyContinue } } }"
-  ]
-},
+  "installer": {
+    "args": [
+      "/VERYSILENT",
+      "/SUPPRESSMSGBOXES",
+      "/NORESTART",
+      "/DIR=\"$dir\""
+    ]
+  },
+  "bin": "EventGhost.exe",
   "shortcuts": [
     [
       "EventGhost.exe",
@@ -73,7 +29,7 @@
     "plugins"
   ],
   "checkver": {
-    "github": "EventGhost/EventGhost"
+    "github": "https://github.com/EventGhost/EventGhost"
   },
   "autoupdate": {
     "architecture": {
@@ -83,4 +39,3 @@
     }
   }
 }
-
