@@ -1,0 +1,43 @@
+{
+    "version": "1.2502.25002.0",
+    "description": "WinDbg is a debugger that can be used to analyze crash dumps, debug live user-mode and kernel-mode code, and examine CPU registers and memory.",
+    "homepage": "https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/",
+    "license": "Proprietary",
+    "notes": "At least Windows 10 build 17763 is required to use WinDbg.",
+    "url": "https://windbg.download.prss.microsoft.com/dbazure/prod/1-2502-25002-0/windbg.msixbundle#/dl.7z",
+    "hash": "2802c9da1eccdfd488d1364aa601170d44dc37e2c8354be514f5f5a40c9cfcda",
+    "architecture": {
+        "64bit": {
+            "pre_install": "Get-ChildItem \"$dir\" -Exclude '*x64.msix' | Remove-Item -Force -Recurse"
+        },
+        "32bit": {
+            "pre_install": "Get-ChildItem \"$dir\" -Exclude '*x86.msix' | Remove-Item -Force -Recurse"
+        },
+        "arm64": {
+            "pre_install": "Get-ChildItem \"$dir\" -Exclude '*arm64.msix' | Remove-Item -Force -Recurse"
+        }
+    },
+    "installer": {
+        "script": "Get-ChildItem \"$dir\" '*.msix' | Select-Object -ExpandProperty Fullname | Expand-7zipArchive -DestinationPath \"$dir\" -Removal"
+    },
+    "bin": [
+        [
+            "DbgX.Shell.exe",
+            "WinDbgX"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "DbgX.Shell.exe",
+            "WinDbg"
+        ]
+    ],
+    "checkver": {
+        "url": "https://raw.githubusercontent.com/MicrosoftDocs/windows-driver-docs/refs/heads/staging/windows-driver-docs-pr/debuggercmds/windbg-release-notes.md",
+        "regex": "## +(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)",
+        "replace": "${1}.${2}.${3}.${4}"
+    },
+    "autoupdate": {
+        "url": "https://windbg.download.prss.microsoft.com/dbazure/prod/$match1-$match2-$match3-$match4/windbg.msixbundle#/dl.7z"
+    }
+}
