@@ -10,11 +10,18 @@
         }
     },
     "installer": {
-        "args": [
-            "/VERYSILENT",
-            "/SUPPRESSMSGBOXES",
-            "/NORESTART",
-            "/DIR=\"$dir\""
+        "script": [
+            "# 1. Run the installer and wait for it to finish",
+            "Start-Process -FilePath \"$dir\\$fname\" -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', \"/DIR=`\"$dir`\"\") -Wait",
+            "",
+            "# 2. Option B: Flatten directory if installer created a subdirectory",
+            "if (Test-Path \"$dir\\EventGhost\\EventGhost.exe\") {",
+            "    Get-ChildItem \"$dir\\EventGhost\\*\" | Move-Item -Destination \"$dir\" -Force",
+            "    Remove-Item \"$dir\\EventGhost\" -Recurse -Force",
+            "}",
+            "",
+            "# 3. Timing Fix: Wait 3 seconds for file locks to release before shimming",
+            "Start-Sleep -Seconds 3"
         ]
     },
     "uninstaller": {
