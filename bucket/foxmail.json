@@ -1,13 +1,13 @@
 {
-    "version": "7.2.25.508",
+    "version": "7.2.25.528",
     "description": "Foxmail like you've never seen it before.",
     "homepage": "https://www.foxmail.com/",
     "license": {
         "identifier": "Proprietary",
         "url": "https://www.foxmail.com/mac/en/terms_of_service"
     },
-    "url": "https://dldir1.qq.com/foxmail/windows/FoxmailSetup_7.2.25.508.exe#/dl.7z",
-    "hash": "1269e18259868eccc7c51ec5b0aee5f608569b07670ea62b322fc94ace43fd59",
+    "url": "https://www.foxmail.com/win/download#/dl.7z",
+    "hash": "56a5b875b7a74c66d540c67ffb2edbf8648044039e5722d632b3f7c6c6944632",
     "pre_install": [
         "$file = 'FMStorage.list'",
         "if (!(Test-Path \"$persist_dir\\$file\")) {",
@@ -31,16 +31,13 @@
     "checkver": {
         "script": [
             "$url = 'https://www.foxmail.com/win/download'",
-            "if ($PSVersionTable.PSVersion.Major -lt 7.0) {",
-            "    $req = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -ErrorAction SilentlyContinue",
-            "} else {",
-            "    $req = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -ErrorAction SilentlyContinue -SkipHttpErrorCheck",
-            "}",
-            "Write-Output $req.Headers.Location"
+            "$request = [System.Net.HttpWebRequest]::Create($url)",
+            "$response = $request.GetResponse()",
+            "Write-Output $response.ResponseUri.AbsoluteUri"
         ],
         "regex": "FoxmailSetup_([\\d.]+)\\.exe"
     },
     "autoupdate": {
-        "url": "https://dldir1.qq.com/foxmail/windows/FoxmailSetup_$version.exe#/dl.7z"
+        "url": "https://www.foxmail.com/win/download#/dl.7z"
     }
 }
