@@ -10,47 +10,71 @@
     "hash": "c06212d303dfe49f454620321e0ae54eea2557b78a2515aa940a51d67365863c",
     "architecture": {
         "64bit": {
-            "pre_install": [
-                "Get-ChildItem -Path $dir -Include '*32*', '*ARM*' -Recurse -File | Remove-Item -Force -ErrorAction SilentlyContinue",
-                "Get-ChildItem -Path $dir -Include '*64*' -Recurse -File | Rename-Item -NewName { $_.Name -replace '\\d{2}(?=\\.exe)', '' }"
+            "pre_install": "Get-ChildItem -Path $dir -Include '*32*', '*ARM*' -Recurse -File | Remove-Item -Force -ErrorAction SilentlyContinue",
+            "bin": [
+                [
+                    "HWiNFO64.exe",
+                    "HWiNFO"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "HWiNFO64.exe",
+                    "HWiNFO"
+                ]
             ]
         },
         "32bit": {
-            "pre_install": [
-                "Get-ChildItem -Path $dir -Include '*64*' -Recurse -File | Remove-Item -Force -ErrorAction SilentlyContinue",
-                "Get-ChildItem -Path $dir -Include '*32*' -Recurse -File | Rename-Item -NewName { $_.Name -replace '\\d{2}(?=\\.exe)', '' }"
+            "pre_install": "Get-ChildItem -Path $dir -Include '*64*' -Recurse -File | Remove-Item -Force -ErrorAction SilentlyContinue",
+            "bin": [
+                [
+                    "HWiNFO32.exe",
+                    "HWiNFO"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "HWiNFO32.exe",
+                    "HWiNFO"
+                ]
             ]
         },
         "arm64": {
-            "pre_install": [
-                "Get-ChildItem -Path $dir -Include '*ARM*' -Recurse -File | Rename-Item -NewName { $_.Name -replace '_.+(?=\\.exe)', '' }",
-                "Get-ChildItem -Path $dir -Include '*32*', '*64*' -Recurse -File | Remove-Item -Force -ErrorAction SilentlyContinue"
+            "pre_install": "Get-ChildItem -Path $dir -Exclude '*ARM*' -Recurse -File | Remove-Item -Force -ErrorAction SilentlyContinue",
+            "bin": [
+                [
+                    "HWiNFO_ARM64.exe",
+                    "HWiNFO"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "HWiNFO_ARM64.exe",
+                    "HWiNFO"
+                ]
             ]
         }
     },
     "installer": {
         "script": [
+            "ensure $persist_dir | Out-Null",
+            "Get-ChildItem -Path $persist_dir -Include '*64_KEY.txt' -Recurse -File | Copy-Item -Destination $dir -Force",
             "$setting_name = if ($architecture -match '\\d{2}(?=bit)') { 'HWiNFO{0}.INI' -f $matches[0] } else { 'HWiNFO_ARM64.INI' }",
             "if (-not (Test-Path -Path \"$persist_dir\\$setting_name\" -PathType Leaf)) {",
             "    $cfg = @('[Settings]', 'AutoUpdate=0', 'AutoUpdateBetaDisable=1')",
             "    Set-Content -Path \"$dir\\$setting_name\" -Value $cfg -Encoding ascii",
             "}",
             "persist_data @{ persist = $setting_name } $original_dir $persist_dir",
-            "Get-ChildItem -Path $persist_dir -Include '*64_KEY.txt' -Recurse -File | Copy-Item -Destination $dir -Force"
+            "persist_permission @{ persist = $setting_name } $global"
         ]
     },
-    "bin": "HWiNFO.exe",
-    "shortcuts": [
-        [
-            "HWiNFO.exe",
-            "HWiNFO"
+    "pre_uninstall": "Get-ChildItem -Path $dir -Filter '*64_KEY.txt' -File | Copy-Item -Destination $persist_dir -Force",
+    "uninstaller": {
+        "script": [
+            "$setting_name = if ($architecture -match '\\d{2}(?=bit)') { 'HWiNFO{0}.INI' -f $matches[0] } else { 'HWiNFO_ARM64.INI' }",
+            "unlink_persist_data @{ persist = $setting_name } $dir"
         ]
-    ],
-    "pre_uninstall": [
-        "Get-ChildItem -Path $dir -Include '*64_KEY.txt' -Recurse -File | Copy-Item -Destination $persist_dir -Force",
-        "$setting_name = if ($architecture -match '\\d{2}(?=bit)') { 'HWiNFO{0}.INI' -f $matches[0] } else { 'HWiNFO_ARM64.INI' }",
-        "unlink_persist_data @{ persist = $setting_name } $dir"
-    ],
+    },
     "checkver": {
         "url": "https://www.hwinfo.com/ver.txt",
         "regex": "([\\d.-]+)"
