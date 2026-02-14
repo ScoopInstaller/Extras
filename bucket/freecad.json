@@ -3,6 +3,11 @@
     "description": "A free and open-source multi-platform parametric 3D modeler.",
     "homepage": "https://www.freecad.org",
     "license": "LGPL-2.0-or-later",
+    "notes": [
+        "Scoop persists data since version 1.0.0. You may need to move data by yourself.",
+        "Before: '$Env:APPDATA\\FreeCAD'",
+        "After : '$persist_dir\\freecad\\_userdata'"
+    ],
     "architecture": {
         "64bit": {
             "url": "https://github.com/FreeCAD/FreeCAD/releases/download/1.0.2/FreeCAD_1.0.2-conda-Windows-x86_64-py311.7z",
@@ -10,12 +15,21 @@
         }
     },
     "pre_install": "pushd $dir ; mv */* . ; rm FreeCAD_* ; popd",
+    "post_install": [
+      "if ($global) { $scope = 'Machine' } else { $scope = 'User' }",
+      "if (!$Env:FREECAD_USER_HOME) { [Environment]::SetEnvironmentVariable('FREECAD_USER_HOME', \"$persist_dir\\_userdata\", $scope) }"
+    ],
     "bin": "bin\\FreeCADCmd.exe",
     "shortcuts": [
         [
             "bin\\FreeCAD.exe",
             "FreeCAD"
         ]
+    ],
+    "persist": "_userdata",
+    "post_uninstall": [
+      "if ($global) { $scope = 'Machine' } else { $scope = 'User' }",
+      "if ($Env:FREECAD_USER_HOME -eq \"$persist_dir\\_userdata\") { [Environment]::SetEnvironmentVariable('FREECAD_USER_HOME', [NullString]::Value, $scope) }"
     ],
     "checkver": {
         "url": "https://api.github.com/repositories/5736080/releases/latest",
