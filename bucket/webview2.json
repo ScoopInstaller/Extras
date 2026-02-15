@@ -1,0 +1,60 @@
+{
+    "version": "144.0.3719.93",
+    "description": "Microsoft Edge WebView2 Runtime. Embed web content (HTML, CSS, and JavaScript) in your native applications with Microsoft Edge WebView2.",
+    "homepage": "https://developer.microsoft.com/en-us/microsoft-edge/webview2",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://developer.microsoft.com/microsoft-edge/api/eula/webview2"
+    },
+    "notes": "Overrides any natively installed Runtime through environment variable 'WEBVIEW2_BROWSER_EXECUTABLE_FOLDER'. This is architecture-specific: Applications must match the runtime architecture, for example install the 32-bit build (--arch 32bit) to support 32-bit applications.",
+    "architecture": {
+        "32bit": {
+            "url": "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/6c876eab-3bbf-4715-bfaf-e5bb2925457d/Microsoft.WebView2.FixedVersionRuntime.144.0.3719.93.x86.cab#/dl.7z",
+            "hash": "ff825c63e55c6ea1f0a588cc5d3f68dc8f12dd7d0c1e7b8f027afe0d0ebb2a77",
+            "extract_dir": "Microsoft.WebView2.FixedVersionRuntime.144.0.3719.93.x86"
+        },
+        "64bit": {
+            "url": "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/251a68fa-d6cf-451f-8cba-43df652d9297/Microsoft.WebView2.FixedVersionRuntime.144.0.3719.93.x64.cab#/dl.7z",
+            "hash": "9b3186a555284a200ee7a40c12e6f8163dbf132ba8a87e4e9ee7ff374176ef7f",
+            "extract_dir": "Microsoft.WebView2.FixedVersionRuntime.144.0.3719.93.x64"
+        },
+        "arm64": {
+            "url": "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/078c90ed-f9b7-4e2c-9cf7-174b552cc76b/Microsoft.WebView2.FixedVersionRuntime.144.0.3719.93.arm64.cab#/dl.7z",
+            "hash": "ab438aa033d9dc83d42efc7a33d643cf33eaae688752598ac1f16f5761167683",
+            "extract_dir": "Microsoft.WebView2.FixedVersionRuntime.144.0.3719.93.arm64"
+        }
+    },
+    "env_set": {
+        "WEBVIEW2_BROWSER_EXECUTABLE_FOLDER": "$dir"
+    },
+    "checkver": {
+        "url": "https://developer.microsoft.com/en-us/Microsoft-edge/webview2/",
+        "script": [
+            "$page -match 'https://msedge\\.sf\\.dl\\.delivery\\.mp\\.microsoft\\.com/filestreamingservice/files/(?<folder>[0-9a-z-]+)/Microsoft\\.WebView2\\.FixedVersionRuntime\\.([0-9.]+)\\.x86\\.cab'",
+            "$arch32 = $Matches.folder",
+            "$page -match 'https://msedge\\.sf\\.dl\\.delivery\\.mp\\.microsoft\\.com/filestreamingservice/files/(?<folder>[0-9a-z-]+)/Microsoft\\.WebView2\\.FixedVersionRuntime\\.(?<version>[0-9.]+)\\.x64\\.cab'",
+            "$version = $Matches.version",
+            "$arch64 = $Matches.folder",
+            "$page -match 'https://msedge\\.sf\\.dl\\.delivery\\.mp\\.microsoft\\.com/filestreamingservice/files/(?<folder>[0-9a-z-]+)/Microsoft\\.WebView2\\.FixedVersionRuntime\\.([0-9.]+)\\.arm64\\.cab'",
+            "$archarm64 = $Matches.folder",
+            "Write-Output \"$version $arch32 $arch64 $archarm64\""
+        ],
+        "regex": "(?<version>[\\d.]+) (?<arch32>[^ ]+) (?<arch64>[^ ]+) (?<archarm64>[^ ]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "32bit": {
+                "url": "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/$matchArch32/Microsoft.WebView2.FixedVersionRuntime.$version.x86.cab#/dl.7z",
+                "extract_dir": "Microsoft.WebView2.FixedVersionRuntime.$version.x86"
+            },
+            "64bit": {
+                "url": "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/$matchArch64/Microsoft.WebView2.FixedVersionRuntime.$version.x64.cab#/dl.7z",
+                "extract_dir": "Microsoft.WebView2.FixedVersionRuntime.$version.x64"
+            },
+            "arm64": {
+                "url": "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/$matchArcharm64/Microsoft.WebView2.FixedVersionRuntime.$version.arm64.cab#/dl.7z",
+                "extract_dir": "Microsoft.WebView2.FixedVersionRuntime.$version.arm64"
+            }
+        }
+    }
+}
