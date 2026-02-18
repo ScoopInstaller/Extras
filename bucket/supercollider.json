@@ -1,0 +1,89 @@
+{
+    "version": "3.14.1",
+    "description": "An audio server, programming language, and IDE for sound synthesis and algorithmic composition.",
+    "homepage": "http://supercollider.github.io",
+    "license": {
+        "identifier": "GPL-3.0",
+        "url": "https://github.com/supercollider/supercollider/blob/develop/COPYING"
+    },
+    "notes": [
+        "The IDE cache dir are at `%localappdata%\\scide` and `%appdata%\\scide`",
+        "The system and user directories are now moved to the *SCOOP persist* path",
+        "For more information: https://github.com/supercollider/supercollider/wiki/Path-searching"
+    ],
+    "require": "main/cmake",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/supercollider/supercollider/releases/download/Version-3.14.1/SuperCollider-3.14.1-win64.zip",
+            "hash": "a5f95416307d35c039ca53a9f9c6151c26585064d3229521093a60dddb9458cd"
+        }
+    },
+    "shortcuts": [
+        [
+            "scide.exe",
+            "SuperCollider"
+        ]
+    ],
+    "bin": [
+        "scide.exe",
+        "sclang.exe",
+        "scsynth.exe"
+    ],
+    "persist": [
+        "LocalAppData\\SuperCollider",
+        "ProgramData\\SuperCollider"
+    ],
+    "pre_install": [
+        "# Ensure the LocalAppData with SymbolicLink.",
+        "if (Test-Path \"$env:localappdata\\SuperCollider\") {",
+        "   info \"Copying old '$env:localappdata\\SuperCollider' to '$persist_dir\\LocalAppData\\SuperCollider'\"",
+        "   if (!(Test-Path \"$persist_dir\\LocalAppData\\SuperCollider\")) {",
+        "       ensure \"$persist_dir\\LocalAppData\\SuperCollider\" | Out-Null",
+        "       Copy-Item \"$env:localappdata\\SuperCollider\\*\" \"$persist_dir\\LocalAppData\\SuperCollider\"",
+        "   }",
+        "   Remove-Item -Path \"$env:localappdata\\SuperCollider\" -Recurse -Force",
+        "   New-Item -ItemType SymbolicLink -Path \"$env:localappdata\\SuperCollider\" -Target \"$persist_dir\\LocalAppData\\SuperCollider\"",
+        "}",
+        "else {",
+        "   if (!(Test-Path \"$persist_dir\\LocalAppData\\SuperCollider\")) {ensure \"$persist_dir\\LocalAppData\\SuperCollider\" | Out-Null}",
+        "   New-Item -ItemType SymbolicLink -Path \"$env:localappdata\\SuperCollider\" -Target \"$persist_dir\\LocalAppData\\SuperCollider\"",
+        "}",
+        "# Ensure the ProgramData with SymbolicLink.",
+        "if (Test-Path \"$env:programdata\\SuperCollider\") {",
+        "   info \"Copying old '$env:programdata\\SuperCollider' to '$persist_dir\\ProgramData\\SuperCollider'\"",
+        "   if (!(Test-Path \"$persist_dir\\ProgramData\\SuperCollider\")) {",
+        "       ensure \"$persist_dir'\\ProgramData\\SuperCollider\" | Out-Null",
+        "       Copy-Item \"$env:programdata\\SuperCollider\\*\" \"$persist_dir'\\ProgramData\\SuperCollider\"",
+        "   }",
+        "   Remove-Item -Path \"$env:programdata\\SuperCollider\" -Recurse -Force",
+        "   New-Item -ItemType SymbolicLink -Path \"$env:programdata\\SuperCollider\" -Target \"$persist_dir\\ProgramData\\SuperCollider\"",
+        "} else {",
+        "   if (!(Test-Path \"$persist_dir\\ProgramData\\SuperCollider\")) {ensure \"$persist_dir'\\ProgramData\\SuperCollider\" | Out-Null}",
+        "   New-Item -ItemType SymbolicLink -Path \"$env:programdata\\SuperCollider\" -Target \"$persist_dir\\ProgramData\\SuperCollider\"",
+        "}"
+    ],
+    "pre_uninstall": [
+        "# Remove the SymbolicLink",
+        "Remove-Item -Path \"$env:localappdata\\SuperCollider\" -Force",
+        "Remove-Item -Path \"$env:programdata\\SuperCollider\" -Force"
+    ],
+    "checkver": {
+        "github": "https://github.com/supercollider/supercollider",
+        "url": "https://api.github.com/repositories/4228314/releases",
+        "regex": "Version-([\\d.]+)"
+    },
+    "extract_dir": "SuperCollider",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/supercollider/supercollider/releases/download/Version-$version/SuperCollider-$version-win64.zip"
+            }
+        },
+        "hash": {
+            "mode": "json",
+            "url": "https://api.github.com/repositories/4228314/releases",
+            "jsonpath": "$[?(@.tag_name == 'Version-$version')].assets[?(@.browser_download_url == '$url')].digest",
+            "regex": "sha256:\\s*([a-f0-9]+)"
+        }
+    }
+}
