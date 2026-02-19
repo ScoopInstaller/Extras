@@ -2,6 +2,13 @@
 
 Set-ExecutionPolicy -Scope Process ByPass
 
+# Check Admin
+
+if (-Not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Write-Host "You NEED ADMIN permisson to add the programdata symlink." -ForegroundColor DarkRed
+    Exit
+}
+
 # Ensure the ProgramData with SymbolicLink
 
 $current_dir = scoop prefix supercollider
@@ -12,6 +19,7 @@ if (Test-Path "$env:programdata\SuperCollider") {
     if (-not (Test-Path "$current_dir\ProgramData\SuperCollider")) {
         New-Item -ItemType Directory -Path "$current_dir\ProgramData\SuperCollider" -Force | Out-Null
     }
+
     Copy-Item "$env:programdata\SuperCollider\*" "$current_dir\ProgramData\SuperCollider" -Recurse -Force
     Remove-Item -Path "$env:programdata\SuperCollider" -Force -Recurse -ErrorAction SilentlyContinue
     New-Item -ItemType SymbolicLink -Path "$env:programdata\SuperCollider" -Target "$current_dir\ProgramData\SuperCollider" | Out-Null
