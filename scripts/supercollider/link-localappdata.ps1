@@ -13,7 +13,7 @@ if (Test-Path "$env:localappdata\SuperCollider") {
         New-Item -ItemType Directory -Path "$current_dir\LocalAppData\SuperCollider" -Force | Out-Null
     }
     Copy-Item "$env:localappdata\SuperCollider\*" "$current_dir\LocalAppData\SuperCollider" -Recurse -Force
-    Remove-Item -Path "$env:localappdata\SuperCollider" -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path "$env:localappdata\SuperCollider" -Force -Recurse -ErrorAction SilentlyContinue
     New-Item -ItemType SymbolicLink -Path "$env:localappdata\SuperCollider" -Target "$current_dir\LocalAppData\SuperCollider" | Out-Null
     Write-Host "Done."
 } else {
