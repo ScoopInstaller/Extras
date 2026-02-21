@@ -1,0 +1,44 @@
+{
+    "version": "1.0.11",
+    "description": "A voice, video and text communication platform",
+    "homepage": "https://discord.com",
+    "license": "Freeware",
+    "notes": [
+        "Fix autostart: re-enable startup in Discord settings",
+        "Fix notifications by running: $dir\\makelnk.ps1"
+    ],
+    "architecture": {
+        "arm64": {
+            "url": "https://stable.dl2.discordapp.net/distro/app/stable/win/arm64/1.0.11/DiscordSetup.exe#/dl.7z",
+            "hash": "04a9fc518cd45789283559c0b76492fec527d640fa545fcebafed5cedbf2e9e1"
+        }
+    },
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\Discord-$version-full.nupkg\" -ExtractDir 'lib\\net45' -DestinationPath \"$dir\\app-$version\" -Removal",
+        "Move-Item \"$dir\\app-$version\\installer.db\" \"$dir\"",
+        "Move-Item \"$dir\\app-$version\\app.ico\" \"$dir\"",
+        "New-Item \"$dir\\packages\" -ItemType Directory | Out-Null",
+        "Move-Item \"$dir\\RELEASES\" \"$dir\\packages\"",
+        "Copy-Item \"$bucketsdir\\$bucket\\scripts\\$app\\makelnk.ps1\" \"$dir\""
+    ],
+    "shortcuts": [
+        [
+            "Update.exe",
+            "Discord",
+            "--processStart Discord.exe",
+            "app.ico"
+        ]
+    ],
+    "post_uninstall": "Remove-Item \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Discord.lnk\" -ErrorAction SilentlyContinue",
+    "checkver": {
+        "url": "https://updates.discord.com/distributions/app/manifests/latest?channel=stable&platform=win&arch=arm64",
+        "regex": "arm64/([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "arm64": {
+                "url": "https://stable.dl2.discordapp.net/distro/app/stable/win/arm64/$version/DiscordSetup.exe#/dl.7z"
+            }
+        }
+    }
+}
