@@ -2,13 +2,17 @@
     "version": "0.97.2",
     "description": "A set of utilities for power users to tune and streamline their Windows experience for greater productivity.",
     "homepage": "https://github.com/microsoft/PowerToys",
-    "license": "MIT",
+    "license": {
+        "identifier": "MIT",
+        "url": "https://github.com/microsoft/PowerToys/blob/HEAD/LICENSE"
+    },
     "notes": [
-        "Add PowerToys context menu option by running:",
+        "To register the context menu entry, please execute the following command:",
         "Invoke-Expression -Command \"& `\"$dir\\install-context.ps1`\"\"",
         "",
-        "If an error occurs when updating or uninstalling, execute the following command then retry:",
-        "`Stop-Process -Name 'explorer'`"
+        "Please note that the related logic has been changed.",
+        "The context menu must be re-registered once, even if it was previously registered.",
+        "No further action is required if this message appears again."
     ],
     "architecture": {
         "64bit": {
@@ -22,64 +26,62 @@
     },
     "installer": {
         "script": [
-            "Expand-DarkArchive \"$dir\\$fname\" \"$dir\\.tmp\"",
-            "Get-ChildItem \"$dir\\.tmp\\AttachedContainer\\PowerToysUserSetup*.msi\" | Rename-Item -NewName 'PowerToysSetup.msi' -Force",
-            "$ver = ([xml](Get-Content -Raw \"$dir\\.tmp\\UX\\manifest.xml\" -Encoding utf8)).BurnManifest.EngineVersion",
-            "if (($null -ne $ver) -and ($ver -like \"5.*\")) {",
-            "    Expand-MsiArchive \"$dir\\.tmp\\AttachedContainer\\PowerToysSetup.msi\" \"$dir\" -ExtractDir 'LocalApp\\PowerToys'",
+            "Expand-DarkArchive -Path \"$dir\\$fname\" -DestinationPath \"$dir\\tmp\" -Removal",
+            "$installer_file = Get-ChildItem -Path \"$dir\\tmp\\AttachedContainer\" -Filter '*.msi' -File",
+            "[xml]$xml = Get-Content -Path \"$dir\\tmp\\UX\\manifest.xml\" -Encoding utf8",
+            "$engine_version = $xml.BurnManifest.EngineVersion",
+            "if ($null -ne $engine_version -and [version]$engine_version -ge [version]::new(5, 0)) {",
+            "    Expand-MsiArchive -Path $installer_file.FullName -DestinationPath $dir -ExtractDir 'LocalApp\\PowerToys'",
             "} else {",
-            "    Expand-MsiArchive \"$dir\\.tmp\\AttachedContainer\\PowerToysSetup.msi\" \"$dir\" -ExtractDir 'PowerToys'",
+            "    Expand-MsiArchive -Path $installer_file.FullName -DestinationPath $dir -ExtractDir 'PowerToys'",
             "}",
-            "Remove-Item \"$dir\\.tmp\", \"$dir\\$fname\" -Force -Recurse"
+            "Remove-Item -Path \"$dir\\tmp\" -Recurse -Force -ErrorAction SilentlyContinue"
         ]
     },
     "post_install": [
-        "'install-context', 'uninstall-context' | ForEach-Object {",
-        "    if (Test-Path \"$bucketsdir\\$bucket\\scripts\\$app\\$_.ps1\") {",
-        "        $content = Get-Content \"$bucketsdir\\$bucket\\scripts\\$app\\$_.ps1\"",
-        "        $content = $content.Replace('{{scoop_dir}}', $original_dir)",
-        "        if ($global) {",
-        "            $content = $content.Replace('{{install_scope}}', 'perMachine')",
-        "            $content = $content.Replace('{{registry_scope}}', 'HKLM')",
-        "        }",
-        "        $content = $content.Replace('{{install_scope}}', 'perUser')",
-        "        $content = $content.Replace('{{registry_scope}}', 'HKCU')",
-        "        $content | Set-Content -Path \"$dir\\$_.ps1\"",
-        "    }",
+        "$install_scope, $registry_scope = if ($global) { 'perMachine', 'HKLM' } else { 'perUser', 'HKCU' }",
+        "Get-ChildItem -Path \"$bucketsdir\\$bucket\\scripts\\$app\" -Filter '*.ps1' -File | ForEach-Object {",
+        "    $content = Get-Content -Path $_.FullName -Encoding utf8",
+        "    $content = $content -Replace '{{install_scope}}', $install_scope",
+        "    $content = $content -Replace '{{registry_scope}}', $registry_scope",
+        "    $content -Replace '{{powertoys_dir}}', $original_dir | Set-Content -Path \"$dir\\$($_.Name)\" -Encoding utf8",
         "}",
-        "$regpath = 'HKCU:\\Software\\Classes\\powertoys'",
-        "if ($global) {",
-        "    $regpath = $regpath.Replace('HKCU', 'HKLM')",
-        "}",
-        "if (Test-Path -Path $regpath) {",
-        "    Remove-Item -Path $regpath -Recurse -Force | Out-Null",
+        "$registry_path = \"${registry_scope}:\\Software\\Classes\\powertoys\"",
+        "if (-not (Test-Path -Path $registry_path)) { return }",
+        "$default_value = Get-ItemProperty -Path $registry_path | ForEach-Object -MemberName '(default)'",
+        "if ($null -ne $default_value -and $default_value -eq 'Context menu registration status check') {",
         "    Invoke-Expression -Command \"& `\"$dir\\install-context.ps1`\"\"",
         "}"
     ],
-    "uninstaller": {
-        "script": [
-            "$regpath = 'HKCU:\\Software\\Classes\\powertoys'",
-            "if ($global) {",
-            "    $regpath = $regpath.Replace('HKCU', 'HKLM')",
-            "}",
-            "if (Test-Path -Path $regpath) {",
-            "    Invoke-Expression -Command \"& `\"$dir\\uninstall-context.ps1`\"\"",
-            "    if ($cmd -ne 'uninstall') {",
-            "        New-Item -Path $regpath -Force | Out-Null",
-            "    }",
-            "}"
-        ]
-    },
     "shortcuts": [
         [
             "PowerToys.exe",
             "PowerToys"
         ]
     ],
+    "uninstaller": {
+        "script": [
+            "$registry_scope = if ($global) { 'HKLM' } else { 'HKCU' }",
+            "$registry_path = \"${registry_scope}:\\Software\\Classes\\powertoys\"",
+            "if (-not (Test-Path -Path $registry_path)) { return }",
+            "$default_value = Get-ItemProperty -Path $registry_path | ForEach-Object -MemberName '(default)'",
+            "if ($default_value -ne 'URL:PowerToys custom internal URI protocol') { return }",
+            "Invoke-Expression -Command \"& `\"$dir\\uninstall-context.ps1`\"\"",
+            "if ($cmd -eq 'uninstall') {",
+            "    $remove_list = @($registry_path, 'HKCU:\\Software\\Classes\\powertoys')",
+            "    $remove_list | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue",
+            "} else {",
+            "    $default_value = 'Context menu registration status check'",
+            "    Set-ItemProperty -Path $registry_path -Name '(default)' -Value $default_value -Force",
+            "}",
+            "Stop-Process -Name 'explorer' -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500"
+        ]
+    },
     "checkver": {
-        "url": "https://api.github.com/repos/microsoft/PowerToys/releases",
-        "jsonpath": "$[0].assets[*].browser_download_url",
-        "regex": "/releases/download/(?<tag>[\\w.]+)/PowerToysUserSetup-([\\d.]+)-x64\\.exe"
+        "url": "https://api.github.com/repositories/184456251/releases",
+        "jsonpath": "$[?(@.prerelease == false)].assets[?(@.name =~ /PowerToysUser/i)].browser_download_url",
+        "regex": "(?i)download/(?<tag>[^/]+)/PowerToysUserSetup-([\\d.]+)"
     },
     "autoupdate": {
         "architecture": {
@@ -92,7 +94,7 @@
         },
         "hash": {
             "url": "https://github.com/microsoft/PowerToys/releases/tag/v$version",
-            "regex": "(?sm)$basename.*?>$sha256<"
+            "regex": "(?s)$basename.+?$sha256"
         }
     }
 }
