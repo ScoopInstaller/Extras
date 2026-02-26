@@ -17,12 +17,11 @@
         }
     },
     "pre_install": [
-        "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
-        "'History.dat', 'Settings.dat' | ForEach-Object {",
-        "    if (Test-Path \"$persist_dir\\$_\") {",
-        "        Copy-Item \"$persist_dir\\$_\" \"$dir\\$_\" -Force -ErrorAction SilentlyContinue",
-        "    } else {",
-        "        New-Item \"$dir\\$_\" -ItemType File | Out-Null",
+        "# Hard links are not applicable here because the application creates a new file instead of modifying the existing one in place.",
+        "ensure $persist_dir | Out-Null",
+        "'History', 'Settings' | ForEach-Object {",
+        "    if (Test-Path -Path \"$persist_dir\\$_.dat\" -PathType Leaf) {",
+        "        Copy-Item -Path \"$persist_dir\\$_.dat\" -Destination $dir -Force",
         "    }",
         "}"
     ],
@@ -33,16 +32,11 @@
             "PDF-XChange Editor"
         ]
     ],
-    "persist": [
-        "History.dat",
-        "Settings.dat"
-    ],
     "pre_uninstall": [
-        "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
-        "ensure $persist_dir",
-        "'History.dat', 'Settings.dat' | ForEach-Object {",
-        "    if (Test-Path \"$dir\\$_\") {",
-        "        Copy-Item \"$dir\\$_\" \"$persist_dir\\$_\" -Force -ErrorAction SilentlyContinue",
+        "# Hard links are not applicable here because the application creates a new file instead of modifying the existing one in place.",
+        "'History', 'Settings' | ForEach-Object {",
+        "    if (Test-Path -Path \"$dir\\$_.dat\" -PathType Leaf) {",
+        "        Copy-Item -Path \"$dir\\$_.dat\" -Destination $persist_dir -Force",
         "    }",
         "}"
     ],
