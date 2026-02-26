@@ -29,9 +29,11 @@
         ]
     ],
     "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\Notepad4.ini\")) { Copy-Item \"$dir\\Notepad4.ini-default\" \"$dir\\Notepad4.ini\" }",
-        "if (!(Test-Path \"$persist_dir\\matepath.ini\")) { Copy-Item \"$dir\\matepath.ini-default\" \"$dir\\matepath.ini\" }",
-        "if (!(Test-Path \"$persist_dir\\Notepad4 DarkTheme.ini\")) { Copy-Item \"$dir\\Notepad4 DarkTheme.ini-default\" \"$dir\\Notepad4 DarkTheme.ini\" }"
+        "'Notepad4.ini', 'matepath.ini', 'Notepad4 DarkTheme.ini' | ForEach-Object {",
+        "    if (-not (Test-Path \"$persist_dir\\$_\")) {",
+        "        Copy-Item \"$dir\\$_-default\" \"$dir\\$_\"",
+        "    }",
+        "}"
     ],
     "persist": [
         "Notepad4.ini",
