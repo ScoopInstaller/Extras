@@ -18,8 +18,10 @@
     },
     "pre_install": [
         "# Hard links are not applicable here because the application creates a new file instead of modifying the existing one in place.",
-        "ensure $persist_dir | Out-Null",
         "'History', 'Settings' | ForEach-Object {",
+        "    if (Test-Path -Path \"$persist_dir\\$_.dat\" -PathType Container) {",
+        "        Remove-Item -Path \"$persist_dir\\$_.dat\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "    }",
         "    if (Test-Path -Path \"$persist_dir\\$_.dat\" -PathType Leaf) {",
         "        Copy-Item -Path \"$persist_dir\\$_.dat\" -Destination $dir -Force",
         "    }",
@@ -34,6 +36,7 @@
     ],
     "pre_uninstall": [
         "# Hard links are not applicable here because the application creates a new file instead of modifying the existing one in place.",
+        "ensure $persist_dir | Out-Null",
         "'History', 'Settings' | ForEach-Object {",
         "    if (Test-Path -Path \"$dir\\$_.dat\" -PathType Leaf) {",
         "        Copy-Item -Path \"$dir\\$_.dat\" -Destination $persist_dir -Force",
