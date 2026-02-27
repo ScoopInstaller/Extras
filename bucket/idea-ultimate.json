@@ -1,20 +1,25 @@
 {
+    "##": "Deprecate this manifest after 2026-06-01.",
     "version": "2025.3.3-253.31033.145",
-    "description": "Cross-Platform IDE for Java by JetBrains.",
+    "description": "Cross-Platform IDE for Java by JetBrains. (Deprecated, please use `extras/idea` instead)",
     "homepage": "https://www.jetbrains.com/idea/",
     "license": {
         "identifier": "Proprietary",
-        "url": "https://www.jetbrains.com/store/license.html"
+        "url": "https://www.jetbrains.com/legal/docs/toolbox/license/"
     },
-    "url": "https://download.jetbrains.com/idea/ideaIU-2025.3.3.win.zip",
-    "hash": "ab46608bb649804e347194137ff7a9761b959d571d511dc48c9cfcbe4e4f56eb",
-    "extract_to": "IDE",
-    "pre_install": "Get-ChildItem \"$persist_dir\\IDE\\bin\\idea*.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$dir\\IDE\\bin\"",
-    "installer": {
-        "script": "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" \"$dir\" \"$persist_dir\""
+    "notes": [
+        "IDEA Community Edition and Ultimate Edition have now been merged into a unified product.",
+        "See: https://blog.jetbrains.com/idea/2025/12/intellij-idea-unified-release/",
+        "The unified `extras/idea` manifest now replaces all IDEA variants.",
+        "This manifest is deprecated and scheduled for removal on 2026-06-01. Please use `extras/idea` instead."
+    ],
+    "suggest": {
+        "IDEA": "extras/idea"
     },
     "architecture": {
         "64bit": {
+            "url": "https://download.jetbrains.com/idea/idea-2025.3.3.win.zip",
+            "hash": "ab46608bb649804e347194137ff7a9761b959d571d511dc48c9cfcbe4e4f56eb",
             "bin": [
                 [
                     "IDE\\bin\\idea64.exe",
@@ -24,32 +29,51 @@
             "shortcuts": [
                 [
                     "IDE\\bin\\idea64.exe",
-                    "JetBrains\\IDEA Ultimate"
+                    "JetBrains\\IDEA"
                 ]
             ]
         },
-        "32bit": {
-            "bin": "IDE\\bin\\idea.exe",
+        "arm64": {
+            "url": "https://download.jetbrains.com/idea/idea-2025.3.3-aarch64.win.zip",
+            "hash": "a2386ba5c5102da9514c00afd0be3c9b16d255e54083c8a11985943b8899a4a8",
+            "bin": [
+                [
+                    "IDE\\bin\\idea64.exe",
+                    "idea"
+                ]
+            ],
             "shortcuts": [
                 [
-                    "IDE\\bin\\idea.exe",
-                    "JetBrains\\IDEA Ultimate"
+                    "IDE\\bin\\idea64.exe",
+                    "JetBrains\\IDEA"
                 ]
             ]
         }
     },
+    "extract_to": "IDE",
+    "installer": {
+        "script": "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" \"$dir\" \"$persist_dir\""
+    },
     "persist": [
         "IDE\\bin\\idea.properties",
+        "IDE\\bin\\idea64.exe.vmoptions",
+        "IDE\\bin\\jetbrains_client64.exe.vmoptions",
         "profile"
     ],
-    "pre_uninstall": "Get-ChildItem \"$dir\\IDE\\bin\\idea*.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$persist_dir\\IDE\\bin\"",
     "checkver": {
         "url": "https://data.services.jetbrains.com/products/releases?code=IIU&latest=true&platform=zip&type=release",
         "regex": "version\":\"(?<ver>[\\d.]+)\".*\"build\":\"(?<build>[\\d.]+)\"",
         "replace": "${ver}-${build}"
     },
     "autoupdate": {
-        "url": "https://download.jetbrains.com/idea/ideaIU-$matchVer.win.zip",
+        "architecture": {
+            "64bit": {
+                "url": "https://download.jetbrains.com/idea/idea-$matchVer.win.zip"
+            },
+            "arm64": {
+                "url": "https://download.jetbrains.com/idea/idea-$matchVer-aarch64.win.zip"
+            }
+        },
         "hash": {
             "url": "$url.sha256"
         }
