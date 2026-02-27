@@ -1,68 +1,64 @@
 {
+    "##": "Deprecate this manifest after 2026-06-01.",
     "version": "2025.3.3-253.31033.139",
-    "description": "Cross-Platform IDE for Python by JetBrains.",
+    "description": "Cross-Platform IDE for Python by JetBrains. (Deprecated, please use `extras/pycharm` instead)",
     "homepage": "https://www.jetbrains.com/pycharm/",
     "license": {
         "identifier": "Proprietary",
-        "url": "https://www.jetbrains.com/store/license.html"
+        "url": "https://www.jetbrains.com/legal/docs/toolbox/license/"
     },
     "notes": [
         "PyCharm Community Edition and Professional Edition have now been merged into a unified product.",
         "See: https://blog.jetbrains.com/pycharm/2025/04/unified-pycharm/",
-        "`pycharm-professional` is scheduled for deprecation on June 1, 2026.",
-        "The unified `extras/pycharm` manifest now replaces all PyCharm variants. Please use `extras/pycharm` instead."
+        "The unified `extras/pycharm` manifest now replaces all PyCharm variants.",
+        "This manifest is deprecated and scheduled for removal on 2026-06-01. Please use `extras/pycharm` instead."
     ],
     "suggest": {
         "PyCharm": "extras/pycharm"
     },
-    "url": "https://download.jetbrains.com/python/pycharm-professional-2025.3.3.win.zip",
-    "hash": "1a68aff22d392f308f0a570e033b83a7f73424a55ab8bc3986a2b2f66405cc9f",
-    "extract_to": "IDE",
-    "pre_install": [
-        "Get-ChildItem \"$persist_dir\\IDE\\bin\\pycharm*.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$dir\\IDE\\bin\"",
-        "Get-ChildItem \"$persist_dir\\IDE\\bin\\jetbrains_client64.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$dir\\IDE\\bin\""
-    ],
-    "installer": {
-        "script": [
-            "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" \"$dir\" \"$persist_dir\"",
-            "Remove-Item \"$dir\\IDE\\`$*\" -Force -Recurse",
-            "Set-Content \"$dir\\run_pycharm.bat\" \"start `\"`\" `\"$dir\\IDE\\bin\\pycharm64.exe`\"\" -Encoding ascii | Out-Null"
-        ]
-    },
     "architecture": {
         "64bit": {
+            "url": "https://download.jetbrains.com/python/pycharm-2025.3.3.win.zip",
+            "hash": "1a68aff22d392f308f0a570e033b83a7f73424a55ab8bc3986a2b2f66405cc9f",
             "bin": [
                 [
-                    "run_pycharm.bat",
+                    "IDE\\bin\\pycharm64.exe",
                     "pycharm"
                 ]
             ],
             "shortcuts": [
                 [
-                    "run_pycharm.bat",
-                    "JetBrains\\PyCharm Professional",
-                    "",
-                    "IDE\\bin\\pycharm64.exe"
+                    "IDE\\bin\\pycharm64.exe",
+                    "JetBrains\\PyCharm"
                 ]
             ]
         },
-        "32bit": {
-            "bin": "IDE\\bin\\pycharm.exe",
+        "arm64": {
+            "url": "https://download.jetbrains.com/python/pycharm-2025.3.3-aarch64.win.zip",
+            "hash": "51cc42162f7037ed99f756ca836a2d04798c011faf786dca3fefe2d763d1c5bd",
+            "bin": [
+                [
+                    "IDE\\bin\\pycharm64.exe",
+                    "pycharm"
+                ]
+            ],
             "shortcuts": [
                 [
-                    "IDE\\bin\\pycharm.exe",
-                    "JetBrains\\PyCharm Professional"
+                    "IDE\\bin\\pycharm64.exe",
+                    "JetBrains\\PyCharm"
                 ]
             ]
         }
     },
+    "extract_to": "IDE",
+    "installer": {
+        "script": "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" \"$dir\" \"$persist_dir\""
+    },
     "persist": [
         "IDE\\bin\\idea.properties",
+        "IDE\\bin\\pycharm64.exe.vmoptions",
+        "IDE\\bin\\jetbrains_client64.exe.vmoptions",
         "profile"
-    ],
-    "pre_uninstall": [
-        "Get-ChildItem \"$dir\\IDE\\bin\\pycharm*.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$persist_dir\\IDE\\bin\"",
-        "Get-ChildItem \"$dir\\IDE\\bin\\jetbrains_client64.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$persist_dir\\IDE\\bin\""
     ],
     "checkver": {
         "url": "https://data.services.jetbrains.com/products/releases?code=PCP&latest=true&platform=zip&type=release",
@@ -70,7 +66,14 @@
         "replace": "${ver}-${build}"
     },
     "autoupdate": {
-        "url": "https://download.jetbrains.com/python/pycharm-professional-$matchVer.win.zip",
+        "architecture": {
+            "64bit": {
+                "url": "https://download.jetbrains.com/python/pycharm-$matchVer.win.zip"
+            },
+            "arm64": {
+                "url": "https://download.jetbrains.com/python/pycharm-$matchVer-aarch64.win.zip"
+            }
+        },
         "hash": {
             "url": "$url.sha256"
         }

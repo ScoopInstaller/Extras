@@ -4,53 +4,55 @@
     "homepage": "https://www.jetbrains.com/pycharm/",
     "license": {
         "identifier": "Proprietary",
-        "url": "https://www.jetbrains.com/store/license.html"
+        "url": "https://www.jetbrains.com/legal/docs/toolbox/license/"
     },
     "notes": [
         "PyCharm Community Edition and Professional Edition have now been merged into a unified product.",
         "PyCharm Community 2025.2 is the last standalone version available to existing users only.",
         "For more information, see: https://blog.jetbrains.com/pycharm/2025/04/unified-pycharm/"
     ],
-    "url": "https://download.jetbrains.com/python/pycharm-2025.3.3.win.zip",
-    "hash": "1a68aff22d392f308f0a570e033b83a7f73424a55ab8bc3986a2b2f66405cc9f",
-    "extract_to": "IDE",
-    "installer": {
-        "script": [
-            "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" $dir $persist_dir",
-            "Remove-Item \"$dir\\IDE\\`$*\" -Force -Recurse",
-            "Set-Content \"$dir\\run_pycharm.bat\" \"start `\"`\" `\"$dir\\IDE\\bin\\pycharm64.exe`\"\" -Encoding ascii | Out-Null"
-        ]
-    },
     "architecture": {
         "64bit": {
+            "url": "https://download.jetbrains.com/python/pycharm-2025.3.3.win.zip",
+            "hash": "1a68aff22d392f308f0a570e033b83a7f73424a55ab8bc3986a2b2f66405cc9f",
             "bin": [
                 [
-                    "run_pycharm.bat",
+                    "IDE\\bin\\pycharm64.exe",
                     "pycharm"
                 ]
             ],
             "shortcuts": [
                 [
-                    "run_pycharm.bat",
-                    "JetBrains\\PyCharm",
-                    "",
-                    "IDE\\bin\\pycharm64.exe"
+                    "IDE\\bin\\pycharm64.exe",
+                    "JetBrains\\PyCharm"
                 ]
             ]
         },
-        "32bit": {
-            "bin": "IDE\\bin\\pycharm.exe",
+        "arm64": {
+            "url": "https://download.jetbrains.com/python/pycharm-2025.3.3-aarch64.win.zip",
+            "hash": "51cc42162f7037ed99f756ca836a2d04798c011faf786dca3fefe2d763d1c5bd",
+            "bin": [
+                [
+                    "IDE\\bin\\pycharm64.exe",
+                    "pycharm"
+                ]
+            ],
             "shortcuts": [
                 [
-                    "IDE\\bin\\pycharm.exe",
+                    "IDE\\bin\\pycharm64.exe",
                     "JetBrains\\PyCharm"
                 ]
             ]
         }
     },
+    "extract_to": "IDE",
+    "installer": {
+        "script": "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" \"$dir\" \"$persist_dir\""
+    },
     "persist": [
         "IDE\\bin\\idea.properties",
         "IDE\\bin\\pycharm64.exe.vmoptions",
+        "IDE\\bin\\jetbrains_client64.exe.vmoptions",
         "profile"
     ],
     "checkver": {
@@ -59,7 +61,14 @@
         "replace": "${ver}-${build}"
     },
     "autoupdate": {
-        "url": "https://download.jetbrains.com/python/pycharm-$matchVer.win.zip",
+        "architecture": {
+            "64bit": {
+                "url": "https://download.jetbrains.com/python/pycharm-$matchVer.win.zip"
+            },
+            "arm64": {
+                "url": "https://download.jetbrains.com/python/pycharm-$matchVer-aarch64.win.zip"
+            }
+        },
         "hash": {
             "url": "$url.sha256"
         }
