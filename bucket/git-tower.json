@@ -9,10 +9,17 @@
     "suggest": {
         ".NET Desktop Runtime 8.0": "versions/windowsdesktop-runtime-8.0"
     },
-    "url": "https://www.git-tower.com/apps/tower3-win/549-edda0eda/Tower-11.2.549.exe#/dl.7z",
-    "hash": "sha1:a931449d1c73a91d0469967cde53a376c3f077aa",
+    "architecture": {
+        "64bit": {
+            "url": "https://www.git-tower.com/apps/tower3-win/549-edda0eda/Tower-11.2.549.exe#/dl.7z",
+            "hash": "sha1:a931449d1c73a91d0469967cde53a376c3f077aa"
+        },
+        "arm64": {
+            "url": "https://www.git-tower.com/apps/tower3-win/549-edda0eda/Tower_arm64-11.2.549.exe#/dl.7z",
+            "hash": "sha1:64f0c6e96801e7ea7b14cec20def26219cd88694"
+        }
+    },
     "extract_dir": "lib\\native",
-    "post_install": "Remove-Item \"$dir\\lib\" -Force -Recurse",
     "bin": "Tower.exe",
     "shortcuts": [
         [
@@ -25,10 +32,21 @@
         "regex": "/(?<release>[\\da-f-]+)/Tower-([\\d.]+)\\.exe"
     },
     "autoupdate": {
-        "url": "https://www.git-tower.com/apps/tower3-win/$matchRelease/Tower-$version.exe#/dl.7z",
-        "hash": {
-            "url": "https://www.git-tower.com/release-notes/windows",
-            "regex": "(?sm)$basename.*?$sha1"
+        "architecture": {
+            "64bit": {
+                "url": "https://www.git-tower.com/apps/tower3-win/$matchRelease/Tower-$version.exe#/dl.7z",
+                "hash": {
+                    "url": "https://www.git-tower.com/release-notes/windows",
+                    "regex": "$sha1\">\\s*Copy SHA1 checksum \\(x64\\)"
+                }
+            },
+            "arm64": {
+                "url": "https://www.git-tower.com/apps/tower3-win/$matchRelease/Tower_arm64-$version.exe#/dl.7z",
+                "hash": {
+                    "url": "https://www.git-tower.com/release-notes/windows",
+                    "regex": "$sha1\">\\s*Copy SHA1 checksum \\(ARM64\\)"
+                }
+            }
         }
     }
 }
