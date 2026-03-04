@@ -1,35 +1,51 @@
 {
-    "version": "25.12.31",
+    "##": [
+        "Please avoid renaming the binaries, as this may cause compatibility issues.",
+        "Ensure you use the original filenames: 'TE64.exe' for 64-bit and 'TE32.exe' for 32-bit."
+    ],
+    "version": "26.2.2",
     "description": "A tabbed file manager with Add-on support.",
     "homepage": "https://tablacus.github.io/explorer_en.html",
     "license": "MIT",
-    "url": "https://github.com/tablacus/TablacusExplorer/releases/download/25.12.31/te251231.zip",
-    "hash": "98a43d91dd2c640d34b5474c5b0521cb1fc12ca7c012a0c86686c899defed77d",
+    "url": "https://github.com/tablacus/TablacusExplorer/releases/download/26.2.2/te260202.zip",
+    "hash": "712a79e907ed0ee206ed69aa4d05278ce3e0525ff43ca30a3a583f0d46ac273c",
     "architecture": {
         "64bit": {
-            "pre_install": "Rename-Item -Path \"$dir\\TE64.exe\" -NewName 'TE.exe'"
+            "bin": [
+                [
+                    "TE64.exe",
+                    "te64.exe"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "TE64.exe",
+                    "Tablacus Explorer"
+                ]
+            ]
         },
         "32bit": {
-            "pre_install": "Rename-Item -Path \"$dir\\TE32.exe\" -NewName 'TE.exe'"
+            "bin": [
+                [
+                    "TE32.exe",
+                    "te32.exe"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "TE32.exe",
+                    "Tablacus Explorer"
+                ]
+            ]
         }
     },
-    "bin": [
-        [
-            "TE.exe",
-            "te.exe"
-        ]
-    ],
-    "shortcuts": [
-        [
-            "TE.exe",
-            "Tablacus Explorer"
-        ]
-    ],
     "persist": "config",
     "checkver": {
-        "github": "https://github.com/tablacus/TablacusExplorer"
+        "github": "https://github.com/tablacus/TablacusExplorer",
+        "jsonpath": "$.assets[?(@.name =~ /te.+zip/i)].browser_download_url",
+        "regex": "download/(?<version>[\\d.]+)/(?<filename>.*)\\.zip"
     },
     "autoupdate": {
-        "url": "https://github.com/tablacus/TablacusExplorer/releases/download/$version/te$cleanVersion.zip"
+        "url": "https://github.com/tablacus/TablacusExplorer/releases/download/$version/$matchFilename.zip"
     }
 }

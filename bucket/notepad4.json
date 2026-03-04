@@ -28,9 +28,23 @@
             "matepath"
         ]
     ],
+    "pre_install": [
+        "'Notepad4.ini', 'matepath.ini', 'Notepad4 DarkTheme.ini' | ForEach-Object {",
+        "    $persistPath = Join-Path $persist_dir $_",
+        "    $defaultPath = Join-Path $dir \"$_-default\"",
+        "    $targetPath = Join-Path $dir $_",
+        "    if (Test-Path -LiteralPath $persistPath -PathType Container) {",
+        "        Remove-Item -LiteralPath $persistPath -Recurse -Force",
+        "    }",
+        "    if (-not (Test-Path -LiteralPath $persistPath -PathType Leaf) -and (Test-Path -LiteralPath $defaultPath -PathType Leaf)) {",
+        "        Copy-Item -LiteralPath $defaultPath -Destination $targetPath",
+        "    }",
+        "}"
+    ],
     "persist": [
         "Notepad4.ini",
-        "matepath.ini"
+        "matepath.ini",
+        "Notepad4 DarkTheme.ini"
     ],
     "checkver": {
         "github": "https://github.com/zufuliu/notepad2",

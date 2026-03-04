@@ -1,5 +1,5 @@
 {
-    "version": "10.8.2.407",
+    "version": "10.8.4.409",
     "description": "A small, fast, and feature-rich PDF viewer/editor.",
     "homepage": "https://www.pdf-xchange.com/product/pdf-xchange-editor",
     "license": {
@@ -8,21 +8,22 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://downloads.pdf-xchange.com/10.8.2.407/PDFXEdit10_Portable_x64.zip",
-            "hash": "83837415cd16bb166d2e3dac0c5dd42c471f70a646a1c5c36e0e92cdfb5afb34"
+            "url": "https://downloads.pdf-xchange.com/10.8.4.409/PDFXEdit10_Portable_x64.zip",
+            "hash": "681cf23b96825e63169f54f024e69ae15b15d9499ab2162e034abcf58b6f0f5d"
         },
         "32bit": {
-            "url": "https://downloads.pdf-xchange.com/10.8.2.407/PDFXEdit10_Portable_x86.zip",
-            "hash": "dc7b9c8bdd2e3078f4af754ad1b957a74475b86b30e69144f11e908d4e523c20"
+            "url": "https://downloads.pdf-xchange.com/10.8.4.409/PDFXEdit10_Portable_x86.zip",
+            "hash": "9e5bef2348a07fe277ee71a79be3772f63c137b5aeaad95f86987ac389b8d0f5"
         }
     },
     "pre_install": [
-        "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
-        "'History.dat', 'Settings.dat' | ForEach-Object {",
-        "    if (Test-Path \"$persist_dir\\$_\") {",
-        "        Copy-Item \"$persist_dir\\$_\" \"$dir\\$_\" -Force -ErrorAction SilentlyContinue",
-        "    } else {",
-        "        New-Item \"$dir\\$_\" -ItemType File | Out-Null",
+        "# Hard links are not applicable here because the application creates a new file instead of modifying the existing one in place.",
+        "'History', 'Settings' | ForEach-Object {",
+        "    if (Test-Path -Path \"$persist_dir\\$_.dat\" -PathType Container) {",
+        "        Remove-Item -Path \"$persist_dir\\$_.dat\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "    }",
+        "    if (Test-Path -Path \"$persist_dir\\$_.dat\" -PathType Leaf) {",
+        "        Copy-Item -Path \"$persist_dir\\$_.dat\" -Destination $dir -Force",
         "    }",
         "}"
     ],
@@ -33,16 +34,12 @@
             "PDF-XChange Editor"
         ]
     ],
-    "persist": [
-        "History.dat",
-        "Settings.dat"
-    ],
     "pre_uninstall": [
-        "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
-        "ensure $persist_dir",
-        "'History.dat', 'Settings.dat' | ForEach-Object {",
-        "    if (Test-Path \"$dir\\$_\") {",
-        "        Copy-Item \"$dir\\$_\" \"$persist_dir\\$_\" -Force -ErrorAction SilentlyContinue",
+        "# Hard links are not applicable here because the application creates a new file instead of modifying the existing one in place.",
+        "ensure $persist_dir | Out-Null",
+        "'History', 'Settings' | ForEach-Object {",
+        "    if (Test-Path -Path \"$dir\\$_.dat\" -PathType Leaf) {",
+        "        Copy-Item -Path \"$dir\\$_.dat\" -Destination $persist_dir -Force",
         "    }",
         "}"
     ],

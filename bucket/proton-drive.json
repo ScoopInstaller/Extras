@@ -1,0 +1,42 @@
+{
+    "version": "1.12.10",
+    "description": "Free end-to-end encrypted cloud storage made by Proton.",
+    "homepage": "https://proton.me/drive",
+    "license": "GPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://proton.me/download/drive/windows/1.12.10/x64/Proton%20Drive%20Setup%201.12.10.exe",
+            "hash": "ca111704e6094d442c294f569a58bb20ca9c709bf52613d2347805a9514ea3fc"
+        },
+        "arm64": {
+            "url": "https://proton.me/download/drive/windows/1.12.10/arm64/Proton%20Drive%20Setup%201.12.10.exe",
+            "hash": "2668a0399520c75a3e545dc8955dbd8bcdfdd7976c90be8c170468d66aba8979"
+        }
+    },
+    "pre_install": [
+        "Expand-DarkArchive -Path \"$dir\\$fname\" -DestinationPath \"$dir\\tmp\" -Removal",
+        "$msi = Get-ChildItem \"$dir\\tmp\\AttachedContainer\\*.msi\" | Select-Object -First 1 -ExpandProperty FullName",
+        "Expand-MsiArchive $msi -ExtractDir 'PFiles64\\Proton\\Drive' -DestinationPath \"$dir\"",
+        "Remove-Item \"$dir\\tmp\" -Recurse -Force"
+    ],
+    "shortcuts": [
+        [
+            "ProtonDrive.exe",
+            "Proton\\Proton Drive"
+        ]
+    ],
+    "checkver": {
+        "url": "https://proton.me/download/drive/windows/version.json",
+        "jsonpath": "$.Releases[?(@.CategoryName == 'Stable')].Version"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://proton.me/download/drive/windows/$version/x64/Proton%20Drive%20Setup%20$version.exe"
+            },
+            "arm64": {
+                "url": "https://proton.me/download/drive/windows/$version/arm64/Proton%20Drive%20Setup%20$version.exe"
+            }
+        }
+    }
+}
