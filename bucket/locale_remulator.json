@@ -12,11 +12,14 @@
     },
     "installer": {
         "script": [
-            " if (!(Test-Path \"$persist_dir\\LRConfig.xml\")) { ",
-            " $proc_tmp = Start-Process \"$dir\\LRProc.exe\" -PassThru ",
-            " Write-Host \"Running LRProc to generate LRConfig.xml, the msgbox will be terminated in 5s, please wait in patience! \" -ForegroundColor Green",
-            " Start-Sleep -Seconds 5 ",
-            " Stop-Process -Id $proc_tmp.Id -Force ",
+            "if (!(Test-Path \"$persist_dir\\LRConfig.xml\")) {",
+            "    $proc_tmp = Start-Process \"$dir\\LRProc.exe\" -PassThru",
+            "    Write-Host \"Running LRProc to generate $dir\\LRConfig.xml, so that it can be persisted later, please wait patiently!\" -ForegroundColor Green",
+            "    Start-Sleep -Seconds 5",
+            "    Stop-Process -Id $proc_tmp.Id -Force -ErrorAction SilentlyContinue",
+            "    if (!(Test-Path \"$dir\\LRConfig.xml\")) {",
+            "        Write-Host \"Warning: LRConfig.xml was not created.\" -ForegroundColor Yellow",
+            "    }",
             "}"
         ]
     },
