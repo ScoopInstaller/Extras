@@ -1,6 +1,6 @@
 {
     "##": "Renaming .msi to .msi_ to avoid auto extraction",
-    "version": "2.6.15-I001",
+    "version": "2.7.0-I017",
     "description": "A flexible virtual private network (VPN) solution to secure data communications.",
     "homepage": "https://openvpn.net",
     "license": "GPL-2.0-only",
@@ -12,31 +12,42 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://swupdate.openvpn.org/community/releases/OpenVPN-2.6.15-I001-amd64.msi#/setup.msi_",
-            "hash": "e41a785c7bf776378ef3977c5968131521e7b69c2219e11cf7ccf1e6cffe0613"
+            "url": "https://swupdate.openvpn.org/community/releases/OpenVPN-2.7.0-I017-amd64.msi#/setup.msi_",
+            "hash": "ea933318c32c440334332e884d59f7f1676465be357d986205d3172a85c04f2c"
         },
         "32bit": {
-            "url": "https://swupdate.openvpn.org/community/releases/OpenVPN-2.6.15-I001-x86.msi#/setup.msi_",
-            "hash": "5a2b880ba0a82462d14079ad78af67aafdca535011aef62fd87c9d1614c85609"
+            "url": "https://swupdate.openvpn.org/community/releases/OpenVPN-2.7.0-I017-x86.msi#/setup.msi_",
+            "hash": "07bb54b16202bc13fe8913b68fe7f6fa0c90139114624fe83c6bb2d73ba4122e"
         },
         "arm64": {
-            "url": "https://swupdate.openvpn.org/community/releases/OpenVPN-2.6.15-I001-arm64.msi#/setup.msi_",
-            "hash": "0338150ad11a857bd45b6302131a5b9ef43d9e94af3e68339ed4e6659baa8bd3"
+            "url": "https://swupdate.openvpn.org/community/releases/OpenVPN-2.7.0-I017-arm64.msi#/setup.msi_",
+            "hash": "d2324ae55eab984ae6dae89d7a52461341bc9cd808a180ce6cad31445fa13a5d"
         }
     },
     "pre_install": [
         "if ([Environment]::OSVersion.Version.Major -lt 10) { error 'Windows 10 is required since version 2.4.8. Use \"versions/openvpn-w7\" instead'; break }",
         "if (-not (is_admin)) { error 'Administrator privileges are needed for installation'; break }",
-        "Invoke-ExternalCommand msiexec -ArgumentList @('/i', \"`\"$dir\\setup.msi_`\"\", \"PRODUCTDIR=`\"$dir`\"\", 'ADDLOCAL=OpenVPN.GUI,OpenVPN.Service,OpenVPN.Documentation,OpenVPN.SampleCfg,OpenSSL,EasyRSA,OpenVPN,OpenVPN.GUI.OnLogon,Drivers.TAPWindows6,Drivers,Drivers.Wintun', '/passive') -RunAs | Out-Null",
-        "if (Test-Path \"$persist_dir\\config\") { Copy-Item \"$persist_dir\\config\" \"$dir\\\" -Force -Recurse }",
-        "else { Copy-Item \"$dir\\sample-config\\*\" \"$dir\\config\\\" }",
+        "Invoke-ExternalCommand msiexec -ArgumentList @('/i', \"`\"$dir\\setup.msi_`\"\", \"PRODUCTDIR=`\"$dir`\"\", 'ADDLOCAL=OpenVPN.GUI,OpenVPN.Service,OpenVPN.Documentation,OpenVPN.SampleCfg,OpenSSL,EasyRSA,OpenVPN,OpenVPN.GUI.OnLogon,Drivers.TAPWindows6,Drivers,Drivers.OvpnDco', '/passive') -RunAs | Out-Null",
         "Remove-Item \"$Env:Public\\Desktop\\OpenVPN*.lnk\""
     ],
+    "post_install": [
+        "# Persist manually because the uninstaller deletes the 'config' and 'config-auto' folder",
+        "'config', 'config-auto' | ForEach-Object {",
+        "    if (Test-Path -Path \"$persist_dir\\$_\") {",
+        "        Copy-Item -Path \"$persist_dir\\$_\" -Destination $dir -Force -Recurse",
+        "    }",
+        "}",
+        "if (-not (Test-Path -Path \"$persist_dir\\config\")) {",
+        "    Copy-Item -Path \"$dir\\sample-config\\*\" -Destination \"$dir\\config\\\" -Force -Recurse",
+        "}"
+    ],
     "pre_uninstall": [
-        "# Persist manually because the uninstaller deletes the 'config' folder",
-        "if (Test-Path \"$dir\\config\") {",
-        "    ensure \"$persist_dir\" | Out-Null",
-        "    Copy-Item \"$dir\\config\" \"$persist_dir\\\" -Force -Recurse",
+        "# Persist manually because the uninstaller deletes the 'config' and 'config-auto' folder",
+        "'config', 'config-auto' | ForEach-Object {",
+        "    if (Test-Path -Path \"$dir\\$_\") {",
+        "        ensure $persist_dir | Out-Null",
+        "        Copy-Item -Path \"$dir\\$_\" -Destination $persist_dir -Force -Recurse",
+        "    }",
         "}",
         "Stop-Process -Name 'openvpn*' -Force -ErrorAction SilentlyContinue"
     ],

@@ -1,24 +1,13 @@
 {
     "version": "23.07.24",
     "description": "Customizable Windows terminal with tabs, splits, quake-style, hotkeys and more.",
-    "homepage": "https://conemu.github.io/",
-    "license": "BSD-3-Clause",
-    "url": "https://github.com/Maximus5/ConEmu/releases/download/v23.07.24/ConEmuPack.230724.7z",
+    "homepage": "https://conemu.github.io",
+    "license": {
+        "identifier": "BSD-3-Clause",
+        "url": "https://github.com/ConEmu/ConEmu/blob/master/Release/ConEmu/License.txt"
+    },
+    "url": "https://github.com/ConEmu/ConEmu/releases/download/v23.07.24/ConEmuPack.230724.7z",
     "hash": "2a9b98ebecaede62665ef427b05b3a5ccdac7bd3202414fc0f4c10825b4f4ea2",
-    "pre_install": [
-        "$xml = \"$dir\\ConEmu\\ConEmu.xml\"",
-        "if(!(Test-Path \"$xml\")) {",
-        "    # Disable AutoUpdates",
-        "    $cont = Get-Content \"$dir\\ConEmu\\ConEmu_Sample.xml\" -Raw",
-        "    $keys = @('Update.CheckOnStartup', 'Update.CheckHourly')",
-        "    foreach($key in $keys) {",
-        "        $find = \"<value name=\"\"$key\"\" type=\"\"hex\"\" data=\"\"\\d+\"\"/>\"",
-        "        $replace = \"<value name=\"\"$key\"\" type=\"\"hex\"\" data=\"\"00\"\"/>\"",
-        "        $cont = $cont -replace $find, $replace",
-        "    }",
-        "    Set-Content $xml $cont -Encoding Ascii -Force",
-        "}"
-    ],
     "architecture": {
         "64bit": {
             "bin": [
@@ -44,15 +33,27 @@
             ]
         }
     },
-    "persist": "ConEmu\\ConEmu.xml",
+    "pre_install": [
+        "if(-not (Test-Path \"$persist_dir\\ConEmu\\ConEmu.xml\")) {",
+        "    [xml]$xml = Get-Content \"$dir\\ConEmu\\ConEmu_Sample.xml\"",
+        "    $comments = $xml.ChildNodes | Where-Object { $_.NodeType.ToString() -eq 'Comment' }",
+        "    $comments | ForEach-Object { $_.ParentNode.RemoveChild($_) | Out-Null }",
+        "    $xml.SelectSingleNode('//value[@name=''Update.UseBuilds'']').SetAttribute('data', '01')",
+        "    $xml.SelectSingleNode('//value[@name=''Update.CheckHourly'']').SetAttribute('data', '00')",
+        "    $xml.SelectSingleNode('//value[@name=''Update.CheckOnStartup'']').SetAttribute('data', '00')",
+        "    $xml.Save(\"$dir\\ConEmu.xml\")",
+        "}"
+    ],
+    "persist": [
+        [
+            "ConEmu.xml",
+            "ConEmu\\ConEmu.xml"
+        ]
+    ],
     "checkver": {
-        "github": "https://github.com/Maximus5/ConEmu"
+        "github": "https://github.com/ConEmu/ConEmu"
     },
     "autoupdate": {
-        "url": "https://github.com/Maximus5/ConEmu/releases/download/v$version/ConEmuPack.$cleanVersion.7z",
-        "hash": {
-            "url": "https://www.fosshub.com/ConEmu.html",
-            "regex": "(?sm)$basename.*?\"sha256\":\"$sha256\""
-        }
+        "url": "https://github.com/ConEmu/ConEmu/releases/download/v$version/ConEmuPack.$cleanVersion.7z"
     }
 }

@@ -1,31 +1,38 @@
 {
-    "version": "122.0.5643.142",
-    "description": "Fast, secure, easy-to-use browser.",
-    "homepage": "https://www.opera.com/",
+    "version": "128.0.5807.66",
+    "description": "A fast, secure, easy-to-use browser.",
+    "homepage": "https://www.opera.com",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.opera.com/eula/computers"
     },
     "architecture": {
         "64bit": {
-            "url": "https://get.geo.opera.com/pub/opera/desktop/122.0.5643.142/win/Opera_122.0.5643.142_Setup_x64.exe#/dl.7z",
-            "hash": "a0956b7406cf81bbecb560a19c87ab250d791d9cafeb7812cabda8fb7aa6e2a9"
+            "url": "https://get.geo.opera.com/pub/opera/desktop/128.0.5807.66/win/Opera_128.0.5807.66_Setup_x64.exe",
+            "hash": "66a25a71f1a0203688338b7fd86ee09063b60684076e60d513762e21f9ebe73c"
         },
         "32bit": {
-            "url": "https://get.geo.opera.com/pub/opera/desktop/122.0.5643.142/win/Opera_122.0.5643.142_Setup.exe#/dl.7z",
-            "hash": "7c89ce8c6748e3bccd8cb6e74484dd8f195cf7d1f7ddc50dd20e1706e7601bfb"
+            "url": "https://get.geo.opera.com/pub/opera/desktop/128.0.5807.66/win/Opera_128.0.5807.66_Setup.exe",
+            "hash": "157f0698ae0a21eb5c7af10462f2f7cfae9d01f76920ecae93399bf6a4f7809c"
+        },
+        "arm64": {
+            "url": "https://get.geo.opera.com/pub/opera/desktop/128.0.5807.66/win/Opera_128.0.5807.66_Setup_arm64.exe",
+            "hash": "0884fa3dd4c77c1be083e2e581e4a5cca10a21355284cf98cad194250982fdf7"
         }
     },
     "installer": {
         "script": [
-            "Remove-Item -Path \"$dir\\*_list\" -Force",
-            "Move-Item -Path \"$dir\\*\" -Destination \"$dir\\$version\" -Exclude 'Assets', 'launcher*', 'Resources.pri' -ErrorAction Ignore",
-            "if (!(Test-Path \"$dir\\$version\\localization\")) {",
-            "   New-Item -Path \"$dir\\$version\\localization\" -ItemType Directory | Out-Null",
-            "   Move-Item -Path \"$dir\\$version\\*.pak\" -Destination \"$dir\\$version\\localization\" -Exclude 'opera*' -ErrorAction Ignore",
+            "Expand-7zipArchive -Path \"$dir\\$fname\" -DestinationPath $dir -Removal",
+            "$version, 'autoupdate' | ForEach-Object { ensure \"$dir\\$_\" | Out-Null }",
+            "Move-Item -Path \"$dir\\opera_autoupdate*\" -Destination \"$dir\\autoupdate\" -Force",
+            "Remove-Item -Path \"$dir\\*\" -Include '*_list' -Force -ErrorAction SilentlyContinue",
+            "$exclude_list = @('Assets', $version, 'autoupdate', 'Resources.pri', 'opera.visualelementsmanifest.xml')",
+            "Get-ChildItem -Path $dir | Where-Object { $exclude_list -notcontains $_.Name } | ForEach-Object {",
+            "    Move-Item -Path $_.FullName -Destination \"$dir\\$version\\$($_.Name)\" -Force -ErrorAction SilentlyContinue",
             "}",
-            "Set-Content -Path \"$dir\\installer_prefs.json\" -Value (@{ 'autoupdate'= $false; 'enable_stats' = $false; 'single_profile' = $true } | ConvertTo-Json) -Encoding ASCII",
-            "Copy-Item \"$dir\\$version\\opera.exe\" \"$dir\""
+            "Copy-Item -Path \"$dir\\$version\\opera.exe\" -Destination $dir",
+            "$cfg = @{ 'autoupdate'= $false; 'enable_stats' = $false; 'single_profile' = $true } | ConvertTo-Json -Depth 5",
+            "Set-Content -Path \"$dir\\installer_prefs.json\" -Value $cfg -Encoding ascii"
         ]
     },
     "shortcuts": [
@@ -37,22 +44,32 @@
     "persist": "profile",
     "checkver": {
         "script": [
-            "$releases = 'https://get.geo.opera.com/pub/opera/desktop/'",
-            "$download_page = Invoke-WebRequest -Uri $releases -UseBasicParsing",
-            "$versionSort   = { [version]$_.href.TrimEnd('/') }",
-            "$last_ver = $download_page.links | Where-Object href -match '^[\\d]+[\\d\\.]+/$' | Sort-Object $versionSort -Descending | Select-Object -first 1 -expand href",
-            "$version = $last_ver -replace '/', ''",
-            "Write-Output $version"
+            "$path_regex = '^(?!\\.)[\\d.]+/$'",
+            "$version_sort = { [version]$_.href.TrimEnd('/') }",
+            "$releases_url = 'https://get.geo.opera.com/pub/opera/desktop/'",
+            "$releases_page = Invoke-WebRequest -Uri $releases_url -UseBasicParsing -ErrorAction Stop",
+            "$path_segments = $releases_page.links | Where-Object { $_.href -match $path_regex } |",
+            "        Sort-Object -Property $version_sort -Descending | ForEach-Object -MemberName href",
+            "foreach ($path_segment in $path_segments.TrimEnd('/')) {",
+            "    $release_url = 'https://get.geo.opera.com/pub/opera/desktop/{0}/win/' -f $path_segment",
+            "    $download_page = Invoke-WebRequest -Uri $release_url -UseBasicParsing -ErrorAction Stop",
+            "    $installer_name = $download_page.Links | Where-Object { $_.href -match '(?<=Setup\\w+)\\.exe$' } |",
+            "            Select-Object -ExpandProperty href -First 1",
+            "    if ($null -ne $installer_name) { Write-Output $installer_name; break }",
+            "}"
         ],
-        "regex": "(\\S+)"
+        "regex": "Opera_([\\d.]+)_Setup"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://get.geo.opera.com/pub/opera/desktop/$version/win/Opera_$version_Setup_x64.exe#/dl.7z"
+                "url": "https://get.geo.opera.com/pub/opera/desktop/$version/win/Opera_$version_Setup_x64.exe"
             },
             "32bit": {
-                "url": "https://get.geo.opera.com/pub/opera/desktop/$version/win/Opera_$version_Setup.exe#/dl.7z"
+                "url": "https://get.geo.opera.com/pub/opera/desktop/$version/win/Opera_$version_Setup.exe"
+            },
+            "arm64": {
+                "url": "https://get.geo.opera.com/pub/opera/desktop/$version/win/Opera_$version_Setup_arm64.exe"
             }
         },
         "hash": {

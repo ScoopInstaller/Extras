@@ -1,12 +1,12 @@
 {
-    "version": "25.08-4068",
+    "version": "25.12-4343",
     "description": "Simple and easy-to-use music player",
     "homepage": "https://apps.kde.org/elisa",
     "license": "LGPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://cdn.kde.org/ci-builds/multimedia/elisa/release-25.08/windows/elisa-release_25.08-4068-windows-cl-msvc2022-x86_64.7z",
-            "hash": "c6902f6d7d200554590e2810249abcb77f49696458701591bd00e1fafd5f37e2"
+            "url": "https://cdn.kde.org/ci-builds/multimedia/elisa/release-25.12/windows/elisa-release_25.12-4343-windows-cl-msvc2022-x86_64.7z",
+            "hash": "ad655779225a9c701b20739345d53a94fe615c2f6194836dbaddbe9441f6109d"
         }
     },
     "bin": "bin\\elisa.exe",
@@ -17,8 +17,23 @@
         ]
     ],
     "checkver": {
-        "url": "https://cdn.kde.org/ci-builds/multimedia/elisa/release-25.08/windows/",
-        "regex": "elisa-release_([\\d.-]+)-windows-cl-(?<lib>\\w+)-x86_64\\.7z"
+        "script": [
+            "$url = 'https://cdn.kde.org/ci-builds/multimedia/elisa/?C=N;O=D'",
+            "",
+            "$cont = (Invoke-WebRequest $url).Content",
+            "$regex = 'release-([\\d.]+)'",
+            "if (!($cont -match $regex)) { error \"Could not match $regex in $url\"; continue }",
+            "$ver = $matches[1]",
+            "",
+            "$nextUrl = \"https://cdn.kde.org/ci-builds/multimedia/elisa/release-$ver/windows/\"",
+            "$nextCont = (Invoke-WebRequest $nextUrl).Content",
+            "$nextRegex = \"elisa-release_$ver-([\\d]+)-windows-cl-([\\w]+)-x86_64\\.7z\"",
+            "if (!($nextCont -match $nextRegex)) { error \"Could not match $nextRegex in $nextUrl\"; continue }",
+            "$build = $matches[1]",
+            "$lib = $matches[2]",
+            "Write-Output $ver-$build $lib"
+        ],
+        "regex": "([\\d.-]+) (?<lib>[\\w]+)"
     },
     "autoupdate": {
         "architecture": {

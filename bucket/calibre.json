@@ -1,20 +1,23 @@
 {
-    "version": "8.13.0",
+    "version": "9.4.0",
     "description": "Powerful and easy to use e-book manager",
     "homepage": "https://calibre-ebook.com",
-    "license": "GPL-3.0-only",
+    "license": {
+        "identifier": "GPL-3.0-only",
+        "url": "https://github.com/kovidgoyal/calibre/blob/master/LICENSE"
+    },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/kovidgoyal/calibre/releases/download/v8.13.0/calibre-portable-installer-8.13.0.exe",
-            "hash": "sha512:e48d0be75542035f4c7377d26faa61ffc2fa957e636696425194e1c209917e4770296ce3965c63c2a8a7bf2182940aa6274ed942465c2654191e38fd789506f2"
+            "url": "https://download.calibre-ebook.com/9.4.0/calibre-portable-installer-9.4.0.exe",
+            "hash": "sha512:e1ab08248ee0ac74c52f865ef24e459cd22026ff5e9dbdce5d0bbe2c79eee1085311f90b9bcbb7bfe458a625ec23c7921d315c0a2f51d34f795427ffdac211b8"
         }
     },
     "installer": {
         "script": [
-            "Start-Process \"$dir\\calibre-portable-installer-$version.exe\" @(\"$env:TEMP\") -Wait",
-            "Move-Item \"$env:TEMP\\Calibre Portable\\**\" \"$dir\"",
-            "Remove-Item \"$env:TEMP\\Calibre Portable\"",
-            "Icacls $dir /t /c /reset"
+            "Start-Process -FilePath \"$dir\\$fname\" -ArgumentList @($env:PUBLIC) -Wait",
+            "Move-Item -Path \"$env:PUBLIC\\Calibre Portable\\*\" -Destination $dir -Force",
+            "Remove-Item -Path \"$dir\\$fname\", \"$env:PUBLIC\\Calibre Portable\" -Recurse -Force -ErrorAction SilentlyContinue",
+            "Icacls $dir /t /c /reset | Out-Null"
         ]
     },
     "bin": [
@@ -71,9 +74,9 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/kovidgoyal/calibre/releases/download/v$version/calibre-portable-installer-$version.exe",
+                "url": "https://download.calibre-ebook.com/$version/calibre-portable-installer-$version.exe",
                 "hash": {
-                    "url": "https://calibre-ebook.com/signatures/calibre-portable-installer-$version.exe.sha512"
+                    "url": "https://calibre-ebook.com/signatures/$basename.sha512"
                 }
             }
         }

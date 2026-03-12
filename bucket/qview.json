@@ -3,6 +3,10 @@
     "description": "Practical and minimal image viewer",
     "homepage": "https://interversehq.com/qview/",
     "license": "GPL-3.0-only",
+    "notes": [
+        "For file associations, run:",
+        "reg import \"$dir\\install-associations.reg\""
+    ],
     "architecture": {
         "64bit": {
             "url": "https://github.com/jurplel/qView/releases/download/7.1/qView-7.1-win64.zip",
@@ -14,6 +18,16 @@
         }
     },
     "extract_dir": "qView",
+    "post_install": [
+        "'install-associations', 'uninstall-associations' | ForEach-Object {",
+        "    if (Test-Path \"$bucketsdir\\$bucket\\scripts\\qview\\$_.reg\") {",
+        "        $qviewPath = \"$dir\".Replace('\\', '\\\\')",
+        "        $content = (Get-Content \"$bucketsdir\\$bucket\\scripts\\qview\\$_.reg\").Replace('$qview', $qviewPath)",
+        "        if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "        Set-Content \"$dir\\$_.reg\" $content -Encoding Ascii -Force",
+        "    }",
+        "}"
+    ],
     "bin": "qView.exe",
     "shortcuts": [
         [
@@ -21,6 +35,9 @@
             "qView"
         ]
     ],
+    "uninstaller": {
+        "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-associations.reg\" }"
+    },
     "checkver": {
         "github": "https://github.com/jurplel/qView"
     },

@@ -1,17 +1,23 @@
 {
-    "version": "11.8.3.8398",
+    "version": "11.8.3.8520",
     "description": "Utility to reduce the memory usage of Firefox or other browsers",
-    "homepage": "https://www.rizonesoft.com/downloads/firemin/",
+    "homepage": "https://www.rizonesoft.com/downloads/firemin",
     "license": "GPL-3.0-or-later",
-    "url": "https://www.rizonesoft.com/mimnaa/10543/?tmstv=1698812482#/dl.zip",
-    "hash": "fae9d4b101cb089e755fcc92d41fa514b7e9c4bb286717092e2ea6696e9b1bac",
-    "extract_dir": "Firemin_8398",
+    "url": "https://rizonesoft.com/?gdm_process_download=1&download_id=18327#/firemin.exe",
+    "hash": "68feaa9da6a48a1c25e6661fa518c262f0609d0add215c15befbceaacf1c488b",
+    "innosetup": true,
     "architecture": {
         "64bit": {
-            "pre_install": "Move-Item \"$dir\\Firemin_X64.exe\" 'Firemin.exe' -Force"
+            "pre_install": [
+                "Get-ChildItem -Path \"$dir\\*,1.*\" -Recurse | Rename-Item -NewName { $_.FullName -replace ',1\\.', '.' }",
+                "Get-ChildItem -Path $dir -Include '*,2.*', 'source' -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
+            ]
         },
         "32bit": {
-            "post_install": "Remove-Item \"$dir\\Firemin_X64.exe\""
+            "pre_install": [
+                "Get-ChildItem -Path \"$dir\\*,2.*\" -Recurse | Rename-Item -NewName { $_.FullName -replace ',2\\.', '.' }",
+                "Get-ChildItem -Path $dir -Include '*,1.*', 'source' -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
+            ]
         }
     },
     "shortcuts": [
@@ -21,9 +27,8 @@
         ]
     ],
     "persist": "Firemin.ini",
-    "checkver": "(?sm)Portable version.*?title=\"Version.*?([\\d.]+)\".*?href=\"(?<link>.*?)\"",
+    "checkver": "(?msi)Version:.+>([\\d.]+)<.+href=\"https://(www\\.)?rizonesoft.com/(?<url>[^\"]+)\".+title=\"Firemin\"",
     "autoupdate": {
-        "url": "$matchLink#/dl.zip",
-        "extract_dir": "Firemin_$buildVersion"
+        "url": "https://rizonesoft.com/$matchUrl#/firemin.exe"
     }
 }

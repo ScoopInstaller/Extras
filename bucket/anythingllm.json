@@ -1,25 +1,24 @@
 {
-    "version": "1.9.0",
+    "version": "1.11.1",
     "description": "The all-in-one Desktop & Docker AI application with built-in RAG, AI agents, and more.",
     "homepage": "https://anythingllm.com",
     "license": "MIT",
     "architecture": {
         "64bit": {
             "url": "https://cdn.anythingllm.com/latest/AnythingLLMDesktop.exe#/dl.7z",
-            "hash": "ce51f3e82e77d8ae0f2501fe481b0d73ea79f1f1b28ef0c9dff43b3fdaa56370",
-            "pre_install": [
-                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-                "Remove-Item \"$dir\\`$*\", \"$dir\\Unintall*\" -Recurse"
-            ]
+            "hash": "8fba280a964dfd16a3fa814050bb76d47bb80e77d79f28f4572d184fdbc99639"
         },
         "arm64": {
             "url": "https://cdn.anythingllm.com/latest/AnythingLLMDesktop-Arm64.exe#/dl.7z",
-            "hash": "818a1b60b7c336830937441dd6de365cd40057040a80e281622f7c3f2e2da9c1",
-            "pre_install": [
-                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" \"$dir\"",
-                "Remove-Item \"$dir\\`$*\", \"$dir\\Unintall*\" -Recurse"
-            ]
+            "hash": "2e6efeb18b2a1155e1c22dcb9a187621633dd4b85f97d08ae8fdff077e685970"
         }
+    },
+    "installer": {
+        "script": [
+            "Get-Item -Path \"$dir\\`$PLUGINSDIR\\app*.7z\" | Expand-7zipArchive -DestinationPath \"$dir\" -Removal",
+            "Expand-7zipArchive -Path \"$dir\\resources\\backend.7z\" -DestinationPath \"$dir\\resources\\backend\" -Removal",
+            "Remove-Item -Path \"$dir\\`$*\", \"$dir\\Unintall*\" -Recurse"
+        ]
     },
     "shortcuts": [
         [

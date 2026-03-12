@@ -14,11 +14,14 @@
         ]
     ],
     "checkver": {
-        "url": "https://api.github.com/repositories/435219615/releases/latest",
-        "jsonpath": "$.name",
-        "regex": "([\\d.]+)"
+        "url": "https://api.github.com/repos/tom-englert/RegionToShare/releases/latest",
+        "script": [
+            "$Release = $page | ConvertFrom-Json",
+            "$Release.tag_name, $Release.name -join ' '"
+        ],
+        "regex": "(?<tag>[\\d.]+) (?<version>[\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://github.com/tom-englert/RegionToShare/releases/download/$majorVersion.$minorVersion/RegionToShare.zip"
+        "url": "https://github.com/tom-englert/RegionToShare/releases/download/$matchTag/RegionToShare.zip"
     }
 }

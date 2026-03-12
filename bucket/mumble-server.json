@@ -1,13 +1,12 @@
 {
-    "version": "1.5.735",
+    "version": "1.5.857",
     "description": "Server kit for Mumble, a low-latency and high quality voice chat primarily intended for use while gaming.",
     "homepage": "https://www.mumble.info/",
     "license": "BSD-3-Clause",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/mumble-voip/mumble/releases/download/v1.5.735/mumble_server-1.5.735.x64.msi",
-            "hash": "03afd91a4b467fe09f7eba54d5da5b0b2523dad0dde4e2972f1f495e92302a69",
-            "extract_dir": "ProgramFiles64Folder\\Mumble\\server"
+            "url": "https://github.com/mumble-voip/mumble/releases/download/v1.5.857/mumble_server-1.5.857.x64.exe",
+            "hash": "8f8765bd347e086a82e12d4e5a2bf085108b06284b2de195f7aa10b0cb2af817"
         }
     },
     "pre_install": [
@@ -15,6 +14,14 @@
         "  if(!(Test-Path \"$persist_dir\\$_\")) {New-Item \"$dir\\$_\" -ItemType File | Out-Null}",
         "}"
     ],
+    "installer": {
+        "script": [
+            "Expand-DarkArchive \"$dir\\$fname\" \"$dir\\tmp\" -Removal",
+            "Expand-MsiArchive \"$dir\\tmp\\AttachedContainer\\mumble_server-$version-x64.msi\" \"$dir\\tmp\\msi\"",
+            "Move-Item \"$dir\\tmp\\msi\\ProgramFiles64Folder\\Mumble\\server\\*\" \"$dir\" -Force",
+            "Remove-Item \"$dir\\tmp\" -Recurse"
+        ]
+    },
     "bin": "mumble-server.exe",
     "shortcuts": [
         [
@@ -32,7 +39,7 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/mumble-voip/mumble/releases/download/v$version/mumble_server-$version.x64.msi"
+                "url": "https://github.com/mumble-voip/mumble/releases/download/v$version/mumble_server-$version.x64.exe"
             }
         }
     }
