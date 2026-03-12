@@ -1,7 +1,7 @@
 {
     "version": "1.2",
-    "description": "Move windows between virtual desktops using keyboard shortcuts (Ctrl+Shift+Win+Arrow)",
-    "homepage": "https://fai-solutions.codeberg.page/move-window-between-desktops/",
+    "description": "Move the active window between virtual desktops using Ctrl+Shift+Win+Arrow keys",
+    "homepage": "https://codeberg.org/FAI-Solutions/move-window-between-desktops",
     "license": "MIT",
     "depends": "autohotkey",
     "url": [
@@ -10,62 +10,50 @@
         "https://codeberg.org/FAI-Solutions/move-window-between-desktops/releases/download/v1.2/README-SCOOP.txt"
     ],
     "hash": [
-        "sha256:1A5A78815A1C0150F12ED56A3C252EECF95E975B5F20D64F8AE2FB9FC73EB78A",
-        "sha256:C73C0D607B9E55D526F807BA849313F8EE8755F08066FCC566A45A90DEB79796",
-        "sha256:227BA295F512159DF57621A31DD0A10F4741F8F7A85A51F6CD72BED0B9DE4472"
+        "sha256:1a5a78815a1c0150f12ed56a3c252eecf95e975b5f20d64f8ae2fb9fc73eb78a",
+        "sha256:c73c0d607b9e55d526f807ba849313f8ee8755f08066fcc566a45a90deb79796",
+        "sha256:227ba295f512159df57621a31dd0a10f4741f8f7a85a51f6cd72bed0b9de4472"
     ],
     "installer": {
         "script": [
-            "# Detect Windows version and download appropriate DLL",
             "$build = [System.Environment]::OSVersion.Version.Build",
-            "$dllUrl = $null",
             "$dllName = 'VirtualDesktopAccessor.dll'",
+            "$dllUrl = $null",
+            "$expectedHash = $null",
             "",
-            "# Determine correct DLL based on Windows build",
-            "# URLs verified from: https://github.com/Ciantic/VirtualDesktopAccessor/releases",
             "if ($build -ge 26100) {",
-            "    # Windows 11 24H2 or later",
             "    $dllUrl = 'https://github.com/Ciantic/VirtualDesktopAccessor/releases/download/2024-12-16-windows11/VirtualDesktopAccessor.dll'",
+            "    $expectedHash = '8740c572a1c000e3b87ffeb1e4c397eae9af3bd4a2abdc3bcffacab4493f8ff5'",
             "    Write-Host 'Windows 11 24H2+ detected' -ForegroundColor Green",
             "} elseif ($build -ge 22631) {",
-            "    # Windows 11 23H2",
             "    $dllUrl = 'https://github.com/Ciantic/VirtualDesktopAccessor/releases/download/2024-01-25-windows11/VirtualDesktopAccessor.dll'",
+            "    $expectedHash = 'f78ff6334f6c0ef5175ec0819026cec31d421a564b9ed1ee1ac4b6ed98d4f999'",
             "    Write-Host 'Windows 11 23H2 detected' -ForegroundColor Green",
-            "} elseif ($build -lt 22000) {",
-            "    # Windows 10 (all versions)",
+            "} else {",
             "    $dllUrl = 'https://github.com/Ciantic/VirtualDesktopAccessor/releases/download/2019-windows10/VirtualDesktopAccessor.dll'",
+            "    $expectedHash = '145431bc2090281838de31824bc829dd35688b13488f4850f4bc5f25f5e599da'",
             "    Write-Host 'Windows 10 detected' -ForegroundColor Green",
             "}",
             "",
             "Write-Host \"Windows Build: $build\" -ForegroundColor Cyan",
-            "Write-Host \"Downloading from: $dllUrl\" -ForegroundColor Yellow",
+            "Write-Host \"Downloading: $dllUrl\" -ForegroundColor Yellow",
             "",
-            "# Download with error handling",
             "try {",
             "    Invoke-WebRequest -Uri $dllUrl -OutFile \"$dir\\$dllName\" -UseBasicParsing -ErrorAction Stop",
-            "    if (-not (Test-Path \"$dir\\$dllName\")) {",
-            "        throw 'Download completed but file not found'",
-            "    }",
-            "    Write-Host \"Successfully downloaded: $dllName\" -ForegroundColor Green",
-            "} catch {",
-            "    Write-Host 'ERROR: Failed to download DLL' -ForegroundColor Red",
-            "    Write-Host \"Error details: $_\" -ForegroundColor Red",
-            "    exit 1",
-            "}",
             "",
-            "# Create info file only after successful download",
-            "\"Windows Build: $build\" | Out-File -FilePath \"$dir\\.windows-build-detected.txt\"",
-            "\"DLL Source: $dllUrl\" | Out-File -FilePath \"$dir\\.windows-build-detected.txt\" -Append",
-            "\"Install Date: $(Get-Date)\" | Out-File -FilePath \"$dir\\.windows-build-detected.txt\" -Append"
+            "    $actualHash = (Get-FileHash \"$dir\\$dllName\" -Algorithm SHA256).Hash.ToLower()",
+            "    if ($actualHash -ne $expectedHash) {",
+            "        Remove-Item \"$dir\\$dllName\" -Force",
+            "        throw \"Hash mismatch! Expected: $expectedHash`nGot: $actualHash\"",
+            "    }",
+            "",
+            "    Write-Host \"Successfully downloaded and verified: $dllName\" -ForegroundColor Green",
+            "} catch {",
+            "    Write-Host \"ERROR: $_\" -ForegroundColor Red",
+            "    exit 1",
+            "}"
         ]
     },
-    "bin": "move-window-between-desktops.ahk",
-    "shortcuts": [
-        [
-            "move-window-between-desktops.ahk",
-            "Move Window Between Desktops"
-        ]
-    ],
     "checkver": {
         "url": "https://codeberg.org/FAI-Solutions/move-window-between-desktops/releases",
         "regex": "tag/v([\\d.]+)"
@@ -78,25 +66,14 @@
         ]
     },
     "notes": [
-        "\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557",
-        "\u2551  IMPORTANT DEPENDENCIES AUTOMATICALLY INSTALLED                  \u2551",
-        "\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d",
-        "",
-        "\u2713 AutoHotkey v2: Installed automatically via Scoop dependencies",
-        "\u2713 VirtualDesktopAccessor.dll: Downloaded automatically for your Windows version",
+        "KEYBOARD SHORTCUTS:",
+        "  Ctrl + Shift + Win + Right : Move window to next desktop",
+        "  Ctrl + Shift + Win + Left  : Move window to previous desktop",
         "",
         "SETUP:",
-        "  1. Run 'setup-autostart.ahk' as Administrator to enable autostart",
-        "  2. Or manually run 'move-window-between-desktops.ahk' to try it",
+        "  Run setup-autostart.ahk to configure autostart (admin recommended).",
+        "  Without admin rights it will fall back to a Startup folder shortcut.",
         "",
-        "KEYBOARD SHORTCUTS:",
-        "  Ctrl + Shift + Win + \u2192  : Move window to next desktop (right)",
-        "  Ctrl + Shift + Win + \u2190  : Move window to previous desktop (left)",
-        "",
-        "DOCUMENTATION:",
-        "  https://fai-solutions.codeberg.page/move-window-between-desktops",
-        "",
-        "REPOSITORY:",
-        "  https://codeberg.org/FAI-Solutions/move-window-between-desktops"
+        "Full documentation: https://codeberg.org/FAI-Solutions/move-window-between-desktops"
     ]
 }
