@@ -1,0 +1,102 @@
+{
+    "version": "1.2",
+    "description": "Move windows between virtual desktops using keyboard shortcuts (Ctrl+Shift+Win+Arrow)",
+    "homepage": "https://fai-solutions.codeberg.page/move-window-between-desktops/",
+    "license": "MIT",
+    "depends": "autohotkey",
+    "url": [
+        "https://codeberg.org/FAI-Solutions/move-window-between-desktops/releases/download/v1.2/move-window-between-desktops.ahk",
+        "https://codeberg.org/FAI-Solutions/move-window-between-desktops/releases/download/v1.2/setup-autostart.ahk",
+        "https://codeberg.org/FAI-Solutions/move-window-between-desktops/releases/download/v1.2/README-SCOOP.txt"
+    ],
+    "hash": [
+        "sha256:1A5A78815A1C0150F12ED56A3C252EECF95E975B5F20D64F8AE2FB9FC73EB78A",
+        "sha256:C73C0D607B9E55D526F807BA849313F8EE8755F08066FCC566A45A90DEB79796",
+        "sha256:227BA295F512159DF57621A31DD0A10F4741F8F7A85A51F6CD72BED0B9DE4472"
+    ],
+    "installer": {
+        "script": [
+            "# Detect Windows version and download appropriate DLL",
+            "$build = [System.Environment]::OSVersion.Version.Build",
+            "$dllUrl = $null",
+            "$dllName = 'VirtualDesktopAccessor.dll'",
+            "",
+            "# Determine correct DLL based on Windows build",
+            "# URLs verified from: https://github.com/Ciantic/VirtualDesktopAccessor/releases",
+            "if ($build -ge 26100) {",
+            "    # Windows 11 24H2 or later",
+            "    $dllUrl = 'https://github.com/Ciantic/VirtualDesktopAccessor/releases/download/2024-12-16-windows11/VirtualDesktopAccessor.dll'",
+            "    Write-Host 'Windows 11 24H2+ detected' -ForegroundColor Green",
+            "} elseif ($build -ge 22631) {",
+            "    # Windows 11 23H2",
+            "    $dllUrl = 'https://github.com/Ciantic/VirtualDesktopAccessor/releases/download/2024-01-25-windows11/VirtualDesktopAccessor.dll'",
+            "    Write-Host 'Windows 11 23H2 detected' -ForegroundColor Green",
+            "} elseif ($build -lt 22000) {",
+            "    # Windows 10 (all versions)",
+            "    $dllUrl = 'https://github.com/Ciantic/VirtualDesktopAccessor/releases/download/2019-windows10/VirtualDesktopAccessor.dll'",
+            "    Write-Host 'Windows 10 detected' -ForegroundColor Green",
+            "}",
+            "",
+            "Write-Host \"Windows Build: $build\" -ForegroundColor Cyan",
+            "Write-Host \"Downloading from: $dllUrl\" -ForegroundColor Yellow",
+            "",
+            "# Download with error handling",
+            "try {",
+            "    Invoke-WebRequest -Uri $dllUrl -OutFile \"$dir\\$dllName\" -UseBasicParsing -ErrorAction Stop",
+            "    if (-not (Test-Path \"$dir\\$dllName\")) {",
+            "        throw 'Download completed but file not found'",
+            "    }",
+            "    Write-Host \"Successfully downloaded: $dllName\" -ForegroundColor Green",
+            "} catch {",
+            "    Write-Host 'ERROR: Failed to download DLL' -ForegroundColor Red",
+            "    Write-Host \"Error details: $_\" -ForegroundColor Red",
+            "    exit 1",
+            "}",
+            "",
+            "# Create info file only after successful download",
+            "\"Windows Build: $build\" | Out-File -FilePath \"$dir\\.windows-build-detected.txt\"",
+            "\"DLL Source: $dllUrl\" | Out-File -FilePath \"$dir\\.windows-build-detected.txt\" -Append",
+            "\"Install Date: $(Get-Date)\" | Out-File -FilePath \"$dir\\.windows-build-detected.txt\" -Append"
+        ]
+    },
+    "bin": "move-window-between-desktops.ahk",
+    "shortcuts": [
+        [
+            "move-window-between-desktops.ahk",
+            "Move Window Between Desktops"
+        ]
+    ],
+    "checkver": {
+        "url": "https://codeberg.org/FAI-Solutions/move-window-between-desktops/releases",
+        "regex": "tag/v([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": [
+            "https://codeberg.org/FAI-Solutions/move-window-between-desktops/releases/download/v$version/move-window-between-desktops.ahk",
+            "https://codeberg.org/FAI-Solutions/move-window-between-desktops/releases/download/v$version/setup-autostart.ahk",
+            "https://codeberg.org/FAI-Solutions/move-window-between-desktops/releases/download/v$version/README-SCOOP.txt"
+        ]
+    },
+    "notes": [
+        "\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557",
+        "\u2551  IMPORTANT DEPENDENCIES AUTOMATICALLY INSTALLED                  \u2551",
+        "\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d",
+        "",
+        "\u2713 AutoHotkey v2: Installed automatically via Scoop dependencies",
+        "\u2713 VirtualDesktopAccessor.dll: Downloaded automatically for your Windows version",
+        "",
+        "SETUP:",
+        "  1. Run 'setup-autostart.ahk' as Administrator to enable autostart",
+        "  2. Or manually run 'move-window-between-desktops.ahk' to try it",
+        "",
+        "KEYBOARD SHORTCUTS:",
+        "  Ctrl + Shift + Win + \u2192  : Move window to next desktop (right)",
+        "  Ctrl + Shift + Win + \u2190  : Move window to previous desktop (left)",
+        "",
+        "DOCUMENTATION:",
+        "  https://fai-solutions.codeberg.page/move-window-between-desktops",
+        "",
+        "REPOSITORY:",
+        "  https://codeberg.org/FAI-Solutions/move-window-between-desktops"
+    ]
+}
