@@ -3,6 +3,9 @@
     "description": "Electronics Design Automation Suite",
     "homepage": "https://www.kicad.org",
     "license": "GPL-3.0-only",
+    "notes": [
+        "To create file-associations for .kicad_* and kicad old files, run '$dir\\install-file-associations.reg'"
+    ],
     "architecture": {
         "64bit": {
             "url": "https://github.com/KiCad/kicad-source-mirror/releases/download/9.0.7/kicad-9.0.7-x86_64.exe#/dl.7z",
@@ -10,6 +13,29 @@
         }
     },
     "pre_install": "Remove-Item \"$dir\\`$*\" -Recurse",
+    "post_install": [
+        "'install-file-associations', 'uninstall-file-associations' | ForEach-Object {",
+        "    $reg_file_in  = \"$bucketsdir\\main\\scripts\\kicad\\$_.reg\"",
+        "    $reg_file_out = \"$dir\\$_.reg\"",
+        "    $kicad_root     = \"$dir\".Replace('\\', '\\\\')",
+        "    if (Test-Path $reg_file_in) {",
+        "        $content = Get-Content $reg_file_in",
+        "        $content = $content.Replace('$kicad_root', $kicad_root)",
+        "        if ($global) {",
+        "            $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "        }",
+        "        Set-Content -Path $reg_file_out -Value $content -Encoding Ascii",
+        "    }",
+        "}"
+    ],
+    "post_uninstall": [
+        "'uninstall-file-associations' | ForEach-Object {",
+        "    $reg_file = \"$dir\\$_.reg\"",
+        "    if (Test-Path $reg_file) {",
+        "        regedit /s $reg_file",
+        "    }",
+        "}"
+    ],
     "bin": "bin\\kicad-cli.exe",
     "shortcuts": [
         [
