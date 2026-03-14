@@ -19,7 +19,14 @@
     },
     "pre_install": [
         "Get-Item \"$dir\\Godot_*_console.exe\" | Rename-Item -NewName 'godot.console.exe'",
-        "Get-Item \"$dir\\Godot_*.exe\" | Rename-Item -NewName 'godot.exe'"
+        "Get-Item \"$dir\\Godot_*.exe\" | Rename-Item -NewName 'godot.exe'",
+        "if (!(Test-Path \"$persist_dir\\editor_data\") -and (Test-Path \"$env:AppData\\Godot\")) {",
+        "    info '[Portable Mode]: Copying user data from \"$env:AppData\\Godot\"'",
+        "    warn '\"godot\" and \"godot-mono\" now use separate persistent settings and project stores'",
+        "    ensure \"$persist_dir\\editor_data\" | Out-Null",
+        "    Copy-Item -Path \"$env:AppData\\Godot\\*\" -Destination \"$persist_dir\\editor_data\" -Recurse -Force",
+        "}",
+        "New-Item -Force -Path \"$dir\" -Name '._sc_' | Out-Null"
     ],
     "bin": [
         [
@@ -33,6 +40,7 @@
             "Godot Engine"
         ]
     ],
+    "persist": "editor_data",
     "checkver": {
         "url": "https://github.com/godotengine/godot/releases/latest",
         "regex": "(?<version>[\\d\\w.]+)-stable"
