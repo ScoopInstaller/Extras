@@ -1,0 +1,43 @@
+{
+    "version": "1.6.0",
+    "description": "System Region and Language Simulator.",
+    "homepage": "https://github.com/InWILL/Locale_Remulator",
+    "license": "LGPL-3.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/InWILL/Locale_Remulator/releases/download/v1.6.0/Locale_Remulator.1.6.0.zip",
+            "hash": "f7f7b4ed8ef5bf1b25d46eb6cbf10d0a01dddfe5030ae09f8a1e73c5ad3c1b02",
+            "extract_dir": "Locale_Remulator.1.6.0"
+        }
+    },
+    "installer": {
+        "script": [
+            "if (!(Test-Path \"$persist_dir\\LRConfig.xml\")) {",
+            "    $proc_tmp = Start-Process \"$dir\\LRProc.exe\" -PassThru",
+            "    Write-Host \"Running LRProc to generate $dir\\LRConfig.xml, so that it can be persisted later, please wait patiently!\" -ForegroundColor Green",
+            "    Start-Sleep -Seconds 5",
+            "    Stop-Process -Id $proc_tmp.Id -Force -ErrorAction SilentlyContinue",
+            "    if (!(Test-Path \"$dir\\LRConfig.xml\")) {",
+            "        Write-Host \"Warning: LRConfig.xml was not created.\" -ForegroundColor Yellow",
+            "    }",
+            "}"
+        ]
+    },
+    "persist": "LRConfig.xml",
+    "bin": "LRProc.exe",
+    "shortcuts": [
+        [
+            "LRInstaller.exe",
+            "Locale Remulator Installer"
+        ],
+        [
+            "LREditor.exe",
+            "Locale Remulator Editor"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "url": "https://github.com/InWILL/Locale_Remulator/releases/download/v$version/Locale_Remulator.$version.zip",
+        "extract_dir": "Locale_Remulator.$version"
+    }
+}
