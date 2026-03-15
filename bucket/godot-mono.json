@@ -3,6 +3,15 @@
     "description": "A feature-packed, cross-platform game engine to create 2D and 3D games from a unified interface.",
     "homepage": "https://godotengine.org/",
     "license": "MIT",
+    "suggest": {
+        ".NET SDK": [
+            "dotnet-sdk",
+            "versions/dotnet-sdk-lts",
+            "versions/dotnet8-sdk",
+            "versions/dotnet9-sdk",
+            "versions/dotnet10-sdk"
+        ]
+    },
     "architecture": {
         "64bit": {
             "url": "https://github.com/godotengine/godot/releases/download/4.6.1-stable/Godot_v4.6.1-stable_mono_win64.zip",
@@ -22,7 +31,14 @@
     },
     "pre_install": [
         "Get-Item \"$dir\\Godot_*_console.exe\" | Rename-Item -NewName 'godot-mono.console.exe'",
-        "Get-Item \"$dir\\Godot_*.exe\" | Rename-Item -NewName 'godot-mono.exe'"
+        "Get-Item \"$dir\\Godot_*.exe\" | Rename-Item -NewName 'godot-mono.exe'",
+        "if (!(Test-Path \"$persist_dir\\editor_data\") -and (Test-Path \"$env:AppData\\Godot\")) {",
+        "    info '[Portable Mode]: Copying user data from \"$env:AppData\\Godot\"'",
+        "    warn '\"godot\" and \"godot-mono\" now use separate persistent settings and project stores'",
+        "    ensure \"$persist_dir\\editor_data\" | Out-Null",
+        "    Copy-Item -Path \"$env:AppData\\Godot\\*\" -Destination \"$persist_dir\\editor_data\" -Recurse -Force",
+        "}",
+        "New-Item -Force -Path \"$dir\" -Name '._sc_' -ItemType File | Out-Null"
     ],
     "bin": [
         [
@@ -36,6 +52,7 @@
             "Godot Engine (Mono)"
         ]
     ],
+    "persist": "editor_data",
     "checkver": {
         "url": "https://github.com/godotengine/godot/releases/latest",
         "regex": "(?<version>[\\d\\w.]+)-stable"
