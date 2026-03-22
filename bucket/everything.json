@@ -14,7 +14,13 @@
         "To register the context menu entry, please execute the following command:",
         "reg import \"$dir\\install-context.reg\"",
         "To register the URL protocol handler, please execute the following command:",
-        "reg import \"$dir\\register-url-handler.reg\""
+        "reg import \"$dir\\register-url-handler.reg\"",
+        "",
+        "Please note that the related logic has been changed.",
+        "The context menu must be unregistered and then registered again, even if it was previously registered.",
+        "The following command can be used to unregister it:",
+        "reg import \"$dir\\uninstall-context.reg\"",
+        "No further action is required if this message appears again."
     ],
     "architecture": {
         "64bit": {
@@ -95,7 +101,9 @@
             "if ($null -ne $service) {",
             "    if (-not (is_admin)) { abort \"`n[ERROR]  $app requires admin rights to $cmd.\" }",
             "    Stop-Service -Name $service.Name -Force -ErrorAction SilentlyContinue",
-            "    Stop-Process -Name 'Everything' -Force -ErrorAction SilentlyContinue",
+            "    $process.Id | ForEach-Object -Process {",
+            "        Get-Process -Id $_ -ErrorAction SilentlyContinue | Where-Object { $_.Name -like '*Everything*' }",
+            "    } | Stop-Process -Force -ErrorAction SilentlyContinue",
             "    Start-Sleep -Milliseconds 1500",
             "    if ($cmd -ne 'uninstall') { return }",
             "    if ($PSVersionTable.PSVersion -ge [version]::new(6, 0)) {",
