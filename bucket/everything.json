@@ -101,7 +101,7 @@
             "if ($null -ne $service) {",
             "    if (-not (is_admin)) { abort \"`n[ERROR]  $app requires admin rights to $cmd.\" }",
             "    Stop-Service -Name $service.Name -Force -ErrorAction SilentlyContinue",
-            "    $process.Id | ForEach-Object -Process {",
+            "    $process.Id | Where-Object { $null -ne $_ } | ForEach-Object {",
             "        Get-Process -Id $_ -ErrorAction SilentlyContinue | Where-Object { $_.Name -like '*Everything*' }",
             "    } | Stop-Process -Force -ErrorAction SilentlyContinue",
             "    Start-Sleep -Milliseconds 1500",
