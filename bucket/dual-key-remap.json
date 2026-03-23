@@ -1,0 +1,55 @@
+{
+    "version": "0.11",
+    "description": "Remap any key to any other two keys on Windows. Remap CapsLock to both Ctrl and Escape!",
+    "homepage": "https://github.com/ililim/dual-key-remap",
+    "license": "GPL-2.0-only",
+    "notes": [
+        "dual-key-remap requires Administrator privileges to remap keys in elevated windows.",
+        "",
+        "To start dual-key-remap automatically at logon (with admin rights), run:",
+        "  install-dual-key-startup",
+        "",
+        "To remove the startup task, run (as Admin):",
+        "  schtasks /delete /tn \"DualKeyRemap\" /f"
+    ],
+    "url": "https://github.com/ililim/dual-key-remap/releases/download/v0.11/dual-key-remap-v0.11.zip",
+    "hash": "3fb5da6fd608d3c1479df79736cb05a471e12c5ef9d93827c613e604af652ea7",
+    "installer": {
+        "script": [
+            "$startup_script = @'",
+            "#Requires -RunAsAdministrator",
+            "$scoopDir = (Get-Item \"$PSScriptRoot\").Target",
+            "if (-not $scoopDir) { $scoopDir = $PSScriptRoot }",
+            "$exe = Join-Path $scoopDir 'dual-key-remap.exe'",
+            "if (-not (Test-Path $exe)) {",
+            "    Write-Error \"Could not find dual-key-remap.exe at '$exe'\"",
+            "    exit 1",
+            "}",
+            "$action  = New-ScheduledTaskAction -Execute $exe -WorkingDirectory $scoopDir",
+            "$trigger = New-ScheduledTaskTrigger -AtLogOn -User $env:USERNAME",
+            "$principal = New-ScheduledTaskPrincipal -UserId $env:USERNAME -RunLevel Highest -LogonType Interactive",
+            "$settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit 0",
+            "Register-ScheduledTask -TaskName 'DualKeyRemap' -Action $action -Trigger $trigger -Principal $principal -Settings $settings -Force | Out-Null",
+            "Write-Host 'Scheduled task \"DualKeyRemap\" registered successfully.' -ForegroundColor Green",
+            "Write-Host 'dual-key-remap will start automatically at logon with elevated privileges.'",
+            "if (-not (Get-Process -Name 'dual-key-remap' -ErrorAction SilentlyContinue)) {",
+            "    Start-Process -FilePath $exe -WorkingDirectory $scoopDir -Verb RunAs",
+            "    Write-Host 'dual-key-remap started.' -ForegroundColor Green",
+            "}",
+            "'@",
+            "$startup_script | Set-Content \"$dir\\install-dual-key-startup.ps1\" -Encoding UTF8"
+        ]
+    },
+    "bin": [
+        "dual-key-remap.exe",
+        [
+            "install-dual-key-startup.ps1",
+            "install-dual-key-startup"
+        ]
+    ],
+    "persist": "config.txt",
+    "checkver": "github",
+    "autoupdate": {
+        "url": "https://github.com/ililim/dual-key-remap/releases/download/v$version/dual-key-remap-v$version.zip"
+    }
+}
