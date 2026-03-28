@@ -1,0 +1,35 @@
+{
+    "version": "13.3.1",
+    "description": "ARM GCC toolchain for PROS VEX V5 development",
+    "homepage": "https://pros.cs.purdue.edu/",
+    "license": "MPL-2.0",
+    "url": "https://github.com/purduesigbots/toolchain/releases/download/13.3.1/pros-toolchain-windows-formatted.zip",
+    "hash": "71a5c056e4fea7687ba564e5294a5db560c2e27e27a61363b8282fae6a4cba72",
+    "installer": {
+        "script": [
+            "# Create tmp directory if it doesn't exist",
+            "if (!(Test-Path \"$dir\\tmp\")) {",
+            "    New-Item -ItemType Directory -Force -Path \"$dir\\tmp\" | Out-Null",
+            "    Write-Host 'Created tmp directory' -ForegroundColor Green",
+            "}"
+        ]
+    },
+    "post_install": [
+        "Write-Host 'PROS Toolchain has been installed successfully!' -ForegroundColor Green",
+        "Write-Host ''",
+        "Write-Host 'Environment variables set:' -ForegroundColor Yellow",
+        "Write-Host \"  PROS_TOOLCHAIN = $dir\\usr\"",
+        "Write-Host ''",
+        "Write-Host 'The toolchain is now ready for use with PROS CLI.' -ForegroundColor Blue"
+    ],
+    "env_set": {
+        "PROS_TOOLCHAIN": "$dir\\usr"
+    },
+    "checkver": {
+        "url": "https://api.github.com/repos/purduesigbots/toolchain/releases/latest",
+        "jsonpath": "$.tag_name"
+    },
+    "autoupdate": {
+        "url": "https://github.com/purduesigbots/toolchain/releases/download/$version/pros-toolchain-windows-formatted.zip"
+    }
+}
