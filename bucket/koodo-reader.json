@@ -1,21 +1,28 @@
 {
-    "version": "1.6.9",
-    "homepage": "https://koodo.960960.xyz/en",
+    "version": "2.3.1",
+    "homepage": "https://www.koodoreader.com",
     "description": "All-in-one ebook reader.",
     "license": "AGPL-3.0",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/troyeguo/koodo-reader/releases/download/v1.6.9/Koodo-Reader-1.6.9-x64-Win.zip",
-            "hash": "385992f8796b91e0ea46842757d658c97156d40a51622b072373309272dc6fd8"
+            "url": "https://dl.koodoreader.com/v2.3.1/Koodo-Reader-2.3.1-x64.exe#/dl.7z",
+            "hash": "sha512:23767ad43e573d6b91b9340f0ef9cfb1a8dc4279e34130eab6fc3ca34515e7301c011020b861cf454635ce9fbc04cacd9a585ff2e565b7863889f03c5a75ab8d"
         },
         "32bit": {
-            "url": "https://github.com/troyeguo/koodo-reader/releases/download/v1.6.9/Koodo-Reader-1.6.9-ia32-Win.zip",
-            "hash": "c6f03b2ec2623fb238ef5cd597a868e321d302ff75aed0ed155dde435e5e5453"
+            "url": "https://dl.koodoreader.com/v2.3.1/Koodo-Reader-2.3.1-ia32.exe#/dl.7z",
+            "hash": "sha512:1f29f91dc536d4470ac632107465bcdcc8a0bdf72c59baab282d69d848c1598d7716323425c3705c4b7d7004511778b06889a2813cb456812bff7933a3877a39"
         },
         "arm64": {
-            "url": "https://github.com/troyeguo/koodo-reader/releases/download/v1.6.9/Koodo-Reader-1.6.9-arm64-Win.zip",
-            "hash": "f4d1d99b3512609037dd7fe0cd57d5f995fe9d0d47d416aada6912d53501bf16"
+            "url": "https://dl.koodoreader.com/v2.3.1/Koodo-Reader-2.3.1-arm64.exe#/dl.7z",
+            "hash": "sha512:29b0be85222c65dbcf5fa6b075b5458ca40fcc3e32e5c844e93f4d89fa6c697d55a72d79970e1ad7571945867fc984137e27da617a269d2aa912d774791c7c6a"
         }
+    },
+    "installer": {
+        "script": [
+            "Remove-Item \"$dir\\resources\" -Recurse -Force -ErrorAction SilentlyContinue",
+            "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Expand-7zipArchive -DestinationPath \"$dir\"",
+            "Remove-Item \"$dir\\`$*\" -Force -Recurse"
+        ]
     },
     "shortcuts": [
         [
@@ -24,19 +31,24 @@
         ]
     ],
     "checkver": {
-        "github": "https://github.com/troyeguo/koodo-reader"
+        "url": "https://koodoreader.com/en/download",
+        "regex": "Stable Version.*?(?<version>[\\d.]+)<"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/troyeguo/koodo-reader/releases/download/v$version/Koodo-Reader-$version-x64-Win.zip"
+                "url": "https://dl.koodoreader.com/v$version/Koodo-Reader-$version-x64.exe#/dl.7z"
             },
             "32bit": {
-                "url": "https://github.com/troyeguo/koodo-reader/releases/download/v$version/Koodo-Reader-$version-ia32-Win.zip"
+                "url": "https://dl.koodoreader.com/v$version/Koodo-Reader-$version-ia32.exe#/dl.7z"
             },
             "arm64": {
-                "url": "https://github.com/troyeguo/koodo-reader/releases/download/v$version/Koodo-Reader-$version-arm64-Win.zip"
+                "url": "https://dl.koodoreader.com/v$version/Koodo-Reader-$version-arm64.exe#/dl.7z"
             }
+        },
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "(?sm)$basename.*?sha512:\\s+$base64"
         }
     }
 }

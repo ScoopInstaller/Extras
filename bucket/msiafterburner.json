@@ -1,5 +1,5 @@
 {
-    "version": "4.6.5",
+    "version": "4.6.6",
     "description": "Overclocking utility for graphics cards. Main features include GPU/Shader/Memory clock adjustment, advanced fan speed and GPU voltage control.",
     "homepage": "https://www.msi.com/page/afterburner",
     "license": {
@@ -12,22 +12,24 @@
         "Profiles will be migrated automatically."
     ],
     "suggest": {
-        "vcredist": "extras/vcredist2008",
+        "vcredist": "extras/vcredist2022",
         "RivaTuner Statistics Server": "extras/rtss",
         "MSI Kombustor": "extras/msikombustor",
         "FurMark": "extras/furmark"
     },
-    "url": "https://download.msi.com/uti_exe/vga/MSIAfterburnerSetup.zip?__token__=exp=acl=/*~hmac=#/dl.zip",
-    "hash": "407cf0f38b4b6b3dc030e70329d35be5eabfef45829240cc6df0442768189cec",
+    "url": "https://ftp.nluug.nl/pub/games/PC/guru3d/afterburner/%5BGuru3D%5D-MSIAfterburnerSetup466Build16757.zip",
+    "hash": "348e9690a638d84e30e32e9c7c2dd7aad9fd82d71eced1942c04c4c5620b0e1e",
     "pre_install": [
-        "Expand-7zipArchive \"$dir\\MSIAfterburnerSetup*.exe\" -Removal",
-        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\", \"$dir\\Redist\" -Recurse"
+        "Expand-7zipArchive \"$dir\\MSIAfterburnerSetup*.exe\" -DestinationPath \"$dir\" -Removal",
+        "'$*', 'Redist', 'Uninstall*', '*guru3d*.txt' | ForEach-Object {",
+        "    Remove-Item -Path \"$dir\\$_\" -Force -Recurse -ErrorAction SilentlyContinue",
+        "}"
     ],
     "post_install": [
         "if (Test-Path \"$persist_dir\\AB_Profiles\") {",
         "    warn 'Migrating Afterburner profiles...'",
-        "    Move-Item \"$persist_dir\\AB_Profiles\\*\" \"$persist_dir\\Profiles\\\"",
-        "    Remove-Item \"$persist_dir\\AB_Profiles\" -Recurse",
+        "    Copy-Item -Path \"$persist_dir\\AB_Profiles\\*\" -Destination \"$persist_dir\\Profiles\" -Force -Recurse",
+        "    Remove-Item -Path \"$persist_dir\\AB_Profiles\" -Force -Recurse -ErrorAction SilentlyContinue",
         "}"
     ],
     "bin": "MSIAfterburner.exe",
@@ -39,11 +41,24 @@
     ],
     "persist": "Profiles",
     "checkver": {
-        "url": "https://www.guru3d.com/files-details/msi-afterburner-beta-download.html",
-        "regex": ">Download\\s+([\\d.]+)\\s+Stable\\s+\\(Final\\)",
-        "reverse": true
+        "url": "https://www.guru3d.com/download/msi-afterburner-beta-download",
+        "script": [
+            "$page -match 'aform.*?value=\"(?<aform>[0-9a-f]+)\".*?Download (?<version>[\\d.]+)'",
+            "$version = $Matches.version",
+            "$body = @{ aform = $Matches.aform }",
+            "$response = Invoke-WebRequest -Uri $url -Method Post -Body $body",
+            "$response.Content -match 'location=\"(?<redirect_url>https://www.guru3d.com/getdownload/[0-9a-f]+)\"'",
+            "$response = if ($PSVersionTable.PSVersion.Major -lt 7.0) {",
+            "    Invoke-WebRequest -Uri $Matches.redirect_url -MaximumRedirection 0 -ErrorAction SilentlyContinue",
+            "} else {",
+            "    Invoke-WebRequest -Uri $Matches.redirect_url -MaximumRedirection 0 -ErrorAction SilentlyContinue -SkipHttpErrorCheck",
+            "}",
+            "[string]($response.Headers.Location) -match 'https://ftp\\.nluug\\.nl/pub/games/PC/guru3d/(?<file_path>[^/]+?)/(?<file_name>.+)'",
+            "Write-Output \"$version $($Matches.file_path)/$([System.Net.WebUtility]::UrlEncode($Matches.file_name))\""
+        ],
+        "regex": "(?<version>[\\d.]+) (?<file>.+)"
     },
     "autoupdate": {
-        "url": "https://download.msi.com/uti_exe/vga/MSIAfterburnerSetup.zip?__token__=exp=acl=/*~hmac=#/dl.zip"
+        "url": "https://ftp.nluug.nl/pub/games/PC/guru3d/$matchFile"
     }
 }

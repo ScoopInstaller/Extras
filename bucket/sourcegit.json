@@ -1,19 +1,26 @@
 {
-    "version": "8.26",
+    "version": "2026.06",
     "description": "Open-source GUI client for git users.",
     "homepage": "https://github.com/sourcegit-scm/sourcegit",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/sourcegit-scm/sourcegit/releases/download/v8.26/sourcegit_8.26.win-x64.zip",
-            "hash": "b9399945ce54d0ea2d08b78161ec17363a273d00d4f3705dee367c2384494874"
+            "url": "https://github.com/sourcegit-scm/sourcegit/releases/download/v2026.06/sourcegit_2026.06.win-x64.zip",
+            "hash": "ed96918c885f25e7bdba357c7432981c268f3889d58def8a07964a8a51169b9f"
         },
         "arm64": {
-            "url": "https://github.com/sourcegit-scm/sourcegit/releases/download/v8.26/sourcegit_8.26.win-arm64.zip",
-            "hash": "c283b8f8adb7cb98f334fc928aeab3cb31c386277e94373e7e4d67dc8daa9754"
+            "url": "https://github.com/sourcegit-scm/sourcegit/releases/download/v2026.06/sourcegit_2026.06.win-arm64.zip",
+            "hash": "49708b97a2b73a78b184edf4bdd730660644e909a41c60d82fedd90189034e25"
         }
     },
     "extract_dir": "SourceGit",
+    "post_install": [
+        "if (Test-Path $env:AppData\\SourceGit) {",
+        "    Write-Host \"`r`nMove config from non-portable version...\"",
+        "    Copy-Item -Path $env:AppData\\SourceGit\\* -Destination \"$persist_dir\\data\" -Force -Recurse | Out-Null",
+        "    Remove-Item $env:AppData\\SourceGit -Force -Recurse",
+        "}"
+    ],
     "bin": "SourceGit.exe",
     "shortcuts": [
         [
@@ -21,6 +28,7 @@
             "SourceGit"
         ]
     ],
+    "persist": "data",
     "checkver": "github",
     "autoupdate": {
         "architecture": {

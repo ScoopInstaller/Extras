@@ -1,61 +1,74 @@
 {
-    "version": "2024.2-242.20224.347",
-    "description": "Cross-Platform IDE for Python by JetBrains (Community edition).",
+    "version": "2025.3.4-253.32098.74",
+    "description": "Cross-Platform IDE for Python by JetBrains.",
     "homepage": "https://www.jetbrains.com/pycharm/",
     "license": {
-        "identifier": "Apache-2.0",
-        "url": "https://sales.jetbrains.com/hc/en-gb/articles/115001015290-Where-can-I-find-the-EULA-End-User-License-Agreement-"
+        "identifier": "Proprietary",
+        "url": "https://www.jetbrains.com/legal/docs/toolbox/license/"
     },
-    "url": "https://download.jetbrains.com/python/pycharm-community-2024.2.exe#/dl.7z",
-    "hash": "155bd522f300157be1eb509601c5e96ae63aa261ffd7d0686ae8ee57fceeb194",
-    "extract_to": "IDE",
-    "installer": {
-        "script": [
-            "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" $dir $persist_dir",
-            "Remove-Item \"$dir\\IDE\\`$*\" -Force -Recurse",
-            "Set-Content \"$dir\\run_pycharm.bat\" \"start `\"`\" `\"$dir\\IDE\\bin\\pycharm64.exe`\"\" -Encoding ascii | Out-Null"
-        ]
-    },
+    "notes": [
+        "PyCharm Community Edition and Professional Edition have now been merged into a unified product.",
+        "PyCharm Community 2025.2 is the last standalone version available to existing users only.",
+        "For more information, see: https://blog.jetbrains.com/pycharm/2025/04/unified-pycharm/"
+    ],
     "architecture": {
         "64bit": {
+            "url": "https://download.jetbrains.com/python/pycharm-2025.3.4.win.zip",
+            "hash": "ca5ffa0793253e1001e322a796fa60dfc25364e291987dd0dc86d2efb07d8259",
             "bin": [
                 [
-                    "run_pycharm.bat",
+                    "IDE\\bin\\pycharm64.exe",
                     "pycharm"
                 ]
             ],
             "shortcuts": [
                 [
-                    "run_pycharm.bat",
-                    "JetBrains\\PyCharm",
-                    "",
-                    "IDE\\bin\\pycharm64.exe"
+                    "IDE\\bin\\pycharm64.exe",
+                    "JetBrains\\PyCharm"
                 ]
             ]
         },
-        "32bit": {
-            "bin": "IDE\\bin\\pycharm.exe",
+        "arm64": {
+            "url": "https://download.jetbrains.com/python/pycharm-2025.3.4-aarch64.win.zip",
+            "hash": "49918c54f55523b47d2d5044b6226a07f71fc2d59e8b64b2e108fa700c4319a2",
+            "bin": [
+                [
+                    "IDE\\bin\\pycharm64.exe",
+                    "pycharm"
+                ]
+            ],
             "shortcuts": [
                 [
-                    "IDE\\bin\\pycharm.exe",
+                    "IDE\\bin\\pycharm64.exe",
                     "JetBrains\\PyCharm"
                 ]
             ]
         }
     },
+    "extract_to": "IDE",
+    "installer": {
+        "script": "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" \"$dir\" \"$persist_dir\""
+    },
     "persist": [
         "IDE\\bin\\idea.properties",
-        "IDE\\bin\\pycharm.exe.vmoptions",
         "IDE\\bin\\pycharm64.exe.vmoptions",
+        "IDE\\bin\\jetbrains_client64.exe.vmoptions",
         "profile"
     ],
     "checkver": {
-        "url": "https://data.services.jetbrains.com/products/releases?code=PCC&latest=true&platform=zip&type=release",
+        "url": "https://data.services.jetbrains.com/products/releases?code=PC&latest=true&platform=zip&type=release",
         "regex": "version\":\"(?<ver>[\\d.]+)\".*\"build\":\"(?<build>[\\d.]+)\"",
         "replace": "${ver}-${build}"
     },
     "autoupdate": {
-        "url": "https://download.jetbrains.com/python/pycharm-community-$matchHead.exe#/dl.7z",
+        "architecture": {
+            "64bit": {
+                "url": "https://download.jetbrains.com/python/pycharm-$matchVer.win.zip"
+            },
+            "arm64": {
+                "url": "https://download.jetbrains.com/python/pycharm-$matchVer-aarch64.win.zip"
+            }
+        },
         "hash": {
             "url": "$url.sha256"
         }

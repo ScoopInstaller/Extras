@@ -1,55 +1,75 @@
 {
-    "version": "2.10.38",
+    "version": "3.2.2",
     "description": "GNU Image Manipulation Program",
     "homepage": "https://www.gimp.org",
     "license": "GPL-3.0-only",
-    "url": "https://download.gimp.org/mirror/pub/gimp/v2.10/windows/gimp-2.10.38-setup.exe",
-    "hash": "e3515980c9012eed67cf78f1151d216725529e95676c16f5ff7478d46230ddab",
+    "url": "https://download.gimp.org/mirror/pub/gimp/v3.2/windows/gimp-3.2.2-setup.exe",
+    "hash": "cbdcdb49c144d5ef26693f03939fff22770bed22b83da7c420cdfe78a18b383e",
     "innosetup": true,
     "installer": {
         "script": [
-            "Push-Location \"$dir\"",
+            "# Set path for the execution of this script",
+            "Push-Location -Path $dir",
+            "# Remove debug files",
             "Get-ChildItem -Filter '*.debug' -Recurse | Remove-Item -Recurse",
-            "if ($architecture -eq '64bit') {",
-            "   Rename-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,2.exe' 'twain.exe'",
-            "   Remove-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,1.exe'",
-            "   Get-ChildItem -Filter '*,1*' -Recurse | Rename-Item -NewName { $_.name -Replace ',\\d','' }",
-            "   Get-ChildItem -Filter '*,*' -Recurse | Remove-Item",
-            "} else {",
-            "   Rename-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,1.exe' 'twain.exe'",
-            "   Remove-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,2.exe'",
-            "   Get-ChildItem -Filter '*,1*' -Recurse | Remove-Item",
-            "   Get-ChildItem -Filter '*,*' -Recurse | Rename-Item -NewName { $_.name -Replace ',\\d','' }",
+            "# Rename architecture specific files for making the rest of the script easier",
+            "$File64 = [array](",
+            "    Get-ChildItem -File -Recurse -Filter '*,?.*' | Where-Object -FilterScript {",
+            "        $_.Name -match '^(.*?),[12]\\.(.*?)$' -and",
+            "        (-not (Test-Path (Join-Path -Path $_.Directory.FullName -ChildPath \"$($matches[1]),3.$($matches[2])\"))) -and",
+            "        $matches[1] -ne 'libhwy'",
+            "    }",
+            ")",
+            "$File64.Where{$_.Name -match ',2'} | Rename-Item -NewName { $_.name -Replace ',2', ',3' }",
+            "$File64.Where{$_.Name -match ',1'} | Rename-Item -NewName { $_.name -Replace ',1', ',2' }",
+            "# If 32bit",
+            "if ($architecture -eq '32bit') {",
+            "    # Remove \",1\" from all files that have it in the file name to keep them",
+            "    Get-ChildItem -Filter '*,1*' -Recurse | Rename-Item -NewName { $_.name -Replace ',1', '' }",
             "}",
-            "$pyenv = Get-Content 'lib\\gimp\\2.0\\environ\\pygimp.env' -Raw",
-            "$pyenv + '__COMPAT_LAYER=HIGHDPIAWARE' | Set-Content 'lib\\gimp\\2.0\\environ\\pygimp.env'",
-            "$pyint = Get-Content 'lib\\gimp\\2.0\\interpreters\\pygimp.interp' -Raw",
-            "$pyint = $pyint -Replace '(python|python2)=(.*)', \"`$1=$dir\\bin\\pythonw.exe\"",
-            "$pyint = $pyint -Replace 'py::python2', 'py::python'",
-            "$pyint | Set-Content 'lib\\gimp\\2.0\\interpreters\\pygimp.interp'",
-            "Pop-Location",
-            "Copy-Item \"$bucketsdir\\extras\\scripts\\gimp\\default.env\" \"$dir\\lib\\gimp\\2.0\\environ\\\" | Out-Null"
+            "# Else: 64bit or ARM64",
+            "else {",
+            "    # Plugin twain' ('twain.exe') is for 'gimp32on64' which is not included",
+            "    $PluginTwain = [string](",
+            "        Resolve-Path -Path \"$dir\\lib\\gimp\\*\\plug-ins\\twain\" | Select-Object -ExpandProperty 'Path' -First 1",
+            "    )",
+            "    if (-not [string]::IsNullOrWhitespace($PluginTwain)) {",
+            "        $null = Remove-Item -Path $PluginTwain -Recurse -Force",
+            "    }",
+            "    # If 64bit: Remove \",2\" from all files that have it in the file name to keep them",
+            "    if ($architecture -eq '64bit') {",
+            "        Get-ChildItem -Filter '*,2*' -Recurse | Rename-Item -NewName { $_.name -Replace ',2', '' }",
+            "    }",
+            "    # If ARM64: Remove \",3\" from all files that have it in the file name to keep them",
+            "    else {",
+            "        Get-ChildItem -Filter '*,3*' -Recurse | Rename-Item -NewName { $_.name -Replace ',3', '' }",
+            "    }",
+            "}",
+            "# Remove all architecture specific files that has not yet been renamed",
+            "$null = Get-ChildItem -Filter '*,*' -Recurse -File | Remove-Item",
+            "# Set path back to what it was before this script started",
+            "Pop-Location"
         ]
     },
     "bin": [
-        "bin\\gimp-console-2.10.exe",
+        "bin\\gimp-console-3.2.exe",
         [
-            "bin\\gimp-console-2.10.exe",
+            "bin\\gimp-console-3.2.exe",
             "gimp-console"
         ],
         [
-            "bin\\gimp-console-2.10.exe",
+            "bin\\gimp-console-3.2.exe",
             "gimp"
         ],
-        "bin\\gimptool-2.0.exe",
+        "bin\\gimptool-3.2.exe",
         [
-            "bin\\gimptool-2.0.exe",
+            "bin\\gimptool-3.2.exe",
             "gimptool"
         ]
     ],
     "shortcuts": [
         [
-            "bin\\gimp-2.10.exe",
+            "bin\\gimp-3.2.exe",
             "GIMP"
         ]
     ],
@@ -62,6 +82,28 @@
         "url": "https://download.gimp.org/mirror/pub/gimp/v$majorVersion.$minorVersion/windows/gimp-$matchHead-setup$matchTail.exe",
         "hash": {
             "url": "$baseurl/SHA256SUMS"
-        }
+        },
+        "bin": [
+            "bin\\gimp-console-$majorVersion.$minorVersion.exe",
+            [
+                "bin\\gimp-console-$majorVersion.$minorVersion.exe",
+                "gimp-console"
+            ],
+            [
+                "bin\\gimp-console-$majorVersion.$minorVersion.exe",
+                "gimp"
+            ],
+            "bin\\gimptool-$majorVersion.$minorVersion.exe",
+            [
+                "bin\\gimptool-$majorVersion.$minorVersion.exe",
+                "gimptool"
+            ]
+        ],
+        "shortcuts": [
+            [
+                "bin\\gimp-$majorVersion.$minorVersion.exe",
+                "GIMP"
+            ]
+        ]
     }
 }

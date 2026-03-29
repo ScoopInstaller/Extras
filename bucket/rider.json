@@ -1,5 +1,5 @@
 {
-    "version": "2024.2.1-242.20224.418",
+    "version": "2025.3.4-253.32098.77",
     "description": "Cross-Platform IDE for .NET by JetBrains.",
     "homepage": "https://www.jetbrains.com/rider/",
     "license": {
@@ -8,15 +8,19 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://download.jetbrains.com/rider/JetBrains.Rider-2024.2.1.win.zip",
-            "hash": "de92d4fdc7b789b2ea67eb6e5f22244ac008ecd03fcd110c30dfa5c16bf7d02e"
+            "url": "https://download.jetbrains.com/rider/JetBrains.Rider-2025.3.4.win.zip",
+            "hash": "444c971ef7a05f862deebc64a7ea96ab9031e4bc6f4f87bd951d4187d4ef095e"
         },
         "arm64": {
-            "url": "https://download.jetbrains.com/rider/JetBrains.Rider-2024.2.1-aarch64.win.zip",
-            "hash": "1a5b943602ab5a9958208d32eb3a349765594a3965a08bbf55b33b8812bc6d5c"
+            "url": "https://download.jetbrains.com/rider/JetBrains.Rider-2025.3.4-aarch64.win.zip",
+            "hash": "a5085e9aceb3c091b1a34634f48d67273e26bc90805e152d49a7d961980a28ec"
         }
     },
     "extract_to": "IDE",
+    "pre_install": [
+        "Get-ChildItem \"$persist_dir\\IDE\\bin\\rider64.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$dir\\IDE\\bin\"",
+        "Get-ChildItem \"$persist_dir\\IDE\\bin\\jetbrains_client64.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$dir\\IDE\\bin\""
+    ],
     "installer": {
         "script": "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" \"$dir\" \"$persist_dir\""
     },
@@ -36,6 +40,10 @@
         "IDE\\bin\\idea.properties",
         "profile"
     ],
+    "pre_uninstall": [
+        "Get-ChildItem \"$dir\\IDE\\bin\\rider64.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$persist_dir\\IDE\\bin\"",
+        "Get-ChildItem \"$dir\\IDE\\bin\\jetbrains_client64.exe.vmoptions\" -ErrorAction SilentlyContinue | Copy-Item -Destination \"$persist_dir\\IDE\\bin\""
+    ],
     "checkver": {
         "url": "https://data.services.jetbrains.com/products/releases?code=RD&latest=true&platform=zip&type=release",
         "regex": "version\":\"(?<ver>[\\d.]+)\".*\"build\":\"(?<build>[\\d.]+)\"",
@@ -44,10 +52,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.jetbrains.com/rider/JetBrains.Rider-$matchHead.win.zip"
+                "url": "https://download.jetbrains.com/rider/JetBrains.Rider-$matchVer.win.zip"
             },
             "arm64": {
-                "url": "https://download.jetbrains.com/rider/JetBrains.Rider-$matchHead-aarch64.win.zip"
+                "url": "https://download.jetbrains.com/rider/JetBrains.Rider-$matchVer-aarch64.win.zip"
             }
         },
         "hash": {

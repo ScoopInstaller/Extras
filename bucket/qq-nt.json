@@ -1,0 +1,56 @@
+{
+    "version": "9.9.28.260319",
+    "description": "An instant messaging software service developed by Tencent",
+    "homepage": "https://im.qq.com/pcqq/index.shtml",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://ti.qq.com/agreement/index.html"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.28_260319_x64_01.exe#/dl.7z",
+            "hash": "9856871a4fcc36dc56faedc4e5209f20fe21b23077c2386705dc4a0d509b7b31"
+        },
+        "32bit": {
+            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.28_260319_x86_01.exe#/dl.7z",
+            "hash": "ab9c16639091b15cea92fc0b911544b84994d62789d7c9983a158e7db3e5d7a1"
+        },
+        "arm64": {
+            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.28_260319_arm64_01.exe#/dl.7z",
+            "hash": "f1a0ab88af56a2f789a8b64a61c207cce199a28b3cf978c7818b1a0d413390b1"
+        }
+    },
+    "extract_dir": "Files",
+    "shortcuts": [
+        [
+            "QQ.exe",
+            "QQ"
+        ]
+    ],
+    "checkver": {
+        "script": [
+            "# Please keep this script. Using 'cdn-go.cn' may result in receiving expired cache responses.",
+            "$url = 'https://cdn-go.cn/qq-web/im.qq.com_new/latest/rainbow/windowsConfig.js'",
+            "$hostname = ([Uri]$url).Host",
+            "$records = Resolve-DnsName 'cdn-go.cn.cloud.tc.qq.com' -Type A -DnsOnly -ErrorAction Ignore",
+            "$ip = $records | Where-Object { $_.QueryType -eq 'A' -and $_.IPAddress } | Select-Object -ExpandProperty IP4Address -First 1",
+            "$url = $url -Replace [regex]::Escape($hostname), $ip",
+            "Invoke-WebRequest -Uri $url -UseBasicParsing -Headers @{'Host' = $hostname} | Select-Object -ExpandProperty Content"
+        ],
+        "regex": "QQNT/Windows/QQ_([\\d\\.]+)_([\\d]+)_x86_01.exe",
+        "replace": "${1}.${2}"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_$match1_$match2_x64_01.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_$match1_$match2_x86_01.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_$match1_$match2_arm64_01.exe#/dl.7z"
+            }
+        }
+    }
+}
