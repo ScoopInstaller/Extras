@@ -12,18 +12,7 @@
             "hash": "040a6971614e7ad0455b4080b13144f9c6b2e154904d9fd443fd8dd357927cab"
         }
     },
-    "pre_install": [
-        "$current_depth = 0",
-        "while ($current_depth -lt 5) {",
-        "    $items = Get-ChildItem -Path $dir | Select-Object -First 3",
-        "    if ($items.Count -eq 1 -and $items.PSIsContainer) {",
-        "        $inner_dir = $items | ForEach-Object -MemberName FullName",
-        "        Move-Item -Path \"$inner_dir\\*\" -Destination $dir -Force",
-        "        Remove-Item -Path $inner_dir -Recurse -Force -ErrorAction SilentlyContinue",
-        "        $current_depth++",
-        "    } else { break }",
-        "}"
-    ],
+    "pre_install": "pushd $dir ; mv */* . ; rm FreeCAD_* ; popd",
     "bin": "bin\\FreeCADCmd.exe",
     "shortcuts": [
         [
