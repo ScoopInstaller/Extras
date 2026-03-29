@@ -1,37 +1,29 @@
 {
     "version": "0.7.9",
-    "description": "Jan is an open source alternative to ChatGPT that runs 100% offline on your computer.",
-    "homepage": "https://jan.ai/",
-    "license": "AGPL-3.0",
-    "url": "https://github.com/janhq/jan/releases/download/v0.7.9/Jan_0.7.9_x64-setup.exe",
-    "hash": "8caef1d3b5de3e8cfc15b43bf8071bca9e9d32da054514387f9abce31db075b0",
-    "installer": {
-        "script": [
-            "# Start installer and capture process object",
-            "$process = Start-Process -FilePath \"$dir\\Jan_0.7.9_x64-setup.exe\" -ArgumentList '/S' -Wait -PassThru",
-            "",
-            "# Check installer exit code",
-            "if ($process.ExitCode -ne 0) {",
-            "    throw \"Jan installer failed with exit code $($process.ExitCode)\"",
-            "}",
-            "",
-            "# Ensure expected install directory exists",
-            "if (-Not (Test-Path \"$env:LOCALAPPDATA\\Programs\\Jan\")) {",
-            "    throw \"Expected install directory not found: $env:LOCALAPPDATA\\Programs\\Jan\"",
-            "}",
-            "",
-            "# Copy installed files to Scoop directory",
-            "Copy-Item \"$env:LOCALAPPDATA\\Programs\\Jan\\*\" \"$dir\" -Recurse -ErrorAction Stop",
-            "",
-            "# Cleanup original install directory",
-            "Remove-Item \"$env:LOCALAPPDATA\\Programs\\Jan\" -Recurse -Force -ErrorAction Stop"
-        ]
+    "description": "An open source alternative to ChatGPT that runs 100% offline on your computer",
+    "homepage": "https://jan.ai",
+    "license": "AGPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/janhq/jan/releases/download/v0.7.9/Jan_0.7.9_x64-setup.exe#/dl.7z",
+            "hash": "8caef1d3b5de3e8cfc15b43bf8071bca9e9d32da054514387f9abce31db075b0"
+        }
     },
-    "bin": "Jan.exe",
+    "post_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse -ErrorAction Ignore",
     "shortcuts": [
         [
             "Jan.exe",
             "Jan"
         ]
-    ]
+    ],
+    "checkver": {
+        "github": "https://github.com/janhq/jan"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/janhq/jan/releases/download/v$version/Jan_$version_x64-setup.exe#/dl.7z"
+            }
+        }
+    }
 }
