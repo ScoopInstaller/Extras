@@ -19,11 +19,33 @@
     },
     "extract_dir": "jellyfin",
     "extract_to": "system",
-    "bin": [
+    "installer": {
+        "script": [
+            "ensure \"$persist_dir\" | Out-Null",
+            "$targetPath = \"$env:LOCALAPPDATA\\jellyfin\"",
+            "$linkType = (Get-Item -Path $targetPath -ErrorAction SilentlyContinue).LinkType",
+            "if (Test-Path $targetPath) {",
+            "    if ($linkType -eq 'Junction') {",
+            "        Remove-Item -Path $targetPath -Force",
+            "    } else {",
+            "        # $persist takes precedence over $targetPath",
+            "        if (-not (Test-Path \"$persist\\*\")) {",
+            "            Move-Item \"$targetPath\\*\" $persist -Force -ErrorAction SilentlyContinue",
+            "        }",
+            "        Remove-Item -Path $targetPath -Force -Recurse",
+            "    }",
+            "}",
+            "New-Item \"$env:LOCALAPPDATA\\jellyfin\" -ItemType Junction -Target \"$persist_dir\" | Out-Null"
+        ]
+    },
+    "uninstaller": {
+        "script": "Remove-Item \"$env:LOCALAPPDATA\\jellyfin\" -Recurse -Force -ErrorAction 'SilentlyContinue'"
+    },
+    "bin": "system\\jellyfin.exe",
+    "shortcuts": [
         [
             "system\\jellyfin.exe",
-            "jellyfin",
-            "-d \"$dir\\data\""
+            "jellyfin"
         ]
     ],
     "persist": "data",
