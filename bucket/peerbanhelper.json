@@ -1,0 +1,210 @@
+{
+    "version": "9.3.8",
+    "description": "Automatically block unwanted, leeches and abnormal BT peers with support for customized and cloud rules.",
+    "homepage": "https://docs.pbh-btn.com/en/",
+    "license": "GPL-3.0-or-later",
+    "notes": [
+        "[Tutorial](https://docs.pbh-btn.com/en/docs/category/%E4%B8%8B%E8%BD%BD%E5%99%A8%E9%85%8D%E7%BD%AE)",
+        "",
+        "PeerBanHelper recommends starting with JBR.",
+        "Install `intellij-jbr25` and launch it with name including \"JBR\" in Start menu.",
+        "",
+        "For Windows 7, install `liberica25-jre`",
+        "and launch it with name including \"Liberica\" in Start menu.",
+        "",
+        "Console mode can be started via the shell with `peerbanhelper-cli`,",
+        "`peerbanhelper-cli-jbr` or `peerbanhelper-cli-liberica`.",
+        "",
+        "================================================================================",
+        "",
+        "[教程](https://docs.pbh-btn.com/docs/category/%E4%B8%8B%E8%BD%BD%E5%99%A8%E9%85%8D%E7%BD%AE)",
+        "",
+        "PeerBanHelper建议使用JBR启动，请安装`intellij-jbr25`。然后在开始菜单中，找到名字含有“JBR”的快捷方式。",
+        "",
+        "Windows 7用户请安装`liberica25-jre`，然后在开始菜单中，找到名字含有“Liberica”的快捷方式。",
+        "",
+        "控制台模式可以在命令行中，使用`peerbanhelper-cli`、`peerbanhelper-cli-jbr`或`peerbanhelper-cli-liberica`启动。",
+        ""
+    ],
+    "suggest": {
+        "Java": [
+            "java/intellij-jbr25",
+            "java/liberica25-jre"
+        ]
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/PBH-BTN/PeerBanHelper/releases/download/v9.3.8/PeerBanHelper_Windows_9.3.8_Portable_nojava.zip",
+            "hash": "393539f6b5269a381d0e63502041a398b8a8c4eb0d8aba65b12950cd8d1ccbcd"
+        },
+        "arm64": {
+            "url": "https://github.com/PBH-BTN/PeerBanHelper/releases/download/v9.3.8/PeerBanHelper_Windows_9.3.8_Portable_nojava.zip",
+            "hash": "393539f6b5269a381d0e63502041a398b8a8c4eb0d8aba65b12950cd8d1ccbcd"
+        }
+    },
+    "extract_dir": "PeerBanHelper",
+    "pre_install": [
+        "# Scripts to start with IntelliJ JBR or Liberica JDK from Scoop",
+        "$launchers = @(",
+        "    @{",
+        "        JavaCandidates = @(",
+        "            \"intellij-jbr25\",",
+        "            \"intellij-jbr25-jcef\",",
+        "            \"intellij-jbr25-sdk\",",
+        "            \"intellij-jbr25-sdk-jcef\"",
+        "        );",
+        "        Bat = \"start-with-scoop-jbr.bat\"",
+        "    },",
+        "    @{",
+        "        JavaCandidates = @(",
+        "            \"liberica25-jre\",",
+        "            \"liberica25-jdk\",",
+        "            \"liberica25-lts-jre\",",
+        "            \"liberica25-lts-jdk\",",
+        "            \"liberica25-full-jre\",",
+        "            \"liberica25-full-jdk\",",
+        "            \"liberica25-full-lts-jre\",",
+        "            \"liberica25-full-lts-jdk\",",
+        "            \"liberica25-lite-jdk\",",
+        "            \"liberica25-lite-lts-jdk\"",
+        "        );",
+        "        Bat = \"start-with-scoop-liberica.bat\"",
+        "    }",
+        ")",
+        "",
+        "foreach ($launcher in $launchers) {",
+        "    $javaCandidates = $launcher.JavaCandidates",
+        "    $primaryJava = $javaCandidates[0]",
+        "    $batName = Join-Path $dir $launcher.Bat",
+        "",
+        "    $javaDetectLines = ($javaCandidates | ForEach-Object {",
+        "        \"for %%J in (`\"$scoopdir\\apps\\$_\\current`\") do if exist %%J\\bin\\java.exe ( set `\"JAVA_HOME=%%J`\" & goto :java_found )\"",
+        "    }) -join \"`r`n\"",
+        "",
+        "    $content = @\"",
+        "@echo off",
+        "setlocal enabledelayedexpansion",
+        "set \"MODE=%~1\"",
+        "",
+        ":: Detect Java installation in order",
+        "$javaDetectLines",
+        "echo [Error] Did you install the ``$primaryJava``?",
+        "echo [Error] scoop install java/$primaryJava",
+        "pause",
+        "exit /b 1",
+        "",
+        ":java_found",
+        "if /i \"%MODE%\"==\"gui\" (",
+        "    set \"TARGET=1. GUI Mode.bat\"",
+        ") else if /i \"%MODE%\"==\"silent\" (",
+        "    set \"TARGET=2. GUI mode (silent).bat\"",
+        ") else if /i \"%MODE%\"==\"console\" (",
+        "    set \"TARGET=3. Console.bat\"",
+        ") else (",
+        "    echo Usage: %~nx0 [gui^|silent^|console]",
+        "    pause",
+        "    exit /b 1",
+        ")",
+        "",
+        "pushd \"%~dp0\"",
+        "call \"!TARGET!\"",
+        "popd",
+        "endlocal",
+        "\"@",
+        "",
+        "    Set-Content -Path $batName -Value $content",
+        "}"
+    ],
+    "post_install": [
+        "if (!((Get-ChildItem -Path \"$dir\\data\").Count -gt 0)) {",
+        "    $sourcePaths = @(",
+        "        \"${env:ProgramFiles}\\PeerBanHelper\\data\\\",",
+        "        \"${env:ProgramFiles(x86)}\\PeerBanHelper\\data\\\",",
+        "        \"${env:LOCALAPPDATA}\\PeerBanHelper\\\",",
+        "        \"${env:APPDATA}\\PeerBanHelper\\\",",
+        "        \"${env:USERPROFILE}\\AppData\\Local\\Programs\\PeerBanHelper\\data\\\",",
+        "        \"${env:WINDIR}\\System32\\config\\systemprofile\\AppData\\Local\\PeerBanHelper\\\"",
+        "    )",
+        "",
+        "    foreach ($path in $sourcePaths) {",
+        "        $configData = Join-Path $path \"config\"",
+        "        if ((Test-Path $path) -and ((Get-ChildItem -Path $path).Count -gt 0)) {",
+        "            $msg = \"[Portable Mode] Copying user data from $path...\"",
+        "            Write-Host ''",
+        "            info $msg",
+        "            Copy-Item \"$path\\*\" \"$dir\\data\\\" -Recurse",
+        "            break",
+        "        }",
+        "    }",
+        "}",
+        ""
+    ],
+    "bin": [
+        [
+            "3. Console.bat",
+            "peerbanhelper-cli"
+        ],
+        [
+            "start-with-scoop-jbr.bat",
+            "peerbanhelper-cli-jbr",
+            "console"
+        ],
+        [
+            "start-with-scoop-liberica.bat",
+            "peerbanhelper-cli-liberica",
+            "console"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "1. GUI Mode.bat",
+            "PeerBanHelper/PeerBanHelper",
+            "",
+            "icon.ico"
+        ],
+        [
+            "2. GUI mode (silent).bat",
+            "PeerBanHelper/PeerBanHelper (Silent)",
+            "",
+            "icon.ico"
+        ],
+        [
+            "start-with-scoop-jbr.bat",
+            "PeerBanHelper/PeerBanHelper (JBR)",
+            "gui",
+            "icon.ico"
+        ],
+        [
+            "start-with-scoop-jbr.bat",
+            "PeerBanHelper/PeerBanHelper (Silent, JBR)",
+            "silent",
+            "icon.ico"
+        ],
+        [
+            "start-with-scoop-liberica.bat",
+            "PeerBanHelper/PeerBanHelper (Liberica, Windows 7)",
+            "gui",
+            "icon.ico"
+        ],
+        [
+            "start-with-scoop-liberica.bat",
+            "PeerBanHelper/PeerBanHelper (Silent, Liberica, Windows 7)",
+            "silent",
+            "icon.ico"
+        ]
+    ],
+    "persist": "data",
+    "checkver": {
+        "github": "https://github.com/PBH-BTN/PeerBanHelper"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/PBH-BTN/PeerBanHelper/releases/download/v$version/PeerBanHelper_Windows_$version_Portable_nojava.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/PBH-BTN/PeerBanHelper/releases/download/v$version/PeerBanHelper_Windows_$version_Portable_nojava.zip"
+            }
+        }
+    }
+}
