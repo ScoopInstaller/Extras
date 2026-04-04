@@ -1,33 +1,41 @@
 {
-    "version": "4.6.0",
-    "description": "A network protocol analyzer that lets you see what’s happening on your network at a microscopic level.",
+    "version": "4.6.4",
+    "description": "A network protocol analyzer that lets you see what's happening on your network at a microscopic level.",
     "homepage": "https://www.wireshark.org/",
     "license": "GPL-2.0-or-later",
     "notes": [
         "Wireshark requires the installation of Npcap. Do it manually from the 'wireshark' directory.",
         "$dir\\npcap-installer.exe",
         "",
-        "You can also install USBPcap from the 'wireshark' directory if you need the USB packets capture funcionality.",
-        "$dir\\USBPcapSetup-installer.exe",
+        "You can also install USBPcap from the 'wireshark' directory if you need the USB packets capture functionality.",
+        "$dir\\USBPcap-installer.exe",
         "",
         "If this is the first time you opted to install USBPcap, please restart and run: $dir\\enable-usbpcap.ps1"
     ],
     "architecture": {
+        "arm64": {
+            "url": "https://www.wireshark.org/download/win64/Wireshark-4.6.4-arm64.exe#/dl.7z",
+            "hash": "62a0d34efb4418fe373b8f56a13457ff488c827d8c7d7f48e3037e52752bee6f"
+        },
         "64bit": {
-            "url": "https://www.wireshark.org/download/win64/Wireshark-4.6.0-x64.exe#/dl.7z",
-            "hash": "aaec7abd3b79e0f336722ab86b193bbf5175fed125d7b8e2629ccdfc9a763aa1"
+            "url": "https://www.wireshark.org/download/win64/Wireshark-4.6.4-x64.exe#/dl.7z",
+            "hash": "102017d8e99a75b57895cd2144e6a61dc335a8ff14c7a25bd83a55f8ea9ad77b"
         }
     },
-    "installer": {
-        "script": [
-            "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\vc_redist*\", \"$dir\\uninstall-wireshark.exe\" -Recurse",
-            "Get-ChildItem \"$dir\\npcap-*.exe\" | Rename-Item -NewName 'npcap-installer.exe'",
-            "Get-ChildItem \"$dir\\USBPcapSetup-*.exe\" | Rename-Item -NewName 'USBPcapSetup-installer.exe'"
-        ]
-    },
+    "pre_install": [
+        "'$PLUGINSDIR', 'vc_redist*', 'uninstall-wireshark.exe' | ForEach-Object { \"$dir/$_\" } | Remove-Item -Recurse -ErrorAction Ignore",
+        "Get-ChildItem -Path \"$dir/npcap-*.exe\" | Select-Object -First 1 | Rename-Item -NewName 'npcap-installer.exe'",
+        "Get-ChildItem -Path \"$dir/USBPcapSetup-*.exe\" | Select-Object -First 1 | Rename-Item -NewName 'USBPcap-installer.exe'",
+        "$data = \"$persist_dir/Data\"",
+        "$preferences = \"$data/preferences\"",
+        "if (!(Test-Path $preferences)) {",
+        "    $null = New-Item -ItemType Directory $data -ErrorAction Ignore",
+        "    'gui.update.enabled: FALSE' | Out-File -Encoding utf8 $preferences",
+        "}"
+    ],
     "post_install": [
-        "Get-ChildItem \"$bucketsdir\\extras\\scripts\\wireshark\" | Copy-Item -Force -Destination \"$dir\"",
-        "& \"$dir\\enable-usbpcap.ps1\" 2>$null   # Attempt try to enable USBPcap if already installed"
+        "Copy-Item -Force \"$bucketsdir/extras/scripts/wireshark/*\" \"$dir\"",
+        "& \"$dir/enable-usbpcap.ps1\" 2>$null   # Attempt try to enable USBPcap if already installed"
     ],
     "bin": [
         "capinfos.exe",
@@ -58,13 +66,16 @@
     },
     "autoupdate": {
         "architecture": {
+            "arm64": {
+                "url": "https://www.wireshark.org/download/win64/Wireshark-$version-arm64.exe#/dl.7z"
+            },
             "64bit": {
-                "url": "https://www.wireshark.org/download/win64/Wireshark-$version-x64.exe#/dl.7z",
-                "hash": {
-                    "url": "https://www.wireshark.org/download/SIGNATURES-$version.txt",
-                    "regex": "SHA256\\($basename\\)=$sha256"
-                }
+                "url": "https://www.wireshark.org/download/win64/Wireshark-$version-x64.exe#/dl.7z"
             }
+        },
+        "hash": {
+            "url": "https://www.wireshark.org/download/SIGNATURES-$version.txt",
+            "regex": "SHA256\\($basename\\)=$sha256"
         }
     }
 }

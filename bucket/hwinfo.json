@@ -1,22 +1,16 @@
 {
-    "version": "8.30-5800",
-    "description": "Comprehensive Hardware Analysis, Monitoring and Reporting for Windows and DOS",
+    "version": "8.44-5935",
+    "description": "Comprehensive Hardware Analysis, Monitoring and Reporting for Windows and DOS.",
     "homepage": "https://www.hwinfo.com",
-    "license": "Freeware",
-    "url": "https://www.sac.sk/download/utildiag/hwi_830.zip",
-    "hash": "eec26737aa2e9224fa1206984d943bd8b5c76e09f7f7f7be982b82634f27491f",
-    "pre_install": [
-        "foreach ($conf in 'HWiNFO64.INI', 'HWiNFO32.INI') {",
-        "    if (!(Test-Path \"$persist_dir\\$conf\")) { Set-Content \"$dir\\$conf\" '[Settings]', 'AutoUpdate=0' -Encoding ASCII }",
-        "}",
-        "if (Test-PATH \"$persist_dir\\HWiNFO64_KEY.txt\" -PathType Leaf) {",
-        "    Copy-Item \"$persist_dir\\HWiNFO64_KEY.txt\" \"$dir\"",
-        "}",
-        "# Remove unwanted executable for x86/x64 installation",
-        "if ($architecture -ne 'arm64') { Remove-Item \"$dir\\HWiNFO_ARM64.exe\" }"
-    ],
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.hwinfo.com/licenses/"
+    },
+    "url": "https://www.sac.sk/download/utildiag/hwi_844.zip",
+    "hash": "b295a8dacbf32378f6c290f85752ed2a32a8eaf84ad958540f4c1a604a5f67a6",
     "architecture": {
         "64bit": {
+            "pre_install": "Get-ChildItem -Path $dir -Include '*32*', '*ARM*' -Recurse -File | Remove-Item -Force -ErrorAction SilentlyContinue",
             "bin": [
                 [
                     "HWiNFO64.exe",
@@ -31,6 +25,7 @@
             ]
         },
         "32bit": {
+            "pre_install": "Get-ChildItem -Path $dir -Include '*64*' -Recurse -File | Remove-Item -Force -ErrorAction SilentlyContinue",
             "bin": [
                 [
                     "HWiNFO32.exe",
@@ -45,6 +40,7 @@
             ]
         },
         "arm64": {
+            "pre_install": "Get-ChildItem -Path $dir -Exclude '*ARM*' -Recurse -File | Remove-Item -Force -ErrorAction SilentlyContinue",
             "bin": [
                 [
                     "HWiNFO_ARM64.exe",
@@ -59,21 +55,29 @@
             ]
         }
     },
-    "persist": [
-        "HWiNFO64.INI",
-        "HWiNFO32.INI"
-    ],
-    "pre_uninstall": [
-        "if (Test-PATH \"$dir\\HWiNFO64_KEY.txt\" -PathType Leaf) {",
-        "    if (Test-PATH \"$persist_dir\\HWiNFO64_KEY.txt\" -PathType Container) {",
-        "        Remove-Item \"$persist_dir\\HWiNFO64_KEY.txt\" -Recurse",
-        "    }",
-        "    Copy-Item \"$dir\\HWiNFO64_KEY.txt\" \"$persist_dir\"",
-        "}"
-    ],
+    "installer": {
+        "script": [
+            "ensure $persist_dir | Out-Null",
+            "Get-ChildItem -Path $persist_dir -Include '*64_KEY.txt' -Recurse -File | Copy-Item -Destination $dir -Force",
+            "$setting_name = if ($architecture -match '\\d{2}(?=bit)') { 'HWiNFO{0}.INI' -f $matches[0] } else { 'HWiNFO_ARM64.INI' }",
+            "if (-not (Test-Path -Path \"$persist_dir\\$setting_name\" -PathType Leaf)) {",
+            "    $cfg = @('[Settings]', 'AutoUpdate=0', 'AutoUpdateBetaDisable=1')",
+            "    Set-Content -Path \"$dir\\$setting_name\" -Value $cfg -Encoding ascii",
+            "}",
+            "persist_data @{ persist = $setting_name } $original_dir $persist_dir",
+            "persist_permission @{ persist = $setting_name } $global"
+        ]
+    },
+    "pre_uninstall": "Get-ChildItem -Path $dir -Filter '*64_KEY.txt' -File | Copy-Item -Destination $persist_dir -Force",
+    "uninstaller": {
+        "script": [
+            "$setting_name = if ($architecture -match '\\d{2}(?=bit)') { 'HWiNFO{0}.INI' -f $matches[0] } else { 'HWiNFO_ARM64.INI' }",
+            "unlink_persist_data @{ persist = $setting_name } $dir"
+        ]
+    },
     "checkver": {
         "url": "https://www.hwinfo.com/ver.txt",
-        "regex": "([\\d-.]+)"
+        "regex": "([\\d.-]+)"
     },
     "autoupdate": {
         "url": "https://www.sac.sk/download/utildiag/hwi_$majorVersion$minorVersion.zip"
