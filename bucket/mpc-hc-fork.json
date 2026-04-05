@@ -1,12 +1,12 @@
 {
-    "version": "2.3.9",
+    "version": "2.7.0",
     "description": "An extremely light-weight, open source media player for Windows.",
     "homepage": "https://github.com/clsid2/mpc-hc",
     "license": "GPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/clsid2/mpc-hc/releases/download/2.3.9/MPC-HC.2.3.9.x64.zip",
-            "hash": "5fec60d3007280a3acb1f223d40bedd088e5287431a18eea9dd29a38306f9cef",
+            "url": "https://github.com/clsid2/mpc-hc/releases/download/2.7.0/MPC-HC.2.7.0.x64.zip",
+            "hash": "64a60253850a2b8e4f6798659925840a3c4a1b269ceb254ffbbd637d8d4b9ce6",
             "bin": [
                 [
                     "mpc-hc64.exe",
@@ -21,8 +21,8 @@
             ]
         },
         "32bit": {
-            "url": "https://github.com/clsid2/mpc-hc/releases/download/2.3.9/MPC-HC.2.3.9.x86.zip",
-            "hash": "cbe61249842046425fdfb972c24bd1aec18b4d1cb2a57d7669f9127b36ffe2be",
+            "url": "https://github.com/clsid2/mpc-hc/releases/download/2.7.0/MPC-HC.2.7.0.x86.zip",
+            "hash": "96651c3f946cdab0de55e565396b391241337b51b6595ca81daa0b5af0741e92",
             "bin": "mpc-hc.exe",
             "shortcuts": [
                 [
@@ -33,7 +33,8 @@
         }
     },
     "pre_install": [
-        "@('mpc-hc64.ini', 'mpc-hc.ini') | ForEach-Object {",
+        "@('mpc-hc64.ini', 'mpc-hc.ini', 'default.mpcpl') | ForEach-Object {",
+        "    if ((Get-Item \"$persist_dir\\$_\" 2>$null).PSIsContainer) { Remove-Item \"$persist_dir\\$_\" }",
         "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" -ItemType File | Out-Null }",
         "}"
     ],
@@ -43,7 +44,7 @@
         "default.mpcpl"
     ],
     "checkver": {
-        "url": "https://api.github.com/repositories/91570348/releases/latest",
+        "url": "https://api.github.com/repos/clsid2/mpc-hc/releases/latest",
         "jsonpath": "$..browser_download_url",
         "regex": "download/(?<tag>[\\d.]+)\\/MPC-HC.([\\d.]+).x64.exe"
     },

@@ -1,17 +1,30 @@
 {
-    "version": "1.5.1",
+    "version": "2.3.0",
     "description": "Everything integration for the Windows taskbar.",
     "homepage": "https://github.com/srwi/EverythingToolbar",
-    "license": "MIT",
-    "depends": "everything",
+    "license": {
+        "identifier": "MIT",
+        "url": "https://github.com/srwi/EverythingToolbar/blob/HEAD/LICENSE"
+    },
+    "suggest": {
+        "everything": "extras/everything",
+        ".NET Desktop Runtime 8.0": "versions/windowsdesktop-runtime-8.0"
+    },
+    "innosetup": true,
     "architecture": {
         "64bit": {
-            "url": "https://github.com/srwi/EverythingToolbar/releases/download/1.5.1/EverythingToolbar-1.5.1.msi",
-            "hash": "53f0bf0fe11083f271ceb9c071a849327ae23905c66f59482d902b5484e6be68",
-            "extract_dir": "PFiles64\\EverythingToolbar"
+            "url": "https://github.com/srwi/EverythingToolbar/releases/download/2.3.0/EverythingToolbar-2.3.0-x64.exe",
+            "hash": "e732c93b299a073f7ee0fbc6707336b8037da5d7af190957e080d68c0bb5d158"
+        },
+        "arm64": {
+            "url": "https://github.com/srwi/EverythingToolbar/releases/download/2.3.0/EverythingToolbar-2.3.0-arm64.exe",
+            "hash": "b5209d282867ef403dab57557e11959f348144678b9ae08c0488f521c1eb4d42"
         }
     },
-    "post_install": "Start-Process \"$dir\\EverythingToolbar.Launcher.exe\"",
+    "pre_install": [
+        "Get-ChildItem -Path $dir -Include '*,1*' -Recurse | Rename-Item -NewName { $_.Name -replace ',1\\.', '.' }",
+        "Get-ChildItem -Path $dir -Include '*,2*' -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue"
+    ],
     "shortcuts": [
         [
             "EverythingToolbar.Launcher.exe",
@@ -22,11 +35,17 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/srwi/EverythingToolbar/releases/download/$version/EverythingToolbar-$version.msi"
+                "url": "https://github.com/srwi/EverythingToolbar/releases/download/$version/EverythingToolbar-$version-x64.exe",
+                "hash": {
+                    "url": "$baseurl/EverythingToolbar-$version-x64.sha256"
+                }
+            },
+            "arm64": {
+                "url": "https://github.com/srwi/EverythingToolbar/releases/download/$version/EverythingToolbar-$version-arm64.exe",
+                "hash": {
+                    "url": "$baseurl/EverythingToolbar-$version-arm64.sha256"
+                }
             }
-        },
-        "hash": {
-            "url": "$baseurl/EverythingToolbar-$version.sha256"
         }
     }
 }
