@@ -1,0 +1,60 @@
+{
+    "version": "145.1.7632.3200",
+    "description": "AI-powered desktop browser with built-in agentic assistant",
+    "homepage": "https://perplexity.ai/comet",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.perplexity.ai/en-ai/workspace/terms-of-service"
+    },
+    "url": "https://browser-download.perplexity.ai/windows-installers/6/comet_installer_latest.exe",
+    "hash": "3100b7cd3a5ac0b6674a9ad8336cbfd53b980dbaef6f08cf0c56aa4595cb2ce9",
+    "architecture": {
+        "64bit": {
+            "url": "https://browser-download.perplexity.ai/windows-installers/6/comet_installer_latest.exe"
+        }
+    },
+    "installer": {
+        "script": [
+            "$proc = Start-Process -FilePath \"$dir\\$fname\" -ArgumentList \"/S\" -Wait -PassThru -NoNewWindow",
+            "if ($proc.ExitCode -ne 0) {",
+            "    throw \"Comet installer failed with exit code $($proc.ExitCode)\"",
+            "}",
+            "$cometExe = \"$env:LOCALAPPDATA\\Perplexity\\Comet\\Application\\comet.exe\"",
+            "$timeout = 120",
+            "$elapsed = 0",
+            "while (-not (Test-Path $cometExe) -and $elapsed -lt $timeout) {",
+            "    Start-Sleep -Seconds 5",
+            "    $elapsed += 5",
+            "}",
+            "if (-not (Test-Path $cometExe)) {",
+            "    throw \"Comet installation did not complete.\"",
+            "}"
+        ]
+    },
+    "post_install": [
+        "$cometExe = \"$env:LOCALAPPDATA\\Perplexity\\Comet\\Application\\comet.exe\"",
+        "if (Test-Path $cometExe) {",
+        "    $startMenu = [Environment]::GetFolderPath('StartMenu')",
+        "    $shortcutPath = \"$startMenu\\Programs\\Perplexity Comet.lnk\"",
+        "    $shell = New-Object -ComObject WScript.Shell",
+        "    $shortcut = $shell.CreateShortcut($shortcutPath)",
+        "    $shortcut.TargetPath = $cometExe",
+        "    $shortcut.Save()",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "$uninstallPath = Get-ChildItem \"$env:LOCALAPPDATA\\Perplexity\\Comet\\Application\\*\\Installer\\setup.exe\" -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName",
+            "if ($uninstallPath -and (Test-Path $uninstallPath)) {",
+            "    Start-Process -FilePath $uninstallPath -ArgumentList '--uninstall', '--force-uninstall' -Wait -NoNewWindow",
+            "}",
+            "$startMenu = [Environment]::GetFolderPath('StartMenu')",
+            "$shortcutPath = \"$startMenu\\Programs\\Perplexity Comet.lnk\"",
+            "if (Test-Path $shortcutPath) { Remove-Item $shortcutPath -Force }"
+        ]
+    },
+    "notes": [
+        "Comet installs to %LOCALAPPDATA%\\Perplexity\\Comet\\ outside of Scoop's control.",
+        "Note: Perplexity only provides a rolling 'latest' installer. The pinned version and hash correspond to the installer at the time of this manifest's creation. Future installs may download a different installer version and fail hash validation. If this happens, the manifest needs a version and hash update."
+    ]
+}
