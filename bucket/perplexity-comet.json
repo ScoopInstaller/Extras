@@ -1,0 +1,76 @@
+{
+    "version": "145.1.7632.3200",
+    "description": "AI-powered desktop browser with built-in agentic assistant by Perplexity AI.",
+    "homepage": "https://perplexity.ai/comet",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.perplexity.ai/en-ai/workspace/terms-of-service"
+    },
+    "url": "https://www.perplexity.ai/rest/browser/download?platform=win_x64&channel=stable#/dl.exe",
+    "hash": "f2c3c519c349291d9106693034883f7c74b7f26c42c88637de8c17a426106dc8",
+    "installer": {
+        "args": [
+            "--do-not-launch-chrome",
+            "--system-level"
+        ]
+    },
+    "post_install": [
+        "# Create Start Menu shortcut (app installs outside Scoop's control)",
+        "$cometExe = \"$env:LOCALAPPDATA\\Perplexity\\Comet\\Application\\comet.exe\"",
+        "if (Test-Path $cometExe) {",
+        "    $startMenu = [Environment]::GetFolderPath('CommonPrograms')",
+        "    $shell = New-Object -ComObject WScript.Shell",
+        "    $lnk = $shell.CreateShortcut(\"$startMenu\\Perplexity Comet.lnk\")",
+        "    $lnk.TargetPath = $cometExe",
+        "    $lnk.Save()",
+        "} else {",
+        "    Write-Host \"Warning: comet.exe not found at $cometExe\"",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "# Try registry uninstall string first",
+            "$uninstallKey = 'HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Perplexity Comet'",
+            "if (Test-Path $uninstallKey) {",
+            "    $uninstallCmd = (Get-ItemProperty -Path $uninstallKey -Name 'QuietUninstallString' -ErrorAction SilentlyContinue).QuietUninstallString",
+            "    if (-not $uninstallCmd) {",
+            "        $uninstallCmd = (Get-ItemProperty -Path $uninstallKey -Name 'UninstallString' -ErrorAction SilentlyContinue).UninstallString",
+            "    }",
+            "}",
+            "if ($uninstallCmd) {",
+            "    cmd /c \"$uninstallCmd\" /S",
+            "} else {",
+            "    # Fallback: find uninstaller by filesystem glob",
+            "    $uninstallPath = Get-ChildItem \"$env:LOCALAPPDATA\\Perplexity\\Comet\\Application\\*\\Installer\\setup.exe\" -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName",
+            "    if ($uninstallPath -and (Test-Path $uninstallPath)) {",
+            "        $proc = Start-Process -FilePath $uninstallPath -ArgumentList '--uninstall', '--verbose-logging', '--force-uninstall' -Wait -NoNewWindow -PassThru",
+            "        if ($proc.ExitCode -ne 0) {",
+            "            Write-Warning \"Comet uninstaller exited with code $($proc.ExitCode).\"",
+            "        }",
+            "    } else {",
+            "        Write-Host 'Native uninstaller not found. Please uninstall from Settings > Apps.'",
+            "    }",
+            "}",
+            "# Remove shortcut created in post_install",
+            "$startMenu = [Environment]::GetFolderPath('CommonPrograms')",
+            "Remove-Item \"$startMenu\\Perplexity Comet.lnk\" -ErrorAction SilentlyContinue"
+        ]
+    },
+    "checkver": {
+        "github": "https://github.com/microsoft/winget-pkgs/tree/master/manifests/p/Perplexity/Comet"
+    },
+    "autoupdate": {
+        "url": {
+            "url": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/p/Perplexity/Comet/$version/Perplexity.Comet.installer.yaml",
+            "regex": "InstallerUrl:\\s*(https://[^\\s]+)"
+        },
+        "hash": {
+            "url": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/p/Perplexity/Comet/$version/Perplexity.Comet.installer.yaml",
+            "regex": "InstallerSha256:\\s*([A-Fa-f0-9]+)"
+        }
+    },
+    "notes": [
+        "Perplexity Comet installs to %LOCALAPPDATA%\\Perplexity\\Comet\\ outside of Scoop's control.",
+        "Package request issue: https://github.com/ScoopInstaller/Extras/issues/17547"
+    ]
+}
