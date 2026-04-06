@@ -1,0 +1,83 @@
+{
+    "version": "1.0.2527.0",
+    "description": "Quick Share from Google lets you quickly and easily share files and links with nearby Android devices and Windows PCs.",
+    "homepage": "https://www.android.com/phones/quick-share/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://policies.google.com/terms"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://dl.google.com/release2/Nearby/o2jg3mmmruq4r5vmifvettngce_1.0.2527.0/better_together.msi",
+            "hash": "615c5760ce1c556f19ba40ac0a2ccc706a8639f30ea42f66478608cd0d68581a"
+        }
+    },
+    "installer": {
+        "script": [
+            "msiexec /i \"$dir\\better_together.msi\" /quiet /norestart | Out-Null",
+            "# Wait for installation to complete",
+            "$wait = 60",
+            "while ($wait -gt 0) {",
+            "    Start-Sleep -Seconds 1",
+            "    $wait--",
+            "    if (-not (Get-Process -Name 'msiexec' -ErrorAction SilentlyContinue)) { break }",
+            "}",
+            "# Create Start Menu shortcut",
+            "$target = \"$env:ProgramFiles\\Google\\Quick Share\\QuickShare.exe\"",
+            "if (Test-Path $target) {",
+            "    $startMenu = [Environment]::GetFolderPath('CommonPrograms')",
+            "    $shell = New-Object -ComObject WScript.Shell",
+            "    $lnk = $shell.CreateShortcut(\"$startMenu\\Quick Share.lnk\")",
+            "    $lnk.TargetPath = $target",
+            "    $lnk.Save()",
+            "} else {",
+            "    Write-Host \"Warning: QuickShare.exe not found at $target\"",
+            "}"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "# Uninstall via Win32_Product",
+            "$product = Get-CimInstance Win32_Product -Filter \"Name='Quick Share'\" -ErrorAction SilentlyContinue",
+            "if ($product) {",
+            "    $product | Invoke-CimMethod -MethodName Uninstall | Out-Null",
+            "} else {",
+            "    # Fallback: find by product code from registry",
+            "    $uninstallKey = Get-ItemProperty 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*' -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -eq 'Quick Share' }",
+            "    if ($uninstallKey) {",
+            "        $uninstallString = $uninstallKey.UninstallString",
+            "        if ($uninstallString) {",
+            "            cmd /c \"$uninstallString\" /quiet",
+            "        }",
+            "    }",
+            "}",
+            "# Remove shortcut",
+            "$startMenu = [Environment]::GetFolderPath('CommonPrograms')",
+            "Remove-Item \"$startMenu\\Quick Share.lnk\" -ErrorAction SilentlyContinue"
+        ]
+    },
+    "checkver": {
+        "url": "https://api.github.com/repos/microsoft/winget-pkgs/contents/manifests/g/Google/QuickShare",
+        "regex": "\"name\"\\s*:\\s*\"([\\d.]+)\"",
+        "reverse": true
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": {
+                    "url": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/g/Google/QuickShare/$version/Google.QuickShare.installer.yaml",
+                    "regex": "InstallerUrl:\\s*(https://[^\\s]+)"
+                },
+                "hash": {
+                    "url": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/g/Google/QuickShare/$version/Google.QuickShare.installer.yaml",
+                    "regex": "InstallerSha256:\\s*([A-Fa-f0-9]+)"
+                }
+            }
+        }
+    },
+    "notes": [
+        "Quick Share from Google installs to %ProgramFiles%\\Google\\Quick Share\\.",
+        "Note: Despite being colloquially called 'Samsung Quick Share', the Windows client is now 'Quick Share from Google'.",
+        "Package request issue: https://github.com/ScoopInstaller/Extras/issues/17553"
+    ]
+}
