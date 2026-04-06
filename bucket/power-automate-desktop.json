@@ -1,0 +1,61 @@
+{
+    "version": "2.66.00154.26079",
+    "description": "Power Automate Desktop enables you to automate repetitive tasks across both legacy and modern applications using a drag-and-drop designer.",
+    "homepage": "https://learn.microsoft.com/power-automate/desktop-flows/introduction",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.microsoft.com/legal/terms-of-use"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://download.microsoft.com/download/5299d958-32ae-4df4-9ed2-08794fa87706/Setup.Microsoft.PowerAutomate.exe#/dl.exe",
+            "hash": "5d3c1e96fa4a4583bfd8c9235df04325ba1ba155be2910322a520579d534654a"
+        }
+    },
+    "installer": {
+        "args": [
+            "-Silent",
+            "-Install",
+            "-ACCEPTEULA"
+        ]
+    },
+    "shortcuts": [
+        [
+            "$env:ProgramFiles(x86)\\Power Automate Desktop\\PowerAutomateDesktop.exe",
+            "Power Automate Desktop"
+        ]
+    ],
+    "uninstaller": {
+        "script": [
+            "$uninstallPath = Get-ItemProperty \"HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*\" -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -match 'Power Automate' } | Select-Object -First 1 -ExpandProperty UninstallString",
+            "if (-not $uninstallPath) {",
+            "    $uninstallPath = Get-ItemProperty \"HKLM:\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*\" -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -match 'Power Automate' } | Select-Object -First 1 -ExpandProperty UninstallString",
+            "}",
+            "if ($uninstallPath) {",
+            "    $proc = Start-Process -FilePath 'cmd' -ArgumentList \"/c $uninstallPath -Silent -Uninstall\" -Wait -NoNewWindow -PassThru",
+            "    if ($proc.ExitCode -ne 0) {",
+            "        Write-Warning \"Power Automate Desktop uninstaller exited with code $($proc.ExitCode).\"",
+            "    }",
+            "} else {",
+            "    Write-Host 'Power Automate Desktop uninstaller not found. Please uninstall from Settings > Apps.'",
+            "}"
+        ]
+    },
+    "checkver": {
+        "url": "https://learn.microsoft.com/en-us/power-automate/desktop-flows/install-paf",
+        "regex": "Version\\s+([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download.microsoft.com/download/5299d958-32ae-4df4-9ed2-08794fa87706/Setup.Microsoft.PowerAutomate.exe#/dl.exe"
+            }
+        }
+    },
+    "notes": [
+        "Power Automate Desktop requires the Visual C++ 2015-2022 Redistributable and .NET Desktop Runtime 8.",
+        "Install them with: scoop install vcredist2022 dotnet-desktop-runtime",
+        "",
+        "Package request issue: https://github.com/ScoopInstaller/Extras/issues/XXXXX"
+    ]
+}
