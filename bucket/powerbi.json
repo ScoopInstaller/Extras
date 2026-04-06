@@ -1,0 +1,59 @@
+{
+    "version": "2.152.882.0",
+    "description": "Power BI Desktop is a unified, scalable platform for self-service and enterprise business intelligence (BI). Connect to and visualize any data, and seamlessly infuse the visuals into the apps you use every day.",
+    "homepage": "https://www.microsoft.com/power-platform/products/power-bi/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://powerbi.microsoft.com/desktop-eula/"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://download.microsoft.com/download/8/8/0/880BCA75-79DD-466A-927D-1ABF1F5454B0/PBIDesktopSetup-2026-03_x64.exe#/dl.exe",
+            "hash": "4396df655af60dbf584204dc4edb72b507c1f1675d1261b5c20eec4b4c274d3d"
+        }
+    },
+    "installer": {
+        "args": [
+            "-quiet",
+            "-norestart",
+            "ACCEPT_EULA=1"
+        ]
+    },
+    "shortcuts": [
+        [
+            "$env:ProgramFiles\\Microsoft Power BI Desktop\\bin\\PBIDesktop.exe",
+            "Power BI Desktop"
+        ]
+    ],
+    "uninstaller": {
+        "script": [
+            "$uninstallPath = Get-ItemProperty \"HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*\" -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -match 'Power BI Desktop' } | Select-Object -First 1 -ExpandProperty UninstallString",
+            "if (-not $uninstallPath) {",
+            "    $uninstallPath = Get-ItemProperty \"HKLM:\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*\" -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -match 'Power BI Desktop' } | Select-Object -First 1 -ExpandProperty UninstallString",
+            "}",
+            "if ($uninstallPath) {",
+            "    $proc = Start-Process -FilePath 'cmd' -ArgumentList \"/c $uninstallPath -quiet -norestart\" -Wait -NoNewWindow -PassThru",
+            "    if ($proc.ExitCode -ne 0) {",
+            "        Write-Warning \"Power BI Desktop uninstaller exited with code $($proc.ExitCode).\"",
+            "    }",
+            "} else {",
+            "    Write-Host 'Power BI Desktop uninstaller not found. Please uninstall from Settings > Apps.'",
+            "}"
+        ]
+    },
+    "checkver": {
+        "url": "https://www.microsoft.com/en-us/download/details.aspx?id=58494",
+        "regex": "Version\\s+([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download.microsoft.com/download/8/8/0/880BCA75-79DD-466A-927D-1ABF1F5454B0/PBIDesktopSetup-2026-03_x64.exe#/dl.exe"
+            }
+        }
+    },
+    "notes": [
+        "Power BI Desktop installs to %ProgramFiles%\\Microsoft Power BI Desktop\\.",
+        "Package request issue: https://github.com/ScoopInstaller/Extras/issues/XXXXX"
+    ]
+}
