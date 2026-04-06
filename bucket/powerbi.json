@@ -1,0 +1,73 @@
+{
+    "version": "2.152.882.0",
+    "description": "Power BI Desktop is a unified, scalable platform for self-service and enterprise business intelligence (BI). Connect to and visualize any data, and seamlessly infuse the visuals into the apps you use every day.",
+    "homepage": "https://www.microsoft.com/power-platform/products/power-bi/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://powerbi.microsoft.com/desktop-eula/"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://download.microsoft.com/download/8/8/0/880BCA75-79DD-466A-927D-1ABF1F5454B0/PBIDesktopSetup-2026-03_x64.exe#/dl.exe",
+            "hash": "4396df655af60dbf584204dc4edb72b507c1f1675d1261b5c20eec4b4c274d3d"
+        }
+    },
+    "installer": {
+        "args": [
+            "/quiet",
+            "/norestart"
+        ]
+    },
+    "post_install": [
+        "# Create Start Menu shortcut (app installs outside Scoop's control)",
+        "$target = Join-Path ${env:ProgramFiles} 'Microsoft Power BI Desktop\\bin\\PBIDesktop.exe'",
+        "if (Test-Path $target) {",
+        "    $startMenu = [Environment]::GetFolderPath('CommonPrograms')",
+        "    $shell = New-Object -ComObject WScript.Shell",
+        "    $lnk = $shell.CreateShortcut(\"$startMenu\\Power BI Desktop.lnk\")",
+        "    $lnk.TargetPath = $target",
+        "    $lnk.Save()",
+        "} else {",
+        "    Write-Host \"Warning: PBIDesktop.exe not found at $target\"",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "# Find the Burn uninstaller from registry",
+            "$uninstallKey = Get-ItemProperty 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*' -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -match 'Power BI Desktop' } | Select-Object -First 1",
+            "if (-not $uninstallKey) {",
+            "    $uninstallKey = Get-ItemProperty 'HKLM:\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*' -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -match 'Power BI Desktop' } | Select-Object -First 1",
+            "}",
+            "if ($uninstallKey -and $uninstallKey.UninstallString) {",
+            "    $uninstallPath = $uninstallKey.UninstallString",
+            "    $proc = Start-Process -FilePath 'cmd' -ArgumentList \"/c `\"$uninstallPath`\" /quiet /norestart\" -Wait -NoNewWindow -PassThru",
+            "    if ($proc.ExitCode -ne 0) {",
+            "        Write-Warning \"Power BI Desktop uninstaller exited with code $($proc.ExitCode).\"",
+            "    }",
+            "} else {",
+            "    Write-Host 'Power BI Desktop uninstaller not found. Please uninstall from Settings > Apps.'",
+            "}",
+            "# Remove shortcut",
+            "$startMenu = [Environment]::GetFolderPath('CommonPrograms')",
+            "Remove-Item \"$startMenu\\Power BI Desktop.lnk\" -ErrorAction SilentlyContinue"
+        ]
+    },
+    "checkver": {
+        "github": "https://github.com/microsoft/winget-pkgs/tree/master/manifests/m/Microsoft/PowerBI"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "hash": {
+                    "url": "https://raw.githubusercontent.com/microsoft/winget-pkgs/master/manifests/m/Microsoft/PowerBI/$version/Microsoft.PowerBI.installer.yaml",
+                    "regex": "InstallerSha256:\\s*([A-Fa-f0-9]+)"
+                }
+            }
+        }
+    },
+    "notes": [
+        "Power BI Desktop installs to %ProgramFiles%\\Microsoft Power BI Desktop\\ outside of Scoop's control.",
+        "The download URL contains a monthly date component (e.g., 2026-03). Autoupdate tracks the hash via winget-pkgs but the URL may need manual update when the monthly release changes.",
+        "Package request issue: https://github.com/ScoopInstaller/Extras/issues/17551"
+    ]
+}
