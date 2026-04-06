@@ -1,0 +1,61 @@
+{
+    "version": "145.1.7632.3200",
+    "description": "AI-powered desktop browser with built-in agentic assistant by Perplexity AI.",
+    "homepage": "https://perplexity.ai/comet",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.perplexity.ai/en-ai/workspace/terms-of-service"
+    },
+    "url": "https://browser-download.perplexity.ai/windows-installers/6/comet_installer_latest.exe#/dl.7z",
+    "hash": "3100b7cd3a5ac0b6674a9ad8336cbfd53b980dbaef6f08cf0c56aa4595cb2ce9",
+    "pre_install": [
+        "# The Comet installer is a Flutter-based NSIS self-extractor that installs to %LOCALAPPDATA%.",
+        "# Scoop cannot control this installation path. This manifest runs the installer silently",
+        "# and waits for the application to appear at the expected location.",
+        "# See: https://github.com/ScoopInstaller/Extras/pull/17537",
+        "$process = Start-Process -FilePath \"$dir\\comet_installer.exe\" -ArgumentList '/S' -Wait -NoNewWindow -PassThru",
+        "if ($process.ExitCode -ne 0) {",
+        "    throw \"Comet installer exited with code $($process.ExitCode).\"",
+        "}",
+        "# Wait for the actual application to appear (up to 2 minutes)",
+        "$cometExe = \"$env:LOCALAPPDATA\\Perplexity\\Comet\\Application\\comet.exe\"",
+        "$timeout = 120",
+        "$elapsed = 0",
+        "while (-not (Test-Path $cometExe) -and $elapsed -lt $timeout) {",
+        "    Start-Sleep -Seconds 5",
+        "    $elapsed += 5",
+        "}",
+        "if (-not (Test-Path $cometExe)) {",
+        "    throw \"Comet installation did not complete. The installer may require interactive installation.\"",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "$env:LOCALAPPDATA\\Perplexity\\Comet\\Application\\comet.exe",
+            "Perplexity Comet"
+        ]
+    ],
+    "uninstaller": {
+        "script": [
+            "# Find the native Comet uninstaller (version-agnostic)",
+            "$uninstallPath = Get-ChildItem \"$env:LOCALAPPDATA\\Perplexity\\Comet\\Application\\*\\Installer\\setup.exe\" -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName",
+            "if ($uninstallPath -and (Test-Path $uninstallPath)) {",
+            "    $proc = Start-Process -FilePath $uninstallPath -ArgumentList '--uninstall', '--verbose-logging', '--force-uninstall' -Wait -NoNewWindow -PassThru",
+            "    if ($proc.ExitCode -ne 0) {",
+            "        Write-Warning \"Comet uninstaller exited with code $($proc.ExitCode).\"",
+            "    }",
+            "} else {",
+            "    Write-Host 'Native uninstaller not found. Please uninstall from Settings > Apps.'",
+            "}"
+        ]
+    },
+    "notes": [
+        "Perplexity Comet is an AI-powered browser by Perplexity AI.",
+        "Homepage: https://perplexity.ai/comet",
+        "",
+        "Note: Comet installs to %LOCALAPPDATA%\\Perplexity\\Comet\\ outside of Scoop's control.",
+        "The Scoop app directory only stores the installer and manifest.",
+        "",
+        "Package request issue: https://github.com/ScoopInstaller/Extras/issues/17547"
+    ]
+}
