@@ -1,0 +1,57 @@
+{
+    "version": "3.4.1.78303",
+    "description": "Toolbox App. A control panel for all JetBrains tools.",
+    "homepage": "https://www.jetbrains.com/toolbox/",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.jetbrains.com/legal/"
+    },
+    "notes": [
+        "By default all your tools are installed into '$dir\\apps' folder and are persisted.",
+        "This could be changed inside settings menu."
+    ],
+    "url": "https://download.jetbrains.com/toolbox/jetbrains-toolbox-3.4.1.78303.exe",
+    "hash": "0caa677bb50f83db826c7b619d91c932f215f270bd4f7277a7b3aa6457f62c77",
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\jetbrains-toolbox-$version.exe\" \"$dir\\installer\" -Removal",
+        "Expand-7zipArchive \"$dir\\installer\\.text\" \"$dir\"",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\installer\" -Recurse"
+    ],
+    "post_install": [
+        "$config = \"$env:LOCALAPPDATA\\JetBrains\\Toolbox\\.settings.json\"",
+        "if (!(Test-Path $config)) {",
+        "    $settings = @{",
+        "        'autostart' = $false",
+        "        'install_location' = \"$dir\\apps\"",
+        "        'update' = @{'install_automatically' = $false}",
+        "    }",
+        "    New-Item $config -Type File -Force | Out-Null",
+        "    Set-Content $config ($settings | ConvertToPrettyJson) -Encoding ASCII -Force",
+        "} else { # NOTE: Remove the migration script after 6 months (2024-02-15)",
+        "  $conf_content = (Get-Content $config | ConvertFrom-Json)",
+        "  if ($conf_content.'install_location' -eq \"$dir\") {",
+        "    $conf_content.'install_location' = \"$dir\\apps\"",
+        "    Set-Content $config ($conf_content | ConvertToPrettyJson) -Encoding ASCII -Force",
+        "  }",
+        "}",
+        "# NOTE END"
+    ],
+    "bin": "jetbrains-toolbox.exe",
+    "shortcuts": [
+        [
+            "jetbrains-toolbox.exe",
+            "JetBrains Toolbox"
+        ]
+    ],
+    "persist": "apps",
+    "checkver": {
+        "url": "https://data.services.jetbrains.com/products/releases?code=TBA&latest=true&type=release",
+        "jsonpath": "$.TBA..build"
+    },
+    "autoupdate": {
+        "url": "https://download.jetbrains.com/toolbox/jetbrains-toolbox-$version.exe",
+        "hash": {
+            "url": "$url.sha256"
+        }
+    }
+}

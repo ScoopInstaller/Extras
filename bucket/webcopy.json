@@ -1,0 +1,57 @@
+{
+    "version": "1.9.1.872",
+    "description": "Copy websites locally for offline browsing.",
+    "homepage": "https://www.cyotek.com/cyotek-webcopy",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.cyotek.com/cyotek-webcopy/license-agreement"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://www.cyotek.com/downloads/get/setup-cyowcopy-1.9.1.872-x64.exe",
+            "hash": "8b5dfdce50f95a26dea849aacc355efae459cbb2360de19fcf1a33b266f8cce0"
+        },
+        "32bit": {
+            "url": "https://www.cyotek.com/downloads/get/setup-cyowcopy-1.9.1.872-x86.exe",
+            "hash": "900908d17e1c8d5e1ff4c8347145e0d221b1d21fb22182cdbc0a3d2c14f5dd3c"
+        }
+    },
+    "installer": {
+        "script": [
+            "Expand-InnoArchive \"$dir\\$fname\" -ExtractDir '{app}'",
+            "if (!(Test-Path \"$persist_dir\")) {",
+            "    ensure \"$persist_dir\" | Out-Null",
+            "    Expand-InnoArchive \"$dir\\$fname\" -ExtractDir '{userappdata}' -DestinationPath \"$persist_dir\" -Removal",
+            "}",
+            "New-Item $env:AppData\\Cyotek -ItemType Junction -Target \"$persist_dir\\Cyotek\" | Out-Null"
+        ]
+    },
+    "uninstaller": {
+        "script": "Remove-Item $env:APPDATA\\Cyotek -Force -Recurse"
+    },
+    "bin": "wcopycmd.cmd",
+    "shortcuts": [
+        [
+            "cyowcopy.exe",
+            "WebCopy"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.cyotek.com/cyotek-webcopy/downloads",
+        "regex": "setup-cyowcopy-([\\d.]+)-x64\\.exe"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://www.cyotek.com/downloads/get/setup-cyowcopy-$version-x64.exe"
+            },
+            "32bit": {
+                "url": "https://www.cyotek.com/downloads/get/setup-cyowcopy-$version-x86.exe"
+            }
+        },
+        "hash": {
+            "url": "https://www.cyotek.com/cyotek-webcopy/downloads",
+            "regex": "(?sm)$basename.*?$sha256"
+        }
+    }
+}

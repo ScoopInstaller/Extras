@@ -1,0 +1,58 @@
+{
+    "version": "1.60.0",
+    "description": "The hackable text editor",
+    "homepage": "https://atom.io/",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/atom/atom/releases/download/v1.60.0/atom-x64-1.60.0-full.nupkg",
+            "hash": "sha1:81ddc41fb724182b950e2f4b413ee5bc9410b730"
+        },
+        "32bit": {
+            "url": "https://github.com/atom/atom/releases/download/v1.60.0/atom-1.60.0-full.nupkg",
+            "hash": "sha1:a735e4fca76c53947cbaab42e461e36b2166ed75"
+        }
+    },
+    "extract_dir": "lib\\net45",
+    "extract_to": "AtomPortable",
+    "bin": [
+        "AtomPortable\\resources\\cli\\atom.cmd",
+        "AtomPortable\\resources\\app\\apm\\bin\\apm.cmd"
+    ],
+    "shortcuts": [
+        [
+            "AtomPortable\\atom.exe",
+            "Atom"
+        ]
+    ],
+    "persist": ".atom",
+    "post_install": [
+        "if (!(Test-Path \"$dir\\.atom\\*\") -and (Test-Path \"$env:UserProfile\\.atom\")) {",
+        "    info '[Portable Mode]: Copying user data...'",
+        "    Copy-Item \"$env:UserProfile\\.atom\\*\" \"$dir\\.atom\" -Recurse",
+        "}",
+        "if (!(Test-Path \"$dir\\.atom\\electronUserData\")) {",
+        "    New-Item -Type Directory \"$dir\\.atom\\electronUserData\" | Out-Null",
+        "}"
+    ],
+    "checkver": {
+        "github": "https://github.com/atom/atom"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/atom/atom/releases/download/v$version/atom-x64-$version-full.nupkg",
+                "hash": {
+                    "url": "$baseurl/RELEASES-x64",
+                    "regex": "$sha1\\s*atom-$version-full\\.nupkg"
+                }
+            },
+            "32bit": {
+                "url": "https://github.com/atom/atom/releases/download/v$version/atom-$version-full.nupkg",
+                "hash": {
+                    "url": "$baseurl/RELEASES"
+                }
+            }
+        }
+    }
+}

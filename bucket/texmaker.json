@@ -1,0 +1,54 @@
+{
+    "version": "6.0.1",
+    "description": "A free, modern and cross-platform LaTeX editor that integrates many tools needed to develop documents with LaTeX.",
+    "homepage": "https://www.xm1math.net/texmaker/",
+    "license": "GPL-2.0-only",
+    "suggest": {
+        "MiKTeX": "latex"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://www.xm1math.net/texmaker/assets/files/texmakerwin64usb.zip",
+            "hash": "2b344b6d58bb7b1b4935a810db7cc9e6c7ff59d62a27e1d68618a040a71fe45d"
+        }
+    },
+    "extract_dir": "texmakerwin64usb",
+    "installer": {
+        "script": [
+            "foreach ($file in @('texmaker.ini', 'texmakerapp.ini')){",
+            "    if(!(Test-Path \"$persist_dir\\$file\")) {",
+            "        New-Item \"$persist_dir\\$file\" -Force | Out-Null",
+            "    }",
+            "    Copy-Item \"$persist_dir\\$file\" \"$dir\\$file\" -Force",
+            "}"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "foreach ($file in @('texmaker.ini', 'texmakerapp.ini')){",
+            "    Copy-Item \"$dir\\$file\" \"$persist_dir\\$file\" -Force",
+            "}"
+        ]
+    },
+    "shortcuts": [
+        [
+            "texmaker.exe",
+            "Texmaker"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.xm1math.net/texmaker/version.txt",
+        "regex": "([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://www.xm1math.net/texmaker/assets/files/texmakerwin64usb.zip"
+            }
+        },
+        "hash": {
+            "url": "https://www.xm1math.net/texmaker/download.html",
+            "regex": "(?sm)$basename.*?md5 sum\\s+:\\s+$md5"
+        }
+    }
+}

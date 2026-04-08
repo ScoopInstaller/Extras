@@ -1,0 +1,50 @@
+{
+    "version": "14.44.35211.0",
+    "description": "Microsoft Visual C++ Redistributables bundle for all major versions",
+    "homepage": "https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.microsoft.com/en-us/legal/intellectualproperty/copyright/default.aspx"
+    },
+    "notes": "You can now remove all vcredist installers with 'scoop uninstall vcredist2005 vcredist2008 vcredist2010 vcredist2012 vcredist2013 vcredist'",
+    "depends": [
+        "extras/vcredist2005",
+        "extras/vcredist2008",
+        "extras/vcredist2010",
+        "extras/vcredist2012",
+        "extras/vcredist2013"
+    ],
+    "url": [
+        "https://aka.ms/vs/17/release/vc_redist.x64.exe",
+        "https://aka.ms/vs/17/release/vc_redist.x86.exe"
+    ],
+    "hash": [
+        "cc0ff0eb1dc3f5188ae6300faef32bf5beeba4bdd6e8e445a9184072096b713b",
+        "0c09f2611660441084ce0df425c51c11e147e6447963c3690f97e0b25c55ed64"
+    ],
+    "post_install": [
+        "# For error codes, see https://docs.microsoft.com/en-us/windows/win32/msi/error-codes",
+        "$ec = @{",
+        "    1638 = 'This product is already installed';",
+        "    3010 = 'A restart is required to complete the installation';",
+        "}",
+        "Invoke-ExternalCommand -FilePath \"$dir\\vc_redist.x64.exe\" -ArgumentList '/fo', '/quiet', '/norestart' -ContinueExitCodes $ec -RunAs | Out-Null",
+        "Invoke-ExternalCommand -FilePath \"$dir\\vc_redist.x86.exe\" -ArgumentList '/fo', '/quiet', '/norestart' -ContinueExitCodes $ec -RunAs | Out-Null"
+    ],
+    "checkver": {
+        "script": [
+            "# download 1 MB and extract version from the file itself",
+            "$wc = [System.Net.HttpWebRequest]::Create('https://aka.ms/vs/17/release/vc_redist.x64.exe')",
+            "$wc.AddRange(0, 1000000)",
+            "$sr = New-Object -TypeName System.IO.StreamReader -ArgumentList $wc.GetResponse().GetResponseStream()",
+            "if ($sr.ReadToEnd() -match \"P\\x00r\\x00o\\x00d\\x00u\\x00c\\x00t\\x00V\\x00e\\x00r\\x00s\\x00i\\x00o\\x00n\\x00\\x00\\x00(?<version>.*?)\\x00\\x00\\x00D\") { return $Matches['version'].Replace(\"`0\", '') } else { return '' }"
+        ],
+        "regex": "(.*)"
+    },
+    "autoupdate": {
+        "url": [
+            "https://aka.ms/vs/17/release/vc_redist.x64.exe",
+            "https://aka.ms/vs/17/release/vc_redist.x86.exe"
+        ]
+    }
+}

@@ -1,0 +1,58 @@
+{
+    "version": "11.10.0",
+    "description": "A Git client which helps you track and manage changes to your code.",
+    "homepage": "https://www.gitkraken.com/",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.gitkraken.com/eula"
+    },
+    "notes": [
+        "Add GitKraken to directory context menu by running:",
+        "'reg import \"$dir\\install-context.reg\"'"
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://api.gitkraken.dev/releases/production/windows/x64/11.10.0/gitkraken-11.10.0-full.nupkg",
+            "hash": "sha1:d2418baaff9d5e5fd16f0ae8024274692eb509a2"
+        }
+    },
+    "extract_dir": "lib\\net45",
+    "bin": "gitkraken.exe",
+    "shortcuts": [
+        [
+            "gitkraken.exe",
+            "GitKraken"
+        ]
+    ],
+    "post_install": [
+        "$exepath = \"$dir\\gitkraken.exe\".Replace('\\', '\\\\')",
+        "'install-context', 'uninstall-context' | ForEach-Object {",
+        "  if (Test-Path \"$bucketsdir\\extras\\scripts\\gitkraken\\$_.reg\") {",
+        "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\gitkraken\\$_.reg\"",
+        "    $content = $content.Replace('$gitkraken', $exepath)",
+        "    if ($global) {",
+        "      $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "    }",
+        "    $content | Set-Content -Path \"$dir\\$_.reg\"",
+        "  }",
+        "}"
+    ],
+    "uninstaller": {
+        "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }"
+    },
+    "checkver": {
+        "url": "https://api.gitkraken.dev/releases/production/windows/x64/RELEASES",
+        "regex": "gitkraken-([\\d.]+)-full\\.nupkg",
+        "reverse": true
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://api.gitkraken.dev/releases/production/windows/x64/$version/gitkraken-$version-full.nupkg"
+            }
+        },
+        "hash": {
+            "url": "https://api.gitkraken.dev/releases/production/windows/x64/RELEASES"
+        }
+    }
+}

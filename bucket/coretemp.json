@@ -1,0 +1,57 @@
+{
+    "version": "1.20",
+    "description": "Monitor processor temperature and other vital information.",
+    "homepage": "https://www.alcpu.com/CoreTemp/",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.alcpu.com/CoreTemp/terms.html"
+    },
+    "notes": "Download language packs by running: \"$dir\\download-language-packs.ps1\" (\"powershell \"$dir\\download-language-packs.ps1\"\" under cmd)",
+    "architecture": {
+        "64bit": {
+            "url": "https://www.alcpu.com/CoreTemp/CoreTemp64.zip",
+            "hash": "4ebe152dd05c4e43d11be442dda3d886be348d1a22d9ead754883275ff0394e5"
+        },
+        "32bit": {
+            "url": "https://www.alcpu.com/CoreTemp/CoreTemp32.zip",
+            "hash": "2cf38a0fa7d500f8c558b4922a6daa6f82fe29ff9db67ebc406af6ab41b18273"
+        }
+    },
+    "pre_install": [
+        "Copy-Item \"$bucketsdir\\extras\\scripts\\coretemp\\download-language-packs.ps1\" \"$dir\\\" | Out-Null",
+        "if (Test-Path \"$persist_dir\\CoreTemp.ini\") { Copy-Item \"$persist_dir\\CoreTemp.ini\" \"$dir\\\" | Out-Null }"
+    ],
+    "pre_uninstall": "Stop-Process -Name 'Core Temp' -ErrorAction SilentlyContinue",
+    "uninstaller": {
+        "script": [
+            "if (Test-Path \"$dir\\CoreTemp.ini\") {",
+            "    ensure \"$persist_dir\" | Out-Null",
+            "    Copy-Item \"$dir\\CoreTemp.ini\" \"$persist_dir\\\" | Out-Null",
+            "}"
+        ]
+    },
+    "shortcuts": [
+        [
+            "Core Temp.exe",
+            "Core Temp"
+        ]
+    ],
+    "persist": [
+        "languages",
+        "plugins"
+    ],
+    "checkver": {
+        "url": "https://www.alcpu.com/CoreTemp/history.html",
+        "regex": "Version ([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://www.alcpu.com/CoreTemp/CoreTemp64.zip"
+            },
+            "32bit": {
+                "url": "https://www.alcpu.com/CoreTemp/CoreTemp32.zip"
+            }
+        }
+    }
+}

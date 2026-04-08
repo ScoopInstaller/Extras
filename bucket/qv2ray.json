@@ -1,0 +1,44 @@
+{
+    "version": "2.7.0",
+    "description": "Graphical frontend for v2ray",
+    "homepage": "https://github.com/Qv2ray/Qv2ray",
+    "license": "GPL-3.0-or-later",
+    "suggest": {
+        "v2ray": "v2ray",
+        "vcredist": "extras/vcredist2022"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Qv2ray/Qv2ray/releases/download/v2.7.0/Qv2ray-v2.7.0-Windows.7z",
+            "hash": "b914b41d015facb84b1eceeff013e1187242b3c6f73539fbcd9a8aaf5d6942e5"
+        }
+    },
+    "extract_dir": "deployment",
+    "pre_install": [
+        "Remove-Item \"$dir\\vc_red*exe\"",
+        "if (-not (Test-Path \"$persist_dir\\config\\Qv2ray.conf\")) {",
+        "    ensure \"$dir\\config\" | Out-Null",
+        "    New-Item \"$dir\\config\\QV2RAY_FEATURE_DISABLE_AUTO_UPDATE\" | Out-Null",
+        "    $v2ray_dir = appdir 'v2ray' $global",
+        "    if (Test-Path $v2ray_dir) {",
+        "        $current = $v2ray_dir | Join-Path -ChildPath 'current'",
+        "        @{",
+        "            'config_version' = 14",
+        "            'logLevel' = 2",
+        "            'kernelConfig' = @{",
+        "                'v2CorePath_win'   = \"$current\\v2ray.exe\"",
+        "                'v2AssetsPath_win' = \"$current\"",
+        "            }",
+        "        } | ConvertTo-Json -Depth 20 | Out-File \"$dir\\config\\Qv2ray.conf\"",
+        "    }",
+        "}"
+    ],
+    "bin": "qv2ray.exe",
+    "shortcuts": [
+        [
+            "qv2ray.exe",
+            "Qv2ray"
+        ]
+    ],
+    "persist": "config"
+}

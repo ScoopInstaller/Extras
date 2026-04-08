@@ -1,0 +1,134 @@
+{
+    "version": "9.7.13",
+    "description": "The .NET programmer's playground",
+    "homepage": "https://www.linqpad.net",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.linqpad.net/eula.txt"
+    },
+    "suggest": {
+        ".NET SDK 8": "versions/dotnet8-sdk",
+        ".NET SDK 9": "versions/dotnet9-sdk",
+        ".NET SDK 10": "versions/dotnet10-sdk"
+    },
+    "url": "https://cdn.linqpad.net/public/LINQPad9.zip?cache=9.7.13.2777418",
+    "hash": "783998de4bd7d515a19ce40a9b318fe7f076fc5211a9ec1775be0ea44103bc9a",
+    "architecture": {
+        "64bit": {
+            "bin": [
+                [
+                    "LPRun9-x64.exe",
+                    "lprun"
+                ],
+                [
+                    "LINQPad9-x64.exe",
+                    "linqpad"
+                ],
+                [
+                    "LPRun9-x86.exe",
+                    "lprun-x86"
+                ],
+                [
+                    "LINQPad9-x86.exe",
+                    "linqpad-x86"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "LINQPad9-x64.exe",
+                    "LINQPad 9"
+                ],
+                [
+                    "LINQPad9-x86.exe",
+                    "LINQPad 9 (x86)"
+                ]
+            ]
+        },
+        "32bit": {
+            "bin": [
+                [
+                    "LPRun9-x86.exe",
+                    "lprun"
+                ],
+                [
+                    "LINQPad9-x86.exe",
+                    "linqpad"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "LINQPad9-x86.exe",
+                    "LINQPad 9"
+                ]
+            ]
+        }
+    },
+    "checkver": {
+        "url": "https://www.linqpad.net/Download.aspx",
+        "script": [
+            "$match = $page -match 'Download LINQPad (?<majorVersion>\\d)'",
+            "if (-not $match) {return '' }",
+            "try {",
+            "    $res = Invoke-WebRequest -Uri \"https://www.linqpad.net/GetFile.aspx?LINQPad$($Matches.majorVersion).zip\" -Method Head -MaximumRedirection 0 -ErrorAction Ignore",
+            "} catch [Microsoft.PowerShell.Commands.HttpResponseException] {",
+            "    $releaseUrl = $_.Exception.Response.Headers.Location.ToString()",
+            "}",
+            "$releaseUrl = if ($null -eq $releaseUrl) { $res.Headers['Location'] } else { $releaseUrl }",
+            "$releaseUrl"
+        ],
+        "regex": "\\.zip\\?cache=(?<ver>(?<version>\\d+\\.\\d+\\.\\d+)[\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://cdn.linqpad.net/public/LINQPad$majorVersion.zip?cache=$matchVer",
+        "architecture": {
+            "64bit": {
+                "bin": [
+                    [
+                        "LPRun$majorVersion-x64.exe",
+                        "lprun"
+                    ],
+                    [
+                        "LINQPad$majorVersion-x64.exe",
+                        "linqpad"
+                    ],
+                    [
+                        "LPRun$majorVersion-x86.exe",
+                        "lprun-x86"
+                    ],
+                    [
+                        "LINQPad$majorVersion-x86.exe",
+                        "linqpad-x86"
+                    ]
+                ],
+                "shortcuts": [
+                    [
+                        "LINQPad$majorVersion-x64.exe",
+                        "LINQPad $majorVersion"
+                    ],
+                    [
+                        "LINQPad$majorVersion-x86.exe",
+                        "LINQPad $majorVersion (x86)"
+                    ]
+                ]
+            },
+            "32bit": {
+                "bin": [
+                    [
+                        "LPRun$majorVersion-x86.exe",
+                        "lprun"
+                    ],
+                    [
+                        "LINQPad$majorVersion-x86.exe",
+                        "linqpad"
+                    ]
+                ],
+                "shortcuts": [
+                    [
+                        "LINQPad$majorVersion-x86.exe",
+                        "LINQPad $majorVersion"
+                    ]
+                ]
+            }
+        }
+    }
+}

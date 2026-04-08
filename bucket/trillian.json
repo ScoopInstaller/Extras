@@ -1,0 +1,34 @@
+{
+    "version": "6.6.0.14",
+    "description": "Modern and secure instant messaging",
+    "homepage": "https://www.trillian.im",
+    "license": {
+        "identifier": "Freemium",
+        "url": "https://www.trillian.im/eula/"
+    },
+    "url": "https://trillian.im/get/windows/6.6/trillian-v6.6.0.14.msi",
+    "hash": "df118389c625b8887001318168cf4c7df04944d8fe6760b51a150ffbb230c260",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\trillian.ini\")) {",
+        "   Set-Content \"$dir\\trillian.ini\" ('[General]', 'Use User Directory=0', 'Global Directory=users\\global\\') -Encoding Ascii",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "trillian.exe",
+            "Trillian"
+        ]
+    ],
+    "persist": [
+        "trillian.ini",
+        "users"
+    ],
+    "checkver": {
+        "url": "https://www.trillian.im/shared/scripts/news.items.js",
+        "regex": "\"windows\",\\s*([\\d.]+),\\s*([\\d]+),\\s*\".*?\",\\s*false",
+        "replace": "${1}.0.${2}"
+    },
+    "autoupdate": {
+        "url": "https://trillian.im/get/windows/$majorVersion.$minorVersion/trillian-v$version.msi"
+    }
+}

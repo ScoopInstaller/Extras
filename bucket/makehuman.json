@@ -1,0 +1,35 @@
+{
+    "version": "1.3.0",
+    "description": "Open source tools for making 3D characters.",
+    "homepage": "http://www.makehumancommunity.org/",
+    "license": "AGPL-3.0-or-later",
+    "url": "https://files.makehumancommunity.org/releases/makehuman-community-1.3.0-windows.zip",
+    "hash": "md5:12d41ef6738a0a092272583b2bff09fe",
+    "bin": "makehuman.ps1",
+    "shortcuts": [
+        [
+            "Python\\pythonw.exe",
+            "MakeHuman",
+            "$dir\\mhstartwrapper.py",
+            "makehuman.ico"
+        ]
+    ],
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\makehuman-community_$version.exe\" \"$dir\"",
+            "Write-Output \"& $dir\\Python\\pythonw.exe $dir\\mhstartwrapper.py @args\" | Out-File -Encoding utf8  \"$dir\\makehuman.ps1\"",
+            "Remove-Item \"$dir\\makehuman-community_$version.exe\""
+        ]
+    },
+    "checkver": {
+        "url": "https://files.makehumancommunity.org/releases/",
+        "regex": "([\\d.]+)-windows.zip",
+        "reverse": true
+    },
+    "autoupdate": {
+        "url": "https://files.makehumancommunity.org/releases/makehuman-community-$version-windows.zip",
+        "hash": {
+            "url": "$baseurl/md5sums.txt"
+        }
+    }
+}

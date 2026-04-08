@@ -1,0 +1,43 @@
+{
+    "version": "0.13.2",
+    "description": "Open-source automated time tracker",
+    "homepage": "https://activitywatch.net/",
+    "license": "MPL-2.0",
+    "notes": [
+        "Add to startup:",
+        "New-ItemProperty -Path HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run -Name ActivityWatch -PropertyType String -Value \"$dir\\aw-qt.exe\"",
+        "",
+        "Remove from startup:",
+        "Remove-ItemProperty -Path HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run -Name ActivityWatch"
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/ActivityWatch/activitywatch/releases/download/v0.13.2/activitywatch-v0.13.2-windows-x86_64.zip",
+            "hash": "a067fa765678a411991826c4da811fd2d8ca260c2db9d6d897957565b61c369f"
+        }
+    },
+    "bin": "aw-qt.exe",
+    "shortcuts": [
+        [
+            "aw-qt.exe",
+            "ActivityWatch"
+        ]
+    ],
+    "extract_dir": "activitywatch",
+    "pre_uninstall": [
+        "if (Get-Service -Name 'aw-qt.exe' -ErrorAction 'SilentlyContinue') {",
+        "    if (!(is_admin)) { error \"Admin rights required to remove ActivityWatch service\"; break }",
+        "    Start-Process \"$dir\\aw-qt.exe\" -Wait -Verb 'RunAs' -ArgumentList 'uninstall' -WindowStyle 'Hidden'",
+        "}"
+    ],
+    "checkver": {
+        "github": "https://github.com/ActivityWatch/activitywatch"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/ActivityWatch/activitywatch/releases/download/v$version/activitywatch-v$version-windows-x86_64.zip"
+            }
+        }
+    }
+}

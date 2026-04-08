@@ -1,0 +1,70 @@
+{
+    "version": "32.1.1",
+    "description": "Video recording and live streaming software",
+    "homepage": "https://obsproject.com",
+    "license": "GPL-2.0-only",
+    "notes": [
+        "Add Virtual Camera module by running: \"$dir\\data\\obs-plugins\\win-dshow\\virtualcam-install.bat\"",
+        "Remove it by running: \"$dir\\data\\obs-plugins\\win-dshow\\virtualcam-uninstall.bat\""
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/obsproject/obs-studio/releases/download/32.1.1/OBS-Studio-32.1.1-Windows-x64.zip",
+            "hash": "a4cc40a06d5a5dc158c792631b596a04b02d8fe99644a0f0bc3b12199dbce011",
+            "shortcuts": [
+                [
+                    "bin\\64bit\\obs64.exe",
+                    "OBS Studio"
+                ]
+            ]
+        },
+        "arm64": {
+            "url": "https://github.com/obsproject/obs-studio/releases/download/32.1.1/OBS-Studio-32.1.1-Windows-arm64.zip",
+            "hash": "f54a9224adb1fdd496476475235527965327e93f912b64af9debdd833335aee3",
+            "shortcuts": [
+                [
+                    "bin\\64bit\\obs64.exe",
+                    "OBS Studio"
+                ]
+            ]
+        }
+    },
+    "pre_install": [
+        "if (-not (Test-Path \"$persist_dir\\portable_mode.txt\")) {",
+        "    New-Item -Path \"$dir\\portable_mode.txt\" -ItemType File -Force | Out-Null",
+        "}"
+    ],
+    "post_install": [
+        "'data', 'obs-plugins' | ForEach-Object {",
+        "    $source_dir = Join-Path $dir \"$_.original\"",
+        "    $destination_dir = Join-Path $dir $_",
+        "    if (Test-Path \"$source_dir\") {",
+        "        Copy-Item -Path \"$source_dir\\*\" -Destination $destination_dir -Force -Recurse",
+        "        Remove-Item -Path $source_dir -Recurse -Force -ErrorAction SilentlyContinue",
+        "    }",
+        "}"
+    ],
+    "persist": [
+        "data",
+        "config",
+        "obs-plugins",
+        "portable_mode.txt"
+    ],
+    "checkver": {
+        "github": "https://github.com/obsproject/obs-studio"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/obsproject/obs-studio/releases/download/$version/OBS-Studio-$version-Windows-x64.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/obsproject/obs-studio/releases/download/$version/OBS-Studio-$version-Windows-arm64.zip"
+            }
+        },
+        "hash": {
+            "url": "https://github.com/obsproject/obs-studio/releases/$version",
+            "regex": "(?sm)$basename.*?$sha256"
+        }
+    }
+}

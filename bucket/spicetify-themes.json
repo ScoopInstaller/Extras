@@ -1,0 +1,35 @@
+{
+    "version": "2026-01-18T07.54.37",
+    "description": "Community-created themes for Spicetify.",
+    "homepage": "https://github.com/spicetify/spicetify-themes",
+    "license": "MIT",
+    "suggest": {
+        "spicetify": "spicetify-cli",
+        "spotify": "extras/spotify"
+    },
+    "url": "https://github.com/spicetify/spicetify-themes/archive/master.zip",
+    "hash": "c533bb8efa8e40ce39d10b024c91c44f30f3ab35a7c09bbf792912d543850fcd",
+    "extract_dir": "spicetify-themes-master",
+    "installer": {
+        "script": [
+            "if (Get-Command 'spicetify' -ErrorAction SilentlyContinue) {",
+            "  Get-ChildItem \"$dir\" -Directory -Exclude '.github' | Copy-Item -Destination \"$(spicetify -c | Split-Path)\\Themes\" -Force -Recurse -ErrorAction SilentlyContinue",
+            "} else { warn \"'spicetify'' not detected, extracts to '$dir' only.\" }"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "if (Get-Command 'spicetify' -ErrorAction SilentlyContinue) {",
+            "  foreach ($theme in (Get-ChildItem \"$dir\" -Directory '.github')) { Remove-Item \"$(spicetify -c | Split-Path)\\Themes\\$($theme.Name)\" -Recurse -Force -ErrorAction SilentlyContinue }",
+            "}"
+        ]
+    },
+    "checkver": {
+        "url": "https://api.github.com/repos/spicetify/spicetify-themes/commits",
+        "regex": "([\\d-]+T)(\\d+):(\\d+):(\\d+)",
+        "replace": "$1$2.$3.$4"
+    },
+    "autoupdate": {
+        "url": "https://github.com/spicetify/spicetify-themes/archive/master.zip"
+    }
+}

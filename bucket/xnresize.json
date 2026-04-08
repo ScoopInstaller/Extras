@@ -1,0 +1,39 @@
+{
+    "version": "1.11",
+    "description": "A fast and powerful image resizer",
+    "homepage": "https://www.xnview.com/en/xnresize/",
+    "license": "Freeware",
+    "architecture": {
+        "64bit": {
+            "url": "https://download.xnview.com/XnResize-win-x64.zip",
+            "hash": "d8799ce40bab1478a712ff34221e3584884a7679cdacd315907cadc194cc7149"
+        }
+    },
+    "extract_dir": "XnResize",
+    "pre_install": [
+        "if (Test-Path \"$persist_dir\\xnresize.ini\") {",
+        "    Copy-Item \"$persist_dir\\xnresize.ini\" \"$dir\"",
+        "} else {",
+        "    ensure \"$persist_dir\" | Out-Null",
+        "    Set-Content \"$dir\\xnresize.ini\" '[BatchResize]', 'update=0' -Encoding Ascii",
+        "}"
+    ],
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\xnresize.ini\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
+    },
+    "bin": "XnResize.exe",
+    "shortcuts": [
+        [
+            "XnResize.exe",
+            "XnResize"
+        ]
+    ],
+    "checkver": ">XnResize ([\\d.]+)\\s*</",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download.xnview.com/XnResize-win-x64.zip"
+            }
+        }
+    }
+}

@@ -1,0 +1,46 @@
+{
+    "version": "1.3.46",
+    "description": "Fork of JPEGView, a fast and highly configurable viewer/editor for JPEG, BMP, PNG, WEBP, TGA, GIF and TIFF images with a minimal GUI.",
+    "homepage": "https://github.com/sylikc/jpegview",
+    "license": "GPL-2.0-or-later",
+    "url": "https://github.com/sylikc/jpegview/releases/download/v1.3.46/JPEGView_1.3.46.7z",
+    "hash": "f8bea0cec1f3430b4eb37f2dfe3190324bf6e353b5bd65ec5a34b40b4a9a43a9",
+    "architecture": {
+        "64bit": {
+            "extract_dir": "JPEGView64"
+        },
+        "32bit": {
+            "extract_dir": "JPEGView32"
+        }
+    },
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\JPEGView.ini\")) {",
+        "    $cont = (Get-Content \"$dir\\JPEGView.ini\").Replace('StoreToEXEPath=false', 'StoreToEXEPath=true')",
+        "    Set-Content \"$dir\\JPEGView.ini\" $cont",
+        "}",
+        "if (Test-Path \"$persist_dir\\ParamDB.db\") { Copy-Item \"$persist_dir\\ParamDB.db\" \"$dir\" | Out-Null }",
+        "if (Test-Path \"$persist_dir\\KeyMap.txt\") { Copy-Item \"$persist_dir\\KeyMap.txt\" \"$dir\" | Out-Null }"
+    ],
+    "bin": "JPEGView.exe",
+    "shortcuts": [
+        [
+            "JPEGView.exe",
+            "JPEGView"
+        ]
+    ],
+    "persist": "JPEGView.ini",
+    "uninstaller": {
+        "script": [
+            "if (Test-Path \"$dir\\ParamDB.db\") { Copy-Item \"$dir\\ParamDB.db\" \"$persist_dir\" | Out-Null }",
+            "if (Test-Path \"$dir\\KeyMap.txt\") { Copy-Item \"$dir\\KeyMap.txt\" \"$persist_dir\" | Out-Null }"
+        ]
+    },
+    "checkver": "github",
+    "autoupdate": {
+        "url": "https://github.com/sylikc/jpegview/releases/download/v$version/JPEGView_$version.7z",
+        "hash": {
+            "url": "https://github.com/sylikc/jpegview/releases/tag/v$version",
+            "regex": "$sha256 \\*$basename"
+        }
+    }
+}

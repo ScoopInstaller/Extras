@@ -1,0 +1,59 @@
+{
+    "version": "8.2.12-0",
+    "description": "Apache distribution containing MariaDB, PHP, and Perl",
+    "homepage": "https://www.apachefriends.org/index.html",
+    "license": "GPL-2.0-only",
+    "suggest": {
+        "vcredist": "extras/vcredist2022"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://download.sourceforge.net/project/xampp/XAMPP%20Windows/8.2.12/xampp-windows-x64-8.2.12-0-VS16.7z",
+            "hash": "sha1:44a447aaf9591e13b35c5a5e330b4579b983a2cb"
+        }
+    },
+    "extract_dir": "xampp",
+    "pre_install": [
+        "if (-Not (Test-Path \"$dir\\xampp-control.ini\")) {",
+        "   New-Item \"$dir\\xampp-control.ini\"",
+        "}"
+    ],
+    "post_install": "Start-Process -FilePath \"$dir\\setup_xampp.bat\" -ArgumentList \"< nul\" -WorkingDirectory \"$dir\" -Wait",
+    "bin": [
+        "apache\\bin\\httpd.exe",
+        "mysql\\bin\\mysql.exe",
+        "mysql\\bin\\mysqld.exe",
+        "sendmail\\sendmail.exe",
+        "perl\\bin\\perl.exe",
+        "php\\php.exe",
+        "tomcat\\bin\\tomcat8.exe",
+        "xampp-control.exe",
+        "xampp_start.exe",
+        "xampp_stop.exe"
+    ],
+    "shortcuts": [
+        [
+            "xampp-control.exe",
+            "XAMPP Control Panel"
+        ]
+    ],
+    "persist": [
+        "apache\\conf",
+        "apache\\logs",
+        "htdocs",
+        "mysql\\data",
+        "php\\php.ini",
+        "sendmail\\sendmail.ini",
+        "tomcat\\conf",
+        "tomcat\\logs",
+        "xampp-control.ini"
+    ],
+    "checkver": "xampp-windows-x64-([\\d.-]+)-VS(?<vs>\\d+)-installer\\.exe",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download.sourceforge.net/project/xampp/XAMPP%20Windows/$matchHead/xampp-windows-x64-$version-VS$matchVs.7z"
+            }
+        }
+    }
+}

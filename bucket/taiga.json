@@ -1,0 +1,33 @@
+{
+    "version": "1.4.1",
+    "description": "Detects anime videos on computer and synchronizes progress with online services.",
+    "homepage": "https://taiga.moe/",
+    "license": "GPL-3.0-only",
+    "url": "https://github.com/erengy/taiga/releases/download/v1.4.1/TaigaSetup_1.4.1.exe#/dl.7z",
+    "hash": "747d3b22e8ea20ca8153d6102c3c10a7205ea3791a3a651e1addf6a22d498f53",
+    "pre_install": [
+        "'$PLUGINSDIR', 'Uninstall.exe' | ForEach-Object { Remove-Item \"$dir/$_\" -Recurse }",
+        "'user', 'feed', 'db/image' | ForEach-Object { if (!(Test-Path \"$persist_dir$($_ = \"/data/$_\")\")) { New-Item -ItemType 'Directory' \"$dir$_\" | Out-Null } }",
+        "'settings', 'db/anime' | ForEach-Object { if (!(Test-Path \"$persist_dir$($_ = \"/data/$_.xml\")\" )) { New-Item \"$dir$_\" | Out-Null } }"
+    ],
+    "bin": "Taiga.exe",
+    "shortcuts": [
+        [
+            "Taiga.exe",
+            "Taiga"
+        ]
+    ],
+    "persist": [
+        "data/user",
+        "data/feed",
+        "data/settings.xml",
+        "data/db/image",
+        "data/db/anime.xml"
+    ],
+    "checkver": {
+        "github": "https://github.com/erengy/taiga"
+    },
+    "autoupdate": {
+        "url": "https://github.com/erengy/taiga/releases/download/v$version/TaigaSetup_$version.exe#/dl.7z"
+    }
+}

@@ -1,0 +1,54 @@
+{
+    "version": "26.2",
+    "description": "Enhanced terminal for Windows with X11 server, tabbed SSH client, network tools and much more.",
+    "homepage": "https://mobaxterm.mobatek.net",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://mobaxterm.mobatek.net/license.html"
+    },
+    "url": "https://download.mobatek.net/2622026032581854/MobaXterm_Portable_v26.2.zip",
+    "hash": "be0db1b681a42040333b6a8506856114b68c5b788e7653afb5768762e2f49107",
+    "pre_install": [
+        "Get-ChildItem -Path $dir -Filter 'MobaXterm*.exe' -File | Select-Object -First 1 | Rename-Item -NewName 'MobaXterm.exe'",
+        "# Hard links are not applicable here because the application creates a new file instead of modifying the existing one in place.",
+        "'*.mxt3', '*.mxtpro', 'MobaXterm.ini', 'MobaXterm backup.zip' | ForEach-Object {",
+        "    if (Test-Path -Path \"$persist_dir\\$_\" -PathType Leaf) {",
+        "        Copy-Item -Path \"$persist_dir\\$_\" -Destination $dir -Force",
+        "        return",
+        "    }",
+        "    if ($_ -eq 'MobaXterm.ini') {",
+        "        $cfg = @('[Misc]', 'HomeDir=_MobaFolder_\\home', 'SlashDir=_MobaFolder_\\slash')",
+        "        Set-Content -Path \"$dir\\MobaXterm.ini\" -Value $cfg -Encoding ascii",
+        "    }",
+        "}"
+    ],
+    "bin": "MobaXterm.exe",
+    "shortcuts": [
+        [
+            "MobaXterm.exe",
+            "MobaXterm"
+        ]
+    ],
+    "persist": [
+        "home",
+        "slash"
+    ],
+    "pre_uninstall": [
+        "# Hard links are not applicable here because the application creates a new file instead of modifying the existing one in place.",
+        "'*.mxt3', '*.mxtpro', 'MobaXterm.ini', 'MobaXterm backup.zip' | ForEach-Object {",
+        "    if (Test-Path -Path \"$dir\\$_\" -PathType Leaf) {",
+        "        Copy-Item -Path \"$dir\\$_\" -Destination $persist_dir -Force",
+        "    }",
+        "}",
+        "# Ensure background X server process is terminated to prevent resource lock.",
+        "Stop-Process -Name 'XWin_MobaX' -Force -ErrorAction SilentlyContinue",
+        "Start-Sleep -Milliseconds 1500"
+    ],
+    "checkver": {
+        "url": "https://mobaxterm.mobatek.net/download-home-edition.html",
+        "regex": "mobatek.net/(?<build>[^/]+)/MobaXterm_Portable_v([\\d.]+)\\.zip"
+    },
+    "autoupdate": {
+        "url": "https://download.mobatek.net/$matchBuild/MobaXterm_Portable_v$version.zip"
+    }
+}

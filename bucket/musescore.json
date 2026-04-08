@@ -1,0 +1,43 @@
+{
+    "version": "4.6.5.253511702",
+    "description": "Music notation editor with easy to use WYSIWYG interface",
+    "homepage": "https://musescore.org/",
+    "license": "GPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/musescore/MuseScore/releases/download/v4.6.5/MuseScore-Studio-4.6.5.253511702-x86_64.msi",
+            "hash": "b47e4c4a4473b3230a952ae9e873cd2cd95e19aff59b0ce759d0e75acc922e7f"
+        }
+    },
+    "extract_dir": "MuseScore 4",
+    "pre_install": "Get-ChildItem \"$dir\\bin\\MuseScore?.exe\" | Rename-Item -NewName \"MuseScore.exe\"",
+    "bin": [
+        "bin\\MuseScore.exe",
+        [
+            "bin\\MuseScore.exe",
+            "mscore"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "bin\\MuseScore.exe",
+            "MuseScore"
+        ]
+    ],
+    "checkver": {
+        "url": "https://musescore.org/en/download/musescore.msi",
+        "regex": "/v(?<ver>[\\d.]+)/MuseScore-Studio-([\\d.]+)-x86_64"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/musescore/MuseScore/releases/download/v$matchVer/MuseScore-Studio-$version-x86_64.msi",
+                "hash": {
+                    "url": "https://musescore.org/en/download/musescore.msi",
+                    "regex": ">SHA256 Checksum:\\s+$sha256</"
+                }
+            }
+        },
+        "extract_dir": "MuseScore $majorVersion"
+    }
+}

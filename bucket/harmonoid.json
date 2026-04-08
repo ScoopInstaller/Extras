@@ -1,0 +1,77 @@
+{
+    "version": "0.3.22",
+    "homepage": "https://harmonoid.com/",
+    "description": "Plays & manages your music library. Looks beautiful & juicy. Playlists, visuals, synced lyrics, pitch shift, volume boost & more.",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://raw.githubusercontent.com/harmonoid/harmonoid/master/EULA.txt"
+    },
+    "notes": [
+        "To install harmonoid file associations, run:",
+        "$dir\\install-harmonoid-associations.ps1",
+        "To install the harmonoid context menu, run:",
+        "$dir\\install-harmonoid-context.ps1",
+        "",
+        "To uninstall harmonoid file associations, run:",
+        "$dir\\uninstall-harmonoid-associations.ps1",
+        "To uninstall the harmonoid context menu, run:",
+        "$dir\\uninstall-harmonoid-context.ps1"
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/alexmercerind2/harmonoid-releases/releases/download/v0.3.22/harmonoid-windows-x64-exe.zip",
+            "hash": "d6d919528ad5d3b6238669d093cb982e420edeb0a7d0559b447124479a16edea",
+            "extract_dir": "harmonoid-windows-x64-exe"
+        },
+        "arm64": {
+            "url": "https://github.com/alexmercerind2/harmonoid-releases/releases/download/v0.3.22/harmonoid-windows-arm64-exe.zip",
+            "hash": "e51c94420280f29cfaa1ccd5a8e095c572efeeb4e15704da6b025fa29d8b8a4d",
+            "extract_dir": "harmonoid-windows-arm64-exe"
+        }
+    },
+    "pre_install": [
+        "$newDir = $dir.Replace($version, 'current')",
+        "",
+        "$scriptsDir = \"$bucketsdir\\extras\\scripts\"",
+        "",
+        "Get-ChildItem \"$scriptsDir\\harmonoid\\*.ps1\" | ForEach-Object {",
+        "    $content = ($_ | Get-Content).Replace('CURRENT_DIRECTORY', $newDir)",
+        "    Set-Content \"$dir\\$($_.Name)\" $content -Encoding 'utf8' -Force",
+        "}"
+    ],
+    "bin": "harmonoid.exe",
+    "shortcuts": [
+        [
+            "harmonoid.exe",
+            "Harmonoid"
+        ]
+    ],
+    "pre_uninstall": [
+        "if ($cmd -eq 'uninstall') {",
+        "    Remove-Item 'HKCU:\\Software\\Classes\\Directory\\shell\\HarmonoidAddToPlaylist' -ErrorAction 'SilentlyContinue' -Recurse -Force",
+        "",
+        "    $formats = @('ogg', 'oga', 'ogx', 'aac', 'm4a', 'mp3', 'wma', 'wav', 'flac', 'opus', 'aiff', 'ac3', 'adt', 'adts', 'amr', 'ec3', 'm3u', 'm4r', 'wpl', 'zpl')",
+        "",
+        "    Remove-Item 'HKCU:\\SOFTWARE\\Classes\\Applications\\harmonoid.exe' -ErrorAction 'SilentlyContinue' -Recurse -Force",
+        "    Remove-Item 'HKCU:\\Software\\Harmonoid\\Harmonoid' -ErrorAction 'SilentlyContinue' -Recurse -Force",
+        "",
+        "    $formats | ForEach-Object {",
+        "        Remove-Item \"HKCU:\\SOFTWARE\\Classes\\Harmonoid.$_\" -ErrorAction 'SilentlyContinue' -Recurse -Force",
+        "        Remove-ItemProperty \"HKCU:\\SOFTWARE\\Classes\\.$_\\OpenWithProgids\" -ErrorAction 'SilentlyContinue' -Name \"Harmonoid.$_\" -Force",
+        "    }",
+        "}"
+    ],
+    "checkver": {
+        "github": "https://github.com/alexmercerind2/harmonoid-releases"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/alexmercerind2/harmonoid-releases/releases/download/v$version/harmonoid-windows-x64-exe.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/alexmercerind2/harmonoid-releases/releases/download/v$version/harmonoid-windows-arm64-exe.zip"
+            }
+        }
+    }
+}

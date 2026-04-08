@@ -1,0 +1,46 @@
+{
+    "version": "21.3",
+    "description": "Open source home theater/media center software and entertainment hub for digital media",
+    "homepage": "https://kodi.tv/",
+    "license": "GPL-2.0-or-later",
+    "suggest": {
+        "vcredist": "extras/vcredist2022"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://mirrors.kodi.tv/releases/windows/win64/kodi-21.3-Omega-x64.exe#/dl.7z",
+            "hash": "2c46c2bd60b38bb60eb0a5e3468bfd43e9235521eae2910b8c81455e46335c5c"
+        },
+        "32bit": {
+            "url": "https://mirrors.kodi.tv/releases/windows/win32/kodi-21.3-Omega-x86.exe#/dl.7z",
+            "hash": "f800ac31237cab33e4a5bf0382e049eccb3492e634f63994206f5b2a7f6980aa"
+        }
+    },
+    "post_install": "'$PLUGINSDIR', '$TEMP', 'AppxManifest.xml', 'Uninstall.exe' | ForEach-Object { Remove-Item \"$dir\\$_\" -Recurse -Force }",
+    "shortcuts": [
+        [
+            "kodi.exe",
+            "Kodi",
+            "-p"
+        ]
+    ],
+    "persist": "portable_data",
+    "checkver": {
+        "url": "https://github.com/xbmc/xbmc/releases/latest",
+        "regex": "/releases/tag/(?<version>[\\d.]+)-(?<name>\\w+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://mirrors.kodi.tv/releases/windows/win64/kodi-$version-$matchName-x64.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://mirrors.kodi.tv/releases/windows/win32/kodi-$version-$matchName-x86.exe#/dl.7z"
+            }
+        },
+        "hash": {
+            "url": "$url?mirrorlist",
+            "regex": "$sha256"
+        }
+    }
+}

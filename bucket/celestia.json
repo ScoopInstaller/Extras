@@ -1,0 +1,35 @@
+{
+    "version": "1.6.4",
+    "description": "Real-time 3D visualization of space",
+    "homepage": "https://celestiaproject.space",
+    "license": "GPL-2.0-or-later",
+    "url": "https://github.com/CelestiaProject/Celestia/releases/download/1.6.4/celestia-1.6.4.exe",
+    "hash": "76413c25dfea4bf096cc371fa8d7856815725ae1617a5e3e0a7f2dcc170a08b8",
+    "innosetup": true,
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": "Get-ChildItem \"$dir\" '*,1.*' -Recurse | Rename-Item -NewName { $_.Name -replace ',1\\.', '.' }"
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": "Get-ChildItem \"$dir\" '*,2.*' -Recurse | Rename-Item -NewName { $_.Name -replace ',2\\.', '.' }"
+            }
+        }
+    },
+    "post_install": "Get-ChildItem \"$dir\\*,[12].*\" -Recurse | Remove-Item -Force -Recurse",
+    "bin": "celestia.exe",
+    "shortcuts": [
+        [
+            "celestia.exe",
+            "Celestia"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/CelestiaProject/Celestia"
+    },
+    "autoupdate": {
+        "url": "https://github.com/CelestiaProject/Celestia/releases/download/$version/celestia-$version.exe"
+    }
+}

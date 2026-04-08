@@ -1,0 +1,30 @@
+{
+    "version": "1.0.253",
+    "description": "A tool which allows you to mute/unmute your microphone using a predefined hotkey",
+    "homepage": "https://github.com/iXab3r/MicSwitch",
+    "license": "Unknown",
+    "url": "https://github.com/iXab3r/MicSwitch/releases/download/1.0.253/MicSwitch-1.0.253-full.nupkg",
+    "hash": "sha1:2ae47846020f7bb940e7aa8d106fee139308182c",
+    "extract_dir": "lib\\.net45",
+    "pre_install": [
+        "# avoid potential errors caused by previous installations (micswitch.exe creates an empty folder in $Env:LocalAppData if not found)",
+        "if(Test-Path \"$Env:LocalAppData\\Micswitch\") { Remove-Item \"$Env:LocalAppData\\Micswitch\" -Force -Recurse }",
+        "New-Item \"$Env:LocalAppData\\Micswitch\" -ItemType Junction -Target \"$dir\" | Out-Null"
+    ],
+    "uninstaller": {
+        "script": "Remove-Item \"$Env:LocalAppData\\Micswitch\" -Force -Recurse"
+    },
+    "shortcuts": [
+        [
+            "MicSwitch.exe",
+            "MicSwitch"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "url": "https://github.com/iXab3r/MicSwitch/releases/download/$version/MicSwitch-$version-full.nupkg",
+        "hash": {
+            "url": "$baseurl/RELEASES"
+        }
+    }
+}

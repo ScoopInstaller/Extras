@@ -1,0 +1,38 @@
+{
+    "version": "5.8.1",
+    "description": "Messaging app for services like WhatsApp, Slack, Messenger and many more.",
+    "homepage": "https://getferdi.com/",
+    "license": "Apache-2.0",
+    "url": "https://github.com/getferdi/ferdi/releases/download/v5.8.1/Ferdi-Setup-5.8.1.exe#/dl.7z",
+    "hash": "sha512:5b684e2d4eda8e495d14784e119083e1bf913116ee1ed66d0cb3928cdce4cc593dc1ef4083af22a7d4568e46239168f69202b97c3e589395c27f29e5ba38e3f5",
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
+            }
+        }
+    },
+    "bin": "Ferdi.exe",
+    "shortcuts": [
+        [
+            "Ferdi.exe",
+            "Ferdi"
+        ]
+    ],
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse",
+    "checkver": {
+        "github": "https://github.com/getferdi/ferdi"
+    },
+    "autoupdate": {
+        "url": "https://github.com/getferdi/ferdi/releases/download/v$version/Ferdi-Setup-$version.exe#/dl.7z",
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512:\\s+$base64"
+        }
+    }
+}

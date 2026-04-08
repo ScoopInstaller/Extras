@@ -1,0 +1,41 @@
+{
+    "version": "6.7.0",
+    "description": "CPU/GPU benchmark software",
+    "homepage": "https://www.geekbench.com/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.primatelabs.com/legal/eula-v5.html"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://cdn.geekbench.com/Geekbench-6.7.0-WindowsSetup.exe",
+            "hash": "01f0af1024b536ee6f7884a53dd2c13c978718641ba8d13a219ca1401f6c76ef"
+        }
+    },
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\$fname\" -Overwrite 'Skip' -Removal",
+            "Move-Item \"$dir\\geekbench ?.exe\" \"$dir\\geekbench_gui.exe\"",
+            "Move-Item \"$dir\\geekbench?.exe\" \"$dir\\geekbench.exe\"",
+            "Remove-Item \"$dir\\$*\", \"$dir\\geekbench_aarch64.exe\", \"$dir\\Uninstall*\" -Recurse"
+        ]
+    },
+    "bin": "geekbench.exe",
+    "shortcuts": [
+        [
+            "geekbench_gui.exe",
+            "GeekBench"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.geekbench.com/download/windows/",
+        "regex": "Geekbench-([\\d.]+)-WindowsSetup\\.exe"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://cdn.geekbench.com/Geekbench-$version-WindowsSetup.exe"
+            }
+        }
+    }
+}

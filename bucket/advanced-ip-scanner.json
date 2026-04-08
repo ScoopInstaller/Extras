@@ -1,0 +1,40 @@
+{
+    "version": "2.5.4594.1",
+    "description": "Network scanner that can analyse LAN, show network devices, and provide remote control via RDP and Radmin.",
+    "homepage": "https://www.advanced-ip-scanner.com/",
+    "license": "Freeware",
+    "url": "https://download.advanced-ip-scanner.com/download/files/Advanced_IP_Scanner_2.5.4594.1.exe#/dl.7z",
+    "hash": "26d5748ffe6bd95e3fee6ce184d388a1a681006dc23a0f08d53c083c593c193b",
+    "pre_install": [
+        "New-Item \"$dir\\platforms\", \"$dir\\printsupport\" -ItemType Directory | Out-Null",
+        "Move-Item \"$dir\\qwindows.dll\" \"$dir\\platforms\\qwindows.dll\"",
+        "Move-Item \"$dir\\windowsprintersupport.dll\" \"$dir\\printsupport\\windowsprintersupport.dll\"",
+        "if(Test-Path \"$persist_dir\") {Copy-Item \"$persist_dir\\*\" \"$dir\\\"}"
+    ],
+    "uninstaller": {
+        "script": [
+            "ensure \"$persist_dir\" | Out-Null",
+            "Copy-Item \"$dir\\advanced_ip_scanner_*.bin\" \"$persist_dir\\\""
+        ]
+    },
+    "bin": [
+        "advanced_ip_scanner_console.exe",
+        [
+            "advanced_ip_scanner_console.exe",
+            "advanced_ip_scanner"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "advanced_ip_scanner.exe",
+            "Advanced IP Scanner"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.advanced-ip-scanner.com/download/",
+        "regex": "Advanced_IP_Scanner_([\\d.]+)\\.exe"
+    },
+    "autoupdate": {
+        "url": "https://download.advanced-ip-scanner.com/download/files/Advanced_IP_Scanner_$version.exe#/dl.7z"
+    }
+}

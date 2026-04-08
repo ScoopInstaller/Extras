@@ -1,0 +1,55 @@
+{
+    "version": "10.51",
+    "description": "Video game library manager and launcher with support for 3rd party libraries like Steam, GOG, Origin, Battle.net, ...",
+    "homepage": "https://playnite.link",
+    "license": "MIT",
+    "url": "https://github.com/JosefNemec/Playnite/releases/download/10.51/10.51.7z",
+    "hash": "b695d49ebc8014adaa723dbdc5c8fc0be76c290896b9be5a63e6d2cd3a05a3d9",
+    "pre_install": [
+        "Copy-Item \"$persist_dir\\config.json\" \"$dir\" -ErrorAction 'SilentlyContinue'",
+        "if (Test-Path \"$persist_dir\\Themes\") {",
+        "    # Only copy themes that does not exist in $dir",
+        "    # This avoids overwriting newer version of themes with the old ones",
+        "    Get-ChildItem \"$persist_dir\\Themes\\Desktop\" | ForEach-Object {",
+        "        if (!(Test-Path \"$dir\\Themes\\Desktop\\$($_.Name)\")) { Copy-Item \"$persist_dir\\Themes\\Desktop\\$($_.Name)\" \"$dir\\Themes\\Desktop\\\" -Recurse }",
+        "    }",
+        "    Get-ChildItem \"$persist_dir\\Themes\\Fullscreen\" | ForEach-Object {",
+        "        if (!(Test-Path \"$dir\\Themes\\Fullscreen\\$($_.Name)\")) { Copy-Item \"$persist_dir\\Themes\\Fullscreen\\$($_.Name)\" \"$dir\\Themes\\Fullscreen\\\" -Recurse }",
+        "    }",
+        "}"
+    ],
+    "pre_uninstall": [
+        "Stop-Process -Name 'Playnite.DesktopApp' -ErrorAction SilentlyContinue",
+        "Copy-Item \"$dir\\config.json\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force",
+        "Copy-Item \"$dir\\themes\" \"$persist_dir\\\" -Recurse -Force -ErrorAction SilentlyContinue"
+    ],
+    "bin": [
+        [
+            "Playnite.DesktopApp.exe",
+            "Playnite"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "Playnite.DesktopApp.exe",
+            "Playnite"
+        ]
+    ],
+    "persist": [
+        "browsercache",
+        "cache",
+        "Extensions",
+        "ExtensionsData",
+        "ExtraMetadata",
+        "library",
+        "Themes"
+    ],
+    "checkver": {
+        "url": "https://api.github.com/repos/JosefNemec/Playnite/releases/latest",
+        "jsonpath": "$..assets[?(@.browser_download_url =~ /download\\/[\\d.]+\\/.*?\\.(?:7z|zip)/)].browser_download_url",
+        "regex": "download/(?<version>[\\d.]+)/(?<file>.*?\\.(?:7z|zip))"
+    },
+    "autoupdate": {
+        "url": "https://github.com/JosefNemec/Playnite/releases/download/$version/$matchFile"
+    }
+}

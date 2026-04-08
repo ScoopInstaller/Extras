@@ -1,0 +1,48 @@
+{
+    "version": "0.8.1",
+    "description": "An offline documentation browser for software developers",
+    "homepage": "https://zealdocs.org/",
+    "license": "GPL-3.0-only",
+    "suggest": {
+        "vcredist": "extras/vcredist2022"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/zealdocs/zeal/releases/download/v0.8.1/zeal-0.8.1-portable-windows-x64.7z",
+            "hash": "d00a87934aa2d0e6224856799b2831ddccc3a85dcfb53daf555f24a6af265bfd",
+            "extract_dir": "zeal-0.8.1-portable-windows-x64"
+        }
+    },
+    "pre_install": [
+        "if (Test-Path \"$persist_dir\\zeal.ini\") {",
+        "    Copy-Item \"$persist_dir\\zeal.ini\" \"$dir\" -ErrorAction 'SilentlyContinue' -Force",
+        "} else {",
+        "    Set-Content \"$dir\\zeal.ini\" @('[General]', 'check_for_update=false') -Encoding ASCII",
+        "}"
+    ],
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\zeal.ini\" \"$persist_dir\" -ErrorAction 'SilentlyContinue' -Force"
+    },
+    "bin": "zeal.exe",
+    "shortcuts": [
+        [
+            "zeal.exe",
+            "Zeal"
+        ]
+    ],
+    "persist": [
+        "cache",
+        "docsets"
+    ],
+    "checkver": {
+        "github": "https://github.com/zealdocs/zeal"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/zealdocs/zeal/releases/download/v$version/zeal-$version-portable-windows-x64.7z",
+                "extract_dir": "zeal-$version-portable-windows-x64"
+            }
+        }
+    }
+}

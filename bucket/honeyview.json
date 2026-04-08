@@ -1,0 +1,50 @@
+{
+    "version": "5.53",
+    "description": "A fast image viewer",
+    "homepage": "https://www.bandisoft.com/honeyview/",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.bandisoft.com/honeyview/eula/"
+    },
+    "notes": [
+        "There will be no more updates for Honeyview.",
+        "Download BandiView to use the features of Honeyview including further improvements."
+    ],
+    "url": "https://bandisoft.app/honeyview/HONEYVIEW-SETUP.EXE",
+    "hash": "831622fcffc89f5ed28a2d796eb0b4157a7d8bd8019d4faf4ef75ddc949933ab",
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\$fname\" -Overwrite Rename -Removal",
+        "Remove-Item \"$dir\\$*\" -Recurse",
+        "if (-not (Test-Path \"$persist_dir\\setting.ini\")) { New-Item \"$dir\\setting.ini\" -ItemType File | Out-Null }",
+        "# Enable portable mode",
+        "$cont = (Get-Content \"$dir\\config.ini\") -replace '^(is_portable\\s+=\\s+)0', '${1}1'",
+        "Set-Content \"$dir\\config.ini\" $cont -Encoding ASCII -Force"
+    ],
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": "Move-Item \"$dir\\Honeyview_1.exe\" \"$dir\\Honeyview.exe\" -Force"
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": "Remove-Item \"$dir\\Honeyview_1.exe\""
+            }
+        }
+    },
+    "bin": "Honeyview.exe",
+    "shortcuts": [
+        [
+            "Honeyview.exe",
+            "Honeyview"
+        ]
+    ],
+    "persist": [
+        "config.ini",
+        "setting.ini"
+    ],
+    "checkver": "Download Honeyview \\(v([\\d.]+)\\)",
+    "autoupdate": {
+        "url": "https://bandisoft.app/honeyview/HONEYVIEW-SETUP.EXE"
+    }
+}

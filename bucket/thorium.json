@@ -1,0 +1,50 @@
+{
+    "version": "138.0.7204.303",
+    "description": "Chromium fork for Linux, Windows, MacOS, Android, and Raspberry Pi named after radioactive element No. 90.",
+    "homepage": "https://thorium.rocks/",
+    "license": {
+        "identifier": "BSD 3-Clause",
+        "url": "https://github.com/Alex313031/Thorium-Win/blob/main/LICENSE"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Alex313031/Thorium-Win/releases/download/M138.0.7204.303/Thorium_SSE3_138.0.7204.303.zip",
+            "hash": "931468563186c4fb1d0f4f835a5b1399be18c3d1c399d7f78fb02d4f1b1a23a8"
+        }
+    },
+    "bin": [
+        [
+            "bin\\thorium.exe",
+            "thorium",
+            "--user-data-dir=\"$dir\\USER_DATA\""
+        ]
+    ],
+    "shortcuts": [
+        [
+            "bin\\thorium.exe",
+            "Thorium",
+            "--user-data-dir=\"$dir\\USER_DATA\""
+        ]
+    ],
+    "post_install": [
+        "if (!(Test-Path \"$dir\\USER_DATA\\*\") -and (Test-Path \"$env:LocalAppData\\Thorium\\User Data\")) {",
+        "    info '[Portable Mode]: Copying user data...'",
+        "    Copy-Item \"$env:LocalAppData\\Thorium\\User Data\\*\" \"$dir\\USER_DATA\" -Recurse",
+        "}"
+    ],
+    "env_set": {
+        "CHROME_EXECUTABLE": "$dir\\bin\\thorium.exe"
+    },
+    "persist": "USER_DATA",
+    "checkver": {
+        "url": "https://api.github.com/repos/Alex313031/Thorium-Win/releases",
+        "regex": "/releases/tag/M(?<version>(?:\\d+\\.){3}\\d+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Alex313031/Thorium-Win/releases/download/M$version/Thorium_SSE3_$version.zip"
+            }
+        }
+    }
+}

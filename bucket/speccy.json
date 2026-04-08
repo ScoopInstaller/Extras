@@ -1,0 +1,48 @@
+{
+    "version": "1.33.75",
+    "description": "Fast, lightweight, advanced system information tool for your PC.",
+    "homepage": "https://www.ccleaner.com/speccy",
+    "license": "Freeware",
+    "url": "https://download.ccleaner.com/spsetup133.exe#/dl.7z",
+    "hash": "03c35fcb1d10cf478c0b9896699937e6e262daa4f4a4353a7cc56b238fe86892",
+    "architecture": {
+        "64bit": {
+            "bin": [
+                [
+                    "Speccy64.exe",
+                    "Speccy"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "Speccy64.exe",
+                    "Speccy"
+                ]
+            ]
+        },
+        "32bit": {
+            "bin": "Speccy.exe",
+            "shortcuts": [
+                [
+                    "Speccy.exe",
+                    "speccy"
+                ]
+            ]
+        }
+    },
+    "pre_install": [
+        "Set-Content \"$dir\\portable.dat\" '#PORTABLE#' -Encoding ASCII",
+        "'$*', 'uninst.exe', \"Speccy$(if ($architecture -eq '32bit') { '64' }).exe\" | ForEach-Object { Remove-Item -Recurse -Force \"$dir\\$_\" }",
+        "if(!(Test-Path \"$persist_dir\\Speccy.ini\")) {",
+        "   Set-Content \"$dir\\Speccy.ini\" (@('[Software\\Piriform\\Speccy]', 'NeedUpdate=0') -join \"`r`n\") -Encoding ASCII",
+        "}"
+    ],
+    "persist": "Speccy.ini",
+    "checkver": {
+        "url": "https://www.ccleaner.com/speccy/version-history",
+        "regex": ">v([\\d.]+)<"
+    },
+    "autoupdate": {
+        "url": "https://download.ccleaner.com/spsetup$majorVersion$minorVersion.exe#/dl.7z"
+    }
+}

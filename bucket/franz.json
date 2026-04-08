@@ -1,0 +1,38 @@
+{
+    "version": "5.11.0",
+    "description": "Messaging app for services like WhatsApp, Slack, Messenger and many more.",
+    "homepage": "https://meetfranz.com",
+    "license": "Apache-2.0",
+    "url": "https://github.com/meetfranz/franz/releases/download/v5.11.0/franz-setup-5.11.0.exe#/dl.7z",
+    "hash": "sha512:cf9700e5acebd036b840fb97f0591f6709fb787d0fd2ea4a3ccf032b5cf5aba67935b9170eff71d03f6b880bf91918f969d5930c77046a7de411536a9bae5e82",
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
+            }
+        }
+    },
+    "bin": "Franz.exe",
+    "shortcuts": [
+        [
+            "Franz.exe",
+            "Franz"
+        ]
+    ],
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse",
+    "checkver": {
+        "github": "https://github.com/meetfranz/franz"
+    },
+    "autoupdate": {
+        "url": "https://github.com/meetfranz/franz/releases/download/v$version/franz-setup-$version.exe#/dl.7z",
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512:\\s+$base64"
+        }
+    }
+}

@@ -1,0 +1,53 @@
+{
+    "version": "4.1.16",
+    "description": "Office software suite for word processing, spreadsheets, presentations, graphics, databases and more",
+    "homepage": "https://www.openoffice.org",
+    "license": "Apache-2.0",
+    "url": "https://archive.apache.org/dist/openoffice/4.1.16/binaries/en-GB/Apache_OpenOffice_4.1.16_Win_x86_install_en-GB.exe#/dl.7z",
+    "hash": "sha512:d065625eafdb51ceca75ad32595e710846d14a414cab73a1f759d031e9000531406fb66dba64768bd3cbc28f21aa0a98dc44ff8612ee5b64555064b0d299989c",
+    "pre_install": [
+        "$splat = @{ 'DestinationPath' = \"$dir\\App\" }",
+        "if (get_config USE_LESSMSI $false) { $splat.Add('ExtractDir', 'OpenOffice 4') }",
+        "(Get-ChildItem \"$dir\" 'openoffic*.msi').FullName | Expand-MsiArchive @splat",
+        "Get-ChildItem \"$dir\" -Exclude 'App' | Remove-Item -Recurse",
+        "Move-Item \"$dir\\App\\*\" \"$dir\" -Force",
+        "Remove-Item \"$dir\\App\" -Recurse"
+    ],
+    "shortcuts": [
+        [
+            "program\\soffice.exe",
+            "OpenOffice\\OpenOffice"
+        ],
+        [
+            "program\\sbase.exe",
+            "OpenOffice\\OpenOffice Base"
+        ],
+        [
+            "program\\scalc.exe",
+            "OpenOffice\\OpenOffice Calc"
+        ],
+        [
+            "program\\sdraw.exe",
+            "OpenOffice\\OpenOffice Draw"
+        ],
+        [
+            "program\\simpress.exe",
+            "OpenOffice\\OpenOffice Impress"
+        ],
+        [
+            "program\\smath.exe",
+            "OpenOffice\\OpenOffice Math"
+        ],
+        [
+            "program\\swriter.exe",
+            "OpenOffice\\OpenOffice Writer"
+        ]
+    ],
+    "checkver": "Apache OpenOffice ([\\d.]+) released",
+    "autoupdate": {
+        "url": "https://archive.apache.org/dist/openoffice/$version/binaries/en-GB/Apache_OpenOffice_$version_Win_x86_install_en-GB.exe#/dl.7z",
+        "hash": {
+            "url": "$url.sha512"
+        }
+    }
+}

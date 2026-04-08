@@ -1,0 +1,38 @@
+{
+    "version": "3.22.0",
+    "description": "Image viewer to view all common image formats including RAW and psd images",
+    "homepage": "https://nomacs.org",
+    "license": "GPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/nomacs/nomacs/releases/download/3.22.0/nomacs-portable-win.zip",
+            "hash": "53b0f952e321303e47d85ff53dc21c6ebaefb1bb8b849fae315b688f8702ff6e"
+        }
+    },
+    "extract_dir": "nomacs-3.22.0",
+    "pre_install": [
+        "ensure \"$persist_dir\" | Out-Null",
+        "Copy-Item \"$persist_dir\\settings.ini\" \"$dir\" -ErrorAction SilentlyContinue -Force"
+    ],
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\settings.ini\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
+    },
+    "bin": "nomacs.exe",
+    "shortcuts": [
+        [
+            "nomacs.exe",
+            "nomacs"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/nomacs/nomacs"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/nomacs/nomacs/releases/download/$version/nomacs-portable-win.zip"
+            }
+        },
+        "extract_dir": "nomacs-$version"
+    }
+}

@@ -1,0 +1,43 @@
+{
+    "version": "1.19.2",
+    "description": "Multi-platform transparent client-side encryption of files in the cloud",
+    "homepage": "https://cryptomator.org",
+    "license": "GPL-3.0-only",
+    "suggest": {
+        "WinFSP": "nonportable/winfsp-np"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/cryptomator/cryptomator/releases/download/1.19.2/Cryptomator-1.19.2-x64.msi",
+            "hash": "4b34ba8d6525ad258de34c8098f9af2240b1874c6151862f1db1f4f2193911d4"
+        }
+    },
+    "extract_dir": "PFiles64/Cryptomator",
+    "post_install": [
+        "    # Change appdata settings folder",
+        "(Get-Content \"$dir\\app\\Cryptomator.cfg\" -Encoding ASCII).replace('~/AppData/Roaming/Cryptomator', './data') | Set-Content \"$dir\\app\\Cryptomator.cfg\" -Encoding ASCII"
+    ],
+    "bin": "Cryptomator.exe",
+    "shortcuts": [
+        [
+            "Cryptomator.exe",
+            "Cryptomator"
+        ]
+    ],
+    "persist": "data",
+    "checkver": {
+        "url": "https://github.com/cryptomator/cryptomator/releases",
+        "regex": "Cryptomator-([\\d.]+)-x64\\.msi"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/cryptomator/cryptomator/releases/download/$version/Cryptomator-$version-x64.msi"
+            }
+        },
+        "hash": {
+            "url": "https://github.com/cryptomator/cryptomator/releases/tag/$version",
+            "regex": "$sha256\\s*\\./$basename"
+        }
+    }
+}

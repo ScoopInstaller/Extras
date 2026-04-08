@@ -1,0 +1,39 @@
+{
+    "version": "0.17.0",
+    "description": "GPU-accelerated terminal emulator",
+    "homepage": "https://github.com/alacritty/alacritty",
+    "license": "Apache-2.0",
+    "notes": [
+        "Add Open with Alacritty as a context menu option by running:",
+        "reg import \"$dir\\install-context.reg\""
+    ],
+    "suggest": {
+        "vcredist": "extras/vcredist2022"
+    },
+    "url": "https://github.com/alacritty/alacritty/releases/download/v0.17.0/Alacritty-v0.17.0-portable.exe#/alacritty.exe",
+    "hash": "5ad70ddc5c2a2bfe84084a2c4c73558e9360914f035a902d7a69277be7249f1f",
+    "post_install": [
+        "$alacrittyPath = \"$dir\\alacritty.exe\".Replace('\\', '\\\\')",
+        "'install-context', 'uninstall-context' | ForEach-Object {",
+        "    if (Test-Path \"$bucketsdir\\extras\\scripts\\$app\\$_.reg\") {",
+        "        $content = Get-Content \"$bucketsdir\\extras\\scripts\\$app\\$_.reg\"",
+        "        $content = $content.Replace('$alacrittyPath', $alacrittyPath)",
+        "        if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "        Set-Content \"$dir\\$_.reg\" $content -Encoding Ascii -Force",
+        "    }",
+        "}"
+    ],
+    "bin": "alacritty.exe",
+    "shortcuts": [
+        [
+            "alacritty.exe",
+            "Alacritty",
+            "--working-directory \"%USERPROFILE%\""
+        ]
+    ],
+    "pre_uninstall": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" *>nul }",
+    "checkver": "github",
+    "autoupdate": {
+        "url": "https://github.com/alacritty/alacritty/releases/download/v$version/Alacritty-v$version-portable.exe#/alacritty.exe"
+    }
+}

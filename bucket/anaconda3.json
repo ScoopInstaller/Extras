@@ -1,0 +1,60 @@
+{
+    "version": "2025.12-2",
+    "description": "The most popular Python distribution for data science.",
+    "homepage": "https://www.anaconda.com/",
+    "license": "BSD-3-Clause",
+    "notes": [
+        "From 4.6.0, conda has built the support for Cmd, Powershell or other shells.",
+        "Use \"conda init powershell\" or \"conda init __your_favorite_shell__\"",
+        "",
+        "Anaconda3 drops support for 32-bit CPUs from v2022.10. If you are running a 32-bit system, please install anaconda3-2022.05 from the Versions bucket.",
+        "If you found the conda cannot fetch update, just run \" conda config --set ssl_verify False \" and try again."
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://repo.anaconda.com/archive/Anaconda3-2025.12-2-Windows-x86_64.exe",
+            "hash": "2e0b8e40ec7600793f116250f5c1775c866833bac32d184ad575ecc0d360a88f"
+        }
+    },
+    "pre_install": "if ($dir -match ' ') { error 'The installation directory cannot include a space'; break}",
+    "installer": {
+        "script": [
+            "warn 'Installing Anaconda 3. This can take up to 30 minutes on an HDD.'",
+            "# The installer will not work properly when args are quoted (e.g. \"`\"/S`\"\")",
+            "Start-Process \"$dir\\$fname\" -ArgumentList @('/S', '/InstallationType=JustMe', '/RegisterPython=1', '/AddToPath=0', '/NoRegistry=1', \"/D=$dir\\App\") -Wait"
+        ]
+    },
+    "post_install": "Remove-Item \"$dir\\$fname\"",
+    "env_add_path": "App\\Scripts",
+    "bin": [
+        "App\\python.exe",
+        "App\\pythonw.exe",
+        [
+            "App\\python.exe",
+            "python3"
+        ]
+    ],
+    "persist": "App\\envs",
+    "uninstaller": {
+        "script": [
+            "Start-Process \"$dir\\App\\Uninstall-Anaconda3.exe\" -ArgumentList '/S' -Wait",
+            "# Create a 'dummy' to avoid error because the uninstaller removes the symlink. The does not affect persist.",
+            "ensure \"$dir\\App\\envs\" | Out-Null"
+        ]
+    },
+    "checkver": {
+        "url": "https://repo.anaconda.com/archive/",
+        "regex": ">Anaconda3-([\\d.-]+)-Windows"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://repo.anaconda.com/archive/Anaconda3-$version-Windows-x86_64.exe",
+                "hash": {
+                    "url": "https://repo.anaconda.com/archive/",
+                    "regex": "(?s)$basename.*?$sha256<"
+                }
+            }
+        }
+    }
+}

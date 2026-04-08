@@ -1,0 +1,60 @@
+{
+    "version": "1.9600.41",
+    "description": "The new purpose-built IDE to harness magic",
+    "homepage": "https://windsurf.com/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://windsurf.com/terms-of-service-individual"
+    },
+    "innosetup": true,
+    "architecture": {
+        "64bit": {
+            "url": "https://windsurf-stable.codeiumdata.com/win32-x64-user/stable/f90ca8311d630b9b77e7537222ecfce0a0ac990b/WindsurfUserSetup-x64-1.9600.41.exe",
+            "hash": "8b55091af6ef5c52b91f01a841a83fd7e35223c1365697f69fca13857ad582a6"
+        },
+        "arm64": {
+            "url": "https://windsurf-stable.codeiumdata.com/win32-arm64-user/stable/f90ca8311d630b9b77e7537222ecfce0a0ac990b/WindsurfUserSetup-arm64-1.9600.41.exe",
+            "hash": "5094accf92e7e4a70ad1e019ad858be9f5d1793393faa9faccbe15ef97ad90df"
+        }
+    },
+    "extract_dir": "{code_GetDestDir}",
+    "post_install": [
+        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse",
+        "if (!(Test-Path \"$dir\\data\\extensions\") -and (Test-Path \"$env:USERPROFILE\\.windsurf\\extensions\")) {",
+        "    info '[Portable Mode] Copying extensions...'",
+        "    Copy-Item \"$env:USERPROFILE\\.windsurf\\extensions\" \"$dir\\data\" -Recurse",
+        "}",
+        "if (!(Test-Path \"$dir\\data\\user-data\") -and (Test-Path \"$env:AppData\\Windsurf\")) {",
+        "    info '[Portable Mode] Copying user data...'",
+        "    Copy-Item \"$env:AppData\\Windsurf\" \"$dir\\data\\user-data\" -Recurse",
+        "}",
+        "$extensions_file = \"$dir\\data\\extensions\\extensions.json\"",
+        "if ((Test-Path \"$extensions_file\")) {",
+        "    info 'Adjusting path in extensions file...'",
+        "    (Get-Content \"$extensions_file\") -replace '(?<=windsurf(/|\\\\\\\\)).*?(?=(/|\\\\\\\\)data(/|\\\\\\\\)extensions)', $version | Set-Content \"$extensions_file\"",
+        "}"
+    ],
+    "bin": "bin\\windsurf.cmd",
+    "shortcuts": [
+        [
+            "Windsurf.exe",
+            "Windsurf",
+            "--user-data-dir=\"$dir\\data\\user-data\" --extensions-dir=\"$dir\\data\\extensions\""
+        ]
+    ],
+    "persist": "data",
+    "checkver": {
+        "url": "https://windsurf.com/editor/releases",
+        "regex": "win32-x64-user/stable/(?<Code>[\\w]+)/WindsurfUserSetup-x64-([\\d.]+).exe"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://windsurf-stable.codeiumdata.com/win32-x64-user/stable/$matchCode/WindsurfUserSetup-x64-$version.exe"
+            },
+            "arm64": {
+                "url": "https://windsurf-stable.codeiumdata.com/win32-arm64-user/stable/$matchCode/WindsurfUserSetup-arm64-$version.exe"
+            }
+        }
+    }
+}

@@ -1,0 +1,34 @@
+{
+    "version": "2.1",
+    "description": "A powerful, stable and lightweight programmer's text editor that provides tons of useful features without bogging down your workflow.",
+    "homepage": "https://www.geany.org/",
+    "license": "GPL-2.0-or-later",
+    "url": "https://download.geany.org/geany-2.1_setup.exe#/dl.7z",
+    "hash": "50c7835b31bc736d0b5e5f894aa8ec08a95185873fb64d29a95727d2859107d8",
+    "pre_install": "Remove-Item \"$dir\\`$*\", \"$dir\\uninst*\" -Recurse",
+    "installer": {
+        "script": [
+            "if (Test-Path -Path $(appdir geany-plugins $global)) {",
+            "  Get-ChildItem \"$(appdir geany-plugins $global)\\current\" -Exclude install.json, manifest.json |",
+            "  Copy-Item -Destination $dir -Recurse -Force",
+            "}"
+        ]
+    },
+    "bin": "bin\\geany.exe",
+    "shortcuts": [
+        [
+            "bin\\geany.exe",
+            "Geany"
+        ]
+    ],
+    "checkver": {
+        "url": "https://download.geany.org/",
+        "regex": "LATEST-IS-([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://download.geany.org/geany-$version_setup.exe#/dl.7z",
+        "hash": {
+            "url": "$baseurl/SHA256SUMS"
+        }
+    }
+}

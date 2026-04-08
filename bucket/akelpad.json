@@ -1,0 +1,63 @@
+{
+    "version": "4.9.9",
+    "description": "An open source editor for plain text. It is designed to be a small and fast.",
+    "homepage": "https://sourceforge.net/projects/akelpad/",
+    "license": "BSD-2-Clause",
+    "architecture": {
+        "64bit": {
+            "url": [
+                "https://downloads.sourceforge.net/project/akelpad/AkelPad%204/4.9.9/x64/AkelPad-4.9.9-x64-bin-eng.zip",
+                "https://akelpad.sourceforge.net/files/tools/AkelUpdater.zip"
+            ],
+            "hash": [
+                "sha1:b7e8d19c320559165b45c990167d30911465f8a0",
+                "4878447a4b93063fd5d3b882c7f463838089ed16913f925f76ee7f9441128149"
+            ]
+        },
+        "32bit": {
+            "url": [
+                "https://downloads.sourceforge.net/project/akelpad/AkelPad%204/4.9.9/AkelPad-4.9.9-bin-eng.zip",
+                "https://akelpad.sourceforge.net/files/tools/AkelUpdater.zip"
+            ],
+            "hash": [
+                "sha1:d7f892e98d104db6d2eb2c765aa55f3935fcd376",
+                "4878447a4b93063fd5d3b882c7f463838089ed16913f925f76ee7f9441128149"
+            ]
+        }
+    },
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\AkelPad.ini\")) { Set-Content \"$dir\\AkelPad.ini\" '[Options]', 'SaveSettings=2' -Encoding Ascii }",
+        "if (Test-Path \"$dir\\AkelUpdater.exe\") { Move-Item \"$dir\\AkelUpdater.exe\" \"$dir\\AkelFiles\" }"
+    ],
+    "bin": "AkelPad.exe",
+    "shortcuts": [
+        [
+            "AkelPad.exe",
+            "AkelPad"
+        ],
+        [
+            "AkelFiles\\AkelUpdater.exe",
+            "AkelUpdater"
+        ]
+    ],
+    "persist": [
+        "AkelPad.ini",
+        "AkelFiles\\Docs",
+        "AkelFiles\\Plugs",
+        "AkelFiles\\Langs"
+    ],
+    "checkver": {
+        "url": "https://sourceforge.net/projects/akelpad/rss?path=/AkelPad%204",
+        "regex": "AkelPad-([\\d.]+)-x64-bin-eng\\.zip"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://downloads.sourceforge.net/project/akelpad/AkelPad%20$majorVersion/$version/x64/AkelPad-$version-x64-bin-eng.zip"
+            },
+            "32bit": {
+                "url": "https://downloads.sourceforge.net/project/akelpad/AkelPad%20$majorVersion/$version/AkelPad-$version-bin-eng.zip"
+            }
+        }
+    }
+}

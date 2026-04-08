@@ -1,0 +1,65 @@
+{
+    "version": "6.6.11.23272",
+    "description": "Video and audio conferencing, chat, and webinars",
+    "homepage": "https://zoom.us",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://zoom.us/terms"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://cdn.zoom.us/prod/6.6.11.23272/x64/ZoomInstallerFull.exe#/dl.7z",
+            "hash": "bb84811e1687219fe9601d454283b4389582768edd34f499b79143cb6ae81f50",
+            "pre_install": "Expand-7zipArchive \"$dir\\ZoomFull.cab\" -Removal"
+        },
+        "32bit": {
+            "url": "https://cdn.zoom.us/prod/6.6.11.23272/ZoomInstaller.exe#/dl.7z",
+            "hash": "7eb91fc484ab27a8bc96fae11e176d34eac39dc619d485af96346f390ee338be",
+            "pre_install": "Expand-7zipArchive \"$dir\\Zoom.msi\" -Removal"
+        },
+        "arm64": {
+            "url": "https://cdn.zoom.us/prod/6.6.11.23272/arm64/ZoomInstallerFull.exe#/dl.7z",
+            "hash": "298a952058244dcb6fbb208cac7f555b01d294cf5cbf8f869eee94dfe078b78d",
+            "pre_install": "Expand-7zipArchive \"$dir\\ZoomFull.cab\" -Removal"
+        }
+    },
+    "post_install": [
+        "Expand-7zipArchive \"$dir\\win10rt.7z\" -Removal",
+        "Remove-Item \"$dir\\Install*\"",
+        "Write-Host \"Registering zoommtg:// protocol handler\"",
+        "$regpath = \"HKCU:\\SOFTWARE\\Classes\\zoommtg\"",
+        "New-Item -Path $regpath -Value \"Zoom (Application Name)\" -Force | Out-Null",
+        "New-ItemProperty -Path $regpath -Name \"URL Protocol\" -PropertyType String -Force | Out-Null",
+        "New-Item -Path \"$regpath\\shell\\open\\command\" -Value \"`\"$dir\\Zoom.exe`\" --url=`\"%1`\"\" -Force| Out-Null"
+    ],
+    "uninstaller": {
+        "script": [
+            "Write-Host \"Unregistering zoommtg:// protocol handler\"",
+            "Remove-Item \"HKCU:\\SOFTWARE\\Classes\\zoommtg\" -Recurse -Force"
+        ]
+    },
+    "bin": "Zoom.exe",
+    "shortcuts": [
+        [
+            "Zoom.exe",
+            "Zoom"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.zoom.us/rest/download?os=win",
+        "jsonpath": "$.result.downloadVO.zoom.version"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://cdn.zoom.us/prod/$version/x64/ZoomInstallerFull.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://cdn.zoom.us/prod/$version/ZoomInstaller.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://cdn.zoom.us/prod/$version/arm64/ZoomInstallerFull.exe#/dl.7z"
+            }
+        }
+    }
+}

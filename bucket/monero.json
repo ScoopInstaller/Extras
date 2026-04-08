@@ -1,0 +1,65 @@
+{
+    "version": "0.18.4.7",
+    "description": "The secure, private, untraceable cryptocurrency",
+    "homepage": "https://getmonero.org",
+    "license": "BSD-3-Clause",
+    "notes": "For 32bit, use 'monero-cli' instead.",
+    "architecture": {
+        "64bit": {
+            "url": "https://dlsrc.getmonero.org/gui/monero-gui-win-x64-v0.18.4.7.zip",
+            "hash": "b06dde8291aa03c4ac89efe19568c22eba2854af18a39163ed6d4a1fb88f1a20"
+        }
+    },
+    "extract_dir": "monero-gui-v0.18.4.7",
+    "pre_install": "if (!(Test-Path \"$persist_dir$($p = '/monero-storage')\")) { New-Item -ItemType Directory \"$dir$p\" | Out-Null }",
+    "persist": "monero-storage",
+    "bin": [
+        "monerod.exe",
+        "monero-wallet-gui.exe",
+        [
+            "start-low-graphics-mode.bat",
+            "monero-wallet-gui-low"
+        ],
+        "extras\\monero-wallet-rpc.exe",
+        "extras\\monero-wallet-cli.exe",
+        "extras\\monero-gen-trusted-multisig.exe",
+        "extras\\monero-blockchain-usage.exe",
+        "extras\\monero-blockchain-mark-spent-outputs.exe",
+        "extras\\monero-blockchain-import.exe",
+        "extras\\monero-blockchain-export.exe",
+        "extras\\monero-blockchain-depth.exe",
+        "extras\\monero-blockchain-ancestry.exe",
+        "extras\\monero-blockchain-prune.exe",
+        "extras\\monero-blockchain-prune-known-spent-data.exe",
+        "extras\\monero-blockchain-stats.exe",
+        [
+            "extras\\monero-blockchain-mark-spent-outputs.exe",
+            "monero-blockchain-blackball"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "monero-wallet-gui.exe",
+            "Monero\\Monero Wallet GUI"
+        ],
+        [
+            "start-low-graphics-mode.bat",
+            "Monero\\Monero Wallet GUI (Low Graphics Mode)"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/monero-project/monero-gui"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://dlsrc.getmonero.org/gui/monero-gui-win-x64-v$version.zip"
+            }
+        },
+        "hash": {
+            "url": "https://github.com/monero-project/monero-gui/releases/tag/v$version",
+            "regex": "(?sm)$basename.*?$sha256"
+        },
+        "extract_dir": "monero-gui-v$version"
+    }
+}

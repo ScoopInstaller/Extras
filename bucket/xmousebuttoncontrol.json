@@ -1,0 +1,35 @@
+{
+    "version": "2.20.5",
+    "description": "Windows tool that allows re-configuration and expand the capabilities of mouse.",
+    "homepage": "https://www.highrez.co.uk/downloads/xmousebuttoncontrol.htm",
+    "license": "Freeware",
+    "url": "https://vps2.highrez.co.uk/downloads/XMouseButtonControl%202.20.5%20Portable.zip",
+    "hash": "383079c809a50d1c375c5751e085efa871905adc775817c27d75eb471d70f4e3",
+    "architecture": {
+        "64bit": {
+            "extract_dir": "64bit (x64)"
+        },
+        "32bit": {
+            "extract_dir": "32bit (x86)"
+        }
+    },
+    "pre_install": [
+        "ensure $persist_dir | Out-Null",
+        "Copy-Item \"$persist_dir\\XMBCSettings.xml\" \"$dir\\XMBCSettings.xml\" -ErrorAction 'SilentlyContinue'"
+    ],
+    "bin": "XMouseButtonControl.exe",
+    "shortcuts": [
+        [
+            "XMouseButtonControl.exe",
+            "X-Mouse Button Control"
+        ]
+    ],
+    "pre_uninstall": "Copy-Item \"$dir\\XMBCSettings.xml\" \"$persist_dir\\XMBCSettings.xml\" -ErrorAction 'SilentlyContinue'",
+    "checkver": {
+        "url": "https://www.highrez.co.uk/downloads/xmbc_changelog.htm",
+        "regex": "Version ([\\d.]+)</"
+    },
+    "autoupdate": {
+        "url": "https://vps2.highrez.co.uk/downloads/XMouseButtonControl%20$version%20Portable.zip"
+    }
+}

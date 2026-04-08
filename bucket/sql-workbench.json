@@ -1,0 +1,61 @@
+{
+    "version": "132",
+    "description": "DBMS-independent SQL query tool",
+    "homepage": "https://www.sql-workbench.eu",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.sql-workbench.eu/manual/license.html"
+    },
+    "suggest": {
+        "java": [
+            "java/oraclejdk",
+            "java/adopt11-hotspot",
+            "java/adopt14-hotspot"
+        ]
+    },
+    "url": "https://www.sql-workbench.eu/Workbench-Build132-with-optional-libs.zip",
+    "hash": "sha1:a42e54dce574df8429ca4aea0616f59f588049e0",
+    "pre_install": [
+        "@('sqlwbconsole64.ini', 'sqlwbconsole.ini', 'SQLWorkbench64.ini', 'SQLWorkbench.ini') | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "}"
+    ],
+    "post_install": "if ((Test-Path \"$dir\\ext.original\")) { Copy-Item \"$dir\\ext.original\\*\" -Destination \"$persist_dir\\ext\" }",
+    "bin": "sqlwbconsole.cmd",
+    "architecture": {
+        "64bit": {
+            "shortcuts": [
+                [
+                    "SQLWorkbench64.exe",
+                    "SQL Workbench"
+                ]
+            ]
+        },
+        "32bit": {
+            "shortcuts": [
+                [
+                    "SQLWorkbench.exe",
+                    "SQL Workbench"
+                ]
+            ]
+        }
+    },
+    "persist": [
+        "ext",
+        "sqlwbconsole64.ini",
+        "sqlwbconsole.ini",
+        "SQLWorkbench64.ini",
+        "SQLWorkbench.ini"
+    ],
+    "checkver": {
+        "url": "https://www.sql-workbench.eu/downloads.html",
+        "regex": "Current stable release: Build (\\d+)"
+    },
+    "autoupdate": {
+        "url": "https://www.sql-workbench.eu/Workbench-Build$version-with-optional-libs.zip",
+        "hash": {
+            "url": "$url.sha1",
+            "regex": "^$sha1"
+        }
+    }
+}

@@ -1,0 +1,57 @@
+{
+    "version": "0.6.6.2",
+    "description": "Open source, cross-platform, user-mode tablet driver",
+    "homepage": "https://opentabletdriver.net",
+    "license": {
+        "identifier": "LGPL-3.0",
+        "url": "https://github.com/OpenTabletDriver/OpenTabletDriver/blob/master/LICENSE"
+    },
+    "notes": "Only certain tablets require zadig, see https://opentabletdriver.net/Wiki/Install/Windows#winusb",
+    "suggest": {
+        ".NET SDK": "versions/dotnet6-sdk",
+        "WinUSB": "nonportable/zadig-np"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/OpenTabletDriver/OpenTabletDriver/releases/download/v0.6.6.2/OpenTabletDriver-0.6.6.2_win-x64.zip",
+            "hash": "c21850eb1a2651b7de49d5f73fc16daf9d07b4dd72012951f0bee98c20280fae"
+        }
+    },
+    "pre_install": [
+        "# NOTE: Remove the migration script after 6 months (2024-02-24)",
+        "if (($cmd -eq 'update') -and !(Test-Path \"$persist_dir\\userdata\")) {",
+        "  if (Test-Path \"$env:LOCALAPPDATA\\OpenTabletDriver\") {",
+        "    info 'Migrating userdata to persist directory...'",
+        "    ensure \"$persist_dir\\userdata\"",
+        "    Copy-Item \"$env:LOCALAPPDATA\\OpenTabletDriver\\**\" \"$persist_dir\\userdata\"",
+        "    Set-Content -Path \"$env:LOCALAPPDATA\\OpenTabletDriver\\SCOOP_MIGRATION.txt\" -Value \"OpenTabletDriver's userdata has been migrated to '$persist_dir\\userdata'\"",
+        "  }",
+        "}",
+        "# NOTE END"
+    ],
+    "bin": [
+        "OpenTabletDriver.UX.Wpf.exe",
+        "OpenTabletDriver.Daemon.exe"
+    ],
+    "shortcuts": [
+        [
+            "OpenTabletDriver.UX.Wpf.exe",
+            "OpenTabletDriver"
+        ],
+        [
+            "OpenTabletDriver.Daemon.exe",
+            "OpenTabletDriver Daemon"
+        ]
+    ],
+    "persist": "userdata",
+    "checkver": {
+        "github": "https://github.com/OpenTabletDriver/OpenTabletDriver"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/OpenTabletDriver/OpenTabletDriver/releases/download/v$version/OpenTabletDriver-$version_win-x64.zip"
+            }
+        }
+    }
+}

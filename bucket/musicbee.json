@@ -1,0 +1,44 @@
+{
+    "version": "3.6.9403",
+    "description": "The ultimate music player to easily manage, find, and play music, podcasts, web radio stations, etc",
+    "homepage": "https://getmusicbee.com",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://musicbee.fandom.com/wiki/FAQ#Are_there_any_limitations_on_using_MusicBee.3F"
+    },
+    "url": "https://www.videohelp.com/download/MusicBeePortable_3_6.zip",
+    "hash": "aff35dc919b4a620847ca0c5269d1d75e93bf96bcabcbbdc0d058ce3e1d82c5d",
+    "pre_install": "(Get-ChildItem \"$dir\" 'MusicBee*.exe').FullName | Expand-7zipArchive -DestinationPath \"$dir\" -Removal",
+    "post_install": [
+        "# If plugins, skins, eq presets, etc. have updates, ensure they're copied after persisting.",
+        "@('BBplugin', 'Equaliser', 'Plugins', 'Skins') | ForEach-Object {",
+        "    if (Test-Path \"$dir\\$_.original\") {",
+        "        Copy-Item \"$dir\\$_.original\\*\" \"$persist_dir\\$_\" -Force -Recurse",
+        "        Remove-Item \"$dir\\$_.original\" -Force -Recurse | Out-Null",
+        "    }",
+        "}",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse"
+    ],
+    "bin": "MusicBee.exe",
+    "shortcuts": [
+        [
+            "MusicBee.exe",
+            "MusicBee"
+        ]
+    ],
+    "persist": [
+        "AppData",
+        "BBplugin",
+        "Equaliser",
+        "Library",
+        "Plugins",
+        "Skins"
+    ],
+    "checkver": {
+        "url": "https://www.videohelp.com/software/MusicBee",
+        "regex": "([\\d.]+) Portable"
+    },
+    "autoupdate": {
+        "url": "https://www.videohelp.com/download/MusicBeePortable_$majorVersion_$minorVersion.zip"
+    }
+}

@@ -1,0 +1,41 @@
+{
+    "version": "6.11",
+    "description": "Collection of paint.net plugins by BoltBait",
+    "homepage": "https://boltbait.com/pdn/",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://boltbait.com/pdn/"
+    },
+    "depends": "extras/paint.net",
+    "url": "https://boltbait.com/pdn/BoltBaitPack611.zip",
+    "hash": "f90abe9930b49d081e7aff602f7087ef223277b7c0a89dd576c5afabb735b3cd",
+    "pre_install": [
+        "$installer = Get-Item \"$dir\\BoltBaitPackInstall*.exe\"",
+        "$installerAssembly = [System.Reflection.Assembly]::Load([IO.File]::ReadAllBytes($installer))",
+        "Remove-Item $installer",
+        "$pluginResourcePrefix = 'Install.Attachments.'",
+        "$pluginsResourceNames = $installerAssembly.GetManifestResourceNames() | Where-Object { $_.StartsWith($pluginResourcePrefix) -and $_.EndsWith('.dll') }",
+        "$pluginFolder = Join-Path (appdir 'paint.net' $global) 'current\\Effects'",
+        "$pluginsResourceNames | ForEach-Object {",
+        "    $pluginFileName = $_.Replace($pluginResourcePrefix, '')",
+        "    $installerAssembly.GetManifestResourceStream($_).",
+        "        CopyTo([IO.File]::OpenWrite(",
+        "            (Join-Path \"$pluginFolder\" \"$pluginFileName\")",
+        "        ))",
+        "}",
+        "$pluginsResourceNames.Replace($pluginResourcePrefix, '') | Out-File \"$dir\\plugins.txt\" -Encoding Ascii"
+    ],
+    "uninstaller": {
+        "script": [
+            "$pluginFolder = Join-Path (appdir 'paint.net' $global) 'current\\Effects'",
+            "Get-Content \"$dir\\plugins.txt\" | Remove-Item -Path { Join-Path \"$pluginFolder\" \"$_\" } -ErrorAction SilentlyContinue"
+        ]
+    },
+    "checkver": {
+        "regex": "BoltBaitPack(?<major>\\d)(?<minor>\\d+)\\.zip</a>",
+        "replace": "${major}.${minor}"
+    },
+    "autoupdate": {
+        "url": "https://boltbait.com/pdn/BoltBaitPack$cleanVersion.zip"
+    }
+}

@@ -1,0 +1,48 @@
+{
+    "version": "0.16.1",
+    "description": "A simple GUI for Neovim",
+    "homepage": "https://neovide.dev",
+    "license": "MIT",
+    "notes": [
+        "Add Open with Neovide as a context menu option by running:",
+        "reg import \"$dir\\install-context.reg\""
+    ],
+    "suggest": {
+        "neovim": "neovim"
+    },
+    "post_install": [
+        "$neovide = \"$dir\\neovide.exe\".Replace('\\', '\\\\')",
+        "'install-context', 'uninstall-context' | ForEach-Object {",
+        "    if (Test-Path \"$bucketsdir\\extras\\scripts\\$app\\$_.reg\") {",
+        "        $content = Get-Content \"$bucketsdir\\extras\\scripts\\$app\\$_.reg\"",
+        "        $content = $content.Replace('$neovide', $neovide)",
+        "        if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "        Set-Content \"$dir\\$_.reg\" $content -Encoding Ascii -Force",
+        "    }",
+        "}"
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/neovide/neovide/releases/download/0.16.1/neovide.exe.zip",
+            "hash": "e43a0d4c3865147fe397e64c8032e3d4b5e2ce0321c41648aab8a273913fffe3"
+        }
+    },
+    "bin": "neovide.exe",
+    "shortcuts": [
+        [
+            "neovide.exe",
+            "Neovide"
+        ]
+    ],
+    "pre_uninstall": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" *>nul }",
+    "checkver": {
+        "github": "https://github.com/neovide/neovide"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/neovide/neovide/releases/download/$version/neovide.exe.zip"
+            }
+        }
+    }
+}

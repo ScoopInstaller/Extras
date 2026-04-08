@@ -1,0 +1,68 @@
+{
+    "version": "11.56",
+    "description": "Total Commander is a Shareware file manager for Windows® 95/98/ME/NT/2000/XP/Vista/7/8/8.1/10, and Windows® 3.1.",
+    "homepage": "https://www.ghisler.com",
+    "license": "Shareware",
+    "architecture": {
+        "64bit": {
+            "url": "https://totalcommander.ch/1156/tcmd1156x64.exe",
+            "hash": "22230671f4a7d8e7dec3c300923726ba24dc1937117ad34a1a7bda973bb8cd34",
+            "bin": "TOTALCMD64.EXE",
+            "shortcuts": [
+                [
+                    "TOTALCMD64.EXE",
+                    "Total Commander"
+                ]
+            ]
+        },
+        "32bit": {
+            "url": "https://totalcommander.ch/1156/tcmd1156x32.exe",
+            "hash": "c3d1934b3c5fd64ed90d159da2822e9707adf694103d5e6b62a095195eafa910",
+            "bin": "TOTALCMD.EXE",
+            "shortcuts": [
+                [
+                    "TOTALCMD.EXE",
+                    "Total Commander"
+                ]
+            ]
+        }
+    },
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\$fname\" \"$dir\\_tmp\"",
+        "Expand-7zipArchive \"$dir\\_tmp\\INSTALL.CAB\" \"$dir\" -Removal",
+        "Move-Item \"$dir\\e\\*\" \"$dir\"",
+        "Remove-Item -Recurse \"$dir\\d\", \"$dir\\e\", \"$dir\\_tmp\", \"$dir\\$fname\"",
+        "\"[Configuration]`r`nUseIniInProgramDir=7\" | Out-File -Encoding ASCII \"$dir\\wincmd.ini\"",
+        "ForEach ($emptyFile in $manifest.persist | Where-Object { $_ -ne 'plugins' }) {New-Item \"$dir\\$emptyFile\" -ItemType file -ErrorAction SilentlyContinue | Out-Null}"
+    ],
+    "persist": [
+        "plugins",
+        "DEFAULT.BAR",
+        "default.br2",
+        "VERTICAL.BAR",
+        "vertical.br2",
+        "usercmd.ini",
+        "wcx_ftp.ini",
+        "wincmd.ini",
+        "wincmd.key",
+        "contplug.ini",
+        "fsplugin.ini",
+        "lsplugin.ini",
+        "pkplugin.ini",
+        "sftpplug.ini"
+    ],
+    "checkver": {
+        "url": "https://www.ghisler.com/download.htm",
+        "regex": "Download\\s+version\\s+([\\w.]+) of Total Commander"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://totalcommander.ch/$cleanVersion/tcmd$cleanVersionx64.exe"
+            },
+            "32bit": {
+                "url": "https://totalcommander.ch/$cleanVersion/tcmd$cleanVersionx32.exe"
+            }
+        }
+    }
+}

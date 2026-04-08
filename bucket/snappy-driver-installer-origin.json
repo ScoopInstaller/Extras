@@ -1,0 +1,57 @@
+{
+    "version": "1.17.8.829",
+    "description": "Device drivers installer and updater",
+    "homepage": "https://www.snappy-driver-installer.org",
+    "license": "GPL-3.0-or-later",
+    "url": "https://www.glenn.delahoy.com/downloads/sdio/SDIO_1.17.8.829.zip",
+    "hash": "5303c67b6885d6ff5afdcf3a2363ae152963e618ffd7140fce11900bc9bccbe3",
+    "architecture": {
+        "64bit": {
+            "pre_install": [
+                "Move-Item \"$dir\\SDIO_x64_*.exe\" \"$dir\\SDIO.exe\"",
+                "Remove-Item \"$dir\\SDIO_*exe\""
+            ]
+        },
+        "32bit": {
+            "pre_install": [
+                "Remove-Item \"$dir\\SDIO_x64_*exe\"",
+                "Move-Item \"$dir\\SDIO_*.exe\" \"$dir\\SDIO.exe\""
+            ]
+        }
+    },
+    "installer": {
+        "script": [
+            "if (Test-Path \"$persist_dir\\sdi.cfg\") { Move-Item \"$persist_dir\\sdi.cfg\" \"$persist_dir\\sdio.cfg\" | Out-Null }",
+            "if (-not (Test-Path \"$persist_dir\\sdio.cfg\")) { New-Item \"$dir\\sdio.cfg\" | Out-Null }"
+        ]
+    },
+    "bin": [
+        "SDIO.exe",
+        [
+            "del_old_driverpacks.bat",
+            "SDIO_del_old_driverpacks.bat"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "SDIO.exe",
+            "Snappy Driver Installer Origin"
+        ]
+    ],
+    "persist": [
+        "drivers",
+        "indexes",
+        "logs",
+        "scripts",
+        "update",
+        "sdio.cfg"
+    ],
+    "checkver": {
+        "url": "https://www.glenn.delahoy.com/snappy-driver-installer-origin/",
+        "regex": "SDIO_([\\d.]+)\\.zip"
+    },
+    "autoupdate": {
+        "url": "https://www.glenn.delahoy.com/downloads/sdio/SDIO_$version.zip",
+        "extract_dir": "SDIO_$version"
+    }
+}

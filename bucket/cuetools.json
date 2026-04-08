@@ -1,0 +1,49 @@
+{
+    "version": "2.2.6",
+    "description": "A suite of tools for lossless audio/CUE sheet format conversion and verification.",
+    "homepage": "http://cue.tools/wiki/Main_Page",
+    "license": "GPL-2.0-or-later",
+    "suggest": {
+        "vcredist": "extras/vcredist2008"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/gchudov/cuetools.net/releases/download/v2.2.6/CUETools_2.2.6.zip",
+            "hash": "103b209502935c911f2162a5babfb21550476413aee13d88187e39783a2a2e32"
+        }
+    },
+    "extract_dir": "CUETools_2.2.6",
+    "pre_install": [
+        "ensure \"$dir\\CUE Tools\" | Out-Null",
+        "ensure \"$dir\\CUERipper\" | Out-Null",
+        "if (!(Test-Path \"$persist_dir\\CUE Tools\\settings.txt\")) { New-Item \"$dir\\CUE Tools\\settings.txt\" | Out-Null }",
+        "if (!(Test-Path \"$persist_dir\\CUERipper\\settings.txt\")) { New-Item \"$dir\\CUERipper\\settings.txt\" | Out-Null }"
+    ],
+    "post_install": "Remove-Item \"$dir\\user_profiles_enabled\"",
+    "bin": "CUETools.Ripper.Console.exe",
+    "shortcuts": [
+        [
+            "CUERipper.exe",
+            "CUERipper"
+        ],
+        [
+            "CUETools.exe",
+            "CUETools"
+        ]
+    ],
+    "persist": [
+        "CUE Tools\\settings.txt",
+        "CUERipper\\settings.txt"
+    ],
+    "checkver": {
+        "github": "https://github.com/gchudov/cuetools.net"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/gchudov/cuetools.net/releases/download/v$version/CUETools_$version.zip"
+            }
+        },
+        "extract_dir": "CUETools_$version"
+    }
+}

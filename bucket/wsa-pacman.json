@@ -1,0 +1,57 @@
+{
+    "version": "1.5.0",
+    "description": "A GUI package manager and package installer for Windows Subsystem for Android (WSA)",
+    "homepage": "https://github.com/alesimula/wsa_pacman",
+    "license": "GPL-3.0-only",
+    "notes": [
+        "For .apk file associations, run:",
+        "\"$dir\\install-associations.reg\""
+    ],
+    "suggest": {
+        "vcredist": "extras/vcredist2022"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/alesimula/wsa_pacman/releases/download/v1.5.0/WSA-pacman-v1.5.0-portable.zip",
+            "hash": "c853c34276c496217833a743b23c5c83b081a23c3729075cdaa252c91f70ac3c"
+        }
+    },
+    "shortcuts": [
+        [
+            "WSA-pacman.exe",
+            "WSA Package Manager"
+        ]
+    ],
+    "post_install": [
+        "$dirpath = \"$dir\".Replace('\\', '\\\\')",
+        "'install-associations', 'uninstall-associations' | ForEach-Object {",
+        "  if (Test-Path \"$bucketsdir\\extras\\scripts\\wsa-pacman\\$_.reg\") {",
+        "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\wsa-pacman\\$_.reg\"",
+        "    $content = $content.Replace('$dirpath', $dirpath)",
+        "    if ($global) {",
+        "      $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "    }",
+        "    $content | Set-Content -Path \"$dir\\$_.reg\"",
+        "  }",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "if ($cmd -eq 'uninstall') {",
+            "    $regkey = Get-ItemProperty -Path 'HKLM:\\SOFTWARE\\Classes\\wsa-pacman.apk' -ErrorAction SilentlyContinue",
+            "    if ($regkey) {",
+            "        if (!(is_admin)) { error 'wsa_pacman: Admin rights are required to unregister file associations'; break }",
+            "        reg import \"$dir\\uninstall-associations.reg\"",
+            "    }",
+            "}"
+        ]
+    },
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/alesimula/wsa_pacman/releases/download/v$version/WSA-pacman-v$version-portable.zip"
+            }
+        }
+    }
+}

@@ -1,0 +1,32 @@
+{
+    "version": "3.29.1",
+    "description": "Educational drag-and-drop programming environment",
+    "homepage": "https://scratch.mit.edu/about",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://scratch.mit.edu/info/faq"
+    },
+    "url": "https://downloads.scratch.mit.edu/desktop/Scratch%203.29.1%20Setup.exe#/dl.7z",
+    "hash": "dfca2f1a842aea69a2b0a22ca66fa7852f86259e3da4f576f8ae7fa16f1e9134",
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\"",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\"-Force -Recurse"
+    ],
+    "shortcuts": [
+        [
+            "Scratch 3.exe",
+            "Scratch 3"
+        ]
+    ],
+    "checkver": {
+        "script": [
+            "$req = [System.Net.HttpWebRequest]::Create('https://downloads.scratch.mit.edu/desktop/Scratch%20Setup.exe')",
+            "$req.Method = 'head'",
+            "$req.GetResponse().ResponseUri.Segments[-1]"
+        ],
+        "regex": "\\AScratch%20([\\d.]+)%20Setup.exe\\Z"
+    },
+    "autoupdate": {
+        "url": "https://downloads.scratch.mit.edu/desktop/Scratch%20$version%20Setup.exe#/dl.7z"
+    }
+}

@@ -1,0 +1,42 @@
+{
+    "version": "2.6.0",
+    "description": "Utility for tweaking AMD Ryzen laptops.",
+    "homepage": "https://ryzencontroller.com/",
+    "license": {
+        "identifier": "CC0-1.0",
+        "url": "https://gitlab.com/ryzen-controller-team/ryzen-controller/-/blob/master/LICENSE.md"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://gitlab.com/ryzen-controller-team/ryzen-controller/-/jobs/3178939815/artifacts/raw/dist/win/Ryzen%20Controller%20Setup%202.6.0.exe#/dl.7z",
+            "hash": "b54b8f0b73cd967a2ae8f346f71c025c5582f2c8d9bf14ef0630e2f53263852d"
+        }
+    },
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall Ryzen Controller.exe\" -Force -Recurse | Out-Null"
+    ],
+    "shortcuts": [
+        [
+            "Ryzen Controller.exe",
+            "Ryzen Controller"
+        ]
+    ],
+    "checkver": {
+        "url": "https://gitlab.com/api/v4/projects/ryzen-controller-team%2Fryzen-controller/releases/permalink/latest",
+        "script": [
+            "$release = $page | ConvertFrom-Json",
+            "$links = $release.assets.links",
+            "$link = $links | Where-Object { $_.name -eq 'Windows installer' } | Select-Object -First 1",
+            "(Invoke-WebRequest -Uri $link.url).Content"
+        ],
+        "regex": "/jobs/(?<job>\\d+)/artifacts/file/dist/win/Ryzen%20Controller%20Setup%20(?<version>[\\d.]+)\\.exe"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://gitlab.com/ryzen-controller-team/ryzen-controller/-/jobs/$matchJob/artifacts/raw/dist/win/Ryzen%20Controller%20Setup%20$version.exe#/dl.7z"
+            }
+        }
+    }
+}

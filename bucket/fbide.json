@@ -1,0 +1,32 @@
+{
+    "version": "0.4.6r4",
+    "description": "#1 editor for FreeBASIC",
+    "homepage": "https://fbide.freebasic.net",
+    "license": "GPL-2.0-or-later",
+    "depends": "freebasic",
+    "url": "http://downloads.sourceforge.net/project/fbide/fbide%200.4/fbide%200.4.6%20r4/FBIde0.4.6r4.zip",
+    "hash": "sha1:326327c7082adae0af1df0281cde4af990b1e273",
+    "extract_dir": "FBIde0.4.6r4",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\IDE\\prefs_win32.ini\")) {",
+        "   $fbc = (versiondir 'freebasic' 'current') -replace '\\\\', '\\\\'",
+        "   $pref = (Get-Content \"$dir\\IDE\\prefs_win32.ini\" -Raw) -replace 'fbc.exe', \"$fbc\\\\fbc.exe\"",
+        "   Set-Content \"$dir\\IDE\\prefs_win32.ini\" $pref -Encoding ASCII",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "fbide.exe",
+            "FBIde"
+        ]
+    ],
+    "persist": "IDE\\prefs_win32.ini",
+    "checkver": {
+        "url": "https://fbide.freebasic.net/download",
+        "regex": ">FBIde ((?<main>[\\d.]+)(?<release>r\\d))<"
+    },
+    "autoupdate": {
+        "url": "http://downloads.sourceforge.net/project/fbide/fbide%20$majorVersion.$minorVersion/fbide%20$matchMain%20$matchRelease/FBIde$version.zip",
+        "extract_dir": "FBIde$version"
+    }
+}

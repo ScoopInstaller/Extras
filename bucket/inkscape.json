@@ -1,0 +1,53 @@
+{
+    "version": "1.4.3",
+    "description": "Professional vector graphics editor",
+    "homepage": "https://inkscape.org",
+    "license": "GPL-3.0-or-later",
+    "notes": [
+        "Due to an issue with the previous versioning scheme, Scoop may incorrectly identify the older version as newer.",
+        "Please run the following command to force an update if the update is not triggered despite a new version being available: scoop update inkscape --force",
+        "For more details, see: https://github.com/ScoopInstaller/Extras/issues/17136"
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://media.inkscape.org/dl/resources/file/inkscape-1.4.3_2025-12-25_0d15f75-x64.7z",
+            "hash": "466c58b10f239e87a72f4ec9eac34e30285c249685e32c3bfe7f969cba44a9f4"
+        }
+    },
+    "extract_dir": "inkscape",
+    "bin": [
+        [
+            "bin\\inkscape.com",
+            "inkscape"
+        ],
+        [
+            "bin\\inkview.com",
+            "inkview"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "bin\\inkscape.exe",
+            "Inkscape"
+        ]
+    ],
+    "checkver": {
+        "script": [
+            "$redirUrl = [System.Net.HttpWebRequest]::Create('https://inkscape.org/release/').GetResponse().ResponseUri.AbsoluteUri",
+            "$test_dl = Invoke-WebRequest ($redirUrl + 'windows/64-bit/compressed-7z/dl/') -UseBasicParsing",
+            "$filename = ($test_dl.Links | Where-Object href -match '.7z$' | Select-Object -First 1 -ExpandProperty href) -split '/' | Select-Object -Last 1",
+            "Write-Output $filename"
+        ],
+        "regex": "(?<cleanfilename>inkscape-(\\d+(?:\\.\\d+)+).*)-x64\\.7z"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://media.inkscape.org/dl/resources/file/$matchCleanfilename-x64.7z",
+                "hash": {
+                    "url": "https://media.inkscape.org/media/resources/sigs/$matchCleanfilename-x64.7z.sha256"
+                }
+            }
+        }
+    }
+}

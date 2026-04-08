@@ -1,0 +1,32 @@
+{
+    "version": "6.2.0.2996",
+    "description": "Remove sensitive data from your hard drive by overwriting it several times with carefully selected patterns",
+    "homepage": "https://eraser.heidi.ie/",
+    "license": "GPL-3.0-or-later",
+    "url": "https://sourceforge.net/project/eraser/Eraser%206/6.2/Eraser%206.2.0.2996.exe#/dl.7z",
+    "hash": "sha1:03028ce564f2b42b2a33320a91593d1e9672d925",
+    "extract_to": "_EXTRACTED",
+    "architecture": {
+        "64bit": {
+            "pre_install": "Expand-MsiArchive \"$dir\\_EXTRACTED\\Eraser (x64).msi\" -DestinationPath \"$dir\" -ExtractDir 'PFiles64\\Eraser'"
+        },
+        "32bit": {
+            "pre_install": "Expand-MsiArchive \"$dir\\_EXTRACTED\\Eraser (x86).msi\" -DestinationPath \"$dir\" -ExtractDir 'PFiles\\Eraser'"
+        }
+    },
+    "post_install": "Remove-Item \"$dir\\_EXTRACTED\" -Force -Recurse",
+    "bin": "Eraser.exe",
+    "shortcuts": [
+        [
+            "Eraser.exe",
+            "Eraser"
+        ]
+    ],
+    "checkver": {
+        "url": "https://eraser.heidi.ie/download/",
+        "regex": ">Eraser ([\\d.]+)</a>"
+    },
+    "autoupdate": {
+        "url": "https://sourceforge.net/project/eraser/Eraser%20$majorVersion/$majorVersion.$minorVersion/Eraser%20$version.exe#/dl.7z"
+    }
+}

@@ -1,0 +1,50 @@
+{
+    "version": "8.5.5",
+    "description": "Distributed computing project focused on disease research",
+    "homepage": "https://foldingathome.org",
+    "license": {
+        "identifier": "Freeware,GPL-3.0-only",
+        "url": "https://foldingathome.org/support/faq/opensource"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://download.foldingathome.org/releases/public/fah-client/windows-10-64bit/release/fah-client_8.5.5_AMD64.exe#/dl.7z",
+            "hash": "718840240414eb065968a7a1a64b636f06857ea9ac284fbe4828cf21cd227ec9"
+        }
+    },
+    "pre_install": [
+        "$null = Remove-Item -Path \"$dir\\`$*\", \"$dir\\Uninstall*\" -Force -Recurse",
+        "'log.txt', 'GPUs.txt' | ForEach-Object -Process {",
+        "    if (-not (Test-Path -Path \"$persist_dir\\$_\") ) { $null = New-Item -Path \"$dir\\$_\" }",
+        "}",
+        "if (-not (Test-Path \"$persist_dir\\config.xml\") ) { Set-Content -Path \"$dir\\config.xml\" -Value '<config></config>' -Encoding Ascii }"
+    ],
+    "bin": "FAHClient.exe",
+    "shortcuts": [
+        [
+            "FAHClient.exe",
+            "Folding@home"
+        ]
+    ],
+    "persist": [
+        "configs",
+        "cores",
+        "work",
+        "logs",
+        "log.txt",
+        "GPUs.txt",
+        "config.xml"
+    ],
+    "checkver": {
+        "url": "https://download.foldingathome.org/releases/public/fah-client/windows-10-64bit/release/",
+        "regex": "_([\\d.]+)_",
+        "reverse": true
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download.foldingathome.org/releases/public/fah-client/windows-10-64bit/release/fah-client_$version_AMD64.exe#/dl.7z"
+            }
+        }
+    }
+}

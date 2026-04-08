@@ -1,0 +1,49 @@
+{
+    "homepage": "https://github.com/zhongyang219/MusicPlayer2",
+    "description": "Audio player which supports music collection playback, lyrics display, format conversion and many other functions.",
+    "license": "GPL-3.0-only",
+    "version": "2.78",
+    "architecture": {
+        "32bit": {
+            "url": "https://github.com/zhongyang219/MusicPlayer2/releases/download/V2.78/MusicPlayer2_V2.78_x86.zip",
+            "hash": "9824d64246982604546e93eedc0143de648198ecb1d983bfd6ea2abb521bc789",
+            "extract_dir": "MusicPlayer2"
+        },
+        "64bit": {
+            "url": "https://github.com/zhongyang219/MusicPlayer2/releases/download/V2.78/MusicPlayer2_V2.78_x64.zip",
+            "hash": "195fa94c281f95b50658875f604e23852ed7559bae966fb9136df7f5226df839",
+            "extract_dir": "MusicPlayer2_x64"
+        }
+    },
+    "shortcuts": [
+        [
+            "MusicPlayer2.exe",
+            "MusicPlayer2"
+        ]
+    ],
+    "pre_install": [
+        "$GLOBAL_CFG = 'global_cfg.ini'",
+        "if (!(Test-Path \"$persist_dir\\$GLOBAL_CFG\")) {",
+        "    Set-Content \"$dir\\$GLOBAL_CFG\" @('[config]', 'portable_mode = true') -Encoding Ascii",
+        "}",
+        "'recent_path.dat', 'song_data.dat', 'config.ini' | ForEach-Object { if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" -ItemType File -Force | Out-Null } }"
+    ],
+    "persist": [
+        "playlist",
+        "recent_path.dat",
+        "song_data.dat",
+        "config.ini",
+        "global_cfg.ini"
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "32bit": {
+                "url": "https://github.com/zhongyang219/MusicPlayer2/releases/download/V$version/MusicPlayer2_V$version_x86.zip"
+            },
+            "64bit": {
+                "url": "https://github.com/zhongyang219/MusicPlayer2/releases/download/V$version/MusicPlayer2_V$version_x64.zip"
+            }
+        }
+    }
+}

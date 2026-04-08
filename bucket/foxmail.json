@@ -1,0 +1,43 @@
+{
+    "version": "7.2.25.542",
+    "description": "Foxmail like you've never seen it before.",
+    "homepage": "https://www.foxmail.com/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.foxmail.com/mac/en/terms_of_service"
+    },
+    "url": "https://www.foxmail.com/win/download#/dl.7z",
+    "hash": "999ec18f7336adb9eaf562456abf49dc1e112e01df558b565f39e1e0a233a896",
+    "pre_install": [
+        "$file = 'FMStorage.list'",
+        "if (!(Test-Path \"$persist_dir\\$file\")) {",
+        "    Write-Host 'File' $file 'does not exist. Creating.' -f Yellow",
+        "    $CONT = @('')",
+        "    Set-Content \"$dir\\$file\" ($CONT -join \"`r`n\") -Encoding Ascii",
+        "}"
+    ],
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse",
+    "shortcuts": [
+        [
+            "Foxmail.exe",
+            "Foxmail"
+        ]
+    ],
+    "persist": [
+        "Storage",
+        "Global",
+        "FMStorage.list"
+    ],
+    "checkver": {
+        "script": [
+            "$url = 'https://www.foxmail.com/win/download'",
+            "$request = [System.Net.HttpWebRequest]::Create($url)",
+            "$response = $request.GetResponse()",
+            "Write-Output $response.ResponseUri.AbsoluteUri"
+        ],
+        "regex": "FoxmailSetup_([\\d.]+)\\.exe"
+    },
+    "autoupdate": {
+        "url": "https://www.foxmail.com/win/download#/dl.7z"
+    }
+}

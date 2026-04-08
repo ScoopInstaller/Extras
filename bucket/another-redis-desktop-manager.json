@@ -1,0 +1,40 @@
+{
+    "version": "1.7.1",
+    "description": "A faster, better and more stable Redis desktop manager",
+    "homepage": "https://github.com/qishibo/AnotherRedisDesktopManager",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/qishibo/AnotherRedisDesktopManager/releases/download/v1.7.1/Another-Redis-Desktop-Manager-win-1.7.1-x64.exe#/dl.7z",
+            "hash": "sha512:aa2279acd033d725fd2107c9116928ab226c8162fb19e6f9a42e58570311f21a2d165aab773696ffeb8e1c219b75d126fb7031d1517a19d0e58f0b0cc859edfe",
+            "pre_install": "Expand-7ZipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\" -Removal"
+        },
+        "arm64": {
+            "url": "https://github.com/qishibo/AnotherRedisDesktopManager/releases/download/v1.7.1/Another-Redis-Desktop-Manager-win-1.7.1-arm64.exe#/dl.7z",
+            "hash": "sha512:70ddc189914f5cde1d58362d6344445c83c2819b3d786436e9d0aacf44fc7c2c6b149af107f42c17a85559d6b3f9f15a39e87ec0de77490398a43ed16651db19",
+            "pre_install": "Expand-7ZipArchive \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" \"$dir\" -Removal"
+        }
+    },
+    "post_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Force -Recurse",
+    "shortcuts": [
+        [
+            "Another Redis Desktop Manager.exe",
+            "Another Redis Desktop Manager"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/qishibo/AnotherRedisDesktopManager/releases/download/v$version/Another-Redis-Desktop-Manager-win-$version-x64.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/qishibo/AnotherRedisDesktopManager/releases/download/v$version/Another-Redis-Desktop-Manager-win-$version-arm64.exe#/dl.7z"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "(?sm)$basename.*?sha512:\\s+$base64"
+        }
+    }
+}

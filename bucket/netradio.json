@@ -1,0 +1,42 @@
+{
+    "version": "2.5.10",
+    "description": "Plays internet radio streams and manages your favorite stations.",
+    "homepage": "https://www.netradio.info/app/",
+    "license": "Freeware",
+    "suggest": {
+        ".NET Desktop Runtime 8.0": "versions/windowsdesktop-runtime-8.0"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://www.netradio.info/?sdm_process_download=1&download_id=212#/NetRadioSetup.exe",
+            "hash": "b01aa972ab4a41dea1df6a95835853191baebda555e5c4c5e6f193f1e9ea83a2"
+        }
+    },
+    "innosetup": true,
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\NetRadio.xml\")) {",
+        "    Add-Content \"$dir\\NetRadio.xml\" '<NetRadio></NetRadio>' -Encoding Ascii",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "NetRadio.exe",
+            "NetRadio"
+        ]
+    ],
+    "persist": "NetRadio.xml",
+    "checkver": {
+        "regex": "sdm_download_version_value\">\\s*(?<version>[\\d.]+).*?download_id=(?<id>\\d+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://www.netradio.info/?sdm_process_download=1&download_id=$matchId#/NetRadioSetup.exe",
+                "hash": {
+                    "url": "https://www.netradio.info/app/",
+                    "regex": "SHA-256:\\s*$sha256"
+                }
+            }
+        }
+    }
+}

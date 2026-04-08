@@ -1,0 +1,67 @@
+{
+    "version": "6.0.920.0",
+    "description": "A dynamic mathematics software for education that brings together geometry, algebra, spreadsheets, graphing, statistics and calculus.",
+    "homepage": "https://www.geogebra.org",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.geogebra.org/license"
+    },
+    "notes": [
+        "To register file associations, please execute the following command:",
+        "reg import \"$dir\\install-associations.reg\""
+    ],
+    "url": "https://download.geogebra.org/installers/6.0/GeoGebra-Windows-Portable-6-0-920-0.zip",
+    "hash": "9533610cff7af09e71cdd73e574d6206e5607339a2fb5d0dc9893056ce027198",
+    "post_install": [
+        "$geogebra_path = $dir -replace '\\\\', '\\\\'",
+        "Get-ChildItem -Path \"$bucketsdir\\$bucket\\scripts\\$app\" -Filter '*.reg' -File | ForEach-Object {",
+        "    $content = Get-Content -Path $_.FullName -Encoding ascii",
+        "    if ($global) { $content = $content -replace 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE' }",
+        "    $content -replace '{{geogebra_dir}}', $geogebra_path | Set-Content -Path \"$dir\\$($_.Name)\" -Encoding unicode",
+        "}"
+    ],
+    "bin": [
+        [
+            "GeoGebra.exe",
+            "geogebra"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "GeoGebra.exe",
+            "GeoGebra\\GeoGebra Classic"
+        ],
+        [
+            "GeoGebraCalculator.exe",
+            "GeoGebra\\GeoGebra Calculator Suite"
+        ],
+        [
+            "GeoGebraCAS.exe",
+            "GeoGebra\\GeoGebra CAS Calculator"
+        ],
+        [
+            "GeoGebraGeometry.exe",
+            "GeoGebra\\GeoGebra Geometry Calculator"
+        ],
+        [
+            "GeoGebraGraphing.exe",
+            "GeoGebra\\GeoGebra Graphing Calculator"
+        ]
+    ],
+    "uninstaller": {
+        "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-associations.reg\" *> $null }"
+    },
+    "checkver": {
+        "script": [
+            "$url = 'https://download.geogebra.org/package/win-port6'",
+            "$request = [System.Net.HttpWebRequest]::Create($url)",
+            "$response = $request.GetResponse()",
+            "$response.ResponseUri.AbsoluteUri -match 'Portable-(?<dashVersion>[\\d-]+)\\.zip'",
+            "Write-Output ($Matches['dashVersion'] -replace '-', '.')"
+        ],
+        "regex": "([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://download.geogebra.org/installers/$majorVersion.$minorVersion/GeoGebra-Windows-Portable-$dashVersion.zip"
+    }
+}

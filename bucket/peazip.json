@@ -1,0 +1,56 @@
+{
+    "version": "11.0.0",
+    "description": "A free file archiver utility, based on Open Source technologies",
+    "homepage": "https://peazip.github.io",
+    "license": "LGPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/peazip/PeaZip/releases/download/11.0.0/peazip_portable-11.0.0.WIN64.zip",
+            "hash": "4e3ef7bbfc6607bbb08c29ce0178feb7845444c7d019fa6cfea8fc9081c103da",
+            "extract_dir": "peazip_portable-11.0.0.WIN64"
+        },
+        "32bit": {
+            "url": "https://github.com/peazip/PeaZip/releases/download/11.0.0/peazip_portable-11.0.0.WINDOWS.zip",
+            "hash": "72716995cc3df142a0d2cbd9b3ebd3b305984d66e2680345941a30541c781103",
+            "extract_dir": "peazip_portable-11.0.0.WINDOWS"
+        }
+    },
+    "bin": "peazip.exe",
+    "shortcuts": [
+        [
+            "peazip.exe",
+            "PeaZip"
+        ]
+    ],
+    "persist": "res\\conf",
+    "post_install": [
+        "Get-ChildItem \"$dir\\res\\share\\batch\\Windows\\Windows 11 mini context menu\\*.reg\" | ForEach-Object {",
+        "    $content = Get-Content $_.FullName",
+        "    $content = $content -replace '\"C:\\\\\\\\Program Files\\\\\\\\PeaZip', \"\"\"$dir\"\"\"",
+        "    Set-Content $_.FullName $content -Encoding Unicode",
+        "}"
+    ],
+    "checkver": {
+        "github": "https://github.com/peazip/PeaZip"
+    },
+    "notes": [
+        "To add Windows 11 Mini Context Menu integration, run the relevant .reg files located in:",
+        "$dir\\res\\share\\batch\\Windows\\Windows 11 mini context menu\\",
+        "There is also a txt file that includes all of the options available for the context menu in that folder as well as their descriptions."
+    ],
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/peazip/PeaZip/releases/download/$version/peazip_portable-$version.WIN64.zip",
+                "extract_dir": "peazip_portable-$version.WIN64"
+            },
+            "32bit": {
+                "url": "https://github.com/peazip/PeaZip/releases/download/$version/peazip_portable-$version.WINDOWS.zip",
+                "extract_dir": "peazip_portable-$version.WINDOWS"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/SHA256.txt"
+        }
+    }
+}

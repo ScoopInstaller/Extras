@@ -1,0 +1,48 @@
+{
+    "version": "4.1.1.29",
+    "description": "Keep track of network configuration in different locations.",
+    "homepage": "http://tcpipmanager.sourceforge.net",
+    "license": "GPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://downloads.sourceforge.net/project/tcpipmanager/tcpipmanager_stable/TCP_IP_Manager_v4.1.1_%28Build_29%29/TCP_IP_Manager_v4.1.1.29_x64.7z",
+            "hash": "sha1:19a96bb50e254434aebef65e10bf691fadbc6355"
+        },
+        "32bit": {
+            "url": "https://downloads.sourceforge.net/project/tcpipmanager/tcpipmanager_stable/TCP_IP_Manager_v4.1.1_%28Build_29%29/TCP_IP_Manager_v4.1.1.29_x86.7z",
+            "hash": "sha1:e4638176f1c23b22bbf329ee5ccc10d573184fd9"
+        }
+    },
+    "extract_dir": "TCP IP Manager",
+    "pre_install": [
+        "$file = 'bin\\options.cfg'",
+        "if (-not (Test-Path \"$persist_dir\\$file\")) {",
+        "    Write-Host 'File' $file 'does not exists. Creating.' -f Yellow",
+        "    New-Item \"$dir\\$file\" -Type File -Force | Out-Null",
+        "    Set-Content \"$dir\\$file\" 'CheckUpdates=0' -Encoding Ascii",
+        "}"
+    ],
+    "bin": "TCP_IP_Manager.exe",
+    "shortcuts": [
+        [
+            "TCP_IP_Manager.exe",
+            "TCP IP Manager"
+        ]
+    ],
+    "persist": "bin",
+    "checkver": {
+        "url": "https://tcpipmanager.sourceforge.io/download.html",
+        "regex": "v(?<ver>[\\d.]+) \\(Build (?<build>[\\d.]+)\\)",
+        "replace": "${ver}.${build}"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://downloads.sourceforge.net/project/tcpipmanager/tcpipmanager_stable/TCP_IP_Manager_v$matchVer_%28Build_$matchBuild%29/TCP_IP_Manager_v$version_x64.7z"
+            },
+            "32bit": {
+                "url": "https://downloads.sourceforge.net/project/tcpipmanager/tcpipmanager_stable/TCP_IP_Manager_v$matchVer_%28Build_$matchBuild%29/TCP_IP_Manager_v$version_x86.7z"
+            }
+        }
+    }
+}

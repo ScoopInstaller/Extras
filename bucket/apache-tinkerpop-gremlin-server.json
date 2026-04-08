@@ -1,0 +1,35 @@
+{
+    "version": "3.8.1",
+    "description": "Remotely execute Gremlin against one or more Graph instances hosted within it.",
+    "homepage": "https://tinkerpop.apache.org",
+    "license": "Apache-2.0",
+    "url": "https://downloads.apache.org/tinkerpop/3.8.1/apache-tinkerpop-gremlin-server-3.8.1-bin.zip",
+    "hash": "sha512:b020e834b144a5f500016cb307734cabd4161f49c2a15a7f841163b3c0c8d9db734cf5fa9dcea4ac372ab742119d024b9534fae589c8f6f8dc79b92c12c81877",
+    "extract_dir": "apache-tinkerpop-gremlin-server-3.8.1",
+    "pre_install": [
+        "$cont = @(",
+        "    '@echo off'",
+        "    'cd /d \"%~dp0\"'",
+        "    'gremlin-server.bat'",
+        ")",
+        "Set-Content \"$dir\\bin\\gremlin-server-scoop.bat\" $cont -Encoding ascii"
+    ],
+    "bin": [
+        [
+            "bin\\gremlin-server-scoop.bat",
+            "gremlin-server"
+        ]
+    ],
+    "checkver": {
+        "url": "https://downloads.apache.org/tinkerpop/",
+        "regex": "href=\"([\\d.]+)/",
+        "reverse": true
+    },
+    "autoupdate": {
+        "url": "https://downloads.apache.org/tinkerpop/$version/apache-tinkerpop-gremlin-server-$version-bin.zip",
+        "hash": {
+            "url": "$url.sha512"
+        },
+        "extract_dir": "apache-tinkerpop-gremlin-server-$version"
+    }
+}

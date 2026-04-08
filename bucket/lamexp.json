@@ -1,0 +1,40 @@
+{
+    "version": "4.21.2382",
+    "description": "Audio Encoder Front-End.",
+    "homepage": "http://lamexp.sourceforge.net",
+    "license": "GPL-2.0-or-later",
+    "depends": "nero-aac",
+    "url": "https://downloads.sourceforge.net/project/lamexp/LameXP.2023-12-29.Release-Static.Build-2382.zip",
+    "hash": "sha1:0b014610c96ea270833de526568f0c116e122d0e",
+    "pre_install": [
+        "Rename-Item \"$dir\\LameXP.exe\" \"$dir\\LameXP-Portable.exe\"",
+        "$ini = \"LameXP-Portable.ini\"",
+        "if (!(Test-Path \"$persist_dir\\$ini\")) {",
+        "   New-Item \"$dir\\$ini\" | Out-Null",
+        "} else {",
+        "   $version -match '(\\d+).(\\d+).(\\d+)' | Out-Null",
+        "   $cleanVersion = $Matches[1] + $Matches[2] + '0' + $Matches[3]",
+        "   (Get-Content \"$persist_dir\\$ini\") -replace 'LameXP_\\d+', \"LameXP_$cleanVersion\" | Set-Content \"$persist_dir\\$ini\"",
+        "},",
+        "$aac = versiondir 'nero-aac' 'current'",
+        "if (Test-Path \"$aac\") {",
+        "   info 'Adding Nero AAC Codec Support'",
+        "   Copy-Item \"$aac\\win32\\*.exe\" \"$dir\"",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "LameXP-Portable.exe",
+            "LameXP"
+        ]
+    ],
+    "persist": "LameXP-Portable.ini",
+    "checkver": {
+        "url": "https://muldersoft.com",
+        "regex": "\\[(?<release>[\\d-]+)\\]&nbsp;LameXP v([\\d.]+) Final \\(Build #(\\d+)\\)",
+        "replace": "${1}.${2}"
+    },
+    "autoupdate": {
+        "url": "https://downloads.sourceforge.net/project/lamexp/LameXP.$matchRelease.Release-Static.Build-$patchVersion.zip"
+    }
+}

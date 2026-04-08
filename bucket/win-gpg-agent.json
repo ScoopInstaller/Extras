@@ -1,0 +1,62 @@
+{
+    "version": "1.6.3",
+    "description": "Simple set of tools to make working with GPG and SSH keys easier on Windows 10/11.",
+    "homepage": "https://github.com/rupor-github/win-gpg-agent",
+    "license": "Apache-2.0",
+    "notes": [
+        "win-gpg-agent is configured to have SSH_AUTH_SOCK to point to named pipe.",
+        "If you prefer cygwin socket you could edit \"$dir\\agent-gui.conf\" file."
+    ],
+    "suggest": {
+        "GnuPG": "gnupg"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/rupor-github/win-gpg-agent/releases/download/v1.6.3/win-gpg-agent.zip",
+            "hash": "23cc5e7b7e1937049ab7a416871713f44fbf84a002aa58fd6326d99876b79cd0"
+        }
+    },
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\agent-gui.conf\")) {",
+        "  @(\"gpg:`r`n\",",
+        "    \"  install_path: \"\"`$`{USERPROFILE`}\\\\scoop\\\\apps\\\\gnupg\\\\current\"\"`r`n\",",
+        "    \"  # Before gnupg 2.3.2 release home directory could be properly link-ed`r`n\",",
+        "    \"  #   homedir: \"\"`$`{USERPROFILE`}\\\\scoop\\\\apps\\\\gnupg\\\\current\\\\home\"\"`r`n\",",
+        "    \"  # With gnupg 2.3.3 release (due to the changes in T5537) use this instead`r`n\",",
+        "    \"  #   homedir: \"\"`$`{USERPROFILE`}\\\\scoop\\\\persist\\\\gnupg\\\\home\"\"`r`n\",",
+        "    \"  #   socketdir: \"\"\"\"`r`n\",",
+        "    \"  # After gnupg 2.3.4 release we have to switch to`r`n\",",
+        "    \"  homedir: \"\"`$`{USERPROFILE`}\\\\scoop\\\\apps\\\\gnupg\\\\current\\\\home\"\"`r`n\",",
+        "    \"  socketdir: \"\"`$`{USERPROFILE`}\\\\scoop\\\\apps\\\\gnupg\\\\current\\\\gnupg\"\"`r`n\",",
+        "    \"gui:`r`n\",",
+        "    \"  debug: false`r`n\",",
+        "    \"  setenv: true`r`n\",",
+        "    \"  # Use line below to enable SSH_AUTH_SOCK to point to cygwin socket`r`n\",",
+        "    \"  #   openssh: cygwin`r`n\"",
+        "  ) -join '' | Set-Content \"$dir\\agent-gui.conf\" -Encoding ASCII",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\pinentry.conf\")) {",
+        "  $content = \"gui:`r`n\"",
+        "  $content += \"  debug: false`r`n\"",
+        "  $content += \"  pin_dialog:`r`n\"",
+        "  $content += \"    delay: 500ms`r`n\"",
+        "  $content | Set-Content \"$dir\\pinentry.conf\" -Encoding ASCII",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\sorelay.conf\")) {",
+        "  $content = \"gui:`r`n\"",
+        "  $content += \"  debug: false`r`n\"",
+        "  $content | Set-Content \"$dir\\sorelay.conf\" -Encoding ASCII",
+        "}"
+    ],
+    "persist": [
+        "agent-gui.conf",
+        "pinentry.conf",
+        "sorelay.conf"
+    ],
+    "shortcuts": [
+        [
+            "agent-gui.exe",
+            "win-gpg-agent"
+        ]
+    ]
+}

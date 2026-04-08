@@ -1,0 +1,45 @@
+{
+    "version": "2.8.1",
+    "description": "Video editor designed for simple cutting, filtering and encoding tasks",
+    "homepage": "http://fixounet.free.fr/avidemux/",
+    "license": "GPL-2.0-only",
+    "depends": "qtifw",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/mean00/avidemux2/releases/download/2.8.1/Avidemux_2.8.1.VC++.64bits.exe",
+            "hash": "DD962BC788D7D955B04E163E7E1A6620B573ADC379BF2EA2A2C25585782B4DCA"
+        }
+    },
+    "pre_install": [
+        "qtifw-devtool dump \"$dir\\$fname\" \"$dir\\dump\"",
+        "Get-ChildItem \"$dir\\dump\\metadata\" -Filter '*.7z' -Recurse | foreach { Expand-7zipArchive $_.FullName \"$dir\" }",
+        "Get-ChildItem \"$dir\\dump\\metadata\" -Filter 'license.txt' -Recurse | Move-Item -Destination \"$dir\" -ErrorAction SilentlyContinue",
+        "Remove-Item \"$dir\\$fname\", \"$dir\\dump\" -Force -Recurse -ErrorAction SilentlyContinue"
+    ],
+    "bin": [
+        [
+            "avidemux_cli.exe",
+            "avidemux"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "avidemux.exe",
+            "Avidemux"
+        ],
+        [
+            "avidemux_jobs.exe",
+            "Avidemux Jobs"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/mean00/avidemux2"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/mean00/avidemux2/releases/download/$version/Avidemux_$version.VC++.64bits.exe"
+            }
+        }
+    }
+}

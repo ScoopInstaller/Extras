@@ -1,0 +1,58 @@
+{
+    "version": "6.0.1.1157",
+    "description": "Records music broadcasted by Internet radio stations.",
+    "homepage": "https://streamwriter.org/en/",
+    "license": "GPL-3.0-or-later",
+    "architecture": {
+        "64bit": {
+            "url": "https://streamwriter.org/en/downloads/streamwriter-x86_64.zip",
+            "hash": "dd7decdff9c6e2105dfcf08464fcfe20fd17c4d4a726e3830b8295b7a4c359f2"
+        },
+        "32bit": {
+            "url": "https://streamwriter.org/en/downloads/streamwriter-i386.zip",
+            "hash": "7a4b6728abb523ef201af4703aeccb6b75942fec2ee5453f9415c65c15f1b741"
+        }
+    },
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\streamwriter_settings.ini\")) {",
+        "    $current_dir = if (get_config NO_JUNCTIONS) { $dir } else { \"$(appdir $app $global)\\current\" }",
+        "    $content = @(",
+        "        '[Settings]'",
+        "        'AutoUpdate=0'",
+        "        \"Dir=$current_dir\\Music\"",
+        "        \"DirAuto=$current_dir\\Music\"",
+        "    )",
+        "    Set-Content \"$dir\\streamwriter_settings.ini\" ($content -join \"`r`n\") -Encoding Ascii",
+        "}",
+        "if (Test-Path \"$persist_dir\\streamwriter_data.dat\") {",
+        "    Copy-Item \"$persist_dir\\streamwriter_data.dat\" \"$dir\"",
+        "}"
+    ],
+    "uninstaller": {
+        "script": "Copy-Item \"$dir\\streamwriter_data.dat\" \"$persist_dir\" -ErrorAction SilentlyContinue -Force"
+    },
+    "bin": "streamwriter.exe",
+    "shortcuts": [
+        [
+            "streamwriter.exe",
+            "streamWriter"
+        ]
+    ],
+    "persist": [
+        "Music",
+        "streamwriter_settings.ini"
+    ],
+    "checkver": {
+        "regex": ">Current version: ([\\d.]+)<"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://streamwriter.org/en/downloads/streamwriter-x86_64.zip"
+            },
+            "32bit": {
+                "url": "https://streamwriter.org/en/downloads/streamwriter-i386.zip"
+            }
+        }
+    }
+}

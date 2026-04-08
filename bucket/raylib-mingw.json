@@ -1,0 +1,96 @@
+{
+    "version": "5.5",
+    "description": "A simple and easy-to-use library to enjoy videogames programming (this version is for the MinGW compiler)",
+    "homepage": "https://www.raylib.com/",
+    "license": "Zlib",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_win64_mingw-w64.zip",
+            "hash": "fe8feda1b92fc02826e2d19c631d648fd0563b93b144893fe18140e9fe4fb6fd"
+        },
+        "32bit": {
+            "url": "https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_win32_mingw-w64.zip",
+            "hash": "150379531e1f4bf58fc92560e486ba7ca878027b1116f71e4eae4f84aed24c6c"
+        }
+    },
+    "post_install": [
+        "# Move extracted files to app root directory",
+        "Move-Item \"$dir\\raylib-*\\*\" \"$dir\" && Remove-Item \"$dir\\raylib-*\"",
+        "# Configure pkg-config file with the library data.",
+        "# Download raylib pkg-config file",
+        "Invoke-WebRequest -Uri https://raw.githubusercontent.com/raysan5/raylib/$version/raylib.pc.in -OutFile $dir\\raylib.pc.in",
+        "# Create helper variables:",
+        "$pc_in = \"$dir\\raylib.pc.in\"",
+        "$pc_out = \"$dir\\lib\\pkgconfig\\raylib.pc\"",
+        "$cm_dir = if (get_config NO_JUNCTIONS) { $dir } else { \"$(appdir $app $global)\\current\" }",
+        "$pc_dir = \"$cm_dir\\lib\\pkgconfig\"",
+        "# Create folder for pkg-config",
+        "New-Item -Path $pc_dir -ItemType Directory | Out-Null",
+        "# Configure the pkg-config file.",
+        "Set-Content $pc_out ((Get-Content $pc_in) `",
+        "    -replace \"@CMAKE_INSTALL_PREFIX@\",\"\" `",
+        "    -replace \"@libdir_for_pc_file@\",\"`${exec_prefix}/lib\" `",
+        "    -replace \"@includedir_for_pc_file@\",\"`${prefix}/include\" `",
+        "    -replace \"@PROJECT_VERSION@\",\"$version\" `",
+        "    -replace \"@PKG_CONFIG_LIBS_EXTRA@\",\"\" `",
+        "    -replace \"@PKG_CONFIG_LIBS_PRIVATE@\",\"\" `",
+        "    -replace \"@GLFW_PKG_DEPS@\",\"\" `",
+        ")",
+        "# Remove raylib.pc.in",
+        "Remove-Item \"$dir\\raylib.pc.in\"",
+        "# Make the library discoverable by adding the path to the Env variables.",
+        "# Do it for the future sessions",
+        "# For pkg-config user",
+        "$null, $currpath = Split-PathLikeEnvVar -Pattern $pc_dir -Path (Get-EnvVar -Name 'PKG_CONFIG_PATH' -Global:$global)",
+        "Write-Host \"Adding $app to PKG_CONFIG_PATH.\"",
+        "Set-EnvVar -Name 'PKG_CONFIG_PATH' -Value \"$pc_dir;$currpath\" -Global:$global",
+        "# For cmake user",
+        "$null, $currpath = Split-PathLikeEnvVar -Pattern $cm_dir -Path (Get-EnvVar -Name 'CMAKE_PREFIX_PATH' -Global:$global)",
+        "Write-Host \"Adding $app to CMAKE_PREFIX_PATH.\"",
+        "Set-EnvVar -Name 'CMAKE_PREFIX_PATH' -Value \"$cm_dir;$currpath\" -Global:$global",
+        "# Do it for this session",
+        "# For pkg-config user",
+        "$null, $env:PKG_CONFIG_PATH = Split-PathLikeEnvVar -Pattern $pc_dir -Path $env:PKG_CONFIG_PATH",
+        "$env:PKG_CONFIG_PATH = \"$pc_dir;$env:PKG_CONFIG_PATH\"",
+        "# For cmake user",
+        "$null, $env:CMAKE_PREFIX_PATH = Split-PathLikeEnvVar -Pattern $cm_dir -Path $env:CMAKE_PREFIX_PATH",
+        "$env:CMAKE_PREFIX_PATH = \"$cm_dir;$env:CMAKE_PREFIX_PATH\""
+    ],
+    "uninstaller": {
+        "script": [
+            "# Remove library link in the env variables",
+            "# Create helper variables:",
+            "$cm_dir = if (get_config NO_JUNCTIONS) { $dir } else { \"$(appdir $app $global)\\current\" }",
+            "$pc_dir = \"$cm_dir\\lib\\pkgconfig\"",
+            "# Delete env variables for future sessions:",
+            "$was_in_path, $newpath = Split-PathLikeEnvVar -Pattern $pc_dir -Path (Get-EnvVar -Name 'PKG_CONFIG_PATH' -Global:$global)",
+            "if($was_in_path) {",
+            "    Write-Host \"Removing $(friendly_path $pc_dir) from your path.\"",
+            "    Set-EnvVar -Name 'PKG_CONFIG_PATH' -Value $newpath -Global:$global",
+            "}",
+            "$was_in_path, $newpath = Split-PathLikeEnvVar -Pattern $cm_dir -Path (Get-EnvVar -Name 'CMAKE_PREFIX_PATH' -Global:$global)",
+            "if($was_in_path) {",
+            "    Write-Host \"Removing $(friendly_path $cm_dir) from your path.\"",
+            "    Set-EnvVar -Name 'CMAKE_PREFIX_PATH' -Value $newpath -Global:$global",
+            "}",
+            "# Delete env variables for this session:",
+            "$was_in_path, $newpath = Split-PathLikeEnvVar -Pattern $pc_dir -Path $env:PKG_CONFIG_PATH",
+            "if($was_in_path) { $env:PKG_CONFIG_PATH = $newpath }",
+            "$was_in_path, $newpath = Split-PathLikeEnvVar -Pattern $cm_dir -Path $env:CMAKE_PREFIX_PATH",
+            "if($was_in_path) { $env:CMAKE_PREFIX_PATH = $newpath }"
+        ]
+    },
+    "checkver": {
+        "github": "https://github.com/raysan5/raylib"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/raysan5/raylib/releases/download/$version/raylib-$version_win64_mingw-w64.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/raysan5/raylib/releases/download/$version/raylib-$version_win32_mingw-w64.zip"
+            }
+        }
+    }
+}

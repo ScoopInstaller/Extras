@@ -1,0 +1,38 @@
+{
+    "version": "3.11.0",
+    "description": "Breitbandmessung der Bundesnetzagentur",
+    "homepage": "https://breitbandmessung.de/",
+    "license": "Proprietary",
+    "url": "https://download.breitbandmessung.de/bbm/Breitbandmessung-3.11.0-win.exe#/dl.7z",
+    "hash": "sha512:d220656613e502422bdb26442458210a5c350e8b11d7b079ec84cd24919d9a8df5cb2e0bb7c6cbe4a81833a738eb76a903b9c35ea3e39e0c399078af957d27e0",
+    "architecture": {
+        "64bit": {
+            "installer": {
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR/app-64.7z\" \"$dir\""
+            }
+        },
+        "32bit": {
+            "installer": {
+                "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR/app-32.7z\" \"$dir\""
+            }
+        }
+    },
+    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\`$R0\", \"$dir\\Uninstall*\" -Force -Recurse",
+    "shortcuts": [
+        [
+            "Breitbandmessung.exe",
+            "Breitbandmessung"
+        ]
+    ],
+    "checkver": {
+        "url": "https://download.breitbandmessung.de/bbm/latest.yml",
+        "regex": "version:\\s([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://download.breitbandmessung.de/bbm/Breitbandmessung-$version-win.exe#/dl.7z",
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512: $base64"
+        }
+    }
+}

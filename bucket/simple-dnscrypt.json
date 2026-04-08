@@ -1,0 +1,68 @@
+{
+    "version": "0.7.1",
+    "description": "An easy to use GUI for dnscrypt-proxy",
+    "homepage": "https://simplednscrypt.org/",
+    "license": "MIT",
+    "suggest": {
+        "vcredist": "extras/vcredist2022"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/bitbeans/SimpleDnsCrypt/releases/download/0.7.1/SimpleDNSCrypt64.msi",
+            "hash": "5ba0c94774acd7ade18446b4351e7d28a948c490aefc50dc6c08c13551f19f7f"
+        },
+        "32bit": {
+            "url": "https://github.com/bitbeans/SimpleDnsCrypt/releases/download/0.7.1/SimpleDNSCrypt.msi",
+            "hash": "cac6b8119af3da70a5977a2e73ee5214303990fedd7abbc5f247a1e2cf19a663"
+        }
+    },
+    "pre_install": [
+        "if (!(Test-Path \"$env:LOCALAPPDATA\\SimpleDnsCrypt\")) { New-Item \"$env:LOCALAPPDATA\\SimpleDnsCrypt\" -ItemType Directory -Force | Out-Null }",
+        "'blacklist.txt', 'blocked.log', 'query.log', 'domain-blacklist.txt', 'domain-whitelist.txt' | ForEach-Object {",
+        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "SimpleDnsCrypt.exe",
+            "Simple DnsCrypt"
+        ]
+    ],
+    "bin": "SimpleDnsCrypt.exe",
+    "persist": [
+        "dnscrypt-proxy\\dnscrypt-proxy.toml",
+        "dnscrypt-proxy\\blacklist.txt",
+        "dnscrypt-proxy\\blocked.log",
+        "dnscrypt-proxy\\query.log",
+        "dnscrypt-proxy\\domain-blacklist.txt",
+        "dnscrypt-proxy\\domain-whitelist.txt"
+    ],
+    "pre_uninstall": [
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+        "",
+        "Start-Process -Wait \"$dir\\Uninstall.exe\" | Out-Null",
+        "if (Get-Process -Name 'SimpleDnsCrypt' -ErrorAction SilentlyContinue) { Stop-Process -Name 'SimpleDnsCrypt' | Out-Null }",
+        "$service = Get-Service -Name 'dnscrypt-proxy' -ErrorAction SilentlyContinue",
+        "if (($service) -and ($service.Status -ne 'Stopped')) {",
+        "    if (!(is_admin)) { error 'Admin rights are required to stop dnscrypt-proxy service'; break }",
+        "    Stop-Service -Name 'dnscrypt-proxy' | Out-Null",
+        "}",
+        "if (($service) -and ($cmd -eq 'uninstall')) {",
+        "    if (!(is_admin)) { error 'Admin rights are required to remove dnscrypt-proxy service'; break }",
+        "    Remove-Service -Name 'dnscrypt-proxy' | Out-Null",
+        "}"
+    ],
+    "checkver": {
+        "github": "https://github.com/bitbeans/SimpleDnsCrypt"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/bitbeans/SimpleDnsCrypt/releases/download/$version/SimpleDNSCrypt64.msi"
+            },
+            "32bit": {
+                "url": "https://github.com/bitbeans/SimpleDnsCrypt/releases/download/$version/SimpleDNSCrypt.msi"
+            }
+        }
+    }
+}

@@ -1,0 +1,36 @@
+{
+    "version": "2.5.1",
+    "description": "A new intuitive graphical interface for Inno Setup",
+    "homepage": "https://www.kymoto.org/products/inno-script-studio",
+    "license": "Unknown",
+    "depends": "inno-setup",
+    "url": "https://www.kymoto.org/downloads/ISStudio_Latest.exe",
+    "hash": "f2fa1c24674de9fc6aa60aa003d7daa8271ff1713def2c2119322c9a7e577b17",
+    "innosetup": true,
+    "post_install": [
+        "$regpath = \"HKCU:\\Software\\Kymoto Solutions\\Inno Script Studio 2\\Options\\Compiler\"",
+        "New-Item -Path $regpath -Type Directory -Force | Out-Null",
+        "New-ItemProperty -Path $regpath -Name \"InnoCompilerPath\" -Value (versiondir 'inno-setup' 'current') | Out-Null"
+    ],
+    "uninstaller": {
+        "script": [
+            "Remove-Item \"HKCU:\\Software\\Kymoto Solutions\\Inno Script Studio 2\" -Recurse -Force",
+            "if ($null -eq (Get-ChildItem \"HKCU:\\Software\\Kymoto Solutions\")) {",
+            "   Remove-Item \"HKCU:\\Software\\Kymoto Solutions\" -Force",
+            "}"
+        ]
+    },
+    "shortcuts": [
+        [
+            "ISStudio.exe",
+            "Inno Script Studio"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.kymoto.org/products/inno-script-studio/release-history",
+        "regex": "Inno Script Studio v([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://www.kymoto.org/downloads/ISStudio_Latest.exe"
+    }
+}

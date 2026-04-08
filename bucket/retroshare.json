@@ -1,0 +1,49 @@
+{
+    "version": "0.6.7.2",
+    "description": "RetroShare is a Free and Open Source cross-platform, Friend-2-Friend and secure decentralised communication platform.",
+    "homepage": "https://retroshare.cc/",
+    "license": "GPL-2.0-only",
+    "notes": [
+        "'retroshare-nogui' is replaced by 'retroshare-service' since version 0.6.6",
+        "See https://retroshareteam.wordpress.com/2021/03/15/release-notes-for-v0-6-6/ for details and instructions"
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/RetroShare/RetroShare/releases/download/v0.6.7.2/RetroShare-0.6.7a-4-ga1fdce2e5-Windows-Portable-20231126-Qt-5.15.2-x64.7z",
+            "hash": "5a89a746115f34312ace09a3ec84c1929f31ab680eb6892d72c71406a15bb3fb"
+        },
+        "32bit": {
+            "url": "https://github.com/RetroShare/RetroShare/releases/download/v0.6.7.2/RetroShare-0.6.7a-4-ga1fdce2e5-Windows-Portable-20231126-Qt-5.15.2-x86.7z",
+            "hash": "23f2b5d31a495839ea8a511a72f71711bf260b80c6592c68f2f68a672fccd164"
+        }
+    },
+    "bin": [
+        "retroshare.exe",
+        "retroshare-service.exe"
+    ],
+    "shortcuts": [
+        [
+            "retroshare.exe",
+            "RetroShare"
+        ]
+    ],
+    "persist": "Data",
+    "checkver": {
+        "url": "https://api.github.com/repos/RetroShare/RetroShare/releases/latest",
+        "jsonpath": "$.assets[?(@.name =~ /Windows-Portable/i)].browser_download_url",
+        "regex": "download/v([\\d.]+)/RetroShare-(?<commit>[^\"]+)-Windows-Portable-(?<build>[\\w.-]+?)(?<!-tor)(?=(?:-x64|-x86)?\\.7z)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/RetroShare/RetroShare/releases/download/v$version/RetroShare-$matchCommit-Windows-Portable-$matchBuild-x64.7z"
+            },
+            "32bit": {
+                "url": "https://github.com/RetroShare/RetroShare/releases/download/v$version/RetroShare-$matchCommit-Windows-Portable-$matchBuild-x86.7z"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/chksums.txt"
+        }
+    }
+}

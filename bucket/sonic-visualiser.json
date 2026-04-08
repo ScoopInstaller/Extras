@@ -1,0 +1,42 @@
+{
+    "version": "5.2.1",
+    "description": "Visualisation, analysis, and annotation of music audio recordings.",
+    "homepage": "https://www.sonicvisualiser.org",
+    "license": "GPL-2.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/sonic-visualiser/sonic-visualiser/releases/download/sv_v5.2.1/sonic-visualiser-5.2.1-win64.msi",
+            "hash": "fb421363db474de2161ef5e73d5a5a1f548d2df0624d811ad0713e76bdae43b1",
+            "extract_dir": "PFiles64\\Sonic Visualiser"
+        }
+    },
+    "shortcuts": [
+        [
+            "Sonic Visualiser.exe",
+            "Sonic Visualiser"
+        ]
+    ],
+    "post_uninstall": [
+        "if ($purge) {",
+        "    $Directories = [string[]](",
+        "        [System.IO.Path]::Combine($env:APPDATA, 'sonic-visualiser')",
+        "    )",
+        "    $Directories.ForEach{",
+        "        if ([System.IO.Directory]::Exists($_)) {",
+        "            $null = [System.IO.Directory]::Delete($_,$true)",
+        "        }",
+        "    }",
+        "}"
+    ],
+    "checkver": {
+        "github": "https://github.com/sonic-visualiser/sonic-visualiser",
+        "regex": "/releases/tag/sv_(?:v|V)?([\\d\\.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/sonic-visualiser/sonic-visualiser/releases/download/sv_v$version/sonic-visualiser-$version-win64.msi"
+            }
+        }
+    }
+}

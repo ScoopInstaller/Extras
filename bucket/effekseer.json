@@ -1,0 +1,49 @@
+{
+    "version": "1.7.3.0",
+    "homepage": "https://effekseer.github.io/en/index.html",
+    "description": "An open source tool that allows easy creation of beautiful particle effects for games and movies. ",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/effekseer/Effekseer/releases/download/1.7.3.0/Effekseer1.7.3.0Win.zip",
+            "hash": "155212c5ec4d365eb1a4a5cbe25a03cfc59893723ec6680e462de4f49e605b69"
+        }
+    },
+    "installer": {
+        "script": [
+            "foreach ($c_file in 'Effekseer.imgui.ini', 'config.option.xml', 'config.recent.xml', 'Effekseer.config.Dock.xml') {",
+            "    Copy-Item \"$persist_dir\\Tool\\$c_file\" \"$dir\\Tool\\$c_file\" -ErrorAction 'SilentlyContinue'",
+            "}",
+            "if (!(Test-Path \"$persist_dir\\Tool\\config.network.xml\")) { New-Item \"$dir\\Tool\\config.network.xml\" | Out-Null }"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "foreach ($c_file in 'Effekseer.imgui.ini', 'config.option.xml', 'config.recent.xml', 'Effekseer.config.Dock.xml') {",
+            "    Copy-Item \"$dir\\Tool\\$c_file\" \"$persist_dir\\Tool\\$c_file\" -ErrorAction 'SilentlyContinue'",
+            "}"
+        ]
+    },
+    "shortcuts": [
+        [
+            "Tool\\Effekseer.exe",
+            "Effekseer"
+        ]
+    ],
+    "persist": [
+        "Tool\\scripts",
+        "Tool\\config.network.xml"
+    ],
+    "checkver": {
+        "url": "https://api.github.com/repos/effekseer/Effekseer/releases",
+        "jsonpath": "$[?(@.prerelease == false)].assets[?(@.name =~ /Win\\.zip/i)].browser_download_url",
+        "regex": "(?i)download/([\\w.]+)/Effekseer"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/effekseer/Effekseer/releases/download/$version/Effekseer$versionWin.zip"
+            }
+        }
+    }
+}

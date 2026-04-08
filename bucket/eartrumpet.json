@@ -1,0 +1,49 @@
+{
+    "version": "2.3.0",
+    "description": "Volume control for Windows",
+    "homepage": "https://github.com/File-New-Project/EarTrumpet",
+    "license": "MIT",
+    "notes": [
+        "Start EarTrumpet with Windows by running:",
+        "reg import \"$dir\\add-startup.reg\""
+    ],
+    "url": "https://packages.chocolatey.org/eartrumpet.2.3.0.nupkg",
+    "hash": "63cd29450fc6356ca104cd1650b71a99aed5292feff37d35e88914868f69068f",
+    "extract_dir": "tools",
+    "pre_install": [
+        "Remove-Item \"$dir\\choco*\"",
+        "Expand-7ZipArchive \"$dir\\Release.zip\" -Removal"
+    ],
+    "post_install": [
+        "$exepath = \"$dir\\EarTrumpet.exe\".Replace('\\', '\\\\')",
+        "'add-startup', 'remove-startup' | ForEach-Object {",
+        "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\eartrumpet\\$_.reg\"",
+        "    $content = $content.Replace('$exepath', $exepath)",
+        "    if ($global) {",
+        "       $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "    }",
+        "    $content | Set-Content -Path \"$dir\\$_.reg\"",
+        "}"
+    ],
+    "uninstaller": {
+        "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\remove-startup.reg\" }"
+    },
+    "bin": "EarTrumpet.exe",
+    "shortcuts": [
+        [
+            "EarTrumpet.exe",
+            "EarTrumpet"
+        ]
+    ],
+    "checkver": {
+        "url": "https://chocolatey.org/packages/eartrumpet",
+        "regex": "Downloads of v\\s+([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://packages.chocolatey.org/eartrumpet.$version.nupkg",
+        "hash": {
+            "url": "https://chocolatey.org/packages/eartrumpet",
+            "regex": "$sha256.*?$basename"
+        }
+    }
+}

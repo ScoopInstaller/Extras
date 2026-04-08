@@ -1,0 +1,51 @@
+{
+    "version": "9.1.12",
+    "description": "This free (for life) Windows desktop application offers an effective and flexible way to stay on top of your daily tasks.",
+    "homepage": "https://www.abstractspoon.com",
+    "license": {
+        "identifier": "EPL-1.0",
+        "url": "https://opensource.org/licenses/eclipse-1.0.php"
+    },
+    "suggest": {
+        "vcredist": "extras/vcredist2010"
+    },
+    "url": "https://raw.githubusercontent.com/abstractspoon/ToDoList_Downloads/master/Latest/todolist_exe.zip",
+    "hash": "313154bf153595ea6e2fe78c635091a6107b05ce37cc722e6dd4ed9b7f75c976",
+    "pre_install": [
+        "function persistFile ([String] $name) {",
+        "    if (!(Test-Path \"$persist_dir\\$name\")) { ",
+        "        Write-Host \"No '$name' exists. Creating.\" -f Yellow",
+        "        New-Item \"$dir\\$name\" -ItemType File | Out-Null",
+        "    }",
+        "}",
+        "persistFile 'ToDoList.ini'",
+        "persistFile 'TDLTransEdit.ini'"
+    ],
+    "bin": [
+        "ToDoList.exe",
+        "TDLTransEdit.exe"
+    ],
+    "shortcuts": [
+        [
+            "ToDoList.exe",
+            "ToDoList"
+        ],
+        [
+            "TDLTransEdit.exe",
+            "ToDoList Translation Editor"
+        ]
+    ],
+    "persist": [
+        "ToDoList.ini",
+        "TDLTransEdit.ini",
+        "Resources\\TaskLists"
+    ],
+    "checkver": {
+        "url": "https://api.github.com/repos/abstractspoon/ToDoList_Downloads/commits",
+        "jsonpath": "$..message",
+        "regex": "Update todolist_exe.zip to (\\d+[\\d.]+\\.\\d+)"
+    },
+    "autoupdate": {
+        "url": "https://raw.githubusercontent.com/abstractspoon/ToDoList_Downloads/master/Latest/todolist_exe.zip"
+    }
+}
