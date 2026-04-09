@@ -16,15 +16,7 @@
     "url": "https://www.petges.lu/pubfiles/ac-11_40b.exe",
     "hash": "md5:16bf84bb8e68853a05a000140e4ee6b4",
     "pre_install": [
-        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-        "if (!(Test-Path \"$persist_dir\\langCode\")) {",
-        "    Set-Content \"$dir\\langCode\" '4' -Encoding Ascii",
-        "}"
-    ],
-    "post_install": [
-        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-        "Start-Process 'regsvr32' -ArgumentList @(\"$dir\\acshell.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
-        "Start-Sleep -Seconds 2"
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }"
     ],
     "installer": {
         "script": [
@@ -133,15 +125,22 @@
             "`$ac_language = `$langs[`$index]",
             "Copy-Item \"$dir\\messages,`$ac_language.ini\" \"$dir\\messages.ini\" -Force",
             "Copy-Item \"$dir\\ac,`$ac_language.pdf\" \"$dir\\ac.pdf\" -Force",
-            "Set-Content \"$dir\\langCode\" (`$index + 1) -Encoding Ascii -Force",
+            "Set-Content \"$dir\\langCode\" (`$index + 1) -Encoding utf8 -Force",
             "\"@",
             "Set-Content \"$dir\\change-ac-language.ps1\" $value -Encoding 'utf8' -Force",
             "",
             "",
-            "# Using the script to set the language according to the persisted langCode value",
-            "& \"$dir\\change-ac-language.ps1\" (Get-Content \"$persist_dir\\langCode\" -Raw)"
+            "if (!(Test-Path \"$persist_dir\\langCode\")) {",
+            "    Set-Content \"$dir\\langCode\" ($langs.IndexOf('english') + 1) -Encoding utf8",
+            "}"
         ]
     },
+    "post_install": [
+        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+        "& \"$dir\\change-ac-language.ps1\" (Get-Content \"$dir\\langCode\" -Raw)",
+        "Start-Process 'regsvr32' -ArgumentList @(\"$dir\\acshell.dll\", '/s') -Verb 'RunAs' -Wait; Stop-Process -Name 'explorer' -ErrorAction 'SilentlyContinue' -Force",
+        "Start-Sleep -Seconds 2"
+    ],
     "persist": "langCode",
     "bin": [
         "acmain.exe",
