@@ -1,6 +1,6 @@
 {
     "version": "26.1.1-3",
-    "description": "A conda-forge distribution",
+    "description": "Community-driven minimalistic conda installer using the conda-forge channel as default.",
     "homepage": "https://github.com/conda-forge/miniforge",
     "license": "BSD-3-Clause",
     "notes": [
@@ -19,6 +19,7 @@
     "pre_install": "if ($dir -match ' ') { error 'The installation directory cannot include a space'; break}",
     "installer": {
         "script": [
+            # Move the installer to the upper directory to avoid 'The installation directory is not empty' error",
             "Move-Item \"$dir\\$fname\" \"$dir\\..\\$fname\"",
             "Start-Process -Wait \"$dir\\..\\$fname\" -ArgumentList @('/S', '/InstallationType=JustMe', '/RegisterPython=0', '/AddToPath=0', '/NoRegistry=1', \"/D=$dir\")",
             "Remove-Item \"$dir\\..\\$fname\""
