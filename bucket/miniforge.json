@@ -39,8 +39,10 @@
     "persist": "envs",
     "uninstaller": {
         "script": [
+            "# Workaround for https://github.com/ScoopInstaller/Scoop/issues/4075",
+            "# Remove junction point before executing the uninstaller, otherwise all envs will be removed by the uninstaller.",
+            "Invoke-ExternalCommand cmd -ArgumentList @('/c', 'rmdir', '/s', '/q', \"`\"$dir\\envs`\"\")",
             "Start-Process -Wait \"$dir\\Uninstall-Miniforge3.exe\" -ArgumentList '/S'",
-            "# Workaround for 'envs' being deleted by the uninstaller. This does not affect persist.",
             "New-Item \"$dir\\envs\" -ItemType Directory | Out-Null"
         ]
     },
