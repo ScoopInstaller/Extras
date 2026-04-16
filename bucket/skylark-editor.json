@@ -1,6 +1,5 @@
 {
     "version": "4.0.20",
-    "versioncode": "20260325063123",
     "description": "Skylark Editor is written in C, a high performance text/hex editor. Embedded Database-client/Redis-client/Lua-engine. You can run Lua scripts and SQL files directly.",
     "homepage": "https://github.com/adonais/skylark/",
     "license": "GPL-3.0",
@@ -16,14 +15,19 @@
             "shortcuts": [["skylark_x86/skylark.exe", "SkyLark"]]
         }
     },
-    "checkver": "github",
+    "checkver": {
+        "url": "https://api.github.com/repos/adonais/skylark/releases/latest",
+        "jsonpath": "$.assets[0].browser_download_url",
+        "regex": "/download/(\\d+)/skylark_x64-v([\\d.]+)\\.7z",
+        "replace": "$2"
+    },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/adonais/skylark/releases/download/$versioncode/skylark_x64-v$version.7z"
+                "url": "https://github.com/adonais/skylark/releases/download/$match1/skylark_x64-v$version.7z"
             },
             "32bit": {
-                "url": "https://github.com/adonais/skylark/releases/download/$versioncode/skylark_x86-v$version.7z"
+                "url": "https://github.com/adonais/skylark/releases/download/$match1/skylark_x86-v$version.7z"
             }
         }
     }
