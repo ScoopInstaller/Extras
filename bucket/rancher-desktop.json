@@ -18,11 +18,14 @@
         "resources\\resources\\win32\\bin",
         "resources\\resources\\linux\\bin"
     ],
-    "shortcuts": [
-        [
-            "Rancher Desktop.exe",
-            "Rancher Desktop"
-        ]
+    "post_install": [
+        "# Rancher Desktop can't be started from a symlinked directory. See: https://github.com/ScoopInstaller/Extras/issues/14691",
+        "startmenu_shortcut \"$original_dir\\Rancher Desktop.exe\" 'Rancher Desktop' $null $null $global"
+    ],
+    "post_uninstall": [
+        "# Remove shortcut",
+        "Write-Host \"Removing shortcut $(friendly_path \"$(shortcut_folder $global)\\Rancher Desktop.lnk\")\"",
+        "Remove-Item \"$(shortcut_folder $global)\\Rancher Desktop.lnk\" -Force -ErrorAction SilentlyContinue"
     ],
     "checkver": {
         "github": "https://github.com/rancher-sandbox/rancher-desktop"
