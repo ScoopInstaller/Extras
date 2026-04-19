@@ -18,8 +18,12 @@
         }
     },
     "extract_dir": "{code_GetDestDir}",
-    "post_install": [
+    "pre_install": [
         "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse",
+        "Rename-Item -Path \"$dir\\{code_GetExeBasename}\" -NewName 'Windsurf.exe'",
+        "Rename-Item -Path \"$dir\\bin\\{code_GetBinDirApplicationCmdFilename}\" -NewName 'windsurf.cmd'"
+    ],
+    "post_install": [
         "if (!(Test-Path \"$dir\\data\\extensions\") -and (Test-Path \"$env:USERPROFILE\\.windsurf\\extensions\")) {",
         "    info '[Portable Mode] Copying extensions...'",
         "    Copy-Item \"$env:USERPROFILE\\.windsurf\\extensions\" \"$dir\\data\" -Recurse",
