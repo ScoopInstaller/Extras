@@ -27,10 +27,17 @@
         "New-ItemProperty -Path $regpath -Name \"URL Protocol\" -PropertyType String -Force | Out-Null",
         "New-Item -Path \"$regpath\\shell\\open\\command\" -Value \"`\"$dir\\Zoom.exe`\" --url=`\"%1`\"\" -Force| Out-Null"
     ],
+    "suggest": {
+        "Zoom (x86)": "extras/zoom"
+    },
     "uninstaller": {
         "script": [
-            "Write-Host \"Unregistering zoommtg:// protocol handler\"",
-            "Remove-Item \"HKCU:\\SOFTWARE\\Classes\\zoommtg\" -Recurse -Force"
+            "if ((Get-ItemProperty -Path \"HKCU:\\SOFTWARE\\Classes\\zoommtg\\shell\\open\\command\" -ErrorAction SilentlyContinue).'(default)' -notlike \"*$dir*\") {",
+            "    Write-Host \"zoommtg:// handler owned by another Zoom installation, skipping removal\"",
+            "} else {",
+            "    Write-Host \"Unregistering zoommtg:// protocol handler\"",
+            "    Remove-Item \"HKCU:\\SOFTWARE\\Classes\\zoommtg\" -Recurse -Force",
+            "}"
         ]
     },
     "bin": "Zoom.exe",
