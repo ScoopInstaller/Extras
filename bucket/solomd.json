@@ -1,28 +1,34 @@
 {
-    "version": "1.1.4",
-    "description": "A lightweight Markdown and plain text editor built with Tauri 2.",
+    "version": "1.1.5",
+    "description": "A lightweight Markdown and plain text editor built with Tauri 2",
     "homepage": "https://solomd.app",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/zhitongblog/solomd/releases/download/v1.1.4/SoloMD_1.1.4_x64-setup.exe#/dl.7z",
-            "hash": "545661a7e1ad4200befd26cd9601ae061e2bccf81f7c65b1d2588996c6841619"
+            "url": "https://github.com/zhitongblog/solomd/releases/download/v1.1.5/SoloMD_1.1.5_x64-setup.exe#/setup.exe",
+            "hash": "0dc5576948bda8f509d303928d817612e6f98e3c03759e23d7fb0d37f810b534"
         }
     },
-    "pre_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Force -Recurse -ErrorAction Ignore",
-    "shortcuts": [
-        [
-            "SoloMD.exe",
-            "SoloMD"
+    "installer": {
+        "script": [
+            "Start-Process -FilePath \"$dir\\\\setup.exe\" -ArgumentList '/S', \"/D=$dir\" -Wait"
         ]
-    ],
-    "checkver": {
-        "github": "https://github.com/zhitongblog/solomd"
     },
+    "uninstaller": {
+        "script": [
+            "Start-Process -FilePath \"$dir\\\\uninstall.exe\" -ArgumentList '/S' -Wait"
+        ]
+    },
+    "shortcuts": [["SoloMD.exe", "SoloMD"]],
+    "checkver": "github",
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/zhitongblog/solomd/releases/download/v$version/SoloMD_$version_x64-setup.exe#/dl.7z"
+                "url": "https://github.com/zhitongblog/solomd/releases/download/v$version/SoloMD_$version_x64-setup.exe#/setup.exe",
+                "hash": {
+                    "url": "https://github.com/zhitongblog/solomd/releases/tag/v$version",
+                    "regex": "SoloMD_$version_x64-setup\\.exe.*?$sha256"
+                }
             }
         }
     }
