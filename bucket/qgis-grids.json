@@ -1,0 +1,32 @@
+{
+    "version": "4.0.1-1",
+    "description": "A free and open source geographic information system (GIS), with optional projection grids",
+    "homepage": "https://www.qgis.org/",
+    "license": "GPL-2.0-or-later",
+    "architecture": {
+        "64bit": {
+            "url": "https://download.qgis.org/downloads/QGIS-Grids-OSGeo4W-4.0.1-1.msi",
+            "hash": "7af6dadc2187892756ca9bac45fdc277a5ba96de5f5dc09a5342d7f39d0dc349"
+        }
+    },
+    "extract_dir": "QGIS 4.0.1",
+    "post_install": "& \"$dir\\etc\\postinstall.bat\" \"$(shortcut_folder $global)\" \"%USERPROFILE%\\Desktop\" 0 1",
+    "bin": "OSGeo4W.bat",
+    "pre_uninstall": "& \"$dir\\etc\\preremove.bat\"",
+    "checkver": {
+        "url": "https://github.com/qgis/QGIS-Website/raw/main/data/conf.json",
+        "jsonpath": "$.lr_grids_msi",
+        "regex": "/QGIS-Grids-OSGeo4W-([\\d.]+(-\\d+)?).msi"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download.qgis.org/downloads/QGIS-Grids-OSGeo4W-$version.msi",
+                "hash": {
+                    "url": "https://download.qgis.org/downloads/QGIS-Grids-OSGeo4W-$version.sha256sum"
+                }
+            }
+        },
+        "extract_dir": "QGIS $majorVersion.$minorVersion.$patchVersion"
+    }
+}
