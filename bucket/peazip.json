@@ -1,18 +1,18 @@
 {
-    "version": "9.5.0",
+    "version": "11.0.0",
     "description": "A free file archiver utility, based on Open Source technologies",
     "homepage": "https://peazip.github.io",
     "license": "LGPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/peazip/PeaZip/releases/download/9.5.0/peazip_portable-9.5.0.WIN64.zip",
-            "hash": "a0cac53a6f140acdca314e898e758c029f41d37deea89b925b85a0a4cdfe7e6a",
-            "extract_dir": "peazip_portable-9.5.0.WIN64"
+            "url": "https://github.com/peazip/PeaZip/releases/download/11.0.0/peazip_portable-11.0.0.WIN64.zip",
+            "hash": "4e3ef7bbfc6607bbb08c29ce0178feb7845444c7d019fa6cfea8fc9081c103da",
+            "extract_dir": "peazip_portable-11.0.0.WIN64"
         },
         "32bit": {
-            "url": "https://github.com/peazip/PeaZip/releases/download/9.5.0/peazip_portable-9.5.0.WINDOWS.zip",
-            "hash": "39d054ca0e301adbe5f526924be12926d6003c0f247a157d014a417bb40e677f",
-            "extract_dir": "peazip_portable-9.5.0.WINDOWS"
+            "url": "https://github.com/peazip/PeaZip/releases/download/11.0.0/peazip_portable-11.0.0.WINDOWS.zip",
+            "hash": "72716995cc3df142a0d2cbd9b3ebd3b305984d66e2680345941a30541c781103",
+            "extract_dir": "peazip_portable-11.0.0.WINDOWS"
         }
     },
     "bin": "peazip.exe",
@@ -23,9 +23,21 @@
         ]
     ],
     "persist": "res\\conf",
+    "post_install": [
+        "Get-ChildItem \"$dir\\res\\share\\batch\\Windows\\Windows 11 mini context menu\\*.reg\" | ForEach-Object {",
+        "    $content = Get-Content $_.FullName",
+        "    $content = $content -replace '\"C:\\\\\\\\Program Files\\\\\\\\PeaZip', \"\"\"$dir\"\"\"",
+        "    Set-Content $_.FullName $content -Encoding Unicode",
+        "}"
+    ],
     "checkver": {
         "github": "https://github.com/peazip/PeaZip"
     },
+    "notes": [
+        "To add Windows 11 Mini Context Menu integration, run the relevant .reg files located in:",
+        "$dir\\res\\share\\batch\\Windows\\Windows 11 mini context menu\\",
+        "There is also a txt file that includes all of the options available for the context menu in that folder as well as their descriptions."
+    ],
     "autoupdate": {
         "architecture": {
             "64bit": {
@@ -38,8 +50,7 @@
             }
         },
         "hash": {
-            "url": "https://peazip.github.io/changelog.html",
-            "regex": "$sha256.*\\s+$basename"
+            "url": "$baseurl/SHA256.txt"
         }
     }
 }

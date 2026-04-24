@@ -1,13 +1,13 @@
 {
-    "version": "23.08.3-2231",
+    "version": "26.04-11511",
     "description": "Multi-document editor",
     "homepage": "https://kate-editor.org",
     "license": "LGPL-2.0-only",
     "notes": "If you want to get the latest development branch-based installer, please install `kate-nightly` from Versions bucket.",
     "architecture": {
         "64bit": {
-            "url": "https://binary-factory.kde.org/job/Kate_Release_win64/2231/artifact/kate-23.08.3-2231-windows-cl-msvc2019-x86_64.7z",
-            "hash": "eed39d875ea99be5e9fff8182c34ae32863d7ec03bea6e6176154815e0d19ee2"
+            "url": "https://cdn.kde.org/ci-builds/utilities/kate/release-26.04/windows/kate-release_26.04-11511-windows-cl-msvc2022-x86_64.7z",
+            "hash": "24939ac5f4f068c618f17f00d85234b5e386a79ee744eb525e325246251516e3"
         }
     },
     "bin": "bin\\kate.exe",
@@ -18,13 +18,28 @@
         ]
     ],
     "checkver": {
-        "url": "https://binary-factory.kde.org/job/Kate_Release_win64/",
-        "regex": "kate-([\\d.-]+)-windows-cl-(?<lib>\\w+)-x86_64\\.7z"
+        "script": [
+            "$url = 'https://cdn.kde.org/ci-builds/utilities/kate/?C=N;O=D'",
+            "",
+            "$cont = (Invoke-WebRequest $url).Content",
+            "$regex = 'release-([\\d.]+)'",
+            "if (!($cont -match $regex)) { error \"Could not match $regex in $url\"; continue }",
+            "$ver = $matches[1]",
+            "",
+            "$nextUrl = \"https://cdn.kde.org/ci-builds/utilities/kate/release-$ver/windows/\"",
+            "$nextCont = (Invoke-WebRequest $nextUrl).Content",
+            "$nextRegex = \"kate-release_$ver-([\\d]+)-windows-cl-([\\w]+)-x86_64\\.7z\"",
+            "if (!($nextCont -match $nextRegex)) { error \"Could not match $nextRegex in $nextUrl\"; continue }",
+            "$build = $matches[1]",
+            "$lib = $matches[2]",
+            "Write-Output $ver-$build $lib"
+        ],
+        "regex": "([\\d.-]+) (?<lib>[\\w]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://binary-factory.kde.org/job/Kate_Release_win64/$preReleaseVersion/artifact/kate-$version-windows-cl-$matchLib-x86_64.7z",
+                "url": "https://cdn.kde.org/ci-builds/utilities/kate/release-$matchHead/windows/kate-release_$version-windows-cl-$matchLib-x86_64.7z",
                 "hash": {
                     "url": "$url.sha256"
                 }

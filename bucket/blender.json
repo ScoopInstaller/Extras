@@ -1,31 +1,61 @@
 {
-    "version": "4.0.1",
+    "version": "5.1.1",
     "description": "3D creation suite",
     "homepage": "https://www.blender.org",
     "license": "GPL-3.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://download.blender.org/release/Blender4.0/blender-4.0.1-windows-x64.zip",
-            "hash": "6845ceeafd957328729099450b27eb8188843a6f5eace723a4bea11964f6d7bc",
-            "extract_dir": "blender-4.0.1-windows-x64"
+            "url": "https://download.blender.org/release/Blender5.1/blender-5.1.1-windows-x64.zip",
+            "hash": "307123caa3bad0c1d04ec373a2f22f622c403eecb34b9c646ede104906b04ced",
+            "extract_dir": "blender-5.1.1-windows-x64"
+        },
+        "arm64": {
+            "url": "https://download.blender.org/release/Blender5.1/blender-5.1.1-windows-arm64.zip",
+            "hash": "a4069826a296681c7dc2eab4f812de7312424263287dd5bed6fe33b512a30674",
+            "extract_dir": "blender-5.1.1-windows-arm64"
         }
     },
-    "bin": "blender.exe",
+    "bin": [
+        "blender-launcher.exe",
+        "blender.exe"
+    ],
     "shortcuts": [
         [
-            "blender.exe",
+            "blender-launcher.exe",
             "Blender"
         ]
     ],
+    "persist": "portable",
     "checkver": {
-        "url": "https://www.blender.org/download/",
-        "regex": "blender-([\\w.]+)-windows-x64\\.zip"
+        "url": "https://download.blender.org/release/",
+        "script": [
+            "try {",
+            "    $baseVersion = [regex]::Matches($page, 'href=\"Blender(?<version>\\d+\\.\\d+)/\"') | ForEach-Object {",
+            "        [version]\"$($_.Groups['version'].Value)\"",
+            "    } | Sort-Object -Descending | Select-Object -First 1",
+            "    if (-not $baseVersion) { throw 'No base version found' }",
+            "    $latestVersion = (Invoke-WebRequest -Uri \"https://download.blender.org/release/Blender$($baseVersion.Major).$($baseVersion.Minor)/\" -UseBasicParsing).Links | ForEach-Object {",
+            "        if ($_.href -match '^blender-(?<version>\\d+\\.\\d+\\.\\d+)-windows-x64\\.zip$') {",
+            "            [version]$Matches['version']",
+            "        }",
+            "    } | Sort-Object -Descending | Select-Object -First 1",
+            "    Write-Output $latestVersion",
+            "}",
+            "catch {",
+            "    Write-Output ''",
+            "}"
+        ],
+        "regex": "(\\d+\\.\\d+\\.\\d+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
                 "url": "https://download.blender.org/release/Blender$majorVersion.$minorVersion/blender-$version-windows-x64.zip",
                 "extract_dir": "blender-$version-windows-x64"
+            },
+            "arm64": {
+                "url": "https://download.blender.org/release/Blender$majorVersion.$minorVersion/blender-$version-windows-arm64.zip",
+                "extract_dir": "blender-$version-windows-arm64"
             }
         },
         "hash": {

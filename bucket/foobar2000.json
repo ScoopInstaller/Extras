@@ -1,5 +1,5 @@
 {
-    "version": "2.0",
+    "version": "2.25.8",
     "description": "An advanced freeware audio player for the Windows platform.",
     "homepage": "https://www.foobar2000.org/",
     "license": {
@@ -11,21 +11,21 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://www.foobar2000.org/files/foobar2000-x64_v2.0.exe#/dl.7z",
-            "hash": "91a7ec18a2a35c89b9cce027695a63831e1388047010561f3a0b30c7cfd3994c"
+            "url": "https://www.foobar2000.org/files/foobar2000-x64_v2.25.8.exe#/dl.7z",
+            "hash": "e7ba9b6c7d6b080551d239f4a428154f3f2c107fa8576b2ab48dc4b258ed1f9b"
         },
         "32bit": {
-            "url": "https://www.foobar2000.org/files/foobar2000_v2.0.exe#/dl.7z",
-            "hash": "bd6aab01d782680f6eb481fa72d5fab474b45bb76b225708eabc9b3c2456332b"
+            "url": "https://www.foobar2000.org/files/foobar2000_v2.25.8.exe#/dl.7z",
+            "hash": "2c43db069f4e5781036d665b25c86552b7752f488e8b7ac18f6cd650cb0a9b20"
         },
         "arm64": {
-            "url": "https://www.foobar2000.org/files/foobar2000-arm64ec_v2.0.exe#/dl.7z",
-            "hash": "9224f0ead8a56512140e0e375bb01d20e48ac7b8f044fb455e23fca7ca017325"
+            "url": "https://www.foobar2000.org/files/foobar2000-arm64ec_v2.25.8.exe#/dl.7z",
+            "hash": "6c0902b020c25e682d32969a3193c7c229f66b1deb9c290ec448a95a908d5a21"
         }
     },
     "installer": {
         "script": [
-            "Remove-Item \"$dir\\`$*\", \"$dir\\uninstall.exe\" -Force -Recurse",
+            "Remove-Item \"$dir\\`$*\" -Force -Recurse",
             "New-Item \"$dir\\portable_mode_enabled\" -Force | Out-Null",
             "$EncodersDir = $(appdir foobar2000-encoders $global)",
             "if (Test-Path \"$EncodersDir\") {",
@@ -37,14 +37,10 @@
         "if (!(Test-Path \"$persist_dir\\profile\\*\")) {",
         "    Get-ChildItem -Path \"$persist_dir\" -Exclude \"profile\" | Move-Item -Destination \"$persist_dir\\profile\" -Force",
         "}",
-        "if (!(Test-Path \"$persist_dir\\profile\\*\") -and (Test-Path \"$env:AppData\\foobar2000\")) {",
+        "if (!(Test-Path \"$persist_dir\\profile\\*\") -and (Test-Path \"$env:AppData\\foobar2000-v2\")) {",
         "    info '[Portable Mode]: Copying user data...'",
-        "    Copy-Item \"$env:AppData\\foobar2000\\*\" -Destination \"$persist_dir\\profile\" -Force -Recurse",
-        "}",
-        "if (!(Test-Path \"$persist_dir\\profile\\playlists-v1.4\")) {",
-        "    Get-ChildItem -Path \"$persist_dir\\profile\" -Filter \"playlists\" -Directory | Rename-Item -NewName \"playlists-v1.4\" -Force",
-        "}",
-        "Get-ChildItem -Path \"$persist_dir\\profile\" -Filter \"playlists\" | Remove-Item -Force -Recurse"
+        "    Copy-Item \"$env:AppData\\foobar2000-v2\\*\" -Destination \"$persist_dir\\profile\" -Force -Recurse",
+        "}"
     ],
     "bin": "foobar2000.exe",
     "shortcuts": [

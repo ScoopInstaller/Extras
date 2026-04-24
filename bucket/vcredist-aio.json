@@ -1,31 +1,42 @@
 {
-    "version": "0.77.0",
+    "version": "0.104.0",
     "description": "All-in-one repack for latest Microsoft Visual C++ Redistributable Runtimes, without the original setup bloat payload.",
     "homepage": "https://github.com/abbodi1406/vcredist",
-    "license": "Unlicense",
-    "url": "https://github.com/abbodi1406/vcredist/releases/download/v0.77.0/VisualCppRedist_AIO_x86_x64_77.zip",
-    "hash": "adf5bb032ef8f10277d7d832a98c6ede016ec02b1e16158c1d81fee038d011a8",
+    "license": {
+        "identifier": "Unlicense",
+        "url": "https://github.com/abbodi1406/vcredist/blob/master/LICENSE"
+    },
+    "notes": "View command-line options and usage examples by executing: `vcredist-aio.exe /?`",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/abbodi1406/vcredist/releases/download/v0.104.0/VisualCppRedist_AIO_x86_x64.exe#/vcredist-aio.exe",
+            "hash": "bfde422ac0f3428c311c173bce42a7fb6699c628f05876633b3a0f8a94fcc332"
+        },
+        "32bit": {
+            "url": "https://github.com/abbodi1406/vcredist/releases/download/v0.104.0/VisualCppRedist_AIO_x86only.exe#/vcredist-aio.exe",
+            "hash": "5b0379a2ddeacb05dafe35fcba4a1990382a586828ec3e32ebc40cb988ac59e4"
+        }
+    },
     "installer": {
         "script": [
-            "if (!(is_admin)) { error 'This package requires admin rights to install'; break }",
-            "Start-Process -Wait \"$dir\\VisualCppRedist_AIO_x86_x64.exe\" -ArgumentList @('/ai', '/gm2') -Verb RunAs"
+            "if (-not (is_admin)) { error 'This package requires admin rights to install'; break }",
+            "Start-Process -FilePath \"$dir\\$fname\" -ArgumentList @('/ai', '/gm2') -Verb RunAs -Wait"
         ]
     },
-    "bin": "VisualCppRedist_AIO_x86_x64.exe",
-    "uninstaller": {
-        "script": [
-            "if (!(is_admin)) { error 'This package requires admin rights to uninstall'; break }",
-            "Start-Process -Wait \"$dir\\VisualCppRedist_AIO_x86_x64.exe\" -ArgumentList @('/ai', '/gm2') -Verb RunAs"
-        ]
-    },
-    "checkver": {
-        "github": "https://github.com/abbodi1406/vcredist"
-    },
+    "bin": "vcredist-aio.exe",
+    "checkver": "github",
     "autoupdate": {
-        "url": "https://github.com/abbodi1406/vcredist/releases/download/v$version/VisualCppRedist_AIO_x86_x64_$minorVersion.zip",
-        "hash": {
-            "url": "https://github.com/abbodi1406/vcredist/releases/v$version",
-            "regex": "File: $basename[\\S\\s]*?SHA-256: $sha256"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/abbodi1406/vcredist/releases/download/v$version/VisualCppRedist_AIO_x86_x64.exe#/vcredist-aio.exe",
+                "hash": {
+                    "url": "https://github.com/abbodi1406/vcredist/releases/v$version",
+                    "regex": "File: $basename[\\S\\s]*?SHA-256: $sha256"
+                }
+            },
+            "32bit": {
+                "url": "https://github.com/abbodi1406/vcredist/releases/download/v$version/VisualCppRedist_AIO_x86only.exe#/vcredist-aio.exe"
+            }
         }
     }
 }

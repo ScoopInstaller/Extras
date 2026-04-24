@@ -1,19 +1,23 @@
 {
-    "version": "7.1.0",
+    "version": "9.7.0",
     "description": "Powerful and easy to use e-book manager",
     "homepage": "https://calibre-ebook.com",
-    "license": "GPL-3.0-only",
+    "license": {
+        "identifier": "GPL-3.0-only",
+        "url": "https://github.com/kovidgoyal/calibre/blob/master/LICENSE"
+    },
     "architecture": {
         "64bit": {
-            "url": "https://download.calibre-ebook.com/7.1.0/calibre-portable-installer-7.1.0.exe",
-            "hash": "sha512:c39b509475f7e9da2921671ae2ed86205ef9a749053af247971d6d3f839f75f1bc3fb505603c7571c0e6a04131dab0e7ef884ff8ede916e43ff5d6293553d3b8"
+            "url": "https://download.calibre-ebook.com/9.7.0/calibre-portable-installer-9.7.0.exe",
+            "hash": "sha512:05bb7b385763986b010cc879a771c58ef9e902d2128ca726ae6e71a3fa5aa1a1a2c4b809388bb6a56a04a7d47bac7b0d99494b08bcb985e0c1ff711309485248"
         }
     },
     "installer": {
         "script": [
-            "Start-Process \"$dir\\calibre-portable-installer-$version.exe\" @(\"$dir\") -Wait",
-            "Move-Item \"$dir\\Calibre Portable\\**\" \"$dir\"",
-            "Remove-Item \"$dir\\Calibre Portable\""
+            "Start-Process -FilePath \"$dir\\$fname\" -ArgumentList @($env:PUBLIC) -Wait",
+            "Move-Item -Path \"$env:PUBLIC\\Calibre Portable\\*\" -Destination $dir -Force",
+            "Remove-Item -Path \"$dir\\$fname\", \"$env:PUBLIC\\Calibre Portable\" -Recurse -Force -ErrorAction SilentlyContinue",
+            "Icacls $dir /t /c /reset | Out-Null"
         ]
     },
     "bin": [
@@ -72,7 +76,7 @@
             "64bit": {
                 "url": "https://download.calibre-ebook.com/$version/calibre-portable-installer-$version.exe",
                 "hash": {
-                    "url": "https://calibre-ebook.com/signatures/calibre-portable-installer-$version.exe.sha512"
+                    "url": "https://calibre-ebook.com/signatures/$basename.sha512"
                 }
             }
         }

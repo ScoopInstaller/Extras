@@ -1,0 +1,41 @@
+{
+    "version": "4.29.1",
+    "description": "Datovka is a multiplatform desktop application for accessing Datová schránka. The application's user interface is inspired by mail clients. Datovka is free software protected by the GNU GPL version 3 license.",
+    "license": "GPL-3",
+    "homepage": "https://www.datovka.cz/",
+    "architecture": {
+        "64bit": {
+            "url": "https://datovka.nic.cz/4.29.1/datovka-portable-4.29.1-windows-x64.zip",
+            "hash": "593e402117f5d2300fd5273d7fa8db125fc3cb8cdf7dc18c01dd9db27194e0e1"
+        },
+        "32bit": {
+            "url": "https://datovka.nic.cz/4.29.1/datovka-portable-4.29.1-windows-x86.zip",
+            "hash": "d031d866d6b29a35fe017dcc4543c2874da695db28e3584d80992edc3d0bce1b"
+        }
+    },
+    "extract_dir": "datovka-4.29.1-portable",
+    "shortcuts": [
+        [
+            "datovka-portable.exe",
+            "Datovka"
+        ]
+    ],
+    "persist": ".dsgui",
+    "checkver": {
+        "url": "https://www.datovka.cz/cs/pages/instalace.html",
+        "regex": "Instalační balíčky verze\\s(\\d+\\.\\d+\\.\\d+)"
+    },
+    "autoupdate": {
+        "extract_dir": "datovka-$version-portable",
+        "architecture": {
+            "64bit": {
+                "url": "https://datovka.nic.cz/$version/datovka-portable-$version-windows-x64.zip"
+            },
+            "32bit": {
+                "url": "https://datovka.nic.cz/$version/datovka-portable-$version-windows-x86.zip"
+            }
+        }
+    },
+    "post_install": "echo 'Disabling in-app updates'; Set-ItemProperty -Path \"HKCU:\\Software\\CZ.NIC\\Datovka\" -Name \"DisableVersionNotification\" -Value 1",
+    "post_uninstall": "Remove-ItemProperty -Path \"HKCU:\\Software\\CZ.NIC\\Datovka\" -Name \"DisableVersionNotification\""
+}

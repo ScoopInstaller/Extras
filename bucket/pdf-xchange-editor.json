@@ -1,16 +1,31 @@
 {
-    "version": "10.0.0.370",
+    "version": "10.8.5.410",
     "description": "A small, fast, and feature-rich PDF viewer/editor.",
-    "homepage": "https://www.tracker-software.com/product/pdf-xchange-editor",
+    "homepage": "https://www.pdf-xchange.com/product/pdf-xchange-editor",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.tracker-software.com/PDF_VE.pdf"
     },
-    "url": "http://downloads.pdf-xchange.com/PDFXEdit10_Portable.zip",
-    "hash": "bf46d14a670f4f7d4697474c55a420880df91ca33d0f389dc85db37e35ab83b7",
-    "persist": [
-        "History.dat",
-        "Settings.dat"
+    "architecture": {
+        "64bit": {
+            "url": "https://downloads.pdf-xchange.com/10.8.5.410/PDFXEdit10_Portable_x64.zip",
+            "hash": "88ee00a55c7d28a81c025c9211f16c3cc4b5bf80709a48a59dd386cb28a6125d"
+        },
+        "32bit": {
+            "url": "https://downloads.pdf-xchange.com/10.8.5.410/PDFXEdit10_Portable_x86.zip",
+            "hash": "8915b80bc5fc9200c6aeaee8c1a8a066e435df29cf3495fa8db3a8794c4a62e7"
+        }
+    },
+    "pre_install": [
+        "# Hard links are not applicable here because the application creates a new file instead of modifying the existing one in place.",
+        "'History', 'Settings' | ForEach-Object {",
+        "    if (Test-Path -Path \"$persist_dir\\$_.dat\" -PathType Container) {",
+        "        Remove-Item -Path \"$persist_dir\\$_.dat\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "    }",
+        "    if (Test-Path -Path \"$persist_dir\\$_.dat\" -PathType Leaf) {",
+        "        Copy-Item -Path \"$persist_dir\\$_.dat\" -Destination $dir -Force",
+        "    }",
+        "}"
     ],
     "bin": "PDFXEdit.exe",
     "shortcuts": [
@@ -19,15 +34,27 @@
             "PDF-XChange Editor"
         ]
     ],
-    "pre_install": [
-        "if(!(Test-Path \"$persist_dir\\History.dat\")) { New-Item \"$dir\\History.dat\" | Out-Null }",
-        "if(!(Test-Path \"$persist_dir\\Settings.dat\")) { New-Item \"$dir\\Settings.dat\" | Out-Null }"
+    "pre_uninstall": [
+        "# Hard links are not applicable here because the application creates a new file instead of modifying the existing one in place.",
+        "ensure $persist_dir | Out-Null",
+        "'History', 'Settings' | ForEach-Object {",
+        "    if (Test-Path -Path \"$dir\\$_.dat\" -PathType Leaf) {",
+        "        Copy-Item -Path \"$dir\\$_.dat\" -Destination $persist_dir -Force",
+        "    }",
+        "}"
     ],
     "checkver": {
-        "url": "https://www.tracker-software.com/product/pdf-xchange-editor/history",
-        "regex": "version ([\\d.]+) release"
+        "url": "https://www.pdf-xchange.com/product/pdf-xchange-editor/history/download-text-file",
+        "regex": "Build ([\\d.]+)"
     },
     "autoupdate": {
-        "url": "http://downloads.pdf-xchange.com/PDFXEdit$majorVersion_Portable.zip"
+        "architecture": {
+            "64bit": {
+                "url": "https://downloads.pdf-xchange.com/$version/PDFXEdit10_Portable_x64.zip"
+            },
+            "32bit": {
+                "url": "https://downloads.pdf-xchange.com/$version/PDFXEdit10_Portable_x86.zip"
+            }
+        }
     }
 }

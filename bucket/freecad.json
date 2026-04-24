@@ -1,35 +1,39 @@
 {
-    "version": "0.20.2-2",
+    "version": "1.1.1",
     "description": "A free and open-source multi-platform parametric 3D modeler.",
-    "homepage": "https://www.freecadweb.org",
-    "license": "LGPL-2.0-or-later",
+    "homepage": "https://www.freecad.org",
+    "license": {
+        "identifier": "LGPL-2.1-or-later",
+        "url": "https://github.com/FreeCAD/FreeCAD/blob/HEAD/LICENSE"
+    },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/FreeCAD/FreeCAD/releases/download/0.20.2/FreeCAD-0.20.2-WIN-x64-portable-2.zip",
-            "hash": "d8af7454f43f1753fd6141fd2172aa9bc7513b4b9cbbac4cd7cee0567a1bca7f"
+            "url": "https://github.com/FreeCAD/FreeCAD/releases/download/1.1.1/FreeCAD_1.1.1-Windows-x86_64-py311.7z",
+            "hash": "aef51acb6725d5667bbae73494d04794a1e1725e17c6589650b044c15808144f"
         }
     },
-    "bin": "FreeCAD-portable\\bin\\FreeCADCmd.exe",
+    "pre_install": "pushd $dir ; mv */* . ; rm FreeCAD_* ; popd",
+    "bin": "bin\\FreeCADCmd.exe",
     "shortcuts": [
         [
-            "FreeCAD-portable\\bin\\FreeCAD.exe",
+            "bin\\FreeCAD.exe",
             "FreeCAD"
         ]
     ],
     "checkver": {
-        "url": "https://api.github.com/repositories/5736080/releases",
-        "regex": "FreeCAD-([\\d.]+)-WIN-x64-portable((-\\d+)?)\\.zip",
-        "replace": "${1}${2}"
+        "url": "https://api.github.com/repos/FreeCAD/FreeCAD/releases/latest",
+        "jsonpath": "$.assets[?(@.name =~ /Win.+\\.7z$/i)].browser_download_url",
+        "regex": "(?i)download/(?<tag>[^/]+)/(?<name>FreeCAD[^\\d]([0-9a-f.-]+)(?:-conda)?-Win.+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/FreeCAD/FreeCAD/releases/download/$matchHead/FreeCAD-$matchHead-WIN-x64-portable$matchTail.zip"
+                "url": "https://github.com/FreeCAD/FreeCAD/releases/download/$matchTag/$matchName"
             }
         },
         "hash": {
             "url": "$url-SHA256.txt",
-            "regex": "SHA256: $sha256"
+            "regex": "(?s)$basename.*?$sha256"
         }
     }
 }

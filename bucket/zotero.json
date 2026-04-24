@@ -1,17 +1,22 @@
 {
-    "version": "6.0.30",
+    "version": "9.0.1",
     "description": "Open-source reference management software to manage bibliographic data and related research materials.",
     "homepage": "https://www.zotero.org/",
     "license": "AGPL-3.0-only",
-    "notes": [
-        "To register the 'zotero://' URL protocol, run:",
-        "$dir\\install-zotero-url-protocol.ps1",
-        "",
-        "To unregister the 'zotero://' URL protocol, run:",
-        "$dir\\uninstall-zotero-url-protocol.ps1"
-    ],
-    "url": "https://download.zotero.org/client/release/6.0.30/Zotero-6.0.30_setup.exe#/dl.7z",
-    "hash": "1b14b89a28ee13b514d4f7f4aa1e97a9e2633d7ffacb75f3320b31d37555db8d",
+    "architecture": {
+        "64bit": {
+            "url": "https://download.zotero.org/client/release/9.0.1/Zotero-9.0.1_x64_setup.exe#/dl.7z",
+            "hash": "531ce0b3ebdb4e25266d149bd88b835ce1bc0c801fc58385845c29c13a4d9314"
+        },
+        "32bit": {
+            "url": "https://download.zotero.org/client/release/9.0.1/Zotero-9.0.1_win32_setup.exe#/dl.7z",
+            "hash": "f7c8188c53838ba90cdd2148b273621a8e6b0809e8f5cc9ba4a9289e44dc6b0d"
+        },
+        "arm64": {
+            "url": "https://download.zotero.org/client/release/9.0.1/Zotero-9.0.1_arm64_setup.exe#/dl.7z",
+            "hash": "db105962993c950d2eab36c8928ef5865c6a7e556eca688ecfedd84df5e3f3c4"
+        }
+    },
     "extract_dir": "core",
     "bin": "zotero.exe",
     "shortcuts": [
@@ -37,10 +42,23 @@
         "}"
     ],
     "checkver": {
-        "url": "https://www.zotero.org/download/client/update/5.0.0/_/WINNT_x86-msvc/en-US/release/_/update.xml",
-        "xpath": "/updates/update/@appVersion"
+        "script": [
+            "try { $detail = Invoke-WebRequest 'https://www.zotero.org/download/client/dl?channel=release&platform=win-x64' -MaximumRedirection 0 -ErrorAction Ignore } catch { $_.Exception.Response }",
+            "return $detail.Headers.Location"
+        ],
+        "regex": "Zotero-([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://download.zotero.org/client/release/$version/Zotero-$version_setup.exe#/dl.7z"
+        "architecture": {
+            "64bit": {
+                "url": "https://download.zotero.org/client/release/$version/Zotero-$version_x64_setup.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://download.zotero.org/client/release/$version/Zotero-$version_win32_setup.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://download.zotero.org/client/release/$version/Zotero-$version_arm64_setup.exe#/dl.7z"
+            }
+        }
     }
 }

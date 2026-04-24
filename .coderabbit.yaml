@@ -1,0 +1,82 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: en
+chat:
+  art: false
+  allow_non_org_members: false # Avoid learning from irrelevant conversations by restricting to organization members only
+reviews:
+  profile: chill
+  auto_review:
+    enabled: true
+    ignore_title_keywords:
+      - "WIP"
+    drafts: false
+    base_branches:
+      - master
+  poem: false
+  in_progress_fortune: false
+  high_level_summary: false
+  sequence_diagrams: false
+  changed_files_summary: false
+  suggested_reviewers: false
+  finishing_touches:
+    docstrings:
+      enabled: false
+    unit_tests:
+      enabled: false
+  auto_apply_labels: true
+  labeling_instructions:
+    - label: package-request-needed
+      instructions: |
+        If this is a NEWLY ADDED manifest file (not a modified or renamed file) and there is no linked GitHub issue in the description or PR body,
+        apply the `package-request-needed` label to indicate that the contributor needs to create a package request issue and link it in the description or PR body.
+  path_instructions:
+    - path: "**"
+      instructions: |
+        If this file is a Scoop manifest, you MUST check for the following:
+        1. [File Location & Name Validation]
+          - Path Check: it MUST be located strictly within the `bucket/` or `deprecated/` directories. If it is placed elsewhere, warn the contributor.
+          - Filename Rule:
+            - The filename MUST consist ONLY of lowercase letters, numbers, hyphens (-), and dots (.), and MUST end with `.json`.
+            - If the filename contains underscores (`_`), suggest replacing them with hyphens (`-`).
+          - Line Endings: Scoop manifests must use CRLF line endings. Remind the contributor if you detect LF.
+
+        2. [New Package Request Policy]
+          - If this is a NEWLY ADDED manifest file (not a modified or renamed file):
+            - Check the `description` field or the PR body for a linked GitHub issue (e.g., #123 (must be a valid issue number) or an issue URL).
+              If missing, you should warn the contributor to create a package request issue and link it in the description or PR body.
+            - Ensure contributor knows the acceptance criteria for new package requests.
+            - Ensure contributors understand how to extract the installer rather than running it, as this is the core concept of Scoop.
+          - Acceptance criteria for new package requests:
+            - Reasonably well-known and widely used (e.g. if it's a GitHub project, it should have at least 100 stars).
+            - A stable release available (not in pre-release or alpha stage).
+            - English interface (or at least English documentation).
+          - Link to create package request issue:
+            - https://github.com/ScoopInstaller/Extras/issues/new?labels=package-request&template=package-request.yml&title=%5BRequest%5D%3A+
+
+        3. [Autoupdate Precision]
+          - NEVER allow hardcoded version numbers in the `autoupdate` block (e.g., `autoupdate.url` or `autoupdate.extract_dir`). They must use variables like `$version`, etc.
+          - Cross-check:
+            If the top-level `url`, `extract_dir`, or `architecture.*.url` contain a version number, ensure that these exact paths are properly parameterized in the `autoupdate`
+            block so future automated updates won't miss them.
+
+        4. [Common Dependencies Check]
+          - Pay close attention to packages that might require .NET, VCREDIST (Visual C++ Redistributable), etc.
+          - If the application relies on these, check if they are correctly declared in the `suggest` fields using standard Scoop identifiers.
+
+        5. [Test Guidance]
+          - Provide clear instructions for testing the manifest locally before submission:
+            - Optional: Enable debug mode and set GitHub token (to access GitHub API for releases only):
+              scoop config debug true
+              scoop config gh_token <your-github-token>  # Read access only
+            - Force version detection and autoupdate (Replace <manifest-name> with the actual filename without `.json`):
+              .\bin\checkver.ps1 -App <manifest-name> -f
+            - Auto-format (Lint) the JSON manifest (Replace <manifest-name> with the actual filename without `.json`):
+              .\bin\formatjson.ps1 -App <manifest-name>
+            - Test installation for each architecture (if supported)
+              scoop install <manifest-path> -a <architecture>
+
+        6. [Other Guidance]
+          - For any violations of the above rules or other Scoop formatting issues, always provide a link to the official contribution guide or wiki to resolve their confusion.
+          - Related links:
+            - Contribution Guide: https://github.com/ScoopInstaller/.github/blob/main/.github/CONTRIBUTING.md
+            - Wiki: https://github.com/ScoopInstaller/Scoop/wiki/App-Manifests

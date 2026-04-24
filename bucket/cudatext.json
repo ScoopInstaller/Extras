@@ -1,19 +1,30 @@
 {
-    "version": "1.203.0.1",
-    "description": "Text editor",
-    "homepage": "http://uvviewsoft.com/cudatext/",
-    "license": "MPL-2.0",
+    "version": "1.234.0.4",
+    "description": "A cross-platform, open-source text editor written in Object Pascal, available free of charge for both personal and commercial use, featuring fast startup and extensibility through Python-based add-ons.",
+    "homepage": "https://cudatext.github.io",
+    "license": {
+        "identifier": "MPL-2.0",
+        "url": "https://github.com/Alexey-T/CudaText/blob/HEAD/LICENSE"
+    },
     "architecture": {
         "64bit": {
-            "url": "https://sourceforge.net/projects/cudatext/files/release/1.203.0.1/cudatext-windows-amd64-1.203.0.1.zip",
-            "hash": "sha1:b0db95167606f02e8f769d0994624da5a035aa81"
+            "url": "https://sourceforge.net/projects/cudatext/files/release/1.234.0.4/cudatext-windows-amd64-1.234.0.4.zip",
+            "hash": "sha1:273e40387176a3e4bb8013507c852639f6818e84"
         },
         "32bit": {
-            "url": "https://sourceforge.net/projects/cudatext/files/release/1.203.0.1/cudatext-windows-i386-1.203.0.1.zip",
-            "hash": "sha1:34bd10f1627f5f045307726c000d92c127d9991b"
+            "url": "https://sourceforge.net/projects/cudatext/files/release/1.234.0.4/cudatext-windows-i386-1.234.0.4.zip",
+            "hash": "sha1:183f857c1f818682971128f468d119f9e59b1edb"
         }
     },
     "extract_dir": "cudatext",
+    "post_install": [
+        "'py', 'data' | ForEach-Object {",
+        "    if (Test-Path -Path \"$dir\\$_.original\" -PathType Container) {",
+        "        Copy-Item -Path \"$dir\\$_.original\\*\" -Destination \"$dir\\$_\" -Force -Recurse",
+        "        Remove-Item -Path \"$dir\\$_.original\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "    }",
+        "}"
+    ],
     "bin": "cudatext.exe",
     "shortcuts": [
         [
@@ -21,7 +32,11 @@
             "CudaText"
         ]
     ],
-    "persist": "settings",
+    "persist": [
+        "py",
+        "data",
+        "settings"
+    ],
     "checkver": {
         "sourceforge": "cudatext/release"
     },

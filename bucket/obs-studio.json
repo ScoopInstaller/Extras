@@ -1,5 +1,5 @@
 {
-    "version": "30.0",
+    "version": "32.1.2",
     "description": "Video recording and live streaming software",
     "homepage": "https://obsproject.com",
     "license": "GPL-2.0-only",
@@ -9,8 +9,18 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://cdn-fastly.obsproject.com/downloads/OBS-Studio-30.0.zip",
-            "hash": "016d659a488df07f386e8f2ce7a7db977a788db4ac65e6af1119e326a76d44bf",
+            "url": "https://github.com/obsproject/obs-studio/releases/download/32.1.2/OBS-Studio-32.1.2-Windows-x64.zip",
+            "hash": "8d97e4563bd8d22d03e63042aa7dccede1d555c9bd35ce8a9e5019b0d0201bf6",
+            "shortcuts": [
+                [
+                    "bin\\64bit\\obs64.exe",
+                    "OBS Studio"
+                ]
+            ]
+        },
+        "arm64": {
+            "url": "https://github.com/obsproject/obs-studio/releases/download/32.1.2/OBS-Studio-32.1.2-Windows-arm64.zip",
+            "hash": "5e1e400e1b49d2019c97c928873229336c8e0b56df488663532376485746328e",
             "shortcuts": [
                 [
                     "bin\\64bit\\obs64.exe",
@@ -19,26 +29,42 @@
             ]
         }
     },
-    "pre_install": "if (!(Test-Path \"$persist_dir\\portable_mode.txt\")) { New-Item \"$dir\\portable_mode.txt\" | Out-Null }",
-    "persist": [
-        "config",
-        "portable_mode.txt",
-        "obs-plugins"
+    "pre_install": [
+        "if (-not (Test-Path \"$persist_dir\\portable_mode.txt\")) {",
+        "    New-Item -Path \"$dir\\portable_mode.txt\" -ItemType File -Force | Out-Null",
+        "}"
     ],
     "post_install": [
-        "if (!(Test-Path \"$dir\\obs-plugins.original\")) { return }",
-        "Copy-Item \"$dir\\obs-plugins.original\\*\" \"$dir\\obs-plugins\" -Recurse -Force",
-        "Remove-Item \"$dir\\obs-plugins.original\" -Recurse -Force"
+        "'data', 'obs-plugins' | ForEach-Object {",
+        "    $source_dir = Join-Path $dir \"$_.original\"",
+        "    $destination_dir = Join-Path $dir $_",
+        "    if (Test-Path \"$source_dir\") {",
+        "        Copy-Item -Path \"$source_dir\\*\" -Destination $destination_dir -Force -Recurse",
+        "        Remove-Item -Path $source_dir -Recurse -Force -ErrorAction SilentlyContinue",
+        "    }",
+        "}"
+    ],
+    "persist": [
+        "data",
+        "config",
+        "obs-plugins",
+        "portable_mode.txt"
     ],
     "checkver": {
-        "url": "https://obsproject.com/download",
-        "regex": "OBS-Studio-([\\d.]+)(-Full)?\\.zip"
+        "github": "https://github.com/obsproject/obs-studio"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://cdn-fastly.obsproject.com/downloads/OBS-Studio-$version.zip"
+                "url": "https://github.com/obsproject/obs-studio/releases/download/$version/OBS-Studio-$version-Windows-x64.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/obsproject/obs-studio/releases/download/$version/OBS-Studio-$version-Windows-arm64.zip"
             }
+        },
+        "hash": {
+            "url": "https://github.com/obsproject/obs-studio/releases/$version",
+            "regex": "(?sm)$basename.*?$sha256"
         }
     }
 }

@@ -1,55 +1,71 @@
 {
-    "version": "2.10.36",
+    "version": "3.2.4",
     "description": "GNU Image Manipulation Program",
     "homepage": "https://www.gimp.org",
     "license": "GPL-3.0-only",
-    "url": "https://download.gimp.org/mirror/pub/gimp/v2.10/windows/gimp-2.10.36-setup.exe",
-    "hash": "947efa2397f7a17b8e4f4c9689e4ab67f00ca220ac1aa0ae0c1e179ccfc4fc10",
-    "innosetup": true,
+    "architecture": {
+        "64bit": {
+            "url": "https://download.gimp.org/mirror/pub/gimp/v3.2/windows/gimp-3.2.4-setup.exe",
+            "hash": "ec31d757dd82831d201ffcf47ffeac4175df739e0c02d5122e89aeeadfb988cc"
+        },
+        "arm64": {
+            "url": "https://download.gimp.org/mirror/pub/gimp/v3.2/windows/gimp-3.2.4-setup.exe",
+            "hash": "ec31d757dd82831d201ffcf47ffeac4175df739e0c02d5122e89aeeadfb988cc"
+        }
+    },
     "installer": {
         "script": [
-            "Push-Location \"$dir\"",
-            "Get-ChildItem -Filter '*.debug' -Recurse | Remove-Item -Recurse",
-            "if ($architecture -eq '64bit') {",
-            "   Rename-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,2.exe' 'twain.exe'",
-            "   Remove-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,1.exe'",
-            "   Get-ChildItem -Filter '*,1*' -Recurse | Rename-Item -NewName { $_.name -Replace ',\\d','' }",
-            "   Get-ChildItem -Filter '*,*' -Recurse | Remove-Item",
-            "} else {",
-            "   Rename-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,1.exe' 'twain.exe'",
-            "   Remove-Item 'lib\\gimp\\2.0\\plug-ins\\twain\\twain,2.exe'",
-            "   Get-ChildItem -Filter '*,1*' -Recurse | Remove-Item",
-            "   Get-ChildItem -Filter '*,*' -Recurse | Rename-Item -NewName { $_.name -Replace ',\\d','' }",
+            "Expand-InnoArchive -Path \"$dir\\$fname\"",
+            "Invoke-ExternalCommand -FilePath (Get-HelperPath -Helper Innounp) -ArgumentList '-x', \"$dir\\$fname\", \"-d$dir\", 'install_script.iss' -LogPath \"$dir\\innounp-iss.log\" | Out-Null",
+            "$installScript = Get-Content -Path \"$dir\\install_script.iss\" -Raw",
+            "$pattern = 'Source: \"(?<Source>\\{app\\}\\\\[^\"]*?)\"(?:; DestDir: \"(?<DestDir>[^\"]*?)\")?(?:; DestName: \"(?<DestName>[^\"]*?)\")?; Components: (?<Components>[^;]+)'",
+            "$matches = [regex]::Matches($installScript, $pattern)",
+            "foreach ($match in $matches) {",
+            "    $source = $match.Groups['Source'].Value -replace '{app}', $dir",
+            "    $destDir = $match.Groups['DestDir'].Value -replace '{app}', $dir",
+            "    $destName = $match.Groups['DestName'].Value",
+            "    $components = $match.Groups['Components'].Value",
+            "    $is64bitComponent = $components -match 'X64'",
+            "    $isArm64Component = $components -match 'ARM64'",
+            "    $isArchitectureIncompatible = if ($architecture -eq '64bit') {",
+            "        -not $is64bitComponent -and $isArm64Component",
+            "    } else {",
+            "        -not $isArm64Component -and $is64bitComponent",
+            "    }",
+            "    if ($isArchitectureIncompatible) {",
+            "        Remove-Item -Path $source -Force",
+            "        continue",
+            "    }",
+            "    if (-not $destDir) { $destDir = $source }",
+            "    if (-not $destName) { $destName = Split-Path -Path $source -Leaf }",
+            "    $destPath = Join-Path -Path $destDir -ChildPath $destName",
+            "    if ($source -ne $destPath) {",
+            "        Move-Item -Path $source -Destination $destPath",
+            "    }",
             "}",
-            "$pyenv = Get-Content 'lib\\gimp\\2.0\\environ\\pygimp.env' -Raw",
-            "$pyenv + '__COMPAT_LAYER=HIGHDPIAWARE' | Set-Content 'lib\\gimp\\2.0\\environ\\pygimp.env'",
-            "$pyint = Get-Content 'lib\\gimp\\2.0\\interpreters\\pygimp.interp' -Raw",
-            "$pyint = $pyint -Replace '(python|python2)=(.*)', \"`$1=$dir\\bin\\pythonw.exe\"",
-            "$pyint = $pyint -Replace 'py::python2', 'py::python'",
-            "$pyint | Set-Content 'lib\\gimp\\2.0\\interpreters\\pygimp.interp'",
-            "Pop-Location",
-            "Copy-Item \"$bucketsdir\\extras\\scripts\\gimp\\default.env\" \"$dir\\lib\\gimp\\2.0\\environ\\\" | Out-Null"
+            "Remove-Item -Path \"$dir\\$fname\" -Force",
+            "Remove-Item -Path \"$dir\\install_script.iss\" -Force"
         ]
     },
     "bin": [
-        "bin\\gimp-console-2.10.exe",
+        "bin\\gimp-console-3.2.exe",
         [
-            "bin\\gimp-console-2.10.exe",
+            "bin\\gimp-console-3.2.exe",
             "gimp-console"
         ],
         [
-            "bin\\gimp-console-2.10.exe",
+            "bin\\gimp-console-3.2.exe",
             "gimp"
         ],
-        "bin\\gimptool-2.0.exe",
+        "bin\\gimptool-3.2.exe",
         [
-            "bin\\gimptool-2.0.exe",
+            "bin\\gimptool-3.2.exe",
             "gimptool"
         ]
     ],
     "shortcuts": [
         [
-            "bin\\gimp-2.10.exe",
+            "bin\\gimp-3.2.exe",
             "GIMP"
         ]
     ],
@@ -62,6 +78,28 @@
         "url": "https://download.gimp.org/mirror/pub/gimp/v$majorVersion.$minorVersion/windows/gimp-$matchHead-setup$matchTail.exe",
         "hash": {
             "url": "$baseurl/SHA256SUMS"
-        }
+        },
+        "bin": [
+            "bin\\gimp-console-$majorVersion.$minorVersion.exe",
+            [
+                "bin\\gimp-console-$majorVersion.$minorVersion.exe",
+                "gimp-console"
+            ],
+            [
+                "bin\\gimp-console-$majorVersion.$minorVersion.exe",
+                "gimp"
+            ],
+            "bin\\gimptool-$majorVersion.$minorVersion.exe",
+            [
+                "bin\\gimptool-$majorVersion.$minorVersion.exe",
+                "gimptool"
+            ]
+        ],
+        "shortcuts": [
+            [
+                "bin\\gimp-$majorVersion.$minorVersion.exe",
+                "GIMP"
+            ]
+        ]
     }
 }

@@ -1,29 +1,35 @@
 {
-    "version": "23.6.0.0",
+    "version": "25.6.0.0",
     "description": "A video player forked from MPV. It can also play Youtube videos, search and download subtitles, and includes other features like a thumbnail generator and audio and video filters.",
-    "homepage": "https://www.smplayer.info/",
-    "license": "GPL-2.0-or-later",
+    "homepage": "https://www.smplayer.info",
+    "license": {
+        "identifier": "GPL-2.0-or-later",
+        "url": "https://github.com/smplayer-dev/smplayer/blob/master/setup/license.txt"
+    },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/smplayer-dev/smplayer/releases/download/v23.6.0/smplayer-portable-23.6.0.0-x64.7z",
-            "hash": "32c02daab027bd154cb29e5818e9ef5d6645b1a23d1cf56a1abe4bcbb2f4f163"
+            "url": "https://github.com/smplayer-dev/smplayer/releases/download/v25.6.0/smplayer-portable-25.6.0.0-x64.7z",
+            "hash": "cff6152744a90080c0ccba29fe54239a7a77037c308bb3866f6451d882787e6d"
         },
         "32bit": {
-            "url": "https://github.com/smplayer-dev/smplayer/releases/download/v23.6.0/smplayer-portable-23.6.0.0-win32-qt5.6.7z",
-            "hash": "a54b7d6dba5df9c54236861aa6c010812825e84723e6dc1724a541e679608359"
+            "url": "https://github.com/smplayer-dev/smplayer/releases/download/v25.6.0/smplayer-portable-25.6.0.0-win32-qt5.6.7z",
+            "hash": "56ea0cd6de27988dbf98d17b4db5837d207f03455894118179dcd4ecd77e7bb8"
         }
     },
+    "extract_dir": "smplayer-portable",
     "pre_install": [
-        "Rename-Item \"$dir\\SMPlayer.html\" 'dl.7z'",
-        "Expand-7zipArchive \"$dir\\dl.7z\" \"$dir\" -ExtractDir 'smplayer-portable' -Removal | Out-Null",
-        "'hdpi.ini', 'playlist.ini', 'favorites.m3u8', 'radio.m3u8', 'tv.m3u8' | ForEach-Object {",
-        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
-        "}",
-        "if (Test-Path \"$persist_dir\\smplayer.ini\") { Copy-Item \"$persist_dir\\smplayer.ini\" \"$dir\\smplayer.ini\" }"
-    ],
-    "pre_uninstall": [
-        "# The following must be done as SMPlayer deletes the original file which was linked to the persist folder when it saves settings, rather than editing the file.",
-        "Copy-Item \"$dir\\smplayer.ini\" \"$persist_dir\\smplayer.ini\""
+        "# Disable automatic update checking and set the correct path for the screenshots directory",
+        "$cfg_dir = Join-Path -Path $persist_dir -ChildPath 'config\\smplayer.ini'",
+        "if (-not (Test-Path -Path $cfg_dir)) {",
+        "    info \"File $cfg_dir does not exist. Creating...\"",
+        "    New-Item -Path $cfg_dir -ItemType File -Force | Out-Null",
+        "    $cfg = @(",
+        "        '[update_checker]', 'enabled=false',",
+        "        '[%General]', 'screenshot_folder={screenshots_dir}'",
+        "    )",
+        "    $screenshots_dir = (Join-Path -Path $persist_dir -ChildPath 'screenshots') -replace '\\\\', '\\\\'",
+        "    $cfg | ForEach-Object { $_ -replace '{.+}', $screenshots_dir } | Set-Content -Path $cfg_dir -Encoding Ascii",
+        "}"
     ],
     "shortcuts": [
         [
@@ -32,12 +38,8 @@
         ]
     ],
     "persist": [
-        "screenshots",
-        "hdpi.ini",
-        "playlist.ini",
-        "favorites.m3u8",
-        "radio.m3u8",
-        "tv.m3u8"
+        "config",
+        "screenshots"
     ],
     "checkver": {
         "url": "https://www.smplayer.info/en/download-smplayer-portable",

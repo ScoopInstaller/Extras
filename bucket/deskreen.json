@@ -1,6 +1,6 @@
 {
-    "version": "2.0.4",
-    "description": "Turn any device into a secondary screen for your computer.",
+    "version": "3.2.14",
+    "description": "Turn any device into a secondary screen for your computer (Community edition).",
     "homepage": "https://deskreen.com/",
     "license": {
         "identifier": "AGPL-3.0-or-later",
@@ -8,20 +8,28 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/pavlobu/deskreen/releases/download/v2.0.4/Deskreen.Setup.2.0.4.exe#/dl.7z",
-            "hash": "sha512:77ad6b05fa8dc5c08645793e2728783060829218d4b32fbdf4bc9aa41cb440723726de08d548803a86c56ed87aebb9a8a4f27e11e9378239a29eaea882ea5680",
-            "installer": {
-                "script": [
-                    "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-                    "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse"
-                ]
-            }
+            "url": "https://github.com/pavlobu/deskreen/releases/download/v3.2.14/deskreen-ce-3.2.14-x64.exe#/dl.7z",
+            "hash": "07395486a0ef007946810dc06ef07a0a3ac3ced5bd504013daccd43af1bfb9e6"
+        },
+        "32bit": {
+            "url": "https://github.com/pavlobu/deskreen/releases/download/v3.2.14/deskreen-ce-3.2.14-ia32.exe#/dl.7z",
+            "hash": "2d871f8325d1404ca8e36423e6e7d5af98e575a48bff6bc5e443123ef87df1d8"
+        },
+        "arm64": {
+            "url": "https://github.com/pavlobu/deskreen/releases/download/v3.2.14/deskreen-ce-3.2.14-arm64.exe#/dl.7z",
+            "hash": "151dbd8504d33cc6a2ddf5770a4691a77ad4ee829785c4ab842f43989695147d"
         }
+    },
+    "installer": {
+        "script": [
+            "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Expand-7zipArchive -DestinationPath $dir",
+            "Remove-Item \"$dir\\`$*\" -Force -Recurse"
+        ]
     },
     "shortcuts": [
         [
-            "Deskreen.exe",
-            "Deskreen"
+            "Deskreen CE.exe",
+            "Deskreen (Community Edition)"
         ]
     ],
     "checkver": {
@@ -30,12 +38,14 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/pavlobu/deskreen/releases/download/v$version/Deskreen.Setup.$version.exe#/dl.7z"
+                "url": "https://github.com/pavlobu/deskreen/releases/download/v$version/deskreen-ce-$version-x64.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://github.com/pavlobu/deskreen/releases/download/v$version/deskreen-ce-$version-ia32.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/pavlobu/deskreen/releases/download/v$version/deskreen-ce-$version-arm64.exe#/dl.7z"
             }
-        },
-        "hash": {
-            "url": "$baseurl/latest.yml",
-            "regex": "sha512:\\s+$base64"
         }
     }
 }

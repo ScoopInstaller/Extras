@@ -1,16 +1,11 @@
 {
-    "version": "1.0.96",
+    "version": "1.1.12",
     "description": "Bootable USB drive creator",
     "homepage": "https://www.ventoy.net/en/index.html",
     "license": "GPL-3.0-or-later",
-    "url": "https://github.com/ventoy/Ventoy/releases/download/v1.0.96/ventoy-1.0.96-windows.zip",
-    "hash": "c37d333bc630076679172cf1934290c3c7c80340a9719369b96628edbdcb724b",
-    "extract_dir": "ventoy-1.0.96",
-    "pre_install": [
-        "'log.txt', 'Ventoy2Disk.ini' | ForEach-Object {",
-        "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" -ItemType File | Out-Null }",
-        "}"
-    ],
+    "url": "https://github.com/ventoy/Ventoy/releases/download/v1.1.12/ventoy-1.1.12-windows.zip",
+    "hash": "e70c505be08d99c55e506832f596c430a9c36f8d087f25542d3f6d332d9b6473",
+    "extract_dir": "ventoy-1.1.12",
     "architecture": {
         "64bit": {
             "bin": [
@@ -77,6 +72,11 @@
             ]
         }
     },
+    "pre_install": [
+        "'log.txt', 'Ventoy2Disk.ini' | ForEach-Object {",
+        "    if (-not (Test-Path \"$persist_dir\\$_\")) { New-Item -Path \"$dir\\$_\" -ItemType File -Force | Out-Null }",
+        "}"
+    ],
     "persist": [
         "log.txt",
         "Ventoy2Disk.ini"
@@ -87,7 +87,7 @@
     "autoupdate": {
         "url": "https://github.com/ventoy/Ventoy/releases/download/v$version/ventoy-$version-windows.zip",
         "hash": {
-            "url": "$baseurl/sha256.txt"
+            "url": "https://github.com/ventoy/Ventoy/releases/tag/v$version"
         },
         "extract_dir": "ventoy-$version"
     }

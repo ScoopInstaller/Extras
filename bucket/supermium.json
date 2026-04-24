@@ -1,0 +1,61 @@
+{
+    "version": "144.0.7559.247-r2",
+    "description": "Chromium fork for Windows XP/2003 and up",
+    "homepage": "https://win32subsystem.live/supermium/",
+    "license": {
+        "identifier": "BSD-3-Clause",
+        "url": "https://github.com/win32ss/supermium/blob/main/LICENSE"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/win32ss/supermium/releases/download/v144-r2/supermium_144_64_setup_win10_11.exe#/dl.zip",
+            "hash": "378332b3f3e394c2b7c5e16003b1fe3abe6d13ac9269998d2435721543cdffcd"
+        },
+        "32bit": {
+            "url": "https://github.com/win32ss/supermium/releases/download/v144-r2/supermium_144_32_setup.exe#/dl.zip",
+            "hash": "6c3659c8270b5e20d8467318c81c4eac3408523af1a8a9036df9e224a1f69b4c"
+        }
+    },
+    "extract_dir": "Supermium",
+    "post_install": [
+        "if (-not (Test-Path \"$dir\\User Data\\*\") -and (Test-Path \"$env:LocalAppData\\Supermium\\User Data\")) {",
+        "    info '[Portable Mode]: Copying user data...'",
+        "    Copy-Item -Path \"$env:LocalAppData\\Supermium\\User Data\\*\" -Destination \"$dir\\User Data\" -Force -Recurse",
+        "    Remove-Item -Path \"$env:LocalAppData\\Supermium\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "}"
+    ],
+    "bin": [
+        [
+            "chrome.exe",
+            "supermium",
+            "--user-data-dir=\"$dir\\User Data\""
+        ]
+    ],
+    "shortcuts": [
+        [
+            "chrome.exe",
+            "Supermium",
+            "--user-data-dir=\"$dir\\User Data\""
+        ]
+    ],
+    "env_set": {
+        "CHROME_EXECUTABLE": "$dir\\chrome.exe"
+    },
+    "persist": "User Data",
+    "checkver": {
+        "url": "https://api.github.com/repos/win32ss/supermium/releases/latest",
+        "jsonpath": "$..['tag_name', 'name']",
+        "regex": "(?i)\"(?<tag>v?[\\d]+(?<suffix>-[^\"]+)?)\",\"[^\"]+?(?<prefix>[\\d.]+)",
+        "replace": "${prefix}${suffix}"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/win32ss/supermium/releases/download/$matchTag/supermium_$majorVersion_64_setup_win10_11.exe#/dl.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/win32ss/supermium/releases/download/$matchTag/supermium_$majorVersion_32_setup.exe#/dl.zip"
+            }
+        }
+    }
+}
