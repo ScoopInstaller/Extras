@@ -1,0 +1,45 @@
+{
+    "version": "0.10.3",
+    "description": "DJ library organizer that sorts tracks by mood, energy, and technique",
+    "homepage": "https://vibesdj.io/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://vibesdj.io/terms"
+    },
+    "notes": [
+        "Vibes is commercial software. See https://vibesdj.io/ for licensing.",
+        "The app is installed per-user via the bundled NSIS installer and auto-updates."
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/benmdg/vibes-releases/releases/download/v0.10.3/Vibes_0.10.3_x64-setup.exe",
+            "hash": "3ad3b3032fc193cf09d0a250bf4b0a835b0851e5bd96807cb90b6f48b868e2ee"
+        }
+    },
+    "installer": {
+        "script": [
+            "$installer = Get-ChildItem \"$dir\" -Filter 'Vibes_*_x64-setup.exe' | Select-Object -First 1",
+            "if (-not $installer) { error 'Installer not found in package dir.'; break }",
+            "Invoke-ExternalCommand $installer.FullName -ArgumentList @('/S') -RunAs | Out-Null",
+            "Remove-Item $installer.FullName -Force"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "$uninstaller = Join-Path $env:LOCALAPPDATA 'Vibes\\uninstall.exe'",
+            "if (Test-Path $uninstaller) {",
+            "    Invoke-ExternalCommand $uninstaller -ArgumentList @('/S') -RunAs | Out-Null",
+            "}"
+        ]
+    },
+    "checkver": {
+        "github": "https://github.com/benmdg/vibes-releases"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/benmdg/vibes-releases/releases/download/v$version/Vibes_$version_x64-setup.exe"
+            }
+        }
+    }
+}
