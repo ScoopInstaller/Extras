@@ -1,0 +1,64 @@
+{
+    "version": "26.1.1-3",
+    "description": "Community-driven minimalistic conda installer using the conda-forge channel as default.",
+    "homepage": "https://github.com/conda-forge/miniforge",
+    "license": "BSD-3-Clause",
+    "notes": [
+        "* Known issue:",
+        "  - The App may fail to install when 'Long Paths' are not enabled, Check it by executing `scoop checkup`. (#11570)",
+        "------",
+        "From 4.6.0, conda has built the support for Cmd, Powershell or other shells.",
+        "Use \"conda init powershell\" or \"conda init __your_favorite_shell__\""
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/conda-forge/miniforge/releases/download/26.1.1-3/Miniforge3-26.1.1-3-Windows-x86_64.exe",
+            "hash": "4d987034d25684fbed0fe7c691227067e37f7443061e2732c3b726c0c5dd45c2"
+        }
+    },
+    "pre_install": "if ($dir -match ' ') { error 'The installation directory cannot include a space'; break}",
+    "installer": {
+        "script": [
+            "# Move the installer to the upper directory to avoid 'The installation directory is not empty' error",
+            "Move-Item \"$dir\\$fname\" \"$dir\\..\\$fname\"",
+            "Start-Process -Wait \"$dir\\..\\$fname\" -ArgumentList @('/S', '/InstallationType=JustMe', '/RegisterPython=0', '/AddToPath=0', '/NoRegistry=1', \"/D=$dir\")",
+            "Remove-Item \"$dir\\..\\$fname\""
+        ]
+    },
+    "env_add_path": [
+        "scripts",
+        "Library\\bin"
+    ],
+    "bin": [
+        "python.exe",
+        "pythonw.exe",
+        [
+            "python.exe",
+            "python3"
+        ]
+    ],
+    "persist": "envs",
+    "uninstaller": {
+        "script": [
+            "# Workaround for https://github.com/ScoopInstaller/Scoop/issues/4075",
+            "# Remove junction point before executing the uninstaller, otherwise all envs will be removed by the uninstaller.",
+            "Invoke-ExternalCommand cmd -ArgumentList @('/c', 'rmdir', '/s', '/q', \"`\"$dir\\envs`\"\") | Out-Null",
+            "Start-Process -Wait \"$dir\\Uninstall-Miniforge3.exe\" -ArgumentList '/S'",
+            "New-Item \"$dir\\envs\" -ItemType Directory | Out-Null"
+        ]
+    },
+    "checkver": {
+        "github": "https://github.com/conda-forge/miniforge",
+        "regex": "tag/([\\d.-]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/conda-forge/miniforge/releases/download/$version/Miniforge3-$version-Windows-x86_64.exe",
+                "hash": {
+                    "url": "$url.sha256"
+                }
+            }
+        }
+    }
+}
