@@ -15,15 +15,13 @@
         }
     },
     "pre_install": [
-        "Get-ChildItem \"$dir\\grepWin*.exe\" | Rename-Item -NewName 'grepWin.exe'",
+        "Get-ChildItem \"$dir\\grepWin*.exe\" | Rename-Item -NewName 'grepWin_portable.exe'",
         "if (-not (Test-Path \"$persist_dir\\grepwin.ini\")) {",
         "    Set-Content \"$dir\\grepwin.ini\" (@('[global]', '[Software\\grepWin\\History]') -join \"`r`n\") -Encoding ASCII",
-        "}",
-        "",
-        "Rename-Item \"$dir\\grepWin.exe\" -NewName 'grepWin_portable.exe' -ErrorAction Ignore"
+        "}"
     ],
     "post_install": [
-        "$app_path = \"$dir\\grepWin.exe\".Replace('\\', '\\\\')",
+        "$app_path = \"$dir\\grepWin_portable.exe\".Replace('\\', '\\\\')",
         "'install-context.reg', 'uninstall-context.reg' | ForEach-Object {",
         "    if (Test-Path \"$bucketsdir\\extras\\scripts\\grepwin\\$_\") {",
         "        $content = Get-Content \"$bucketsdir\\extras\\scripts\\grepwin\\$_\"",
