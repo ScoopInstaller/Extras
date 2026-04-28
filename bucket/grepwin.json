@@ -3,7 +3,7 @@
     "description": "Regular expression search and replace tool for Windows.",
     "homepage": "https://tools.stefankueng.com/grepWin.html",
     "license": "GPL-3.0-only",
-    "notes": "Execute reg import '$dir\\install-context.reg' to add grepWin to right-click context menu.",
+    "notes": "Execute \"reg import '$dir\\install-context.reg'\" to add grepWin to right-click context menu.",
     "architecture": {
         "64bit": {
             "url": "https://github.com/stefankueng/grepWin/releases/download/2.1.12/grepWin-x64-2.1.12_portable.zip",
@@ -18,7 +18,9 @@
         "Get-ChildItem \"$dir\\grepWin*.exe\" | Rename-Item -NewName 'grepWin.exe'",
         "if (-not (Test-Path \"$persist_dir\\grepwin.ini\")) {",
         "    Set-Content \"$dir\\grepwin.ini\" (@('[global]', '[Software\\grepWin\\History]') -join \"`r`n\") -Encoding ASCII",
-        "}"
+        "}",
+        "",
+        "Rename-Item \"$dir\\grepWin.exe\" -NewName 'grepWin_portable.exe' -ErrorAction Ignore"
     ],
     "post_install": [
         "$app_path = \"$dir\\grepWin.exe\".Replace('\\', '\\\\')",
@@ -31,9 +33,7 @@
         "        }",
         "    }",
         "    $content | Set-Content -Path \"$dir\\$_\" -Encoding ascii",
-        "}",
-        "",
-        "Rename-Item \"$dir\\grepWin.exe\" -NewName 'grepWin_portable.exe' -ErrorAction Ignore"
+        "}"
     ],
     "bin": [
         [
