@@ -10,6 +10,7 @@
         }
     },
     "extract_dir": "aegisub-portable",
+    "pre_install": "Copy-Item \"$persist_dir\\config.json\" \"$dir\" -ErrorAction SilentlyContinue",
     "shortcuts": [
         [
             "aegisub.exe",
@@ -20,8 +21,12 @@
         "autoback",
         "autosave",
         "catalog",
-        "config",
-        "config.json"
+        "config"
+    ],
+    "pre_uninstall": [
+        "# Hardlinks won't work properly here to persist files, because this app creates a new file instead of writing to the existing one.",
+        "ensure \"$persist_dir\" | Out-Null",
+        "Copy-Item \"$dir\\config.json\" \"$persist_dir\" -ErrorAction SilentlyContinue"
     ],
     "checkver": {
         "github": "https://github.com/TypesettingTools/Aegisub"
