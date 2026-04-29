@@ -2,7 +2,13 @@
     "version": "12",
     "description": "Cross-platform advanced subtitle editor, with new feature branches. Read the README on the feature branch.",
     "homepage": "https://github.com/arch1t3cht/Aegisub",
-    "license": "https://github.com/arch1t3cht/Aegisub/blob/feature/LICENCE",
+    "license": {
+        "identifier": "BSD-3-Clause,MIT,BSDL,MPL-1.1",
+        "url": "https://github.com/arch1t3cht/Aegisub/blob/feature/LICENCE"
+    },
+    "suggest": {
+        "vcredist": "extras/vcredist2022"
+    },
     "architecture": {
         "64bit": {
             "url": "https://github.com/arch1t3cht/Aegisub/releases/download/feature_12/Windows.MSVC.Release.wx.master.-.portable.zip",
@@ -11,14 +17,28 @@
     },
     "pre_install": [
         "Expand-ZipArchive -Path \"$dir\\aegisub-portable-64.zip\" -DestinationPath \"$dir\"-ExtractDir \"aegisub-portable\" -Removal",
-        "if (!(Test-Path -Path \"$persist_dir\\config.json\")) { Move-Item -Path \"$dir\\config.json\" -Destination \"$persist_dir\\config.json\" }",
-        "New-Item -Type SymbolicLink -Target \"$persist_dir\\config.json\" -Path \"$dir\\config.json\" -Force"
+        "",
+        "# Hardlinks won't work properly here to persist files, because this app creates a new file instead of writing to the existing one.",
+        "'config.json' | ForEach-Object {",
+        "    if (Test-Path -LiteralPath \"$persist_dir\\$_\" -PathType Leaf) {",
+        "        Copy-Item -Path \"$persist_dir\\$_\" -Destination \"$dir\\$_\" -Force",
+        "    }",
+        "}"
     ],
     "shortcuts": [
         [
             "aegisub.exe",
             "Aegisub"
         ]
+    ],
+    "pre_uninstall": [
+        "# Hardlinks won't work properly here to persist files, because this app creates a new file instead of writing to the existing one.",
+        "'config.json' | ForEach-Object {",
+        "    if (Test-Path -LiteralPath \"$dir\\$_\" -PathType Leaf) {",
+        "        ensure $persist_dir | Out-Null",
+        "        Copy-Item -Path \"$dir\\$_\" -Destination \"$persist_dir\\$_\" -Force",
+        "    }",
+        "}"
     ],
     "persist": [
         "autoback",
