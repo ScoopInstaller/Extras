@@ -11,21 +11,11 @@
     },
     "pre_install": [
         "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
-        "# Please keep the file list the same in both pre_install and pre_uninstall scripts.",
         "'LibreHardwareMonitor.config', 'LibreHardwareMonitorLog*.csv' | ForEach-Object {",
-        "   if (!(Test-Path \"$persist_dir\\\")) {",
-        "       New-Item -Type Directory -Path \"$persist_dir\\\" -ErrorAction Ignore | Out-Null",
-        "   }",
-        "   if (Test-Path \"$persist_dir\\$_\") {",
-        "       Copy-Item -Path \"$persist_dir\\$_\" -Destination \"$dir\\\" -Force",
-        "   }",
+        "    if (Test-Path -Path \"$persist_dir\\$_\" -PathType Leaf) {",
+        "        Copy-Item -Path \"$persist_dir\\$_\" -Destination \"$dir\\$_\" -Force",
+        "    }",
         "}"
-    ],
-    "bin": [
-        [
-            "LibreHardwareMonitor.exe",
-            "lhm"
-        ]
     ],
     "shortcuts": [
         [
@@ -35,11 +25,11 @@
     ],
     "pre_uninstall": [
         "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
-        "# Please keep the file list the same in both pre_install and pre_uninstall scripts.",
         "'LibreHardwareMonitor.config', 'LibreHardwareMonitorLog*.csv' | ForEach-Object {",
-        "   if (Test-Path -Path \"$dir\\$_\") {",
-        "       Copy-Item -Path \"$dir\\$_\" -Destination \"$persist_dir\\\" -Force",
-        "   }",
+        "    if (Test-Path -Path \"$dir\\$_\" -PathType Leaf) {",
+        "        ensure $persist_dir | Out-Null",
+        "        Copy-Item -Path \"$dir\\$_\" -Destination \"$persist_dir\\$_\" -Force",
+        "    }",
         "}"
     ],
     "checkver": "github",
