@@ -9,11 +9,28 @@
             "hash": "086d9f1b5a99e643edc2cfaaac16051685b551e4c5ac0b32a57c58c0e529c001"
         }
     },
+    "pre_install": [
+        "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
+        "'LibreHardwareMonitor.config', 'LibreHardwareMonitorLog*.csv' | ForEach-Object {",
+        "    if (Test-Path -Path \"$persist_dir\\$_\" -PathType Leaf) {",
+        "        Copy-Item -Path \"$persist_dir\\$_\" -Destination $dir -Force",
+        "    }",
+        "}"
+    ],
     "shortcuts": [
         [
             "LibreHardwareMonitor.exe",
             "Libre Hardware Monitor"
         ]
+    ],
+    "pre_uninstall": [
+        "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
+        "'LibreHardwareMonitor.config', 'LibreHardwareMonitorLog*.csv' | ForEach-Object {",
+        "    if (Test-Path -Path \"$dir\\$_\" -PathType Leaf) {",
+        "        ensure $persist_dir | Out-Null",
+        "        Copy-Item -Path \"$dir\\$_\" -Destination $persist_dir -Force",
+        "    }",
+        "}"
     ],
     "checkver": "github",
     "autoupdate": {
