@@ -2,7 +2,16 @@
     "version": "2.6.2",
     "description": "Seelen UI is a fully customizable desktop environment for Windows 10/11.",
     "homepage": "https://seelen.io/apps/seelen-ui",
-    "license": "AGPL-3.0-or-later",
+    "license": {
+        "identifier": "AGPL-3.0-or-later",
+        "url": "https://github.com/eythaann/Seelen-UI/blob/HEAD/LICENSE"
+    },
+    "notes": [
+        "To register file associations, please execute the following command:",
+        "reg import \"$dir\\install-associations.reg\"",
+        "To register the URL protocol handler, please execute the following command:",
+        "reg import \"$dir\\register-url-handler.reg\""
+    ],
     "suggest": {
         "Microsoft Edge WebView2": "extras/webview2"
     },
@@ -16,13 +25,30 @@
             "hash": "c5829c02c8d376fa2836230e5624724e8dffbc6ff48f5548724da5b8f912dfb3"
         }
     },
-    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Force -Recurse",
+    "pre_install": "'$*', 'uninst*' | ForEach-Object { Remove-Item -Path \"$dir\\$_\" -Recurse -Force -ErrorAction SilentlyContinue }",
+    "post_install": [
+        "$seelen_dir = $dir -replace '\\\\', '\\\\'",
+        "Get-ChildItem -Path \"$bucketsdir\\$bucket\\scripts\\$app\" -Filter '*.reg' -File | ForEach-Object {",
+        "    $content = Get-Content -Path $_.FullName -Encoding utf8",
+        "    if ($global) { $content = $content -replace 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE' }",
+        "    $content -replace '{{seelen_dir}}', $seelen_dir | Set-Content -Path \"$dir\\$($_.Name)\" -Encoding unicode",
+        "}"
+    ],
     "shortcuts": [
         [
             "seelen-ui.exe",
             "Seelen UI"
         ]
     ],
+    "uninstaller": {
+        "script": [
+            "if ($cmd -ne 'uninstall') { return }",
+            "Get-ChildItem -Path $dir -Filter 'un*.reg' -File | ForEach-Object {",
+            "    $registry_file = '\"{0}\"' -f $_.FullName",
+            "    Start-Process -FilePath 'reg.exe' -ArgumentList @('import', $registry_file) -WindowStyle Hidden -Wait",
+            "}"
+        ]
+    },
     "checkver": {
         "github": "https://github.com/eythaann/Seelen-UI"
     },
