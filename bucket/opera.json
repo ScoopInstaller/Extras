@@ -28,16 +28,7 @@
             "$exclude_list = @('Assets', $version, 'autoupdate', 'Resources.pri', 'opera.visualelementsmanifest.xml')",
             "Move-Item -Path \"$dir\\*\" -Destination \"$dir\\$version\" -Exclude $exclude_list -Force -ErrorAction SilentlyContinue",
             "Copy-Item -Path \"$dir\\$version\\opera.exe\" -Destination $dir -Force",
-            "$consent_settings = [ordered]@{",
-            "    'consent-given' = $true; 'general-interests' = $false",
-            "    'general-location' = $false; 'personalized-ads' = $false; 'personalized-content' = $false",
-            "}",
-            "$cfg = [ordered]@{",
-            "    'autoupdate' = $false; 'consent' = $consent_settings",
-            "    'enable-crash-reporting' = $false; 'enable_stats' = $false",
-            "    'import_browser_data' = $false; 'run-at-startup' = $false",
-            "    'show_eula_window_on_first_run' = $false; 'show_onboarding_overlay' = $false; 'single_profile' = $true",
-            "} | ConvertTo-Json -Depth 5 -Compress",
+            "$cfg = @{ 'autoupdate' = $false; 'enable_stats' = $false; 'single_profile' = $true } | ConvertTo-Json -Depth 5 -Compress",
             "Set-Content -Path \"$dir\\installer_prefs.json\" -Value $cfg -NoNewline -Encoding utf8"
         ]
     },
