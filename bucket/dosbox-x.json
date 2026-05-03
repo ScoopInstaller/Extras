@@ -1,26 +1,28 @@
 {
-    "version": "2026.01.02",
-    "description": "Fork of DOSBox, an Intel x86-based PC emulator, complete with sound, graphics, mouse, joystick, modem, etc.",
+    "version": "2026.05.02",
+    "description": "DOSBox fork with DOS/V and NEC PC-98 emulation, focusing on general emulation and accuracy.",
     "homepage": "https://dosbox-x.com",
     "license": "GPL-2.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/joncampbell123/dosbox-x/releases/download/dosbox-x-v2026.01.02/dosbox-x-vsbuild-win64-20260102233440.zip",
-            "hash": "4d738794a3b274841b119854457837d90fcc65c406d48eb634f7ceb3c7a9f189",
+            "url": "https://github.com/joncampbell123/dosbox-x/releases/download/dosbox-x-v2026.05.02/dosbox-x-vsbuild-win64-2026.05.02-portable.zip",
+            "hash": "d58c5db50e4793c8e48a0f5d8eac75f0c0ebd865cbe35c015f143f93db3a5288",
             "extract_dir": "bin\\x64\\Release SDL2"
         },
         "32bit": {
-            "url": "https://github.com/joncampbell123/dosbox-x/releases/download/dosbox-x-v2026.01.02/dosbox-x-vsbuild-win32-20260102233440.zip",
-            "hash": "a4536092b3958f3ab458ccfcb268b6fe1b444b6830de4b321d61b1171f147fea",
+            "url": "https://github.com/joncampbell123/dosbox-x/releases/download/dosbox-x-v2026.05.02/dosbox-x-vsbuild-win32-2026.05.02-portable.zip",
+            "hash": "09b4388c6bb40712b738d1bdba04ef39bd3cb5976e9248930a5ce4c9ab32e919",
             "extract_dir": "bin\\Win32\\Release SDL2"
         },
         "arm64": {
-            "url": "https://github.com/joncampbell123/dosbox-x/releases/download/dosbox-x-v2026.01.02/dosbox-x-vsbuild-arm64-20260102233440.zip",
-            "hash": "dc35c31fa16f4ec2ee69987554ca675d0f0f603cf1e24a1d0b01b69be0a19b48",
+            "url": "https://github.com/joncampbell123/dosbox-x/releases/download/dosbox-x-v2026.05.02/dosbox-x-vsbuild-arm64-2026.05.02-portable.zip",
+            "hash": "220a854dc0c6a3c91f043fd44fdd8b374e0a9aee2c684e4c9015f9e47c068817",
             "extract_dir": "bin\\ARM64\\Release SDL2"
         }
     },
-    "pre_install": "if (!(Test-Path \"$persist_dir\\dosbox.conf\")) { Copy-Item \"$dir\\dosbox-x.reference.conf\" \"$dir\\dosbox.conf\" }",
+    "persist": "dosbox-x.conf",
+    "pre_install": "if (Test-Path \"$persist_dir\\dosbox-x.conf\") { Copy-Item \"$persist_dir\\dosbox-x.conf\" \"$persist_dir\\dosbox-x.conf.old\" }",
+    "post_install": "if (Test-Path \"$persist_dir\\*.rom\") { Copy-Item \"$persist_dir\\*.rom\" \"$dir\\\" }",
     "bin": "dosbox-x.exe",
     "shortcuts": [
         [
@@ -28,22 +30,22 @@
             "DOSBox-X"
         ]
     ],
-    "persist": "dosbox.conf",
+    "notes": "To use dumped ROMs, place them inside $persist_dir and reinstall. This only needs to be done once.",
     "checkver": {
         "url": "https://api.github.com/repos/joncampbell123/dosbox-x/releases/latest",
-        "jsonpath": "$.assets..browser_download_url",
-        "regex": "dosbox-x-v([\\d.]+).*vsbuild-arm64-(?<releasearm64>\\d+).*vsbuild-win32-(?<releasewin32>\\d+).*vsbuild-win64-(?<releasewin64>\\d+)"
+        "jsonpath": "$.tag_name",
+        "regex": "dosbox-x-v([\\d.]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/joncampbell123/dosbox-x/releases/download/dosbox-x-v$version/dosbox-x-vsbuild-win64-$matchReleasewin64.zip"
+                "url": "https://github.com/joncampbell123/dosbox-x/releases/download/dosbox-x-v$version/dosbox-x-vsbuild-win64-$version-portable.zip"
             },
             "32bit": {
-                "url": "https://github.com/joncampbell123/dosbox-x/releases/download/dosbox-x-v$version/dosbox-x-vsbuild-win32-$matchReleasewin32.zip"
+                "url": "https://github.com/joncampbell123/dosbox-x/releases/download/dosbox-x-v$version/dosbox-x-vsbuild-win32-$version-portable.zip"
             },
             "arm64": {
-                "url": "https://github.com/joncampbell123/dosbox-x/releases/download/dosbox-x-v$version/dosbox-x-vsbuild-arm64-$matchReleasearm64.zip"
+                "url": "https://github.com/joncampbell123/dosbox-x/releases/download/dosbox-x-v$version/dosbox-x-vsbuild-arm64-$version-portable.zip"
             }
         }
     }
