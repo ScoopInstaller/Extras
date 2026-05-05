@@ -3,7 +3,10 @@
     "description": "Regular expression search and replace tool for Windows.",
     "homepage": "https://tools.stefankueng.com/grepWin.html",
     "license": "GPL-3.0-only",
-    "notes": "Run '$dir\\install-context.reg' to add grepWin to right-click context menu.",
+    "notes": [
+        "To add grepWin to right-click context menu, run:",
+        "reg import \"$dir\\install-context.reg\""
+    ],
     "architecture": {
         "64bit": {
             "url": "https://github.com/stefankueng/grepWin/releases/download/2.1.12/grepWin-x64-2.1.12_portable.zip",
@@ -15,13 +18,14 @@
         }
     },
     "pre_install": [
-        "Get-ChildItem \"$dir\\grepWin*.exe\" | Rename-Item -NewName 'grepWin.exe'",
+        "Get-ChildItem \"$dir\\grepWin*.exe\" | Rename-Item -NewName 'grepWin_portable.exe'",
         "if (-not (Test-Path \"$persist_dir\\grepwin.ini\")) {",
         "    Set-Content \"$dir\\grepwin.ini\" (@('[global]', '[Software\\grepWin\\History]') -join \"`r`n\") -Encoding ASCII",
         "}"
     ],
     "post_install": [
-        "$app_path = \"$dir\\grepWin.exe\".Replace('\\', '\\\\')",
+        "# keep the 'portable' suffix to ensure it runs in portable mode.",
+        "$app_path = \"$dir\\grepWin_portable.exe\".Replace('\\', '\\\\')",
         "'install-context.reg', 'uninstall-context.reg' | ForEach-Object {",
         "    if (Test-Path \"$bucketsdir\\extras\\scripts\\grepwin\\$_\") {",
         "        $content = Get-Content \"$bucketsdir\\extras\\scripts\\grepwin\\$_\"",
@@ -31,18 +35,33 @@
         "        }",
         "    }",
         "    $content | Set-Content -Path \"$dir\\$_\" -Encoding ascii",
+        "}",
+        "# Workaround for https://github.com/ScoopInstaller/Extras/pull/17697 (Remove this workaround after 2027-01-01)",
+        "if ($cmd -eq 'update') {",
+        "    $regPath = 'HKCU:\\Software\\Classes\\*\\shell\\grepWin\\command'",
+        "    if ($global) {",
+        "        $regPath = $regPath -replace '^HKCU', 'HKLM'",
+        "    }",
+        "    $regValue = Get-ItemProperty -LiteralPath $regPath -ErrorAction Ignore",
+        "    if ($regValue -and $regValue.'(default)' -match \"^$([regex]::Escape($(appdir $app $global)))\") {",
+        "        reg import \"$dir\\install-context.reg\" *> $null",
+        "    }",
         "}"
     ],
-    "bin": "grepWin.exe",
+    "bin": [
+        [
+            "grepWin_portable.exe",
+            "grepWin"
+        ]
+    ],
     "shortcuts": [
         [
-            "grepWin.exe",
-            "grepWin",
-            "/portable"
+            "grepWin_portable.exe",
+            "grepWin"
         ]
     ],
     "persist": "grepwin.ini",
-    "pre_uninstall": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }",
+    "pre_uninstall": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" *> $null }",
     "checkver": {
         "github": "https://github.com/stefankueng/grepWin"
     },

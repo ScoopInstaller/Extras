@@ -1,5 +1,5 @@
 {
-    "version": "129.0.5823.70",
+    "version": "130.0.5847.108",
     "description": "Opera GX is a special version of the Opera browser built specifically for gamers.",
     "homepage": "https://www.opera.com/gx",
     "license": {
@@ -8,27 +8,24 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://get.opera.com/pub/opera_gx/129.0.5823.70/win/Opera_GX_129.0.5823.70_Setup_x64.exe",
-            "hash": "ca7faf0de5c8d192b7ccef50ee93918eda2df7fe1245bef178cfcd7fdf81764d"
+            "url": "https://get.opera.com/pub/opera_gx/130.0.5847.108/win/Opera_GX_130.0.5847.108_Setup_x64.exe",
+            "hash": "12cfcc8279ddbc085688e9d823bd2dc75910c4d7543d9fe0778bb3da9064c296"
         },
         "32bit": {
-            "url": "https://get.opera.com/pub/opera_gx/129.0.5823.70/win/Opera_GX_129.0.5823.70_Setup.exe",
-            "hash": "328d8e6a1ac090e545dc7ec1ad73c800bdc93aeff550d74431d0f82d914a65b8"
+            "url": "https://get.opera.com/pub/opera_gx/130.0.5847.108/win/Opera_GX_130.0.5847.108_Setup.exe",
+            "hash": "e06d6d4043253848d67938c0536631f5d1c65ccc6c1a2cc982323653079d021a"
         }
     },
     "installer": {
         "script": [
-            "Expand-7zipArchive -Path \"$dir\\$fname\" -DestinationPath $dir -Removal",
             "$version, 'autoupdate' | ForEach-Object { ensure \"$dir\\$_\" | Out-Null }",
+            "Expand-7zipArchive -Path \"$dir\\$fname\" -Switches '-x!*_list -xr!unins*' -Removal",
             "Move-Item -Path \"$dir\\opera_autoupdate*\" -Destination \"$dir\\autoupdate\" -Force",
-            "Remove-Item -Path \"$dir\\*\" -Include '*_list' -Force -ErrorAction SilentlyContinue",
             "$exclude_list = @('Assets', $version, 'autoupdate', 'Resources.pri', 'opera.visualelementsmanifest.xml')",
-            "Get-ChildItem -Path $dir | Where-Object { $exclude_list -notcontains $_.Name } | ForEach-Object {",
-            "    Move-Item -Path $_.FullName -Destination \"$dir\\$version\\$($_.Name)\" -Force -ErrorAction SilentlyContinue",
-            "}",
-            "Copy-Item -Path \"$dir\\$version\\opera.exe\" -Destination $dir",
-            "$cfg = @{ 'autoupdate'= $false; 'enable_stats' = $false; 'single_profile' = $true } | ConvertTo-Json -Depth 5",
-            "Set-Content -Path \"$dir\\installer_prefs.json\" -Value $cfg -Encoding ascii"
+            "Move-Item -Path \"$dir\\*\" -Destination \"$dir\\$version\" -Exclude $exclude_list -Force -ErrorAction SilentlyContinue",
+            "Copy-Item -Path \"$dir\\$version\\opera.exe\" -Destination $dir -Force",
+            "$cfg = @{ 'autoupdate' = $false; 'enable_stats' = $false; 'single_profile' = $true } | ConvertTo-Json -Depth 5 -Compress",
+            "Set-Content -Path \"$dir\\installer_prefs.json\" -Value $cfg -NoNewline -Encoding utf8"
         ]
     },
     "shortcuts": [

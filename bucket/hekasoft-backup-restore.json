@@ -1,14 +1,26 @@
 {
-    "version": "0.99.1",
+    "version": "1.0.0",
     "description": "Hekasoft Backup & Restore provides a reliable solution for backing up, restoring, and migrating browser profiles. It also allows you to optimize profile data by removing unnecessary files.",
     "homepage": "https://hekasoft.com/hekasoft-backup-restore/",
     "license": {
         "identifier": "Freeware",
         "url": "https://hekasoft.com/eula/"
     },
-    "url": "https://www.fosshub.com/Hekasoft-Backup-Restore.html/backup_restore_0991-portable.zip",
-    "hash": "44af16a0229bc99fc7afa5924a9f219cd1758c6f06112c9957d64c3d8454a6b6",
-    "extract_dir": "backup_restore_0991",
+    "architecture": {
+        "64bit": {
+            "url": "https://hekasoft.com/hbr-portable.zip",
+            "hash": "a91f2ae5af62eb6029118b098d0a90ef4cf055eea4bcab8ede197686ee1766a1"
+        }
+    },
+    "pre_install": [
+        "# Use a script to extract files since the extract_dir changes frequently.",
+        "$items = Get-ChildItem -Path $dir | Select-Object -First 3",
+        "if ($items.Count -eq 1 -and $items.PSIsContainer) {",
+        "    $inner_dir = $items | ForEach-Object -MemberName FullName",
+        "    Move-Item -Path \"$inner_dir\\*\" -Destination $dir -Force",
+        "    Remove-Item -Path $inner_dir -Recurse -Force -ErrorAction SilentlyContinue",
+        "}"
+    ],
     "shortcuts": [
         [
             "hbr.exe",
@@ -16,11 +28,14 @@
         ]
     ],
     "checkver": {
-        "url": "https://www.fosshub.com/Hekasoft-Backup-Restore.html",
-        "regex": "\"softwareVersion\">([\\d.]+)<"
+        "url": "https://hekasoft.com/hekasoft-backup-restore/",
+        "regex": "Current Version.+?([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://www.fosshub.com/Hekasoft-Backup-Restore.html/backup_restore_$cleanVersion-portable.zip",
-        "extract_dir": "backup_restore_$cleanVersion"
+        "architecture": {
+            "64bit": {
+                "url": "https://hekasoft.com/hbr-portable.zip"
+            }
+        }
     }
 }
