@@ -4,8 +4,12 @@
     "homepage": "https://www.lazarus-ide.org",
     "license": {
         "identifier": "GPL-2.0-or-later | FPC-modified-LGPL-2.0-or-later",
-        "url": "http://wiki.lazarus.freepascal.org/licensing"
+        "url": "https://wiki.lazarus.freepascal.org/licensing"
     },
+    "notes": [
+        "To register file associations, please execute the following command:",
+        "reg import \"$dir\\install-associations.reg\""
+    ],
     "architecture": {
         "64bit": {
             "url": "https://downloads.sourceforge.net/project/lazarus/Lazarus%20Windows%2064%20bits/Lazarus%204.6/lazarus-4.6-fpc-3.2.2-win64.exe",
@@ -17,12 +21,31 @@
         }
     },
     "innosetup": true,
+    "installer": {
+        "script": [
+            "$executable_dir = Get-ChildItem -Path \"$dir\\fpc\" -Filter 'fpcmkcfg.exe' -Depth 3 -File |",
+            "        Select-Object -ExpandProperty DirectoryName -First 1",
+            "$fpc_dir = $executable_dir -replace '(?<=fpc.+)[\\\\/]bin.+', ''",
+            "$process_args = @('-d', \"basepath=$fpc_dir\", '-o', \"$executable_dir\\fpc.cfg\")",
+            "Start-Process -FilePath \"$executable_dir\\fpcmkcfg.exe\" -ArgumentList $process_args -NoNewWindow -Wait"
+        ]
+    },
     "post_install": [
-        "$fpcdir = \"$dir\\fpc\\\" + ($fname -replace '.*fpc-([\\d.]+)-.*', '$1');",
-        "$fpcarch=$(if ($fname -match '.*fpc-([\\d.]+)-win64') {'x86_64-win64'} else {'i386-win32'});",
-        "& \"$fpcdir\\bin\\$fpcarch\\fpcmkcfg.exe\" -d \"basepath=$fpcdir\" -o \"$fpcdir\\bin\\$fpcarch\\fpc.cfg\""
+        "$lazarus_dir = $dir -replace '\\\\', '\\\\'",
+        "Get-ChildItem -Path \"$bucketsdir\\$bucket\\scripts\\$app\" -Filter '*.reg' -File | ForEach-Object -Process {",
+        "    $content = Get-Content -Path $_.FullName -Encoding utf8",
+        "    if ($global) { $content = $content -replace 'HKEY_CURRENT_USER(?=.+Classes)', 'HKEY_LOCAL_MACHINE' }",
+        "    $content -replace '{{lazarus_dir}}', $lazarus_dir | Set-Content -Path \"$dir\\$($_.Name)\" -Encoding unicode",
+        "}"
     ],
-    "bin": "lazbuild.exe",
+    "env_set": {
+        "LazDir": "$dir",
+        "LazarusDir": "$dir"
+    },
+    "bin": [
+        "lazarus.exe",
+        "lazbuild.exe"
+    ],
     "shortcuts": [
         [
             "lazarus.exe",
@@ -34,11 +57,19 @@
             "--debug"
         ]
     ],
-    "env_set": {
-        "LazarusDir": "$dir",
-        "LazDir": "$dir"
+    "uninstaller": {
+        "script": [
+            "if ($cmd -ne 'uninstall') { return }",
+            "Get-ChildItem -Path $dir -Filter 'un*.reg' -File | ForEach-Object -Process {",
+            "    $registry_file = '\"{0}\"' -f $_.FullName",
+            "    Start-Process -FilePath 'reg.exe' -ArgumentList @('import', $registry_file) -WindowStyle Hidden -Wait",
+            "}"
+        ]
     },
-    "checkver": "lazarus-([\\d.]+)-fpc-(?<fpc>[\\d.]+)-win(64|32)\\.exe",
+    "checkver": {
+        "url": "https://www.lazarus-ide.org/index.php?page=downloads",
+        "regex": "lazarus-([\\d.]+)-fpc-(?<fpc>[\\d.]+)-win"
+    },
     "autoupdate": {
         "architecture": {
             "64bit": {
@@ -49,7 +80,7 @@
             }
         },
         "hash": {
-            "url": "http://www.lazarus-ide.org/index.php?page=checksums",
+            "url": "https://www.lazarus-ide.org/index.php?page=checksums",
             "regex": "$sha256.*?$basename"
         }
     }
