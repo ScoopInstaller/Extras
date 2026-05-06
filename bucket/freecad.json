@@ -13,15 +13,19 @@
         }
     },
     "pre_install": "pushd $dir ; mv */* . ; rm FreeCAD_* ; popd",
-    "bin": "bin\\FreeCADCmd.exe",
-    "shortcuts": [
-        [
-            "bin\\FreeCAD.exe",
-            "FreeCAD"
-        ]
+    "post_install": [
+        "# FreeCAD may behave unexpectedly when launched from a symlinked directory. See: https://github.com/ScoopInstaller/Extras/issues/17759",
+        "startmenu_shortcut \"$original_dir\\bin\\FreeCAD.exe\" 'FreeCAD' $null $null $global",
+        "shim \"$original_dir\\bin\\FreeCADCmd.exe\" $global 'FreeCADCmd'"
+    ],
+    "post_uninstall": [
+        "# Remove shortcut and shim",
+        "rm_shim 'FreeCADCmd' \"$(shimdir $global)\"",
+        "Write-Host \"Removing shortcut $(friendly_path \"$(shortcut_folder $global)\\FreeCAD.lnk\")\"",
+        "Remove-Item \"$(shortcut_folder $global)\\FreeCAD.lnk\" -Force -ErrorAction SilentlyContinue"
     ],
     "checkver": {
-        "url": "https://api.github.com/repos/FreeCAD/FreeCAD/releases/latest",
+        "github": "https://api.github.com/repos/FreeCAD/FreeCAD/releases/latest",
         "jsonpath": "$.assets[?(@.name =~ /Win.+\\.7z$/i)].browser_download_url",
         "regex": "(?i)download/(?<tag>[^/]+)/(?<name>FreeCAD[^\\d]([0-9a-f.-]+)(?:-conda)?-Win.+)"
     },
