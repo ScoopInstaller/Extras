@@ -1,0 +1,50 @@
+{
+    "version": "1.0.14",
+    "description": "An open-source remake of the short-lived JetBrains git client",
+    "homepage": "https://github.com/DetachHead/rebased",
+    "license": {
+        "identifier": "Apache-2.0",
+        "url": "https://github.com/DetachHead/rebased/blob/master/LICENSE.txt"
+    },
+    "depends": "7zip",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/DetachHead/rebased/releases/download/1.0.14/rebased.exe",
+            "hash": "5805ac06ce2ed6a929a2df9b89521c9ffd3a364c47531b4b043a02b53f10620f"
+        }
+    },
+    "pre_install": "Expand-7zipArchive \"$dir\\rebased.exe\" \"$dir\\IDE\" -Removal",
+    "installer": {
+        "script": [
+            "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" \"$dir\" \"$persist_dir\"",
+            "Remove-Item \"$dir\\IDE\\`$*\" -Force -Recurse -ErrorAction SilentlyContinue"
+        ]
+    },
+    "bin": [
+        [
+            "IDE\\bin\\idea64.exe",
+            "rebased"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "IDE\\bin\\idea64.exe",
+            "Rebased"
+        ]
+    ],
+    "persist": [
+        "IDE\\bin\\idea.properties",
+        "IDE\\bin\\idea64.exe.vmoptions",
+        "profile"
+    ],
+    "checkver": {
+        "github": "https://github.com/DetachHead/rebased"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/DetachHead/rebased/releases/download/$version/rebased.exe"
+            }
+        }
+    }
+}
