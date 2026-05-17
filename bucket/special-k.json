@@ -1,0 +1,49 @@
+{
+    "version": "26.4.3.1",
+    "description": "Lovingly referred to as the Swiss Army Knife of PC gaming, Special K does a bit of everything.",
+    "homepage": "https://www.special-k.info",
+    "license": "GPL-3.0-only",
+    "url": "https://sk-data.special-k.info/repository/SpecialK_26.4.3.1.exe",
+    "hash": "c2bff5986836154017fd58f7a0b1d8b544c0acf55d0c4105923ff9301ca0f1f8",
+    "innosetup": true,
+    "architecture": {
+        "64bit": {
+            "pre_install": "Rename-Item \"$dir\\SKIF,1.exe\" SKIF.exe; Remove-Item \"$dir\\SKIF,2.exe\""
+        },
+        "32bit": {
+            "pre_install": "Rename-Item \"$dir\\SKIF,2.exe\" SKIF.exe; Remove-Item \"$dir\\SKIF,1.exe\""
+        }
+    },
+    "bin": [
+        "SKIF.exe",
+        "SKIV.exe"
+    ],
+    "shortcuts": [
+        [
+            "SKIF.exe",
+            "Special K/SKIF"
+        ],
+        [
+            "SKIV.exe",
+            "Special K/SKIV"
+        ]
+    ],
+    "persist": [
+        "Global",
+        "PlugIns",
+        "Profiles"
+    ],
+    "pre_uninstall": "$folder = \"$persist_dir\\PlugIns\\ThirdParty\\Steamworks\"; if (Test-Path $folder) { Remove-Item $folder -Recurse -Force }",
+    "checkver": {
+        "url": "https://sk-data.special-k.info/repository.json",
+        "jp": "$.Main.Versions[0].Name"
+    },
+    "autoupdate": {
+        "hash": {
+            "mode": "json",
+            "url": "https://sk-data.special-k.info/repository.json",
+            "jp": "$.Main.Versions[0].SHA256"
+        },
+        "url": "https://sk-data.special-k.info/repository/SpecialK_$version.exe"
+    }
+}
