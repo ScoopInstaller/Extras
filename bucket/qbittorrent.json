@@ -1,10 +1,10 @@
 {
     "version": "5.2.0",
     "description": "Free and reliable P2P Bittorent client.",
-    "homepage": "https://www.qbittorrent.org/",
+    "homepage": "https://www.qbittorrent.org",
     "license": {
-        "identifier": "GPL-2.0-only",
-        "url": "https://github.com/qbittorrent/qBittorrent/blob/master/COPYING"
+        "identifier": "GPL-3.0-or-later",
+        "url": "https://github.com/qbittorrent/qBittorrent/blob/HEAD/COPYING"
     },
     "notes": [
         "For file associations, run:",
@@ -17,26 +17,17 @@
         }
     },
     "pre_install": [
-        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\uninst.exe\" -Force -Recurse -ErrorAction SilentlyContinue",
-        "if ((!(Test-Path \"$persist_dir\\profile\")) -and ((Test-Path \"$persist_dir\\..\\qbittorrent-portable\\profile\") -or (Test-Path \"$env:APPDATA\\qBittorrent\"))) {",
-        "    Write-Host \"Scoop is migrating qbittorrent to use portable mode by default.\" -ForegroundColor Yellow",
-        "    Write-Host \"For details, see: https://github.com/ScoopInstaller/Extras/issues/5845\" -ForegroundColor Yellow",
-        "    if ((Test-Path \"$persist_dir\\..\\qbittorrent-portable\\profile\") -and (Test-Path \"$env:APPDATA\\qBittorrent\")) {",
-        "        Write-Host \"Both portable and non-portable qBittorrent profile exist.\" -ForegroundColor Yellow",
-        "        Write-Host \"Scoop will prioritize and import the non-portable one.\" -ForegroundColor Yellow",
-        "    }",
-        "    New-Item \"$persist_dir\\profile\" -ItemType Directory | Out-Null",
-        "    if (Test-Path \"$env:APPDATA\\qBittorrent\") {",
-        "        Write-Host \"Copying non-portable profile's config and data to Scoop persist directory...\" -ForegroundColor Yellow",
-        "        Copy-Item \"$env:APPDATA\\qBittorrent\" \"$persist_dir\\profile\\qBittorrent\\config\" -Recurse | Out-Null",
-        "        Copy-Item \"$env:LOCALAPPDATA\\qBittorrent\" \"$persist_dir\\profile\\qBittorrent\\data\" -Recurse | Out-Null",
-        "    } else {",
-        "        Write-Host \"Copying portable profile's config and data to Scoop persist directory...\" -ForegroundColor Yellow",
-        "        Write-Host \"If you haven't setup an absolute download path before torrenting, please manually migrate affected torrents, as they use relative path by default for storaging.\" -ForegroundColor Yellow",
-        "        Write-Host \"Or you can move them to an absolute download path in qbittorrent-portable and cleanly (re)install qbittorrent to let migration script to take care of them.\" -ForegroundColor Yellow",
-        "        Copy-Item \"$persist_dir\\..\\qbittorrent-portable\\profile\\qBittorrent\\config\" \"$persist_dir\\profile\\qBittorrent\\config\" -Recurse | Out-Null",
-        "        Copy-Item \"$persist_dir\\..\\qbittorrent-portable\\profile\\qBittorrent\\data\" \"$persist_dir\\profile\\qBittorrent\\data\" -Recurse | Out-Null",
-        "    }",
+        "$data_dir = \"$persist_dir\\profile\\qBittorrent\\data\"",
+        "$configuration_dir = \"$persist_dir\\profile\\qBittorrent\\config\"",
+        "$data_dir, $configuration_dir | ForEach-Object { ensure $_ | Out-Null }",
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\uninst*\" -Force -Recurse -ErrorAction SilentlyContinue",
+        "if (-not (Test-Path -Path \"$data_dir\\*\") -and (Test-Path -Path \"$env:LOCALAPPDATA\\qBittorrent\\*\")) {",
+        "    Write-Host \"`nINFO  Migrating qBittorrent data to '$data_dir'...\" -ForegroundColor DarkGray",
+        "    Copy-Item -Path \"$env:LOCALAPPDATA\\qBittorrent\\*\" -Destination $data_dir -Force -Exclude 'cache' -Recurse",
+        "}",
+        "if (-not (Test-Path -Path \"$configuration_dir\\*\") -and (Test-Path -Path \"$env:APPDATA\\qBittorrent\\*\")) {",
+        "    Write-Host \"INFO  Migrating qBittorrent configurations to '$configuration_dir'...\" -ForegroundColor DarkGray",
+        "    Copy-Item -Path \"$env:APPDATA\\qBittorrent\\*\" -Destination $configuration_dir -Force -Recurse",
         "}"
     ],
     "post_install": [
@@ -56,7 +47,10 @@
             "qBittorrent"
         ]
     ],
-    "persist": "profile",
+    "persist": [
+        "profile",
+        "qt.conf"
+    ],
     "uninstaller": {
         "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-associations.reg\" }"
     },
