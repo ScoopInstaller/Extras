@@ -1,0 +1,47 @@
+{
+    "version": "0.4.13-1",
+    "description": "Discover, download, and run local LLMs (llama.cpp, MLX). Chat UI and OpenAI-compatible local API server.",
+    "homepage": "https://lmstudio.ai",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://lmstudio.ai/app-terms"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://installers.lmstudio.ai/win32/x64/0.4.13-1/LM-Studio-0.4.13-1-x64.exe#/dl.7z",
+            "hash": "85e4e85b9a855ae628355619f36e607610047c8376a2c55b9d5ad078467b52f7"
+        },
+        "arm64": {
+            "url": "https://installers.lmstudio.ai/win32/arm64/0.4.13-1/LM-Studio-0.4.13-1-arm64.exe#/dl.7z",
+            "hash": "2d55c91d72aa8cdd5af16447dd7b750d90074306ad22305ee881b750d1d10f56"
+        }
+    },
+    "installer": {
+        "script": [
+            "Get-Item -Path \"$dir\\`$PLUGINSDIR\\app*.7z\" | Expand-7zipArchive -DestinationPath \"$dir\"",
+            "Remove-Item -Path \"$dir\\`$*\", \"$dir\\Uninst*.exe\" -Force -Recurse -ErrorAction Ignore"
+        ]
+    },
+    "bin": "resources\\app\\.webpack\\lms.exe",
+    "shortcuts": [
+        [
+            "LM Studio.exe",
+            "LM Studio"
+        ]
+    ],
+    "checkver": {
+        "url": "https://lmstudio.ai/download",
+        "regex": "\\\\\"version\\\\\":\\\\\"(?<ver>[\\d.]+)\\\\\",\\\\\"build\\\\\":\\\\\"(?<build>\\d+)\\\\\"",
+        "replace": "${ver}-${build}"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://installers.lmstudio.ai/win32/x64/$version/LM-Studio-$version-x64.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://installers.lmstudio.ai/win32/arm64/$version/LM-Studio-$version-arm64.exe#/dl.7z"
+            }
+        }
+    }
+}
