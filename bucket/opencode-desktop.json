@@ -1,20 +1,21 @@
 {
-    "version": "1.1.31",
+    "version": "1.15.10",
     "description": "The open source AI coding agent.",
     "homepage": "https://opencode.ai/",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/anomalyco/opencode/releases/download/v1.1.31/opencode-desktop-windows-x64.exe#/dl.7z",
-            "hash": "e4556eeb36033a7d4919977da455744a2ad6e9bab9db2804e02dc13e96be60f5"
+            "url": "https://github.com/anomalyco/opencode/releases/download/v1.15.10/opencode-desktop-win-x64.exe#/dl.7z",
+            "hash": "8c6da334a8d04f837d81f92d23219cc90376a0835fd00c6215a6a3c2b4b654fc"
+        },
+        "arm64": {
+            "url": "https://github.com/anomalyco/opencode/releases/download/v1.15.10/opencode-desktop-win-arm64.exe#/dl.7z",
+            "hash": "695289d2354bd8116001fe6dc4c347936f26a7e886cca61419ed23b33a2277a1"
         }
     },
-    "pre_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Force -Recurse -ErrorAction Ignore",
-    "bin": [
-        [
-            "opencode-cli.exe",
-            "opencode"
-        ]
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-*.7z\" \"$dir\"",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Force -Recurse -ErrorAction Ignore"
     ],
     "shortcuts": [
         [
@@ -28,7 +29,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/anomalyco/opencode/releases/download/v$version/opencode-desktop-windows-x64.exe#/dl.7z"
+                "url": "https://github.com/anomalyco/opencode/releases/download/v$version/opencode-desktop-win-x64.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/anomalyco/opencode/releases/download/v$version/opencode-desktop-win-arm64.exe#/dl.7z"
             }
         }
     }

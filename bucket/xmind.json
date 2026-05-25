@@ -1,5 +1,5 @@
 {
-    "version": "26.02.02052",
+    "version": "26.03.04129",
     "description": "A full-featured mind mapping and brainstorming tool",
     "homepage": "https://xmind.app/",
     "license": {
@@ -8,8 +8,8 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://dl3.xmind.net/Xmind-for-Windows-x64bit-26.02.02052-202601211810.exe#/dl.7z",
-            "hash": "c270c7fb22cca3031dd7dfe1d52d07689c7a958432001506eed4cad457a972e2",
+            "url": "https://dl3.xmind.net/Xmind-for-Windows-x64bit-26.03.04129-202605110716.exe#/dl.7z",
+            "hash": "bc71c0d9729f91f6d7ee414f6a7027341bca5e70c5c2849549442695cd936912",
             "installer": {
                 "script": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
             }
@@ -24,13 +24,11 @@
     ],
     "checkver": {
         "script": [
-            "$url = 'https://www.xmind.app/zen/download/win64/'",
-            "if ($PSVersionTable.PSVersion.Major -lt 7.0) {",
-            "    $req = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -ErrorAction SilentlyContinue",
-            "} else {",
-            "    $req = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -ErrorAction SilentlyContinue -SkipHttpErrorCheck",
-            "}",
-            "Write-Output $req.Headers.Location"
+            "$url = 'https://www.xmind.app/zen/download/win64'",
+            "$request = [System.Net.HttpWebRequest]::Create($url)",
+            "$request.UserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'",
+            "$response = $request.GetResponse()",
+            "Write-Output $response.ResponseUri.AbsoluteUri"
         ],
         "regex": "Xmind-for-Windows-x64bit-([\\d.]+)-(?<dt>\\d{12})\\.exe"
     },

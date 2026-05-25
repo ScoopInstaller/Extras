@@ -1,0 +1,49 @@
+{
+    "version": "1.6.0",
+    "description": "System Region and Language Simulator.",
+    "homepage": "https://github.com/InWILL/Locale_Remulator",
+    "license": "LGPL-3.0-only",
+    "suggest": {
+        "vcredist": "extras/vcredist2022"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/InWILL/Locale_Remulator/releases/download/v1.6.0/Locale_Remulator.1.6.0.zip",
+            "hash": "f7f7b4ed8ef5bf1b25d46eb6cbf10d0a01dddfe5030ae09f8a1e73c5ad3c1b02"
+        }
+    },
+    "extract_dir": "Locale_Remulator.1.6.0",
+    "pre_install": [
+        "# User configuration files are copied only when they exist.",
+        "# This prevents application crashes caused by empty configuration files, as generating a functional initial configuration is highly complex.",
+        "if (Test-Path -LiteralPath \"$persist_dir\\LRConfig.xml\" -PathType Leaf) {",
+        "    Copy-Item -Path \"$persist_dir\\LRConfig.xml\" -Destination \"$dir\\LRConfig.xml\" -Force",
+        "}"
+    ],
+    "bin": "LRProc.exe",
+    "shortcuts": [
+        [
+            "LRInstaller.exe",
+            "Locale Remulator Installer"
+        ],
+        [
+            "LREditor.exe",
+            "Locale Remulator Editor"
+        ]
+    ],
+    "pre_uninstall": [
+        "if (Test-Path -LiteralPath \"$dir\\LRConfig.xml\" -PathType Leaf) {",
+        "    ensure $persist_dir | Out-Null",
+        "    Copy-Item -Path \"$dir\\LRConfig.xml\" -Destination \"$persist_dir\\LRConfig.xml\" -Force",
+        "}"
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/InWILL/Locale_Remulator/releases/download/v$version/Locale_Remulator.$version.zip"
+            }
+        },
+        "extract_dir": "Locale_Remulator.$version"
+    }
+}

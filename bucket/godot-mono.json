@@ -1,28 +1,45 @@
 {
-    "version": "4.5.1",
+    "##": "Using homepage for checkver to avoid out-of-order versioning on GitHub (e.g., 4.6.1 -> 4.5.2).",
+    "version": "4.6.3",
     "description": "A feature-packed, cross-platform game engine to create 2D and 3D games from a unified interface.",
     "homepage": "https://godotengine.org/",
     "license": "MIT",
+    "suggest": {
+        ".NET SDK": [
+            "dotnet-sdk",
+            "versions/dotnet-sdk-lts",
+            "versions/dotnet8-sdk",
+            "versions/dotnet9-sdk",
+            "versions/dotnet10-sdk"
+        ]
+    },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/godotengine/godot/releases/download/4.5.1-stable/Godot_v4.5.1-stable_mono_win64.zip",
-            "hash": "sha512:168fb2502fe979f7a2258d036cae9e5d6a32c96263fe9193a3e34e2be60d5024732a28f713b1ce3f962a74b731a72b1501df891e80bc97ddc1638191199b8a13",
-            "extract_dir": "Godot_v4.5.1-stable_mono_win64"
+            "url": "https://github.com/godotengine/godot/releases/download/4.6.3-stable/Godot_v4.6.3-stable_mono_win64.zip",
+            "hash": "sha512:87e265d354f3f71971a90eab70bcb18bcaf1698686c403051c57e30d6a8478cb670e25341867e7d9b66fa1f0761c9cc38d0ae7253154a4b2b21a84b09896625f",
+            "extract_dir": "Godot_v4.6.3-stable_mono_win64"
         },
         "32bit": {
-            "url": "https://github.com/godotengine/godot/releases/download/4.5.1-stable/Godot_v4.5.1-stable_mono_win32.zip",
-            "hash": "sha512:b614b33d37383b87c726fe9981e7422573f72bbc46e765b83cbfc9051fc55e39e5debcaaba285114cd3fc87a2343e233f4f0230565f056adc93790be5a1eca4b",
-            "extract_dir": "Godot_v4.5.1-stable_mono_win32"
+            "url": "https://github.com/godotengine/godot/releases/download/4.6.3-stable/Godot_v4.6.3-stable_mono_win32.zip",
+            "hash": "sha512:2f3047a10082f1e309bd2a8a097c2b9561231f8a37692374e04816130794b2c86d25202df622adcf8ce0738f87a4b3add4473eee42a0cfcf7afe2223b6f6f2a1",
+            "extract_dir": "Godot_v4.6.3-stable_mono_win32"
         },
         "arm64": {
-            "url": "https://github.com/godotengine/godot/releases/download/4.5.1-stable/Godot_v4.5.1-stable_mono_windows_arm64.zip",
-            "hash": "sha512:62a152edc7bd815add92bd2e3f726bc17bee28c62dba63ffc4ce5dbb60c2a5c99eb23400313e611db8a8842a9477e16512e595c9532e7b67445db32fa4e26c18",
-            "extract_dir": "Godot_v4.5.1-stable_mono_windows_arm64"
+            "url": "https://github.com/godotengine/godot/releases/download/4.6.3-stable/Godot_v4.6.3-stable_mono_windows_arm64.zip",
+            "hash": "sha512:0ef69293e6d3ebb8e387bd29d0382194c377326c7328790b05b471ff53b7cd9812311c7f153aa4f3e3480965da44aa94b279920b0e1df296c7c337f3360f82d9",
+            "extract_dir": "Godot_v4.6.3-stable_mono_windows_arm64"
         }
     },
     "pre_install": [
         "Get-Item \"$dir\\Godot_*_console.exe\" | Rename-Item -NewName 'godot-mono.console.exe'",
-        "Get-Item \"$dir\\Godot_*.exe\" | Rename-Item -NewName 'godot-mono.exe'"
+        "Get-Item \"$dir\\Godot_*.exe\" | Rename-Item -NewName 'godot-mono.exe'",
+        "if (!(Test-Path \"$persist_dir\\editor_data\") -and (Test-Path \"$env:AppData\\Godot\")) {",
+        "    info '[Portable Mode]: Copying user data from \"$env:AppData\\Godot\"'",
+        "    warn '\"godot\" and \"godot-mono\" now use separate persistent settings and project stores'",
+        "    ensure \"$persist_dir\\editor_data\" | Out-Null",
+        "    Copy-Item -Path \"$env:AppData\\Godot\\*\" -Destination \"$persist_dir\\editor_data\" -Recurse -Force",
+        "}",
+        "New-Item -Force -Path \"$dir\" -Name '._sc_' -ItemType File | Out-Null"
     ],
     "bin": [
         [
@@ -36,9 +53,10 @@
             "Godot Engine (Mono)"
         ]
     ],
+    "persist": "editor_data",
     "checkver": {
-        "url": "https://github.com/godotengine/godot/releases/latest",
-        "regex": "(?<version>[\\d\\w.]+)-stable"
+        "url": "https://godotengine.org",
+        "regex": "Download Latest.*?>([\\d.]+)<"
     },
     "autoupdate": {
         "architecture": {

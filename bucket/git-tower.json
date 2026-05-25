@@ -1,5 +1,5 @@
 {
-    "version": "10.1.540",
+    "version": "12.1.557",
     "homepage": "https://www.git-tower.com",
     "description": "An easy to use GUI client for Git with powerful features.",
     "license": {
@@ -9,10 +9,17 @@
     "suggest": {
         ".NET Desktop Runtime 8.0": "versions/windowsdesktop-runtime-8.0"
     },
-    "url": "https://www.git-tower.com/apps/tower3-win/540-789bf0e8/Tower-10.1.540.exe#/dl.7z",
-    "hash": "sha1:65946ae0a03755a8377c5a2752e907b3395a9d4c",
+    "architecture": {
+        "64bit": {
+            "url": "https://www.git-tower.com/apps/tower3-win/557-ca9adea2/Tower-12.1.557.exe#/dl.7z",
+            "hash": "sha1:d05ecd0ccbc24f3c3712285efe8736cda9b56649"
+        },
+        "arm64": {
+            "url": "https://www.git-tower.com/apps/tower3-win/557-ca9adea2/Tower_arm64-12.1.557.exe#/dl.7z",
+            "hash": "sha1:1cd82fc51acd074826df3c81323bef25fbca0e77"
+        }
+    },
     "extract_dir": "lib\\native",
-    "post_install": "Remove-Item \"$dir\\lib\" -Force -Recurse",
     "bin": "Tower.exe",
     "shortcuts": [
         [
@@ -25,10 +32,21 @@
         "regex": "/(?<release>[\\da-f-]+)/Tower-([\\d.]+)\\.exe"
     },
     "autoupdate": {
-        "url": "https://www.git-tower.com/apps/tower3-win/$matchRelease/Tower-$version.exe#/dl.7z",
-        "hash": {
-            "url": "https://www.git-tower.com/release-notes/windows",
-            "regex": "(?sm)$basename.*?$sha1"
+        "architecture": {
+            "64bit": {
+                "url": "https://www.git-tower.com/apps/tower3-win/$matchRelease/Tower-$version.exe#/dl.7z",
+                "hash": {
+                    "url": "https://www.git-tower.com/release-notes/windows",
+                    "regex": "$sha1\">\\s*Copy SHA1 checksum \\(x64\\)"
+                }
+            },
+            "arm64": {
+                "url": "https://www.git-tower.com/apps/tower3-win/$matchRelease/Tower_arm64-$version.exe#/dl.7z",
+                "hash": {
+                    "url": "https://www.git-tower.com/release-notes/windows",
+                    "regex": "$sha1\">\\s*Copy SHA1 checksum \\(ARM64\\)"
+                }
+            }
         }
     }
 }

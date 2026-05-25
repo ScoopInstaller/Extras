@@ -1,26 +1,52 @@
 {
-    "version": "2.1.14",
-    "description": "Read, edit, convert, merge, and sign PDFs across devices for free, no registration required.",
+    "version": "2.1.15",
+    "description": "A free, cross-platform PDF application that allows you to read, edit, convert, and merge documents across devices without requiring registration.",
     "homepage": "https://www.pdfgear.com",
     "license": {
         "identifier": "Freeware",
         "url": "https://www.pdfgear.com/end-user-license-agreement/"
     },
+    "notes": [
+        "To register file associations, please execute the following command:",
+        "reg import \"$dir\\install-associations.reg\""
+    ],
     "architecture": {
         "64bit": {
-            "url": "https://downloadfiles.pdfgear.com/releases/windows/pdfgear_setup_v2.1.14.exe",
-            "hash": "b668557a3874cc6d0775d1b4375b23908226f7af4f84515f3f4791b7d0809d13"
+            "url": "https://downloadfiles.pdfgear.com/releases/windows/pdfgear_setup_v2.1.15.exe",
+            "hash": "3a37578a08e0723b1bd101482c9e3cfa8f4add4f8854ec0187fc5cf2bfef9fe2"
         }
     },
     "innosetup": true,
+    "post_install": [
+        "$pdfgear_dir = $dir -replace '\\\\', '\\\\'",
+        "Get-ChildItem -Path \"$bucketsdir\\$bucket\\scripts\\$app\" -Filter '*.reg' -File | ForEach-Object {",
+        "    $content = Get-Content -Path $_.FullName -Encoding utf8",
+        "    if ($global) { $content = $content -replace 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE' }",
+        "    $content -replace '{{pdfgear_dir}}', $pdfgear_dir | Set-Content -Path \"$dir\\$($_.Name)\" -Encoding unicode",
+        "}"
+    ],
+    "bin": [
+        "pdfeditor.exe",
+        "PDFLauncher.exe",
+        "pdfconverter.exe"
+    ],
     "shortcuts": [
         [
             "PDFLauncher.exe",
             "PDFgear"
         ]
     ],
+    "uninstaller": {
+        "script": [
+            "if ($cmd -ne 'uninstall') { return }",
+            "Get-ChildItem -Path $dir -Filter 'un*.reg' -File | ForEach-Object -Process {",
+            "    $registry_file = '\"{0}\"' -f $_.FullName",
+            "    Start-Process -FilePath 'reg.exe' -ArgumentList @('import', $registry_file) -WindowStyle Hidden -Wait",
+            "}"
+        ]
+    },
     "checkver": {
-        "url": "https://www.pdfgear.com/pdfgear-for-windows",
+        "url": "https://www.pdfgear.com/js/jquery.common.js",
         "regex": "pdfgear_setup_v([\\d.]+)\\.exe"
     },
     "autoupdate": {
