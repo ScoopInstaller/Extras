@@ -3,6 +3,7 @@
     "description": "A Microsoft Windows grep utility.",
     "homepage": "http://astrogrep.sourceforge.net/",
     "license": "GPL-3.0-or-later",
+    "notes": "Add AstroGrep as a context menu option by running: reg import \"$dir\\install-context.reg\"",
     "url": "https://downloads.sourceforge.net/project/astrogrep/AstroGrep%20%28Win32%29/AstroGrep%20v4.4.9/AstroGrep_v4.4.9_portable.zip",
     "hash": "sha1:3430dead8254aeb19dbc436f390f99c8a9687c7a",
     "bin": "AstroGrep.exe",
@@ -12,6 +13,24 @@
             "AstroGrep"
         ]
     ],
+    "post_install": [
+        "'install-context', 'uninstall-context' | ForEach-Object {",
+        "    if (Test-Path \"$bucketsdir\\extras\\scripts\\astrogrep\\$_.reg\") {",
+        "        $astroPath = \"$dir\\AstroGrep.exe\".Replace('\\', '\\\\')",
+        "        $content = (Get-Content \"$bucketsdir\\extras\\scripts\\astrogrep\\$_.reg\").Replace('$astro', $astroPath)",
+        "        if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "        Set-Content \"$dir\\$_.reg\" $content -Encoding Ascii -Force",
+        "    }",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "if ($cmd -eq 'uninstall')",
+            "{",
+            "   reg import \"$dir\\uninstall-context.reg\" ",
+            "}"
+        ]
+    },
     "checkver": {
         "url": "https://sourceforge.net/projects/astrogrep/rss?path=/",
         "regex": "AstroGrep_v([\\d.]+)_portable\\.zip"
