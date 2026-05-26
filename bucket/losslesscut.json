@@ -5,7 +5,7 @@
     "license": "GPL-2.0-or-later",
     "notes": [
         "For .mp4 and .mkv file associations, run:",
-        "\"$dir\\install-associations.reg\""
+        "reg import \"$dir\\install-associations.reg\""
     ],
     "architecture": {
         "64bit": {
@@ -21,24 +21,17 @@
         ]
     ],
     "post_install": [
-        "$dirpath = \"$dir\".Replace('\\', '\\\\')",
+        "$losslesscutPath = \"$dir\".Replace('\\', '\\\\')",
         "'install-associations', 'uninstall-associations' | ForEach-Object {",
-        "    if (Test-Path \"$bucketsdir\\extras\\scripts\\losslesscut\\$_.reg\") {",
-        "        $content = Get-Content \"$bucketsdir\\extras\\scripts\\losslesscut\\$_.reg\"",
-        "        $content = $content.Replace('$dirpath', $dirpath)",
-        "        $content | Set-Content -Path \"$dir\\$_.reg\"",
+        "    if (Test-Path \"$bucketsdir\\extras\\scripts\\$app\\$_.reg\") {",
+        "        $content = (Get-Content \"$bucketsdir\\extras\\scripts\\$app\\$_.reg\").Replace('$losslesscut', $losslesscutPath)",
+        "        if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "        $content | Set-Content -Path \"$dir\\$_.reg\" -Encoding Ascii",
         "    }",
         "}"
     ],
     "uninstaller": {
-        "script": [
-            "if ($cmd -eq 'uninstall') {",
-            "    $regkey = Get-ItemProperty -Path 'HKCU:\\SOFTWARE\\Classes\\Applications\\LosslessCut.exe' -ErrorAction SilentlyContinue",
-            "    if ($regkey) {",
-            "        reg import \"$dir\\uninstall-associations.reg\"",
-            "    }",
-            "}"
-        ]
+        "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-associations.reg\" }"
     },
     "checkver": "github",
     "autoupdate": {
