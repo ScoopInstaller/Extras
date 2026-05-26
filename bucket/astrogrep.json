@@ -25,9 +25,12 @@
     ],
     "uninstaller": {
         "script": [
-            "if ($cmd -eq 'uninstall')",
-            "{",
-            "   reg import \"$dir\\uninstall-context.reg\" ",
+            "if (Test-Path \"$dir\\uninstall-context.reg\") {",
+            "    if ($global) {",
+            "        Write-Host \"Unregister context menu entry by running: reg import `\"$dir\\uninstall-context.reg`\"\" -ForegroundColor Yellow",
+            "    } else {",
+            "        reg import \"$dir\\uninstall-context.reg\"",
+            "    }",
             "}"
         ]
     },
