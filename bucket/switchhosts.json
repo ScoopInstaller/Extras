@@ -1,21 +1,23 @@
 {
-    "version": "4.2.0.6119",
+    "version": "5.0.0",
     "description": "Hosts management & switching",
-    "homepage": "https://oldj.github.io/SwitchHosts/",
+    "homepage": "https://switchhosts.app",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/oldj/SwitchHosts/releases/download/v4.2.0/SwitchHosts_windows_installer_x64_4.2.0.6119.exe#/dl.7z",
-            "hash": "d173a61eb339c513060d6a9ddb43f156a75c2140ab8c6f540faa075d54ddb000",
-            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+            "url": "https://github.com/oldj/SwitchHosts/releases/download/v5.0.0/SwitchHosts-5.0.0-windows-x64-setup.exe#/dl.7z",
+            "hash": "bfb27549789cb4e3ff2b773538d3751d7e6c4b922e324d68c41a77330204aa33"
         },
         "32bit": {
-            "url": "https://github.com/oldj/SwitchHosts/releases/download/v4.2.0/SwitchHosts_windows_installer_ia32_4.2.0.6119.exe#/dl.7z",
-            "hash": "1b5321469f08c57b95fb7e94082d64fa4e6558f095e152ddbfcbc986bcd76f5f",
-            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\""
+            "url": "https://github.com/oldj/SwitchHosts/releases/download/v5.0.0/SwitchHosts-5.0.0-windows-x86-setup.exe#/dl.7z",
+            "hash": "1317e147f1b99302e2e7c5489eb1128c2207cab5548ee1fe4a91d736b550eaed"
+        },
+        "arm64": {
+            "url": "https://github.com/oldj/SwitchHosts/releases/download/v5.0.0/SwitchHosts-5.0.0-windows-arm64-setup.exe#/dl.7z",
+            "hash": "76eaceb1fab0201a309c1011af37164f97c09d19cfbf7a6e59a5e961a7c42149"
         }
     },
-    "post_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Force -Recurse",
+    "pre_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Force -Recurse",
     "shortcuts": [
         [
             "SwitchHosts.exe",
@@ -23,16 +25,20 @@
         ]
     ],
     "checkver": {
-        "url": "https://api.github.com/repos/oldj/SwitchHosts/releases/latest",
-        "regex": "SwitchHosts_windows_installer_x64_([\\d.]+)\\.exe"
+        "github": "https://api.github.com/repos/oldj/SwitchHosts/releases/latest",
+        "jsonpath": "$..browser_download_url",
+        "regex": "SwitchHosts-([\\d.]+)-windows-x64-setup\\.exe"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/oldj/SwitchHosts/releases/download/v$matchHead/SwitchHosts_windows_installer_x64_$version.exe#/dl.7z"
+                "url": "https://github.com/oldj/SwitchHosts/releases/download/v$matchHead/SwitchHosts-$version-windows-x64-setup.exe#/dl.7z"
             },
             "32bit": {
-                "url": "https://github.com/oldj/SwitchHosts/releases/download/v$matchHead/SwitchHosts_windows_installer_ia32_$version.exe#/dl.7z"
+                "url": "https://github.com/oldj/SwitchHosts/releases/download/v$matchHead/SwitchHosts-$version-windows-x86-setup.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/oldj/SwitchHosts/releases/download/v$matchHead/SwitchHosts-$version-windows-arm64-setup.exe#/dl.7z"
             }
         }
     }
