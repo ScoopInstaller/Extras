@@ -3,7 +3,6 @@
     "description": "Volunteer scientific or grid computing client",
     "homepage": "https://boinc.berkeley.edu/",
     "license": "LGPL-3.0-or-later",
-    "depends": "isx",
     "notes": [
         "Set DATADIR and INSTALLDIR in:",
         "Computer\\HKEY_LOCAL_MACHINE\\SOFTWARE\\Space Sciences Laboratory, U.C. Berkeley\\BOINC Setup"
@@ -17,11 +16,20 @@
     },
     "installer": {
         "script": [
-            "Invoke-ExternalCommand ((Get-Command 'isx' -CommandType Application).Source) -ArgumentList \"$dir\\$fname\" -LogPath \"$dir\\isx.log\" | Out-Null",
-            "$folder = Get-ChildItem \"$dir\" -Directory | Select-Object -First 1 -ExpandProperty FullName",
+            "Start-Process \"$dir\\$fname\" -ArgumentList '/a'",
+            "Start-Sleep -Seconds 5",
+            "$msi = Get-ChildItem 'C:\\Windows\\Downloaded Installations\\BOINC' -Recurse -Filter 'BOINC.msi' | Sort-Object LastWriteTime -Descending | Select-Object -First 1",
             "$extract = if ($architecture -eq '64bit') { 'Program Files 64' } else { 'program files' }",
-            "Expand-MsiArchive \"$folder\\BOINC.msi\" \"$dir\" -ExtractDir \"$extract\\BOINC\" -Removal",
-            "Remove-Item $folder -Force -Recurse"
+            "if ($msi)",
+            "{",
+            "   Write-Host \"MSI located, unpacking... This may take a moment.\"",
+            "   Expand-MsiArchive $msi.FullName \"$dir\" -ExtractDir \"$extract\\BOINC\" -Removal",
+            "}",
+            "else",
+            "{",
+            "   Write-Host \"MSI not found, installation may have failed.\" -ForegroundColor Red",
+            "   exit 1", 
+            "}"
         ]
     },
     "post_install": [
