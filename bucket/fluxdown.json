@@ -1,0 +1,51 @@
+{
+    "version": "0.1.42",
+    "description": "FluxDown - A modern multi-protocol download manager (Portable) built with Rust",
+    "homepage": "https://fluxdown.zerx.dev",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://fluxdown.zerx.dev"
+    },
+    "notes": [
+        "FluxDown portable data persistence:",
+        "  - Built-in portable mode: runtime data stored in the app directory",
+        "  - Download history and config persisted via flux_down.db (SQLite)",
+        "  - Database is preserved across updates",
+        "",
+        "Browser extensions (required for download interception):",
+        "  Chrome: https://chromewebstore.google.com/detail/fluxdown/meleenglfggcmcajknpeeeiobnpfmahc",
+        "  Firefox: https://addons.mozilla.org/zh-CN/firefox/addon/fluxdown",
+        "  Edge: https://microsoftedge.microsoft.com/addons/detail/fluxdown/nglkkjbogjghekbhhcnccnpfedjbdhhd"
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://fluxdown.zerx.dev/api/download/FluxDown-0.1.42-windows-x64-portable.zip",
+            "hash": "24b8a236b6cf05943558408b9e870a9c491a5449b1a950d1822d20819757cf3b"
+        }
+    },
+    "pre_install": [
+        "# Create an empty database placeholder so persist treats it as a file, not a directory",
+        "if (!(Test-Path \"$dir\\flux_down.db\")) { New-Item -ItemType File \"$dir\\flux_down.db\" -Force | Out-Null }"
+    ],
+    "shortcuts": [
+        [
+            "flux_down.exe",
+            "FluxDown"
+        ]
+    ],
+    "persist": "flux_down.db",
+    "checkver": {
+        "url": "https://fluxdown.zerx.dev/api/release",
+        "jp": "version"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://fluxdown.zerx.dev/api/download/FluxDown-$version-windows-x64-portable.zip"
+            }
+        },
+        "hash": {
+            "mode": "download"
+        }
+    }
+}
