@@ -16,9 +16,13 @@
     },
     "installer": {
         "script": [
-            "Start-Process \"$dir\\$fname\" -ArgumentList '/a'",
-            "Start-Sleep -Seconds 5",
-            "$msi = Get-ChildItem 'C:\\Windows\\Downloaded Installations\\BOINC' -Recurse -Filter 'BOINC.msi' | Sort-Object LastWriteTime -Descending | Select-Object -First 1",
+            "Start-Process \"$dir\\$fname\" -ArgumentList '/extract'",
+            "$msiDir = \"$env:windir\\Downloaded Installations\\BOINC\"",
+            "$msi = $null; $deadline = (Get-Date).AddSeconds(60)",
+            "while (-not $msi -and (Get-Date) -lt $deadline) {",
+            "    Start-Sleep -Seconds 2",
+            "    $msi = Get-ChildItem $msiDir -Recurse -Filter 'BOINC.msi' -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1",
+            "}",
             "$extract = if ($architecture -eq '64bit') { 'Program Files 64' } else { 'program files' }",
             "if ($msi)",
             "{",
