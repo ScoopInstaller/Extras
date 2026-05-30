@@ -27,6 +27,15 @@
     "env_set": {
         "WEBVIEW2_BROWSER_EXECUTABLE_FOLDER": "$dir"
     },
+    "installer": {
+        "script": [
+            "$path = \"$dir\\$([System.IO.Path]::GetFileNameWithoutExtension($fname))\"",
+            "reg.exe add \"HKCU\\SOFTWARE\\Microsoft\\EdgeUpdate\\ClientState\\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}\" /v \"EBWebView\" /t \"REG_SZ\" /d \"$dir\" /f | Out-Null"
+        ]
+    },
+    "uninstaller": {
+        "script": "reg.exe delete \"HKCU\\SOFTWARE\\Microsoft\\EdgeUpdate\\ClientState\\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}\" /f | Out-Null"
+    },
     "checkver": {
         "url": "https://developer.microsoft.com/en-us/Microsoft-edge/webview2/",
         "script": [
