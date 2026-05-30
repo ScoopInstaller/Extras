@@ -1,38 +1,70 @@
 {
-    "version": "4.1.10.27",
-    "description": "Free messaging and calling app by Tencent",
+    "version": "4.1.10",
+    "description": "WeChat (Weixin) - Free messaging and calling app by Tencent",
     "homepage": "https://www.wechat.com/",
     "license": {
         "identifier": "Proprietary",
-        "url": "https://www.wechat.com/en/service_terms.html"
+        "url": "https://www.wechat.com/zh_CN/service_terms.html"
     },
+    "notes": [
+        "WeChat 4.x (rebuilt) stores data in a version-specific subdirectory. Scoop handles this automatically.",
+        "Chat data (xwechat_files) is persisted and mapped to %USERPROFILE%\\Documents\\xwechat_files via a junction.",
+        "To use weixin:// protocol links after update, run: scoop reset wechat"
+    ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/cscnk52/wechat-windows-versions/releases/download/v4.1.10.27/weixin_4.1.10.27.exe#/dl.7z",
+            "url": "https://dldir1v6.qq.com/weixin/Universal/Windows/WeChatWin_4.1.10.exe#/dl.7z",
             "hash": "54203fc2b41983fa106b0af0d67f86befc56ccd3dc1005d4bab6de8ea36b4f74"
         }
     },
-    "installer": {
-        "script": [
-            "Expand-7zipArchive \"$dir\\install.7z\" \"$dir\" -Removal",
-            "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Force -Recurse",
-            "$config_path = \"$env:APPDATA\\Tencent\\xwechat\\config\"",
-            "ensure \"$config_path\" | Out-Null",
-            "Set-Content -NoNewline -Path \"$config_path\\51a1fffea11325a1e4104c6b3de47af7.ini\" -Value \"$persist_dir\"",
-            "$reg_path = \"HKCU:Software\\Tencent\\Wexin\"",
-            "if (!(Test-Path \"$reg_path\")) {",
-            "    New-Item -Path \"$reg_path\" -Type Directory -Force | Out-Null",
-            "}",
-            "New-ItemProperty -Path $reg_path -Name \"FileSavePath\" -Value \"$persist_dir\" -Force | Out-Null",
-            "New-Item -Path $reg_path -Name \"InstallPath\" -Value \"$dir\" -Force -ErrorAction SilentlyContinue | Out-Null"
-        ]
-    },
-    "uninstaller": {
-        "script": [
-            "Remove-Item -Path \"$env:APPDATA\\Tencent\\xwechat\\config\\51a1fffea11325a1e4104c6b3de47af7.ini\" -Force | Out-Null",
-            "Remove-ItemProperty -Path \"HKCU:Software\\Tencent\\Wexin\" -Name \"FileSavePath\" -Force | Out-Null"
-        ]
-    },
+    "pre_install": [
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\install\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "Expand-7zipArchive \"$dir\\install.7z\" \"$dir\"",
+        "Remove-Item \"$dir\\install.7z\" -Force",
+        "$verDir = Get-ChildItem \"$dir\" -Directory | Where-Object { $_.Name -match '^\\d+[\\.\\d]+$' } | Select-Object -First 1",
+        "if ($verDir) {",
+        "    Move-Item \"$verDir\\Weixin.exe\" \"$dir\" -Force -ErrorAction SilentlyContinue",
+        "    Move-Item \"$verDir\\Uninstall.exe\" \"$dir\" -Force -ErrorAction SilentlyContinue",
+        "}",
+        "Remove-Item \"$dir\\FindProcDLL.dll\", \"$dir\\nsis7z.dll\", \"$dir\\System.dll\", \"$dir\\WeChatInstallDll.dll\" -Force -ErrorAction SilentlyContinue",
+        "$regPath = \"HKCU:\\Software\\Classes\\weixin\"",
+        "if (!(Test-Path $regPath)) {",
+        "    New-Item -Path \"$regPath\\shell\\open\\command\" -Force | Out-Null",
+        "    Set-ItemProperty -Path $regPath -Name '(default)' -Value 'WeChat Protocol' -Type String",
+        "    Set-ItemProperty -Path $regPath -Name 'URL Protocol' -Value '' -Type String",
+        "    Set-ItemProperty -Path \"$regPath\\shell\\open\\command\" -Name '(default)' -Value \"`\"$dir\\Weixin.exe`\" `\"%1`\"\"",
+        "}",
+        "$persistDataDir = \"$persist_dir\\xwechat_files\"",
+        "$dataDir = \"$home\\Documents\\xwechat_files\"",
+        "if (!(Test-Path $persistDataDir)) {",
+        "    if (Test-Path $dataDir) { Move-Item $dataDir $persistDataDir -Force }",
+        "    else { New-Item -ItemType Directory $persistDataDir -Force | Out-Null }",
+        "}",
+        "if (!(Test-Path $dataDir)) {",
+        "    New-Item -ItemType Junction -Path $dataDir -Target $persistDataDir -Force | Out-Null",
+        "}"
+    ],
+    "post_install": [
+        "$persistDataDir = \"$persist_dir\\xwechat_files\"",
+        "$dataDir = \"$home\\Documents\\xwechat_files\"",
+        "if (!(Test-Path $dataDir)) {",
+        "    if (!(Test-Path $persistDataDir)) { New-Item -ItemType Directory $persistDataDir -Force | Out-Null }",
+        "    New-Item -ItemType Junction -Path $dataDir -Target $persistDataDir -Force | Out-Null",
+        "}"
+    ],
+    "pre_uninstall": [
+        "$proc = Get-Process Weixin -ErrorAction SilentlyContinue",
+        "if ($proc) {",
+        "    $proc.CloseMainWindow() | Out-Null",
+        "    Start-Sleep -Seconds 2",
+        "    if (!$proc.HasExited) { $proc.Kill() }",
+        "}",
+        "$dataDir = \"$home\\Documents\\xwechat_files\"",
+        "if ((Test-Path $dataDir) -and ((Get-Item $dataDir -ErrorAction SilentlyContinue).LinkType -eq 'Junction')) {",
+        "    Remove-Item $dataDir -Force",
+        "}"
+    ],
+    "post_uninstall": "Remove-Item \"HKCU:\\Software\\Classes\\weixin\" -Recurse -Force -ErrorAction SilentlyContinue",
     "shortcuts": [
         [
             "Weixin.exe",
@@ -41,13 +73,17 @@
     ],
     "persist": "xwechat_files",
     "checkver": {
-        "github": "https://github.com/cscnk52/wechat-windows-versions"
+        "url": "https://windows.weixin.qq.com/",
+        "regex": "WeChatWin_([\\d.]+)\\."
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/cscnk52/wechat-windows-versions/releases/download/v$version/weixin_$version.exe#/dl.7z"
+                "url": "https://dldir1v6.qq.com/weixin/Universal/Windows/WeChatWin_$matchHead.exe#/dl.7z"
             }
+        },
+        "hash": {
+            "mode": "download"
         }
     }
 }
