@@ -1,0 +1,102 @@
+{
+    "version": "4.1.10.27",
+    "description": "微信，腾讯的一款聊天通讯工具 | A chat communication tool by Tencent",
+    "homepage": "https://www.wechat.com/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.wechat.com/zh_CN/service_terms.html"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/cscnk52/wechat-windows-versions/releases/download/v4.1.10.27/weixin_4.1.10.27.exe#/dl.7z",
+            "hash": "54203fc2b41983fa106b0af0d67f86befc56ccd3dc1005d4bab6de8ea36b4f74"
+        }
+    },
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\install.7z\" \"$dir\" -Removal",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\install\", \"$dir\\FindProcDLL.dll\", \"$dir\\nsis7z.dll\", \"$dir\\System.dll\", \"$dir\\WeChatInstallDll.dll\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "",
+        "# 注册表：记录安装路径和文件存储路径（微信读取 FileSavePath 确定数据目录）",
+        "$regPath = \"HKCU:\\Software\\Tencent\\Wexin\"",
+        "New-Item -Path $regPath -Force | Out-Null",
+        "New-ItemProperty -Path $regPath -Name 'FileSavePath' -Value \"$persist_dir\" -Force | Out-Null",
+        "New-ItemProperty -Path $regPath -Name 'InstallPath' -Value \"$dir\" -Force | Out-Null",
+        "",
+        "# 注册 weixin:// 协议（每次安装/更新都刷新，指向 current 路径）",
+        "$exePath = \"$(Split-Path $dir -Parent)\\current\\Weixin.exe\"",
+        "$protoPath = \"HKCU:\\Software\\Classes\\weixin\"",
+        "New-Item -Path \"$protoPath\\shell\\open\\command\" -Force | Out-Null",
+        "Set-ItemProperty -Path $protoPath -Name '(default)' -Value 'Weixin Protocol' -Type String",
+        "Set-ItemProperty -Path $protoPath -Name 'URL Protocol' -Value '' -Type String",
+        "Set-ItemProperty -Path \"$protoPath\\shell\\open\\command\" -Name '(default)' -Value \"`\"$exePath`\" `\"%1`\"\""
+    ],
+    "post_install": [
+        "# 将系统数据目录映射到 persist（AppData + Documents）",
+        "$pairs = @(",
+        "    @(\"$persist_dir\\xwechat\", \"$env:APPDATA\\Tencent\\xwechat\"),",
+        "    @(\"$persist_dir\\xwechat_files\", (Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'xwechat_files'))",
+        ")",
+        "foreach ($pair in $pairs) {",
+        "    $persistDir, $targetDir = $pair",
+        "    if (Test-Path $targetDir) {",
+        "        $item = Get-Item $targetDir -Force -ErrorAction SilentlyContinue",
+        "        if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {",
+        "            # 已有 junction，删掉重建",
+        "            [System.IO.Directory]::Delete($targetDir)",
+        "        } else {",
+        "            # 真实目录：robocopy 合并到 persist",
+        "            robocopy $targetDir $persistDir /E /MOVE /NP /NFL /NDL /NJH /NJS | Out-Null",
+        "            if (Test-Path $targetDir) { Remove-Item $targetDir -Force -Recurse -ErrorAction SilentlyContinue }",
+        "        }",
+        "    }",
+        "    New-Item -ItemType Directory $persistDir -Force | Out-Null",
+        "    New-Item -ItemType Junction -Path $targetDir -Target $persistDir | Out-Null",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "# 结束微信进程（终止后等待文件句柄释放）",
+            "Stop-Process -Name Weixin -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500",
+            "# 清理开始菜单快捷方式残留（校验目标路径指向本应用目录，避免误删同名非 Scoop 快捷方式）",
+            "$appDir = Split-Path $dir -Parent",
+            "$shell = New-Object -ComObject WScript.Shell",
+            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
+            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\微信.lnk\"",
+            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
+            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "pre_uninstall": [
+        "# 删除目录联接（保留数据）",
+        "@(\"$env:APPDATA\\Tencent\\xwechat\", (Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'xwechat_files')) | ForEach-Object {",
+        "    if ((Test-Path $_) -and ((Get-Item $_ -ErrorAction SilentlyContinue).Attributes -band [System.IO.FileAttributes]::ReparsePoint)) {",
+        "        [System.IO.Directory]::Delete($_)",
+        "    }",
+        "}"
+    ],
+    "post_uninstall": [
+        "# 清理 weixin:// 协议注册",
+        "Remove-Item \"HKCU:\\Software\\Classes\\weixin\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "# 清理注册表 FileSavePath/InstallPath（只移除本清单写入的值，不删整个键）",
+        "Remove-ItemProperty -Path \"HKCU:\\Software\\Tencent\\Wexin\" -Name 'FileSavePath', 'InstallPath' -Force -ErrorAction SilentlyContinue"
+    ],
+    "shortcuts": [
+        ["Weixin.exe", "..\\微信"]
+    ],
+    "checkver": {
+        "github": "https://github.com/cscnk52/wechat-windows-versions"
+    },
+    "autoupdate": {
+        "hash": {
+            "mode": "github"
+        },
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/cscnk52/wechat-windows-versions/releases/download/v$version/weixin_$version.exe#/dl.7z"
+            }
+        }
+    }
+}
