@@ -23,6 +23,31 @@
         "   $xml.Save($configFile)",
         "}"
     ],
+    "post_install": [
+        "$exe = (Join-Path $dir 'workspaces.exe')",
+        "$scheme = 'workspaces'",
+        "$base = \"HKCU:\\Software\\Classes\\$scheme\"",
+        "New-Item -Path $base -Force | Out-Null",
+        "Set-ItemProperty -Path $base -Name '(Default)' -Value 'URL:Workspaces Protocol'",
+        "New-ItemProperty -Path $base -Name 'URL Protocol' -Value '' -PropertyType String -Force | Out-Null",
+        "",
+        "New-Item -Path \"$base\\DefaultIcon\" -Force | Out-Null",
+        "Set-ItemProperty -Path \"$base\\DefaultIcon\" -Name '(Default)' -Value \"$exe,1\"",
+        "",
+        "New-Item -Path \"$base\\shell\\open\\command\" -Force | Out-Null",
+        "Set-ItemProperty -Path \"$base\\shell\\open\\command\" -Name '(Default)' -Value \"`\"$exe`\" --uri `\"%1`\"\""
+    ],
+    "post_uninstall": [
+        "$base = 'HKCU:\\Software\\Classes\\workspaces'",
+        "$commandKey = \"$base\\shell\\open\\command\"",
+        "$expected = \"`\"$(Join-Path $dir 'workspaces.exe')`\" --uri `\"%1`\"\"",
+        "if (Test-Path -LiteralPath $commandKey) {",
+        "    $current = (Get-Item -LiteralPath $commandKey).GetValue('')",
+        "    if ($current -eq $expected) {",
+        "        Remove-Item -LiteralPath $base -Recurse -Force -ErrorAction SilentlyContinue",
+        "    }",
+        "}"
+    ],
     "shortcuts": [
         [
             "workspaces.exe",
