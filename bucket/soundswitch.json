@@ -3,10 +3,20 @@
     "description": "Switch your default playback devices and/or recording devices using simple hotkeys",
     "homepage": "https://soundswitch.aaflalo.me/",
     "license": "GPL-2.0-or-later",
+    "url": "https://github.com/Belphemur/SoundSwitch/releases/download/v7.1.0/SoundSwitch_v7.1.0.0_Release_Installer.exe",
+    "hash": "49967673307e44e2152347a28d410d47bafdd99e009155924bf1c9a2521615bd",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/Belphemur/SoundSwitch/releases/download/v7.1.0/SoundSwitch_v7.1.0.0_Release_Installer.exe",
-            "hash": "49967673307e44e2152347a28d410d47bafdd99e009155924bf1c9a2521615bd"
+            "pre_install": [
+                "Get-ChildItem $dir -Filter '*,2*' -Recurse | Remove-Item -Force",
+                "Get-ChildItem $dir -Filter '*,1*' -Recurse | Rename-Item -NewName { $_.Name -replace ',1', '' } -Force"
+            ]
+        },
+        "arm64": {
+            "pre_install": [
+                "Get-ChildItem $dir -Filter '*,1*' -Recurse | Remove-Item -Force",
+                "Get-ChildItem $dir -Filter '*,2*' -Recurse | Rename-Item -NewName { $_.Name -replace ',2', '' } -Force"
+            ]
         }
     },
     "innosetup": true,
@@ -18,14 +28,10 @@
     ],
     "checkver": {
         "github": "https://api.github.com/repos/Belphemur/SoundSwitch/releases/latest",
-        "jsonpath": "$.assets..browser_download_url",
+        "jsonpath": "$.assets[*].browser_download_url",
         "regex": "v([\\d.]+)/SoundSwitch_v([\\d.]+)_Release_Installer\\.exe"
     },
     "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://github.com/Belphemur/SoundSwitch/releases/download/v$version/SoundSwitch_v$match2_Release_Installer.exe"
-            }
-        }
+        "url": "https://github.com/Belphemur/SoundSwitch/releases/download/v$version/SoundSwitch_v$match2_Release_Installer.exe"
     }
 }
