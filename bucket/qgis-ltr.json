@@ -1,0 +1,32 @@
+{
+    "version": "3.44.9-1",
+    "description": "A free and open source geographic information system (GIS)",
+    "homepage": "https://www.qgis.org/",
+    "license": "GPL-2.0-or-later",
+    "architecture": {
+        "64bit": {
+            "url": "https://download.qgis.org/downloads/QGIS-OSGeo4W-3.44.9-1.msi",
+            "hash": "711d6df99f450522a1e22755fcbfed65d5190c1e4c241793bc2f80ff1a2c24ba"
+        }
+    },
+    "extract_dir": "QGIS 3.44.9",
+    "post_install": "& \"$dir\\etc\\postinstall.bat\" \"$([System.IO.Path]::Combine(shortcut_folder $global, 'OSGeo4W'))\" \"%USERPROFILE%\\Desktop\" 0 1",
+    "bin": "OSGeo4W.bat",
+    "pre_uninstall": "& \"$dir\\etc\\preremove.bat\"",
+    "checkver": {
+        "url": "https://github.com/qgis/QGIS-Website/raw/main/data/conf.json",
+        "jsonpath": "$.ltr_msi",
+        "regex": "/QGIS-OSGeo4W-([\\d.]+(-\\d+)?)\\.msi"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download.qgis.org/downloads/QGIS-OSGeo4W-$version.msi",
+                "hash": {
+                    "url": "https://download.qgis.org/downloads/QGIS-OSGeo4W-$version.sha256sum"
+                }
+            }
+        },
+        "extract_dir": "QGIS $majorVersion.$minorVersion.$patchVersion"
+    }
+}
