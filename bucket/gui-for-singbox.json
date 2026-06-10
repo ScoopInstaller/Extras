@@ -5,16 +5,28 @@
     "license": "GPL-3.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/GUI-for-Cores/GUI.for.SingBox/releases/download/v1.25.1/GUI.for.SingBox-windows-amd64.zip",
-            "hash": "614da937a831d98ca08dd26ea10f8f0bd6218df74198f19183de2ba675999a27"
+            "url": [
+                "https://github.com/GUI-for-Cores/GUI.for.SingBox/releases/download/v1.25.1/GUI.for.SingBox-windows-amd64.zip",
+                "https://github.com/SagerNet/cronet-go/releases/download/v148.0.7778.96-1/libcronet-windows-amd64.dll#/libcronet.dll"
+            ],
+            "hash": [
+                "614da937a831d98ca08dd26ea10f8f0bd6218df74198f19183de2ba675999a27",
+                "c7434cfa93c3041321dd19111c4de6c52b8a9531a65661ba45425d3c51ec69e2"
+            ]
         },
         "32bit": {
             "url": "https://github.com/GUI-for-Cores/GUI.for.SingBox/releases/download/v1.25.1/GUI.for.SingBox-windows-386.zip",
             "hash": "5478de63854c3b5d591d603e96b834b044d6671607a382edaab2e0bb13d7156f"
         },
         "arm64": {
-            "url": "https://github.com/GUI-for-Cores/GUI.for.SingBox/releases/download/v1.25.1/GUI.for.SingBox-windows-arm64.zip",
-            "hash": "066dbd7ca697a584244c49de905a0d954b8c7e423adb41c7dec5290f2e12580c"
+            "url": [
+                "https://github.com/GUI-for-Cores/GUI.for.SingBox/releases/download/v1.25.1/GUI.for.SingBox-windows-arm64.zip",
+                "https://github.com/SagerNet/cronet-go/releases/download/v148.0.7778.96-1/libcronet-windows-arm64.dll#/libcronet.dll"
+            ],
+            "hash": [
+                "066dbd7ca697a584244c49de905a0d954b8c7e423adb41c7dec5290f2e12580c",
+                "fc9e3bae0b326d83092a5de2c04d8b4139dc5c1ba576a035dee4bde780a3c95f"
+            ]
         }
     },
     "shortcuts": [
@@ -24,17 +36,37 @@
         ]
     ],
     "persist": "data",
-    "checkver": "github",
+    "checkver": {
+        "script": [
+            "$cont = (Invoke-WebRequest $url/releases/latest -UseBasicParsing).Content",
+            "$regex = '/releases/tag/(?:v|V)?(?<version>[\\d.-]+)'",
+            "if (!($cont -match $regex)) { error \"Could not match $regex in $url\"; continue }",
+            "$version = $($matches.version)",
+            "",
+            "$nextUrl = \"https://github.com/SagerNet/cronet-go/releases/latest/\"",
+            "$nextCont = (Invoke-WebRequest $nextUrl -UseBasicParsing).Content",
+            "if (!($nextCont -match $regex)) { error \"Could not match $regex in $nextUrl\"; continue }",
+            "$libcronetdllversion = $($matches.version)",
+            "\"$version $libcronetdllversion\""
+        ],
+        "regex": "([\\d.]+) (?<libcronetdllversion>[\\d.-]+)"
+    },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/GUI-for-Cores/GUI.for.SingBox/releases/download/v$version/GUI.for.SingBox-windows-amd64.zip"
+                "url": [
+                    "https://github.com/GUI-for-Cores/GUI.for.SingBox/releases/download/v$version/GUI.for.SingBox-windows-amd64.zip",
+                    "https://github.com/SagerNet/cronet-go/releases/download/v$matchLibcronetdllversion/libcronet-windows-amd64.dll#/libcronet.dll"
+                ]
             },
             "32bit": {
                 "url": "https://github.com/GUI-for-Cores/GUI.for.SingBox/releases/download/v$version/GUI.for.SingBox-windows-386.zip"
             },
             "arm64": {
-                "url": "https://github.com/GUI-for-Cores/GUI.for.SingBox/releases/download/v$version/GUI.for.SingBox-windows-arm64.zip"
+                "url": [
+                    "https://github.com/GUI-for-Cores/GUI.for.SingBox/releases/download/v$version/GUI.for.SingBox-windows-arm64.zip",
+                    "https://github.com/SagerNet/cronet-go/releases/download/v$matchLibcronetdllversion/libcronet-windows-arm64.dll#/libcronet.dll"
+                ]
             }
         }
     }
