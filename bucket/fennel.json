@@ -1,0 +1,65 @@
+{
+    "version": "1.6.1",
+    "description": "A lisp that compiles to Lua. Brings together the speed, simplicity, and reach of Lua with the flexibility of a lisp syntax and macro system.",
+    "homepage": "https://fennel-lang.org",
+    "license": "MIT",
+    "url": "https://git.sr.ht/~technomancy/fennel/archive/1.6.1.tar.gz",
+    "hash": "sha256:f0f188e9a4424851d9263ab69302b6b2ffc5c6efb67a25fffc52187a29c94024",
+    "extract_dir": "fennel-1.6.1",
+    "depends": [
+        "lua",
+        "gnupg"
+    ],
+    "pre_install": [
+        "Push-Location \"$dir\"",
+        "$gpg_exe = (Get-Command gpg.exe | Where-Object { $_.Source -notmatch 'mingw|usr.bin' } | Select-Object -First 1).Source",
+        "if (-not $gpg_exe) { throw 'gpg.exe not found; install gnupg via Scoop' }",
+        "$gnupg_home = Join-Path $dir '.gnupg'",
+        "New-Item -ItemType Directory -Force -Path $gnupg_home | Out-Null",
+        "$gpg_wrapper = Join-Path $dir 'gpg-verify.cmd'",
+        "[System.IO.File]::WriteAllText($gpg_wrapper, \"@echo off`r`n`\"$gpg_exe`\" --homedir `\"$gnupg_home`\" %*`r`n\")",
+        "& $gpg_exe --homedir $gnupg_home --keyserver hkps://keys.openpgp.org --recv-keys 9D13D9426A0814B3373CF5E3D8A8243577A7859F",
+        "if ($LASTEXITCODE -ne 0) { throw 'GPG key fetch failed' }",
+        "Write-Output '9D13D9426A0814B3373CF5E3D8A8243577A7859F:6:' | & $gpg_exe --homedir $gnupg_home --import-ownertrust",
+        "if ($LASTEXITCODE -ne 0) { throw 'GPG ownertrust import failed' }",
+        "git init",
+        "git config --local gpg.program $gpg_wrapper",
+        "git remote add origin https://git.sr.ht/~technomancy/fennel",
+        "git fetch --depth 1 origin tag $version",
+        "git verify-tag $version",
+        "if ($LASTEXITCODE -ne 0) { throw 'signature verification failed' }",
+        "git reset --hard $version",
+        "$env:FENNEL_PATH = 'src/?.fnl'",
+        "$env:FENNEL_MACRO_PATH = 'src/?.fnl'",
+        "cmd.exe /c \"lua bootstrap/aot.lua src/fennel/view.fnl > bootstrap/view.lua\"",
+        "if ($LASTEXITCODE -ne 0) { throw 'failed to precompile view' }",
+        "cmd.exe /c \"lua bootstrap/aot.lua src/fennel/macros.fnl --macro > bootstrap/macros.lua\"",
+        "if ($LASTEXITCODE -ne 0) { throw 'failed to precompile macros' }",
+        "cmd.exe /c \"lua bootstrap/aot.lua src/fennel/match.fnl --macro > bootstrap/match.lua\"",
+        "if ($LASTEXITCODE -ne 0) { throw 'failed to precompile match' }",
+        "$header = \"#!/usr/bin/env lua`n-- SPDX-License-Identifier: MIT`n-- SPDX-FileCopyrightText: Calvin Rose and contributors`n\"",
+        "[System.IO.File]::WriteAllText(\"$dir\\fennel.lua\", $header)",
+        "cmd.exe /c \"lua bootstrap/aot.lua src/launcher.fnl --require-as-include >> fennel.lua\"",
+        "if ($LASTEXITCODE -ne 0) { throw 'fennel compilation failed' }",
+        "$cmd = \"@echo off`r`nlua `\"%~dp0fennel.lua`\" %*\"",
+        "[System.IO.File]::WriteAllText(\"$dir\\fennel.cmd\", $cmd)",
+        "Pop-Location"
+    ],
+    "bin": [
+        [
+            "fennel.cmd",
+            "fennel"
+        ]
+    ],
+    "checkver": {
+        "url": "https://git.sr.ht/~technomancy/fennel",
+        "regex": ">(\\d+\\.\\d+\\.\\d+)<\\/a>\\s*·\\s*release notes"
+    },
+    "autoupdate": {
+        "url": "https://git.sr.ht/~technomancy/fennel/archive/$version.tar.gz",
+        "extract_dir": "fennel-$version",
+        "hash": {
+            "url": "$url.sha256"
+        }
+    }
+}
