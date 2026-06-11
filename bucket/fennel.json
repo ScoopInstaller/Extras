@@ -8,10 +8,10 @@
     "extract_dir": "fennel-1.6.1",
     "depends": [
         "lua",
-        "gnupg"
+        "gnupg",
+        "git"
     ],
     "pre_install": [
-        "Push-Location \"$dir\"",
         "function Invoke-Retry([scriptblock]$Script, [string]$ErrorMsg) { for($i=1; $i -le 3; $i++) { & $Script; if ($LASTEXITCODE -eq 0) { return }; if ($i -lt 3) { Start-Sleep -Seconds ($i*2) } }; throw $ErrorMsg }",
         "$gpg_exe = (Get-Command gpg.exe | Where-Object { $_.Source -notmatch 'mingw|usr.bin' } | Select-Object -First 1).Source",
         "if (-not $gpg_exe) { throw 'gpg.exe not found; install gnupg via Scoop' }",
@@ -42,8 +42,7 @@
         "cmd.exe /c \"lua bootstrap/aot.lua src/launcher.fnl --require-as-include >> fennel.lua\"",
         "if ($LASTEXITCODE -ne 0) { throw 'fennel compilation failed' }",
         "$cmd = \"@echo off`r`nlua `\"%~dp0fennel.lua`\" %*\"",
-        "[System.IO.File]::WriteAllText(\"$dir\\fennel.cmd\", $cmd)",
-        "Pop-Location"
+        "[System.IO.File]::WriteAllText(\"$dir\\fennel.cmd\", $cmd)"
     ],
     "bin": [
         [
