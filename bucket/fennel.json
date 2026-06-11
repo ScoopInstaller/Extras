@@ -12,7 +12,7 @@
     ],
     "pre_install": [
         "Push-Location \"$dir\"",
-        "function Invoke-Retry([scriptblock]$Script, [string]$ErrorMsg) { for($i=1; $i -le 3; $i++) { & $Script; if ($LASTEXITCODE -eq 0) { return }; if ($i -lt 3) { Write-Host \"Attempt $i failed, retrying in $($i*2)s...\"; Start-Sleep -Seconds ($i*2) } }; throw $ErrorMsg }",
+        "function Invoke-Retry([scriptblock]$Script, [string]$ErrorMsg) { for($i=1; $i -le 3; $i++) { & $Script; if ($LASTEXITCODE -eq 0) { return }; if ($i -lt 3) { Start-Sleep -Seconds ($i*2) } }; throw $ErrorMsg }",
         "$gpg_exe = (Get-Command gpg.exe | Where-Object { $_.Source -notmatch 'mingw|usr.bin' } | Select-Object -First 1).Source",
         "if (-not $gpg_exe) { throw 'gpg.exe not found; install gnupg via Scoop' }",
         "$gnupg_home = Join-Path $dir '.gnupg'",
