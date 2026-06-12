@@ -1,0 +1,44 @@
+{
+    "version": "0.3.2",
+    "description": "QuickClipboard - A powerful clipboard management tool (Portable)",
+    "homepage": "https://quickclipboard.cn/",
+    "license": {
+        "identifier": "Apache-2.0"
+    },
+    "notes": "Portable version: data is saved to the 'data' subdirectory under the app folder and persisted.",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/mosheng1/QuickClipboard/releases/download/v0.3.2/QuickClipboard_0.3.2_portable.exe#/QuickClipboard_portable.exe",
+            "hash": "1d7135681fb63f3b313015df623bae7ba7dd7174ec9833fca7cf9f09101a4419"
+        }
+    },
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\data\")) { New-Item -ItemType Directory -Force -Path \"$persist_dir\\data\" | Out-Null }"
+    ],
+    "shortcuts": [
+        [
+            "QuickClipboard_portable.exe",
+            "QuickClipboard"
+        ]
+    ],
+    "persist": "data",
+    "uninstaller": {
+        "script": [
+            "Stop-Process -Name QuickClipboard_portable -Force -ErrorAction SilentlyContinue",
+            "Start-Sleep -Milliseconds 1500"
+        ]
+    },
+    "checkver": {
+        "github": "https://github.com/mosheng1/QuickClipboard"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/mosheng1/QuickClipboard/releases/download/v$version/QuickClipboard_$version_portable.exe#/QuickClipboard_portable.exe"
+            }
+        },
+        "hash": {
+            "mode": "github"
+        }
+    }
+}
