@@ -18,7 +18,8 @@
     },
     "pre_install": [
         "if (-not (Test-Path \"$persist_dir\\UserSettings.ini\")) {",
-        "    Set-Content \"$dir\\UserSettings.ini\" @('[General]', 'UseCustomTempFolder=1', \"CustomTempFolder=$persist_dir\\tmp\", \"RemoveableMediaCache=$persist_dir\\cache\") -Encoding Ascii",
+        "    $cfg = @( '[General]', 'UseCustomTempFolder=1', \"CustomTempFolder=$persist_dir\\tmp\", \"RemoveableMediaCache=$persist_dir\\cache\" )",
+        "    Set-Content -Path \"$dir\\UserSettings.ini\" -Value $cfg -Encoding Ascii",
         "}"
     ],
     "bin": [
@@ -32,13 +33,13 @@
         ]
     ],
     "persist": [
-        "cache",
         "tmp",
+        "cache",
         "UserSettings.ini"
     ],
     "checkver": {
         "url": "https://www.fosshub.com/CDBurnerXP.html",
-        "regex": "CDBurnerXP-x64-([\\d.]+).zip"
+        "regex": "\"softwareVersion\">([\\d.]+)<"
     },
     "autoupdate": {
         "architecture": {

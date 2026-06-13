@@ -1,23 +1,27 @@
 {
-    "version": "4.6",
+    "version": "4.14",
     "description": "A utility that helps format and create bootable USB flash drives.",
     "homepage": "https://rufus.ie/",
     "license": "GPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/pbatard/rufus/releases/download/v4.6/rufus-4.6.exe#/rufus.exe",
-            "hash": "8279696c1d78b14618500e9135886a3667b9decc65946f3729002e4bfdbb20ab"
+            "url": "https://github.com/pbatard/rufus/releases/download/v4.14/rufus-4.14.exe#/rufus.exe",
+            "hash": "9fcad316c82ba3d0c3130c9f43fb0fe147e9eb62e1bf830716a0bbb6c58d24ee"
         },
         "32bit": {
-            "url": "https://github.com/pbatard/rufus/releases/download/v4.6/rufus-4.6_x86.exe#/rufus.exe",
-            "hash": "1c3edd36bdb686de09e3a0ad6507d52b9f91fa3ae2a24658fb0f7c157c2c8dcf"
+            "url": "https://github.com/pbatard/rufus/releases/download/v4.14/rufus-4.14_x86.exe#/rufus.exe",
+            "hash": "c4c2030901c9069228f90ea37a33d2b38ec83c2caba8bb88a4c3b8e27bb4fb78"
         },
         "arm64": {
-            "url": "https://github.com/pbatard/rufus/releases/download/v4.6/rufus-4.6_arm64.exe#/rufus.exe",
-            "hash": "318f89696b36be6667b1d70eaf211851b8289020bd61cdaa57ebc3a1500436e1"
+            "url": "https://github.com/pbatard/rufus/releases/download/v4.14/rufus-4.14_arm64.exe#/rufus.exe",
+            "hash": "65461a08dd88f0f2d7bb08fe0e8feae33ebc75bc68f25f8dd7803b8f42bc5267"
         }
     },
-    "pre_install": "if (!(Test-Path \"$persist_dir\\rufus.ini\")) { New-Item \"$dir\\rufus.ini\" | Out-Null }",
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\rufus.ini\")) {",
+        "    Set-Content \"$dir\\rufus.ini\" 'UpdateCheckInterval = -1' -Encoding Ascii",
+        "}"
+    ],
     "bin": "rufus.exe",
     "shortcuts": [
         [
@@ -26,8 +30,8 @@
         ]
     ],
     "persist": [
-        "rufus.ini",
-        "rufus_files"
+        "Rufus",
+        "rufus.ini"
     ],
     "checkver": {
         "github": "https://github.com/pbatard/rufus"

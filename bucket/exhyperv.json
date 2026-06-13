@@ -1,0 +1,46 @@
+{
+    "version": "1.4.3",
+    "description": "A graphical Hyper-V management tool that allows mere mortals to easily master advanced Hyper-V features.",
+    "homepage": "https://github.com/Justsenger/ExHyperV",
+    "license": "GPL-3.0-only",
+    "suggest": {
+        ".NET Desktop Runtime 8.0": "versions/windowsdesktop-runtime-8.0"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Justsenger/ExHyperV/releases/download/V1.4.3/ExHyperV_1.4.3_x64.zip",
+            "hash": "17d4f765fb81e9af528b2c0470fa5680a225735eb95010c43ad60272ffa19730"
+        },
+        "arm64": {
+            "url": "https://github.com/Justsenger/ExHyperV/releases/download/V1.4.3/ExHyperV_1.4.3_arm64.zip",
+            "hash": "4c1bcaf3289f1d75e8e137e7a959abacc0ac2088a78612aa69e8327a82045bc0"
+        }
+    },
+    "pre_install": [
+        "if (-not (Test-Path -LiteralPath \"$persist_dir\\Config.xml\" -PathType Leaf)) {",
+        "    Set-Content -Path \"$dir\\Config.xml\" -Value '<?xml version=\"1.0\" encoding=\"utf-8\"?><Config/>' -Encoding UTF8",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "ExHyperV.exe",
+            "ExHyperV"
+        ]
+    ],
+    "persist": "Config.xml",
+    "checkver": {
+        "github": "https://api.github.com/repos/Justsenger/ExHyperV/releases",
+        "jsonpath": "$[?(@.tag_name =~ /^v?[\\d.]+$/i)].tag_name",
+        "regex": "(?i)(?<tag>v?(?<version>[\\d.]+))"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Justsenger/ExHyperV/releases/download/$matchTag/ExHyperV_$version_x64.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/Justsenger/ExHyperV/releases/download/$matchTag/ExHyperV_$version_arm64.zip"
+            }
+        }
+    }
+}

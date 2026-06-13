@@ -1,10 +1,17 @@
 {
-    "version": "3.6.1.22",
+    "version": "3.6.2.19",
     "homepage": "https://www.adventuregamestudio.co.uk/",
     "description": "An IDE and the engine meant for creating and running videogames of adventure (aka “quest”) genre.",
-    "license": "Artistic-2.0",
-    "url": "https://github.com/adventuregamestudio/ags/releases/download/v3.6.1.22/AGS-3.6.1.22.zip",
-    "hash": "768a72f314d088bfdbddd3ab1923a407329854b8e6fcedb6cb306c5d29189490",
+    "license": {
+        "identifier": "Artistic-2.0",
+        "url": "https://github.com/adventuregamestudio/ags/blob/master/License.txt"
+    },
+    "suggest": {
+        "vcredist": "extras/vcredist2022"
+    },
+    "url": "https://github.com/adventuregamestudio/ags/releases/download/v3.6.2.19/AGS-3.6.2.19-P9.exe",
+    "hash": "66a5851cbc2654970658b6dbef8fdd8f4a0fd2498be0466113c5ba5c2d3ff6d3",
+    "innosetup": true,
     "shortcuts": [
         [
             "ags-help.chm",
@@ -16,10 +23,12 @@
         ]
     ],
     "checkver": {
-        "github": "https://github.com/adventuregamestudio/ags"
+        "github": "https://api.github.com/repos/adventuregamestudio/ags/releases/latest",
+        "jsonpath": "$.assets[?(@.name =~ /AGS.+exe/i)].browser_download_url",
+        "regex": "download/v([\\d.]+)/(?<name>.+)"
     },
     "autoupdate": {
-        "url": "https://github.com/adventuregamestudio/ags/releases/download/v$version/AGS-$version.zip",
+        "url": "https://github.com/adventuregamestudio/ags/releases/download/v$version/$matchName",
         "hash": {
             "url": "$baseurl/checksums.sha256",
             "regex": "$sha256\\s+$basename"

@@ -1,0 +1,75 @@
+{
+    "version": "2.0.6",
+    "description": "Agent orchestration platform developed by Google.",
+    "homepage": "https://antigravity.google/product/antigravity-2",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://antigravity.google/terms"
+    },
+    "notes": [
+        "Antigravity 2.0 has fully transitioned into an agent orchestration platform.",
+        "The editor component has been decoupled and is now maintained separately as Antigravity IDE.",
+        "For more details, see: https://antigravity.google/blog/introducing-google-antigravity-2-0",
+        "",
+        "Antigravity IDE is available as a separate package: 'extras/antigravity-ide'.",
+        "If you have previously installed Antigravity IDE (v1.x), your data (v1.x) is located in:",
+        "\"$persist_dir\"",
+        "You may need to move the persisted data manually after installing Antigravity IDE v2.x."
+    ],
+    "suggest": {
+        "Antigravity IDE": "extras/antigravity-ide"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://storage.googleapis.com/antigravity-public/antigravity-hub/2.0.6-5413878570549248/windows-x64/Antigravity-x64.exe#/dl.7z",
+            "hash": "6be1f449426ad92880e55c49158f3dfd3dbd7bac050c1a83de5abc3c2febf4cf"
+        },
+        "arm64": {
+            "url": "https://storage.googleapis.com/antigravity-public/antigravity-hub/2.0.6-5413878570549248/windows-arm/Antigravity-arm64.exe#/dl.7z",
+            "hash": "0e68fb5ced0b09560f3424836a1a9cce207b099f9b1e28948ea1c70d3119c53d"
+        }
+    },
+    "installer": {
+        "script": [
+            "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Expand-7zipArchive -DestinationPath \"$dir\"",
+            "Remove-Item \"$dir\\`$*\" -Force -Recurse"
+        ]
+    },
+    "post_install": [
+        "# Disable built-in update mechanism to prevent conflicts with Scoop's update management",
+        "$yaml = \"$dir\\resources\\app-update.yml\"",
+        "$content = Get-Content -Path $yaml | Foreach-Object {",
+        "    if ($_.StartsWith('url')) { \"$($_.Replace('url', '# url')) # Disabled by Scoop\" } else { $_ }",
+        "}",
+        "Set-Content $yaml -Value $content -Encoding ascii"
+    ],
+    "shortcuts": [
+        [
+            "Antigravity.exe",
+            "Antigravity"
+        ]
+    ],
+    "checkver": {
+        "url": "https://antigravity-auto-updater-974169037036.us-central1.run.app/api/update/win32-x64-user/stable/latest",
+        "jsonpath": "$.url",
+        "regex": "antigravity-hub/(?<version>[\\d.]+)-(?<build>\\d+)/"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://storage.googleapis.com/antigravity-public/antigravity-hub/$version-$matchBuild/windows-x64/Antigravity-x64.exe#/dl.7z",
+                "hash": {
+                    "url": "https://antigravity-auto-updater-974169037036.us-central1.run.app/api/update/win32-x64-user/stable/$version",
+                    "jsonpath": "$.sha256hash"
+                }
+            },
+            "arm64": {
+                "url": "https://storage.googleapis.com/antigravity-public/antigravity-hub/$version-$matchBuild/windows-arm/Antigravity-arm64.exe#/dl.7z",
+                "hash": {
+                    "url": "https://antigravity-auto-updater-974169037036.us-central1.run.app/api/update/win32-arm64-user/stable/$version",
+                    "jsonpath": "$.sha256hash"
+                }
+            }
+        }
+    }
+}

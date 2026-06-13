@@ -1,11 +1,26 @@
 {
-    "version": "0.98",
-    "description": "Hekasoft Backup and Restore is a free tool to backup and restores your browser settings. It allows you to migrate your profile from one browser to another and even custom your profile by removing unwanted files",
-    "homepage": "http://www.hekasoft.com/hekasoft-backup-restore/",
-    "license": "Freeware",
-    "url": "https://www.fosshub.com/Hekasoft-Backup-Restore.html/backup-restore-0.98-portable.zip",
-    "hash": "e1b6fee05c579cb1ef3b99032a1a41ea7117f707b864f5dfdfa5cad5a011a493",
-    "extract_dir": "Hekasoft Backup & Restore",
+    "version": "1.1.3",
+    "description": "Hekasoft Backup & Restore provides a reliable solution for backing up, restoring, and migrating browser profiles. It also allows you to optimize profile data by removing unnecessary files.",
+    "homepage": "https://hekasoft.com/hekasoft-backup-restore/",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://hekasoft.com/eula/"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://hekasoft.com/hbr-portable.zip",
+            "hash": "4ba6d243dc027977abfad87a07dd032256e2ab214e071fc2efc52cfc96bf49ca"
+        }
+    },
+    "pre_install": [
+        "# Use a script to extract files since the extract_dir changes frequently.",
+        "$items = Get-ChildItem -Path $dir | Select-Object -First 3",
+        "if ($items.Count -eq 1 -and $items.PSIsContainer) {",
+        "    $inner_dir = $items | ForEach-Object -MemberName FullName",
+        "    Move-Item -Path \"$inner_dir\\*\" -Destination $dir -Force",
+        "    Remove-Item -Path $inner_dir -Recurse -Force -ErrorAction SilentlyContinue",
+        "}"
+    ],
     "shortcuts": [
         [
             "hbr.exe",
@@ -13,11 +28,14 @@
         ]
     ],
     "checkver": {
-        "url": "https://www.fosshub.com/Hekasoft-Backup-Restore.html",
-        "regex": "backup-restore-([\\d.]+)-portable\\.zip"
+        "url": "https://hekasoft.com/hekasoft-backup-restore/",
+        "regex": "Current Version.+?([\\d.]+)"
     },
     "autoupdate": {
-        "url": "https://www.fosshub.com/Hekasoft-Backup-Restore.html/backup-restore-$version-portable.zip",
-        "extract_dir": "Hekasoft Backup & Restore"
+        "architecture": {
+            "64bit": {
+                "url": "https://hekasoft.com/hbr-portable.zip"
+            }
+        }
     }
 }

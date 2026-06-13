@@ -23,13 +23,19 @@
         ]
     ],
     "checkver": {
-        "url": "https://scoopinstaller.github.io/UpdateTracker/ryzen-controller/latest.xml",
-        "regex": "<version>([\\d.]+)</version><url>(?<url>.*?)</url>"
+        "url": "https://gitlab.com/api/v4/projects/ryzen-controller-team%2Fryzen-controller/releases/permalink/latest",
+        "script": [
+            "$release = $page | ConvertFrom-Json",
+            "$links = $release.assets.links",
+            "$link = $links | Where-Object { $_.name -eq 'Windows installer' } | Select-Object -First 1",
+            "(Invoke-WebRequest -Uri $link.url).Content"
+        ],
+        "regex": "/jobs/(?<job>\\d+)/artifacts/file/dist/win/Ryzen%20Controller%20Setup%20(?<version>[\\d.]+)\\.exe"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "$matchUrl#/dl.7z"
+                "url": "https://gitlab.com/ryzen-controller-team/ryzen-controller/-/jobs/$matchJob/artifacts/raw/dist/win/Ryzen%20Controller%20Setup%20$version.exe#/dl.7z"
             }
         }
     }

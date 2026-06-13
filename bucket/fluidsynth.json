@@ -1,34 +1,38 @@
 {
-    "version": "2.4.2",
-    "description": "A real-time software synthesizer based on the Soundfont 2 specification.",
-    "homepage": "https://www.fluidsynth.org/",
-    "license": "LGPL-2.1-only",
+    "version": "2.5.5",
+    "description": "Software synthesizer based on the SoundFont 2 specifications.",
+    "homepage": "https://www.fluidsynth.org",
+    "license": {
+        "identifier": "LGPL-2.1-only",
+        "url": "https://github.com/FluidSynth/fluidsynth/blob/master/LICENSE"
+    },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/FluidSynth/fluidsynth/releases/download/v2.4.2/fluidsynth-2.4.2-win10-x64.zip",
-            "hash": "db7df0c0794ad3615a74cadbf05dc750b78304b501243459d0a150c313c921f6"
+            "url": "https://github.com/FluidSynth/fluidsynth/releases/download/v2.5.5/fluidsynth-v2.5.5-win10-x64-cpp11.zip",
+            "hash": "323649e567cfbe234ebd31d7d85ccb97f4dae3547d91d211b4afe92153ddb98a",
+            "extract_dir": "fluidsynth-v2.5.5-win10-x64-cpp11"
         },
         "32bit": {
-            "url": "https://github.com/FluidSynth/fluidsynth/releases/download/v2.4.2/fluidsynth-2.4.2-winXP-x86.zip",
-            "hash": "53cc3fc61707bccb5d0c4fba85531214e36d0ef805227ba789fda15887798bd3"
+            "url": "https://github.com/FluidSynth/fluidsynth/releases/download/v2.5.5/fluidsynth-v2.5.5-win10-x86-cpp11.zip",
+            "hash": "78d5e73ea7368d2676760c1e8aa1b00a6608c29b3f430105f145fbadb3c5fbf4",
+            "extract_dir": "fluidsynth-v2.5.5-win10-x86-cpp11"
         }
     },
-    "bin": "bin/fluidsynth.exe",
-    "notes": [
-        "This manifest contains the barebones FluidSynth installation.",
-        "For appropriate programming DLLs, add `~/scoop/apps/fluidsynth/current/bin` to PATH.",
-        "For example, executing `$env:Path += \";$(Resolve-Path '~/scoop/apps/fluidsynth/current/bin')\"` will add it to PATH for the current shell."
-    ],
+    "env_add_path": "bin",
     "checkver": {
-        "github": "https://github.com/FluidSynth/fluidsynth"
+        "github": "https://api.github.com/repos/FluidSynth/fluidsynth/releases",
+        "jsonpath": "$..assets[?(@.name =~ /win(?!.+glib).+\\.zip$/i)].browser_download_url",
+        "regex": "(?i)download/(?<tag>v?([\\d.]+))/(?<prefix>[^\"]+)-x(?:64|86)(?<suffix>-[^\"]+)?\\.zip"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/FluidSynth/fluidsynth/releases/download/v$version/fluidsynth-$version-win10-x64.zip"
+                "url": "https://github.com/FluidSynth/fluidsynth/releases/download/$matchTag/$matchPrefix-x64$matchSuffix.zip",
+                "extract_dir": "$matchPrefix-x64$matchSuffix"
             },
             "32bit": {
-                "url": "https://github.com/FluidSynth/fluidsynth/releases/download/v$version/fluidsynth-$version-winXP-x86.zip"
+                "url": "https://github.com/FluidSynth/fluidsynth/releases/download/$matchTag/$matchPrefix-x86$matchSuffix.zip",
+                "extract_dir": "$matchPrefix-x86$matchSuffix"
             }
         }
     }

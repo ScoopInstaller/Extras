@@ -1,13 +1,13 @@
 {
-    "version": "24.12-8747",
+    "version": "26.04-11836",
     "description": "Multi-document editor",
     "homepage": "https://kate-editor.org",
     "license": "LGPL-2.0-only",
     "notes": "If you want to get the latest development branch-based installer, please install `kate-nightly` from Versions bucket.",
     "architecture": {
         "64bit": {
-            "url": "https://cdn.kde.org/ci-builds/utilities/kate/release-24.12/windows/kate-release_24.12-8747-windows-cl-msvc2022-x86_64.7z",
-            "hash": "e04ef3a2109a88cb3ffe4a01326dd1e4a0820a7d8eec5128a75d7aae9afe7a72"
+            "url": "https://cdn.kde.org/ci-builds/utilities/kate/release-26.04/windows/kate-release_26.04-11836-windows-cl-msvc2022-x86_64.7z",
+            "hash": "9f7b8e9eedc3968cb75b81db6d0a615c97610064e69d4a62e92d4edfb58f677c"
         }
     },
     "bin": "bin\\kate.exe",
@@ -18,8 +18,23 @@
         ]
     ],
     "checkver": {
-        "url": "https://cdn.kde.org/ci-builds/utilities/kate/release-24.12/windows/",
-        "regex": "kate-release_([\\d.-]+)-windows-cl-(?<lib>\\w+)-x86_64\\.7z"
+        "script": [
+            "$url = 'https://cdn.kde.org/ci-builds/utilities/kate/?C=N;O=D'",
+            "",
+            "$cont = (Invoke-WebRequest $url).Content",
+            "$regex = 'release-([\\d.]+)'",
+            "if (!($cont -match $regex)) { error \"Could not match $regex in $url\"; continue }",
+            "$ver = $matches[1]",
+            "",
+            "$nextUrl = \"https://cdn.kde.org/ci-builds/utilities/kate/release-$ver/windows/\"",
+            "$nextCont = (Invoke-WebRequest $nextUrl).Content",
+            "$nextRegex = \"kate-release_$ver-([\\d]+)-windows-cl-([\\w]+)-x86_64\\.7z\"",
+            "if (!($nextCont -match $nextRegex)) { error \"Could not match $nextRegex in $nextUrl\"; continue }",
+            "$build = $matches[1]",
+            "$lib = $matches[2]",
+            "Write-Output $ver-$build $lib"
+        ],
+        "regex": "([\\d.-]+) (?<lib>[\\w]+)"
     },
     "autoupdate": {
         "architecture": {

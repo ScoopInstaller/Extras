@@ -1,18 +1,13 @@
 {
     "version": "7.5",
-    "description": "A free interior design application that helps you draw the plan of your house, arrange furniture on it and visit the results in 3D",
-    "homepage": "http://www.sweethome3d.com/",
-    "license": "GPL-2.0-or-later",
-    "url": "https://downloads.sourceforge.net/project/sweethome3d/SweetHome3D/SweetHome3D-7.5/SweetHome3D-7.5-portable.7z#/dl.7z_",
-    "hash": "sha1:4467d814102a4d29ab905552c9b9645a6fc9a275",
-    "installer": {
-        "script": [
-            "$switches = '-xr!LICENSE -xr!ASSEMBLY_EXCEPTION -xr!ADDITIONAL_LICENSE_INFO -xr!cldr.md'",
-            "Expand-7zipArchive \"$dir\\$fname\" \"$dir\" -Switches $switches -ExtractDir \"SweetHome3D-$version-portable\" -Removal",
-            "# A temporary workaround to bypass 'symbolic link' files that are not supported without Developer mode, no intention to violate any legal terms"
-        ]
+    "description": "A free interior design application that helps you draw the plan of your house, arrange furniture on it and visit the results in 3D.",
+    "homepage": "https://www.sweethome3d.com",
+    "license": {
+        "identifier": "GPL-2.0-or-later",
+        "url": "https://www.sweethome3d.com/license.jsp"
     },
-    "post_install": "if (!(Test-Path \"$persist_dir\\data\\preferences.xml\")) { New-Item \"$dir\\data\\preferences.xml\" | Out-Null }",
+    "url": "https://downloads.sourceforge.net/project/sweethome3d/SweetHome3D/SweetHome3D-7.5/SweetHome3D-7.5-portable.7z",
+    "hash": "sha1:4467d814102a4d29ab905552c9b9645a6fc9a275",
     "architecture": {
         "64bit": {
             "bin": [
@@ -43,17 +38,41 @@
             ]
         }
     },
+    "extract_dir": "SweetHome3D-7.5-portable",
+    "pre_install": [
+        "if (-not (Test-Path -Path \"$persist_dir\\data\\preferences.xml\")) {",
+        "    info \"File \"$dir\\data\\preferences.xml\" does not exist. Creating...\"",
+        "    New-Item -Path \"$dir\\data\\preferences.xml\" -ItemType File -Force | Out-Null",
+        "    @(",
+        "        '<!DOCTYPE properties SYSTEM \"http://java.sun.com/dtd/properties.dtd\">'",
+        "        '<properties>'",
+        "        '<entry key=\"checkUpdatesEnabled\">false</entry>'",
+        "        '</properties>'",
+        "    ) | Set-Content -Path \"$dir\\data\\preferences.xml\" -Encoding Ascii",
+        "}"
+    ],
+    "post_install": [
+        "'plugins', 'textures', 'furniture' | ForEach-Object {",
+        "    $source_dir = Join-Path $dir \"data\\$_.original\"",
+        "    $destination_dir = Join-Path $dir \"data\\$_\"",
+        "    if (Test-Path -Path \"$source_dir\") {",
+        "        Copy-Item -Path \"$source_dir\\*\" -Destination $destination_dir -Force -Recurse",
+        "        Remove-Item -Path $source_dir -Recurse -Force -ErrorAction SilentlyContinue",
+        "    }",
+        "}"
+    ],
     "persist": [
-        "data\\preferences.xml",
         "data\\plugins",
+        "data\\textures",
         "data\\furniture",
-        "data\\textures"
+        "data\\preferences.xml"
     ],
     "checkver": {
-        "url": "http://www.sweethome3d.com/SweetHome3DUpdates.xml",
+        "url": "https://www.sweethome3d.com/SweetHome3DUpdates.xml",
         "regex": "id=\"SweetHome3D#Portable\"\\s+version=\"([\\d.]+)\""
     },
     "autoupdate": {
-        "url": "https://downloads.sourceforge.net/project/sweethome3d/SweetHome3D/SweetHome3D-$version/SweetHome3D-$version-portable.7z#/dl.7z_"
+        "url": "https://downloads.sourceforge.net/project/sweethome3d/SweetHome3D/SweetHome3D-$version/SweetHome3D-$version-portable.7z",
+        "extract_dir": "SweetHome3D-$version-portable"
     }
 }

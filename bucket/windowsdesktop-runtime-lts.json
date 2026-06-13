@@ -1,21 +1,21 @@
 {
-    "version": "8.0.11",
+    "version": "10.0.9",
     "description": "Microsoft .NET Desktop Runtime LTS (Long-term support)",
     "homepage": "https://dotnet.microsoft.com/download/dotnet",
     "license": "MIT",
     "notes": "You can now remove this installer with 'scoop uninstall windowsdesktop-runtime-lts'",
     "architecture": {
         "64bit": {
-            "url": "https://dotnetcli.blob.core.windows.net/dotnet/WindowsDesktop/8.0.11/windowsdesktop-runtime-8.0.11-win-x64.exe",
-            "hash": "sha512:fd6f0ac18e77f92b78c41aa2f3e19b9d1de6e63a0e4a517c897e68dafa5131f734d39f0b1dc9ea09a3b0949805d72ef6f82efb1f6a689ab055048705f43cff7b"
+            "url": "https://dotnetcli.blob.core.windows.net/dotnet/WindowsDesktop/10.0.9/windowsdesktop-runtime-10.0.9-win-x64.exe",
+            "hash": "sha512:99bc2215d67f8aea1ecb3df642423ccabf76e5261b225f0f2d78123d84d58e64923f050a5dc58405c4d5cf074acbad32c4a1021a67e94629dcc57206ac4116de"
         },
         "32bit": {
-            "url": "https://dotnetcli.blob.core.windows.net/dotnet/WindowsDesktop/8.0.11/windowsdesktop-runtime-8.0.11-win-x86.exe",
-            "hash": "sha512:32d11f33394ea1662a23046c45c224d60b25897951072d00324f6a9a297960086e3b8c606018ef947f40b19b570f7335e18fe8481bcaf6edba4a349285be8186"
+            "url": "https://dotnetcli.blob.core.windows.net/dotnet/WindowsDesktop/10.0.9/windowsdesktop-runtime-10.0.9-win-x86.exe",
+            "hash": "sha512:3193fa469541a40e4516c0afe5a6ef7e538fa93277adc722955966ff4406f38e736e4992160ee757ebd7aa2328641b772acdcc838bee12e70e8c368df19b3857"
         },
         "arm64": {
-            "url": "https://dotnetcli.blob.core.windows.net/dotnet/WindowsDesktop/8.0.11/windowsdesktop-runtime-8.0.11-win-arm64.exe",
-            "hash": "sha512:888487f046d07ac904c6de902dd5403d97f5a7251758e976f98c43c8a5fc1146996acc37d492466ab60bcab00be4db433a84d9ef01e897c8528c800262f13ebd"
+            "url": "https://dotnetcli.blob.core.windows.net/dotnet/WindowsDesktop/10.0.9/windowsdesktop-runtime-10.0.9-win-arm64.exe",
+            "hash": "sha512:dcfbdb87f1da152fb5e84ae7a070575cbe1c52ff8d7475daa3ebc164ffefac9cbbba3b00eab8be1d00357e05204401e6bce64f0f818430c09a64aa6fa509e5e4"
         }
     },
     "pre_install": "if (!(is_admin)) { error 'Admin privileges are required.'; break }",
@@ -23,8 +23,9 @@
         "script": "Invoke-ExternalCommand \"$dir\\$fname\" -ArgumentList '/install', '/quiet', '/norestart' -RunAs | Out-Null"
     },
     "checkver": {
-        "url": "https://dotnetcli.blob.core.windows.net/dotnet/WindowsDesktop/LTS/latest.version",
-        "regex": "([\\d.]+)$"
+        "url": "https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/releases-index.json",
+        "jsonpath": "$.releases-index[?(@.support-phase == 'active' && @.release-type == 'lts')].latest-runtime",
+        "regex": "([\\d.]+)"
     },
     "autoupdate": {
         "architecture": {

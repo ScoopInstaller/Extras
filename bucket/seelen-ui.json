@@ -1,0 +1,65 @@
+{
+    "version": "2.7.0",
+    "description": "Seelen UI is a fully customizable desktop environment for Windows 10/11.",
+    "homepage": "https://seelen.io/apps/seelen-ui",
+    "license": {
+        "identifier": "AGPL-3.0-or-later",
+        "url": "https://github.com/eythaann/Seelen-UI/blob/HEAD/LICENSE"
+    },
+    "notes": [
+        "To register file associations, please execute the following command:",
+        "reg import \"$dir\\install-associations.reg\"",
+        "To register the URL protocol handler, please execute the following command:",
+        "reg import \"$dir\\register-url-handler.reg\""
+    ],
+    "suggest": {
+        "Microsoft Edge WebView2": "extras/webview2"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/eythaann/Seelen-UI/releases/download/v2.7.0/Seelen.UI_2.7.0_x64-setup.exe#/dl.7z",
+            "hash": "5e12d519166b449a94c21fd804c5b6af107b77996db93ba74f7740a392adb39a"
+        },
+        "arm64": {
+            "url": "https://github.com/eythaann/Seelen-UI/releases/download/v2.7.0/Seelen.UI_2.7.0_arm64-setup.exe#/dl.7z",
+            "hash": "12c5cb306c5fd27115deff24d75a6fa95ae2628cefcc190302bb406f92828da0"
+        }
+    },
+    "pre_install": "'$*', 'uninst*' | ForEach-Object { Remove-Item -Path \"$dir\\$_\" -Recurse -Force -ErrorAction SilentlyContinue }",
+    "post_install": [
+        "$seelen_dir = $dir -replace '\\\\', '\\\\'",
+        "Get-ChildItem -Path \"$bucketsdir\\$bucket\\scripts\\$app\" -Filter '*.reg' -File | ForEach-Object {",
+        "    $content = Get-Content -Path $_.FullName -Encoding utf8",
+        "    if ($global) { $content = $content -replace 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE' }",
+        "    $content -replace '{{seelen_dir}}', $seelen_dir | Set-Content -Path \"$dir\\$($_.Name)\" -Encoding unicode",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "seelen-ui.exe",
+            "Seelen UI"
+        ]
+    ],
+    "uninstaller": {
+        "script": [
+            "if ($cmd -ne 'uninstall') { return }",
+            "Get-ChildItem -Path $dir -Filter 'un*.reg' -File | ForEach-Object {",
+            "    $registry_file = '\"{0}\"' -f $_.FullName",
+            "    Start-Process -FilePath 'reg.exe' -ArgumentList @('import', $registry_file) -WindowStyle Hidden -Wait",
+            "}"
+        ]
+    },
+    "checkver": {
+        "github": "https://github.com/eythaann/Seelen-UI"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/eythaann/Seelen-UI/releases/download/v$version/Seelen.UI_$version_x64-setup.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/eythaann/Seelen-UI/releases/download/v$version/Seelen.UI_$version_arm64-setup.exe#/dl.7z"
+            }
+        }
+    }
+}

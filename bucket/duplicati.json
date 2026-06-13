@@ -1,17 +1,40 @@
 {
-    "version": "2.0.8.1_beta_2024-05-07",
-    "homepage": "https://www.duplicati.com/",
+    "version": "2.3.0.3_stable_2026-06-10",
     "description": "A free, open source, backup client that securely stores encrypted, incremental, compressed backups on cloud storage services and remote file servers.",
-    "license": "LGPL-2.1",
+    "homepage": "https://www.duplicati.com/",
+    "license": "MIT",
     "notes": [
-        "If you want Dupilicati to run at the startup of your system, run: (requires administrator privileges)",
+        "If you want Duplicati to run at the startup of your system, run: (requires administrator privileges)",
         "start \"$dir\\Duplicati.WindowsService.exe\" -Verb 'RunAs' -ArgumentList 'install'",
         "",
         "To remove Duplicati from startup, run: (requires administrator privileges)",
         "start \"$dir\\Duplicati.WindowsService.exe\" -Verb 'RunAs' -ArgumentList 'uninstall'"
     ],
-    "url": "https://github.com/duplicati/duplicati/releases/download/v2.0.8.1-2.0.8.1_beta_2024-05-07/duplicati-2.0.8.1_beta_2024-05-07.zip",
-    "hash": "516d83a78123f876a85e012d8adfccb31e77cdaf9bf85d527ce30b5541094675",
+    "architecture": {
+        "32bit": {
+            "url": "https://github.com/duplicati/duplicati/releases/download/v2.3.0.3_stable_2026-06-10/duplicati-2.3.0.3_stable_2026-06-10-win-x86-gui.zip",
+            "hash": "f6bf2ca1db519f76ec5ddc890c08505266e96363b39a961c5a399610d62b61d8",
+            "extract_dir": "duplicati-2.3.0.3_stable_2026-06-10-win-x86-gui"
+        },
+        "64bit": {
+            "url": "https://github.com/duplicati/duplicati/releases/download/v2.3.0.3_stable_2026-06-10/duplicati-2.3.0.3_stable_2026-06-10-win-x64-gui.zip",
+            "hash": "0b8376ca585aaba081d12bbbdd64daea5d7ad4386010f8dd32b47fb0142de98c",
+            "extract_dir": "duplicati-2.3.0.3_stable_2026-06-10-win-x64-gui"
+        },
+        "arm64": {
+            "url": "https://github.com/duplicati/duplicati/releases/download/v2.3.0.3_stable_2026-06-10/duplicati-2.3.0.3_stable_2026-06-10-win-arm64-gui.zip",
+            "hash": "4e4adb03ebf3aeedb6e61f85d65f7367d729f6ccbd290781285aff01ff301c6a",
+            "extract_dir": "duplicati-2.3.0.3_stable_2026-06-10-win-arm64-gui"
+        }
+    },
+    "post_install": [
+        "if (($cmd -eq 'update') -and ($env:duplicati_svc_installed -eq $true)) {",
+        "    info 'Reinstalling service...'",
+        "    if (!(is_admin)) { error 'Admin rights required to install Duplicati service'; break }",
+        "    Start-Process \"$dir\\Duplicati.WindowsService.exe\" -Wait -Verb 'RunAs' -ArgumentList 'install' -WindowStyle 'Hidden'",
+        "    $env:duplicati_svc_installed = $null",
+        "}"
+    ],
     "bin": [
         "Duplicati.CommandLine.exe",
         [
@@ -31,15 +54,32 @@
     ],
     "pre_uninstall": [
         "if (Get-Service -Name 'Duplicati' -ErrorAction 'SilentlyContinue') {",
-        "    if (!(is_admin)) { error \"Admin rights required to remove Duplicati service\"; break }",
+        "    info 'Uninstalling service...'",
+        "    if (!(is_admin)) { error 'Admin rights required to remove Duplicati service'; break }",
+        "    Stop-Service duplicati",
+        "    if ($cmd -eq 'update') { $env:duplicati_svc_installed = $true }",
         "    Start-Process \"$dir\\Duplicati.WindowsService.exe\" -Wait -Verb 'RunAs' -ArgumentList 'uninstall' -WindowStyle 'Hidden'",
         "}"
     ],
     "checkver": {
-        "url": "https://github.com/duplicati/duplicati/tags",
-        "regex": "v(?<half>[\\d.]+)-([\\d.]+_beta_[\\d-]+)"
+        "github": "https://api.github.com/repos/duplicati/duplicati/releases/latest",
+        "jsonpath": "$.tag_name",
+        "regex": "v(.*)"
     },
     "autoupdate": {
-        "url": "https://github.com/duplicati/duplicati/releases/download/v$matchHalf-$version/duplicati-$version.zip"
+        "architecture": {
+            "32bit": {
+                "url": "https://github.com/duplicati/duplicati/releases/download/v$version/duplicati-$version-win-x86-gui.zip",
+                "extract_dir": "duplicati-$version-win-x86-gui"
+            },
+            "64bit": {
+                "url": "https://github.com/duplicati/duplicati/releases/download/v$version/duplicati-$version-win-x64-gui.zip",
+                "extract_dir": "duplicati-$version-win-x64-gui"
+            },
+            "arm64": {
+                "url": "https://github.com/duplicati/duplicati/releases/download/v$version/duplicati-$version-win-arm64-gui.zip",
+                "extract_dir": "duplicati-$version-win-arm64-gui"
+            }
+        }
     }
 }

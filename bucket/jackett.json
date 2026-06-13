@@ -1,22 +1,28 @@
 {
-    "version": "0.22.1199",
+    "version": "0.24.2057",
     "description": "API Support for your favorite torrent trackers",
     "homepage": "https://github.com/Jackett/Jackett",
-    "license": "GPL-2.0-or-later",
-    "url": "https://github.com/Jackett/Jackett/releases/download/v0.22.1199/Jackett.Binaries.Windows.zip",
-    "hash": "f745e946cc0979f8779d6bc854be88c20d782684b91a278ff56cf5d2a9a2b336",
+    "license": {
+        "identifier": "GPL-2.0-or-later",
+        "url": "https://github.com/Jackett/Jackett/blob/HEAD/LICENSE"
+    },
+    "url": "https://github.com/Jackett/Jackett/releases/download/v0.24.2057/Jackett.Binaries.Windows.zip",
+    "hash": "3e9efbc5ba6cafe12c5f08774291270696aec5da0af81818a32edfb177704f22",
     "extract_dir": "Jackett",
-    "pre_uninstall": [
-        "'JacketTray', 'JacketConsole', 'JacketService' | ForEach-Object {",
-        "    Stop-Process -Name $_ -ErrorAction SilentlyContinue",
-        "}"
-    ],
     "shortcuts": [
         [
             "JackettTray.exe",
             "Jackett"
         ]
     ],
+    "uninstaller": {
+        "script": [
+            "'JackettTray', 'JackettConsole', 'JackettService' | ForEach-Object {",
+            "    Stop-Process -Name $_ -Force -ErrorAction SilentlyContinue",
+            "}",
+            "Start-Sleep -Milliseconds 1500"
+        ]
+    },
     "checkver": "github",
     "autoupdate": {
         "url": "https://github.com/Jackett/Jackett/releases/download/v$version/Jackett.Binaries.Windows.zip"

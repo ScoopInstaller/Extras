@@ -1,0 +1,58 @@
+{
+    "version": "1.8.00.27654",
+    "description": "Office 365's chats, meetings, files and apps together in one place",
+    "homepage": "https://teams.microsoft.com/start",
+    "license": "Freeware",
+    "architecture": {
+        "64bit": {
+            "url": "https://statics.teams.microsoft.com/production-windows-x64/1.8.00.27654/Teams-1.8.00.27654-full.nupkg",
+            "hash": "sha1:ed09b2966862bf0b909fdcadfbb840323df4b0b8"
+        },
+        "32bit": {
+            "url": "https://statics.teams.microsoft.com/production-windows/1.8.00.27654/Teams-1.8.00.27654-full.nupkg",
+            "hash": "sha1:4c03c795187445ea8d1afc186bd77f59788181b8"
+        }
+    },
+    "extract_dir": "lib\\net45",
+    "bin": "Teams.exe",
+    "shortcuts": [
+        [
+            "Teams.exe",
+            "Microsoft Teams"
+        ]
+    ],
+    "post_install": [
+        "$ErrorActionPreference = \"silentlycontinue\"",
+        "$file = ${env:APPDATA} + \"\\Microsoft\\Teams\\desktop-config.json\"",
+        "$key = \"isLoggedOut\"",
+        "$val = $false",
+        "try {",
+        "  $json = Get-Content $file | ConvertFrom-Json",
+        "  if ($json -eq $null) { throw }",
+        "} catch {",
+        "  $json = \"{}\" | ConvertFrom-Json",
+        "}",
+        "if (!($json.$key -eq $val)) {",
+        "  New-Item -Force -Path $file -Type \"file\" | Out-Null",
+        "  $json | Add-Member -Force -MemberType \"noteproperty\" -Name $key -Value $val",
+        "  $json | ConvertTo-Json -Compress | Set-Content $file",
+        "}"
+    ],
+    "checkver": {
+        "url": "https://teams.microsoft.com/downloads/desktopurl?env=production&plat=windows&arch=x64&download=false",
+        "regex": "/([\\d.]+)/Teams_windows_x64\\.exe"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://statics.teams.microsoft.com/production-windows-x64/$version/Teams-$version-full.nupkg"
+            },
+            "32bit": {
+                "url": "https://statics.teams.microsoft.com/production-windows/$version/Teams-$version-full.nupkg"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/RELEASES"
+        }
+    }
+}
