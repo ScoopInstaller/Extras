@@ -24,6 +24,14 @@
         "    }",
         "}"
     ],
+    "post_install": [
+        "'automation' | ForEach-Object {",
+        "    if (Test-Path -Path \"$dir\\$_.original\" -PathType Container) {",
+        "        Copy-Item -Path \"$dir\\$_.original\\*\" -Destination \"$dir\\$_\" -Force -Recurse",
+        "        Remove-Item -Path \"$dir\\$_.original\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "    }",
+        "}"
+    ],
     "shortcuts": [
         [
             "aegisub.exe",
@@ -32,6 +40,7 @@
     ],
     "persist": [
         "autoback",
+        "automation",
         "autosave",
         "catalog",
         "config"
