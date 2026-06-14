@@ -45,7 +45,10 @@
         "$old_storage = \"C:\\.local\\share\\curd\"",
         "if ((Test-Path $old_storage) -and !(Test-Path \"$persist_dir\\storage\")) {",
         "  Move-Item $old_storage \"$persist_dir\\storage\"",
-        "}"
+        "}",
+        "",
+        "# --- Ensure storage dir exists regardless of migration ---",
+        "New-Item -ItemType Directory -Force \"$persist_dir\\storage\" | Out-Null"
     ],
     "pre_uninstall": [
         "# Remove the AppData junction but leave persist data intact",
