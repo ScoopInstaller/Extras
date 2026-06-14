@@ -9,35 +9,37 @@
             "hash": "eaedde0311a884115044a07886a211c25a842b5e160a7610699270191b3adb9b"
         }
     },
-    "extract_dir": "$PLUGINSDIR",
-    "pre_install": "Expand-7zipArchive \"$dir\\app-64.7z\" $dir -Removal",
-    "post_install": [
-        "if (!(Test-Path \"$persist_dir\")) {",
-        "    ensure \"$persist_dir\" | Out-Null",
-        "}",
-        "if (!(Test-Path \"$persist_dir\\data\")) {",
-        "    ensure \"$persist_dir\\data\" | Out-Null",
-        "}",
-        "New-Item $env:AppData\\com.differentai.openwork -ItemType Junction -Target \"$persist_dir\\data\" | Out-Null"
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\" -Removal",
+        "Remove-Item \"$dir\\`$*\" -Force -Recurse"
     ],
+    "installer": {
+        "script": [
+            "if (!(Test-Path \"$persist_dir\")) {",
+            "    ensure \"$persist_dir\" | Out-Null",
+            "}",
+            "if (!(Test-Path \"$persist_dir\\data\")) {",
+            "    ensure \"$persist_dir\\data\" | Out-Null",
+            "}",
+            "New-Item $env:AppData\\com.differentai.openwork -ItemType Junction -Target \"$persist_dir\\data\" | Out-Null"
+        ]
+    },
     "shortcuts": [
         [
             "openwork.exe",
             "openwork (different-ai)"
         ]
     ],
-    "pre_uninstall": [
-        "if (Test-Path \"$Env:AppData\\com.differentai.openwork\\*\") {",
-        "    Remove-Item $env:APPDATA\\com.differentai.openwork -Force -Recurse",
-        "}"
-    ],
+    "uninstaller": {
+        "script": "Remove-Item $env:APPDATA\\com.differentai.openwork -Force -Recurse"
+    },
     "checkver": {
         "github": "https://github.com/different-ai/openwork"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/different-ai/openwork/releases/download/v$version/openwork-win-x64-$version.exe"
+                "url": "https://github.com/different-ai/openwork/releases/download/v$version/openwork-win-x64-$version.exe#/dl.7z"
             }
         }
     }
