@@ -12,6 +12,9 @@
     },
     "bin": "curd.exe",
     "post_install": [
+        "# --- Ensure persist_dir exists (not guaranteed without a persist array) ---",
+        "New-Item -ItemType Directory -Force \"$persist_dir\" | Out-Null",
+        "",
         "# --- Config dir: %APPDATA%\\Curd -> junction to $persist_dir\\config ---",
         "$appdata_config = \"$env:APPDATA\\Curd\"",
         "if (!(Test-Path \"$persist_dir\\config\")) {",
