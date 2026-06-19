@@ -8,27 +8,12 @@
     },
     "url": "https://dl.boosterx.org/BoosterX.exe",
     "hash": "d21ff11ac4f9077b53a22545a510d302ca371f12bc5ff8dd85c8e7d8198d6dc4",
-    "post_install": [
-        "ensure \"$persist_dir\" | Out-Null",
-        "$targetPath = \"$env:APPDATA\\BoosterX\"",
-        "$linkType = (Get-Item -Path $targetPath -ErrorAction SilentlyContinue).LinkType",
-        "if (Test-Path $targetPath) {",
-        "    if ($linkType -eq 'Junction') {",
-        "        Remove-Item -Path $targetPath -Force -Recurse",
-        "    } else {",
-        "        Get-ChildItem -Path $targetPath -Force | Move-Item -Destination $persist_dir -Force",
-        "        Remove-Item -Path $targetPath -Force -Recurse",
-        "    }",
-        "}",
-        "New-Item $targetPath -ItemType Junction -Target \"$persist_dir\" | Out-Null"
-    ],
     "shortcuts": [
         [
             "BoosterX.exe",
             "BoosterX"
         ]
     ],
-    "pre_uninstall": "Remove-Item \"$env:APPDATA\\BoosterX\" -Recurse -Force -ErrorAction 'SilentlyContinue'",
     "checkver": "Version ([\\d.]+)",
     "autoupdate": {
         "url": "https://dl.boosterx.org/BoosterX.exe",
