@@ -37,9 +37,20 @@
     ],
     "checkver": {
         "url": "https://uvnc.com/downloads/ultravnc.html",
-        "regex": "Latest release version: UltraVNC ([\\d.]+)"
+        "script": [
+            "$page -match 'Latest release version: UltraVNC (?<version>[\\d.]+)'",
+            "$version = $matches.version",
+            "$cleanVersion = $version -replace '\\.'",
+            "$page -match 'href=\"(?<url>https://forum\\.uvnc\\.com/viewtopic\\.php\\?t=\\d+)\"'",
+            "$url = $matches.url",
+            "$page = Invoke-WebRequest -Uri $url -UseBasicParsing | Select-Object -ExpandProperty Content",
+            "$page -match \"href=`\"(?<url>https://uvnc\\.eu/download/.*/UltraVNC_$cleanVersion\\.zip)`\"\"",
+            "$url = $matches.url",
+            "Write-Output \"$version $url\""
+        ],
+        "regex": "(?<version>\\d+(?:\\.\\d+)+) https://uvnc\\.eu/download/(?<url>[^/]*)"
     },
     "autoupdate": {
-        "url": "https://uvnc.eu/download/$majorVersion$minorVersion00/UltraVNC_$cleanVersion.zip"
+        "url": "https://uvnc.eu/download/$matchUrl/UltraVNC_$cleanVersion.zip"
     }
 }
