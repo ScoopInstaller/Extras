@@ -1,5 +1,5 @@
 {
-    "version": "6.4.10",
+    "version": "6.4.10.5.1.22",
     "description": "A portable VirtualBox downloader and launcher written by Runar Buvik",
     "homepage": "https://www.vbox.me/",
     "license": "GPL-2.0-only,CC-BY-NC-SA-3.0",
@@ -23,16 +23,12 @@
     ],
     "checkver": {
         "script": [
-            "$cont = (Invoke-WebRequest $url -UseBasicParsing).Content",
-            "$regex = 'VirtualBox_v(?<vbox>[\\d.]+)-Starter_v(?<version>[\\d.]+)-Win_all.exe'",
-            "if (!($cont -match $regex)) { error \"Could not match $regex in $url\"; continue }",
+            "$page -match 'VirtualBox_v(?<vbox>[\\d.]+)-Starter_v(?<version>[\\d.]+)-Win_all.exe'",
             "$vboxVersion = $($matches.vbox)",
             "$fullversion = \"$($matches.version).$($matches.vbox)\"",
-            "",
-            "$nextUrl = \"https://download.virtualbox.org/virtualbox/$vboxVersion/\"",
-            "$nextCont = (Invoke-WebRequest $nextUrl -UseBasicParsing).Content",
-            "$nextRegex = \"VirtualBox-$vboxVersion-(?<vboxbuild>\\d+)-Win.exe\"",
-            "if (!($nextCont -match $nextRegex)) { error \"Could not match $nextRegex in $nextUrl\"; continue }",
+            "$url = \"https://download.virtualbox.org/virtualbox/$vboxVersion/\"",
+            "$page = (Invoke-WebRequest $url -UseBasicParsing).Content",
+            "$page -match \"VirtualBox-$vboxVersion-(?<vboxbuild>\\d+)-Win.exe\"",
             "$vboxbuild = $($matches.vboxbuild)",
             "\"$fullversion $vboxVersion $vboxbuild\""
         ],
