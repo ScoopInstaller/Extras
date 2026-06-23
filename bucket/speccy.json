@@ -32,6 +32,9 @@
     },
     "pre_install": [
         "Set-Content \"$dir\\portable.dat\" '#PORTABLE#' -Encoding ASCII",
+        "if (-not (Test-Path \"$dir\\Speccy*.exe\")) {",
+        "   Get-ChildItem -Path \"$dir\" -Filter \"Speccy*.exe\" -Recurse | Resolve-Path | ForEach-Object { Move-Item -Path $_ -Destination \"$dir\" }",
+        "}",
         "'$*', 'uninst.exe', \"Speccy$(if ($architecture -eq '32bit') { '64' }).exe\" | ForEach-Object { Remove-Item -Recurse -Force \"$dir\\$_\" }",
         "if(!(Test-Path \"$persist_dir\\Speccy.ini\")) {",
         "   Set-Content \"$dir\\Speccy.ini\" (@('[Software\\Piriform\\Speccy]', 'NeedUpdate=0') -join \"`r`n\") -Encoding ASCII",
