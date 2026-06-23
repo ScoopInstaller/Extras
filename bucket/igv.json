@@ -1,0 +1,43 @@
+{
+    "version": "2.19.8",
+    "description": "Easy visualization of various genomics/bioinformatics file formats, including but not limited to BAM, VCF, and GFF3.",
+    "homepage": "https://igv.org/",
+    "license": "MIT",
+    "notes": "IGV requires Java 21 or greater.",
+    "suggest": {
+        "Java 21": [
+            "java/temurin21-jdk",
+            "java/openjdk21"
+        ]
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://data.broadinstitute.org/igv/projects/downloads/2.19/IGV_Win_2.19.8-installer.exe",
+            "hash": "7ad1be7b2d95eaab1c03597dbccefc23facf56d4af4ff2f298b03dee9c028f78"
+        }
+    },
+    "bin": "igv.bat",
+    "shortcuts": [
+        [
+            "igv-launcher.bat",
+            "IGV",
+            "",
+            "IGV_64.ico"
+        ]
+    ],
+    "pre_install": [
+        "Get-ChildItem \"$dir\\IGV_Win_*installer.exe\" | Expand-7zipArchive -DestinationPath $dir -Removal",
+        "Remove-Item \"$dir\\uninstaller.exe\" -Force"
+    ],
+    "checkver": {
+        "url": "https://igv.org/doc/desktop/DownloadPage/",
+        "regex": "version ([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://data.broadinstitute.org/igv/projects/downloads/$majorVersion.$minorVersion/IGV_Win_$version-installer.exe"
+            }
+        }
+    }
+}
