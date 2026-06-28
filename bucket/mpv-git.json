@@ -1,5 +1,5 @@
 {
-    "version": "0.41.0-dev-g62f149466-28302012960",
+    "version": "0.41.0-17156-62f149466",
     "description": "A free, open source, and cross-platform media player",
     "homepage": "https://mpv.io",
     "license": "LGPL-2.1-or-later,GPL-2.0-or-later",
@@ -33,18 +33,24 @@
         "script": [
             "$run = ($page | ConvertFrom-Json).workflow_runs[0]",
             "$req = Invoke-WebRequest \"https://raw.githubusercontent.com/mpv-player/mpv/$($run.head_sha)/MPV_VERSION\" -UseBasicParsing",
-            "@{'ver' = $req.Content.Trim() -replace 'UNKNOWN', \"dev-g$($run.head_sha.Substring(0, 9))-$($run.id)\"} | ConvertTo-Json"
+            "$ver = \"$($req.Content.Trim().Split('-')[0])-$($run.run_number)-$($run.head_sha)\"",
+            "@{'result' = \"$ver $($run.id)\"} | ConvertTo-Json"
         ],
-        "jsonpath": "$.ver"
+        "jsonpath": "$.result",
+        "regex": "(?<version>(?<base>[\\d.]+)-\\d+-(?<sha>[a-f0-9]{9}))[a-f0-9]* (?<id>\\d+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://nightly.link/mpv-player/mpv/workflows/build/master/mpv-v$version-x86_64-pc-windows-msvc.zip"
+                "url": "https://nightly.link/mpv-player/mpv/workflows/build/master/mpv-v$matchBase-dev-g$matchSha-$matchId-x86_64-pc-windows-msvc.zip"
             },
             "arm64": {
-                "url": "https://nightly.link/mpv-player/mpv/workflows/build/master/mpv-v$version-aarch64-pc-windows-msvc.zip"
+                "url": "https://nightly.link/mpv-player/mpv/workflows/build/master/mpv-v$matchBase-dev-g$matchSha-$matchId-aarch64-pc-windows-msvc.zip"
             }
+        },
+        "hash": {
+            "url": "https://api.github.com/repos/mpv-player/mpv/actions/runs/$matchId/artifacts",
+            "jsonpath": "$.artifacts[?(@.name== '$basenameNoExt')].digest"
         }
     }
 }
