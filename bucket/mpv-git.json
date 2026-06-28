@@ -1,10 +1,10 @@
 {
-    "version": "20260610",
-    "description": "Video player based on MPlayer/mplayer2 (builds by shinchiro)",
+    "version": "0.41.0-dev-g62f149466-28302012960",
+    "description": "A free, open source, and cross-platform media player",
     "homepage": "https://mpv.io",
     "license": "LGPL-2.1-or-later,GPL-2.0-or-later",
     "notes": [
-        "To set and unset file type associations and AutoPlay handlers, run '$dir\\installer\\mpv-install.bat' and '$dir\\installer\\mpv-uninstall.bat' as administrator, respectively.",
+        "To set and unset file type associations and AutoPlay handlers, run '$dir\\mpv-register.bat' and '$dir\\mpv-unregister.bat', respectively.",
         "You can use Icaros ('nonportable/icaros-np') to enable thumbnails for all media types."
     ],
     "suggest": {
@@ -12,19 +12,14 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/shinchiro/mpv-winbuild-cmake/releases/download/20260610/mpv-x86_64-20260610-git-304426c.7z",
-            "hash": "facac536baa73c7b925771af5e39a3c9cb16b8d75b59a6e9800de89799dffca7"
-        },
-        "32bit": {
-            "url": "https://github.com/shinchiro/mpv-winbuild-cmake/releases/download/20260610/mpv-i686-20260610-git-304426c.7z",
-            "hash": "ce5ffa43c7cb599e0fff619f199452d17c22ed8f3b2f5bbf8f914d5da34db941"
+            "url": "https://nightly.link/mpv-player/mpv/workflows/build/master/mpv-v0.41.0-dev-g62f149466-28302012960-x86_64-pc-windows-msvc.zip",
+            "hash": "55930fbd3694126dd4779fe235b33ea6dd05ff5035e872bd06060c11886ca64f"
         },
         "arm64": {
-            "url": "https://github.com/shinchiro/mpv-winbuild-cmake/releases/download/20260610/mpv-aarch64-20260610-git-304426c.7z",
-            "hash": "0781fdffeef27a40a7f266631d1ca9e5c1d0f82868a1678c58d23e0b1bd1eb98"
+            "url": "https://nightly.link/mpv-player/mpv/workflows/build/master/mpv-v0.41.0-dev-g62f149466-28302012960-aarch64-pc-windows-msvc.zip",
+            "hash": "daa7042a7a16aed96b30170facc5e9fba71378840da981bbc2f952b2e596666d"
         }
     },
-    "pre_install": "Remove-Item \"$dir\\updater.bat\"",
     "env_add_path": ".",
     "shortcuts": [
         [
@@ -34,20 +29,21 @@
     ],
     "persist": "portable_config",
     "checkver": {
-        "github": "https://api.github.com/repos/shinchiro/mpv-winbuild-cmake/releases/latest",
-        "jsonpath": "$.assets[*].browser_download_url",
-        "regex": "mpv-x86_64-(\\d+)-git-(?<commit>[\\da-f]+)\\.7z"
+        "url": "https://api.github.com/repos/mpv-player/mpv/actions/workflows/build.yml/runs?branch=master&status=success",
+        "script": [
+            "$run = ($page | ConvertFrom-Json).workflow_runs[0]",
+            "$req = Invoke-WebRequest \"https://raw.githubusercontent.com/mpv-player/mpv/$($run.head_sha)/MPV_VERSION\" -UseBasicParsing",
+            "@{'ver' = $req.Content.Trim() -replace 'UNKNOWN', \"dev-g$($run.head_sha.Substring(0, 9))-$($run.id)\"} | ConvertTo-Json"
+        ],
+        "jsonpath": "$.ver"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/shinchiro/mpv-winbuild-cmake/releases/download/$version/mpv-x86_64-$version-git-$matchCommit.7z"
-            },
-            "32bit": {
-                "url": "https://github.com/shinchiro/mpv-winbuild-cmake/releases/download/$version/mpv-i686-$version-git-$matchCommit.7z"
+                "url": "https://nightly.link/mpv-player/mpv/workflows/build/master/mpv-v$version-x86_64-pc-windows-msvc.zip"
             },
             "arm64": {
-                "url": "https://github.com/shinchiro/mpv-winbuild-cmake/releases/download/$version/mpv-aarch64-$version-git-$matchCommit.7z"
+                "url": "https://nightly.link/mpv-player/mpv/workflows/build/master/mpv-v$version-aarch64-pc-windows-msvc.zip"
             }
         }
     }
