@@ -3,16 +3,11 @@
     "description": "Fast, lightweight, advanced system information tool for your PC.",
     "homepage": "https://www.ccleaner.com/speccy",
     "license": "Freeware",
-    "url": "https://download.ccleaner.com/spsetup134.exe#/dl.7z",
+    "url": "https://download.ccleaner.com/spsetup134.exe#/spsetup.exe",
     "hash": "a7f525daeb124f90d2a07d2975f40b9ee568d56244902d3418728ce6dfd737f0",
-    "bin": "Speccy.exe",
-    "shortcuts": [
-        [
-            "Speccy.exe",
-            "speccy"
-        ]
-    ],
     "pre_install": [
+        "# Extract, handle duplicate cpuidsdk.dll",
+        "Expand-7zipArchive -Path \"$dir\\spsetup.exe\" -DestinationPath \"$dir\\temp\" -Overwrite Rename -Removal",
         "# Construct EXE file name based on $architecture",
         "$FileName = [string] 'Speccy{0}.exe' -f $(if($architecture -eq '64bit'){'64'})",
         "# Copy EXE to $dir root and rename it to Speccy.exe if 64 bit",
@@ -20,17 +15,27 @@
         "    ForEach-Object -Process {",
         "        Move-Item -Path \"$dir\\$_\" -Destination \"$dir\\Speccy.exe\"",
         "    }",
+        "# Keep correct cpuidsdk.dll - 64 bit has the largest file size",
+        "Get-ChildItem -Path \"$dir\\temp\" -Include 'cpuidsdk*.dll' -Recurse |",
+        "   Sort-Object -Property 'Length' -Descending:$(if($architecture -eq '64bit'){$true}else{$false}) |",
+        "   Select-Object -First 1 |",
+        "   ForEach-Object -Process {Move-Item -Path $_.FullName -Destination \"$dir\\cpuidsdk.dll\"}",
+        "# Keep language files",
+        "Move-Item -Path \"$dir\\temp\\Lang\" -Destination \"$dir\"",
         "# Remove everything else",
-        "Get-ChildItem -Path $dir |",
-        "    Where-Object -Property 'Name' -ne 'Speccy.exe' |",
-        "    ForEach-Object -Process {",
-        "        Remove-Item -Recurse -Force -Path $_.FullName",
-        "    }",
+        "Remove-Item -Path \"$dir\\temp\" -Recurse -Force",
         "# Set settings",
         "Set-Content -Path \"$dir\\portable.dat\" -Value '#PORTABLE#' -Encoding ASCII",
         "if (-not (Test-Path \"$persist_dir\\Speccy.ini\")) {",
         "    Set-Content \"$dir\\Speccy.ini\" (@('[Software\\Piriform\\Speccy]', 'NeedUpdate=0') -join \"`r`n\") -Encoding ASCII",
         "}"
+    ],
+    "bin": "Speccy.exe",
+    "shortcuts": [
+        [
+            "Speccy.exe",
+            "speccy"
+        ]
     ],
     "persist": "Speccy.ini",
     "checkver": {
