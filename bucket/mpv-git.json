@@ -1,5 +1,5 @@
 {
-    "version": "0.41.0-17156-62f149466",
+    "version": "2026-06-28-5abce15f1c",
     "description": "A free, open source, and cross-platform media player",
     "homepage": "https://mpv.io",
     "license": "LGPL-2.1-or-later,GPL-2.0-or-later",
@@ -12,14 +12,15 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://nightly.link/mpv-player/mpv/workflows/build/master/mpv-v0.41.0-dev-g62f149466-28302012960-x86_64-pc-windows-msvc.zip",
-            "hash": "55930fbd3694126dd4779fe235b33ea6dd05ff5035e872bd06060c11886ca64f"
+            "url": "https://github.com/zhongfly/mpv-winbuild/releases/download/2026-06-28-5abce15f1c/mpv-x86_64-v3-20260628-git-5abce15f1c.7z",
+            "hash": "d84b0971373f5747e69efde6650c742a477a1a70c38911884a243e5f4b145aac"
         },
         "arm64": {
-            "url": "https://nightly.link/mpv-player/mpv/workflows/build/master/mpv-v0.41.0-dev-g62f149466-28302012960-aarch64-pc-windows-msvc.zip",
-            "hash": "daa7042a7a16aed96b30170facc5e9fba71378840da981bbc2f952b2e596666d"
+            "url": "https://github.com/zhongfly/mpv-winbuild/releases/download/2026-06-28-5abce15f1c/mpv-aarch64-20260628-git-5abce15f1c.7z",
+            "hash": "df70833a1b82ee0899b757d0620d797ed78acc09c4406af8370bc617bf6ce263"
         }
     },
+    "pre_install": "'updater.bat', 'installer' | ForEach-Object { Remove-Item \"$dir\\$_\" }",
     "env_add_path": ".",
     "shortcuts": [
         [
@@ -29,28 +30,18 @@
     ],
     "persist": "portable_config",
     "checkver": {
-        "url": "https://api.github.com/repos/mpv-player/mpv/actions/workflows/build.yml/runs?branch=master&status=success",
-        "script": [
-            "$run = ($page | ConvertFrom-Json).workflow_runs[0]",
-            "$req = Invoke-WebRequest \"https://raw.githubusercontent.com/mpv-player/mpv/$($run.head_sha)/MPV_VERSION\" -UseBasicParsing",
-            "$ver = \"$($req.Content.Trim().Split('-')[0])-$($run.run_number)-$($run.head_sha)\"",
-            "@{'result' = \"$ver $($run.id)\"} | ConvertTo-Json"
-        ],
-        "jsonpath": "$.result",
-        "regex": "(?<version>(?<base>[\\d.]+)-\\d+-(?<sha>[a-f0-9]{9}))[a-f0-9]* (?<id>\\d+)"
+        "github": "https://github.com/zhongfly/mpv-winbuild",
+        "regex": "(?<year>\\d{4})-(?<month>\\d{2})-(?<day>\\d{2})-(?<commit>[a-f0-9]+)",
+        "replace": "${year}-${month}-${day}-${commit}"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://nightly.link/mpv-player/mpv/workflows/build/master/mpv-v$matchBase-dev-g$matchSha-$matchId-x86_64-pc-windows-msvc.zip"
+                "url": "https://github.com/zhongfly/mpv-winbuild/releases/download/$version/mpv-x86_64-v3-$matchYear$matchMonth$matchDay-git-$matchCommit.7z"
             },
             "arm64": {
-                "url": "https://nightly.link/mpv-player/mpv/workflows/build/master/mpv-v$matchBase-dev-g$matchSha-$matchId-aarch64-pc-windows-msvc.zip"
+                "url": "https://github.com/zhongfly/mpv-winbuild/releases/download/$version/mpv-aarch64-$matchYear$matchMonth$matchDay-git-$matchCommit.7z"
             }
-        },
-        "hash": {
-            "url": "https://api.github.com/repos/mpv-player/mpv/actions/runs/$matchId/artifacts",
-            "jsonpath": "$.artifacts[?(@.name== '$basenameNoExt')].digest"
         }
     }
 }
