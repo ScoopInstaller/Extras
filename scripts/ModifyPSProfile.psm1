@@ -47,7 +47,8 @@ function New-ProfileModifier {
     $ScoopDir = Split-Path $BucketDir | Split-Path
     $AppDir = $ScoopDir | Join-Path -ChildPath "\apps\$AppName\current\"
 
-    $ImportUtilsCommand = ("Import-Module ", $UtilsPath) -Join ("")
+    $EscapedUtilsPath = $UtilsPath -replace "'", "''"
+    $ImportUtilsCommand = "Import-Module '$EscapedUtilsPath'"
     $RemoveUtilsCommand = "Remove-Module -Name ModifyPSProfile"
 
     $ImportModuleCommand = ("Add-ProfileContent 'Import-Module ", $ModuleName, "'") -Join ("")
@@ -59,11 +60,11 @@ function New-ProfileModifier {
         switch ($Behavior) {
             "ImportModule" {
                 $GenerateContent = ($ImportUtilsCommand, $RemoveModuleCommand, $ImportModuleCommand, $RemoveUtilsCommand) -Join ($NewLine)
-                $GenerateContent | Out-File -FilePath "$AppDir\add-profile-content.ps1" -Encoding UTF8
+                $GenerateContent | Out-File -FilePath "$AppDir\add-profile-content.ps1" -Encoding UTF8 -ErrorAction Stop
             }
             "RemoveModule" {
                 $GenerateContent = ($ImportUtilsCommand, $RemoveModuleCommand, $RemoveUtilsCommand) -Join ($NewLine)
-                $GenerateContent | Out-File -FilePath "$AppDir\remove-profile-content.ps1" -Encoding UTF8
+                $GenerateContent | Out-File -FilePath "$AppDir\remove-profile-content.ps1" -Encoding UTF8 -ErrorAction Stop
             }
         }
 
@@ -94,9 +95,11 @@ function Add-ProfileContent {
 
     try {
         if (Test-Path $PROFILE) {
-            Add-Content -Path $PROFILE -Value "$NewLine$Content" -Encoding UTF8 -NoNewLine
+            Add-Content -Path $PROFILE -Value "$NewLine$Content" -Encoding UTF8 -NoNewLine -ErrorAction Stop
         } else {
-            $Content | Out-File -FilePath $PROFILE -Encoding UTF8 -Force
+            $ProfileParentDir = Split-Path -Path $PROFILE -Parent
+            if (-not (Test-Path $ProfileParentDir)) { New-Item -Path $ProfileParentDir -ItemType Directory -Force -ErrorAction Stop | Out-Null }
+            $Content | Out-File -FilePath $PROFILE -Encoding UTF8 -Force -ErrorAction Stop
         }
 
         Write-Host "success." -ForegroundColor Green
@@ -129,7 +132,7 @@ function Remove-ProfileContent {
     }
 
     try {
-        $RawProfile = Get-Content -Path $PROFILE -Encoding UTF8 -Raw
+        $RawProfile = Get-Content -Path $PROFILE -Encoding UTF8 -Raw -ErrorAction Stop
 
         if ($null -eq $RawProfile) {
             Write-Host "abort." -ForegroundColor Yellow
@@ -138,10 +141,11 @@ function Remove-ProfileContent {
         }
 
         $escapedContent = [Regex]::Escape($Content)
+        $ProfileLinePattern = "(?m)^[ \t]*$escapedContent[ \t]*(?:\r?\n|$)"
 
-        if ($RawProfile -match $escapedContent) {
-            $modifiedProfile = ($RawProfile -replace "[\r\n]*$escapedContent", '').trim()
-            $modifiedProfile | Out-File -FilePath $PROFILE -Encoding UTF8 -NoNewLine
+        if ($RawProfile -match $ProfileLinePattern) {
+            $modifiedProfile = $RawProfile -replace $ProfileLinePattern, ''
+            $modifiedProfile | Out-File -FilePath $PROFILE -Encoding UTF8 -NoNewLine -ErrorAction Stop
         } else {
             Write-Host "abort." -ForegroundColor Yellow
             Write-Host "INFO  Content not found in PowerShell profile." -ForegroundColor DarkGray
