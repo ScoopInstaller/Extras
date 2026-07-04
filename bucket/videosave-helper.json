@@ -1,0 +1,39 @@
+{
+  "version": "2.0.2",
+  "description": "Windows helper for saving and verifying supported video pages with a companion browser extension.",
+  "homepage": "https://daice-labo.com/VideoSaverHelper/",
+  "license": "Proprietary",
+  "architecture": {
+    "64bit": {
+      "url": "https://github.com/HIRONLONDON/VideoLatchHelper/releases/download/videolatch-helper-v2.0.2/VideoSaveHelperSetup-2.0.2.exe#/VideoSaveHelperSetup-2.0.2.exe",
+      "hash": "153ad9dd85acdc8f07bb2b3b15f5a3eee3b8e66889c901914a8aae73274dc58e"
+    }
+  },
+  "installer": {
+    "script": [
+      "$installer = \"$dir\\VideoSaveHelperSetup-2.0.2.exe\"",
+      "Start-Process -FilePath $installer -ArgumentList '--quiet','--no-start' -Wait"
+    ]
+  },
+  "uninstaller": {
+    "script": [
+      "$uninstaller = Join-Path $env:LOCALAPPDATA 'VideoLatchHelper\\2.0.2\\VideoLatchHelperUninstall.exe'",
+      "if (Test-Path $uninstaller) { Start-Process -FilePath $uninstaller -ArgumentList '--quiet' -Wait }"
+    ]
+  },
+  "checkver": {
+    "github": "https://github.com/HIRONLONDON/VideoLatchHelper",
+    "regex": "videolatch-helper-v([\\d.]+)"
+  },
+  "autoupdate": {
+    "architecture": {
+      "64bit": {
+        "url": "https://github.com/HIRONLONDON/VideoLatchHelper/releases/download/videolatch-helper-v$version/VideoSaveHelperSetup-$version.exe#/VideoSaveHelperSetup-$version.exe"
+      }
+    }
+  },
+  "notes": [
+    "VideoSave Helper installs a local Windows helper for the browser extension.",
+    "Users are responsible for saving only content they own or have permission to save."
+  ]
+}
