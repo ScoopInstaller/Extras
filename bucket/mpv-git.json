@@ -1,5 +1,5 @@
 {
-    "version": "2026-07-05-33111f3212",
+    "version": "202607051339",
     "description": "A free, open source, and cross-platform media player",
     "homepage": "https://mpv.io",
     "license": "LGPL-2.1-or-later,GPL-2.0-or-later",
@@ -30,17 +30,18 @@
     ],
     "persist": "portable_config",
     "checkver": {
-        "github": "https://github.com/zhongfly/mpv-winbuild",
-        "regex": "(?<year>\\d{4})-(?<month>\\d{2})-(?<day>\\d{2})-(?<commit>[a-f0-9]+)",
-        "replace": "${year}-${month}-${day}-${commit}"
+        "github": "https://api.github.com/repos/zhongfly/mpv-winbuild/releases/latest",
+        "jsonpath": "$..['tag_name', 'name']",
+        "regex": "(?<tag>(?<year>\\d{4})-(?<month>\\d{2})-(?<day>\\d{2})-(?<commit>[a-f0-9]{10})).*?(?<hour>\\d{2}):(?<minute>\\d{2})",
+        "replace": "${year}${month}${day}${hour}${minute}"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/zhongfly/mpv-winbuild/releases/download/$version/mpv-x86_64-$matchYear$matchMonth$matchDay-git-$matchCommit.7z"
+                "url": "https://github.com/zhongfly/mpv-winbuild/releases/download/$matchTag/mpv-x86_64-$matchYear$matchMonth$matchDay-git-$matchCommit.7z"
             },
             "arm64": {
-                "url": "https://github.com/zhongfly/mpv-winbuild/releases/download/$version/mpv-aarch64-$matchYear$matchMonth$matchDay-git-$matchCommit.7z"
+                "url": "https://github.com/zhongfly/mpv-winbuild/releases/download/$matchTag/mpv-aarch64-$matchYear$matchMonth$matchDay-git-$matchCommit.7z"
             }
         }
     }
