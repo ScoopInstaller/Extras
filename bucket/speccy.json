@@ -5,36 +5,31 @@
     "license": "Freeware",
     "url": "https://download.ccleaner.com/spsetup134.exe#/dl.7z",
     "hash": "a7f525daeb124f90d2a07d2975f40b9ee568d56244902d3418728ce6dfd737f0",
-    "architecture": {
-        "64bit": {
-            "bin": [
-                [
-                    "Speccy64.exe",
-                    "Speccy"
-                ]
-            ],
-            "shortcuts": [
-                [
-                    "Speccy64.exe",
-                    "Speccy"
-                ]
-            ]
-        },
-        "32bit": {
-            "bin": "Speccy.exe",
-            "shortcuts": [
-                [
-                    "Speccy.exe",
-                    "speccy"
-                ]
-            ]
-        }
-    },
+    "bin": "Speccy.exe",
+    "shortcuts": [
+        [
+            "Speccy.exe",
+            "speccy"
+        ]
+    ],
     "pre_install": [
-        "Set-Content \"$dir\\portable.dat\" '#PORTABLE#' -Encoding ASCII",
-        "'$*', 'uninst.exe', \"Speccy$(if ($architecture -eq '32bit') { '64' }).exe\" | ForEach-Object { Remove-Item -Recurse -Force \"$dir\\$_\" }",
-        "if(!(Test-Path \"$persist_dir\\Speccy.ini\")) {",
-        "   Set-Content \"$dir\\Speccy.ini\" (@('[Software\\Piriform\\Speccy]', 'NeedUpdate=0') -join \"`r`n\") -Encoding ASCII",
+        "# Construct EXE file name based on $architecture",
+        "$FileName = [string] 'Speccy{0}.exe' -f $(if($architecture -eq '64bit'){'64'})",
+        "# Copy EXE to $dir root and rename it to Speccy.exe if 64 bit",
+        "Get-ChildItem -Recurse -File -Path \"$dir\" -Name $FileName -ErrorAction Stop |",
+        "    ForEach-Object -Process {",
+        "        Move-Item -Path \"$dir\\$_\" -Destination \"$dir\\Speccy.exe\"",
+        "    }",
+        "# Remove everything else",
+        "Get-ChildItem -Path $dir |",
+        "    Where-Object -Property 'Name' -ne 'Speccy.exe' |",
+        "    ForEach-Object -Process {",
+        "        Remove-Item -Recurse -Force -Path $_.FullName",
+        "    }",
+        "# Set settings",
+        "Set-Content -Path \"$dir\\portable.dat\" -Value '#PORTABLE#' -Encoding ASCII",
+        "if (-not (Test-Path \"$persist_dir\\Speccy.ini\")) {",
+        "    Set-Content \"$dir\\Speccy.ini\" (@('[Software\\Piriform\\Speccy]', 'NeedUpdate=0') -join \"`r`n\") -Encoding ASCII",
         "}"
     ],
     "persist": "Speccy.ini",
