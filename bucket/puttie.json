@@ -41,7 +41,13 @@
     ],
     "checkver": {
         "github": "https://api.github.com/repos/lalbornoz/PuTTie/releases/latest",
-        "regex": "(?s)Release-(?<sha>[0-9a-f]{8}).*?updated_at.*?(\\d{4})-(\\d{2})-(\\d{2})",
+        "script": [
+            "$release = $page | ConvertFrom-Json",
+            "$output = @{'result' = \"$($release.tag_name) $($release.updated_at)\"} | ConvertTo-Json",
+            "Write-Output $output"
+        ],
+        "jsonpath": "$.result",
+        "regex": "Release-(?<sha>[0-9a-f]{8}) (\\d{4})-(\\d{2})-(\\d{2})",
         "replace": "${1}${2}${3}-${sha}"
     },
     "autoupdate": {
