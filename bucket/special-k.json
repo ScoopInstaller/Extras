@@ -8,10 +8,31 @@
     "innosetup": true,
     "architecture": {
         "64bit": {
-            "pre_install": "Rename-Item \"$dir\\SKIF,1.exe\" SKIF.exe; Remove-Item \"$dir\\SKIF,2.exe\""
+            "pre_install": "Rename-Item \"$dir\\SKIF,1.exe\" SKIF.exe; Remove-Item \"$dir\\SKIF,2.exe\"",
+            "bin": [
+                "SKIF.exe",
+                "SKIV.exe"
+            ],
+            "shortcuts": [
+                [
+                    "SKIF.exe",
+                    "Special K\\Special K Injection Frontend (SKIF)"
+                ],
+                [
+                    "SKIV.exe",
+                    "Special K\\Special K Image Viewer (SKIV)"
+                ]
+            ]
         },
         "32bit": {
-            "pre_install": "Rename-Item \"$dir\\SKIF,2.exe\" SKIF.exe; Remove-Item \"$dir\\SKIF,1.exe\""
+            "pre_install": "Rename-Item \"$dir\\SKIF,2.exe\" SKIF.exe; Remove-Item \"$dir\\SKIF,1.exe\"",
+            "bin": "SKIF.exe",
+            "shortcuts": [
+                [
+                    "SKIF.exe",
+                    "Special K\\Special K Injection Frontend (SKIF)"
+                ]
+            ]
         }
     },
     "post_install": [
@@ -22,20 +43,6 @@
         "    }",
         "}"
     ],
-    "bin": [
-        "SKIF.exe",
-        "SKIV.exe"
-    ],
-    "shortcuts": [
-        [
-            "SKIF.exe",
-            "Special K/SKIF"
-        ],
-        [
-            "SKIV.exe",
-            "Special K/SKIV"
-        ]
-    ],
     "persist": [
         "Global",
         "PlugIns",
@@ -43,14 +50,13 @@
     ],
     "checkver": {
         "url": "https://sk-data.special-k.info/repository.json",
-        "jp": "$.Main.Versions[0].Name"
+        "jsonpath": "$.Main.Versions[0].Name"
     },
     "autoupdate": {
+        "url": "https://sk-data.special-k.info/repository/SpecialK_$version.exe",
         "hash": {
-            "mode": "json",
             "url": "https://sk-data.special-k.info/repository.json",
-            "jp": "$.Main.Versions[0].SHA256"
-        },
-        "url": "https://sk-data.special-k.info/repository/SpecialK_$version.exe"
+            "jsonpath": "$.Main.Versions[0].SHA256"
+        }
     }
 }
