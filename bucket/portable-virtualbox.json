@@ -1,10 +1,10 @@
 {
-    "version": "6.4.10",
+    "version": "6.4.10.5.1.22",
     "description": "A portable VirtualBox downloader and launcher written by Runar Buvik",
     "homepage": "https://www.vbox.me/",
     "license": "GPL-2.0-only,CC-BY-NC-SA-3.0",
     "url": [
-        "http://files.vbox.me/files/Portable-VirtualBox_v5.1.22-Starter_v6.4.10-Win_all.exe#/dl.7z",
+        "https://vbox.me/files/Portable-VirtualBox_v5.1.22-Starter_v6.4.10-Win_all.exe#/dl.7z",
         "https://download.virtualbox.org/virtualbox/5.1.22/VirtualBox-5.1.22-115126-Win.exe#/VirtualBox.exe",
         "https://download.virtualbox.org/virtualbox/5.1.22/Oracle_VM_VirtualBox_Extension_Pack-5.1.22-115126.vbox-extpack#/Extension"
     ],
@@ -21,8 +21,24 @@
             "Portable VirtualBox"
         ]
     ],
-    "checkver": "VirtualBox_v(?<vbox>[\\d.]+)-Starter_v(?<version>[\\d.]+)-Win_all.exe</a>",
+    "checkver": {
+        "script": [
+            "$page -match 'VirtualBox_v(?<vbox>[\\d.]+)-Starter_v(?<version>[\\d.]+)-Win_all.exe'",
+            "$vboxVersion = $($matches.vbox)",
+            "$fullversion = \"$($matches.version).$($matches.vbox)\"",
+            "$url = \"https://download.virtualbox.org/virtualbox/$vboxVersion/\"",
+            "$page = (Invoke-WebRequest $url -UseBasicParsing).Content",
+            "$page -match \"VirtualBox-$vboxVersion-(?<vboxbuild>\\d+)-Win.exe\"",
+            "$vboxbuild = $($matches.vboxbuild)",
+            "\"$fullversion $vboxVersion $vboxbuild\""
+        ],
+        "regex": "([\\d.]+) (?<vboxversion>[\\d.]+) (?<vboxbuild>[\\d]+)"
+    },
     "autoupdate": {
-        "url": "http://files.vbox.me/files/Portable-VirtualBox_v$matchVbox-Starter_v$matchVersion-Win_all.exe#/dl.7z"
+        "url": [
+            "https://vbox.me/files/Portable-VirtualBox_v$matchVboxversion-Starter_v$matchHead-Win_all.exe#/dl.7z",
+            "https://download.virtualbox.org/virtualbox/$matchVboxversion/VirtualBox-$matchVboxversion-$matchVboxbuild-Win.exe#/VirtualBox.exe",
+            "https://download.virtualbox.org/virtualbox/$matchVboxversion/Oracle_VM_VirtualBox_Extension_Pack-$matchVboxversion-$matchVboxbuild.vbox-extpack#/Extension"
+        ]
     }
 }
