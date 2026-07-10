@@ -1,0 +1,34 @@
+{
+    "version": "1.7.4",
+    "description": "Voice-to-text dictation app with local and cloud models",
+    "homepage": "https://openwhispr.com",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/OpenWhispr/openwhispr/releases/download/v1.7.4/OpenWhispr-Setup-1.7.4.exe#/dl.7z",
+            "hash": "sha512:15e070fb6044792ef38ada64ec03bab74507f3a4385ba4d69cca4819999e7d09fb47ce1a2c68ba1c2fb5d198a2e6cb4c4dcd778ef5f90c56afb997398ed1b2eb",
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+        }
+    },
+    "post_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Recurse -Force",
+    "shortcuts": [
+        [
+            "OpenWhispr.exe",
+            "OpenWhispr"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/OpenWhispr/openwhispr"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/OpenWhispr/openwhispr/releases/download/v$version/OpenWhispr-Setup-$version.exe#/dl.7z"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "(?sm)$basename.*?sha512:\\s+$base64"
+        }
+    }
+}
