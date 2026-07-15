@@ -1,6 +1,6 @@
 {
     "version": "0.1.55",
-    "description": "Free, blazing-fast multi-protocol download manager (IDM alternative) powered by a Rust engine. Supports HTTP/HTTPS/FTP/BitTorrent/HLS with intelligent segmentation.",
+    "description": "A Rust-powered download manager with HTTP, FTP, BitTorrent and HLS/DASH streaming support.",
     "homepage": "https://fluxdown.zerx.dev",
     "license": {
         "identifier": "AGPL-3.0-only",
@@ -18,7 +18,10 @@
         "Browser extensions (required for download interception):",
         "  Chrome: https://chromewebstore.google.com/detail/fluxdown/meleenglfggcmcajknpeeeiobnpfmahc",
         "  Firefox: https://addons.mozilla.org/firefox/addon/fluxdown",
-        "  Edge: https://microsoftedge.microsoft.com/addons/detail/fluxdown/nglkkjbogjghekbhhcnccnpfedjbdhhd"
+        "  Edge: https://microsoftedge.microsoft.com/addons/detail/fluxdown/nglkkjbogjghekbhhcnccnpfedjbdhhd",
+        "",
+        "Command-line client:",
+        "  https://github.com/zerx-lab/FluxDown/releases/tag/cli-v$version"
     ],
     "architecture": {
         "64bit": {
@@ -30,9 +33,10 @@
             "hash": "3fd9d54ca258df1ccb217d3fa5f14d55e61dd7408a5cb4447af1d342c8b1d047"
         }
     },
-    "pre_install": "if (!(Test-Path \"$dir\\flux_down.db\")) { New-Item -ItemType File \"$dir\\flux_down.db\" -Force | Out-Null }",
-    "post_install": "if (!(Test-Path \"$dir\\settings.json\")) { New-Item -ItemType File \"$dir\\settings.json\" -Force | Out-Null }",
-    "bin": "flux_down.exe",
+    "pre_install": [
+        "if (!(Test-Path \"$dir\\flux_down.db\")) { New-Item -ItemType File \"$dir\\flux_down.db\" -Force | Out-Null }",
+        "if (!(Test-Path \"$dir\\settings.json\")) { Set-Content \"$dir\\settings.json\" '{}' -Encoding UTF8 }"
+    ],
     "shortcuts": [
         [
             "flux_down.exe",
@@ -45,20 +49,6 @@
         "settings.json",
         "logs"
     ],
-    "uninstaller": {
-        "script": [
-            "Stop-Process -Name flux_down -Force -ErrorAction SilentlyContinue",
-            "Start-Sleep -Milliseconds 1500",
-            "$appDir = Split-Path $dir -Parent",
-            "$shell = New-Object -ComObject WScript.Shell",
-            "@(\"$env:APPDATA\", \"$env:ProgramData\") | ForEach-Object {",
-            "    $lnk = \"$_\\Microsoft\\Windows\\Start Menu\\Programs\\FluxDown.lnk\"",
-            "    if ((Test-Path $lnk) -and ($shell.CreateShortcut($lnk).TargetPath -like \"$appDir\\*\")) {",
-            "        Remove-Item $lnk -Force -ErrorAction SilentlyContinue",
-            "    }",
-            "}"
-        ]
-    },
     "checkver": {
         "github": "https://github.com/zerx-lab/FluxDown"
     },
@@ -72,7 +62,7 @@
             }
         },
         "hash": {
-            "url": "https://github.com/zerx-lab/FluxDown/releases/download/v$version/SHA256SUMS.txt"
+            "url": "$baseurl/SHA256SUMS.txt"
         }
     }
 }
