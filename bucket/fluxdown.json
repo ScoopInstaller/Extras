@@ -8,11 +8,11 @@
     },
     "notes": [
         "FluxDown portable data persistence:",
-        "  - Built-in portable mode: runtime data stored in the app directory",
-        "  - Download history and config persisted via flux_down.db (SQLite)",
-        "  - BT session state (fast-resume) persisted via bt_session/",
-        "  - UI settings (window state, theme, locale) persisted via settings.json",
-        "  - Application logs persisted via logs/",
+        "  - Built-in portable mode: runtime data stored in portable_data/ subdirectory",
+        "  - Download history and config persisted via portable_data/flux_down.db (SQLite)",
+        "  - BT session state (fast-resume) persisted via portable_data/bt_session/",
+        "  - UI settings (window state, theme, locale) persisted via portable_data/settings.json",
+        "  - Application logs persisted via portable_data/logs/",
         "  - All data is preserved across updates",
         "",
         "Browser extensions (required for download interception):",
@@ -34,6 +34,7 @@
         }
     },
     "pre_install": [
+        "if (!(Test-Path \"$dir\\portable_data\")) { New-Item -ItemType Directory \"$dir\\portable_data\" -Force | Out-Null }",
         "if (!(Test-Path \"$dir\\flux_down.db\")) { New-Item -ItemType File \"$dir\\flux_down.db\" -Force | Out-Null }",
         "if (!(Test-Path \"$dir\\settings.json\")) { Set-Content \"$dir\\settings.json\" '{}' -Encoding UTF8 }"
     ],
@@ -47,7 +48,8 @@
         "flux_down.db",
         "bt_session",
         "settings.json",
-        "logs"
+        "logs",
+        "portable_data"
     ],
     "checkver": {
         "github": "https://github.com/zerx-lab/FluxDown"
