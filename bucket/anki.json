@@ -1,12 +1,18 @@
 {
-    "version": "25.09",
+    "version": "26.05",
     "description": "Powerful and intelligent flash cards",
     "homepage": "https://apps.ankiweb.net",
     "license": "AGPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/ankitects/anki/releases/download/25.09/anki-launcher-25.09-windows.exe#/dl.7z",
-            "hash": "398f690a8208bd381dc2d4220720a82f6d2249c1fd1b38f46a90db356cb7c69e"
+            "url": "https://github.com/ankitects/anki/releases/download/26.05/anki-26.05-win-x64.msi",
+            "hash": "2047f71d7771add993e15f2f01a56ea41617967ae5b3d6d3f402cbc40716c5e0",
+            "extract_dir": "PFiles64\\Anki"
+        },
+        "arm64": {
+            "url": "https://github.com/ankitects/anki/releases/download/26.05/anki-26.05-win-arm64.msi",
+            "hash": "c354b8d2df56232a8a4158b17a155b6e132a1be56bded66e8c0fed0fa4ac8005",
+            "extract_dir": "PFiles64\\Anki"
         }
     },
     "pre_install": [
@@ -14,12 +20,10 @@
         "   '@echo off'",
         "   'echo Starting Anki...'",
         "   'set \"USB_ROOT=%~dp0\"'",
-        "   'set \"ANKI_LAUNCHER_VENV_ROOT=%USB_ROOT%\\programfiles\"'",
         "   'set \"ANKI_LAUNCHER=%USB_ROOT%\\anki\"'",
         "   'set \"ANKI_BASE=%USB_ROOT%\\data\"'",
         "   'start /b \"\" \"%ANKI_LAUNCHER%\"'",
-        ") | Set-Content \"$dir\\anki.cmd\" -Encoding ASCII",
-        "Remove-Item \"$dir\\`$*\" -Recurse"
+        ") | Set-Content \"$dir\\anki.cmd\" -Encoding ASCII"
     ],
     "bin": "anki.cmd",
     "shortcuts": [
@@ -30,23 +34,20 @@
             "anki.exe"
         ]
     ],
-    "persist": [
-        "data",
-        "programfiles"
-    ],
+    "persist": "data",
     "checkver": {
         "github": "https://api.github.com/repos/ankitects/anki/releases",
         "jsonpath": "$[*].assets[*].browser_download_url",
-        "regex": "download/(?<version>[\\d.]+)/anki-launcher-\\k<version>-windows\\.exe"
+        "regex": "download/(?<version>[\\d.]+)/anki-\\k<version>-win-x64\\.msi"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/ankitects/anki/releases/download/$version/anki-launcher-$version-windows.exe#/dl.7z"
+                "url": "https://github.com/ankitects/anki/releases/download/$version/anki-$version-win-x64.msi"
+            },
+            "arm64": {
+                "url": "https://github.com/ankitects/anki/releases/download/$version/anki-$version-win-arm64.msi"
             }
-        },
-        "hash": {
-            "url": "$baseurl/anki-launcher-$version-checksums.txt"
         }
     }
 }

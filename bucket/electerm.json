@@ -1,30 +1,38 @@
 {
-    "version": "3.15.86",
+    "version": "3.15.138",
     "description": "Terminal/ssh/serial port/sftp client",
     "homepage": "https://electerm.github.io/electerm/",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/electerm/electerm/releases/download/v3.15.86/electerm-3.15.86-win-x64.tar.gz",
-            "hash": "ca6784a85e3f3640a35f73d4f4347071cc03db193128353057cf6980ec31058a",
-            "extract_dir": "electerm-3.15.86-win-x64"
+            "url": "https://github.com/electerm/electerm/releases/download/v3.15.138/electerm-3.15.138-win-x64-portable.tar.gz",
+            "hash": "02cb36bb31f920554e4514056715ed2d8c98f34e42c0b2a6e8df2c27d90bfb3a",
+            "extract_dir": "electerm-3.15.138-win-x64-portable"
         }
     },
+    "pre_install": [
+        "# copy config from non-portable version",
+        "if (!(Test-Path \"$persist_dir\\electerm\") -and (Test-Path \"$env:Appdata\\electerm\")) {",
+        "    if (!(Test-Path \"$dir\\electerm\")) { New-Item \"$dir\\electerm\" -ItemType Directory | Out-Null }",
+        "    Copy-Item \"$env:Appdata\\electerm\\*\" \"$dir\\electerm\\\" -Recurse -Force",
+        "}"
+    ],
     "bin": "electerm.exe",
     "shortcuts": [
         [
             "electerm.exe",
-            "electerm"
+            "Electerm"
         ]
     ],
+    "persist": "electerm",
     "checkver": {
         "github": "https://github.com/electerm/electerm"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/electerm/electerm/releases/download/v$version/electerm-$version-win-x64.tar.gz",
-                "extract_dir": "electerm-$version-win-x64"
+                "url": "https://github.com/electerm/electerm/releases/download/v$version/electerm-$version-win-x64-portable.tar.gz",
+                "extract_dir": "electerm-$version-win-x64-portable"
             }
         }
     }
