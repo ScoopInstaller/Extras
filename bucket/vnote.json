@@ -5,9 +5,8 @@
     "license": "LGPL-3.0-only",
     "notes": [
         "VNote does not auto-migrate non-portable settings into the portable `config` folder.",
-        "If you used VNote before this change, copy your old settings into the persist folder once:",
-        "from `%APPDATA%\\VNoteX\\VNote`, `%LOCALAPPDATA%\\VNoteX\\VNote`, `%APPDATA%\\vnote`, or `%LOCALAPPDATA%\\VNote`",
-        "to `$persist_dir\\config` (or let the install script migrate when that folder is empty)."
+        "If you used VNote before this change, copy your settings once from the non-portable user folder into `$persist_dir\\config`.",
+        "Common locations: `%APPDATA%\\VNote\\VNote` or `%LOCALAPPDATA%\\VNote\\VNote` (not both at once for a single profile)."
     ],
     "suggest": {
         "vcredist": "extras/vcredist2022"
@@ -19,24 +18,6 @@
             "extract_dir": "VNote-4.2.0-win64\\bin"
         }
     },
-    "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\config\")) { New-Item \"$persist_dir\\config\" -ItemType Directory | Out-Null }",
-        "$targets = @(",
-        "    \"$env:APPDATA\\VNoteX\\VNote\",",
-        "    \"$env:LOCALAPPDATA\\VNoteX\\VNote\",",
-        "    \"$env:APPDATA\\vnote\",",
-        "    \"$env:LOCALAPPDATA\\VNote\"",
-        ")",
-        "if (-not (Test-Path -Path \"$persist_dir\\config\\*\")) {",
-        "    foreach ($src in $targets) {",
-        "        if (Test-Path -Path \"$src\\*\") {",
-        "            Write-Host \"INFO  Migrating VNote settings from '$src' to '$persist_dir\\config'...\" -ForegroundColor DarkGray",
-        "            Copy-Item -Path \"$src\\*\" -Destination \"$persist_dir\\config\" -Force -Recurse -ErrorAction SilentlyContinue",
-        "            break",
-        "        }",
-        "    }",
-        "}"
-    ],
     "bin": "vnote.exe",
     "shortcuts": [
         [
