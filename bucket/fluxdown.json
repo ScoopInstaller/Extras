@@ -1,0 +1,60 @@
+{
+    "version": "0.2.3",
+    "description": "A Rust-powered download manager with HTTP, FTP, BitTorrent and HLS/DASH streaming support.",
+    "homepage": "https://fluxdown.zerx.dev",
+    "license": {
+        "identifier": "AGPL-3.0-only",
+        "url": "https://github.com/zerx-lab/FluxDown/blob/main/LICENSE"
+    },
+    "notes": [
+        "FluxDown portable data persistence:",
+        "  - Built-in portable mode: runtime data stored in portable_data/ subdirectory",
+        "  - Download history and config persisted via portable_data/flux_down.db (SQLite)",
+        "  - BT session state (fast-resume) persisted via portable_data/bt_session/",
+        "  - UI settings (window state, theme, locale) persisted via portable_data/settings.json",
+        "  - Application logs persisted via portable_data/logs/",
+        "  - All data is preserved across updates",
+        "",
+        "Browser extensions (required for download interception):",
+        "  Chrome: https://chromewebstore.google.com/detail/fluxdown/meleenglfggcmcajknpeeeiobnpfmahc",
+        "  Firefox: https://addons.mozilla.org/firefox/addon/fluxdown",
+        "  Edge: https://microsoftedge.microsoft.com/addons/detail/fluxdown/nglkkjbogjghekbhhcnccnpfedjbdhhd",
+        "",
+        "Command-line client:",
+        "  https://github.com/zerx-lab/FluxDown/releases/tag/cli-v$version"
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/zerx-lab/FluxDown/releases/download/v0.2.3/FluxDown-0.2.3-windows-x64-portable.zip",
+            "hash": "e85f0eae285e661f69639187c3ceba7799726823b343abd212d2fb5e926a7b3f"
+        },
+        "arm64": {
+            "url": "https://github.com/zerx-lab/FluxDown/releases/download/v0.2.3/FluxDown-0.2.3-windows-arm64-portable.zip",
+            "hash": "82a427ff25d4af920612e69fa345c9f7a62e5795b4a971f56c61b8ba934ada58"
+        }
+    },
+    "pre_install": "if (!(Test-Path \"$dir\\portable_data\")) { New-Item -ItemType Directory \"$dir\\portable_data\" -Force | Out-Null }",
+    "shortcuts": [
+        [
+            "flux_down.exe",
+            "FluxDown"
+        ]
+    ],
+    "persist": "portable_data",
+    "checkver": {
+        "github": "https://github.com/zerx-lab/FluxDown"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/zerx-lab/FluxDown/releases/download/v$version/FluxDown-$version-windows-x64-portable.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/zerx-lab/FluxDown/releases/download/v$version/FluxDown-$version-windows-arm64-portable.zip"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/SHA256SUMS.txt"
+        }
+    }
+}
