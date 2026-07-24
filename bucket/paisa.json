@@ -1,0 +1,30 @@
+{
+    "version": "0.6.6",
+    "description": "Personal Finance Manager (CLI only)",
+    "homepage": "https://paisa.fyi/",
+    "license": "AGPL-3.0-or-later",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/ananthakumaran/paisa/releases/download/v0.6.6/paisa-cli-windows-amd64.exe#/paisa.exe",
+            "hash": "066c01813f5a48dd6712a3eac410f7c2208161e5aac36cabbf19b82f7d5f2f30"
+        }
+    },
+    "bin": ["paisa.exe"],
+    "checkver": {
+        "github": "https://github.com/ananthakumaran/paisa"
+    },
+    "env_set": {
+        "PAISA_CONFIG": "$persist_dir/paisa.yaml"
+    },
+    "persist": ["paisa.yaml", "main.ledger"],
+    "post_install": [
+        "if (!(Test-Path $persist_dir/paisa.yaml) && !(Test-Path $persist_dir/main.ledger)) { New-Item $persist_dir -ItemType Directory -Force | Out-Null; Push-Location $persist_dir && paisa init; Pop-Location }"
+    ],
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/ananthakumaran/paisa/releases/download/v$version/paisa-cli-windows-amd64.exe"
+            }
+        }
+    }
+}
