@@ -1,0 +1,64 @@
+{
+    "version": "2026.1.4",
+    "description": "Cross-Platform IDE for Java by JetBrains - Open Source Community Edition",
+    "homepage": "https://github.com/JetBrains/intellij-community",
+    "license": "Apache-2.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/JetBrains/intellij-community/releases/download/idea%2F2026.1.4/idea-2026.1.4.win.zip",
+            "hash": "da0f2da6bd7e3b113be1a119f44d28efd40758f3249623a636fa8368ec559cc5"
+        },
+        "arm64": {
+            "url": "https://github.com/JetBrains/intellij-community/releases/download/idea%2F2026.1.4/idea-2026.1.4-aarch64.win.zip",
+            "hash": "ba9c9615e75c3e2e3c53a6604a912221146d5c773c9c9fd655039198777ec63a"
+        }
+    },
+    "extract_to": "IDE",
+    "post_install": [
+        "$file = \"$persist_dir\\IDE\\bin\\idea.properties\"",
+        "$content = Get-Content $file",
+        "$content = $content -replace '^#\\s*idea\\.config\\.path=.*$', \"idea.config.path=$persist_dir\\config\"",
+        "$content = $content -replace '^#\\s*idea\\.system\\.path=.*$', \"idea.system.path=$persist_dir\\system\"",
+        "$content = $content -replace '^#\\s*idea\\.plugins\\.path=.*$', \"idea.plugins.path=$persist_dir\\plugins\"",
+        "$content = $content -replace '^#\\s*idea\\.log\\.path=.*$', \"idea.log.path=$persist_dir\\logs\"",
+        "$content | Set-Content $file"
+    ],
+    "bin": [
+        [
+            "IDE\\bin\\idea64.exe",
+            "idea"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "IDE\\bin\\idea64.exe",
+            "JetBrains\\IDEA"
+        ]
+    ],
+    "persist": "IDE\\bin\\idea.properties",
+    "checkver": {
+        "url": "https://api.github.com/repos/JetBrains/intellij-community/releases",
+        "jsonpath": "$.[*].tag_name",
+        "regex": "\"idea/([\\d.]+)\""
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/JetBrains/intellij-community/releases/download/idea%2F$version/idea-$version.win.zip",
+                "hash": {
+                    "mode": "json",
+                    "url": "https://api.github.com/repos/JetBrains/intellij-community/releases/tags/idea%2F$version",
+                    "jsonpath": "$.assets[?(@.name == 'idea-$version.win.zip')].digest"
+                }
+            },
+            "arm64": {
+                "url": "https://github.com/JetBrains/intellij-community/releases/download/idea%2F$version/idea-$version-aarch64.win.zip",
+                "hash": {
+                    "mode": "json",
+                    "url": "https://api.github.com/repos/JetBrains/intellij-community/releases/tags/idea%2F$version",
+                    "jsonpath": "$.assets[?(@.name == 'idea-$version-aarch64.win.zip')].digest"
+                }
+            }
+        }
+    }
+}
