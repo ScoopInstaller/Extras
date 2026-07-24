@@ -1,12 +1,11 @@
 {
-    "##": "It cannot be updated to 9.0 or higher because the installer cannot be extracted properly.",
-    "version": "5.0.13.1",
+    "version": "9.5.27.0",
     "description": "An Android emulator optimized for mobile gaming with lower resource consumption",
     "homepage": "https://www.ldplayer.net",
     "license": "Unknown",
     "notes": "Administrator privileges are required to run repairer",
-    "url": "https://static.ldrescdn.com/download/package/LDPlayer_5.0.13.1.exe#/dl.7z",
-    "hash": "88d0342c2a6d82c6091a40c2697557e3c6d7f00b9f570613b0b20e5fd5f8756f",
+    "url": "https://static.ldrescdn.com/download/package/LDPlayer_9.5.27.0.exe#/setup.exe",
+    "hash": "dad4e80883fd2f4a28ba917547d70ee044e1b6c485888e78ba4ba63054161b4a",
     "shortcuts": [
         [
             "dnplayer.exe",
@@ -21,6 +20,18 @@
             "LDPlayer\\LDPlayer Repairer"
         ]
     ],
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\setup.exe\" \"$dir\\installer\" -Switches \"-t#\"",
+            "@('4.7z', '6.7z') | ForEach-Object {",
+            "    Remove-Item \"$dir\\installer\\$_\"",
+            "}",
+            "(Get-ChildItem \"$dir\\installer\\*.7z\").FullName | ForEach-Object {",
+            "    Expand-7zipArchive $_ \"$dir\" ",
+            "}",
+            "Remove-Item \"$dir\\installer\", \"$dir\\setup.exe\" -Force -Recurse"
+        ]
+    },
     "uninstaller": {
         "file": "dnuninst.exe"
     },
@@ -30,9 +41,9 @@
     ],
     "checkver": {
         "url": "https://www.ldplayer.net/other/version-history-and-release-notes.html",
-        "regex": "download/package/LDPlayer_(5[\\d.]+)\\.exe"
+        "regex": "download/package/LDPlayer_([\\d.]+)\\.exe"
     },
     "autoupdate": {
-        "url": "https://static.ldrescdn.com/download/package/LDPlayer_$version.exe#/dl.7z"
+        "url": "https://static.ldrescdn.com/download/package/LDPlayer_$version.exe#/setup.exe"
     }
 }
