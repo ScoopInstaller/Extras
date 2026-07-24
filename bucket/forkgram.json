@@ -16,7 +16,13 @@
             "hash": "f29440aee81de3ca2c0e1eb728f093495da4e9e66c113642646e8b2ccfa7b8d9"
         }
     },
-    "pre_install": "if (Test-Path \"$persist_dir\\log.txt\") { Copy-Item \"$persist_dir\\log.txt\" \"$dir\\\" }",
+    "pre_install": [
+        "if (Test-Path \"$dir\\Telegram\\Telegram.exe\") {",
+        "    Get-ChildItem \"$dir\\Telegram\" | Move-Item -Destination \"$dir\\\" -Force",
+        "    Remove-Item \"$dir\\Telegram\" -Recurse -Force",
+        "}",
+        "if (Test-Path \"$persist_dir\\log.txt\") { Copy-Item \"$persist_dir\\log.txt\" \"$dir\\\" }"
+    ],
     "pre_uninstall": "if (Test-Path \"$dir\\log.txt\") { Copy-Item \"$dir\\log.txt\" \"$persist_dir\\\" }",
     "bin": [
         "Telegram.exe",
