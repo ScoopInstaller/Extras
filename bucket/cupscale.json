@@ -18,13 +18,14 @@
     ],
     "persist": "CupscaleData\\models",
     "checkver": {
-        "github": "https://github.com/n00mkrad/cupscale",
-        "regex": "/Cupscale\\.([\\w.]+)\\.zip"
+        "github": "https://api.github.com/repos/n00mkrad/cupscale/releases/latest",
+        "jsonpath": "$.assets[?(@.name =~ /Cupscale/i)].browser_download_url",
+        "regex": "(?i)download/(?<tag>[^/]+)/(?<name>Cupscale\\.?([\\w.]+)\\.zip)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/n00mkrad/cupscale/releases/download/$majorVersion.$minorVersion/Cupscale.$version.zip"
+                "url": "https://github.com/n00mkrad/cupscale/releases/download/$matchTag/$matchName"
             }
         },
         "extract_dir": "Cupscale $version"

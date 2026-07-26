@@ -9,19 +9,22 @@
     "architecture": {
         "64bit": {
             "url": "https://download.kiwix.org/release/kiwix-desktop/kiwix-desktop_windows_x64_2.5.1.zip",
-            "hash": "56ad5b3a86010c2c74db63a717d087cfbdcdbe71a0d7fca0655f90ef1d80593f"
+            "hash": "md5:0d1be45f654072c5133198074845e415"
         }
     },
     "pre_install": "Remove-Item \"$dir\\vc_redist.*.exe\"",
+    "post_install": "New-Item \"$dir\\.portable\" | Out-Null ",
     "shortcuts": [
         [
             "kiwix-desktop.exe",
             "Kiwix Desktop"
         ]
     ],
+    "persist": "data",
     "checkver": {
         "url": "https://download.kiwix.org/release/kiwix-desktop/feed.xml",
-        "regex": "kiwix-desktop_windows_x64_([\\d.]+)\\.zip"
+        "regex": "kiwix-desktop_windows_x64_([\\d.]+)\\.zip",
+        "reverse": true
     },
     "autoupdate": {
         "architecture": {
@@ -30,7 +33,7 @@
             }
         },
         "hash": {
-            "url": "$url.sha256"
+            "url": "$url.md5"
         }
     }
 }
