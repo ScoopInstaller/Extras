@@ -1,5 +1,5 @@
 {
-    "version": "1.6.24",
+    "version": "1.7.7",
     "description": "Local-first network scanner that finds and identifies every device on your LAN, with open-port and security reporting.",
     "homepage": "https://deviceshelf.app",
     "license": {
@@ -7,15 +7,22 @@
         "url": "https://deviceshelf.app/terms"
     },
     "notes": [
-        "DeviceShelf is commercial software with a 7-day trial.",
-        "The installer is not code-signed, so SmartScreen may warn on first run."
+        "DeviceShelf needs Npcap to scan. The x64 build links wpcap.dll at load time, so without it the app will not start at all:",
+        "  scoop install extras/npcap    (or https://npcap.com/#download)",
+        "The regular installer warns about this; a Scoop install bypasses that warning, hence this note.",
+        "",
+        "DeviceShelf is commercial software with a 7-day trial. The installer is not code-signed, so SmartScreen may warn on first run."
     ],
     "architecture": {
         "64bit": {
-            "url": "https://downloads.deviceshelf.app/DeviceShelf-1.6.24-setup.exe#/dl.7z",
-            "hash": "2ae502845b5f6241def870fd82f5ecc9293f557e8bdbb166578e9e05a0d35ec0"
+            "url": "https://downloads.deviceshelf.app/DeviceShelf-1.7.7-setup.exe#/dl.7z",
+            "hash": "3fef98d4ae45ede595f6c02d5220074c9cb4aa63662bb830d94de0137cbabbc7"
         }
     },
+    "post_install": [
+        "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "Remove-Item \"$dir\\uninstall.exe\" -Force -ErrorAction SilentlyContinue"
+    ],
     "shortcuts": [
         [
             "DeviceShelf.exe",
