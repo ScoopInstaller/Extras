@@ -3,29 +3,44 @@
     "description": "Volunteer scientific or grid computing client",
     "homepage": "https://boinc.berkeley.edu/",
     "license": "LGPL-3.0-or-later",
-    "depends": "isx",
     "notes": [
         "Set DATADIR and INSTALLDIR in:",
         "Computer\\HKEY_LOCAL_MACHINE\\SOFTWARE\\Space Sciences Laboratory, U.C. Berkeley\\BOINC Setup"
     ],
-    "persist": "data",
     "architecture": {
         "64bit": {
             "url": "https://boinc.berkeley.edu/dl/boinc_8.2.15_windows_x86_64.exe#/dl.exe",
-            "hash": "89cbad087ee1ee1009aafcd61ae8f14ed09d81827f1cbd791eecd70e5d0e050c"
+            "hash": "89cbad087ee1ee1009aafcd61ae8f14ed09d81827f1cbd791eecd70e5d0e050c",
+            "installer": {
+                "script": "Expand-MsiArchive -Path \"$dir\\boinc.msi\" -DestinationPath \"$dir\" -ExtractDir 'Program Files 64\\BOINC' -Removal"
+            }
         }
     },
-    "installer": {
-        "script": [
-            "Invoke-ExternalCommand ((Get-Command 'isx' -CommandType Application).Source) -ArgumentList \"$dir\\$fname\" -LogPath \"$dir\\isx.log\" | Out-Null",
-            "$folder = Get-ChildItem \"$dir\" -Directory | Select-Object -First 1 -ExpandProperty FullName",
-            "$extract = if ($architecture -eq '64bit') { 'Program Files 64' } else { 'program files' }",
-            "Expand-MsiArchive \"$folder\\BOINC.msi\" \"$dir\" -ExtractDir \"$extract\\BOINC\" -Removal",
-            "Remove-Item $folder -Force -Recurse"
-        ]
-    },
+    "pre_install": [
+        "# Extract embedded MSI by detecting its signature within the custom installer",
+        "$bytes = [System.IO.File]::ReadAllBytes(\"$dir\\$fname\")",
+        "$signature = [byte[]](0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1)",
+        "$installerName = 'boinc.msi'",
+        "",
+        "for ($i = 0; $i -lt $bytes.Length - $signature.Length; $i++) {",
+        "    $match = $true",
+        "    for ($j = 0; $j -lt $signature.Length; $j++) {",
+        "        if ($bytes[$i + $j] -ne $signature[$j]) {",
+        "            $match = $false",
+        "            break",
+        "        }",
+        "    }",
+        "    if ($match) {",
+        "        $installerBytes = New-Object byte[] ($bytes.Length - $i)",
+        "        [Array]::Copy($bytes, $i, $installerBytes, 0, $installerBytes.Length)",
+        "        [System.IO.File]::WriteAllBytes(\"$dir\\$installerName\", $installerBytes)",
+        "        break",
+        "    }",
+        "}",
+        "if (-not (Test-Path \"$dir\\$installerName\")) { throw 'Extracted archive not found' }",
+        "Remove-Item -Path \"$dir\\$fname\" -Force"
+    ],
     "post_install": [
-        "Remove-Item \"$dir\\$fname\"",
         "if (-not (is_admin)) {",
         "error 'Administrator privileges are needed for registry entries'; ",
         "} else {",
@@ -47,6 +62,7 @@
             "BOINC\\BOINC Screensaver"
         ]
     ],
+    "persist": "data",
     "checkver": {
         "url": "https://boinc.berkeley.edu/dl/?C=M;O=D",
         "regex": "boinc_([\\d.]+)_windows_x86_64.exe"

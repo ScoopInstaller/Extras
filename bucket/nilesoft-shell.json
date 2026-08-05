@@ -24,6 +24,14 @@
         }
     },
     "pre_install": "if (!(Test-Path \"$persist_dir\\shell.log\")) { New-Item -ItemType File -Path \"$dir\\shell.log\" | Out-Null }",
+    "post_install": [
+        "'imports' | ForEach-Object {",
+        "    if (Test-Path -Path \"$dir\\$_.original\" -PathType Container) {",
+        "        Copy-Item -Path \"$dir\\$_.original\\*\" -Destination \"$dir\\$_\" -Force -Recurse",
+        "        Remove-Item -Path \"$dir\\$_.original\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "    }",
+        "}"
+    ],
     "pre_uninstall": [
         "if ($cmd -eq 'uninstall') {",
         "    $regkey = Get-ItemProperty -Path 'HKLM:\\SOFTWARE\\Classes\\Directory\\background\\shellex\\ContextMenuHandlers\\ @nilesoft.shell' -ErrorAction SilentlyContinue",
@@ -43,7 +51,8 @@
     ],
     "persist": [
         "shell.log",
-        "shell.nss"
+        "shell.nss",
+        "imports"
     ],
     "checkver": {
         "url": "https://nilesoft.org/download/changes",

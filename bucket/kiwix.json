@@ -1,5 +1,5 @@
 {
-    "version": "2.0.1",
+    "version": "2.5.1",
     "homepage": "https://www.kiwix.org/en/",
     "description": "Store any website on your mobile phone or computer, easily.",
     "license": "GPL-3.0-only",
@@ -8,20 +8,23 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://download.kiwix.org/release/kiwix-desktop/kiwix-desktop_windows_x64_2.0.1.zip",
-            "hash": "8a41d3871e27e8085e8cfdb0790ce16da0dc3363fd1f2564c54d0d637bf5b201"
+            "url": "https://download.kiwix.org/release/kiwix-desktop/kiwix-desktop_windows_x64_2.5.1.zip",
+            "hash": "md5:0d1be45f654072c5133198074845e415"
         }
     },
     "pre_install": "Remove-Item \"$dir\\vc_redist.*.exe\"",
+    "post_install": "New-Item \"$dir\\.portable\" | Out-Null ",
     "shortcuts": [
         [
             "kiwix-desktop.exe",
             "Kiwix Desktop"
         ]
     ],
+    "persist": "data",
     "checkver": {
         "url": "https://download.kiwix.org/release/kiwix-desktop/feed.xml",
-        "regex": "kiwix-desktop_windows_x64_([\\d.]+)\\.zip"
+        "regex": "kiwix-desktop_windows_x64_([\\d.]+)\\.zip",
+        "reverse": true
     },
     "autoupdate": {
         "architecture": {
@@ -30,7 +33,7 @@
             }
         },
         "hash": {
-            "url": "$url.sha256"
+            "url": "$url.md5"
         }
     }
 }
