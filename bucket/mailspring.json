@@ -6,6 +6,17 @@
     "url": "https://github.com/Foundry376/Mailspring/releases/download/1.23.0/Mailspring-1.23.0-full.nupkg",
     "hash": "sha1:88efc433326d5bbbbf943dbd6678bdc3bb3cc46a",
     "extract_dir": "lib\\net45",
+    "post_install": [
+        "if (Test-Path $env:APPDATA\\Mailspring) {",
+        "    Write-Host \"`r`nMove config from non-portable version...\"",
+        "    Copy-Item -Path $env:APPDATA\\Mailspring\\* -Destination \"$persist_dir\\UserData\" -Force -Recurse | Out-Null",
+        "    Remove-Item $env:APPDATA\\Mailspring -Force -Recurse",
+        "}",
+        "New-Item -ItemType Junction -Path $env:APPDATA\\Mailspring -Target $persist_dir\\UserData | Out-Null"
+    ],
+    "uninstaller": {
+        "script": "Remove-Item $env:APPDATA\\Mailspring -Force -Recurse"
+    },
     "bin": "Mailspring.exe",
     "shortcuts": [
         [
@@ -13,6 +24,7 @@
             "Mailspring"
         ]
     ],
+    "persist": "UserData",
     "checkver": {
         "github": "https://github.com/Foundry376/Mailspring"
     },
