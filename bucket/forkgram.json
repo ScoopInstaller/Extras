@@ -1,5 +1,5 @@
 {
-    "version": "7.0.3",
+    "version": "7.0.7",
     "description": "Fork of Telegram Desktop with quality-of-life enhancements.",
     "homepage": "https://t.me/forkgram",
     "license": {
@@ -8,15 +8,21 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/forkgram/tdesktop/releases/download/v7.0.3/Telegram.zip",
-            "hash": "20465223839b536190c330d5041bcf755e6c03d098cddaf31a20b5a4eb52673c"
+            "url": "https://github.com/forkgram/tdesktop/releases/download/v7.0.7/Telegram.zip",
+            "hash": "c93e9f87eb534ccd5b452a7db3b0bfc1388d21651ffb0c10197fc249f29a55c9"
         },
         "32bit": {
-            "url": "https://github.com/forkgram/tdesktop/releases/download/v7.0.3/Telegram_x86.zip",
-            "hash": "005cb76bec46926735315513d9b0f418a0365431a468dbecc82cc8bc48f27b5c"
+            "url": "https://github.com/forkgram/tdesktop/releases/download/v7.0.7/Telegram_x86.zip",
+            "hash": "869585d0fb012027fbc1cc38aaf6f15b1b235dd0b7e19a8cf5220f897d6d05d4"
         }
     },
-    "pre_install": "if (Test-Path \"$persist_dir\\log.txt\") { Copy-Item \"$persist_dir\\log.txt\" \"$dir\\\" }",
+    "pre_install": [
+        "if (Test-Path \"$dir\\Telegram\\Telegram.exe\") {",
+        "    Get-ChildItem \"$dir\\Telegram\" | Move-Item -Destination \"$dir\\\" -Force",
+        "    Remove-Item \"$dir\\Telegram\" -Recurse -Force",
+        "}",
+        "if (Test-Path \"$persist_dir\\log.txt\") { Copy-Item \"$persist_dir\\log.txt\" \"$dir\\\" }"
+    ],
     "pre_uninstall": "if (Test-Path \"$dir\\log.txt\") { Copy-Item \"$dir\\log.txt\" \"$persist_dir\\\" }",
     "bin": [
         "Telegram.exe",
