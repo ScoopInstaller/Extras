@@ -1,17 +1,36 @@
 {
-    "version": "0.4.6r4",
+    "version": "0.5.1",
     "description": "#1 editor for FreeBASIC",
     "homepage": "https://fbide.freebasic.net",
-    "license": "GPL-2.0-or-later",
+    "license": "MIT",
     "depends": "freebasic",
-    "url": "http://downloads.sourceforge.net/project/fbide/fbide%200.4/fbide%200.4.6%20r4/FBIde0.4.6r4.zip",
-    "hash": "sha1:326327c7082adae0af1df0281cde4af990b1e273",
-    "extract_dir": "FBIde0.4.6r4",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/albeva/fbide/releases/download/v0.5.1/fbide-0.5.1-win64.zip",
+            "hash": "2a85b34f86a08ffb02d4be1b12cbb791dc1b22f13b223c5a42615449e62f7d45"
+        },
+        "32bit": {
+            "url": "https://github.com/albeva/fbide/releases/download/v0.5.1/fbide-0.5.1-win32.zip",
+            "hash": "c52e5de58e038fee91d6127473c9742ac2b920036fad2f4ba62cbd5e10898f84"
+        },
+        "arm64": {
+            "url": "https://github.com/albeva/fbide/releases/download/v0.5.1/fbide-0.5.1-winarm64.zip",
+            "hash": "67d5bcedcc1ac5df8b60f17971890bcfe2e1c6ec1adac94ae6dccf2700e2fa9e"
+        }
+    },
     "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\IDE\\prefs_win32.ini\")) {",
+        "# create placeholders for user-local files",
+        "$base = @('config_win', 'history', 'layout', 'keywords', 'shortcuts_win')",
+        "foreach ($name in $base) {",
+        "    $fname = \"$name.local.ini\"",
+        "    if (!(Test-Path \"$persist_dir\\ide\\$fname\")) { New-Item \"$dir\\ide\\$fname\" -ItemType 'File' | Out-Null }",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\ide\\config_win.ini\")) {",
         "   $fbc = (versiondir 'freebasic' 'current') -replace '\\\\', '\\\\'",
-        "   $pref = (Get-Content \"$dir\\IDE\\prefs_win32.ini\" -Raw) -replace 'fbc.exe', \"$fbc\\\\fbc.exe\"",
-        "   Set-Content \"$dir\\IDE\\prefs_win32.ini\" $pref -Encoding ASCII",
+        "   $content = Get-Content \"$dir\\ide\\config_win.ini\" -Raw",
+        "   $content = $content -replace 'path=', \"path=$fbc\\\\fbc.exe\"",
+        "   $content = $content -replace 'checkOnStartup=1', 'checkOnStartup=0'",
+        "   Set-Content \"$dir\\ide\\config_win.ini\" $content -Encoding ASCII",
         "}"
     ],
     "shortcuts": [
@@ -20,13 +39,32 @@
             "FBIde"
         ]
     ],
-    "persist": "IDE\\prefs_win32.ini",
+    "persist": [
+        "ide\\themes",
+        "ide\\config_win.ini",
+        "ide\\config_win.local.ini",
+        "ide\\history.local.ini",
+        "ide\\layout.ini",
+        "ide\\layout.local.ini",
+        "ide\\keywords.ini",
+        "ide\\keywords.local.ini",
+        "ide\\shortcuts_win.ini",
+        "ide\\shortcuts_win.local.ini"
+    ],
     "checkver": {
-        "url": "https://fbide.freebasic.net/download",
-        "regex": ">FBIde ((?<main>[\\d.]+)(?<release>r\\d))<"
+        "github": "https://github.com/albeva/fbide"
     },
     "autoupdate": {
-        "url": "http://downloads.sourceforge.net/project/fbide/fbide%20$majorVersion.$minorVersion/fbide%20$matchMain%20$matchRelease/FBIde$version.zip",
-        "extract_dir": "FBIde$version"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/albeva/fbide/releases/download/v$version/fbide-$version-win64.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/albeva/fbide/releases/download/v$version/fbide-$version-win32.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/albeva/fbide/releases/download/v$version/fbide-$version-winarm64.zip"
+            }
+        }
     }
 }
