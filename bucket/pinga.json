@@ -1,4 +1,5 @@
 {
+    "##": "Why here? Waiting for PR to be merged to the Scoop official Extras bucket.",
     "version": "0.66.3-d621f",
     "description": "Image optimizer for web",
     "homepage": "https://css-ig.net/pinga",
@@ -22,15 +23,18 @@
         ]
     ],
     "post_uninstall": [
-        "if ($purge) {",
-        "    $Files = [string[]](",
-        "        [System.IO.Path]::Combine($env:LOCALAPPDATA,'pinga.ini')",
-        "    )",
-        "    $Files.ForEach{",
-        "        if ([System.IO.File]::Exists($_)) {",
-        "            $null = [System.IO.File]::Delete($_)",
-        "        }",
+        "# Inform of leftover files if any was found",
+        "$LeftoverFiles = [string[]](",
+        "    [System.IO.Path]::Combine($env:LOCALAPPDATA,'pinga.ini') | Where-Object -FilterScript {",
+        "        [System.IO.File]::Exists($_)",
         "    }",
+        ")",
+        "if ($LeftoverFiles.Count -gt 0) {",
+        "    $Message = [string] \"`r`nFound some leftover files you might want to delete:\"",
+        "    $LeftoverFiles.ForEach{",
+        "        $Message += \"`r`n* '{0}'\" -f $_",
+        "    }",
+        "    info $Message",
         "}"
     ],
     "checkver": {
