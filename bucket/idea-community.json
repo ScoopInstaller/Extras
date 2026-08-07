@@ -1,0 +1,71 @@
+{
+    "version": "2026.2",
+    "description": "Cross-Platform IDE for Java by JetBrains (Open Source Community Edition).",
+    "homepage": "https://github.com/JetBrains/intellij-community",
+    "license": "Apache-2.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/JetBrains/intellij-community/releases/download/idea/2026.2/idea-2026.2.win.zip",
+            "hash": "4ceacd1b7dda88ee9e8f7f81f100e337ccbc03f84c75c20da2b2333056002f29",
+            "bin": [
+                [
+                    "IDE\\bin\\idea64.exe",
+                    "idea"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "IDE\\bin\\idea64.exe",
+                    "JetBrains\\IDEA (Community Edition)"
+                ]
+            ]
+        },
+        "arm64": {
+            "url": "https://github.com/JetBrains/intellij-community/releases/download/idea/2026.2/idea-2026.2-aarch64.win.zip",
+            "hash": "3485182d4a0068e76b8bfc5f2bc19d9257f90b6efb229f8d8a3f0176137bd865",
+            "bin": [
+                [
+                    "IDE\\bin\\idea64.exe",
+                    "idea"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "IDE\\bin\\idea64.exe",
+                    "JetBrains\\IDEA (Community Edition)"
+                ]
+            ]
+        }
+    },
+    "extract_to": "IDE",
+    "installer": {
+        "script": "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" \"$dir\" \"$persist_dir\""
+    },
+    "persist": [
+        "IDE\\bin\\idea.properties",
+        "IDE\\bin\\idea64.exe.vmoptions",
+        "profile"
+    ],
+    "checkver": {
+        "github": "https://api.github.com/repos/JetBrains/intellij-community/releases",
+        "script": [
+            "$releases = $page | ConvertFrom-Json -ErrorAction Stop",
+            "$versions = $releases | Where-Object { $_.tag_name -match '^idea/(?<version>[\\d.]+)$' } | ForEach-Object { [version]$Matches['version'] }",
+            "$latest_version = $versions | Sort-Object -Descending | Select-Object -First 1",
+            "$version_info = @{ result = \"$($latest_version.ToString())\" } | ConvertTo-Json -Compress",
+            "Write-Output $version_info"
+        ],
+        "jsonpath": "$.result",
+        "regex": "^(?<version>[\\d.]+)$"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/JetBrains/intellij-community/releases/download/idea/$version/idea-$version.win.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/JetBrains/intellij-community/releases/download/idea/$version/idea-$version-aarch64.win.zip"
+            }
+        }
+    }
+}
