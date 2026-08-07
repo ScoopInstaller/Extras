@@ -1,6 +1,6 @@
 {
     "version": "2025.2.6.3",
-    "description": "Cross-Platform IDE for Java by JetBrains - Open Source Community Edition",
+    "description": "Cross-Platform IDE for Java by JetBrains (Open Source Community Edition).",
     "homepage": "https://github.com/JetBrains/intellij-community",
     "license": "Apache-2.0",
     "architecture": {
@@ -38,19 +38,17 @@
         }
     },
     "extract_to": "IDE",
-    "post_install": [
-        "$file = \"$persist_dir\\IDE\\bin\\idea.properties\"",
-        "$content = Get-Content $file",
-        "$content = $content -replace '^#\\s*idea\\.config\\.path=.*$', \"idea.config.path=$persist_dir\\config\"",
-        "$content = $content -replace '^#\\s*idea\\.system\\.path=.*$', \"idea.system.path=$persist_dir\\system\"",
-        "$content = $content -replace '^#\\s*idea\\.plugins\\.path=.*$', \"idea.plugins.path=$persist_dir\\plugins\"",
-        "$content = $content -replace '^#\\s*idea\\.log\\.path=.*$', \"idea.log.path=$persist_dir\\logs\"",
-        "$content | Set-Content $file"
+    "installer": {
+        "script": "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" \"$dir\" \"$persist_dir\""
+    },
+    "persist": [
+        "IDE\\bin\\idea.properties",
+        "IDE\\bin\\idea64.exe.vmoptions",
+        "profile"
     ],
-    "persist": "IDE\\bin\\idea.properties",
     "checkver": {
         "github": "https://api.github.com/repos/JetBrains/intellij-community/releases",
-        "jsonpath": "$.[*].tag_name",
+        "jsonpath": "$[*].tag_name",
         "regex": "\"idea/([\\d.]+)\""
     },
     "autoupdate": {
