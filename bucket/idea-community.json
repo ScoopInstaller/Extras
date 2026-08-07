@@ -1,12 +1,12 @@
 {
-    "version": "2025.2.6.3",
+    "version": "2026.2",
     "description": "Cross-Platform IDE for Java by JetBrains (Open Source Community Edition).",
     "homepage": "https://github.com/JetBrains/intellij-community",
     "license": "Apache-2.0",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/JetBrains/intellij-community/releases/download/idea/2025.2.6.3/ideaIC-2025.2.6.3.win.zip",
-            "hash": "0c5ea801530c8b9f8b2f9429580d29e7aace7dd338e2a0c62a89e034f498ded5",
+            "url": "https://github.com/JetBrains/intellij-community/releases/download/idea/2026.2/idea-2026.2.win.zip",
+            "hash": "4ceacd1b7dda88ee9e8f7f81f100e337ccbc03f84c75c20da2b2333056002f29",
             "bin": [
                 [
                     "IDE\\bin\\idea64.exe",
@@ -21,8 +21,8 @@
             ]
         },
         "arm64": {
-            "url": "https://github.com/JetBrains/intellij-community/releases/download/idea/2025.2.6.3/ideaIC-2025.2.6.3-aarch64.win.zip",
-            "hash": "b8cbbae02362d72932d65b5db798bf8889f4e4afef6bd130af0b3638d37f2b9c",
+            "url": "https://github.com/JetBrains/intellij-community/releases/download/idea/2026.2/idea-2026.2-aarch64.win.zip",
+            "hash": "3485182d4a0068e76b8bfc5f2bc19d9257f90b6efb229f8d8a3f0176137bd865",
             "bin": [
                 [
                     "IDE\\bin\\idea64.exe",
@@ -48,16 +48,23 @@
     ],
     "checkver": {
         "github": "https://api.github.com/repos/JetBrains/intellij-community/releases",
-        "jsonpath": "$[*].tag_name",
-        "regex": "\"idea/([\\d.]+)\""
+        "script": [
+            "$releases = $page | ConvertFrom-Json -ErrorAction Stop",
+            "$versions = $releases | Where-Object { $_.tag_name -match '^idea/(?<version>[\\d.]+)$' } | ForEach-Object { [version]$Matches['version'] }",
+            "$latest_version = $versions | Sort-Object -Descending | Select-Object -First 1",
+            "$version_info = @{ result = \"$($latest_version.ToString())\" } | ConvertTo-Json -Compress",
+            "Write-Output $version_info"
+        ],
+        "jsonpath": "$.result",
+        "regex": "^(?<version>[\\d.]+)$"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/JetBrains/intellij-community/releases/download/idea/$version/ideaIC-$version.win.zip"
+                "url": "https://github.com/JetBrains/intellij-community/releases/download/idea/$version/idea-$version.win.zip"
             },
             "arm64": {
-                "url": "https://github.com/JetBrains/intellij-community/releases/download/idea/$version/ideaIC-$version-aarch64.win.zip"
+                "url": "https://github.com/JetBrains/intellij-community/releases/download/idea/$version/idea-$version-aarch64.win.zip"
             }
         }
     }
