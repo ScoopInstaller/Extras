@@ -8,14 +8,21 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://www.mersenne.org/download/software/v30/30.19/p95v3019b20.win64.zip",
+            "url": "https://download.mersenne.ca/gimps/v30/30.19/p95v3019b20.win64.zip",
             "hash": "d9475f2ff3f4a6a701abc49a86a66126cb48abd10bda6fa87039d98fa8756bca"
         },
         "32bit": {
-            "url": "https://www.mersenne.org/download/software/v30/30.1932/p95v3019b20.win32.zip",
+            "url": "https://download.mersenne.ca/gimps/v30/30.19/p95v3019b20.win32.zip",
             "hash": "a77c9297bd80dffcb7e2e7e6e89db674126c06a2fe8e769dcec06da2e66e8516"
         }
     },
+    "pre_install": [
+        "'results.txt', 'prime.txt' | ForEach-Object {",
+        "    if (-not (Test-Path -Path (Join-Path -Path $persist_dir -ChildPath $_))) {",
+        "        New-Item -ItemType File -Path (Join-Path -Path $dir -ChildPath $_) | Out-Null",
+        "    }",
+        "}"
+    ],
     "bin": "prime95.exe",
     "shortcuts": [
         [
@@ -23,18 +30,22 @@
             "Prime95"
         ]
     ],
-    "checkver": "Windows:\\s+64-bit\\D+([\\w.]+).*?href=\"https:?[\\w./]+?/software/v([\\d]+)/(?<verpath>[\\d.]+)/(?<file64>[^.]+).win64.zip\".*Windows:\\s+32-bit\\D+(?<version32>[\\w.]+).*?href=\"https:?[\\w./]+?/software/v([\\d]+)/(?<verpath32>[\\d.]+)/(?<file32>[^.]+).win32.zip",
+    "persist": [
+        "results.txt",
+        "prime.txt"
+    ],
+    "checkver": "Windows:\\s+64-bit\\D+([\\w.]+).*?href=\"https:?[\\w./]+?/gimps/v([\\d]+)/(?<verpath>[\\d.]+)/(?<file64>[^.]+)\\.win64\\.zip\".*Windows:\\s+32-bit\\D+(?<version32>[\\w.]+).*?href=\"https:?[\\w./]+?/gimps/v([\\d]+)/(?<verpath32>[\\d.]+)/(?<file32>[^.]+)\\.win32\\.zip",
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://www.mersenne.org/download/software/v$majorVersion/$matchVerpath/$matchFile64.win64.zip",
+                "url": "https://download.mersenne.ca/gimps/v$majorVersion/$matchVerpath/$matchFile64.win64.zip",
                 "hash": {
                     "url": "https://www.mersenne.org/download/",
                     "regex": "\\.win64\\.zip.*?SHA256:.*?$sha256"
                 }
             },
             "32bit": {
-                "url": "https://www.mersenne.org/download/software/v$majorVersion/$matchVerpath32/$matchFile32.win32.zip",
+                "url": "https://download.mersenne.ca/gimps/v$majorVersion/$matchVerpath32/$matchFile32.win32.zip",
                 "hash": {
                     "url": "https://www.mersenne.org/download/",
                     "regex": "\\.win32\\.zip.*?SHA256:.*?$sha256"

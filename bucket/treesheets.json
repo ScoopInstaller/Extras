@@ -1,13 +1,21 @@
 {
-    "version": "13166867284",
+    "version": "3292",
     "description": "A free form data organizer and a replacement for spreadsheets, mind mappers, outliners, PIMs, text editors and small databases.",
     "homepage": "https://strlen.com/treesheets",
     "license": "ZLIB",
-    "url": "https://github.com/aardappel/treesheets/releases/download/13166867284/windows_treesheets_no_installer.zip",
-    "hash": "1382c36a563fcf8f0a9aa4ab1f936f618c74e325b0da46062bc924038158d586",
-    "extract_dir": "TS",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/aardappel/treesheets/releases/download/3292/TreeSheets-3292-winx64.zip",
+            "hash": "eab8f53527eb67b8b80a7858ca7800bb3131bf582b32772d2530b5cdc76207cc",
+            "extract_dir": "TreeSheets-3292-winx64"
+        },
+        "arm64": {
+            "url": "https://github.com/aardappel/treesheets/releases/download/3292/TreeSheets-3292-winarm64.zip",
+            "hash": "aee9b4f833a9d66b3369c72e6d35adbe204a348cf82b410afd199653bdcf4b28",
+            "extract_dir": "TreeSheets-3292-winarm64"
+        }
+    },
     "pre_install": [
-        "ensure \"$persist_dir\" | Out-Null",
         "if (Test-Path \"$persist_dir\\TreeSheets.ini\") {",
         "    Copy-Item \"$persist_dir\\TreeSheets.ini\" \"$dir\"",
         "}"
@@ -19,11 +27,25 @@
             "-p"
         ]
     ],
-    "pre_uninstall": "if (Test-Path \"$dir\\TreeSheets.ini\") { Copy-Item \"$dir\\TreeSheets.ini\" \"$persist_dir\" }",
+    "pre_uninstall": [
+        "if (Test-Path \"$dir\\TreeSheets.ini\") {",
+        "    ensure \"$persist_dir\" | Out-Null",
+        "    Copy-Item \"$dir\\TreeSheets.ini\" \"$persist_dir\"",
+        "}"
+    ],
     "checkver": {
         "github": "https://github.com/aardappel/treesheets"
     },
     "autoupdate": {
-        "url": "https://github.com/aardappel/treesheets/releases/download/$version/windows_treesheets_no_installer.zip"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/aardappel/treesheets/releases/download/$version/TreeSheets-$version-winx64.zip",
+                "extract_dir": "TreeSheets-$version-winx64"
+            },
+            "arm64": {
+                "url": "https://github.com/aardappel/treesheets/releases/download/$version/TreeSheets-$version-winarm64.zip",
+                "extract_dir": "TreeSheets-$version-winarm64"
+            }
+        }
     }
 }

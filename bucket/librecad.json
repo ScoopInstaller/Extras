@@ -1,10 +1,41 @@
 {
-    "version": "2.2.0.2",
+    "version": "2.2.1.5",
     "description": "Cross-platform 2D CAD program.",
-    "homepage": "https://librecad.org/",
-    "license": "GPL-2.0-only",
-    "url": "https://github.com/LibreCAD/LibreCAD/releases/download/2.2.0.2/LibreCAD-Installer-2.2.0.2.exe#/dl.7z",
-    "hash": "996014cc38e0e98d274fbbb89e4f6ff92455e487e3a06ba46a38feb7c575a9d2",
+    "homepage": "https://librecad.org",
+    "license": {
+        "identifier": "GPL-2.0-only",
+        "url": "https://github.com/LibreCAD/LibreCAD/blob/HEAD/LICENSE"
+    },
+    "notes": [
+        "To register file associations, please execute the following command:",
+        "reg import \"$dir\\install-associations.reg\""
+    ],
+    "suggest": {
+        "vcredist": "extras/vcredist2022"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/LibreCAD/LibreCAD/releases/download/v2.2.1.5/LibreCAD-v2.2.1.5-win64-msvc.exe#/dl.7z",
+            "hash": "738912fea40aca934689444af9c5cd281572417983cc081c204fe6c779f6941d"
+        },
+        "32bit": {
+            "url": "https://github.com/LibreCAD/LibreCAD/releases/download/v2.2.1.5/LibreCAD-v2.2.1.5-msvc.exe#/dl.7z",
+            "hash": "7af37e61badaa4b9215f182cc843e0075cb976eb79d2ac59bf9dd77d56516261"
+        }
+    },
+    "pre_install": [
+        "'$*', 'Uninst*', 'vc_redist*' | ForEach-Object {",
+        "    Remove-Item -Path \"$dir\\$_\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "}"
+    ],
+    "post_install": [
+        "$librecad_dir = $dir -replace '\\\\', '\\\\'",
+        "Get-ChildItem -Path \"$bucketsdir\\$bucket\\scripts\\$app\" -Filter '*.reg' -File | ForEach-Object {",
+        "    $content = Get-Content -Path $_.FullName -Encoding utf8",
+        "    if ($global) { $content = $content -replace 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE' }",
+        "    $content -replace '{{librecad_dir}}', $librecad_dir | Set-Content -Path \"$dir\\$($_.Name)\" -Encoding unicode",
+        "}"
+    ],
     "bin": "LibreCAD.exe",
     "shortcuts": [
         [
@@ -12,14 +43,29 @@
             "LibreCAD"
         ]
     ],
+    "uninstaller": {
+        "script": [
+            "if ($cmd -eq 'uninstall') {",
+            "    Get-ChildItem -Path $dir -Filter 'un*.reg' -File | ForEach-Object {",
+            "        $registry_file = '\"{0}\"' -f $_.FullName",
+            "        Start-Process -FilePath 'reg.exe' -ArgumentList @('import', $registry_file) -WindowStyle Hidden -Wait",
+            "    }",
+            "}"
+        ]
+    },
     "checkver": {
-        "github": "https://github.com/LibreCAD/LibreCAD/"
+        "github": "https://api.github.com/repos/LibreCAD/LibreCAD/releases/latest",
+        "jsonpath": "$.assets[?(@.name =~ /win/i)].browser_download_url",
+        "regex": "(?i)download/(?<tag>v?([\\d.]+))/LibreCAD-(?<string>v?[\\d.-]+(?:[+-]g\\w+)?)?-win"
     },
     "autoupdate": {
-        "url": "https://github.com/LibreCAD/LibreCAD/releases/download/$version/LibreCAD-Installer-$version.exe#/dl.7z",
-        "hash": {
-            "url": "https://sourceforge.net/projects/librecad/files/Windows/$version",
-            "regex": "$basename\":.+?\"sha1\":\\s\"$sha1"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/LibreCAD/LibreCAD/releases/download/$matchTag/LibreCAD-$matchString-win64-msvc.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://github.com/LibreCAD/LibreCAD/releases/download/$matchTag/LibreCAD-$matchString-msvc.exe#/dl.7z"
+            }
         }
     }
 }

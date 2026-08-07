@@ -1,0 +1,62 @@
+{
+    "version": "26.6.13.7",
+    "description": "Lovingly referred to as the Swiss Army Knife of PC gaming, Special K does a bit of everything.",
+    "homepage": "https://www.special-k.info",
+    "license": "GPL-3.0-only",
+    "url": "https://sk-data.special-k.info/repository/SpecialK_26.6.13.7.exe",
+    "hash": "289a3b0d62649de9df367af4736ad689058864ed113957a3ccf28c378066fa83",
+    "innosetup": true,
+    "architecture": {
+        "64bit": {
+            "pre_install": "Rename-Item \"$dir\\SKIF,1.exe\" SKIF.exe; Remove-Item \"$dir\\SKIF,2.exe\"",
+            "bin": [
+                "SKIF.exe",
+                "SKIV.exe"
+            ],
+            "shortcuts": [
+                [
+                    "SKIF.exe",
+                    "Special K\\Special K Injection Frontend (SKIF)"
+                ],
+                [
+                    "SKIV.exe",
+                    "Special K\\Special K Image Viewer (SKIV)"
+                ]
+            ]
+        },
+        "32bit": {
+            "pre_install": "Rename-Item \"$dir\\SKIF,2.exe\" SKIF.exe; Remove-Item \"$dir\\SKIF,1.exe\"",
+            "bin": "SKIF.exe",
+            "shortcuts": [
+                [
+                    "SKIF.exe",
+                    "Special K\\Special K Injection Frontend (SKIF)"
+                ]
+            ]
+        }
+    },
+    "post_install": [
+        "'PlugIns' | ForEach-Object {",
+        "    if (Test-Path -Path \"$dir\\$_.original\" -PathType Container) {",
+        "        Copy-Item -Path \"$dir\\$_.original\\*\" -Destination \"$dir\\$_\" -Force -Recurse",
+        "        Remove-Item -Path \"$dir\\$_.original\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "    }",
+        "}"
+    ],
+    "persist": [
+        "Global",
+        "PlugIns",
+        "Profiles"
+    ],
+    "checkver": {
+        "url": "https://sk-data.special-k.info/repository.json",
+        "jsonpath": "$.Main.Versions[0].Name"
+    },
+    "autoupdate": {
+        "url": "https://sk-data.special-k.info/repository/SpecialK_$version.exe",
+        "hash": {
+            "url": "https://sk-data.special-k.info/repository.json",
+            "jsonpath": "$.Main.Versions[0].SHA256"
+        }
+    }
+}

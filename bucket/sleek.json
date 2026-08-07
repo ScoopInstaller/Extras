@@ -1,19 +1,27 @@
 {
-    "version": "2.0.16",
+    "version": "2.0.27",
     "description": "Open-source (FOSS) todo manager based on the todo.txt syntax",
     "homepage": "https://github.com/ransome1/sleek",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/ransome1/sleek/releases/download/v2.0.16/sleek-2.0.16-win-x64-Setup.exe#/dl.7z",
-            "hash": "sha512:058b51ea6930cee4a948b21e4432b15a7d7e4618d8dc8cf295b937af3ddb4b20b4e1ec03432934ca96536d8a62391ec060f18a5ae1359d4045f1d30fe21ce605"
+            "url": "https://github.com/ransome1/sleek/releases/download/v2.0.27/sleek-2.0.27-win-x64-Setup.exe#/dl.7z",
+            "hash": "sha512:52968b034aa721191224edc89907874a82c2fde6cc23a62f453a68f71e29ff46e81656c6f84ffa3f9d7560623d1c67fa2baf37c52537845c53e8912e93ed853f"
+        },
+        "32bit": {
+            "url": "https://github.com/ransome1/sleek/releases/download/v2.0.27/sleek-2.0.27-win-ia32-Setup.exe#/dl.7z",
+            "hash": "sha512:895e4b1caed660586cc25b86b809c4f6249c2f0ae82ce75c65fe2f2a2610e8c072e09f61f2f0286e57ea9a14bbdff1fefaa2a09af364b5b73ed7687d9a241e26"
+        },
+        "arm64": {
+            "url": "https://github.com/ransome1/sleek/releases/download/v2.0.27/sleek-2.0.27-win-arm64-Setup.exe#/dl.7z",
+            "hash": "sha512:528a2bb809f100bf15525c9afadab31be4d4ecbd3c4eedacd0392df52b9794092820ff40c60c7f24b34d74a706e646934f50a746003224847a6cd0a45557af5a"
         }
     },
     "pre_install": [
-        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-*.7z\" \"$dir\"",
         "Remove-Item \"$dir\\`$*\" -Force -Recurse",
         "if (!(Test-Path \"$persist_dir\\user-preferences.json\")) {",
-        "    New-Item -Path \"$dir\\user-preferences.json\" | Out-Null",
+        "    New-Item \"$dir\\user-preferences.json\" -ItemType File | Out-Null",
         "}"
     ],
     "bin": "sleek.exe",
@@ -29,11 +37,17 @@
         "architecture": {
             "64bit": {
                 "url": "https://github.com/ransome1/sleek/releases/download/v$version/sleek-$version-win-x64-Setup.exe#/dl.7z"
+            },
+            "32bit": {
+                "url": "https://github.com/ransome1/sleek/releases/download/v$version/sleek-$version-win-ia32-Setup.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/ransome1/sleek/releases/download/v$version/sleek-$version-win-arm64-Setup.exe#/dl.7z"
             }
         },
         "hash": {
             "url": "$baseurl/latest.yml",
-            "regex": "sha512:\\s+$base64"
+            "regex": "(?sm)$basename.*?sha512:\\s+$base64"
         }
     }
 }

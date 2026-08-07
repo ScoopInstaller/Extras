@@ -1,0 +1,42 @@
+{
+    "version": "1.37.0",
+    "description": "Simple, free, and powerful desktop tool for creating, managing, and sharing your processes and knowledge.",
+    "homepage": "https://folge.me",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://folge.me/eula"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://cdn.folge.me/Folge-1.37.0.exe#/dl.7z",
+            "hash": "22b57b53c6d1bcba7d073414aac5879feb3c2004984da4d113c0c58379b28084"
+        }
+    },
+    "installer": {
+        "script": [
+            "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Expand-7zipArchive -DestinationPath \"$dir\"",
+            "Remove-Item \"$dir\\`$*\" -Force -Recurse"
+        ]
+    },
+    "shortcuts": [
+        [
+            "Folge.exe",
+            "Folge"
+        ]
+    ],
+    "checkver": {
+        "script": [
+            "$request = [System.Net.HttpWebRequest]::Create('https://folge.me/get-windows')",
+            "$response = $request.GetResponse()",
+            "Write-Output $response.ResponseUri.AbsoluteUri"
+        ],
+        "regex": "cdn\\.folge\\.me/Folge-(?<version>[\\w.]+)\\.exe"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://cdn.folge.me/Folge-$version.exe#/dl.7z"
+            }
+        }
+    }
+}

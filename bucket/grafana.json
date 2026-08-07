@@ -1,21 +1,30 @@
 {
-    "version": "11.5.1",
+    "version": "13.1.3",
     "description": "Open platform for analytics and data monitoring",
     "homepage": "https://grafana.com/",
     "license": "Apache-2.0",
     "architecture": {
         "64bit": {
-            "url": "https://dl.grafana.com/oss/release/grafana-11.5.1.windows-amd64.zip",
-            "hash": "4a751ba3902f1cf59aee4e0cb436ed05b446cc54108ff8ee7088bd53316868f2"
+            "url": "https://dl.grafana.com/oss/release/grafana-13.1.3.windows-amd64.zip",
+            "hash": "9d0038e110916dc4ff8edc646c27ba46cf71ee68476455b09226de4d21c4f0c9"
+        },
+        "arm64": {
+            "url": "https://dl.grafana.com/oss/release/grafana-13.1.3.windows-arm64.zip",
+            "hash": "cfab13cfbf250314330c7406e932c28f20fc6ebb5cef3629294728d5355080c1"
         }
     },
-    "extract_dir": "grafana-v11.5.1",
+    "extract_dir": "grafana-13.1.3",
     "bin": [
-        "bin\\grafana-cli.exe",
+        "bin\\grafana.exe",
         [
-            "bin\\grafana-server.exe",
+            "bin\\grafana.exe",
+            "grafana-cli",
+            "cli"
+        ],
+        [
+            "bin\\grafana.exe",
             "grafana-server",
-            "-homepath \"$dir\""
+            "server -homepath \"$dir\""
         ]
     ],
     "persist": [
@@ -23,18 +32,21 @@
         "data"
     ],
     "checkver": {
-        "url": "https://grafana.com/grafana/download?platform=windows",
-        "regex": "-([\\d.]+)\\.windows"
+        "url": "https://grafana.com/grafana/download?edition=oss&platform=windows",
+        "regex": "grafana_([\\d.]+(?:\\+security-\\d+)?)_(?<stamp>[\\d]+)_windows"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
                 "url": "https://dl.grafana.com/oss/release/grafana-$version.windows-amd64.zip"
+            },
+            "arm64": {
+                "url": "https://dl.grafana.com/oss/release/grafana-$version.windows-arm64.zip"
             }
         },
         "hash": {
             "url": "$url.sha256"
         },
-        "extract_dir": "grafana-v$version"
+        "extract_dir": "grafana-$version"
     }
 }

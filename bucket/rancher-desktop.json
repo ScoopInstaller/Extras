@@ -1,5 +1,5 @@
 {
-    "version": "1.17.1",
+    "version": "1.24.0",
     "description": "Kubernates container management tool that can build, push, and pull images and run containers.",
     "homepage": "https://rancherdesktop.io/",
     "license": "Apache-2.0",
@@ -9,8 +9,8 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/rancher-sandbox/rancher-desktop/releases/download/v1.17.1/Rancher.Desktop.Setup.1.17.1.msi",
-            "hash": "sha512:dd86b455a62400aaebe9ca6c9c32539c6aef83abaaaca5b3be7f3206ccd0a1b84e26af46f7ceb7c7f6e1a022cdd44677d62d3cddc5282e879f0ea24db20d045e"
+            "url": "https://github.com/rancher-sandbox/rancher-desktop/releases/download/v1.24.0/Rancher.Desktop.Setup.1.24.0.msi",
+            "hash": "sha512:6428f330cdf8dc9dbbc07bbde270046c9e86fb91e90392c0d25ac764e64eaa8f9d2b3e7faaffed669a48f7fd7445dadda18072dd51c905bf59df4787b70ed77e"
         }
     },
     "extract_dir": "Rancher Desktop",
@@ -18,11 +18,14 @@
         "resources\\resources\\win32\\bin",
         "resources\\resources\\linux\\bin"
     ],
-    "shortcuts": [
-        [
-            "Rancher Desktop.exe",
-            "Rancher Desktop"
-        ]
+    "post_install": [
+        "# Rancher Desktop can't be started from a symlinked directory. See: https://github.com/ScoopInstaller/Extras/issues/14691",
+        "startmenu_shortcut \"$original_dir\\Rancher Desktop.exe\" 'Rancher Desktop' $null $null $global"
+    ],
+    "post_uninstall": [
+        "# Remove shortcut",
+        "Write-Host \"Removing shortcut $(friendly_path \"$(shortcut_folder $global)\\Rancher Desktop.lnk\")\"",
+        "Remove-Item \"$(shortcut_folder $global)\\Rancher Desktop.lnk\" -Force -ErrorAction SilentlyContinue"
     ],
     "checkver": {
         "github": "https://github.com/rancher-sandbox/rancher-desktop"

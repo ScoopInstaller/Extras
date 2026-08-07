@@ -1,24 +1,21 @@
 {
-    "version": "1.4.3.6",
+    "version": "1.8.2.4",
     "description": "UltraVNC Server and Viewer can display the screen of one computer (Server) on the screen of another (Viewer).",
     "homepage": "https://uvnc.com",
     "license": "GPL-3.0-or-later",
-    "url": "https://uvnc.eu/download/1436/UltraVNC_IPv6_1436.zip",
-    "hash": "bbb35b8199af7841080b5d34a559b76f9d824ff8c140a030db86dac5edccc7ae",
+    "url": "https://uvnc.eu/download/1800/UltraVNC_1824.zip",
+    "hash": "8af948089626008f02edd1254afc15c814e454ec5fc9e3eaa860356f19d4f113",
     "architecture": {
         "64bit": {
-            "extract_dir": "64"
+            "extract_dir": "x64"
         },
         "32bit": {
-            "extract_dir": "32"
+            "extract_dir": "x86"
         }
     },
     "pre_install": [
         "if (!(Test-Path \"$persist_dir\\UltraVnc.ini\")) { New-Item \"$dir\\UltraVnc.ini\" | Out-Null }",
         "if (!(Test-Path \"$persist_dir\\options.vnc\")) { New-Item \"$dir\\options.vnc\" | Out-Null }"
-    ],
-    "post_install": [
-        "if (!(Test-Path \"$persist_dir\\SecureVNCPlugin64.dsm\")) { Copy-Item \"$persist_dir\\SecureVNCPlugin64.dsm\" \"$dir\\SecureVNCPlugin64.dsm\" | Out-Null }"
     ],
     "bin": [
         "vncviewer.exe",
@@ -40,13 +37,20 @@
     ],
     "checkver": {
         "url": "https://uvnc.com/downloads/ultravnc.html",
-        "regex": "Latest release version: ([\\d.]+)"
+        "script": [
+            "$page -match 'Latest release version: UltraVNC (?<version>[\\d.]+)'",
+            "$version = $matches.version",
+            "$cleanVersion = $version -replace '\\.'",
+            "$page -match 'href=\"(?<url>https://forum\\.uvnc\\.com/viewtopic\\.php\\?t=\\d+)\"'",
+            "$url = $matches.url",
+            "$page = Invoke-WebRequest -Uri $url -UseBasicParsing | Select-Object -ExpandProperty Content",
+            "$page -match \"href=`\"(?<url>https://uvnc\\.eu/download/.*/UltraVNC_$cleanVersion\\.zip)`\"\"",
+            "$url = $matches.url",
+            "Write-Output \"$version $url\""
+        ],
+        "regex": "(?<version>\\d+(?:\\.\\d+)+) https://uvnc\\.eu/download/(?<url>[^/]*)/"
     },
     "autoupdate": {
-        "url": "https://uvnc.eu/download/$cleanVersion/UltraVNC_IPv6_$cleanVersion.zip",
-        "hash": {
-            "url": "$baseurl/Hashes.txt",
-            "regex": "(?sm)$basename.*?SHA256\\s+$sha256"
-        }
+        "url": "https://uvnc.eu/download/$matchUrl/UltraVNC_$cleanVersion.zip"
     }
 }

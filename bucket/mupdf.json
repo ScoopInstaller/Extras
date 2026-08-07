@@ -1,11 +1,18 @@
 {
-    "version": "1.23.0",
+    "version": "1.28.0",
     "description": "A lightweight PDF, XPS, and E-book viewer",
     "homepage": "https://mupdf.com",
     "license": "AGPL-3.0-only",
-    "url": "https://mupdf.com/downloads/archive/mupdf-1.23.0-windows.zip",
-    "hash": "sha1:c7740bb23c5d93e5bbf8a752cf213f3840dfa610",
-    "extract_dir": "mupdf-1.23.0-windows",
+    "suggest": {
+        "vcredist": "extras/vcredist2022"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/ArtifexSoftware/mupdf-downloads/releases/download/1.28.0/mupdf-1.28.0-windows.zip",
+            "hash": "a0ee869bf38ee66b19cd30c281d04e91215f812f0cb20177cd1f69c74c33eb22"
+        }
+    },
+    "extract_dir": "mupdf-1.28.0-windows",
     "bin": [
         "mupdf.exe",
         "mupdf-gl.exe",
@@ -15,18 +22,23 @@
         [
             "mupdf.exe",
             "MuPDF"
+        ],
+        [
+            "mupdf-gl.exe",
+            "MuPDF GL"
         ]
     ],
     "checkver": {
-        "url": "https://www.mupdf.com/releases/",
-        "regex": "mupdf-([\\w.-]+)-windows\\.zip"
+        "github": "https://api.github.com/repos/ArtifexSoftware/mupdf-downloads/releases",
+        "jsonpath": "$..browser_download_url",
+        "regex": "mupdf-([\\d.]+)-windows\\.zip"
     },
     "autoupdate": {
-        "url": "https://mupdf.com/downloads/archive/mupdf-$version-windows.zip",
-        "hash": {
-            "url": "https://www.mupdf.com/releases/",
-            "regex": "$basename.*?$sha1"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/ArtifexSoftware/mupdf-downloads/releases/download/$version/mupdf-$version-windows.zip"
+            }
         },
-        "extract_dir": "mupdf-$matchHead-windows"
+        "extract_dir": "mupdf-$version-windows"
     }
 }

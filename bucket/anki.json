@@ -1,28 +1,29 @@
 {
-    "version": "24.11",
+    "version": "26.08.1",
     "description": "Powerful and intelligent flash cards",
     "homepage": "https://apps.ankiweb.net",
     "license": "AGPL-3.0-only",
-    "suggest": {
-        "vcredist": "extras/vcredist2008"
-    },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/ankitects/anki/releases/download/24.11/anki-24.11-windows-qt6.exe#/dl.7z",
-            "hash": "e202346a0b91293229c73eef2393b733d4a95ff25b25814852825d76621b55c8"
+            "url": "https://github.com/ankitects/anki/releases/download/26.08.1/anki-26.08.1-win-x64.msi",
+            "hash": "d79170c3cd2e6225f9c2ba33212117a8fe70c10735c3f0e5a2864e2f0ccf7c8c",
+            "extract_dir": "PFiles64\\Anki"
+        },
+        "arm64": {
+            "url": "https://github.com/ankitects/anki/releases/download/26.08.1/anki-26.08.1-win-arm64.msi",
+            "hash": "0f3821d09faabfc742642bed649e207e6692344dd0632c62bc66313c3880eba5",
+            "extract_dir": "PFiles64\\Anki"
         }
     },
     "pre_install": [
         "@(",
-        "    '@echo off'",
-        "    'SET _allParams=\"%*\"'",
-        "    'IF /i %_allParams:-b =%==%_allParams% ('",
-        "    \"    start `\"anki`\" /D `\"%~dp0`\" `\"%~dp0anki.exe`\" -b `\"$persist_dir\\data`\" %*\"",
-        "    ') ELSE ('",
-        "    '    start \"anki\" /D \"%~dp0\" \"%~dp0anki.exe\" %*'",
-        "    ')'",
-        ") | Set-Content \"$dir\\anki.cmd\" -Encoding ASCII",
-        "Remove-Item \"$dir\\`$*\" -Recurse"
+        "   '@echo off'",
+        "   'echo Starting Anki...'",
+        "   'set \"USB_ROOT=%~dp0\"'",
+        "   'set \"ANKI_LAUNCHER=%USB_ROOT%\\anki\"'",
+        "   'set \"ANKI_BASE=%USB_ROOT%\\data\"'",
+        "   'start /b \"\" \"%ANKI_LAUNCHER%\"'",
+        ") | Set-Content \"$dir\\anki.cmd\" -Encoding ASCII"
     ],
     "bin": "anki.cmd",
     "shortcuts": [
@@ -35,16 +36,18 @@
     ],
     "persist": "data",
     "checkver": {
-        "github": "https://github.com/ankitects/anki"
+        "github": "https://api.github.com/repos/ankitects/anki/releases",
+        "jsonpath": "$[*].assets[*].browser_download_url",
+        "regex": "download/(?<version>[\\d.]+)/anki-\\k<version>-win-x64\\.msi"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/ankitects/anki/releases/download/$version/anki-$version-windows-qt6.exe#/dl.7z"
+                "url": "https://github.com/ankitects/anki/releases/download/$version/anki-$version-win-x64.msi"
+            },
+            "arm64": {
+                "url": "https://github.com/ankitects/anki/releases/download/$version/anki-$version-win-arm64.msi"
             }
-        },
-        "hash": {
-            "url": "$baseurl/anki-$version-checksums.txt"
         }
     }
 }

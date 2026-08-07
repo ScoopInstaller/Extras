@@ -1,20 +1,15 @@
 {
-    "version": "24.02-3692",
+    "version": "26.04-6401",
     "description": "Communications and data transfer between devices over local networks",
     "homepage": "https://kdeconnect.kde.org/",
     "license": "GPL-3.0-or-later",
     "notes": "If you want to get the latest development branch-based installer, please install `kdeconnect-nightly` from Versions bucket.",
     "architecture": {
         "64bit": {
-            "url": "https://download.kde.org/stable/release-service/24.02.0/windows/kdeconnect-kde-release_24.02-3692-windows-cl-msvc2022-x86_64.exe#/dl.7z",
-            "hash": "8f7eb541bbe21a5fb1800d5f362fe1ea25328631894c30e937bd4bc259327ebd"
+            "url": "https://cdn.kde.org/ci-builds/network/kdeconnect-kde/release-26.04/windows/kdeconnect-kde-release_26.04-6401-windows-cl-msvc2022-x86_64.7z",
+            "hash": "73adfa072d8a6b95c0a63742bb41f8cd59f47dd2a5b862ecc08f3a6715bf3376"
         }
     },
-    "pre_install": [
-        "Remove-Item \"$dir\\*\" -Exclude kdeconnect-*.7z -Recurse",
-        "Expand-7ZipArchive \"$dir\\kdeconnect-*.7z\" \"$dir\"",
-        "Remove-Item \"$dir\\kdeconnect-*.7z\""
-    ],
     "bin": "bin\\kdeconnect-cli.exe",
     "shortcuts": [
         [
@@ -23,16 +18,30 @@
         ]
     ],
     "checkver": {
-        "url": "https://kdeconnect.kde.org/download.html",
-        "regex": "release-service/(?<release>[\\d.]+)/windows/kdeconnect-kde-release_(?<version>.*)-windows-(?<lib>.*)\\.exe"
+        "script": [
+            "$url = 'https://cdn.kde.org/ci-builds/network/kdeconnect-kde/?C=N;O=D'",
+            "",
+            "$cont = (Invoke-WebRequest $url).Content",
+            "$regex = 'release-([\\d.]+)'",
+            "if (!($cont -match $regex)) { error \"Could not match $regex in $url\"; continue }",
+            "$ver = $matches[1]",
+            "",
+            "$nextUrl = \"https://cdn.kde.org/ci-builds/network/kdeconnect-kde/release-$ver/windows/\"",
+            "$nextCont = (Invoke-WebRequest $nextUrl).Content",
+            "$nextRegex = \"kdeconnect-kde-release_$ver-([\\d]+)-windows-cl-([\\w]+)-x86_64\\.7z\"",
+            "if (!($nextCont -match $nextRegex)) { error \"Could not match $nextRegex in $nextUrl\"; continue }",
+            "$build = $matches[1]",
+            "$lib = $matches[2]",
+            "Write-Output $ver-$build $lib"
+        ],
+        "regex": "([\\d.-]+) (?<lib>[\\w]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://download.kde.org/stable/release-service/$matchRelease/windows/kdeconnect-kde-release_$version-windows-$matchLib.exe#/dl.7z",
+                "url": "https://cdn.kde.org/ci-builds/network/kdeconnect-kde/release-$matchHead/windows/kdeconnect-kde-release_$version-windows-cl-$matchLib-x86_64.7z",
                 "hash": {
-                    "url": "https://apps.kde.org/kdeconnect",
-                    "regex": "sha256:</strong> $sha256</div>"
+                    "url": "$url.sha256"
                 }
             }
         }

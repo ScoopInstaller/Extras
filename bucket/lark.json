@@ -1,5 +1,5 @@
 {
-    "version": "7.35.8",
+    "version": "7.73.11",
     "description": "The Next-Gen Collaboration Suite",
     "homepage": "https://www.larksuite.com/",
     "license": {
@@ -7,8 +7,16 @@
         "url": "https://www.larksuite.com/en_us/user-terms-of-service"
     },
     "notes": "Runtime data are stored in '%APPDATA%\\LarkInternational', and are not persisted by Scoop.",
-    "url": "https://sf16-va.larksuitecdn.com/obj/lark-artifact-storage/e54649cf/Lark-win32_ia32-7.35.8-signed.exe#/dl.7z",
-    "hash": "md5:815df5a10cad6e80c007c398bd0724f2",
+    "architecture": {
+        "32bit": {
+            "url": "https://sf16-sg.larksuitecdn.com/obj/lark-version-sg/98e01e6d/Lark-win32_ia32-7.73.11-signed.exe#/dl.7z",
+            "hash": "md5:bf55921899db5ba99ecdfca94b5c52ad"
+        },
+        "64bit": {
+            "url": "https://sf16-sg.larksuitecdn.com/obj/lark-version-sg/019fdb1f/Lark-win32_x64-7.73.11-signed.exe#/dl.7z",
+            "hash": "md5:51f3ddb6228ddde34e36cfb52a52b0f9"
+        }
+    },
     "extract_to": "app",
     "shortcuts": [
         [
@@ -18,14 +26,32 @@
     ],
     "checkver": {
         "url": "https://www.larksuite.com/api/downloads",
-        "jsonpath": "$.versions.Windows.download_link",
-        "regex": "storage/(?<tag>[\\w.-/].*?)/(?<suffix>[\\w.-].*?)-([\\d.]+)"
+        "script": [
+            "$page -match '(?<arch64>[0-9a-f]+)/Lark-win32_x64-(?<version>[\\d.]+)-signed\\.exe'",
+            "$version = $Matches.version",
+            "$arch64 = $Matches.arch64",
+            "$page -match '(?<arch32>[0-9a-f]+)/Lark-win32_ia32-(?<version>[\\d.]+)-signed\\.exe'",
+            "$arch32 = $Matches.arch32",
+            "Write-Output \"$version $arch64 $arch32\""
+        ],
+        "regex": "(?<version>[\\d.]+) (?<arch64>[0-9a-f]+) (?<arch32>[0-9a-f]+)"
     },
     "autoupdate": {
-        "url": "https://sf16-va.larksuitecdn.com/obj/lark-artifact-storage/$matchTag/Lark-win32_ia32-$version-signed.exe#/dl.7z",
-        "hash": {
-            "url": "https://www.larksuite.com/api/downloads",
-            "jsonpath": "$.versions.Windows.hash"
+        "architecture": {
+            "32bit": {
+                "url": "https://sf16-sg.larksuitecdn.com/obj/lark-version-sg/$matchArch32/Lark-win32_ia32-$version-signed.exe#/dl.7z",
+                "hash": {
+                    "url": "https://www.larksuite.com/api/downloads",
+                    "jsonpath": "$.versions.Windows.hash"
+                }
+            },
+            "64bit": {
+                "url": "https://sf16-sg.larksuitecdn.com/obj/lark-version-sg/$matchArch64/Lark-win32_x64-$version-signed.exe#/dl.7z",
+                "hash": {
+                    "url": "https://www.larksuite.com/api/downloads",
+                    "jsonpath": "$.versions.Windows_x64.hash"
+                }
+            }
         }
     }
 }

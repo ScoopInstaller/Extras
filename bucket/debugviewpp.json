@@ -1,53 +1,35 @@
 {
-    "version": "1.8.0.103",
+    "version": "1.2.0.0",
     "description": "Collect, view and filter application logs.",
     "homepage": "https://github.com/CobaltFusion/DebugViewPP",
     "license": "BSL-1.0",
-    "notes": "The 'OutputForwarderVSIX.vsix' is located at '$dir'.",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/CobaltFusion/DebugViewPP/releases/download/1.8.0.103-x64/DebugView%2B%2B.zip",
-            "hash": "35fe7bf1713e5ffc0d89fb00e58deae414165fe4e8e0326a09a63cb040818c7e"
-        },
-        "32bit": {
-            "url": "https://github.com/CobaltFusion/DebugViewPP/releases/download/v1.8.0.95/DebugView%2B%2B.zip",
-            "hash": "98d2c858271b69f8577c6225905413b0c13139f6edc55d4ac92c7c92e6de22e6"
+            "url": "https://github.com/CobaltFusion/DebugViewPP/releases/download/v.1.20.0.0/Debugview-1.2.0.0-x64.zip",
+            "hash": "eb4e94faf5027ade8d7503309d6dc3127c45955f685b724308124473759cef90",
+            "extract_dir": "Debugview-1.2.0.0-x64"
         }
     },
     "bin": [
-        "DebugView++.exe",
-        [
-            "DebugView++.exe",
-            "DebugView"
-        ],
+        "Debugviewpp.exe",
         "DebugViewConsole.exe"
     ],
     "shortcuts": [
         [
-            "DebugView++.exe",
-            "DebugView++"
+            "Debugviewpp.exe",
+            "Debugview++"
         ]
     ],
     "checkver": {
-        "script": [
-            "try {",
-            "    foreach ($tag in (Invoke-RestMethod https://api.github.com/repositories/14376430/releases).tag_name) {",
-            "        if ($64 -and $32) { break }",
-            "        if ($_ -clike '*-x64') { $64 = $tag } else { $32 = $tag }",
-            "    }",
-            "    $64, $32 -join ' '",
-            "}",
-            "catch { '' }"
-        ],
-        "regex": "\\A(?<prefix64>v?)([\\d.]+)-x64 (?<prefix32>v?)(?<ver32>[\\d.]+)\\Z"
+        "github": "https://api.github.com/repos/CobaltFusion/DebugViewPP/releases/latest",
+        "jsonpath": "$.assets[?(@.name =~ /Debugview.+64.+zip$/i)].browser_download_url",
+        "regex": "(?i)download/(?<tag>[^/]+)/(?<name>Debugview[^\\d\"]*([\\d.]+)(?![^\"]*upx).*\\.zip)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/CobaltFusion/DebugViewPP/releases/download/$matchPrefix64$version-x64/DebugView%2B%2B.zip"
-            },
-            "32bit": {
-                "url": "https://github.com/CobaltFusion/DebugViewPP/releases/download/$matchPrefix32$matchVer32/DebugView%2B%2B.zip"
+                "url": "https://github.com/CobaltFusion/DebugViewPP/releases/download/$matchTag/$matchName",
+                "extract_dir": "Debugview-$version-x64"
             }
         }
     }

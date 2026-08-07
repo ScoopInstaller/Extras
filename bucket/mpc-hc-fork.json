@@ -1,12 +1,12 @@
 {
-    "version": "2.4.0",
+    "version": "2.7.4",
     "description": "An extremely light-weight, open source media player for Windows.",
     "homepage": "https://github.com/clsid2/mpc-hc",
     "license": "GPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/clsid2/mpc-hc/releases/download/2.4.0/MPC-HC.2.4.0.x64.zip",
-            "hash": "2bea42ae1c11d32f8db5a45e543e8388923c19c55fbd683de8d4908c61f6ae4d",
+            "url": "https://github.com/clsid2/mpc-hc/releases/download/2.7.4/MPC-HC.2.7.4.x64.zip",
+            "hash": "79ee7c5391b0b8dbc6793356b858e55574dfbc96114464502e7010a11d3b4441",
             "bin": [
                 [
                     "mpc-hc64.exe",
@@ -21,8 +21,8 @@
             ]
         },
         "32bit": {
-            "url": "https://github.com/clsid2/mpc-hc/releases/download/2.4.0/MPC-HC.2.4.0.x86.zip",
-            "hash": "77e7c6a6d4d75631d3bee5d5799dfe8e409fd7d9bcac0ac60efb3262f20014dc",
+            "url": "https://github.com/clsid2/mpc-hc/releases/download/2.7.4/MPC-HC.2.7.4.x86.zip",
+            "hash": "de5e9467f81d92a6ded4081f7ce95d5c7d38e99e932d3cfc178fced7919e8a73",
             "bin": "mpc-hc.exe",
             "shortcuts": [
                 [
@@ -33,7 +33,8 @@
         }
     },
     "pre_install": [
-        "@('mpc-hc64.ini', 'mpc-hc.ini') | ForEach-Object {",
+        "@('mpc-hc64.ini', 'mpc-hc.ini', 'default.mpcpl') | ForEach-Object {",
+        "    if ((Get-Item \"$persist_dir\\$_\" 2>$null).PSIsContainer) { Remove-Item \"$persist_dir\\$_\" }",
         "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" -ItemType File | Out-Null }",
         "}"
     ],
@@ -43,8 +44,8 @@
         "default.mpcpl"
     ],
     "checkver": {
-        "url": "https://api.github.com/repositories/91570348/releases/latest",
-        "jsonpath": "$..browser_download_url",
+        "github": "https://api.github.com/repos/clsid2/mpc-hc/releases/latest",
+        "jsonpath": "$.assets[*].browser_download_url",
         "regex": "download/(?<tag>[\\d.]+)\\/MPC-HC.([\\d.]+).x64.exe"
     },
     "autoupdate": {

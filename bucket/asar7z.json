@@ -1,23 +1,50 @@
 {
     "version": "1.5",
-    "description": "7-Zip plugin that allows 7-zip to open, modify, or create Electron .asar archives.",
+    "description": "A plugin for 7-Zip that enables opening, modifying, and creating .asar archives used by Electron-based applications, while noting that encrypted .asar archives cannot be accessed without the specific encryption method defined by the developer.",
     "homepage": "https://www.tc4shell.com/en/7zip/asar/",
-    "license": "Freeware",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.tc4shell.com/en/termsofuse/"
+    },
     "url": "https://www.tc4shell.com/binary/Asar.zip",
     "hash": "ea17751b2d7d607dfc11612e71d0c9d36561e643cdfb2bfb16922a9a0ec6d250",
-    "pre_install": [
-        "$7z_folder = Split-Path (scoop which 7z)",
-        "if (!(Test-Path $7z_folder)) { error 'Could not find 7z.exe in PATH. Abort installation.'; break }",
-        "if ($architecture -eq '64bit') { Copy-Item \"$dir\\Asar.64.dll\" \"$7z_folder\\Formats\\\" -Force }",
-        "elseif ($architecture -eq '32bit') { Copy-Item \"$dir\\Asar.32.dll\" \"$7z_folder\\Formats\\\" -Force }"
-    ],
-    "pre_uninstall": [
-        "$7z_folder = Split-Path (scoop which 7z)",
-        "if (!(Test-Path $7z_folder)) { warn 'Could not find 7z.exe in PATH.' }",
-        "if ($architecture -eq '64bit') { Remove-Item \"$7z_folder\\Formats\\Asar.64.dll\" }",
-        "elseif ($architecture -eq '32bit') { Remove-Item \"$7z_folder\\Formats\\Asar.32.dll\" }"
-    ],
-    "checkver": "Plugin version: ([\\d.]+)",
+    "architecture": {
+        "64bit": {
+            "pre_install": [
+                "Get-ChildItem -Path $dir -Include '*32*' -Recurse -File | Remove-Item -Force -ErrorAction SilentlyContinue",
+                "Get-ChildItem -Path $dir -Include '*64*' -Recurse -File | Rename-Item -NewName { $_.Name -replace '\\d{2}\\.(?=dll)', '' }"
+            ]
+        },
+        "32bit": {
+            "pre_install": [
+                "Get-ChildItem -Path $dir -Include '*64*' -Recurse -File | Remove-Item -Force -ErrorAction SilentlyContinue",
+                "Get-ChildItem -Path $dir -Include '*32*' -Recurse -File | Rename-Item -NewName { $_.Name -replace '\\d{2}\\.(?=dll)', '' }"
+            ]
+        }
+    },
+    "installer": {
+        "script": [
+            "$7z_path = Get-CommandPath -Command '7z.exe'",
+            "if ($null -eq $7z_path) { abort \"`nCould not locate '7z.exe' in system PATH. Abort installation.\" }",
+            "$formats_dir = Join-Path -Path $(Split-Path -Path $7z_path -Parent) -ChildPath 'Formats'",
+            "if (-not (Test-Path -Path $formats_dir -PathType Container)) {",
+            "    New-Item -Path $formats_dir -ItemType Directory -Force | Out-Null",
+            "}",
+            "Copy-Item -Path \"$dir\\*\" -Destination $formats_dir -Exclude '*.json', 'ReadMe.txt' -Force -Recurse"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "$7z_path = Get-CommandPath -Command '7z.exe'",
+            "if ($null -ne $7z_path) {",
+            "    $formats_dir = Join-Path -Path $(Split-Path -Path $7z_path -Parent) -ChildPath 'Formats'",
+            "    Get-ChildItem -Path $dir -Exclude '*.json', 'ReadMe.txt' | ForEach-Object -Process {",
+            "        Remove-Item -Path \"$formats_dir\\$($_.Name)\" -Recurse -Force -ErrorAction SilentlyContinue",
+            "    }",
+            "}"
+        ]
+    },
+    "checkver": "Plugin version:\\s*([\\d.]+)",
     "autoupdate": {
         "url": "https://www.tc4shell.com/binary/Asar.zip"
     }

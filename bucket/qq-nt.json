@@ -1,5 +1,5 @@
 {
-    "version": "9.9.17.250110",
+    "version": "9.9.33.260730",
     "description": "An instant messaging software service developed by Tencent",
     "homepage": "https://im.qq.com/pcqq/index.shtml",
     "license": {
@@ -8,16 +8,16 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.17_250110_x64_01.exe#/dl.7z",
-            "hash": "cf02935bb2a6c245637a3c04f72c002a9957e1edfe3c912b2a37c32694fef082"
+            "url": "https://qqdl.gtimg.cn/qqfile/QQNT/9.9.33/release/a0ce07ad/QQ_9.9.33_260730_x64_01.exe#/dl.7z",
+            "hash": "7bcc1ad50c19d14c9aad17778a0359aacd84b4d6c54ef1c71d938e0a6e2f2f5d"
         },
         "32bit": {
-            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.17_250110_x86_01.exe#/dl.7z",
-            "hash": "74075d88a9598082442f0e7ee2e9181bd10b8143a87674a0f4d0eeb074c11685"
+            "url": "https://qqdl.gtimg.cn/qqfile/QQNT/9.9.33/release/a0ce07ad/QQ_9.9.33_260730_x86_01.exe#/dl.7z",
+            "hash": "f277c8e6139fad03c4bb59d91eb00811f5cab9f2bade77edc44a49e7aa431342"
         },
         "arm64": {
-            "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.17_250110_arm64_01.exe#/dl.7z",
-            "hash": "eb7e6b803b2a1f5e1d1525ec6c52bb4c9df2d22da0f38bdf13599debc6d0c57f"
+            "url": "https://qqdl.gtimg.cn/qqfile/QQNT/9.9.33/release/a0ce07ad/QQ_9.9.33_260730_arm64_01.exe#/dl.7z",
+            "hash": "3568e15927a0f799fc4bc1b39fd1477185d5ccaa67452c2401fe5144e66c86b7"
         }
     },
     "extract_dir": "Files",
@@ -29,26 +29,27 @@
     ],
     "checkver": {
         "script": [
-            "$url = 'https://im.qq.com/pcqq/index.shtml'",
-            "$resp = Invoke-WebRequest -Uri $url",
-            "$cont = $resp.Content",
-            "$pattern = 'https://qq-web.cdn-go.cn.*windowsDownloadUrl.js'",
-            "$jsUrl = [regex]::Match($cont, $pattern).Value",
-            "Invoke-WebRequest -Uri $jsUrl"
+            "# Please keep this script. Using 'cdn-go.cn' may result in receiving expired cache responses.",
+            "$url = 'https://cdn-go.cn/qq-web/im.qq.com_new/latest/rainbow/windowsConfig.js'",
+            "$hostname = ([Uri]$url).Host",
+            "$records = Resolve-DnsName 'cdn-go.cn.cloud.tc.qq.com' -Type A -DnsOnly -ErrorAction Ignore",
+            "$ip = $records | Where-Object { $_.QueryType -eq 'A' -and $_.IPAddress } | Select-Object -ExpandProperty IP4Address -First 1",
+            "$url = $url -Replace [regex]::Escape($hostname), $ip",
+            "Invoke-WebRequest -Uri $url -UseBasicParsing -Headers @{'Host' = $hostname} | Select-Object -ExpandProperty Content"
         ],
-        "regex": "QQNT/Windows/QQ_([\\d\\.]+)_([\\d]+)_x86_01.exe",
-        "replace": "${1}.${2}"
+        "regex": "QQNT/(.*?)/QQ_([\\d.]+)_([\\d]+)_x86_01.exe",
+        "replace": "${2}.${3}"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_$match1_$match2_x64_01.exe#/dl.7z"
+                "url": "https://qqdl.gtimg.cn/qqfile/QQNT/$match1/QQ_$match2_$match3_x64_01.exe#/dl.7z"
             },
             "32bit": {
-                "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_$match1_$match2_x86_01.exe#/dl.7z"
+                "url": "https://qqdl.gtimg.cn/qqfile/QQNT/$match1/QQ_$match2_$match3_x86_01.exe#/dl.7z"
             },
             "arm64": {
-                "url": "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_$match1_$match2_arm64_01.exe#/dl.7z"
+                "url": "https://qqdl.gtimg.cn/qqfile/QQNT/$match1/QQ_$match2_$match3_arm64_01.exe#/dl.7z"
             }
         }
     }

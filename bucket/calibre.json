@@ -1,20 +1,23 @@
 {
-    "version": "7.25.0",
+    "version": "9.13.0",
     "description": "Powerful and easy to use e-book manager",
     "homepage": "https://calibre-ebook.com",
-    "license": "GPL-3.0-only",
+    "license": {
+        "identifier": "GPL-3.0-only",
+        "url": "https://github.com/kovidgoyal/calibre/blob/master/LICENSE"
+    },
     "architecture": {
         "64bit": {
-            "url": "https://download.calibre-ebook.com/7.25.0/calibre-portable-installer-7.25.0.exe",
-            "hash": "sha512:01c29bc9f1b7e190fc85f15b3d8082f96614dd68734248bf01a635d0c1669d9cae3771774737e73279d6c2caef05fa623d6aeabd2f875bbc6f40cd15fc76d55b"
+            "url": "https://download.calibre-ebook.com/9.13.0/calibre-portable-installer-9.13.0.exe",
+            "hash": "sha512:8d67b537dba15daa8114d577f32e47fc14830ca9bbcbb4cbca6427e1ec44de50379a208174bc3683cb1324001ef2c3830e9b5cbcf8aa45d6fa593ea22947e506"
         }
     },
     "installer": {
         "script": [
-            "Start-Process \"$dir\\calibre-portable-installer-$version.exe\" @(\"$env:TEMP\") -Wait",
-            "Move-Item \"$env:TEMP\\Calibre Portable\\**\" \"$dir\"",
-            "Remove-Item \"$env:TEMP\\Calibre Portable\"",
-            "Icacls $dir /t /c /reset"
+            "Start-Process -FilePath \"$dir\\$fname\" -ArgumentList @($env:PUBLIC) -Wait",
+            "Move-Item -Path \"$env:PUBLIC\\Calibre Portable\\*\" -Destination $dir -Force",
+            "Remove-Item -Path \"$dir\\$fname\", \"$env:PUBLIC\\Calibre Portable\" -Recurse -Force -ErrorAction SilentlyContinue",
+            "Icacls $dir /t /c /reset | Out-Null"
         ]
     },
     "bin": [
@@ -73,7 +76,7 @@
             "64bit": {
                 "url": "https://download.calibre-ebook.com/$version/calibre-portable-installer-$version.exe",
                 "hash": {
-                    "url": "https://calibre-ebook.com/signatures/calibre-portable-installer-$version.exe.sha512"
+                    "url": "https://calibre-ebook.com/signatures/$basename.sha512"
                 }
             }
         }
