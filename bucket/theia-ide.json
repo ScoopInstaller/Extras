@@ -3,12 +3,40 @@
     "description": "A modern and open IDE for cloud and desktop. Theia platform based. Formerly “Theia Blueprint”.",
     "homepage": "https://theia-ide.org/#theiaide",
     "license": "EPL-2.0, GPL-2.0, MIT",
-    "notes": "Settings are stored in '%APPDATA%\\Theia IDE', and are not persisted by Scoop.",
+    "notes": [
+        "Added 'Open with Theia IDE' context menu entry for folders",
+        "To remove: reg import \"$dir\\uninstall-context.reg\"",
+        "Settings in '%APPDATA%\\Theia IDE' not persisted by Scoop"
+    ],
     "architecture": {
         "64bit": {
             "url": "https://www.eclipse.org/downloads/download.php?mirror_id=1&file=/theia/ide/1.73.100/windows/TheiaIDESetup-1.73.100.exe#/dl.7z",
             "hash": "sha512:649b3c552f9a4d046ebc8d64eaee9b27c7bf156d23e5012ed91c299cafedde986f4967ee1e71aa9ec37d894809d15dbd72ce736fecac952fbf774955234cf1a6"
         }
+    },
+    "post_install": [
+        "$theia_path = $dir -replace '\\\\', '\\\\'",
+        "$scriptsdir = \"$bucketsdir\\$bucket\\scripts\\$app\"",
+        "if (-not (Test-Path $scriptsdir)) {",
+        "    Write-Host \"Warning: reg script source not found at $scriptsdir\" -ForegroundColor Yellow",
+        "} else {",
+        "    Get-ChildItem -Path $scriptsdir -Filter '*.reg' -File | ForEach-Object {",
+        "        $content = Get-Content -Path $_.FullName -Encoding utf8",
+        "        if ($global) { $content = $content -replace 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE' }",
+        "        $content -replace '{{theia_dir}}', $theia_path | Set-Content -Path \"$dir\\$($_.Name)\" -Encoding unicode",
+        "    }",
+        "    reg import \"$dir\\install-context.reg\"",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "if ($cmd -eq 'uninstall')",
+            "{",
+            "    if (Test-Path \"$dir\\uninstall-context.reg\") {",
+            "        reg import \"$dir\\uninstall-context.reg\"",
+            "    }",
+            "}"
+        ]
     },
     "extract_dir": "$PLUGINSDIR",
     "installer": {
