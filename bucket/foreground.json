@@ -1,0 +1,38 @@
+{
+    "version": "1.1.0",
+    "description": "Automatic time and activity tracker that records time spent in apps and websites, storing all data locally",
+    "homepage": "https://foreground.computer",
+    "license": {
+        "identifier": "Shareware",
+        "url": "https://foreground.computer/buy.html"
+    },
+    "notes": [
+        "Tracking data is stored in '%LOCALAPPDATA%\\HelloCode\\Foreground', and is not persisted by Scoop.",
+        "Consider installing the Foreground extension for your browser."
+    ],
+    "suggest": {
+        "Microsoft Edge WebView2": "extras/webview2"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://foreground.computer/static/builds/1/Foreground_1.1.0_x64_en-US.msi.zip",
+            "hash": "82b28fb6265344316ee654db609608ff7e9c3d0cba7d05eb9dfb2d0a333064ef"
+        }
+    },
+    "pre_install": "Expand-MsiArchive \"$dir\\Foreground_$($version)_x64_en-US.msi\" \"$dir\" -ExtractDir 'PFiles\\Foreground' -Removal | Out-Null",
+    "shortcuts": [
+        [
+            "Foreground.exe",
+            "Foreground"
+        ]
+    ],
+    "pre_uninstall": "Stop-Process -Name 'Foreground' -ErrorAction SilentlyContinue",
+    "checkver": "static/builds/(?<Build>\\d+)/Foreground_(?<version>[\\d.]+)_x64_en-US\\.msi\\.zip",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://foreground.computer/static/builds/$matchBuild/Foreground_$version_x64_en-US.msi.zip"
+            }
+        }
+    }
+}
