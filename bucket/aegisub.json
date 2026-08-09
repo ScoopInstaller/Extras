@@ -18,7 +18,7 @@
     "extract_dir": "aegisub-portable",
     "pre_install": [
         "# Hardlinks won't work properly here to persist files, because this app creates a new file instead of writing to the existing one.",
-        "Get-ChildItem -LiteralPath \"$persist_dir\" -File | Where-Object { $_.Name -notin @('manifest.json', 'install.json') } | ForEach-Object {",
+        "Get-ChildItem -LiteralPath \"$persist_dir\" -File -Filter '*.json' | Where-Object { $_.Name -notin @('manifest.json', 'install.json') } | ForEach-Object {",
         "    if (Test-Path -LiteralPath \"$persist_dir\\$($_.Name)\" -PathType Leaf) {",
         "        Copy-Item -Path \"$persist_dir\\$($_.Name)\" -Destination \"$dir\\$($_.Name)\" -Force",
         "    }",
@@ -47,7 +47,7 @@
     ],
     "pre_uninstall": [
         "# Hardlinks won't work properly here to persist files, because this app creates a new file instead of writing to the existing one.",
-        "Get-ChildItem -LiteralPath \"$dir\" -File | Where-Object { $_.Name -notin @('manifest.json', 'install.json') } | ForEach-Object {",
+        "Get-ChildItem -LiteralPath \"$dir\" -File -Filter '*.json' | Where-Object { $_.Name -notin @('manifest.json', 'install.json') } | ForEach-Object {",
         "    if (Test-Path -LiteralPath \"$dir\\$($_.Name)\" -PathType Leaf) {",
         "        ensure $persist_dir | Out-Null",
         "        Copy-Item -Path \"$dir\\$($_.Name)\" -Destination \"$persist_dir\\$($_.Name)\" -Force",
