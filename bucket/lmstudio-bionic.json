@@ -1,0 +1,50 @@
+{
+    "version": "1.0.6-5",
+    "description": "Local-first AI agent for work and code. Runs open models on your machine (llama.cpp) or in LM Studio Cloud, with codebase, document and voice tools.",
+    "homepage": "https://lmstudio.ai",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://lmstudio.ai/app-terms"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://bionic-installers.lmstudio.ai/win32/x64/1.0.6-5/Bionic-1.0.6-5-x64.exe#/dl.7z",
+            "hash": "d3726463c0964655e1260c2137dccee557c3d8bb4aaa003f3cd58628f7b067d7"
+        }
+    },
+    "installer": {
+        "script": [
+            "Get-Item -Path \"$dir\\`$PLUGINSDIR\\app*.7z\" | Expand-7zipArchive -DestinationPath \"$dir\"",
+            "Remove-Item -Path \"$dir\\`$*\", \"$dir\\Uninst*.exe\" -Force -Recurse -ErrorAction Ignore"
+        ]
+    },
+    "bin": [
+        [
+            "resources\\app\\.webpack-bionic\\lms.exe",
+            "lmsb"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "Bionic.exe",
+            "LM Studio Bionic"
+        ]
+    ],
+    "checkver": {
+        "script": [
+            "$request = [System.Net.WebRequest]::Create('https://lmstudio.ai/download/bionic/latest/win32/x64')",
+            "$request.Method = 'HEAD'",
+            "$response = $request.GetResponse()",
+            "$response.ResponseUri.AbsoluteUri",
+            "$response.Close()"
+        ],
+        "regex": "Bionic-(?<version>[\\d.]+-\\d+)-x64\\.exe"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://bionic-installers.lmstudio.ai/win32/x64/$version/Bionic-$version-x64.exe#/dl.7z"
+            }
+        }
+    }
+}
