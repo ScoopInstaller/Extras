@@ -1,0 +1,37 @@
+{
+    "version": "0.42.4.0",
+    "description": "Tracker and ad-blocking browser",
+    "homepage": "https://duckduckgo.com/windows",
+    "license": "Freeware",
+    "url": "https://staticcdn.duckduckgo.com/d5c04536-5379-4709-8d19-d13fdd456ff6/0.42.4.0/DuckDuckGo_0.42.4.0.msixbundle#/dl.zip_",
+    "hash": "6dba53fb20ee613bce6e16762a4ad05b5aa7ac612b87b27ce9d1782290f65340",
+    "architecture": {
+        "64bit": {
+            "pre_install": [
+                "$file = \"DuckDuckGo_$($version)_x64.msix\"",
+                "Expand-7zipArchive \"$dir\\$fname\" \"$dir\" -Switch \"-i!$file\" -Removal",
+                "Expand-7zipArchive \"$dir\\$file\" \"$dir\" -Removal"
+            ]
+        },
+        "32bit": {
+            "pre_install": [
+                "$file = \"DuckDuckGo_$($version)_x86.msix\"",
+                "Expand-7zipArchive \"$dir\\$fname\" \"$dir\" -Switch \"-i!$file\" -Removal",
+                "Expand-7zipArchive \"$dir\\$file\" \"$dir\" -Removal"
+            ]
+        }
+    },
+    "shortcuts": [
+        [
+            "WindowsBrowser/DuckDuckGo.exe",
+            "DuckDuckGo Browser"
+        ]
+    ],
+    "checkver": {
+        "url": "https://staticcdn.duckduckgo.com/windows-desktop-browser/DuckDuckGo.appinstaller",
+        "regex": "/(?<Uuid>[\\w-]+)/([\\d.]+)/DuckDuckGo_"
+    },
+    "autoupdate": {
+        "url": "https://staticcdn.duckduckgo.com/$matchUuid/$version/DuckDuckGo_$version.msixbundle#/dl.zip_"
+    }
+}
