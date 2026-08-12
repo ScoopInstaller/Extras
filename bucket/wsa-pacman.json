@@ -28,9 +28,6 @@
         "  if (Test-Path \"$bucketsdir\\extras\\scripts\\wsa-pacman\\$_.reg\") {",
         "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\wsa-pacman\\$_.reg\"",
         "    $content = $content.Replace('$dirpath', $dirpath)",
-        "    if ($global) {",
-        "      $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
-        "    }",
         "    $content | Set-Content -Path \"$dir\\$_.reg\"",
         "  }",
         "}"
@@ -38,11 +35,9 @@
     "uninstaller": {
         "script": [
             "if ($cmd -eq 'uninstall') {",
-            "    $regkey = Get-ItemProperty -Path 'HKLM:\\SOFTWARE\\Classes\\wsa-pacman.apk' -ErrorAction SilentlyContinue",
+            "    $regkey = Get-ItemProperty -Path 'HKCU:\\SOFTWARE\\Classes\\wsa-pacman.apk' -ErrorAction SilentlyContinue",
             "    if ($regkey) {",
-            "        if (!(is_admin)) { error 'wsa_pacman: Admin rights are required to unregister file associations'; break }",
             "        reg import \"$dir\\uninstall-associations.reg\"",
-            "    }",
             "}"
         ]
     },
