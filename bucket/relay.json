@@ -5,7 +5,10 @@
   "license": "MIT",
   "url": "https://github.com/Fiqqar/Relay/releases/download/v0.5.8/relay_cli-0.5.8-py3-none-any.whl",
   "hash": "sha256:6734f18d9c8977bc2f2167a48833234156ab52bbf3030641addc77833b0a23a3",
-  "depends": "python",
+  "depends": [
+    "git",
+    "python"
+  ],
   "checkver": {
     "url": "https://api.github.com/repos/Fiqqar/Relay/releases/latest",
     "regex": "tag_name\": *\"v([\\d.]+)\""
@@ -16,7 +19,7 @@
   "installer": {
     "script": [
       "python -c \"import zipfile; zipfile.ZipFile(r'$dir\\relay_cli-$version-py3-none-any.whl').extractall(r'$dir\\lib')\"",
-      "Set-Content -Path \"$dir\\relay.ps1\" -Value '$env:PYTHONPATH = (Join-Path $PSScriptRoot \"lib\"); python -m relay @args' -Encoding UTF8"
+      "Set-Content -Path \"$dir\\relay.ps1\" -Value '$env:RELAY_LIB = (Join-Path $PSScriptRoot \"lib\"); python -I -c \"import os, sys; sys.path.insert(0, os.environ[''RELAY_LIB'']); from relay.cli import main; sys.exit(main())\" @args' -Encoding UTF8"
     ]
   },
   "bin": [
