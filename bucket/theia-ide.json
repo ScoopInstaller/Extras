@@ -1,5 +1,5 @@
 {
-    "version": "1.73.100",
+    "version": "1.74.100",
     "description": "A modern and open IDE for cloud and desktop. Theia platform based. Formerly “Theia Blueprint”.",
     "homepage": "https://theia-ide.org/#theiaide",
     "license": "EPL-2.0, GPL-2.0, MIT",
@@ -10,27 +10,22 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://www.eclipse.org/downloads/download.php?mirror_id=1&file=/theia/ide/1.73.100/windows/TheiaIDESetup-1.73.100.exe#/dl.7z",
-            "hash": "sha512:649b3c552f9a4d046ebc8d64eaee9b27c7bf156d23e5012ed91c299cafedde986f4967ee1e71aa9ec37d894809d15dbd72ce736fecac952fbf774955234cf1a6"
+            "url": "https://www.eclipse.org/downloads/download.php?mirror_id=1&file=/theia/ide/$version/windows/TheiaIDESetup-$version.exe#/dl.7z",
+            "hash": "sha512:ddf047801546acf4d9eb996acdd8517582aded479adb243f4f82cc509fdd102e26779d0d4083c42b4d7f3eafde96e26695bbfb415f1d92ffc9760a716718f2b1"
         }
     },
     "post_install": [
         "$theia_path = $dir -replace '\\\\', '\\\\'",
         "$scriptsdir = \"$bucketsdir\\$bucket\\scripts\\$app\"",
         "if (-not (Test-Path $scriptsdir)) {",
-        "    throw \"reg script source not found at $scriptsdir\"",
-        "}",
-        "Get-ChildItem -Path $scriptsdir -Filter '*.reg' -File | ForEach-Object {",
-        "    $content = Get-Content -Path $_.FullName -Encoding utf8",
-        "    if ($global) { $content = $content -replace 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE' }",
-        "    $content -replace '{{theia_dir}}', $theia_path | Set-Content -Path \"$dir\\$($_.Name)\" -Encoding unicode",
-        "}",
-        "if (-not (Test-Path \"$dir\\install-context.reg\")) {",
-        "    throw \"install-context.reg not found at $dir after template processing\"",
-        "}",
-        "reg import \"$dir\\install-context.reg\"",
-        "if ($LASTEXITCODE -ne 0) {",
-        "    throw \"reg import failed with exit code $LASTEXITCODE for $dir\\install-context.reg\"",
+        "    Write-Host \"Warning: reg script source not found at $scriptsdir\" -ForegroundColor Yellow",
+        "} else {",
+        "    Get-ChildItem -Path $scriptsdir -Filter '*.reg' -File | ForEach-Object {",
+        "        $content = Get-Content -Path $_.FullName -Encoding utf8",
+        "        if ($global) { $content = $content -replace 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE' }",
+        "        $content -replace '{{theia_dir}}', $theia_path | Set-Content -Path \"$dir\\$($_.Name)\" -Encoding unicode",
+        "    }",
+        "    reg import \"$dir\\install-context.reg\"",
         "}"
     ],
     "uninstaller": {
@@ -39,9 +34,6 @@
             "{",
             "    if (Test-Path \"$dir\\uninstall-context.reg\") {",
             "        reg import \"$dir\\uninstall-context.reg\"",
-            "        if ($LASTEXITCODE -ne 0) {",
-            "            throw \"reg import failed with exit code $LASTEXITCODE for $dir\\uninstall-context.reg\"",
-            "        }",
             "    }",
             "}"
         ]
