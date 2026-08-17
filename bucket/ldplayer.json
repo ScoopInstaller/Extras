@@ -1,11 +1,20 @@
 {
-    "version": "9.5.27.0",
+    "version": "14.0.22.0",
     "description": "An Android emulator optimized for mobile gaming with lower resource consumption",
     "homepage": "https://www.ldplayer.net",
     "license": "Unknown",
     "notes": "Administrator privileges are required to run repairer",
-    "url": "https://static.ldrescdn.com/download/package/LDPlayer_9.5.27.0.exe#/setup.exe",
-    "hash": "dad4e80883fd2f4a28ba917547d70ee044e1b6c485888e78ba4ba63054161b4a",
+    "url": "https://static.ldrescdn.com/download/package/LDPlayer_14.0.22.0.exe",
+    "hash": "f351d39360a2be22274123d139c68108020aafa8276f8533cab7f0e6686354dc",
+    "installer": {
+        "script": [
+            "Expand-7zipArchive \"$dir\\$fname\" \"$dir\\installer\" -Switches \"-t#\" -Removal",
+            "Get-ChildItem -LiteralPath \"$dir\\installer\" -Filter '*.7z' -File | ForEach-Object {",
+            "    Expand-7zipArchive $_.FullName $dir",
+            "}",
+            "Remove-Item \"$dir\\installer\" -Force -Recurse"
+        ]
+    },
     "shortcuts": [
         [
             "dnplayer.exe",
@@ -20,18 +29,6 @@
             "LDPlayer\\LDPlayer Repairer"
         ]
     ],
-    "installer": {
-        "script": [
-            "Expand-7zipArchive \"$dir\\setup.exe\" \"$dir\\installer\" -Switches \"-t#\"",
-            "@('4.7z', '6.7z') | ForEach-Object {",
-            "    Remove-Item \"$dir\\installer\\$_\"",
-            "}",
-            "(Get-ChildItem \"$dir\\installer\\*.7z\").FullName | ForEach-Object {",
-            "    Expand-7zipArchive $_ \"$dir\" ",
-            "}",
-            "Remove-Item \"$dir\\installer\", \"$dir\\setup.exe\" -Force -Recurse"
-        ]
-    },
     "uninstaller": {
         "file": "dnuninst.exe"
     },
@@ -44,6 +41,6 @@
         "regex": "download/package/LDPlayer_([\\d.]+)\\.exe"
     },
     "autoupdate": {
-        "url": "https://static.ldrescdn.com/download/package/LDPlayer_$version.exe#/setup.exe"
+        "url": "https://static.ldrescdn.com/download/package/LDPlayer_$version.exe"
     }
 }
