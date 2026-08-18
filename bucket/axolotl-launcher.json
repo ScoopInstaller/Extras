@@ -1,0 +1,63 @@
+{
+    "version": "1.8.6",
+    "description": "Free and open-source Minecraft Java Edition launcher with Modrinth and CurseForge integration",
+    "homepage": "https://axlmc.org",
+    "license": "GPL-3.0-only",
+    "suggest": {
+        "Microsoft Edge WebView2": "extras/webview2"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Mystic-Stars/Axolotl/releases/download/v1.8.6/Axolotl_Launcher_1.8.6_x64_portable.zip",
+            "hash": "e902e8d7dbc9f2c5bc590bd3f2b225f135df66c0a4f4e890d8da4cfcb4222d3a"
+        }
+    },
+    "extract_dir": "Axolotl",
+    "pre_install": [
+        "$sourceDir = \"$env:APPDATA\\red.ghs.axolotl\"",
+        "$targetDir = \"$persist_dir\\red.ghs.axolotl\"",
+        "if (!(Test-Path $targetDir) -and (Test-Path $sourceDir)) {",
+        "    if (Get-Process -Name 'Axolotl Launcher' -ErrorAction SilentlyContinue) { throw 'Close Axolotl Launcher before migrating its data' }",
+        "    $stagingDir = \"$targetDir.migration\"",
+        "    info \"Copying existing '$sourceDir' data to '$targetDir'\"",
+        "    try {",
+        "        ensure $persist_dir | Out-Null",
+        "        if (Test-Path $stagingDir) { Remove-Item $stagingDir -Recurse -Force -ErrorAction Stop }",
+        "        Copy-Item $sourceDir $stagingDir -Recurse -Force -ErrorAction Stop",
+        "        Move-Item $stagingDir $targetDir -ErrorAction Stop",
+        "    } catch {",
+        "        if (Test-Path $stagingDir) { Remove-Item $stagingDir -Recurse -Force -ErrorAction SilentlyContinue }",
+        "        throw",
+        "    }",
+        "}",
+        "Remove-Item \"$dir\\.Axolotl\" -Recurse -Force"
+    ],
+    "bin": [
+        [
+            "Axolotl Launcher.exe",
+            "axolotl-launcher"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "Axolotl Launcher.exe",
+            "Axolotl Launcher"
+        ]
+    ],
+    "persist": [
+        [
+            ".Axolotl",
+            "red.ghs.axolotl"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/Mystic-Stars/Axolotl"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Mystic-Stars/Axolotl/releases/download/v$version/Axolotl_Launcher_$version_x64_portable.zip"
+            }
+        }
+    }
+}
