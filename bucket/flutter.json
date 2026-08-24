@@ -1,9 +1,13 @@
 {
-    "version": "3.41.1",
+    "version": "3.47.1",
     "description": "Google's SDK for crafting beautiful, fast user experiences for mobile, web, and desktop",
     "homepage": "https://flutter.dev",
     "license": "BSD-3-Clause",
-    "notes": " - Run 'flutter doctor' to see if there are any platform dependencies you need to complete the setup.",
+    "notes": [
+        " - Run 'flutter doctor' to see if there are any platform dependencies you need to complete the setup.",
+        "Though only x64 sdk are officially distributed, we can repurpose it to get arm64 sdk, see:",
+        "https://github.com/flutter/flutter/issues/186730#issuecomment-4573214964"
+    ],
     "suggest": {
         "Android SDK Tools": "android-clt",
         "Android Studio": "extras/android-studio",
@@ -13,8 +17,17 @@
         ],
         "Visual Studio Code with Flutter extension": "extras/vscode"
     },
-    "url": "https://storage.googleapis.com/flutter_infra_release/releases/stable/windows/flutter_windows_3.41.1-stable.zip",
-    "hash": "1b2b077a35eeb5e125d4dac3857d1a16c1ffc09403c05a087054ac34fafba68a",
+    "url": "https://storage.googleapis.com/flutter_infra_release/releases/stable/windows/flutter_windows_3.47.1-stable.zip",
+    "hash": "4cbf94fde1f5f8d6b9fc50b2483b57cf2077f61712282c2f4cf92560168f442b",
+    "architecture": {
+        "arm64": {
+            "post_install": [
+                "Remove-Item -path \"$dir\\bin\\cache\\engine-dart-sdk.stamp\" -Force -ErrorAction Ignore",
+                "Write-Host \"Repurposing the sdk for arm64, please wait in patience!\" -ForegroundColor Green",
+                "cmd /c \"$dir\\bin\\flutter.bat\" doctor -v"
+            ]
+        }
+    },
     "extract_dir": "flutter",
     "env_add_path": "bin",
     "env_set": {

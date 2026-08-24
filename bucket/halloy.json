@@ -1,21 +1,21 @@
 {
-    "version": "2026.2",
+    "version": "2026.8",
     "description": "Halloy is an open-source IRC client written in Rust, with the iced GUI library.",
-    "homepage": "https://halloy.squidowl.org/",
+    "homepage": "https://halloy.chat/",
     "license": "GPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/squidowl/halloy/releases/download/2026.2/halloy-installer.msi",
-            "hash": "64f314deccda5255d5b6d1399df60f8bed6e3cfb0c101d7751a30b02ee4e232a"
+            "url": "https://github.com/squidowl/halloy/releases/download/2026.8/halloy-installer.exe",
+            "hash": "6c50ee8a96da71decd0f5c1cb98660a7b77197c22bb6d617684afd740fdee596"
         }
     },
-    "extract_dir": "PFiles64/Halloy",
+    "innosetup": true,
     "installer": {
         "script": [
             "if (!(Test-Path \"$persist_dir\\config.toml\")) {",
             "    $configContent = '# Halloy config.",
             "# For a complete list of available options,",
-            "# please visit https://halloy.squidowl.org/configuration/index.html",
+            "# please visit https://halloy.chat/configuration",
             "[servers.liberachat]",
             "    nickname = \"halloy8765\"",
             "    server = \"irc.libera.chat\"",
@@ -24,11 +24,11 @@
             "    if (Test-Path \"$env:AppData\\halloy\") {",
             "        Copy-Item \"$env:AppData\\halloy\\*\" \"$dir\" -Recurse -Exclude '*config.toml' -ErrorAction SilentlyContinue",
             "    }",
-            "} else { Move-Item \"$persist_dir\\*\" \"$dir\" -Include '*.log', '*.gz', '*.toml' }"
+            "} else { Move-Item \"$persist_dir\\*\" \"$dir\" -Include '*.log', '*.gz', '*.toml' -ErrorAction SilentlyContinue}"
         ]
     },
     "uninstaller": {
-        "script": "Move-Item \"$dir\\*\" \"$persist_dir\" -Include '*.log', '*.gz', '*.toml'"
+        "script": "Move-Item \"$dir\\*\" \"$persist_dir\" -Include '*.log', '*.gz', '*.toml' -ErrorAction SilentlyContinue"
     },
     "persist": [
         "themes",
@@ -46,11 +46,8 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/squidowl/halloy/releases/download/$version/halloy-installer.msi"
+                "url": "https://github.com/squidowl/halloy/releases/download/$version/halloy-installer.exe"
             }
-        },
-        "hash": {
-            "url": "$baseurl/checksums.txt"
         }
     }
 }

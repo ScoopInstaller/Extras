@@ -1,10 +1,10 @@
 {
-    "version": "1.6.4.0",
+    "version": "1.8.2.4",
     "description": "UltraVNC Server and Viewer can display the screen of one computer (Server) on the screen of another (Viewer).",
     "homepage": "https://uvnc.com",
     "license": "GPL-3.0-or-later",
-    "url": "https://uvnc.eu/download/1640/UltraVNC_1640.zip",
-    "hash": "910ab4df4441c4f415c59007501e23ea2db331aa5dfa6ecbd5e583f34362d975",
+    "url": "https://uvnc.eu/download/1800/UltraVNC_1824.zip",
+    "hash": "8af948089626008f02edd1254afc15c814e454ec5fc9e3eaa860356f19d4f113",
     "architecture": {
         "64bit": {
             "extract_dir": "x64"
@@ -37,9 +37,20 @@
     ],
     "checkver": {
         "url": "https://uvnc.com/downloads/ultravnc.html",
-        "regex": "Latest release version: UltraVNC ([\\d.]+)"
+        "script": [
+            "$page -match 'Latest release version: UltraVNC (?<version>[\\d.]+)'",
+            "$version = $matches.version",
+            "$cleanVersion = $version -replace '\\.'",
+            "$page -match 'href=\"(?<url>https://forum\\.uvnc\\.com/viewtopic\\.php\\?t=\\d+)\"'",
+            "$url = $matches.url",
+            "$page = Invoke-WebRequest -Uri $url -UseBasicParsing | Select-Object -ExpandProperty Content",
+            "$page -match \"href=`\"(?<url>https://uvnc\\.eu/download/.*/UltraVNC_$cleanVersion\\.zip)`\"\"",
+            "$url = $matches.url",
+            "Write-Output \"$version $url\""
+        ],
+        "regex": "(?<version>\\d+(?:\\.\\d+)+) https://uvnc\\.eu/download/(?<url>[^/]*)/"
     },
     "autoupdate": {
-        "url": "https://uvnc.eu/download/$cleanVersion/UltraVNC_$cleanVersion.zip"
+        "url": "https://uvnc.eu/download/$matchUrl/UltraVNC_$cleanVersion.zip"
     }
 }

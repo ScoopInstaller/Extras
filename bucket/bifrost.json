@@ -1,15 +1,19 @@
 {
-    "version": "1.20.4",
+    "version": "2.1.4",
     "description": "Samsung Firmware Downloader",
-    "homepage": "https://github.com/zacharee/SamloaderKotlin/",
+    "homepage": "https://bifrost.zwander.dev",
     "license": {
         "identifier": "MIT",
-        "url": "https://github.com/zacharee/SamloaderKotlin/blob/master/LICENSE.txt"
+        "url": "https://github.com/zacharee/Bifrost/blob/master/LICENSE.txt"
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/zacharee/SamloaderKotlin/releases/download/1.20.4/bifrost-1.20.4-windows-amd64.zip",
-            "hash": "428df51c8b1da49828af38cc2668bf6f750d8bbd84ceebcf4a0fb915c0605b49"
+            "url": "https://github.com/zacharee/Bifrost/releases/download/2.1.4/bifrost-2.1.4-windows-amd64.zip",
+            "hash": "472e4fcc290d4a403f5469814624bc895fff8883b342e4fad259d402c019f59d"
+        },
+        "arm64": {
+            "url": "https://github.com/zacharee/Bifrost/releases/download/2.1.4/bifrost-2.1.4-windows-aarch64.zip",
+            "hash": "61be0b5b6e5b9b2feb67c89d07b4e72a92f48cd6baacd577dfcefb7ea51abbef"
         }
     },
     "bin": "bin/Bifrost.exe",
@@ -20,12 +24,35 @@
         ]
     ],
     "checkver": {
-        "github": "https://github.com/zacharee/SamloaderKotlin"
+        "github": "https://api.github.com/repos/zacharee/Bifrost/releases?per_page=15",
+        "script": [
+            "$releases = $page | ConvertFrom-Json -ErrorAction Stop",
+            "$version_sort = { if ($_.tag_name -match '([\\d.]+)$') { [version]$Matches[1] } }",
+            "$valid_releases = $releases.Where({ -not $_.prerelease -and $_.assets.Count -gt 0 }) |",
+            "        Sort-Object -Property $version_sort -Descending",
+            "$latest_windows_asset = $null",
+            "foreach ($item in $valid_releases) {",
+            "    $windows_assets = $item.assets.Where({ $_.name -like '*windows*' })",
+            "    if ($windows_assets.Count -eq 0) { continue }",
+            "    $latest_windows_asset = $windows_assets | Sort-Object -Property updated_at -Descending |",
+            "            Select-Object -ExpandProperty name -First 1",
+            "    if ($latest_windows_asset -match 'bifrost-(?<version>[\\d.]+)-windows') {",
+            "        $version_info = @{ result = \"$($item.tag_name), $($Matches['version'])\" } | ConvertTo-Json -Compress",
+            "        Write-Output $version_info",
+            "        break",
+            "    }",
+            "}"
+        ],
+        "jsonpath": "$.result",
+        "regex": "(?<tag>[^,]+), (?<version>[\\d.]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/zacharee/SamloaderKotlin/releases/download/$version/bifrost-$version-windows-amd64.zip"
+                "url": "https://github.com/zacharee/Bifrost/releases/download/$matchTag/bifrost-$version-windows-amd64.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/zacharee/Bifrost/releases/download/$matchTag/bifrost-$version-windows-aarch64.zip"
             }
         }
     }

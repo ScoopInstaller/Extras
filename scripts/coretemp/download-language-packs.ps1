@@ -22,6 +22,7 @@ $language_pack_filenames = @(
     "ro-RO.lng",
     "ru-RU.lng",
     "sk.lng",
+    "sl-SI.lng",
     "es.lng",
     "sv-SV.lng",
     "tr-TR.lng",

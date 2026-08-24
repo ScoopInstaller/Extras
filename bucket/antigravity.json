@@ -1,71 +1,72 @@
 {
-    "version": "1.16.5",
-    "description": "AI-powered IDE developed by Google, designed for prioritizing AI agents platform for software development.",
-    "homepage": "https://antigravity.google/",
+    "version": "2.9.1",
+    "description": "Agent orchestration platform developed by Google.",
+    "homepage": "https://antigravity.google/product/antigravity-2",
     "license": {
         "identifier": "Proprietary",
         "url": "https://antigravity.google/terms"
     },
+    "notes": [
+        "Antigravity 2.0 has fully transitioned into an agent orchestration platform.",
+        "The editor component has been decoupled and is now maintained separately as Antigravity IDE.",
+        "For more details, see: https://antigravity.google/blog/introducing-google-antigravity-2-0",
+        "",
+        "Antigravity IDE is available as a separate package: 'extras/antigravity-ide'.",
+        "If you have previously installed Antigravity IDE (v1.x), your data (v1.x) is located in:",
+        "\"$persist_dir\"",
+        "You may need to move the persisted data manually after installing Antigravity IDE v2.x."
+    ],
+    "suggest": {
+        "Antigravity IDE": "extras/antigravity-ide"
+    },
     "architecture": {
         "64bit": {
-            "url": "https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/1.16.5-6703236727046144/windows-x64/Antigravity.exe#/dl.exe",
-            "hash": "11d587902ce44ab99ed4ef23a0a03129752d5f8c74f7ffd6b8cfc274f8f35f7c"
+            "url": "https://storage.googleapis.com/antigravity-public/antigravity-hub/2.9.1-4871453687021568/windows-x64/Antigravity-x64.exe#/dl.7z",
+            "hash": "sha512:dd49fc846aafa4633edd435ee29db432d2c4f838fba04a9ce30dc4c432e0b1ffe6bd1d03c1b58c41fe43ef5c8ca6899f07dfed9e8423503393a479f1b20b43cd"
         },
         "arm64": {
-            "url": "https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/1.16.5-6703236727046144/windows-arm64/Antigravity.exe#/dl.exe",
-            "hash": "de12eb273171debe7993bec11594fdf9c84fe8911c9ac47c5897c7840737247d"
+            "url": "https://storage.googleapis.com/antigravity-public/antigravity-hub/2.9.1-4871453687021568/windows-arm/Antigravity-arm64.exe#/dl.7z",
+            "hash": "sha512:b0747632986a0e0e2560f5d6fee79bb14399f45784afa536de4a10d8de6eba924d919b6a52c38df198f188ca835bdc28d163c15eb5b0dbceadd958d20ddf3233"
         }
     },
-    "innosetup": true,
-    "extract_dir": "{code_GetDestDir}",
+    "installer": {
+        "script": [
+            "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Expand-7zipArchive -DestinationPath \"$dir\"",
+            "Remove-Item \"$dir\\`$*\" -Force -Recurse"
+        ]
+    },
     "post_install": [
-        "if (!(Test-Path \"$dir\\data\\extensions\") -and (Test-Path \"$env:USERPROFILE\\.antigravity\\extensions\")) {",
-        "    info '[Portable Mode] Copying extensions...'",
-        "    Copy-Item \"$env:USERPROFILE\\.antigravity\\extensions\" \"$dir\\data\" -Recurse",
+        "# Disable built-in update mechanism to prevent conflicts with Scoop's update management",
+        "$yaml = \"$dir\\resources\\app-update.yml\"",
+        "$content = Get-Content -Path $yaml | Foreach-Object {",
+        "    if ($_.StartsWith('url')) { \"$($_.Replace('url', '# url')) # Disabled by Scoop\" } else { $_ }",
         "}",
-        "if (!(Test-Path \"$dir\\data\\user-data\") -and (Test-Path \"$env:AppData\\Antigravity\")) {",
-        "    info '[Portable Mode] Copying user data...'",
-        "    Copy-Item \"$env:AppData\\Antigravity\" \"$dir\\data\\user-data\" -Recurse",
-        "}",
-        "$extensions_file = \"$dir\\data\\extensions\\extensions.json\"",
-        "if ((Test-Path \"$extensions_file\")) {",
-        "    info 'Adjusting path in extensions file...'",
-        "    (Get-Content \"$extensions_file\") -replace '(?<=antigravity(/|\\\\\\\\)).*?(?=(/|\\\\\\\\)data(/|\\\\\\\\)extensions)', $version | Set-Content \"$extensions_file\"",
-        "}"
+        "Set-Content $yaml -Value $content -Encoding ascii"
     ],
     "shortcuts": [
         [
-            "antigravity.exe",
-            "Antigravity",
-            "--user-data-dir $dir\\data\\user-data --extensions-dir $dir\\data\\extensions"
+            "Antigravity.exe",
+            "Antigravity"
         ]
     ],
-    "bin": [
-        [
-            "bin\\antigravity.cmd",
-            "antigravity",
-            "--user-data-dir $dir\\data\\user-data --extensions-dir $dir\\data\\extensions"
-        ]
-    ],
-    "persist": "data",
     "checkver": {
-        "url": "https://antigravity-auto-updater-974169037036.us-central1.run.app/api/update/win32-x64-user/stable/latest",
-        "regex": ".+/antigravity/stable/([.\\d]+)-(?<build>\\d+)/"
+        "url": "https://antigravity-hub-auto-updater-974169037036.us-central1.run.app/manifest/latest-x64-win.yml",
+        "regex": "antigravity-hub/(?<version>[\\d.]+)-(?<build>\\d+)/"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/$version-$matchBuild/windows-x64/Antigravity.exe#/dl.exe",
+                "url": "https://storage.googleapis.com/antigravity-public/antigravity-hub/$version-$matchBuild/windows-x64/Antigravity-x64.exe#/dl.7z",
                 "hash": {
-                    "url": "https://antigravity-auto-updater-974169037036.us-central1.run.app/api/update/win32-x64-user/stable/latest",
-                    "jsonpath": "$.sha256hash"
+                    "url": "https://antigravity-hub-auto-updater-974169037036.us-central1.run.app/manifest/latest-x64-win.yml",
+                    "regex": "sha512:\\s+$base64"
                 }
             },
             "arm64": {
-                "url": "https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/$version-$matchBuild/windows-arm64/Antigravity.exe#/dl.exe",
+                "url": "https://storage.googleapis.com/antigravity-public/antigravity-hub/$version-$matchBuild/windows-arm/Antigravity-arm64.exe#/dl.7z",
                 "hash": {
-                    "url": "https://antigravity-auto-updater-974169037036.us-central1.run.app/api/update/win32-arm64-user/stable/latest",
-                    "jsonpath": "$.sha256hash"
+                    "url": "https://antigravity-hub-auto-updater-974169037036.us-central1.run.app/manifest/latest-arm64-win.yml",
+                    "regex": "sha512:\\s+$base64"
                 }
             }
         }

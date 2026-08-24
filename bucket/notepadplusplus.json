@@ -1,25 +1,27 @@
 {
-    "version": "8.9.2",
+    "version": "8.9.8",
     "description": "A free source code editor and Notepad replacement that supports several languages.",
     "homepage": "https://notepad-plus-plus.org",
     "license": "GPL-3.0-or-later",
     "notes": "Add Notepad++ as a context menu option by running: reg import \"$dir\\install-context.reg\"",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.9.2/npp.8.9.2.portable.x64.zip",
-            "hash": "49798d5af654c1389193dd39f56fffe2d1005306690d331570609b3a41ca4a9e"
+            "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.9.8/npp.8.9.8.portable.x64.zip",
+            "hash": "b269383239464a945d17cfabfccf53935b83d80d907922310fdfd50d80274c66"
         },
         "32bit": {
-            "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.9.2/npp.8.9.2.portable.zip",
-            "hash": "32bdd72a55099addef958690b4c507e33d8a99cbe835ff52e80c5e4041019681"
+            "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.9.8/npp.8.9.8.portable.zip",
+            "hash": "880c5c5323305154aaed3fa5238d6186cda3bcfa3a82645243c1e7999e35602a"
         },
         "arm64": {
-            "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.9.2/npp.8.9.2.portable.arm64.zip",
-            "hash": "2df4a4292f1f73646a9cd3ab15402ee85d89bff82fb73aca6a154485433baace"
+            "url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.9.8/npp.8.9.8.portable.arm64.zip",
+            "hash": "06b047b6c07ee32f2b685af42a7312c62e7f6eeda747e6102cb48936fd91c4ee"
         }
     },
     "pre_install": [
-        "'session.xml', 'userDefineLang.xml', 'nativeLang.xml' | ForEach-Object {",
+        "'config.xml', 'nativeLang.xml', 'session.xml', 'shortcuts.xml', 'userDefineLang.xml' | ForEach-Object {",
+        "    # If present from previous installs, removing incorrectly created folders from the persist dir",
+        "    if ((Test-Path -Path \"$persist_dir\\$_\" -PathType Container)) { Remove-Item \"$persist_dir\\$_\" -Recurse -Force }",
         "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" -ItemType File | Out-Null }",
         "}",
         "if (!(Test-Path \"$persist_dir\\stylers.xml\")) { Copy-Item \"$dir\\stylers.model.xml\" \"$dir\\stylers.xml\" }"

@@ -1,29 +1,54 @@
 {
-    "version": "2.5.0",
+    "version": "2.8.2",
     "description": "Seelen UI is a fully customizable desktop environment for Windows 10/11.",
     "homepage": "https://seelen.io/apps/seelen-ui",
-    "license": "AGPL-3.0-or-later",
+    "license": {
+        "identifier": "AGPL-3.0-or-later",
+        "url": "https://github.com/eythaann/Seelen-UI/blob/HEAD/LICENSE"
+    },
     "notes": [
-        "Seelen UI requires Microsoft Edge and the WebView runtime to function properly.",
-        "For more information, see: https://github.com/eythaann/Seelen-UI/?tab=readme-ov-file#installation"
+        "To register file associations, please execute the following command:",
+        "reg import \"$dir\\install-associations.reg\"",
+        "To register the URL protocol handler, please execute the following command:",
+        "reg import \"$dir\\register-url-handler.reg\""
     ],
+    "suggest": {
+        "Microsoft Edge WebView2": "extras/webview2"
+    },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/eythaann/Seelen-UI/releases/download/v2.5.0/Seelen.UI_2.5.0_x64-setup.exe#/dl.7z",
-            "hash": "4a66b922876e41dea6b4f5cad1dc164ce1e659c72306ce35ca4c7e85ecdf2e10"
+            "url": "https://github.com/eythaann/Seelen-UI/releases/download/v2.8.2/Seelen.UI_2.8.2_x64-setup.exe#/dl.7z",
+            "hash": "8b24aa07b37ffff649fa7b2cb8349af4a2920ed0c56cfbc47b1a5565df5570ac"
         },
         "arm64": {
-            "url": "https://github.com/eythaann/Seelen-UI/releases/download/v2.5.0/Seelen.UI_2.5.0_arm64-setup.exe#/dl.7z",
-            "hash": "4e4d1ab077621003758fd854c8dcbec91cc2232508faff3c4ba0624b9d62a923"
+            "url": "https://github.com/eythaann/Seelen-UI/releases/download/v2.8.2/Seelen.UI_2.8.2_arm64-setup.exe#/dl.7z",
+            "hash": "92e0356e83dd58468b12ecee7209951946ae35544a098d7ad276ffe1000fb208"
         }
     },
-    "post_install": "Remove-Item \"$dir\\`$PLUGINSDIR\" -Force -Recurse",
+    "pre_install": "'$*', 'uninst*' | ForEach-Object { Remove-Item -Path \"$dir\\$_\" -Recurse -Force -ErrorAction SilentlyContinue }",
+    "post_install": [
+        "$seelen_dir = $dir -replace '\\\\', '\\\\'",
+        "Get-ChildItem -Path \"$bucketsdir\\$bucket\\scripts\\$app\" -Filter '*.reg' -File | ForEach-Object {",
+        "    $content = Get-Content -Path $_.FullName -Encoding utf8",
+        "    if ($global) { $content = $content -replace 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE' }",
+        "    $content -replace '{{seelen_dir}}', $seelen_dir | Set-Content -Path \"$dir\\$($_.Name)\" -Encoding unicode",
+        "}"
+    ],
     "shortcuts": [
         [
             "seelen-ui.exe",
             "Seelen UI"
         ]
     ],
+    "uninstaller": {
+        "script": [
+            "if ($cmd -ne 'uninstall') { return }",
+            "Get-ChildItem -Path $dir -Filter 'un*.reg' -File | ForEach-Object {",
+            "    $registry_file = '\"{0}\"' -f $_.FullName",
+            "    Start-Process -FilePath 'reg.exe' -ArgumentList @('import', $registry_file) -WindowStyle Hidden -Wait",
+            "}"
+        ]
+    },
     "checkver": {
         "github": "https://github.com/eythaann/Seelen-UI"
     },

@@ -1,5 +1,5 @@
 {
-    "version": "1.9552.21",
+    "version": "2.3.15",
     "description": "The new purpose-built IDE to harness magic",
     "homepage": "https://windsurf.com/",
     "license": {
@@ -9,17 +9,21 @@
     "innosetup": true,
     "architecture": {
         "64bit": {
-            "url": "https://windsurf-stable.codeiumdata.com/win32-x64-user/stable/16cc024632923bc387171d59cf5638057d4c8918/WindsurfUserSetup-x64-1.9552.21.exe",
-            "hash": "aae196bfdbbae0965fed080f052ae97e8d0e6f529620320db0ec4566c0e29b1c"
+            "url": "https://windsurf-stable.codeiumdata.com/win32-x64-user/stable/c46c49e94b4d3f41181204d59809d8f1b2c48d68/WindsurfUserSetup-x64-2.3.15.exe",
+            "hash": "d5c38c53bd6152401d979873875f2a92d880720402037c340fafdaa5ffbd5ea1"
         },
         "arm64": {
-            "url": "https://windsurf-stable.codeiumdata.com/win32-arm64-user/stable/16cc024632923bc387171d59cf5638057d4c8918/WindsurfUserSetup-arm64-1.9552.21.exe",
-            "hash": "6be7333a7a66bfdb7951f0f3af5b0d7950ed00df2f9068db6338f8bd6aee0dff"
+            "url": "https://windsurf-stable.codeiumdata.com/win32-arm64-user/stable/c46c49e94b4d3f41181204d59809d8f1b2c48d68/WindsurfUserSetup-arm64-2.3.15.exe",
+            "hash": "678a6f616f4eb2cb8fcfb11f1b8c65b3f366de88968e6dc99429bd7c74087dae"
         }
     },
     "extract_dir": "{code_GetDestDir}",
-    "post_install": [
+    "pre_install": [
         "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse",
+        "Rename-Item -Path \"$dir\\{code_GetExeBasename}\" -NewName 'Windsurf.exe'",
+        "Rename-Item -Path \"$dir\\bin\\{code_GetBinDirApplicationCmdFilename}\" -NewName 'windsurf.cmd'"
+    ],
+    "post_install": [
         "if (!(Test-Path \"$dir\\data\\extensions\") -and (Test-Path \"$env:USERPROFILE\\.windsurf\\extensions\")) {",
         "    info '[Portable Mode] Copying extensions...'",
         "    Copy-Item \"$env:USERPROFILE\\.windsurf\\extensions\" \"$dir\\data\" -Recurse",

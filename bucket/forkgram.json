@@ -1,14 +1,28 @@
 {
-    "version": "6.5.1",
-    "description": "Fork of Telegram Desktop messaging app.",
+    "version": "7.1.0",
+    "description": "Fork of Telegram Desktop with quality-of-life enhancements.",
     "homepage": "https://t.me/forkgram",
     "license": {
         "identifier": "GPL-3.0-openssl-exception",
-        "url": "https://github.com/Forkgram/tdesktop/blob/dev/LICENSE"
+        "url": "https://github.com/forkgram/tdesktop/blob/dev/LICENSE"
     },
-    "url": "https://github.com/Forkgram/tdesktop/releases/download/v6.5.1/Telegram.zip",
-    "hash": "a668bc86e89a99caae8b37083ce07226d22bd376afaf54b60cc6dad07d336bee",
-    "pre_install": "if (Test-Path \"$persist_dir\\log.txt\") { Copy-Item \"$persist_dir\\log.txt\" \"$dir\\\" }",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/forkgram/tdesktop/releases/download/v7.1.0/Telegram.zip",
+            "hash": "cd13a7c3df5dca6d54629e1f19d53b7ce135de1035deadb3cdbb7868d80c361e"
+        },
+        "32bit": {
+            "url": "https://github.com/forkgram/tdesktop/releases/download/v7.1.0/Telegram_x86.zip",
+            "hash": "5c20a09c807eebbea1079021d3ffb10b2cc8cdef0d2c84e6a166d034267f7990"
+        }
+    },
+    "pre_install": [
+        "if (Test-Path \"$dir\\Telegram\\Telegram.exe\") {",
+        "    Get-ChildItem \"$dir\\Telegram\" | Move-Item -Destination \"$dir\\\" -Force",
+        "    Remove-Item \"$dir\\Telegram\" -Recurse -Force",
+        "}",
+        "if (Test-Path \"$persist_dir\\log.txt\") { Copy-Item \"$persist_dir\\log.txt\" \"$dir\\\" }"
+    ],
     "pre_uninstall": "if (Test-Path \"$dir\\log.txt\") { Copy-Item \"$dir\\log.txt\" \"$persist_dir\\\" }",
     "bin": [
         "Telegram.exe",
@@ -25,9 +39,16 @@
     ],
     "persist": "tdata",
     "checkver": {
-        "github": "https://github.com/Forkgram/tdesktop"
+        "github": "https://github.com/forkgram/tdesktop"
     },
     "autoupdate": {
-        "url": "https://github.com/Forkgram/tdesktop/releases/download/v$version/Telegram.zip"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/forkgram/tdesktop/releases/download/v$version/Telegram.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/forkgram/tdesktop/releases/download/v$version/Telegram_x86.zip"
+            }
+        }
     }
 }
