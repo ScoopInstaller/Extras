@@ -24,27 +24,39 @@
             "hash": "d1829928593cfd6d959433dd96b6c24a73a83dacb62ca445cc0d070aa2801caf"
         }
     },
-    "env_add_path": "bin",
-    "shortcuts": [
-        [
-            "code.exe",
-            "Visual Studio Code"
-        ]
-    ],
     "post_install": [
         "$dirpath = \"$dir\".Replace('\\', '\\\\')",
         "$exepath = \"$dir\\Code.exe\".Replace('\\', '\\\\')",
+        "$versionfolder = Get-ChildItem -LiteralPath $dir -Directory | Where-Object {",
+        "    ($_.Name -match '^[a-fA-F0-9]+$') -and (Test-Path -LiteralPath \"$($_.FullName)\\resources\" -PathType Container)",
+        "} | Select-Object -First 1 -ExpandProperty Name",
         "'install-associations', 'uninstall-associations', 'install-context', 'uninstall-context', 'install-github-integration', 'uninstall-github-integration' | ForEach-Object {",
-        "  if (Test-Path \"$bucketsdir\\extras\\scripts\\vscode\\$_.reg\") {",
-        "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\vscode\\$_.reg\"",
-        "    $content = $content.Replace('$codedir', $dirpath)",
-        "    $content = $content.Replace('$code', $exepath)",
-        "    if ($global) {",
-        "      $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "    if (Test-Path \"$bucketsdir\\extras\\scripts\\vscode\\$_.reg\") {",
+        "        $content = Get-Content \"$bucketsdir\\extras\\scripts\\vscode\\$_.reg\"",
+        "        $content = $content.Replace('$codedir', $dirpath)",
+        "        $content = $content.Replace('$code', $exepath)",
+        "        if ($versionfolder) {",
+        "            $content = $content.Replace('$versionfolder', $versionfolder)",
+        "        } else {",
+        "            $content = $content.Replace('\\\\$versionfolder', '')",
+        "        }",
+        "        if ($global) {",
+        "            $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "        }",
+        "        $content | Set-Content -Path \"$dir\\$_.reg\"",
         "    }",
-        "    $content | Set-Content -Path \"$dir\\$_.reg\"",
-        "  }",
         "}",
+        "# Re-register file associations if they are already registered to this installation",
+        "$regpath = 'HKCU:\\Software\\Classes\\CodeOSS.*\\shell\\open\\command'",
+        "if ($global) {",
+        "    $regpath = $regpath.Replace('HKCU', 'HKLM')",
+        "}",
+        "$command = Get-ItemPropertyValue $regpath -Name '(default)' -ErrorAction Ignore",
+        "if ($command -and ($command -match [regex]::escape($(appdir $app $global)))) {",
+        "    info 'Re-registering file associations...'",
+        "    reg import \"$dir\\install-associations.reg\"",
+        "}",
+        "",
         "if (!(Test-Path \"$dir\\data\\extensions\") -and (Test-Path \"$env:USERPROFILE\\.vscode\\extensions\")) {",
         "    info '[Portable Mode] Copying extensions...'",
         "    Copy-Item \"$env:USERPROFILE\\.vscode\\extensions\" \"$dir\\data\" -Recurse",
@@ -59,16 +71,23 @@
         "    (Get-Content \"$extensions_file\") -replace '(?<=vscode(/|\\\\\\\\)).*?(?=(/|\\\\\\\\)data(/|\\\\\\\\)extensions)', $version | Set-Content \"$extensions_file\"",
         "}"
     ],
+    "env_add_path": "bin",
+    "shortcuts": [
+        [
+            "code.exe",
+            "Visual Studio Code"
+        ]
+    ],
+    "persist": "data",
     "uninstaller": {
         "script": [
-            "if ($cmd -eq 'uninstall')",
-            "{",
-            "   reg import \"$dir\\uninstall-context.reg\" ",
-            "   reg import \"$dir\\uninstall-github-integration.reg\" ",
+            "if ($cmd -eq 'uninstall') {",
+            "    reg import \"$dir\\uninstall-context.reg\"",
+            "    reg import \"$dir\\uninstall-associations.reg\"",
+            "    reg import \"$dir\\uninstall-github-integration.reg\"",
             "}"
         ]
     },
-    "persist": "data",
     "checkver": {
         "url": "https://update.code.visualstudio.com/api/update/win32-x64-archive/stable/latest",
         "jsonpath": "$.name"
