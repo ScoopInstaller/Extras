@@ -1,0 +1,45 @@
+{
+    "version": "7.3.6",
+    "description": "A computer program that renders a 3D representation of Earth based primarily on satellite imagery.",
+    "homepage": "https://www.google.com/enterprise/mapsearth/products/earthpro.html",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://www.google.com/help/terms_maps/"
+    },
+    "architecture": {
+        "32bit": {
+            "url": "https://dl.google.com/dl/earth/client/advanced/current/googleearthprowin-7.3.6.exe#/installer.exe",
+            "hash": "ebf093542cf10105c02fc7e6ee650e1b11293e9ecb74ce4e7d906e04613e292d"
+        },
+        "64bit": {
+            "url": "https://dl.google.com/dl/earth/client/advanced/current/googleearthprowin-7.3.6-x64.exe#/installer.exe",
+            "hash": "dfb78631d794fd32b09fdc3c9105594f0e100d2343d6f9681612a84fa3fc5325"
+        }
+    },
+    "installer": {
+        "script": [
+            "& \"$bucketsdir\\extras\\scripts\\google-earth-pro\\expand-resource.ps1\" -filePath \"$dir\\$fname\" -resourceType \"BINARY\" -resourceName \"ID_MSI\" -outputFilePath \"$dir\\installer.msi\" -Removal",
+            "Expand-MsiArchive \"$dir\\installer.msi\" \"$dir\" -ExtractDir 'Google\\Google Earth Pro\\client' -Removal | Out-Null"
+        ]
+    },
+    "shortcuts": [
+        [
+            "googleearth.exe",
+            "Google Earth Pro"
+        ]
+    ],
+    "checkver": {
+        "url": "https://support.google.com/earth/answer/40901",
+        "regex": "Earth version ([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "32bit": {
+                "url": "https://dl.google.com/dl/earth/client/advanced/current/googleearthprowin-$version.exe#/installer.exe"
+            },
+            "64bit": {
+                "url": "https://dl.google.com/dl/earth/client/advanced/current/googleearthprowin-$version-x64.exe#/installer.exe"
+            }
+        }
+    }
+}
