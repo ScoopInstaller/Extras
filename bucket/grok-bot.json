@@ -1,0 +1,43 @@
+{
+    "version": "0.30.0",
+    "description": "Always-on AI agents from xAI and Cursor that work autonomously across your tools and apps.",
+    "homepage": "https://x.ai/bot",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://x.ai/legal/terms-of-service"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://downloads.cursor.com/grokbot/stable/win32-x64/0.30.0/Grok_Bot_0.30.0_Setup.exe#/dl.7z",
+            "hash": "cb1a5ef75b4d3ebeee7e7833ecdd66440e2639864f255e18ec6d5029058e814d",
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+        },
+        "arm64": {
+            "url": "https://downloads.cursor.com/grokbot/stable/win32-arm64/0.30.0/Grok_Bot_0.30.0_Setup.exe#/dl.7z",
+            "hash": "492d228f8becb4b5a54f8be126215593567fa040a358cf65a2e75299e4cf1768",
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" \"$dir\""
+        }
+    },
+    "post_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Recurse -ErrorAction Ignore",
+    "shortcuts": [
+        [
+            "Grok Bot.exe",
+            "Grok Bot"
+        ]
+    ],
+    "checkver": {
+        "url": "https://api2.cursor.sh/updates/api/update/win32-x64/sand/0.0.0/stable",
+        "jsonpath": "$.version",
+        "regex": "^([\\d.]+)$"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://downloads.cursor.com/grokbot/stable/win32-x64/$version/Grok_Bot_$version_Setup.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://downloads.cursor.com/grokbot/stable/win32-arm64/$version/Grok_Bot_$version_Setup.exe#/dl.7z"
+            }
+        }
+    }
+}
