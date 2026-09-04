@@ -1,0 +1,42 @@
+{
+    "version": "1.0.0",
+    "description": "Create and share live, interactive wallpapers with HTML/CSS/JS.",
+    "homepage": "https://underpig1.github.io/octos",
+    "license": "MIT",
+    "suggest": {
+        "vcredist": "extras/vcredist2022"
+    },
+    "url": "https://github.com/underpig1/octos/releases/download/v1.0.0/OctosSetup.exe",
+    "hash": "07d535dc36fb3ef01864a01a2ec3208c131facbb52f3b05c6bcb38ac27db55a4",
+    "architecture": {
+        "64bit": {
+            "pre_install": [
+                "Get-ChildItem $dir -Recurse -File | Where-Object { $_.Name -like '*,1.*' } | ForEach-Object {",
+                "    Rename-Item $_.FullName ($_.Name.Replace(',1.', '.'))",
+                "}",
+                "Get-ChildItem $dir -Recurse -File | Where-Object { $_.Name -like '*,2.*' } | Remove-Item -Force"
+            ]
+        },
+        "32bit": {
+            "pre_install": [
+                "Get-ChildItem $dir -Recurse -File | Where-Object { $_.Name -like '*,2.*' } | ForEach-Object {",
+                "    Rename-Item $_.FullName ($_.Name.Replace(',2.', '.'))",
+                "}",
+                "Get-ChildItem $dir -Recurse -File | Where-Object { $_.Name -like '*,1.*' } | Remove-Item -Force"
+            ]
+        }
+    },
+    "innosetup": true,
+    "shortcuts": [
+        [
+            "Octos.exe",
+            "Octos"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/underpig1/octos"
+    },
+    "autoupdate": {
+        "url": "https://github.com/underpig1/octos/releases/download/v$version/OctosSetup.exe"
+    }
+}
