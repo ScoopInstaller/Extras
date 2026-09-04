@@ -1,8 +1,11 @@
 {
     "version": "2.2.4+586",
-    "description": "Advanced eSIM Management Application",
-    "homepage": "https://lpa.nekoko.ee",
+    "description": "A cross-platform eSIM management app for working with local eUICCs, external readers, and remote reader endpoints.",
+    "homepage": "https://lpa.nekoko.ee/en",
     "license": "MIT",
+    "suggest": {
+        "vcredist": "extras/vcredist2022"
+    },
     "architecture": {
         "64bit": {
             "url": "https://github.com/iebb/NekokoLPA2/releases/download/v2.2.4+586/ee.nekoko.nlpa2.windows-2.2.4-586-setup.exe",
@@ -10,7 +13,6 @@
         }
     },
     "innosetup": true,
-    "bin": "nlpa2.exe",
     "shortcuts": [
         [
             "nlpa2.exe",
@@ -18,18 +20,15 @@
         ]
     ],
     "checkver": {
-        "github": "https://github.com/iebb/NekokoLPA2",
-        "regex": "v(?<ver>[\\d.]+)\\+(?<build>\\d+)",
+        "github": "https://api.github.com/repos/iebb/NekokoLPA2/releases",
+        "jsonpath": "$[?(@.prerelease == false)].assets[?(@.name =~ /windows/i)].browser_download_url",
+        "regex": "windows-(?<ver>\\d+(?:\\.\\d+)+)-(?<build>\\d+)-setup\\.exe",
         "replace": "${ver}+${build}"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/iebb/NekokoLPA2/releases/download/v$matchVer+$matchBuild/ee.nekoko.nlpa2.windows-$matchVer-$matchBuild-setup.exe",
-                "hash": {
-                    "url": "https://api.github.com/repos/iebb/NekokoLPA2/releases",
-                    "jsonpath": "$..assets[?(@.name == '$basename')].digest"
-                }
+                "url": "https://github.com/iebb/NekokoLPA2/releases/download/v$version/ee.nekoko.nlpa2.windows-$matchHead-$matchBuild-setup.exe"
             }
         }
     }
