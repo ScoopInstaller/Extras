@@ -1,15 +1,15 @@
-#Requires -Version 5.0
+#Requires -Version 5.1
 
 function New-ProfileModifier {
     <#
     .SYNOPSIS
         Generate scripts from template.
 
-    .PARAMETER Type
+    .PARAMETER Behavior
         Type of scripts to generate.
 
-    .PARAMETER Name
-        Name of manifest.
+    .PARAMETER AppName
+        Name of the manifest.
 
     .PARAMETER BucketDir
         Path of bucket root directory.
@@ -20,45 +20,59 @@ function New-ProfileModifier {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true, Position = 0)]
-        [string] $Type,
+        [Alias("Type")]
+        [string] $Behavior,
         [Parameter(Mandatory = $true, Position = 1)]
-        [string] $Name,
+        [Alias("Name")]
+        [string] $AppName,
         [Parameter(Mandatory = $true, Position = 2)]
         [string] $BucketDir,
         [Parameter(Mandatory = $false, Position = 3)]
         [string] $ModuleName
     )
 
-    $SupportedType = @("ImportModule", "RemoveModule")
+    if (-not ($ModuleName)) { $ModuleName = $AppName }
 
-    if ($SupportedType -notcontains $Type) {
-        Write-Host "Error: Unsupported type." -ForegroundColor Red
-        Return
-    }
+    Write-Host "Generating $Behavior script for $ModuleName..." -NoNewline
 
-    if (-not($ModuleName)) {
-        $ModuleName = $Name
+    $SupportedBehavior = @("ImportModule", "RemoveModule")
+
+    if ($SupportedBehavior -notcontains $Behavior) {
+        Write-Host "failed." -ForegroundColor Red
+        Write-Host "ERROR  Unsupported behavior type: $Behavior" -ForegroundColor DarkRed
+        return
     }
 
     $UtilsPath = $BucketDir | Join-Path -ChildPath "\scripts\ModifyPSProfile.psm1"
     $ScoopDir = Split-Path $BucketDir | Split-Path
-    $AppDir = $ScoopDir | Join-Path -ChildPath "\apps\$Name\current\"
+    $AppDir = $ScoopDir | Join-Path -ChildPath "\apps\$AppName\current\"
 
-    $ImportUtilsCommand = ("Import-Module ", $UtilsPath) -Join("")
-    $RemoveUtilsCommand = "Remove-Module -Name ModifyPSProfile"
+    $EscapedUtilsPath = $UtilsPath -replace "'", "''"
+    $ImportUtilsCommand = "Import-Module '$EscapedUtilsPath' -ErrorAction Stop"
+    $RemoveUtilsCommand = "Remove-Module -Name ModifyPSProfile -ErrorAction SilentlyContinue"
 
-    $ImportModuleCommand = ("Add-ProfileContent 'Import-Module ", $ModuleName, "'") -Join("")
-    $RemoveModuleCommand = ("Remove-ProfileContent 'Import-Module ", $ModuleName, "'") -Join("")
+    $ImportModuleCommand = ("Add-ProfileContent 'Import-Module ", $ModuleName, "'") -Join ("")
+    $RemoveModuleCommand = ("Remove-ProfileContent 'Import-Module ", $ModuleName, "'") -Join ("")
 
-    switch ($Type) {
-        {$_ -eq "ImportModule"} {
-            $GenerateContent = ($ImportUtilsCommand, $RemoveModuleCommand, $ImportModuleCommand, $RemoveUtilsCommand) -Join("`r`n")
-            $GenerateContent | Set-Content -Path "$AppDir\add-profile-content.ps1"
+    $NewLine = [Environment]::NewLine
+
+    switch ($Behavior) {
+        "ImportModule" {
+            $GenerateContent = ($ImportUtilsCommand, $RemoveModuleCommand, $ImportModuleCommand, $RemoveUtilsCommand) -Join ($NewLine)
+            $OutputPath = "$AppDir\add-profile-content.ps1"
         }
-        {$_ -eq "RemoveModule"} {
-            $GenerateContent = ($ImportUtilsCommand, $RemoveModuleCommand, $RemoveUtilsCommand) -Join("`r`n")
-            $GenerateContent | Set-Content -Path "$AppDir\remove-profile-content.ps1"
+        "RemoveModule" {
+            $GenerateContent = ($ImportUtilsCommand, $RemoveModuleCommand, $RemoveUtilsCommand) -Join ($NewLine)
+            $OutputPath = "$AppDir\remove-profile-content.ps1"
         }
+    }
+
+    try {
+        $GenerateContent | Out-File -FilePath $OutputPath -Encoding UTF8 -ErrorAction Stop
+        Write-Host "success." -ForegroundColor Green
+    } catch {
+        Write-Host "failed." -ForegroundColor Red
+        Write-Host "ERROR  $($_.Exception.Message)" -ForegroundColor DarkRed
     }
 }
 
@@ -76,11 +90,35 @@ function Add-ProfileContent {
         [string] $Content
     )
 
-    if (-not(Test-Path $PROFILE)) {
-        New-Item -Path $PROFILE -Value "$Content" -ItemType File -Force | Out-Null
-    }
-    else {
-        Add-Content -Path $PROFILE -Value "`r`n$Content" -NoNewLine
+    Write-Host "Modifying PowerShell profile..." -NoNewline
+
+    if (Test-Path $PROFILE) {
+        $NewLine = [Environment]::NewLine
+        try {
+            Add-Content -Path $PROFILE -Value "$NewLine$Content" -Encoding UTF8 -NoNewLine -ErrorAction Stop
+            Write-Host "success." -ForegroundColor Green
+        } catch {
+            Write-Host "failed." -ForegroundColor Red
+            Write-Host "ERROR  $($_.Exception.Message)" -ForegroundColor DarkRed
+        }
+    } else {
+        $ProfileParentDir = Split-Path -Path $PROFILE -Parent
+        if (-not (Test-Path $ProfileParentDir)) {
+            try {
+                New-Item -Path $ProfileParentDir -ItemType Directory -Force -ErrorAction Stop | Out-Null
+            } catch {
+                Write-Host "failed." -ForegroundColor Red
+                Write-Host "ERROR  $($_.Exception.Message)" -ForegroundColor DarkRed
+                return
+            }
+        }
+        try {
+            $Content | Out-File -FilePath $PROFILE -Encoding UTF8 -Force -ErrorAction Stop
+            Write-Host "success." -ForegroundColor Green
+        } catch {
+            Write-Host "failed." -ForegroundColor Red
+            Write-Host "ERROR  $($_.Exception.Message)" -ForegroundColor DarkRed
+        }
     }
 }
 
@@ -98,25 +136,45 @@ function Remove-ProfileContent {
         [string] $Content
     )
 
-    if (-not(Test-Path $PROFILE)) {
-        Return
+    Write-Host "Cleaning up PowerShell profile..." -NoNewline
+
+    if (-not (Test-Path $PROFILE)) {
+        Write-Host "abort." -ForegroundColor Yellow
+        Write-Host "INFO  PowerShell profile not found." -ForegroundColor DarkGray
+        return
     }
 
-    $RawProfile = Get-Content -Path $PROFILE -raw
+    try {
+        $RawProfile = Get-Content -Path $PROFILE -Encoding UTF8 -Raw -ErrorAction Stop
+    } catch {
+        Write-Host "failed." -ForegroundColor Red
+        Write-Host "ERROR  $($_.Exception.Message)" -ForegroundColor DarkRed
+        return
+    }
 
     if ($null -eq $RawProfile) {
-        Return
+        Write-Host "abort." -ForegroundColor Yellow
+        Write-Host "INFO  PowerShell profile is empty." -ForegroundColor DarkGray
+        return
     }
 
-    ($RawProfile -replace "[\r\n]*$Content",'').trim() | Set-Content $PROFILE -NoNewLine
+    $escapedContent = [Regex]::Escape($Content)
+    $ProfileLinePattern = "(?m)^[ \t]*$escapedContent[ \t]*(?:\r?\n|$)"
+
+    if ($RawProfile -match $ProfileLinePattern) {
+        $modifiedProfile = $RawProfile -replace $ProfileLinePattern, ''
+        try {
+            $modifiedProfile | Out-File -FilePath $PROFILE -Encoding UTF8 -NoNewLine -ErrorAction Stop
+            Write-Host "success." -ForegroundColor Green
+        } catch {
+            Write-Host "failed." -ForegroundColor Red
+            Write-Host "ERROR  $($_.Exception.Message)" -ForegroundColor DarkRed
+        }
+    } else {
+        Write-Host "abort." -ForegroundColor Yellow
+        Write-Host "INFO  Content not found in PowerShell profile." -ForegroundColor DarkGray
+        return
+    }
 }
 
-Set-Alias AppendtoProfile Add-ProfileContent
-Set-Alias RemovefromProfile Remove-ProfileContent
-Export-ModuleMember -Alias *
-
-Export-ModuleMember `
-    -Function `
-        New-ProfileModifier, `
-        Add-ProfileContent, `
-        Remove-ProfileContent
+Export-ModuleMember -Function New-ProfileModifier, Add-ProfileContent, Remove-ProfileContent
