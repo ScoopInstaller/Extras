@@ -1,0 +1,60 @@
+{
+    "version": "0.0.38",
+    "description": "Desktop app for orchestrating AI coding agents like Claude Code, Codex, Cursor CLI and OpenCode",
+    "homepage": "https://t3.codes",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/pingdotgg/t3code/releases/download/v0.0.38/T3-Code-0.0.38-x64.exe#/dl.7z",
+            "hash": "sha512:31867a6b1c220069b8daef394e65252c901d7439abe33e88a9f43dde3b60f5e1744a92adce170bdfad5f5c135d074cc6490cdb46bdc40a1cccc4b0eeac4796ed",
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$*\", \"$dir\\*.nsi\" -Recurse"
+            ]
+        }
+    },
+    "post_install": [
+        "if (Test-Path $env:USERPROFILE\\.t3) {",
+        "    Write-Host \"`r`nMove user config from non-portable version...\"",
+        "    Copy-Item -Path $env:USERPROFILE\\.t3\\* -Destination \"$persist_dir\\user\" -Force -Recurse -ErrorAction Stop | Out-Null",
+        "    Remove-Item $env:USERPROFILE\\.t3 -Force -Recurse",
+        "}",
+        "if (Test-Path $env:APPDATA\\t3code) {",
+        "    Write-Host \"`r`nMove app config from non-portable version...\"",
+        "    Copy-Item -Path $env:APPDATA\\t3code\\* -Destination \"$persist_dir\\app\" -Force -Recurse -ErrorAction Stop | Out-Null",
+        "    Remove-Item $env:APPDATA\\t3code -Force -Recurse",
+        "}",
+        "New-Item -ItemType Junction -Path $env:USERPROFILE\\.t3 -Target \"$persist_dir\\user\" | Out-Null",
+        "New-Item -ItemType Junction -Path $env:APPDATA\\t3code -Target \"$persist_dir\\app\" | Out-Null"
+    ],
+    "uninstaller": {
+        "script": [
+            "Remove-Item $env:USERPROFILE\\.t3 -Force -Recurse",
+            "Remove-Item $env:APPDATA\\t3code -Force -Recurse"
+        ]
+    },
+    "shortcuts": [
+        [
+            "T3 Code (Alpha).exe",
+            "T3 Code (Alpha)"
+        ]
+    ],
+    "persist": [
+        "user",
+        "app"
+    ],
+    "checkver": {
+        "github": "https://github.com/pingdotgg/t3code"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/pingdotgg/t3code/releases/download/v$version/T3-Code-$version-x64.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "(?sm)$basename.*?$base64"
+                }
+            }
+        }
+    }
+}
