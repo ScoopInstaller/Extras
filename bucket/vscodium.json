@@ -1,11 +1,13 @@
 {
     "version": "1.126.04524",
-    "description": "A community-driven, freely-licensed binary distribution of Microsoft’s editor VS Code.",
+    "description": "A community-driven, freely-licensed binary distribution of Microsoft's editor VS Code.",
     "homepage": "https://vscodium.com/",
     "license": "MIT",
     "notes": [
-        "Add VSCodium as a context menu option by running 'reg import \"$dir\\install-context.reg\"'",
-        "For file associations, run 'reg import \"$dir\\install-associations.reg\"'"
+        "Add VSCodium as a context menu option by running:",
+        "reg import \"$dir\\install-context.reg\"",
+        "For file associations, run:",
+        "reg import \"$dir\\install-associations.reg\""
     ],
     "architecture": {
         "64bit": {
@@ -34,7 +36,7 @@
         "  if (Test-Path \"$bucketsdir\\extras\\scripts\\vscode\\$_.reg\") {",
         "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\vscode\\$_.reg\"",
         "    $content = $content.Replace('$codedir', $dirpath)",
-        "    $content = $content.Replace('$code', $exepath)",
+        "    $content = $content.Replace('\\\\$versionfolder', '')",
         "    $content = $content.Replace('&Code', '&VSCodium')",
         "    if ($global) {",
         "      $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
@@ -70,6 +72,14 @@
         ]
     ],
     "persist": "data",
+    "uninstaller": {
+        "script": [
+            "if ($cmd -eq 'uninstall') {",
+            "    reg import \"$dir\\uninstall-associations.reg\" *> $null",
+            "    reg import \"$dir\\uninstall-context.reg\" *> $null",
+            "}"
+        ]
+    },
     "checkver": {
         "github": "https://github.com/VSCodium/vscodium"
     },
