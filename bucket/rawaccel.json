@@ -1,0 +1,66 @@
+{
+    "version": "1.7.1",
+    "description": "Kernel mode mouse acceleration: Win 10/11 x86-64 driver which allows for the acceleration of mouse input in the raw input stream",
+    "homepage": "https://github.com/RawAccelOfficial/rawaccel",
+    "license": "MIT",
+    "notes": [
+        "❗ To finish installing the driver: run 'Raw Accel Driver Installer' Scoop shortcut or 'scoop/apps/rawaccel/installer.exe'",
+        "(requires elevation to install 'rawaccel.sys' system-wide and is thus not enabled in Scoop)",
+        "Added startup shortcut to the registry 'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\RawAccel'",
+        "Anti-Cheat friendly: drivers are signed and run in system space. The app only modifies mouse input by a constant set of formulas, and adds a one-second delay when changing settings in order to mitigate its abuse"
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/RawAccelOfficial/rawaccel/releases/download/v1.7.1/RawAccel_v1.7.1.zip",
+            "hash": "770fe3ae0919ca3c4d412f58c985eb27f5434decad809f7e8206de4e8852eec4",
+            "extract_dir": "RawAccel"
+        }
+    },
+    "pre_install": "New-Item -Path \"$dir/settings.json\" -ItemType file | Out-Null",
+    "post_install": [
+        "\"$dir/installer.exe\"",
+        "New-ItemProperty -Force -Path HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run -Name RawAccel -PropertyType String -Value \"`\"$dir\\writer.exe`\" `\"$dir\\settings.json`\"\""
+    ],
+    "pre_uninstall": [
+        "\"$dir/uninstaller.exe\"",
+        "Remove-ItemProperty -Path HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run -Name RawAccel -ErrorAction SilentlyContinue"
+    ],
+    "bin": [
+        [
+            "rawaccel.exe",
+            "rawaccel"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "rawaccel.exe",
+            "Raw Accel Start¦Configure (GUI)"
+        ],
+        [
+            "writer.exe",
+            "Raw Accel Start (CLI)",
+            "\"$dir/settings.json\""
+        ],
+        [
+            "installer.exe",
+            "Raw Accel Driver Installer"
+        ],
+        [
+            "uninstaller.exe",
+            "Raw Accel Driver Uninstaller"
+        ]
+    ],
+    "persist": "settings.json",
+    "checkver": {
+        "url": "https://github.com/RawAccelOfficial/rawaccel/releases",
+        "regex": "/v([\\w\\.-]+)\""
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/RawAccelOfficial/rawaccel/releases/download/v$version/RawAccel_v$version.zip",
+                "extract_dir": "RawAccel"
+            }
+        }
+    }
+}
