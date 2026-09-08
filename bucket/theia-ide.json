@@ -4,7 +4,8 @@
     "homepage": "https://theia-ide.org/#theiaide",
     "license": "EPL-2.0, GPL-2.0, MIT",
     "notes": [
-        "Added 'Open with Theia IDE' context menu entry for folders",
+        "Added 'Open with Theia IDE' as a context menu option by running:",
+        "reg import \"$dir\\install-context.reg\"",
         "Context-menu entry is removed automatically when Theia IDE is uninstalled",
         "Settings in '%APPDATA%\\Theia IDE' not persisted by Scoop"
     ],
@@ -14,20 +15,6 @@
             "hash": "sha512:a3c4a862800ffdc0502a3b73f6bea872f714b009831969d4c7d328deb0cd7e81c2d2993ef1e075393ee39259aaeab8354d86d0eb09f0cf48880c6ec3b46e73e9"
         }
     },
-    "post_install": [
-        "$theia_path = $dir -replace '\\\\', '\\\\'",
-        "$scriptsdir = \"$bucketsdir\\$bucket\\scripts\\$app\"",
-        "if (-not (Test-Path $scriptsdir)) {",
-        "    Write-Host \"Warning: reg script source not found at $scriptsdir\" -ForegroundColor Yellow",
-        "} else {",
-        "    Get-ChildItem -Path $scriptsdir -Filter '*.reg' -File | ForEach-Object {",
-        "        $content = Get-Content -Path $_.FullName -Encoding utf8",
-        "        if ($global) { $content = $content -replace 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE' }",
-        "        $content -replace '{{theia_dir}}', $theia_path | Set-Content -Path \"$dir\\$($_.Name)\" -Encoding unicode",
-        "    }",
-        "    reg import \"$dir\\install-context.reg\"",
-        "}"
-    ],
     "uninstaller": {
         "script": [
             "if ($cmd -eq 'uninstall')",
