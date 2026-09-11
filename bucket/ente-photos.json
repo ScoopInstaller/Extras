@@ -1,0 +1,45 @@
+{
+    "version": "1.7.29",
+    "description": "Open source, end-to-end encrypted photo and video storage app.",
+    "homepage": "https://ente.io",
+    "license": "AGPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/ente/photos-desktop/releases/download/v1.7.29/ente-1.7.29-x64.exe#/dl.7z",
+            "hash": "sha512:42a92d8d9982196553c87bcb947a9028f55d088f139c9a8fe3a5ccf6ca62812105386f6e26fbc3402eaae75985c45560f5294e0ff373f99723546ae98362ca2d",
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+        },
+        "arm64": {
+            "url": "https://github.com/ente/photos-desktop/releases/download/v1.7.29/ente-1.7.29-arm64.exe#/dl.7z",
+            "hash": "sha512:47f9b754ea68cc30410967fed62013bc6a5a31fde60f2994e09eeed11f59855c04e238825224475b49fb45bf9fec154bd44da76f205cf2675ebda640b8614a8d",
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" \"$dir\""
+        }
+    },
+    "post_install": [
+        "# app-update.yml removal disables the in-app updater, which conflicts with Scoop-managed updates (ente/ente#6397)",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*.exe\", \"$dir\\resources\\app-update.yml\" -Recurse -Force"
+    ],
+    "shortcuts": [
+        [
+            "ente.exe",
+            "Ente Photos"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/ente/photos-desktop"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/ente/photos-desktop/releases/download/v$version/ente-$version-x64.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/ente/photos-desktop/releases/download/v$version/ente-$version-arm64.exe#/dl.7z"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "$basename\\s+sha512:\\s$base64"
+        }
+    }
+}

@@ -2,7 +2,9 @@ name: Pull Requests
 
 on:
   pull_request:
-    types: [ opened ]
+    types: [opened]
+  issue_comment:
+    types: [created]
 
 permissions:
   contents: read
@@ -10,13 +12,13 @@ permissions:
 
 jobs:
   pullRequestHandler:
-    name: PullRequestHandler
+    name: Pull Request Handler
+    if: github.event_name == 'pull_request' || (github.event.issue.pull_request && startsWith(github.event.comment.body, '/verify'))
     runs-on: windows-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-    - name: PullRequestHandler
-      uses: ScoopInstaller/GithubActions@main
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SCOOP_BRANCH: develop
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Run Pull Request Handler
+        uses: ScoopInstaller/GithubActions@5bceeda181721d9d10a18fdcc3ddca6f33467ae6 # v3.0.0
+        env:
+          SCOOP_BRANCH: develop
