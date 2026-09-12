@@ -1,14 +1,38 @@
 {
     "version": "1.75.0",
-    "description": "A modern and open IDE for cloud and desktop. Theia platform based. Formerly “Theia Blueprint”.",
+    "description": "A modern and open IDE for cloud and desktop. Theia platform based. Formerly \"Theia Blueprint\".",
     "homepage": "https://theia-ide.org/#theiaide",
     "license": "EPL-2.0, GPL-2.0, MIT",
-    "notes": "Settings are stored in '%APPDATA%\\Theia IDE', and are not persisted by Scoop.",
+    "notes": [
+        "To add 'Open with Theia IDE' context menu option, run:",
+        "reg import \"$dir\\install-context.reg\"",
+        "Context-menu entry can be removed by running:",
+        "reg import \"$dir\\uninstall-context.reg\""
+    ],
     "architecture": {
         "64bit": {
             "url": "https://www.eclipse.org/downloads/download.php?mirror_id=1&file=/theia/ide/1.75.0/windows/TheiaIDESetup-1.75.0.exe#/dl.7z",
             "hash": "sha512:a3c4a862800ffdc0502a3b73f6bea872f714b009831969d4c7d328deb0cd7e81c2d2993ef1e075393ee39259aaeab8354d86d0eb09f0cf48880c6ec3b46e73e9"
         }
+    },
+    "post_install": [
+        "$theia_dir = \"$dir\\TheiaIDE.exe\".Replace('\\', '\\\\').Replace('.exe', '')",
+        "'install-context', 'uninstall-context' | ForEach-Object {",
+        "  if (Test-Path \"$bucketsdir\\extras\\scripts\\theia-ide\\$_.reg\") {",
+        "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\theia-ide\\$_.reg\"",
+        "    $content = $content.Replace('{{theia_dir}}', $theia_dir)",
+        "    $content | Set-Content -Path \"$dir\\$_.reg\"",
+        "  }",
+        "}"
+    ],
+    "uninstaller": {
+        "script": [
+            "if ($cmd -eq 'uninstall') {",
+            "    if (Test-Path \"$dir\\uninstall-context.reg\") {",
+            "        reg import \"$dir\\uninstall-context.reg\"",
+            "    }",
+            "}"
+        ]
     },
     "extract_dir": "$PLUGINSDIR",
     "installer": {
