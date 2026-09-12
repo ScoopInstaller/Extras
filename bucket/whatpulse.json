@@ -1,0 +1,40 @@
+{
+    "version": "6.3",
+    "description": "Measures your keyboard, mouse, application and network usage",
+    "homepage": "https://whatpulse.org",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://whatpulse.org/terms/"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://releases.whatpulse.org/latest/windows/whatpulse-win-latest.exe",
+            "hash": "56407a2875b3c3d45f7edd53b885a39d4627f9f694455bbe30737a1693fed0ee"
+        }
+    },
+    "installer": {
+        "script": "Start-Process -FilePath \"$dir\\whatpulse-win-latest.exe\" -ArgumentList @('--root', \"$dir\", '--accept-messages', '--accept-licenses', '--confirm-command', 'install') -Wait"
+    },
+    "post_install": "Remove-Item \"$dir\\whatpulse-win-latest.exe\" -Force -ErrorAction SilentlyContinue",
+    "shortcuts": [
+        [
+            "WhatPulse.exe",
+            "WhatPulse"
+        ]
+    ],
+    "pre_uninstall": "Stop-Process -Name 'whatpulse' -ErrorAction SilentlyContinue",
+    "uninstaller": {
+        "script": "Start-Process -FilePath \"$dir\\WhatPulseMaintenanceTool.exe\" -ArgumentList @('--confirm-command', 'remove', 'com.whatpulse.client') -Wait"
+    },
+    "checkver": {
+        "url": "https://whatpulse.org/downloads/",
+        "regex": "id=\"latest-client-version\" data-version=\"([\\d.]+)\""
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://releases.whatpulse.org/latest/windows/whatpulse-win-latest.exe"
+            }
+        }
+    }
+}
