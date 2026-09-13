@@ -1,12 +1,21 @@
-name: hash-test
+name: hash-test-win
 on: push
 jobs:
   hash:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
-      - name: Download and hash VibeFuse portable
+      - name: Scoop checkhashes replication
+        shell: powershell
         run: |
-          curl -sL --retry 2 --max-time 240 -o vf.exe "https://fuseintelligence.org/downloads/VibeFuse/VibeFuse.exe"
-          ls -la vf.exe
-          sha256sum vf.exe
-          file vf.exe || true
+          $ErrorActionPreference = "Continue"
+          New-Item -ItemType Directory -Force -Path "$env:TEMP\bucket" | Out-Null
+          Copy-Item bucket/vibefuse.json "$env:TEMP\bucket\" -ErrorAction SilentlyContinue
+          git clone --depth 1 https://github.com/ScoopInstaller/Scoop.git "$env:TEMP\scoopcore"
+          . "$env:TEMP\scoopcore\lib\core.ps1"
+          . "$env:TEMP\scoopcore\lib\manifest.ps1"
+          . "$env:TEMP\scoopcore\lib\buckets.ps1"
+          . "$env:TEMP\scoopcore\lib\autoupdate.ps1"
+          . "$env:TEMP\scoopcore\lib\json.ps1"
+          . "$env:TEMP\scoopcore\lib\versions.ps1"
+          . "$env:TEMP\scoopcore\lib\download.ps1"
+          & "$env:TEMP\scoopcore\bin\checkhashes.ps1" -App vibefuse -Dir "$env:TEMP\bucket" *>&1 | ForEach-Object { Write-Host $_ }
