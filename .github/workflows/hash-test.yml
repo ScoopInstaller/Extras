@@ -8,8 +8,10 @@ jobs:
         shell: powershell
         run: |
           $ErrorActionPreference = "Continue"
-          New-Item -ItemType Directory -Force -Path "$env:TEMP\bucket" | Out-Null
-          Copy-Item bucket/vibefuse.json "$env:TEMP\bucket\" -ErrorAction SilentlyContinue
+          $env:SCOOP = "$env:TEMP\scoop"
+          New-Item -ItemType Directory -Force -Path "$env:SCOOP" | Out-Null
+          New-Item -ItemType Directory -Force -Path "$env:SCOOP\cache" | Out-Null
+          $env:SCOOP_GLOBAL = ""
           git clone --depth 1 https://github.com/ScoopInstaller/Scoop.git "$env:TEMP\scoopcore"
           . "$env:TEMP\scoopcore\lib\core.ps1"
           . "$env:TEMP\scoopcore\lib\manifest.ps1"
@@ -18,4 +20,14 @@ jobs:
           . "$env:TEMP\scoopcore\lib\json.ps1"
           . "$env:TEMP\scoopcore\lib\versions.ps1"
           . "$env:TEMP\scoopcore\lib\download.ps1"
-          & "$env:TEMP\scoopcore\bin\checkhashes.ps1" -App vibefuse -Dir "$env:TEMP\bucket" *>&1 | ForEach-Object { Write-Host $_ }
+          $m = parse_json (Resolve-Path "bucket/vibefuse.json").Path
+          Write-Host ("parsed version: " + $m.version)
+          $algorithm, $expected = get_hash $m.architecture."64bit".hash
+          Write-Host ("algorithm: " + $algorithm + " expected: " + $expected)
+          $cachedir = "$env:SCOOP\cache"
+          $cached = Join-Path $cachedir "vibefuse#HASH_CHECK#https_//fuseintelligence.org_downloads_VibeFuse_VibeFuse.exe"
+          Start-Download $m.architecture."64bit".url "$cached.download" $null
+          Move-Item "$cached.download" $cached -Force
+          $actual = (Get-FileHash -Path $cached -Algorithm $algorithm).Hash.ToLower()
+          Write-Host ("ACTUAL: " + $actual)
+          if ($actual -eq $expected) { Write-Host "HASH MATCH: OK" } else { Write-Host "HASH MISMATCH" }
