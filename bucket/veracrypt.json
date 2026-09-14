@@ -1,0 +1,56 @@
+{
+    "version": "1.26.24",
+    "description": "VeraCrypt is a free open source disk encryption software for Windows, Mac OSX and Linux.",
+    "homepage": "https://veracrypt.jp/",
+    "license": {
+        "identifier": "Apache-2.0",
+        "url": "https://veracrypt.jp/en/VeraCrypt%20License.html"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://launchpad.net/veracrypt/trunk/1.26.24/+download/VeraCrypt_Setup_x64_1.26.24.msi#/dl.msi_",
+            "hash": "sha512:29e781f50b6ce3cf7833b79d17ac274287262164a29f32d3a01bda0d7412c2899489a68bd33008af1cab734652ceaf9f50d492c76207ddfcc82f1cc874f395f1"
+        }
+    },
+    "pre_install": [
+        "Expand-MsiArchive \"$dir\\$fname\" \"$dir\" -ExtractDir 'VeraCrypt' -Removal",
+        "Remove-Item -Path \"$dir\\VeraCrypt COMReg.exe\" -Force",
+        "Get-ChildItem -Path \"$dir\\*\" -Include 'veracrypt.sys', 'veracrypt.cat', 'VeraCrypt.exe', 'VeraCryptExpander.exe', 'VeraCrypt Format.exe' | Rename-Item -NewName { $_.BaseName + '-x64' + $_.Extension }",
+        "'Configuration.xml', 'Default Keyfiles.xml', 'Favorite Volumes.xml', 'History.xml' | ForEach-Object { Copy-Item (Join-Path $persist_dir $_) (Join-Path $dir $_) -ErrorAction SilentlyContinue; Remove-Item (Join-Path $persist_dir $_) -ErrorAction SilentlyContinue }"
+    ],
+    "bin": [
+        [
+            "VeraCrypt-x64.exe",
+            "veracrypt"
+        ],
+        [
+            "VeraCrypt Format-x64.exe",
+            "veracrypt-format"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "VeraCrypt-x64.exe",
+            "VeraCrypt"
+        ]
+    ],
+    "pre_uninstall": [
+        "ensure \"$persist_dir\" | Out-Null",
+        "'Configuration.xml', 'Default Keyfiles.xml', 'Favorite Volumes.xml', 'History.xml' | ForEach-Object { Copy-Item (Join-Path $dir $_) (Join-Path $persist_dir $_) -ErrorAction SilentlyContinue }"
+    ],
+    "checkver": {
+        "url": "https://veracrypt.io/en/Downloads.html",
+        "regex": "Latest Stable Release - ([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://launchpad.net/veracrypt/trunk/$version/+download/VeraCrypt_Setup_x64_$version.msi#/dl.msi_",
+                "hash": {
+                    "url": "https://launchpad.net/veracrypt/trunk/$version/+download/veracrypt-$version-sha512sum.txt",
+                    "find": "$sha512\\s+$basename"
+                }
+            }
+        }
+    }
+}
