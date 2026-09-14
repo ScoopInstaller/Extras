@@ -4,10 +4,11 @@
     "homepage": "https://theia-ide.org/#theiaide",
     "license": "EPL-2.0, GPL-2.0, MIT",
     "notes": [
-        "To add 'Open with Theia IDE' context menu option, run:",
+        "Add 'Open with Theia IDE' to directory context menu by running:",
         "reg import \"$dir\\install-context.reg\"",
-        "Context-menu entry can be removed by running:",
-        "reg import \"$dir\\uninstall-context.reg\""
+        "Remove 'Open with Theia IDE' from directory context menu by running:",
+        "reg import \"$dir\\uninstall-context.reg\"",
+        "Auto Remove when 'uninstall'"
     ],
     "architecture": {
         "64bit": {
@@ -16,11 +17,14 @@
         }
     },
     "post_install": [
-        "$theia_dir = \"$dir\\TheiaIDE.exe\".Replace('\\', '\\\\').Replace('.exe', '')",
+        "$exepath = \"$dir\\TheiaIDE.exe\".Replace('\\', '\\\\')",
         "'install-context', 'uninstall-context' | ForEach-Object {",
         "  if (Test-Path \"$bucketsdir\\extras\\scripts\\theia-ide\\$_.reg\") {",
         "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\theia-ide\\$_.reg\"",
-        "    $content = $content.Replace('{{theia_dir}}', $theia_dir)",
+        "    $content = $content.Replace('{{theiaide}}', $exepath)",
+        "    if ($global) {",
+        "      $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "    }",
         "    $content | Set-Content -Path \"$dir\\$_.reg\"",
         "  }",
         "}"
