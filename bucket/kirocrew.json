@@ -1,0 +1,42 @@
+{
+    "version": "0.6.0",
+    "description": "Autonomous agent management layer for Kiro - persistent memory, scheduled jobs, background subagents, and multi-session orchestration.",
+    "homepage": "https://kiro.dev/crew/",
+    "license": "Apache-2.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/kirodotdev/KiroCrew/releases/download/v0.6.0/KiroCrew-0.6.0-Setup-x64.exe#/dl.7z",
+            "hash": "c7a6adaa618f534be5f64fcc5109be581f291c2e5ea3e77be502460f7e9442f8"
+        }
+    },
+    "installer": {
+        "script": [
+            "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Select-Object -First 1 | Expand-7zipArchive -DestinationPath $dir",
+            "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Force -Recurse -ErrorAction Ignore"
+        ]
+    },
+    "post_install": [
+        "# Disable built-in update mechanism to prevent conflicts with Scoop's update management",
+        "$yaml = \"$dir\\resources\\app-update.yml\"",
+        "$content = Get-Content -Path $yaml | Foreach-Object {",
+        "    if ($_.StartsWith('url')) { \"$($_.Replace('url', '# url')) # Disabled by Scoop\" } else { $_ }",
+        "}",
+        "Set-Content $yaml -Value $content -Encoding ascii"
+    ],
+    "shortcuts": [
+        [
+            "KiroCrew.exe",
+            "KiroCrew"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/kirodotdev/KiroCrew"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/kirodotdev/KiroCrew/releases/download/v$version/KiroCrew-$version-Setup-x64.exe#/dl.7z"
+            }
+        }
+    }
+}
