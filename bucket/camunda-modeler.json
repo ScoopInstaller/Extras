@@ -14,15 +14,25 @@
         }
     },
     "bin": "Camunda Modeler.exe",
+    "pre_install": [
+        "if (Test-Path \"$env:AppData\\camunda-modeler\") {",
+        "    info '[Persistent AppData]: Moving user data...'",
+        "    ensure \"$persist_dir\\UserData\" | Out-Null",
+        "    Copy-Item \"$env:AppData\\camunda-modeler\\*\" \"$persist_dir\\UserData\\\" -Recurse -Force -ErrorAction 'SilentlyContinue'",
+        "    Remove-Item \"$env:AppData\\camunda-modeler\" -Recurse -Force -ErrorAction 'SilentlyContinue'",
+        "}"
+    ],
     "shortcuts": [
         [
             "Camunda Modeler.exe",
-            "Camunda Modeler"
+            "Camunda Modeler",
+            "--user-data-dir=\"$persist_dir\\UserData\""
         ]
     ],
     "checkver": {
         "github": "https://github.com/camunda/camunda-modeler"
     },
+    "persist": "UserData",
     "autoupdate": {
         "architecture": {
             "64bit": {
