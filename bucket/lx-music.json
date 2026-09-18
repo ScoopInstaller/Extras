@@ -1,0 +1,52 @@
+{
+    "version": "2.9.0",
+    "description": "A music software developed based on Electron + Vue",
+    "homepage": "https://github.com/lyswhut/lx-music-desktop",
+    "license": "Apache-2.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/lyswhut/lx-music-desktop/releases/download/v2.9.0/lx-music-desktop-v2.9.0-win_x64-green.7z",
+            "hash": "6F84474FE0829092BF8669DA294D5F42843800D88AF8119C19CD3DF262CD9033"
+        },
+        "32bit": {
+            "url": "https://github.com/lyswhut/lx-music-desktop/releases/download/v2.9.0/lx-music-desktop-v2.9.0-win7_x86-green.7z",
+            "hash": "9E2594A6DAB86C19E4E0D33BCDE8B9764E57D1788473F3CCB3F423377B65F30E"
+        },
+        "arm64": {
+            "url": "https://github.com/lyswhut/lx-music-desktop/releases/download/v2.9.0/lx-music-desktop-v2.9.0-win_arm64-green.7z",
+            "hash": "468D990C057A23D77BDD771A4ACE70D9B6BCCB684BE003F8E2CF65751AA3DDDB"
+        }
+    },
+    "shortcuts": [["lx-music-desktop.exe", "Lx Music"]],
+    "persist": ["portable"],
+    "post_install": [
+        "$datadir = \"$env:APPDATA\\lx-music-desktop\"",
+        "ensure \"$persist_dir\\portable\\userData\" | Out-Null",
+        "if (Test-Path $datadir) {",
+        "    Copy-Item -Path \"$datadir\\*\" -Destination \"$persist_dir\\portable\\userData\" -Recurse | Out-Null",
+        "}"
+    ],
+    "post_uninstall": [
+        "$datadir = \"$env:AppData\\lx-music-desktop\"",
+        "if (Test-Path \"$datadir\\logs\") {",
+        "    Remove-Item -Path \"$datadir\\logs\" -Recurse -Force | Out-Null",
+        "    if ((Get-ChildItem -Path \"$datadir\" -Force | Measure-Object).Count -eq 0) {",
+        "        Remove-Item -Path \"$datadir\" -Recurse -Force | Out-Null",
+        "    }",
+        "}"
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/lyswhut/lx-music-desktop/releases/download/v$version/lx-music-desktop-v$version-win_x64-green.7z"
+            },
+            "32bit": {
+                "url": "https://github.com/lyswhut/lx-music-desktop/releases/download/v$version/lx-music-desktop-v$version-win7_x86-green.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/lyswhut/lx-music-desktop/releases/download/v$version/lx-music-desktop-v$version-win_arm64-green.7z"
+            }
+        }
+    }
+}
