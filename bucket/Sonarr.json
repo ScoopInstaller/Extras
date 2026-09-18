@@ -1,0 +1,47 @@
+{
+    "version": "4.0.13.2932",
+    "description": "Smart PVR for newsgroup and bittorrent users.",
+    "homepage": "https://sonarr.tv/",
+    "license": "GPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Sonarr/Sonarr/releases/download/v4.0.13.2932/Sonarr.main.4.0.13.2932.win-x64.zip",
+            "hash": "43e804c91b1bea5e0c97a9cb04e57cbf47fe5b0b1ad7e6c399268b66a312f9cd"
+        },
+        "32bit": {
+            "url": "https://github.com/Sonarr/Sonarr/releases/download/v4.0.13.2932/Sonarr.main.4.0.13.2932.win-x86.zip",
+            "hash": "d03c3bc501ba1bf7539ca6cc4d71df69fa65faf81430c646fe078747f7a1fc41"
+        }
+    },
+    "extract_dir": "Sonarr",
+    "post_install": [
+        "$WSshell = New-Object -ComObject WScript.Shell",
+        "$shortcut = $WSshell.CreateShortcut(\"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\Sonarr.lnk\")",
+        "$shortcut.TargetPath = \"$dir\\Sonarr.exe\"",
+        "$shortcut.Save()"
+    ],
+    "shortcuts": [
+        [
+            "Sonarr.exe",
+            "Sonarr"
+        ]
+    ],
+    "post_uninstall": [
+        "Remove-Item -Recurse -Force \"$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\Sonarr.lnk\"",
+        "echo \"`nTo remove persistent data, remove the folder C:\\ProgramData\\Sonarr\""
+    ],
+    "checkver": {
+        "github": "https://github.com/Sonarr/Sonarr",
+        "regex": "/releases/tag/v([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Sonarr/Sonarr/releases/download/v$version/Sonarr.main.$version.win-x64.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/Sonarr/Sonarr/releases/download/v$version/Sonarr.main.$version.win-x86.zip"
+            }
+        }
+    }
+}
