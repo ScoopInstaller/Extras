@@ -1,0 +1,38 @@
+{
+    "version": "5.5.2.37849279",
+    "description": "A full-scenario AI workbench from Tencent.",
+    "homepage": "https://www.workbuddy.ai",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.workbuddy.ai/document/term"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://codebuddy-1328495429.cos.accelerate.myqcloud.com/workbuddy/saas/win32-x64-user/WorkBuddy-win32-x64-user-5.5.2.37849279-910352f0.exe#/dl.7z",
+            "hash": "19b107bdccb918d49e84cfc3407ced578439a1643a7714a493da7d88b9fd786b"
+        }
+    },
+    "installer": {
+        "script": [
+            "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Select-Object -First 1 | Expand-7zipArchive -DestinationPath $dir",
+            "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Force -Recurse -ErrorAction Ignore"
+        ]
+    },
+    "shortcuts": [
+        [
+            "WorkBuddyAI.exe",
+            "WorkBuddyAI"
+        ]
+    ],
+    "checkver": {
+        "url": "https://www.workbuddy.ai/v2/update?platform=workbuddy-win32-x64-user",
+        "regex": "WorkBuddy-win32-x64-user-(?<version>\\d+(?:\\.\\d+)+)-(?<sha>[0-9a-f]+).exe"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://codebuddy-1328495429.cos.accelerate.myqcloud.com/workbuddy/saas/win32-x64-user/WorkBuddy-win32-x64-user-$version-$matchSha.exe#/dl.7z"
+            }
+        }
+    }
+}

@@ -1,7 +1,7 @@
 {
-    "version": "0.9.2",
+    "version": "0.9.8",
     "description": "A modern lightweight database client built with Wails and React.",
-    "homepage": "https://github.com/Syngnat/GoNavi",
+    "homepage": "https://gonavi.org",
     "license": "Apache-2.0",
     "suggest": {
         "vcredist": "extras/vcredist2022",
@@ -9,12 +9,12 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/Syngnat/GoNavi/releases/download/v0.9.2/GoNavi-0.9.2-Windows-Amd64-Portable.exe#/GoNavi.exe",
-            "hash": "bae57fd0f3e15315e80b2e2c187548873abbe39c516ec2bbb7e5f9094a301ec4"
+            "url": "https://github.com/Syngnat/GoNavi/releases/download/v0.9.8/GoNavi-0.9.8-Windows-Amd64-Portable.zip",
+            "hash": "e5099947306b2ec6b78c7275c99ddf8b131f0277473289b0704068e3e020049b"
         },
         "arm64": {
-            "url": "https://github.com/Syngnat/GoNavi/releases/download/v0.9.2/GoNavi-0.9.2-Windows-Arm64-Portable.exe#/GoNavi.exe",
-            "hash": "4f240484b701494a7e62771959b3c67d271c6e9eb4605ef5798b8cdd0c8ad061"
+            "url": "https://github.com/Syngnat/GoNavi/releases/download/v0.9.8/GoNavi-0.9.8-Windows-Arm64-Portable.zip",
+            "hash": "2c1bee938e13a930da51e6deafd137885e6b708c7612afaac0e239c764b232af"
         }
     },
     "shortcuts": [
@@ -23,14 +23,28 @@
             "GoNavi"
         ]
     ],
-    "checkver": "github",
+    "post_install": [
+        "if (Test-Path $env:USERPROFILE\\.gonavi) {",
+        "    Write-Host \"`r`nMove config from non-portable version...\"",
+        "    Copy-Item -Path $env:USERPROFILE\\.gonavi\\* -Destination \"$persist_dir\\data\" -Force -Recurse -ErrorAction Stop | Out-Null",
+        "    Remove-Item $env:USERPROFILE\\.gonavi -Force -Recurse",
+        "}"
+    ],
+    "env_set": {
+        "GONAVI_DATA_ROOT": "$dir\\data",
+        "GONAVI_LOG_DIR": "$dir\\data\\logs"
+    },
+    "persist": "data",
+    "checkver": {
+        "github": "https://github.com/Syngnat/GoNavi"
+    },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/Syngnat/GoNavi/releases/download/v$version/GoNavi-$version-Windows-Amd64-Portable.exe#/GoNavi.exe"
+                "url": "https://github.com/Syngnat/GoNavi/releases/download/v$version/GoNavi-$version-Windows-Amd64-Portable.zip"
             },
             "arm64": {
-                "url": "https://github.com/Syngnat/GoNavi/releases/download/v$version/GoNavi-$version-Windows-Arm64-Portable.exe#/GoNavi.exe"
+                "url": "https://github.com/Syngnat/GoNavi/releases/download/v$version/GoNavi-$version-Windows-Arm64-Portable.zip"
             }
         },
         "hash": {

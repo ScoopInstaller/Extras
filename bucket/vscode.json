@@ -1,5 +1,5 @@
 {
-    "version": "1.132.0",
+    "version": "1.138.0",
     "description": "Lightweight but powerful source code editor",
     "homepage": "https://code.visualstudio.com/",
     "license": {
@@ -16,35 +16,47 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://update.code.visualstudio.com/1.132.0/win32-x64-archive/stable#/dl.7z",
-            "hash": "98bd4a4721a5bd8534dbad8eaf9801f001ee36703a278c5d52d6036df8c7e503"
+            "url": "https://update.code.visualstudio.com/1.138.0/win32-x64-archive/stable#/dl.7z",
+            "hash": "c0a9f12a0d8962fa4cda1959eecd5fdd3f82de9715ad4dadd5601856bb60fd21"
         },
         "arm64": {
-            "url": "https://update.code.visualstudio.com/1.132.0/win32-arm64-archive/stable#/dl.7z",
-            "hash": "85520b1eac09c079b38cb4f0f855ff16fa4d691ac9531148ddd6935369186b9f"
+            "url": "https://update.code.visualstudio.com/1.138.0/win32-arm64-archive/stable#/dl.7z",
+            "hash": "f2d93057ad037135db0aaaa122050bb3c9f5bba56b0db09e55cd1c905475cb41"
         }
     },
-    "env_add_path": "bin",
-    "shortcuts": [
-        [
-            "code.exe",
-            "Visual Studio Code"
-        ]
-    ],
     "post_install": [
         "$dirpath = \"$dir\".Replace('\\', '\\\\')",
         "$exepath = \"$dir\\Code.exe\".Replace('\\', '\\\\')",
+        "$versionfolder = Get-ChildItem -LiteralPath $dir -Directory | Where-Object {",
+        "    ($_.Name -match '^[a-fA-F0-9]+$') -and (Test-Path -LiteralPath \"$($_.FullName)\\resources\" -PathType Container)",
+        "} | Select-Object -First 1 -ExpandProperty Name",
         "'install-associations', 'uninstall-associations', 'install-context', 'uninstall-context', 'install-github-integration', 'uninstall-github-integration' | ForEach-Object {",
-        "  if (Test-Path \"$bucketsdir\\extras\\scripts\\vscode\\$_.reg\") {",
-        "    $content = Get-Content \"$bucketsdir\\extras\\scripts\\vscode\\$_.reg\"",
-        "    $content = $content.Replace('$codedir', $dirpath)",
-        "    $content = $content.Replace('$code', $exepath)",
-        "    if ($global) {",
-        "      $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "    if (Test-Path \"$bucketsdir\\extras\\scripts\\vscode\\$_.reg\") {",
+        "        $content = Get-Content \"$bucketsdir\\extras\\scripts\\vscode\\$_.reg\"",
+        "        $content = $content.Replace('$codedir', $dirpath)",
+        "        $content = $content.Replace('$code', $exepath)",
+        "        if ($versionfolder) {",
+        "            $content = $content.Replace('$versionfolder', $versionfolder)",
+        "        } else {",
+        "            $content = $content.Replace('\\\\$versionfolder', '')",
+        "        }",
+        "        if ($global) {",
+        "            $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE')",
+        "        }",
+        "        $content | Set-Content -Path \"$dir\\$_.reg\"",
         "    }",
-        "    $content | Set-Content -Path \"$dir\\$_.reg\"",
-        "  }",
         "}",
+        "# Re-register file associations if they are already registered to this installation",
+        "$regpath = 'HKCU:\\Software\\Classes\\CodeOSS.*\\shell\\open\\command'",
+        "if ($global) {",
+        "    $regpath = $regpath.Replace('HKCU', 'HKLM')",
+        "}",
+        "$command = Get-ItemPropertyValue $regpath -Name '(default)' -ErrorAction Ignore",
+        "if ($command -and ($command -match [regex]::escape($(appdir $app $global)))) {",
+        "    info 'Re-registering file associations...'",
+        "    reg import \"$dir\\install-associations.reg\"",
+        "}",
+        "",
         "if (!(Test-Path \"$dir\\data\\extensions\") -and (Test-Path \"$env:USERPROFILE\\.vscode\\extensions\")) {",
         "    info '[Portable Mode] Copying extensions...'",
         "    Copy-Item \"$env:USERPROFILE\\.vscode\\extensions\" \"$dir\\data\" -Recurse",
@@ -59,16 +71,23 @@
         "    (Get-Content \"$extensions_file\") -replace '(?<=vscode(/|\\\\\\\\)).*?(?=(/|\\\\\\\\)data(/|\\\\\\\\)extensions)', $version | Set-Content \"$extensions_file\"",
         "}"
     ],
+    "env_add_path": "bin",
+    "shortcuts": [
+        [
+            "code.exe",
+            "Visual Studio Code"
+        ]
+    ],
+    "persist": "data",
     "uninstaller": {
         "script": [
-            "if ($cmd -eq 'uninstall')",
-            "{",
-            "   reg import \"$dir\\uninstall-context.reg\" ",
-            "   reg import \"$dir\\uninstall-github-integration.reg\" ",
+            "if ($cmd -eq 'uninstall') {",
+            "    reg import \"$dir\\uninstall-context.reg\"",
+            "    reg import \"$dir\\uninstall-associations.reg\"",
+            "    reg import \"$dir\\uninstall-github-integration.reg\"",
             "}"
         ]
     },
-    "persist": "data",
     "checkver": {
         "url": "https://update.code.visualstudio.com/api/update/win32-x64-archive/stable/latest",
         "jsonpath": "$.name"
