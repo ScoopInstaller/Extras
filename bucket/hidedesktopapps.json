@@ -1,0 +1,54 @@
+{
+    "version": "1.2.2",
+    "description": "System tray app to hide/show desktop icons, taskbar, and all windows via configurable hotkeys.",
+    "homepage": "https://github.com/Londopy/HideDesktopApps",
+    "license": "MIT",
+    "url": "https://github.com/Londopy/HideDesktopApps/releases/download/v1.2.2/HideDesktopApps-v1.2.2-portable.zip",
+    "hash": "46296c95a2cf2c358f6b7bba16462f98005d3d534ab7872d1f3b7214729076a1",
+    "extract_dir": "HideDesktopApps",
+    "architecture": {
+        "64bit": {
+            "bin": "x64\\HideDesktopApps.exe",
+            "shortcuts": [
+                [
+                    "x64\\HideDesktopApps.exe",
+                    "HideDesktopApps"
+                ]
+            ]
+        },
+        "32bit": {
+            "bin": "x86\\HideDesktopApps.exe",
+            "shortcuts": [
+                [
+                    "x86\\HideDesktopApps.exe",
+                    "HideDesktopApps"
+                ]
+            ]
+        },
+        "arm64": {
+            "bin": "arm64\\HideDesktopApps.exe",
+            "shortcuts": [
+                [
+                    "arm64\\HideDesktopApps.exe",
+                    "HideDesktopApps"
+                ]
+            ]
+        }
+    },
+    "persist": [
+        "x64\\config.toml",
+        "x86\\config.toml",
+        "arm64\\config.toml"
+    ],
+    "pre_install": "@('x64','x86','arm64') | ForEach-Object { $sub = Join-Path $dir $_; if (Test-Path $sub) { $marker = Join-Path $sub 'portable'; if (!(Test-Path $marker)) { New-Item -ItemType File -Path $marker | Out-Null } } }",
+    "checkver": {
+        "github": "https://github.com/Londopy/HideDesktopApps"
+    },
+    "autoupdate": {
+        "url": "https://github.com/Londopy/HideDesktopApps/releases/download/v$version/HideDesktopApps-v$version-portable.zip",
+        "hash": {
+            "url": "https://github.com/Londopy/HideDesktopApps/releases/download/v$version/SHA256SUMS.txt",
+            "regex": "$sha256\\s+$basename"
+        }
+    }
+}
