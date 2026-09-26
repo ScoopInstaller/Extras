@@ -21,6 +21,11 @@
         "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
         "}"
     ],
+    "pre_uninstall": "& \"$dir/simplewall.exe\" -uninstall -silent",
+    "post_uninstall": [
+        "$startupEntry = @('HKCU:/SOFTWARE/Microsoft/Windows/CurrentVersion/Run', 'simplewall')",
+        "if ((Get-ItemProperty @startupEntry -ErrorAction Ignore).simplewall -eq \"$([char][byte]34)$dir\\simplewall.exe$([char][byte]34) -minimized\") { Remove-ItemProperty @startupEntry }"
+    ],
     "bin": "simplewall.exe",
     "shortcuts": [
         [
