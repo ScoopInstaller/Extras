@@ -1,0 +1,66 @@
+{
+    "##": "Why here? Waiting for PR to be merged to the Scoop official Extras bucket.",
+    "version": "0.66.3-d621f",
+    "description": "Image optimizer for web",
+    "homepage": "https://css-ig.net/pinga",
+    "license": {
+        "identifier": "Unknown",
+        "url": "https://css-ig.net/submit/licenses"
+    },
+    "url": "https://css-ig.net/bin/pinga-win64.zip",
+    "hash": "d621fdcb19091fb68cb4302f2a38097e48f616b4c55cc6ebbf49044aefc25fa9",
+    "innosetup": true,
+    "pre_install": [
+        "# Rename the installer because it is named the same as the executable inside it",
+        "Rename-Item -Path \"$dir\\pinga.exe\" -NewName \"pinga_setup.exe\"",
+        "# Extract the installer and delete it afterwards",
+        "Expand-InnoArchive -Path \"$dir\\pinga_setup.exe\" -DestinationPath \"$dir\" -Removal"
+    ],
+    "shortcuts": [
+        [
+            "pinga.exe",
+            "pinga"
+        ]
+    ],
+    "post_uninstall": [
+        "# Inform of leftover files if any was found",
+        "$LeftoverFiles = [string[]](",
+        "    [System.IO.Path]::Combine($env:LOCALAPPDATA,'pinga.ini') | Where-Object -FilterScript {",
+        "        [System.IO.File]::Exists($_)",
+        "    }",
+        ")",
+        "if ($LeftoverFiles.Count -gt 0) {",
+        "    $Message = [string] \"`r`nFound some leftover files you might want to delete:\"",
+        "    $LeftoverFiles.ForEach{",
+        "        $Message += \"`r`n* '{0}'\" -f $_",
+        "    }",
+        "    info $Message",
+        "}"
+    ],
+    "checkver": {
+        "script": [
+            "<#",
+            "   Create version with first 5ch of SHA256 checksum,",
+            "   because the author have multiple times updated the ZIP file,",
+            "   without incrementing the version number.",
+            "#>",
+            "# Get stated version from webpage",
+            "$Html = Invoke-RestMethod -Method 'Get' -Uri 'https://css-ig.net/pinga'",
+            "$Version = [string] [regex]::Matches($Html, 'v([\\d+.]+)')[0].'Value'.TrimStart('v')",
+            "# Get SHA256 checksum",
+            "$WebClient = [System.Net.WebClient]::new()",
+            "$Sha256 = [string](",
+            "    (Get-FileHash -InputStream ($WebClient.OpenRead('https://css-ig.net/bin/pinga-win64.zip')) -Algorithm 'SHA256').'Hash'.ToLower()",
+            ")",
+            "if ($null -ne $WebClient) {",
+            "    $WebClient.Dispose()",
+            "}",
+            "# Output stated version with first 5 characters of the SHA256 checksum",
+            "[string]::Format('{0}-{1}', $Version, $Sha256.Substring(0, 5))"
+        ],
+        "regex": "([\\d+.]+-[\\da-f]{5})"
+    },
+    "autoupdate": {
+        "url": "https://css-ig.net/bin/pinga-win64.zip"
+    }
+}
