@@ -14,9 +14,8 @@
     },
     "pre_install": [
         "Remove-Item \"$dir\\resources\" -Recurse -Force -ErrorAction SilentlyContinue",
-        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-        "Move-Item \"$dir\\`$R0\\Uninstall VoiceStudio.exe\" \"$dir\" -ErrorAction SilentlyContinue",
-        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\`$R0\" -Force -Recurse -ErrorAction SilentlyContinue"
+        "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Select-Object -First 1 | Expand-7zipArchive -DestinationPath $dir",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Force -Recurse -ErrorAction Ignore"
     ],
     "shortcuts": [
         [
@@ -32,6 +31,9 @@
             "64bit": {
                 "url": "https://github.com/debpalash/VoiceStudio/releases/download/v$version/VoiceStudio-Electron-$version-win-x64.exe#/dl.7z"
             }
+        },
+        "hash": {
+            "url": "$baseurl/SHA256SUMS.txt"
         }
     }
 }
