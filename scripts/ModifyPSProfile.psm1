@@ -38,8 +38,8 @@ function New-ProfileModifier {
     $SupportedBehavior = @("ImportModule", "RemoveModule")
 
     if ($SupportedBehavior -notcontains $Behavior) {
-        Write-Host "failed." -ForegroundColor Red
-        Write-Host "ERROR  Unsupported behavior type: $Behavior" -ForegroundColor DarkRed
+        Write-Host "Failed." -ForegroundColor Red
+        Write-Host "ERROR Unsupported behavior type: $Behavior" -ForegroundColor DarkRed
         return
     }
 
@@ -69,10 +69,10 @@ function New-ProfileModifier {
 
     try {
         $GenerateContent | Out-File -FilePath $OutputPath -Encoding UTF8 -ErrorAction Stop
-        Write-Host "success." -ForegroundColor Green
+        Write-Host "Success." -ForegroundColor Green
     } catch {
-        Write-Host "failed." -ForegroundColor Red
-        Write-Host "ERROR  $($_.Exception.Message)" -ForegroundColor DarkRed
+        Write-Host "Failed." -ForegroundColor Red
+        Write-Host "ERROR $($_.Exception.Message)" -ForegroundColor DarkRed
     }
 }
 
@@ -96,10 +96,10 @@ function Add-ProfileContent {
         $NewLine = [Environment]::NewLine
         try {
             Add-Content -Path $PROFILE -Value "$NewLine$Content" -Encoding UTF8 -NoNewLine -ErrorAction Stop
-            Write-Host "success." -ForegroundColor Green
+            Write-Host "Success." -ForegroundColor Green
         } catch {
-            Write-Host "failed." -ForegroundColor Red
-            Write-Host "ERROR  $($_.Exception.Message)" -ForegroundColor DarkRed
+            Write-Host "Failed." -ForegroundColor Red
+            Write-Host "ERROR $($_.Exception.Message)" -ForegroundColor DarkRed
         }
     } else {
         $ProfileParentDir = Split-Path -Path $PROFILE -Parent
@@ -107,17 +107,17 @@ function Add-ProfileContent {
             try {
                 New-Item -Path $ProfileParentDir -ItemType Directory -Force -ErrorAction Stop | Out-Null
             } catch {
-                Write-Host "failed." -ForegroundColor Red
-                Write-Host "ERROR  $($_.Exception.Message)" -ForegroundColor DarkRed
+                Write-Host "Failed." -ForegroundColor Red
+                Write-Host "ERROR $($_.Exception.Message)" -ForegroundColor DarkRed
                 return
             }
         }
         try {
             $Content | Out-File -FilePath $PROFILE -Encoding UTF8 -Force -ErrorAction Stop
-            Write-Host "success." -ForegroundColor Green
+            Write-Host "Success." -ForegroundColor Green
         } catch {
-            Write-Host "failed." -ForegroundColor Red
-            Write-Host "ERROR  $($_.Exception.Message)" -ForegroundColor DarkRed
+            Write-Host "Failed." -ForegroundColor Red
+            Write-Host "ERROR $($_.Exception.Message)" -ForegroundColor DarkRed
         }
     }
 }
@@ -139,7 +139,7 @@ function Remove-ProfileContent {
     Write-Host "Cleaning up PowerShell profile..." -NoNewline
 
     if (-not (Test-Path $PROFILE)) {
-        Write-Host "abort." -ForegroundColor Yellow
+        Write-Host "Abort." -ForegroundColor Yellow
         Write-Host "INFO  PowerShell profile not found." -ForegroundColor DarkGray
         return
     }
@@ -147,13 +147,13 @@ function Remove-ProfileContent {
     try {
         $RawProfile = Get-Content -Path $PROFILE -Encoding UTF8 -Raw -ErrorAction Stop
     } catch {
-        Write-Host "failed." -ForegroundColor Red
-        Write-Host "ERROR  $($_.Exception.Message)" -ForegroundColor DarkRed
+        Write-Host "Failed." -ForegroundColor Red
+        Write-Host "ERROR $($_.Exception.Message)" -ForegroundColor DarkRed
         return
     }
 
     if ($null -eq $RawProfile) {
-        Write-Host "abort." -ForegroundColor Yellow
+        Write-Host "Abort." -ForegroundColor Yellow
         Write-Host "INFO  PowerShell profile is empty." -ForegroundColor DarkGray
         return
     }
@@ -165,13 +165,13 @@ function Remove-ProfileContent {
         $modifiedProfile = $RawProfile -replace $ProfileLinePattern, ''
         try {
             $modifiedProfile | Out-File -FilePath $PROFILE -Encoding UTF8 -NoNewLine -ErrorAction Stop
-            Write-Host "success." -ForegroundColor Green
+            Write-Host "Success." -ForegroundColor Green
         } catch {
-            Write-Host "failed." -ForegroundColor Red
-            Write-Host "ERROR  $($_.Exception.Message)" -ForegroundColor DarkRed
+            Write-Host "Failed." -ForegroundColor Red
+            Write-Host "ERROR $($_.Exception.Message)" -ForegroundColor DarkRed
         }
     } else {
-        Write-Host "abort." -ForegroundColor Yellow
+        Write-Host "Abort." -ForegroundColor Yellow
         Write-Host "INFO  Content not found in PowerShell profile." -ForegroundColor DarkGray
         return
     }
