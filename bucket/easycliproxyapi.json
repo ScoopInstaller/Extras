@@ -1,0 +1,65 @@
+{
+    "version": "0.3.12",
+    "description": "Cross-platform GUI desktop management client for CLIProxyAPI",
+    "homepage": "https://github.com/router-for-me/EasyCLIProxyAPI",
+    "license": "MIT",
+    "suggest": {
+        "Microsoft Edge WebView2": "extras/webview2"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/router-for-me/EasyCLIProxyAPI/releases/download/v0.3.12/EasyCLIProxyAPI-v0.3.12-Windows-amd64.zip",
+            "hash": "7df7095ac4b54a8f975594da950978523f87715da4709d8f76bae2930567e68b",
+            "extract_dir": "EasyCLIProxyAPI-v0.3.12-Windows-amd64"
+        },
+        "arm64": {
+            "url": "https://github.com/router-for-me/EasyCLIProxyAPI/releases/download/v0.3.12/EasyCLIProxyAPI-v0.3.12-Windows-aarch64.zip",
+            "hash": "1e4218920c88ab9b1233e8e85a11e9aa72e6b106763f615629a4b90ab69b56e9",
+            "extract_dir": "EasyCLIProxyAPI-v0.3.12-Windows-aarch64"
+        }
+    },
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\config.toml\")) {",
+        "    New-Item -ItemType File -Path \"$dir\\config.toml\" -Force | Out-Null",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\cpa-core\\config.yaml\")) {",
+        "    Get-Item \"$dir\\cpa-core\\CLIProxyAPI_*.zip\" | Expand-7zipArchive -DestinationPath \"$dir\\cpa-core\" -Switches 'config.example.yaml'",
+        "    $config = Get-Content \"$dir\\cpa-core\\config.example.yaml\" -Raw -Encoding UTF8",
+        "    # Add EasyCLIProxyAPI defaults",
+        "    $config = $config -replace '(?m)^  host:[^\\r\\n]*', '  host: 127.0.0.1'",
+        "    $config = $config -replace '(?m)^  api-keys:\\r?\\n(?:    - [^\\r\\n]*\\r?\\n)+', \"  api-keys:`n    - '123456'`n\"",
+        "    $config = $config -replace '(?m)^  auth-dir:[^\\r\\n]*', '  auth-dir: ../oauth'",
+        "    $config = $config -replace '(?m)^    usage-statistics-enabled:[^\\r\\n]*', '    usage-statistics-enabled: true'",
+        "    $config = $config -replace '(?m)^  session-affinity-ttl:[^\\r\\n]*', '  session-affinity-ttl: \"\"'",
+        "    $config = $config -replace '(?m)^requests:\\r?$', \"requests:`n  streaming: {bootstrap-retries: 0}\"",
+        "    [System.IO.File]::WriteAllText(\"$dir\\cpa-core\\config.yaml\", $config, (New-Object System.Text.UTF8Encoding $false))",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "EasyCLIProxyAPI.exe",
+            "EasyCLIProxyAPI"
+        ]
+    ],
+    "persist": [
+        "config.toml",
+        "oauth",
+        "usage-records",
+        "cpa-core\\config.yaml"
+    ],
+    "checkver": {
+        "github": "https://github.com/router-for-me/EasyCLIProxyAPI"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/router-for-me/EasyCLIProxyAPI/releases/download/v$version/EasyCLIProxyAPI-v$version-Windows-amd64.zip",
+                "extract_dir": "EasyCLIProxyAPI-v$version-Windows-amd64"
+            },
+            "arm64": {
+                "url": "https://github.com/router-for-me/EasyCLIProxyAPI/releases/download/v$version/EasyCLIProxyAPI-v$version-Windows-aarch64.zip",
+                "extract_dir": "EasyCLIProxyAPI-v$version-Windows-aarch64"
+            }
+        }
+    }
+}
