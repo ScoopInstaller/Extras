@@ -3,6 +3,10 @@
     "homepage": "https://www.koodoreader.com",
     "description": "All-in-one ebook reader.",
     "license": "AGPL-3.0",
+    "notes": [
+        "To register file associations, please execute the following command:",
+        "reg import \"$dir\\install-associations.reg\""
+    ],
     "architecture": {
         "64bit": {
             "url": "https://dl.koodoreader.com/v2.4.3/Koodo-Reader-2.4.3-x64.exe#/dl.7z",
@@ -25,28 +29,14 @@
         ]
     },
     "post_install": [
-        "$koodo_exe = \"$dir\\Koodo Reader.exe\".Replace('\\', '\\\\')",
-        "$extensions = '.epub', '.mobi', '.azw', '.azw3', '.fb2', '.pdf', '.djvu', '.cbr', '.cbz', '.cbt', '.cb7', '.txt', '.md', '.docx', '.rtf'",
-        "$content = @(",
-        "    'Windows Registry Editor Version 5.00'",
-        "    ''",
-        "    '[HKEY_CURRENT_USER\\Software\\Classes\\Applications\\Koodo Reader.exe]'",
-        "    '\"FriendlyAppName\"=\"Koodo Reader\"'",
-        "    ''",
-        "    '[HKEY_CURRENT_USER\\Software\\Classes\\Applications\\Koodo Reader.exe\\shell\\open\\command]'",
-        "    ('@=\"' + $koodo_exe + '\" \"%1\"')",
-        "    ''",
-        "    '[HKEY_CURRENT_USER\\Software\\Classes\\Applications\\Koodo Reader.exe\\DefaultIcon]'",
-        "    ('@=\"' + $koodo_exe + ',0\"')",
-        "    ''",
-        "    '[HKEY_CURRENT_USER\\Software\\Classes\\Applications\\Koodo Reader.exe\\SupportedTypes]'",
-        ")",
-        "foreach ($ext in $extensions) { $content += ('\"' + $ext + '\"=\"\"') }",
-        "Set-Content \"$dir\\install-context.reg\" $content",
-        "reg import \"$dir\\install-context.reg\""
+        "$dirpath = \"$dir\".Replace('\\', '\\\\')",
+        "$content = Get-Content \"$bucketsdir\\extras\\scripts\\koodo-reader\\install-associations.reg\"",
+        "$content = $content.Replace('$dirpath', $dirpath)",
+        "$content | Set-Content -Path \"$dir\\install-associations.reg\"",
+        "Copy-Item \"$bucketsdir\\extras\\scripts\\koodo-reader\\uninstall-associations.reg\" \"$dir\\uninstall-associations.reg\""
     ],
     "pre_uninstall": [
-        "Remove-Item \"HKCU:\\Software\\Classes\\Applications\\Koodo Reader.exe\" -Recurse -Force -ErrorAction SilentlyContinue"
+        "reg import \"$dir\\uninstall-associations.reg\""
     ],
     "shortcuts": [
         [
