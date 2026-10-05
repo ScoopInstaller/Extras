@@ -3,6 +3,11 @@
     "description": "Unified model, provider, and gateway manager for AI coding agents.",
     "homepage": "https://usemagpie.ai",
     "license": "MIT",
+    "notes": [
+        "Scoop persists data since version 0.1.1067. You may need to move data by yourself.",
+        "Before: '$env:USERPROFILE\\.config\\magpie'",
+        "After : '$persist_dir\\data'"
+    ],
     "architecture": {
         "64bit": {
             "url": "https://github.com/yetone/magpie-releases/releases/download/v0.1.1067/magpie-windows-amd64.exe#/magpie.exe",
@@ -13,12 +18,19 @@
             "hash": "f69d5ce291d5b32de50a10ca6fdf027efac11bf881e501930a7f583c6e29b0c3"
         }
     },
+    "pre_install": [
+        "if (-not (Test-Path -LiteralPath \"$persist_dir\\data\\settings.json\" -PathType Leaf)) {",
+        "    ensure \"$dir\\data\" | Out-Null",
+        "    @{ noAutoUpdate = $true } | ConvertTo-Json | Set-Content -LiteralPath \"$dir\\data\\settings.json\" -Force -Encoding ASCII",
+        "}"
+    ],
     "shortcuts": [
         [
             "magpie.exe",
             "Magpie"
         ]
     ],
+    "persist": "data",
     "checkver": {
         "github": "https://github.com/yetone/magpie-releases"
     },
