@@ -30,10 +30,12 @@
     },
     "post_install": [
         "$dirpath = \"$dir\".Replace('\\', '\\\\')",
-        "$content = Get-Content \"$bucketsdir\\extras\\scripts\\koodo-reader\\install-associations.reg\"",
-        "$content = $content.Replace('$dirpath', $dirpath)",
-        "$content | Set-Content -Path \"$dir\\install-associations.reg\"",
-        "Copy-Item \"$bucketsdir\\extras\\scripts\\koodo-reader\\uninstall-associations.reg\" \"$dir\\uninstall-associations.reg\""
+        "'install-associations', 'uninstall-associations' | ForEach-Object {",
+        "    $content = Get-Content \"$bucketsdir\\$bucket\\scripts\\$app\\$_.reg\"",
+        "    $content = $content.Replace('$dirpath', $dirpath)",
+        "    if ($global) { $content = $content -replace 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE' }",
+        "    $content | Set-Content -Path \"$dir\\$_.reg\"",
+        "}"
     ],
     "pre_uninstall": [
         "reg import \"$dir\\uninstall-associations.reg\""
