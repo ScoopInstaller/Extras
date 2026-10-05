@@ -1,0 +1,69 @@
+{
+    "version": "2026.2.3",
+    "description": "Cross-Platform IDE for Python by JetBrains (Open Source Community Edition).",
+    "homepage": "https://github.com/JetBrains/intellij-community",
+    "license": "Apache-2.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/JetBrains/intellij-community/releases/download/pycharm/2026.2.3/pycharm-2026.2.3.win.zip",
+            "hash": "a7674d94e7bec78db3d6f559e364f8bf1b98455ccf3a62d9ead5e18f4594378c",
+            "bin": [
+                [
+                    "IDE\\bin\\pycharm64.exe",
+                    "pycharm"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "IDE\\bin\\pycharm64.exe",
+                    "JetBrains\\PyCharm (Community Edition)"
+                ]
+            ]
+        },
+        "arm64": {
+            "url": "https://github.com/JetBrains/intellij-community/releases/download/pycharm/2026.2.3/pycharm-2026.2.3-aarch64.win.zip",
+            "hash": "4261fa0af490c7b8d01c27f9369a66ea0b1c239eaf2b60eecdfb04e3ce5f5b48",
+            "bin": [
+                [
+                    "IDE\\bin\\pycharm64.exe",
+                    "pycharm"
+                ]
+            ],
+            "shortcuts": [
+                [
+                    "IDE\\bin\\pycharm64.exe",
+                    "JetBrains\\PyCharm (Community Edition)"
+                ]
+            ]
+        }
+    },
+    "extract_to": "IDE",
+    "installer": {
+        "script": "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" \"$dir\" \"$persist_dir\""
+    },
+    "persist": [
+        "IDE\\bin\\idea.properties",
+        "IDE\\bin\\pycharm64.exe.vmoptions",
+        "profile"
+    ],
+    "checkver": {
+        "github": "https://api.github.com/repos/JetBrains/intellij-community/releases",
+        "script": [
+            "$releases = $page | ConvertFrom-Json -ErrorAction Stop",
+            "$versions = $releases | Where-Object { $_.tag_name -match '^pycharm/(?<version>[\\d.]+)$' } | ForEach-Object { [version]$Matches['version'] }",
+            "$latest_version = $versions | Sort-Object -Descending | Select-Object -First 1",
+            "Write-Output \"$($latest_version.ToString())\""
+        ],
+        "regex": "^(?<version>[\\d.]+)$"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/JetBrains/intellij-community/releases/download/pycharm/$version/pycharm-$version.win.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/JetBrains/intellij-community/releases/download/pycharm/$version/pycharm-$version-aarch64.win.zip"
+            }
+        }
+    }
+}
