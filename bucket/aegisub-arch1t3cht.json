@@ -16,7 +16,8 @@
         }
     },
     "pre_install": [
-        "Expand-ZipArchive -Path \"$dir\\aegisub-portable-64.zip\" -DestinationPath \"$dir\"-ExtractDir \"aegisub-portable\" -Removal",
+        "$portableArchive = Get-ChildItem -Path $dir -Filter '*-portable.zip' | Select-Object -First 1",
+        "Expand-ZipArchive -Path $portableArchive.FullName -DestinationPath \"$dir\" -ExtractDir \"aegisub-portable\" -Removal",
         "",
         "# Hardlinks won't work properly here to persist files, because this app creates a new file instead of writing to the existing one.",
         "'config.json' | ForEach-Object {",
