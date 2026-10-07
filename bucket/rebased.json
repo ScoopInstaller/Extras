@@ -6,6 +6,10 @@
         "identifier": "Apache-2.0",
         "url": "https://github.com/DetachHead/rebased/blob/master/LICENSE.txt"
     },
+    "notes": [
+        "To add Rebased to right-click context menu, run:",
+        "reg import \"$dir\\install-context.reg\""
+    ],
     "architecture": {
         "64bit": {
             "url": "https://github.com/DetachHead/rebased/releases/download/1.1.20/rebased.win.zip",
@@ -20,6 +24,16 @@
     "installer": {
         "script": "& \"$bucketsdir\\extras\\scripts\\jetbrains\\portable.ps1\" \"$dir\" \"$persist_dir\""
     },
+    "post_install": [
+        "$app_path = \"$dir\\IDE\\bin\\rebased64.exe\".Replace('\\', '\\\\')",
+        "'install-context', 'uninstall-context' | ForEach-Object {",
+        "    if (Test-Path \"$bucketsdir\\extras\\scripts\\$app\\$_.reg\") {",
+        "        $content = (Get-Content \"$bucketsdir\\extras\\scripts\\$app\\$_.reg\" -Encoding UTF8).Replace('$app_path', $app_path)",
+        "        if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "        Set-Content \"$dir\\$_.reg\" $content -Encoding Unicode -Force",
+        "    }",
+        "}"
+    ],
     "bin": [
         [
             "IDE\\bin\\rebased64.exe",
@@ -37,6 +51,9 @@
         "IDE\\bin\\rebased64.exe.vmoptions",
         "profile"
     ],
+    "uninstaller": {
+        "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" }"
+    },
     "checkver": "github",
     "autoupdate": {
         "architecture": {
