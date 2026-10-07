@@ -1,5 +1,5 @@
 {
-    "version": "26.903.8094.0",
+    "version": "26.930.7945.0",
     "description": "Desktop application for ChatGPT",
     "homepage": "https://chatgpt.com/",
     "license": {
@@ -11,24 +11,39 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://persistent.oaistatic.com/codex-app-prod/releases/26.903.8094.0/ChatGPT-x64.msix#/dl.zip",
-            "hash": "f8a845dd58f177fbcd71b01c7831d742fc90855e4b207ee2d8ce3ab5f9bcc30f"
+            "url": "https://persistent.oaistatic.com/codex-app-prod/releases/26.930.7945.0/ChatGPT-x64.msix#/dl.zip",
+            "hash": "0fcd11295dfd239ef8b6a2cb088a4ead18316b80a87e0c0e1abbad9d830edef3"
         },
         "arm64": {
-            "url": "https://persistent.oaistatic.com/codex-app-prod/releases/26.903.8094.0/ChatGPT-arm64.msix#/dl.zip",
-            "hash": "9e69aa06823922eb0b2cd1b5cf1ed55f026a94aa8521aee572253a3ee02e9329"
+            "url": "https://persistent.oaistatic.com/codex-app-prod/releases/26.930.7945.0/ChatGPT-arm64.msix#/dl.zip",
+            "hash": "a208d373c7c84aa3e0452cd3dd8406a6794d8139ec1260c64a770c2a00fbeeb8"
         }
     },
     "extract_dir": "app",
+    "post_install": [
+        "# MSIX stores names as OPC/AppX percent-encoded UTF-8 (e.g. %40 -> @); decode to the real name.",
+        "# Children are renamed before their parents to ensure each item's path is still valid when it's renamed.",
+        "Get-ChildItem -LiteralPath $dir -Recurse | Sort-Object { $_.FullName.Length } -Descending | ForEach-Object {",
+        "    $decodedName = [uri]::UnescapeDataString($_.Name)",
+        "    if ($decodedName -ne $_.Name) {",
+        "        Rename-Item -LiteralPath $_.FullName -NewName $decodedName",
+        "    }",
+        "}"
+    ],
     "shortcuts": [
         [
             "ChatGPT.exe",
             "ChatGPT"
         ]
     ],
+    "env_set": {
+        "CODEX_CLI_PATH": "$dir\\resources\\codex.exe",
+        "CODEX_SPARKLE_ENABLED": "false"
+    },
     "checkver": {
         "url": "https://persistent.oaistatic.com/codex-app-prod/windows-store-update.json",
-        "jsonpath": "$.buildVersion"
+        "script": "(Invoke-WebRequest 'https://persistent.oaistatic.com/codex-app-prod/ChatGPT-x64.msix' -Method Head -UseBasicParsing).Headers['x-ms-meta-package_version']",
+        "regex": "([\\d.]+)"
     },
     "autoupdate": {
         "architecture": {
