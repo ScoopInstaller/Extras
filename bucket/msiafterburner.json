@@ -1,5 +1,5 @@
 {
-    "version": "4.6.7",
+    "version": "4.6.7-beta3",
     "description": "Overclocking utility for graphics cards. Main features include GPU/Shader/Memory clock adjustment, advanced fan speed and GPU voltage control.",
     "homepage": "https://www.msi.com/page/afterburner",
     "license": {
@@ -17,8 +17,8 @@
         "MSI Kombustor": "extras/msikombustor",
         "FurMark": "extras/furmark"
     },
-    "url": "https://ftp.nluug.nl/pub/games/PC/guru3d/afterburner/%5BGuru3D%5D-MSIAfterburnerSetup467Beta2Build16935.zip",
-    "hash": "a3c550f0ce23ac4bc89e72d0a6e73019b0742fdeff3b68d0849d82c5145a9b62",
+    "url": "https://ftp.nluug.nl/pub/games/PC/guru3d/afterburner/%5BGuru3D%5D-MSIAfterburnerSetup467Beta3Build17352.zip",
+    "hash": "2e6a8ef37756c2337733be92a04fa70e5435c8069f6678cf0c1c8327093bd1c4",
     "pre_install": [
         "Expand-7zipArchive \"$dir\\MSIAfterburnerSetup*.exe\" -DestinationPath \"$dir\" -Removal",
         "'$*', 'Redist', 'Uninstall*', '*guru3d*.txt' | ForEach-Object {",
@@ -43,8 +43,9 @@
     "checkver": {
         "url": "https://www.guru3d.com/download/msi-afterburner-beta-download",
         "script": [
-            "$page -match 'aform.*?value=\"(?<aform>[0-9a-f]+)\".*?Download (?<version>[\\d.]+)'",
+            "$page -match 'aform.*?value=\"(?<aform>[0-9a-f]+)\".*?Download (?<version>[\\d.]+)(?:[^<]*?(?<beta>Beta(?:\\s*\\d+)?))?'",
             "$version = $Matches.version",
+            "if ($Matches.beta) { $version += '-' + ($Matches.beta -replace '\\s').ToLower() }",
             "$body = @{ aform = $Matches.aform }",
             "$response = Invoke-WebRequest -Uri $url -Method Post -Body $body",
             "$response.Content -match 'location=\"(?<redirect_url>https://www.guru3d.com/getdownload/[0-9a-f]+)\"'",
@@ -56,7 +57,7 @@
             "[string]($response.Headers.Location) -match 'https://ftp\\.nluug\\.nl/pub/games/PC/guru3d/(?<file_path>[^/]+?)/(?<file_name>.+)'",
             "Write-Output \"$version $($Matches.file_path)/$([System.Net.WebUtility]::UrlEncode($Matches.file_name))\""
         ],
-        "regex": "(?<version>[\\d.]+) (?<file>.+)"
+        "regex": "(?<version>[\\d.]+(?:-beta\\d*)?) (?<file>.+)"
     },
     "autoupdate": {
         "url": "https://ftp.nluug.nl/pub/games/PC/guru3d/$matchFile"
