@@ -38,7 +38,13 @@
         "}"
     ],
     "pre_uninstall": [
-        "reg import \"$dir\\uninstall-associations.reg\""
+        "if ($cmd -ne 'uninstall') { return }",
+        "$regpath = 'HKCU:\\Software\\Classes\\Applications\\Koodo Reader.exe\\shell\\open\\command'",
+        "if ($global) { $regpath = $regpath.Replace('HKCU', 'HKLM') }",
+        "$command = Get-ItemPropertyValue -Path $regpath -Name '(default)' -ErrorAction Ignore",
+        "if ($command -and ($command -match [regex]::Escape($(appdir $app $global)))) {",
+        "    reg import \"$dir\\uninstall-associations.reg\"",
+        "}"
     ],
     "shortcuts": [
         [
