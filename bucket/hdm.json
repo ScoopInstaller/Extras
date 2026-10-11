@@ -18,11 +18,16 @@
     },
     "post_install": [
         "$desktop = [Environment]::GetFolderPath(\"DesktopDirectory\")",
-        "$shortcut = (New-Object -ComObject WScript.Shell).CreateShortcut(\"$desktop\\Hydra Download Manager.lnk\")",
-        "$shortcut.TargetPath = \"$dir\\hydra-gui.exe\"",
-        "$shortcut.WorkingDirectory = $dir",
-        "$shortcut.IconLocation = \"$dir\\hydra-gui.exe,0\"",
-        "$shortcut.Save()"
+        "$shortcutPath = \"$desktop\\Hydra Download Manager.lnk\"",
+        "$appRoot = (Split-Path -Parent $dir) + \"\\\"",
+        "$exists = Test-Path -LiteralPath $shortcutPath",
+        "$shortcut = (New-Object -ComObject WScript.Shell).CreateShortcut($shortcutPath)",
+        "if (!$exists -or ($shortcut.TargetPath.StartsWith($appRoot, [StringComparison]::OrdinalIgnoreCase) -and [IO.Path]::GetFileName($shortcut.TargetPath) -eq \"hydra-gui.exe\")) {",
+        "    $shortcut.TargetPath = \"${appRoot}current\\hydra-gui.exe\"",
+        "    $shortcut.WorkingDirectory = \"${appRoot}current\"",
+        "    $shortcut.IconLocation = \"${appRoot}current\\hydra-gui.exe,0\"",
+        "    $shortcut.Save()",
+        "}"
     ],
     "bin": [
         "hydra.exe",
@@ -40,9 +45,10 @@
     "pre_uninstall": [
         "$desktop = [Environment]::GetFolderPath(\"DesktopDirectory\")",
         "$shortcutPath = \"$desktop\\Hydra Download Manager.lnk\"",
+        "$appRoot = (Split-Path -Parent $dir) + \"\\\"",
         "if (Test-Path -LiteralPath $shortcutPath) {",
         "    $shortcut = (New-Object -ComObject WScript.Shell).CreateShortcut($shortcutPath)",
-        "    if ($shortcut.TargetPath -eq \"$dir\\hydra-gui.exe\") {",
+        "    if ($shortcut.TargetPath.StartsWith($appRoot, [StringComparison]::OrdinalIgnoreCase) -and [IO.Path]::GetFileName($shortcut.TargetPath) -eq \"hydra-gui.exe\") {",
         "        Remove-Item -LiteralPath $shortcutPath -Force",
         "    }",
         "}"
