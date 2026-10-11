@@ -1,0 +1,49 @@
+{
+    "version": "0.27.0",
+    "description": "Local-first SSH/SFTP/Serial client with E2EE sync, team vaults and plugins",
+    "homepage": "https://voltius.app",
+    "license": "AGPL-3.0-or-later",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/VoltiusApp/voltius/releases/download/v0.27.0/Voltius_0.27.0_x64-setup.exe#/setup.exe",
+            "hash": "63deb1cc8163e59862890be56996ab579a7b86c27d6aeb1cbf0cfda489481f1b"
+        },
+        "arm64": {
+            "url": "https://github.com/VoltiusApp/voltius/releases/download/v0.27.0/Voltius_0.27.0_arm64-setup.exe#/setup.exe",
+            "hash": "039be56458c2fee5efa94f0255b349b3f685e978f4b01f13c75665ef1852facb"
+        }
+    },
+    "installer": {
+        "script": [
+            "Start-Process -FilePath \"$dir\\setup.exe\" -ArgumentList '/S' -Wait",
+            "Remove-Item \"$dir\\setup.exe\" -Force"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "$keys = @('HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*', 'HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*')",
+            "$entry = Get-ItemProperty $keys -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -eq 'Voltius' } | Select-Object -First 1",
+            "$uninst = if ($entry -and $entry.UninstallString) { $entry.UninstallString.Trim('\"') } else { Join-Path $env:LOCALAPPDATA 'Voltius\\uninstall.exe' }",
+            "if (Test-Path $uninst) { Start-Process -FilePath $uninst -ArgumentList '/S' -Wait } else { Write-Host \"no uninstaller found at $uninst\" }"
+        ]
+    },
+    "checkver": {
+        "github": "https://github.com/VoltiusApp/voltius"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/VoltiusApp/voltius/releases/download/v$version/Voltius_$version_x64-setup.exe#/setup.exe",
+                "hash": {
+                    "url": "https://github.com/VoltiusApp/voltius/releases/download/v$version/Voltius_$version_x64-setup.exe.sha256"
+                }
+            },
+            "arm64": {
+                "url": "https://github.com/VoltiusApp/voltius/releases/download/v$version/Voltius_$version_arm64-setup.exe#/setup.exe",
+                "hash": {
+                    "url": "https://github.com/VoltiusApp/voltius/releases/download/v$version/Voltius_$version_arm64-setup.exe.sha256"
+                }
+            }
+        }
+    }
+}
