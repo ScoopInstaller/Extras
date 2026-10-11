@@ -1,0 +1,50 @@
+{
+    "version": "1.1.0",
+    "description": "A fast download manager with a desktop interface, CLI, and browser integration",
+    "homepage": "https://hydra.javad.dev/",
+    "license": "GPL-3.0-or-later",
+    "notes": "Use scoop update hydra to upgrade this installation.",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/ja7ad/hydra/releases/download/v1.1.0/hydra-1.1.0-windows-x64-setup.exe",
+            "hash": "16f703469288589c39dee8e093adb5db7fc568dc071b3161462fa815955cacca"
+        },
+        "arm64": {
+            "url": "https://github.com/ja7ad/hydra/releases/download/v1.1.0/hydra-1.1.0-windows-arm64-setup.exe",
+            "hash": "d011f2f9640774ec77b914e3278c91e7c49321abf7b0e3d05f6cb20a0c3b9360"
+        }
+    },
+    "installer": {
+        "args": [
+            "/S",
+            "/D=$dir"
+        ],
+        "keep": true
+    },
+    "bin": [
+        "hydra.exe",
+        "hya.exe"
+    ],
+    "uninstaller": {
+        "script": [
+            "$process = Start-Process -FilePath \"$dir\\uninstall.exe\" -ArgumentList \"/S _?=$dir\" -Wait -PassThru",
+            "if ($process.ExitCode -ne 0) { throw \"Hydra uninstaller failed with exit code $($process.ExitCode).\" }"
+        ]
+    },
+    "checkver": {
+        "github": "https://github.com/ja7ad/hydra"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/ja7ad/hydra/releases/download/v$version/hydra-$version-windows-x64-setup.exe"
+            },
+            "arm64": {
+                "url": "https://github.com/ja7ad/hydra/releases/download/v$version/hydra-$version-windows-arm64-setup.exe"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/SHA256SUMS.txt"
+        }
+    }
+}
