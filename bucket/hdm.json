@@ -1,0 +1,68 @@
+{
+    "version": "1.1.0",
+    "description": "A fast download manager with a desktop interface, CLI, and browser integration",
+    "homepage": "https://hydra.javad.dev/",
+    "license": "GPL-3.0-or-later",
+    "notes": "Use scoop update hdm to upgrade this installation.",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/ja7ad/hydra/releases/download/v1.1.0/hydra-1.1.0-windows-amd64.zip",
+            "hash": "91f0f0d8c90bfd871b8aceda64579f60e538eaad10db670a9a917639b70d1fe6",
+            "extract_dir": "hydra-1.1.0-windows-amd64"
+        },
+        "arm64": {
+            "url": "https://github.com/ja7ad/hydra/releases/download/v1.1.0/hydra-1.1.0-windows-arm64.zip",
+            "hash": "506dd08808b6aa0b46e9bffa63b087a28fe9c69ee8dfa145b5f2ab3562a475eb",
+            "extract_dir": "hydra-1.1.0-windows-arm64"
+        }
+    },
+    "post_install": [
+        "$desktop = [Environment]::GetFolderPath(\"DesktopDirectory\")",
+        "$shortcut = (New-Object -ComObject WScript.Shell).CreateShortcut(\"$desktop\\Hydra Download Manager.lnk\")",
+        "$shortcut.TargetPath = \"$dir\\hydra-gui.exe\"",
+        "$shortcut.WorkingDirectory = $dir",
+        "$shortcut.IconLocation = \"$dir\\hydra-gui.exe,0\"",
+        "$shortcut.Save()"
+    ],
+    "bin": [
+        "hydra.exe",
+        [
+            "hydra.exe",
+            "hya"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "hydra-gui.exe",
+            "Hydra Download Manager"
+        ]
+    ],
+    "pre_uninstall": [
+        "$desktop = [Environment]::GetFolderPath(\"DesktopDirectory\")",
+        "$shortcutPath = \"$desktop\\Hydra Download Manager.lnk\"",
+        "if (Test-Path -LiteralPath $shortcutPath) {",
+        "    $shortcut = (New-Object -ComObject WScript.Shell).CreateShortcut($shortcutPath)",
+        "    if ($shortcut.TargetPath -eq \"$dir\\hydra-gui.exe\") {",
+        "        Remove-Item -LiteralPath $shortcutPath -Force",
+        "    }",
+        "}"
+    ],
+    "checkver": {
+        "github": "https://github.com/ja7ad/hydra"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/ja7ad/hydra/releases/download/v$version/hydra-$version-windows-amd64.zip",
+                "extract_dir": "hydra-$version-windows-amd64"
+            },
+            "arm64": {
+                "url": "https://github.com/ja7ad/hydra/releases/download/v$version/hydra-$version-windows-arm64.zip",
+                "extract_dir": "hydra-$version-windows-arm64"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/SHA256SUMS.txt"
+        }
+    }
+}
