@@ -3,6 +3,10 @@
     "homepage": "https://www.koodoreader.com",
     "description": "All-in-one ebook reader.",
     "license": "AGPL-3.0",
+    "notes": [
+        "To register file associations, please execute the following command:",
+        "reg import \"$dir\\install-associations.reg\""
+    ],
     "architecture": {
         "64bit": {
             "url": "https://dl.koodoreader.com/v2.4.3/Koodo-Reader-2.4.3-x64.exe#/dl.7z",
@@ -24,6 +28,24 @@
             "Remove-Item \"$dir\\`$*\" -Force -Recurse"
         ]
     },
+    "post_install": [
+        "$dirpath = \"$dir\".Replace('\\', '\\\\')",
+        "'install-associations', 'uninstall-associations' | ForEach-Object {",
+        "    $content = Get-Content \"$bucketsdir\\$bucket\\scripts\\$app\\$_.reg\"",
+        "    $content = $content.Replace('$dirpath', $dirpath)",
+        "    if ($global) { $content = $content -replace 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE' }",
+        "    $content | Set-Content -Path \"$dir\\$_.reg\"",
+        "}"
+    ],
+    "pre_uninstall": [
+        "if ($cmd -ne 'uninstall') { return }",
+        "$regpath = 'HKCU:\\Software\\Classes\\Applications\\Koodo Reader.exe\\shell\\open\\command'",
+        "if ($global) { $regpath = $regpath.Replace('HKCU', 'HKLM') }",
+        "$command = Get-ItemPropertyValue -Path $regpath -Name '(default)' -ErrorAction Ignore",
+        "if ($command -and ($command -match [regex]::Escape($(appdir $app $global)))) {",
+        "    reg import \"$dir\\uninstall-associations.reg\"",
+        "}"
+    ],
     "shortcuts": [
         [
             "Koodo Reader.exe",
