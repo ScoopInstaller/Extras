@@ -1,6 +1,6 @@
 {
     "version": "10.0.12",
-    "description": "Microsoft .NET (10.0 latest) Runtime, installed from the ZIP archive without admin rights",
+    "description": "Microsoft .NET Runtime, installed from the ZIP archive without admin rights",
     "homepage": "https://dotnet.microsoft.com/download/dotnet",
     "license": "MIT",
     "suggest": {
@@ -20,10 +20,43 @@
             "hash": "sha512:1f939a42c52919e789038fed6d410771eb41b5d0ff65c6dd117b200a5623a734cb6b2a25e00d4932d779b3bbe200f165977633d18fdb8dec03f9307527169c04"
         }
     },
-    "env_add_path": ".",
+    "post_install": [
+        "# Link this runtime into the root shared by all dotnet-runtime / dotnetN-runtime packages (side-by-side)",
+        "$root = Join-Path (basedir $global) 'shared\\dotnet'",
+        "foreach ($d in Get-ChildItem \"$original_dir\\host\\fxr\\*\", \"$original_dir\\shared\\*\\*\" -Directory) {",
+        "    $link = Join-Path $root $d.FullName.Substring($original_dir.Length + 1)",
+        "    New-Item -ItemType Directory -Force (Split-Path $link) | Out-Null",
+        "    if (Get-Item $link -Force -ErrorAction SilentlyContinue) { [IO.Directory]::Delete($link) }",
+        "    New-Item -ItemType Junction -Path $link -Target $d.FullName | Out-Null",
+        "}",
+        "$exe = \"$root\\dotnet.exe\"",
+        "if (!(Test-Path $exe) -or (Get-Item $exe).VersionInfo.FileMajorPart -lt (Get-Item \"$original_dir\\dotnet.exe\").VersionInfo.FileMajorPart) {",
+        "    Copy-Item \"$original_dir\\dotnet.exe\" $exe -Force",
+        "}",
+        "New-Item -ItemType Junction -Path \"$original_dir\\dotnet-root\" -Target $root | Out-Null"
+    ],
+    "env_add_path": "dotnet-root",
     "env_set": {
-        "DOTNET_ROOT": "$dir"
+        "DOTNET_ROOT": "$(basedir $global)\\shared\\dotnet"
     },
+    "pre_uninstall": [
+        "# Unlink only this package's runtime; other dotnet-runtime packages are left untouched",
+        "$root = Join-Path (basedir $global) 'shared\\dotnet'",
+        "if (Get-Item \"$dir\\dotnet-root\" -Force -ErrorAction SilentlyContinue) { [IO.Directory]::Delete(\"$dir\\dotnet-root\") }",
+        "if (Test-Path $root) {",
+        "    $pattern = \"$root\\host\\fxr\\*\", \"$root\\shared\\*\\*\"",
+        "    Get-ChildItem $pattern -Directory | Where-Object { \"$($_.Target)\".StartsWith(\"$dir\\\", 'OrdinalIgnoreCase') } | ForEach-Object { [IO.Directory]::Delete($_.FullName) }",
+        "    if (!(Get-ChildItem $pattern -Directory)) { Remove-Item $root -Recurse -Force }",
+        "}"
+    ],
+    "post_uninstall": [
+        "# env_set removal wiped DOTNET_ROOT; restore it while another runtime remains",
+        "$root = Join-Path (basedir $global) 'shared\\dotnet'",
+        "if (Test-Path $root) {",
+        "    Set-EnvVar -Name 'DOTNET_ROOT' -Value $root -Global:$global",
+        "    $env:DOTNET_ROOT = $root",
+        "}"
+    ],
     "checkver": {
         "url": "https://builds.dotnet.microsoft.com/dotnet/release-metadata/releases-index.json",
         "jsonpath": "$.releases-index[?(@.support-phase == 'active')].latest-runtime",
