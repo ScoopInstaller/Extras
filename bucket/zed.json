@@ -17,8 +17,23 @@
     "installer": {
         "script": [
             "Expand-InnoArchive -Path \"$dir\\$fname\" -ExtractDir '{app}'",
-            "Expand-InnoArchive -Path \"$dir\\$fname\" -ExtractDir '{code_GetInstallDir}' -Removal"
+            "Expand-InnoArchive -Path \"$dir\\$fname\" -ExtractDir '{code_GetInstallDir}' -Removal",
+            "ensure \"$persist_dir\" | Out-Null",
+            "$targetPath = \"$env:APPDATA\\Zed\"",
+            "$linkType = (Get-Item -Path $targetPath -ErrorAction SilentlyContinue).LinkType",
+            "if (Test-Path $targetPath) {",
+            "    if ($linkType -eq 'Junction') {",
+            "        (Get-Item $targetPath -Force).Delete()",
+            "    } else {",
+            "        Get-ChildItem -Path $targetPath -Force | Move-Item -Destination $persist_dir -Force",
+            "        Remove-Item -Path $targetPath -Force -Recurse",
+            "    }",
+            "}",
+            "New-Item \"$env:APPDATA\\Zed\" -ItemType Junction -Target \"$persist_dir\" | Out-Null"
         ]
+    },
+    "uninstaller": {
+        "script": "Remove-Item \"$env:APPDATA\\Zed\" -Recurse -Force -ErrorAction 'SilentlyContinue'"
     },
     "bin": "bin\\zed.exe",
     "shortcuts": [
