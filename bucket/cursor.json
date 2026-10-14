@@ -32,20 +32,32 @@
         "if ((Test-Path \"$extensions_file\")) {",
         "    info 'Adjusting path in extensions file...'",
         "    (Get-Content \"$extensions_file\") -replace '(?<=cursor(/|\\\\\\\\)).*?(?=(/|\\\\\\\\)data(/|\\\\\\\\)extensions)', $version | Set-Content \"$extensions_file\"",
+        "}",
+        "$product_path = \"$dir\\resources\\app\\product.json\"",
+        "$product_text = [System.IO.File]::ReadAllText($product_path)",
+        "$product_patched = [regex]::Replace($product_text, ',\\s*\\r?\\n\\s*\"target\"\\s*:\\s*\"user\"(?=\\s*\\r?\\n\\})', '')",
+        "if ($product_patched -ne $product_text) {",
+        "    info '[Portable Mode] Removing \"target\" from product.json...'",
+        "    [System.IO.File]::WriteAllText($product_path, $product_patched, (New-Object System.Text.UTF8Encoding($false)))",
+        "} elseif (($product_text | ConvertFrom-Json).PSObject.Properties.Name -contains 'target') {",
+        "    warn 'Portable mode is not enabled: unexpected product.json layout.'",
+        "}",
+        "$argv_file = \"$dir\\data\\argv.json\"",
+        "if (!(Test-Path $argv_file) -and (Test-Path \"$env:USERPROFILE\\.cursor\\argv.json\")) {",
+        "    info '[Portable Mode] Copying argv.json...'",
+        "    Copy-Item \"$env:USERPROFILE\\.cursor\\argv.json\" $argv_file",
         "}"
     ],
     "bin": [
         [
             "resources\\app\\bin\\cursor.cmd",
-            "cursor",
-            "--user-data-dir=\"$dir\\data\\user-data\" --extensions-dir=\"$dir\\data\\extensions\""
+            "cursor"
         ]
     ],
     "shortcuts": [
         [
             "Cursor.exe",
-            "Cursor",
-            "--user-data-dir=\"$dir\\data\\user-data\" --extensions-dir=\"$dir\\data\\extensions\""
+            "Cursor"
         ]
     ],
     "persist": "data",
