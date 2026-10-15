@@ -1,22 +1,42 @@
 {
-    "version": "4.1.0",
+    "version": "4.1.2",
     "description": "AI-assisted desktop annotation tool for image, video, text and 3D point cloud data, with built-in YOLO, SAM and other models (CPU build)",
     "homepage": "https://xanylabeling.com/",
     "license": "GPL-3.0-only",
     "notes": [
-        "This is the CPU build. For NVIDIA GPU acceleration, use one of the CUDA builds from",
-        "https://github.com/CVHub520/X-AnyLabeling/releases (Windows-CUDA11/12/13) matching your driver."
+        "This is the CPU build. For NVIDIA GPU acceleration, use a Windows CUDA 11/12/13 installer from",
+        "https://github.com/CVHub520/X-AnyLabeling/releases matching your driver.",
+        "X-AnyLabeling has a built-in updater; prefer 'scoop update x-anylabeling' so Scoop stays in sync."
     ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/CVHub520/X-AnyLabeling/releases/download/v4.1.0/X-AnyLabeling-v4.1.0-CPU.exe#/X-AnyLabeling.exe",
-            "hash": "dd0567096a46a85b5abe5b89f4858a2431d5d7303dd7717a4748aefc5cd2ad76"
+            "url": "https://github.com/CVHub520/X-AnyLabeling/releases/download/v4.1.2/X-AnyLabeling-v4.1.2-Windows-CPU-Setup.exe#/setup.exe",
+            "hash": "0d385e9780e71badc5e193f64b79e656e407bbd7f25f76ceda7fd96c654f53cb"
         }
     },
-    "bin": "X-AnyLabeling.exe",
+    "installer": {
+        "file": "setup.exe",
+        "args": [
+            "/VERYSILENT",
+            "/SUPPRESSMSGBOXES",
+            "/NORESTART",
+            "/CURRENTUSER",
+            "/NOICONS",
+            "/DIR=$dir\\app"
+        ]
+    },
+    "uninstaller": {
+        "file": "app\\unins000.exe",
+        "args": [
+            "/VERYSILENT",
+            "/SUPPRESSMSGBOXES",
+            "/NORESTART"
+        ]
+    },
+    "bin": "app\\X-AnyLabeling.exe",
     "shortcuts": [
         [
-            "X-AnyLabeling.exe",
+            "app\\X-AnyLabeling.exe",
             "X-AnyLabeling"
         ]
     ],
@@ -26,7 +46,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/CVHub520/X-AnyLabeling/releases/download/v$version/X-AnyLabeling-v$version-CPU.exe#/X-AnyLabeling.exe"
+                "url": "https://github.com/CVHub520/X-AnyLabeling/releases/download/v$version/X-AnyLabeling-v$version-Windows-CPU-Setup.exe#/setup.exe",
+                "hash": {
+                    "url": "$baseurl/SHA256SUMS.txt"
+                }
             }
         }
     }
