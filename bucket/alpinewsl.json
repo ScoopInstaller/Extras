@@ -1,12 +1,12 @@
 {
     "##": "'rootfs' must be a 'real' directory (at least on Windows 10 RS4)",
-    "version": "3.23.3-0",
+    "version": "19010200",
     "description": "Install AlpineWSL as a WSL Instance",
     "homepage": "https://github.com/yuk7/AlpineWSL",
     "license": "MIT",
     "notes": "Even when you are logging in as 'root', some operations (like service command) require Windows administrator privileges",
-    "url": "https://github.com/yuk7/AlpineWSL/releases/download/3.23.3-0/Alpine.zip",
-    "hash": "d9f8683602c8698955d1bf51c30d50be52b4f979e4cb63f6188adc28e7cf900f",
+    "url": "https://github.com/yuk7/AlpineWSL/releases/download/19010200/Alpine.zip",
+    "hash": "1481bd24a646dd8d8200c0359d03608b345accffbc6e58ea7ebc8e848d31e4fb",
     "post_install": [
         "$installable = $true",
         "if ($null -eq (Get-Command 'wslconfig' -ErrorAction SilentlyContinue)) {",
@@ -28,6 +28,12 @@
         "}",
         "Remove-Item \"$dir\\rootfs.tar.gz\" -Force"
     ],
+    "bin": "Alpine.exe",
+    "shortcuts": [
+        "Alpine.exe",
+        "Alpine Linux"
+    ],
+    "persist": "data",
     "uninstaller": {
         "script": [
             "if ($cmd -ne 'uninstall') { return }",
@@ -36,14 +42,6 @@
             "Invoke-ExternalCommand \"$dir\\Alpine.exe\" 'clean', '-y' | Out-Null"
         ]
     },
-    "bin": "Alpine.exe",
-    "shortcuts": [
-        [
-            "Alpine.exe",
-            "Alpine Linux"
-        ]
-    ],
-    "persist": "data",
     "checkver": {
         "url": "https://github.com/yuk7/AlpineWSL/releases/latest",
         "regex": "/releases/tag/(?:v|V)?([\\d.]+(-\\d+)?)"
