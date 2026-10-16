@@ -1,0 +1,31 @@
+{
+    "version": "8.5.0",
+    "description": "Remote desktop viewer application focusing on security (formerly VNC Viewer).",
+    "homepage": "https://www.realvnc.com/en/connect/download/viewer/",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://www.realvnc.com/en/legal/#eulas"
+    },
+    "url": "https://downloads.realvnc.com/download/file/realvnc-connect-viewer/RealVNC-Connect-Viewer-8.5.0-Windows.msi.zip",
+    "hash": "f2a145cf067ceef5035af9356313d1301ee64fb71e56c899144bc60de0ff22bb",
+    "pre_install": [
+        "$msi = Get-ChildItem \"$dir\\*.msi\" | Select-Object -First 1 -ExpandProperty FullName",
+        "Expand-MsiArchive $msi \"$dir\"",
+        "Remove-Item $msi -Force"
+    ],
+    "bin": "RealVNC\\RealVNC Connect\\rvncconnect.exe",
+    "shortcuts": [
+        [
+            "RealVNC\\RealVNC Connect\\rvncconnect.exe",
+            "RealVNC Connect Viewer"
+        ]
+    ],
+    "checkver": {
+        "url": "https://help.realvnc.com/api/v2/help_center/en-us/sections/35761686621853/articles.json",
+        "jsonpath": "$.articles[*].title",
+        "regex": "RealVNC Connect Viewer ([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://downloads.realvnc.com/download/file/realvnc-connect-viewer/RealVNC-Connect-Viewer-$version-Windows.msi.zip"
+    }
+}
