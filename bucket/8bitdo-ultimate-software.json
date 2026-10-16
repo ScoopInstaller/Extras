@@ -1,0 +1,31 @@
+{
+    "version": "2.16",
+    "description": "Ultimate software gives you elite control over every piece of your controller",
+    "homepage": "https://app.8bitdo.com/",
+    "license": "Proprietary",
+    "url": "http://dl.8bitdo.com:8080/firmwareFile/upload//9e48922c-6519-4aac-b460-3dcddf4fba75.zip",
+    "hash": "e47a6c94639660c48baa16dabafb934507309014d378d6a7ec66f0c0aa31fd0e",
+    "extract_dir": "8BitDoUltimateSoftwareV2.16",
+    "shortcuts": [
+        [
+            "8BitDo Ultimate Software.exe",
+            "8BitDo Ultimate Software"
+        ]
+    ],
+    "checkver": {
+        "script": [
+            "$headers = @{",
+            "    'Version' = 1",
+            "    'Type'    = 2",
+            "}",
+            "$res = Invoke-WebRequest -Uri http://dl.8bitdo.com:8080/firmware/loadNewToolUpdateVersion -Method Post -Headers $headers -MaximumRedirection 0 -ErrorAction Ignore",
+            "$res.Content"
+        ],
+        "jsonpath": "$.list[0]",
+        "regex": "8BitDoUltimateSoftwareV([\\d.]+)[\\s\\S]*/var/lib/tomcat9/webapps//(?<path>[\\w/.-]+)\""
+    },
+    "autoupdate": {
+        "url": "http://dl.8bitdo.com:8080/$matchPath",
+        "extract_dir": "8BitDoUltimateSoftwareV$version"
+    }
+}
