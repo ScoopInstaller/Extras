@@ -1,0 +1,30 @@
+{
+    "version": "0.3.2",
+    "description": "Sovereign native computer-use engine and MCP server across Linux, Windows, and macOS",
+    "homepage": "https://github.com/AIYantra/extra",
+    "license": "Apache-2.0",
+    "suggest": {
+        "Python": "python"
+    },
+    "url": "https://github.com/AIYantra/extra/releases/download/v0.3.2/extra_desktop-0.3.2-py3-none-any.whl",
+    "hash": "3058c67ed9f0ac6a1755e189778eb34100e6a4f1ea8e19d4b890cb6ed40599e9",
+    "pre_install": [
+        "$cmd = $null",
+        "foreach ($candidate in @('python', 'py')) {",
+        "    if (Get-Command $candidate -ErrorAction SilentlyContinue) {",
+        "        $cmd = $candidate",
+        "        break",
+        "    }",
+        "}",
+        "if (-not $cmd) { throw 'Python not found. Install Python 3.11+ or add it to PATH.' }",
+        "& $cmd -m pip install --no-deps --target=\"$dir\\lib\" \"$dir\\extra_desktop-0.3.2-py3-none-any.whl\"",
+        "Set-Content -Value \"@$cmd -m extra %*\" -Path \"$dir\\extra.bat\""
+    ],
+    "bin": "extra.bat",
+    "checkver": {
+        "github": "https://github.com/AIYantra/extra"
+    },
+    "autoupdate": {
+        "url": "https://github.com/AIYantra/extra/releases/download/v$version/extra_desktop-$version-py3-none-any.whl"
+    }
+}
