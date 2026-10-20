@@ -1,0 +1,47 @@
+{
+    "version": "26.09.01",
+    "description": "Transparent, community-powered CCleaner alternative for Windows, featuring terminal control and multi-database support.",
+    "homepage": "https://github.com/builtbybel/FluentCleaner",
+    "license": "MIT",
+    "notes": "FluentCleaner requires the Windows App Runtime 2.0: https://aka.ms/windowsappsdk/2.0/2.0.1/windowsappruntimeinstall-x64.exe",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/builtbybel/FluentCleaner/releases/download/26.09.01/FluentCleaner-win-x64.zip",
+            "hash": "570d73ee702e888ecc3db2af583dd24428cd6f59a26edf1a1c0dbdc2552613b3",
+            "extract_dir": "FluentCleaner-win-x64"
+        }
+    },
+    "pre_install": [
+        "if (-not (Test-Path \"$persist_dir\\settings.json\") -and (Test-Path \"$env:APPDATA\\FluentCleaner\\settings.json\")) {",
+        "    info \"Migrating legacy settings from '$env:APPDATA\\FluentCleaner\\settings.json' to '$dir\\settings.json'\"",
+        "    Move-Item \"$env:APPDATA\\FluentCleaner\\settings.json\" \"$dir\\settings.json\" -Force",
+        "}",
+        "# Winapp2.ini is excluded from persistence because it is updated together with the app",
+        "'settings.json', 'Winapp3.ini', 'Winappx.ini' | ForEach-Object {",
+        "    if ((-not (Test-Path \"$persist_dir\\$_\")) -and (-not (Test-Path \"$dir\\$_\"))) {",
+        "        [System.IO.File]::WriteAllText((Join-Path -Path $dir -ChildPath $_), '', [System.Text.UTF8Encoding]::new($false))",
+        "    }",
+        "}"
+    ],
+    "bin": "FCleaner.exe",
+    "shortcuts": [
+        [
+            "FCleaner.exe",
+            "Fluent Cleaner"
+        ]
+    ],
+    "persist": [
+        "Custom",
+        "settings.json",
+        "Winapp3.ini",
+        "Winappx.ini"
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/builtbybel/FluentCleaner/releases/download/$version/FluentCleaner-win-x64.zip"
+            }
+        }
+    }
+}
