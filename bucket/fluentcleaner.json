@@ -12,6 +12,10 @@
         }
     },
     "pre_install": [
+        "if (-not (Test-Path \"$persist_dir\\settings.json\") -and (Test-Path \"$env:APPDATA\\FluentCleaner\\settings.json\")) {",
+        "    info \"Migrating legacy settings from '$env:APPDATA\\FluentCleaner\\settings.json' to '$dir\\settings.json'\"",
+        "    Move-Item \"$env:APPDATA\\FluentCleaner\\settings.json\" \"$dir\\settings.json\" -Force",
+        "}",
         "# Winapp2.ini is excluded from persistence because it is updated together with the app",
         "'settings.json', 'Winapp3.ini', 'Winappx.ini' | ForEach-Object {",
         "    if ((-not (Test-Path \"$persist_dir\\$_\")) -and (-not (Test-Path \"$dir\\$_\"))) {",
