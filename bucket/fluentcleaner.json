@@ -11,12 +11,26 @@
             "extract_dir": "FluentCleaner-win-x64"
         }
     },
+    "pre_install": [
+        "# Winapp2.ini is excluded from persistence because it is updated together with the app",
+        "'settings.json', 'Winapp3.ini', 'Winappx.ini' | ForEach-Object {",
+        "    if ((-not (Test-Path \"$persist_dir\\$_\")) -and (-not (Test-Path \"$dir\\$_\"))) {",
+        "        [System.IO.File]::WriteAllText((Join-Path -Path $dir -ChildPath $_), '', [System.Text.UTF8Encoding]::new($false))",
+        "    }",
+        "}"
+    ],
     "bin": "FCleaner.exe",
     "shortcuts": [
         [
             "FCleaner.exe",
-            "FCleaner"
+            "Fluent Cleaner"
         ]
+    ],
+    "persist": [
+        "Custom",
+        "settings.json",
+        "Winapp3.ini",
+        "Winappx.ini"
     ],
     "checkver": "github",
     "autoupdate": {
