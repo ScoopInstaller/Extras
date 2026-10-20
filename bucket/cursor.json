@@ -1,5 +1,5 @@
 {
-    "version": "3.22.12",
+    "version": "3.25.9",
     "description": "The AI Code Editor",
     "homepage": "https://www.cursor.com/",
     "license": {
@@ -9,12 +9,12 @@
     "innosetup": true,
     "architecture": {
         "64bit": {
-            "url": "https://downloads.cursor.com/production/3a92974361033b2051526321308c2740fe5912c5/win32/x64/user-setup/CursorUserSetup-x64-3.22.12.exe",
-            "hash": "0b76176e54fcd9b51302968aeebce3ee708e93da61071ecc2fcd50f79c1c3e79"
+            "url": "https://downloads.cursor.com/production/5d4df965746c5d09740842fc0f1331ba1c15783d/win32/x64/user-setup/CursorUserSetup-x64-3.25.9.exe",
+            "hash": "6d5d6b4bae99cca1a28f1fdf539ecd3983c2ea3140d3a9e5b0e5c1543b7cd4fd"
         },
         "arm64": {
-            "url": "https://downloads.cursor.com/production/3a92974361033b2051526321308c2740fe5912c5/win32/arm64/user-setup/CursorUserSetup-arm64-3.22.12.exe",
-            "hash": "14e9609bd61261552e13a1e90b8041fe5e8c7011b90c1b4c116f50efc000417a"
+            "url": "https://downloads.cursor.com/production/5d4df965746c5d09740842fc0f1331ba1c15783d/win32/arm64/user-setup/CursorUserSetup-arm64-3.25.9.exe",
+            "hash": "59f4e458601ce96aa220f7030f337e27a4cc5b9df4c33adc9a7650701c4dbe89"
         }
     },
     "extract_dir": "{code_GetDestDir}",
@@ -32,20 +32,32 @@
         "if ((Test-Path \"$extensions_file\")) {",
         "    info 'Adjusting path in extensions file...'",
         "    (Get-Content \"$extensions_file\") -replace '(?<=cursor(/|\\\\\\\\)).*?(?=(/|\\\\\\\\)data(/|\\\\\\\\)extensions)', $version | Set-Content \"$extensions_file\"",
+        "}",
+        "$product_path = \"$dir\\resources\\app\\product.json\"",
+        "$product_text = [System.IO.File]::ReadAllText($product_path)",
+        "$product_patched = [regex]::Replace($product_text, ',\\s*\\r?\\n\\s*\"target\"\\s*:\\s*\"user\"(?=\\s*\\r?\\n\\})', '')",
+        "if ($product_patched -ne $product_text) {",
+        "    info '[Portable Mode] Removing \"target\" from product.json...'",
+        "    [System.IO.File]::WriteAllText($product_path, $product_patched, (New-Object System.Text.UTF8Encoding($false)))",
+        "} elseif (($product_text | ConvertFrom-Json).PSObject.Properties.Name -contains 'target') {",
+        "    warn 'Portable mode is not enabled: unexpected product.json layout.'",
+        "}",
+        "$argv_file = \"$dir\\data\\argv.json\"",
+        "if (!(Test-Path $argv_file) -and (Test-Path \"$env:USERPROFILE\\.cursor\\argv.json\")) {",
+        "    info '[Portable Mode] Copying argv.json...'",
+        "    Copy-Item \"$env:USERPROFILE\\.cursor\\argv.json\" $argv_file",
         "}"
     ],
     "bin": [
         [
             "resources\\app\\bin\\cursor.cmd",
-            "cursor",
-            "--user-data-dir=\"$dir\\data\\user-data\" --extensions-dir=\"$dir\\data\\extensions\""
+            "cursor"
         ]
     ],
     "shortcuts": [
         [
             "Cursor.exe",
-            "Cursor",
-            "--user-data-dir=\"$dir\\data\\user-data\" --extensions-dir=\"$dir\\data\\extensions\""
+            "Cursor"
         ]
     ],
     "persist": "data",

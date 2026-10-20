@@ -1,15 +1,25 @@
 {
-    "version": "1.37.0",
+    "version": "1.42.0",
     "description": "Free password manager with identity protection by Proton.",
     "homepage": "https://proton.me/pass",
     "license": "GPL-3.0-only",
     "architecture": {
         "64bit": {
-            "url": "https://proton.me/download/pass/windows/ProtonPass-1.37.0-full.nupkg",
-            "hash": "b263c099225e045c2a03dc4cb355065f0fe0a5af6987e66168682d6e8ce3dc79"
+            "url": "https://proton.me/download/pass/windows/ProtonPass_1.42.0.msix#/dl.zip",
+            "hash": "b8e707d530e57d2de7e8f990e20ea3bed228b41ee4df99ee3eaf0ca674f53773"
         }
     },
-    "extract_dir": "lib\\net45",
+    "extract_dir": "app",
+    "post_install": [
+        "# MSIX stores names as OPC/AppX percent-encoded UTF-8 (e.g. %40 -> @); decode to the real name.",
+        "# Children are renamed before their parents to ensure each item's path is still valid when it's renamed.",
+        "Get-ChildItem -LiteralPath $dir -Recurse | Sort-Object { $_.FullName.Length } -Descending | ForEach-Object {",
+        "    $decodedName = [uri]::UnescapeDataString($_.Name)",
+        "    if ($decodedName -ne $_.Name) {",
+        "        Rename-Item -LiteralPath $_.FullName -NewName $decodedName",
+        "    }",
+        "}"
+    ],
     "shortcuts": [
         [
             "ProtonPass.exe",
@@ -23,7 +33,7 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://proton.me/download/pass/windows/ProtonPass-$version-full.nupkg"
+                "url": "https://proton.me/download/pass/windows/ProtonPass_$version.msix#/dl.zip"
             }
         }
     }

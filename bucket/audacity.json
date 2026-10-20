@@ -1,5 +1,5 @@
 {
-    "version": "3.7.9",
+    "version": "4.0.1",
     "description": "An easy-to-use, multi-track audio editor and recorder",
     "homepage": "https://www.audacityteam.org",
     "license": {
@@ -8,35 +8,33 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/audacity/audacity/releases/download/Audacity-3.7.9/audacity-win-3.7.9-64bit.zip",
-            "hash": "6ace99628c02ae345690183950bf76ee7aeacdaa1a3693e98a6f971642cd2da7",
-            "extract_dir": "audacity-win-3.7.9-64bit"
-        },
-        "32bit": {
-            "url": "https://github.com/audacity/audacity/releases/download/Audacity-3.7.9/audacity-win-3.7.9-32bit.zip",
-            "hash": "77fde2501e51c5e9b82bd2d5f4abca8320b91fa755acc8fdfe5f88b34e0b759d",
-            "extract_dir": "audacity-win-3.7.9-32bit"
+            "url": "https://github.com/audacity/audacity/releases/download/Audacity-4.0.1/audacity-win-4.0.1-x86_64.7z",
+            "hash": "9c5e0379626dee8a573af91ba5355311b9001dcf310294dd4dc9aa6887593d03"
         },
         "arm64": {
-            "url": "https://github.com/audacity/audacity/releases/download/Audacity-3.7.9/audacity-win-3.7.9-arm64.zip",
-            "hash": "c15771014710a03ca8d6a9e1a1cff4e20bba17fd0359471c091861189c66ba95",
-            "extract_dir": "audacity-win-3.7.9-arm64"
+            "url": "https://github.com/audacity/audacity/releases/download/Audacity-4.0.1/audacity-win-4.0.1-arm64.7z",
+            "hash": "bafa562f9fc3960eae50ac64b656360b5bd2824af3396ed0809551a1f8eb716e"
         }
     },
-    "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\Portable Settings\\audacity.cfg\")) {",
-        "    ensure \"$dir\\Portable Settings\" | Out-Null",
-        "    Set-Content \"$dir\\Portable Settings\\audacity.cfg\" '[Update]', 'DefaultUpdatesChecking=0' -Encoding Ascii",
-        "}"
+    "pre_install": "Get-ChildItem \"$dir\\Audacity-*\" -Directory | ForEach-Object { movedir $_.FullName $dir }",
+    "bin": [
+        [
+            "bin\\Audacity4.exe",
+            "audacity"
+        ]
     ],
-    "bin": "Audacity.exe",
     "shortcuts": [
         [
-            "Audacity.exe",
+            "bin\\Audacity4.exe",
             "Audacity"
         ]
     ],
-    "persist": "Portable Settings",
+    "persist": [
+        [
+            "bin\\Portable Settings",
+            "Portable Settings"
+        ]
+    ],
     "checkver": {
         "github": "https://github.com/audacity/audacity",
         "regex": "Audacity-([\\d.]+)"
@@ -44,16 +42,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/audacity/audacity/releases/download/Audacity-$version/audacity-win-$version-64bit.zip",
-                "extract_dir": "audacity-win-$version-64bit"
-            },
-            "32bit": {
-                "url": "https://github.com/audacity/audacity/releases/download/Audacity-$version/audacity-win-$version-32bit.zip",
-                "extract_dir": "audacity-win-$version-32bit"
+                "url": "https://github.com/audacity/audacity/releases/download/Audacity-$version/audacity-win-$version-x86_64.7z"
             },
             "arm64": {
-                "url": "https://github.com/audacity/audacity/releases/download/Audacity-$version/audacity-win-$version-arm64.zip",
-                "extract_dir": "audacity-win-$version-arm64"
+                "url": "https://github.com/audacity/audacity/releases/download/Audacity-$version/audacity-win-$version-arm64.7z"
             }
         },
         "hash": {
