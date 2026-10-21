@@ -1,5 +1,5 @@
 {
-    "version": "6.7.3",
+    "version": "7.1.0",
     "description": "An open-source installation builder for Windows applications.",
     "homepage": "https://www.jrsoftware.org/isinfo.php",
     "license": {
@@ -9,24 +9,43 @@
     "suggest": {
         "Inno Script Studio": "extras/inno-script-studio"
     },
-    "url": "https://github.com/jrsoftware/issrc/releases/download/is-6_7_3/innosetup-6.7.3.exe",
-    "hash": "9c73c3bae7ed48d44112a0f48e66742c00090bdb5bef71d9d3c056c66e97b732",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/jrsoftware/issrc/releases/download/is-7_1_0/innosetup-7.1.0-x64.exe",
+            "hash": "0362a383ed217d4c4239b5933866dd96d3eb2102737da92f80f6057a4b40df2f"
+        },
+        "32bit": {
+            "url": "https://github.com/jrsoftware/issrc/releases/download/is-7_1_0/innosetup-7.1.0-x86.exe",
+            "hash": "f9671174e0d15ba9b4f6b56564c6aed32ea8db9c3cb9bf6f2af0850fe7894f60"
+        }
+    },
     "innosetup": true,
-    "bin": "iscc.exe",
+    "bin": [
+        "ISCC.exe",
+        "ISSigTool.exe"
+    ],
     "shortcuts": [
         [
-            "Compil32.exe",
+            "ISIDE.exe",
             "Inno Setup Compiler"
         ]
     ],
     "checkver": {
-        "url": "https://www.jrsoftware.org/isdl.php",
-        "regex": "innosetup-([\\d.]+)\\.exe"
+        "github": "https://api.github.com/repos/jrsoftware/issrc/releases/latest",
+        "jsonpath": "$.assets[?(@.name =~ /\\.exe/)].name",
+        "regex": "innosetup-(\\d+(?:\\.\\d+)+)-x64\\.exe"
     },
     "autoupdate": {
-        "url": "https://github.com/jrsoftware/issrc/releases/download/is-$underscoreVersion/innosetup-$version.exe",
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/jrsoftware/issrc/releases/download/is-$underscoreVersion/innosetup-$version-x64.exe"
+            },
+            "32bit": {
+                "url": "https://github.com/jrsoftware/issrc/releases/download/is-$underscoreVersion/innosetup-$version-x86.exe"
+            }
+        },
         "hash": {
-            "url": "https://github.com/jrsoftware/issrc/releases/download/is-$underscoreVersion/innosetup-$version.exe.issig",
+            "url": "$url.issig",
             "find": "file-hash\\s+$sha256"
         }
     }
