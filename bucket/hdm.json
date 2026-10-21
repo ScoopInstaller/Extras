@@ -3,7 +3,7 @@
     "description": "A fast download manager with a desktop interface, CLI, and browser integration",
     "homepage": "https://hydra.javad.dev/",
     "license": "GPL-3.0-or-later",
-    "notes": "Use scoop update hdm to upgrade this installation.",
+    "notes": "Updates are managed by Scoop: the in-app update check is disabled on first install. Use 'scoop update hdm' to upgrade.",
     "architecture": {
         "64bit": {
             "url": "https://github.com/ja7ad/hydra/releases/download/v1.1.0/hydra-1.1.0-windows-amd64.zip",
@@ -17,16 +17,10 @@
         }
     },
     "post_install": [
-        "$desktop = [Environment]::GetFolderPath(\"DesktopDirectory\")",
-        "$shortcutPath = \"$desktop\\Hydra Download Manager.lnk\"",
-        "$appRoot = (Split-Path -Parent $dir) + \"\\\"",
-        "$exists = Test-Path -LiteralPath $shortcutPath",
-        "$shortcut = (New-Object -ComObject WScript.Shell).CreateShortcut($shortcutPath)",
-        "if (!$exists -or ($shortcut.TargetPath.StartsWith($appRoot, [StringComparison]::OrdinalIgnoreCase) -and [IO.Path]::GetFileName($shortcut.TargetPath) -eq \"hydra-gui.exe\")) {",
-        "    $shortcut.TargetPath = \"$dir\\hydra-gui.exe\"",
-        "    $shortcut.WorkingDirectory = \"$dir\"",
-        "    $shortcut.IconLocation = \"$dir\\hydra-gui.exe,0\"",
-        "    $shortcut.Save()",
+        "$config = \"$env:APPDATA\\hydra\\config.toml\"",
+        "if (!(Test-Path -LiteralPath $config)) {",
+        "    New-Item -ItemType Directory -Path (Split-Path -Parent $config) -Force | Out-Null",
+        "    Set-Content -LiteralPath $config -Value \"[settings]`ncheck_updates_on_startup = false\" -Encoding ascii",
         "}"
     ],
     "bin": [
@@ -41,17 +35,6 @@
             "hydra-gui.exe",
             "Hydra Download Manager"
         ]
-    ],
-    "pre_uninstall": [
-        "$desktop = [Environment]::GetFolderPath(\"DesktopDirectory\")",
-        "$shortcutPath = \"$desktop\\Hydra Download Manager.lnk\"",
-        "$appRoot = (Split-Path -Parent $dir) + \"\\\"",
-        "if (Test-Path -LiteralPath $shortcutPath) {",
-        "    $shortcut = (New-Object -ComObject WScript.Shell).CreateShortcut($shortcutPath)",
-        "    if ($shortcut.TargetPath.StartsWith($appRoot, [StringComparison]::OrdinalIgnoreCase) -and [IO.Path]::GetFileName($shortcut.TargetPath) -eq \"hydra-gui.exe\") {",
-        "        Remove-Item -LiteralPath $shortcutPath -Force",
-        "    }",
-        "}"
     ],
     "checkver": {
         "github": "https://github.com/ja7ad/hydra"
