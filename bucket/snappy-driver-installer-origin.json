@@ -1,27 +1,27 @@
 {
-    "version": "1.18.0.830",
+    "version": "2.0.6.889",
     "description": "Device drivers installer and updater",
-    "homepage": "https://www.snappy-driver-installer.org",
+    "homepage": "https://www.glenn.delahoy.com/snappy-driver-installer-origin/",
     "license": "GPL-3.0-or-later",
-    "url": "https://www.glenn.delahoy.com/downloads/sdio/SDIO_1.18.0.830.zip",
-    "hash": "7bb0cecaca9d69493a730763c980471a8eadd0c5bf9bf5b20df2d090e3692819",
+    "url": "https://www.glenn.delahoy.com/downloads/sdio/SDIO_2.0.6.889.zip",
+    "hash": "d7b308c0bffe3ea954a568c7020e69fe60c038be039a75b9afc3c66f7e12bad1",
     "architecture": {
-        "64bit": {
-            "pre_install": [
-                "Move-Item \"$dir\\SDIO_x64_*.exe\" \"$dir\\SDIO.exe\"",
-                "Remove-Item \"$dir\\SDIO_*exe\""
-            ]
-        },
         "32bit": {
             "pre_install": [
                 "Remove-Item \"$dir\\SDIO_x64_*exe\"",
                 "Move-Item \"$dir\\SDIO_*.exe\" \"$dir\\SDIO.exe\""
             ]
+        },
+        "64bit": {
+            "pre_install": [
+                "Move-Item \"$dir\\SDIO_x64_*.exe\" \"$dir\\SDIO.exe\"",
+                "Remove-Item \"$dir\\SDIO_*exe\""
+            ]
         }
     },
     "installer": {
         "script": [
-            "if (Test-Path \"$persist_dir\\sdi.cfg\") { Move-Item \"$persist_dir\\sdi.cfg\" \"$persist_dir\\sdio.cfg\" | Out-Null }",
+            "if ((Test-Path \"$persist_dir\\sdi.cfg\") -and (-not (Test-Path \"$persist_dir\\sdio.cfg\"))) { Move-Item \"$persist_dir\\sdi.cfg\" \"$persist_dir\\sdio.cfg\" | Out-Null }",
             "if (-not (Test-Path \"$persist_dir\\sdio.cfg\")) { New-Item \"$dir\\sdio.cfg\" | Out-Null }"
         ]
     },

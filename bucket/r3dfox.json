@@ -1,16 +1,16 @@
 {
-    "version": "153.0",
+    "version": "153.0.3",
     "description": "Firefox-based web browser for Windows 7",
     "homepage": "https://eclipse.cx/projects/r3dfox",
     "license": "MPL-2.0",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/Eclipse-Community/r3dfox/releases/download/v153.0/r3dfox-153.0.en-US.win64.portable.7z",
-            "hash": "ee8506e441e16be4ee8cee4ae81caf2c09a92f2545169ffd2d284ac0487f6b0f"
+            "url": "https://github.com/Eclipse-Community/r3dfox/releases/download/v153.0.3/r3dfox-v153.0.3.win64.portable.7z",
+            "hash": "2bb87b9f5fdfe8d6d7d05e29a459b15b6ba709364122a432df4afb1be1717882"
         },
         "32bit": {
-            "url": "https://github.com/Eclipse-Community/r3dfox/releases/download/v153.0/r3dfox-153.0.en-US.win32.portable.7z",
-            "hash": "0ffc3c2ce93c10f23c7b663128557b154ee51a12ca1f2babf8aa404d5291b554"
+            "url": "https://github.com/Eclipse-Community/r3dfox/releases/download/v153.0.3/r3dfox-v153.0.3.win32.portable.7z",
+            "hash": "b3a56ba2fbd8d7ba36f036bf92ddda3bc8febc57a37b6cff2f96da7a9ab6bf27"
         }
     },
     "bin": "r3dfox.exe",
@@ -22,15 +22,17 @@
     ],
     "persist": "Profile",
     "checkver": {
-        "github": "https://github.com/Eclipse-Community/r3dfox"
+        "github": "https://api.github.com/repos/Eclipse-Community/r3dfox/releases?per_page=15",
+        "jsonpath": "$[?(@.target_commitish =~ /win/i)].assets[?(@.name =~ /win64\\.portable\\.7z/i)].browser_download_url",
+        "regex": "download/v([\\w.-]+)/r3dfox-v(?<short>[\\d.]+)\\.win64\\.portable\\.7z"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/Eclipse-Community/r3dfox/releases/download/v$version/r3dfox-$version.en-US.win64.portable.7z"
+                "url": "https://github.com/Eclipse-Community/r3dfox/releases/download/v$version/r3dfox-v$matchShort.win64.portable.7z"
             },
             "32bit": {
-                "url": "https://github.com/Eclipse-Community/r3dfox/releases/download/v$version/r3dfox-$version.en-US.win32.portable.7z"
+                "url": "https://github.com/Eclipse-Community/r3dfox/releases/download/v$version/r3dfox-v$matchShort.win32.portable.7z"
             }
         }
     }
