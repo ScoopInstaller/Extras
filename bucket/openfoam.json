@@ -1,0 +1,55 @@
+{
+    "version": "2606",
+    "description": "Open-source CFD toolbox with a wide range of solvers and utilities for fluid dynamics simulations (ESI/OpenCFD MinGW native Windows build).",
+    "homepage": "https://www.openfoam.com/openfoam-mingw-cross-compilation",
+    "license": "GPL-3.0-or-later",
+    "notes": [
+        "This is the ESI/OpenCFD MinGW cross-compiled build of OpenFOAM.",
+        "Run 'openfoam' (or the Start Menu shortcut) to open the MSYS2 terminal with the OpenFOAM environment already set up.",
+        "This build can run solvers and utilities but cannot compile OpenFOAM or user code.",
+        "For parallel runs, install 'msmpi' from the main bucket.",
+        "For post-processing, install the Windows version of ParaView separately."
+    ],
+    "suggest": {
+        "MS-MPI": "main/msmpi"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://downloads.sourceforge.net/project/openfoam/v2606/OpenFOAM-v2606-windows-mingw.exe",
+            "hash": "020321d58b42e1d2ad0b616cdde17f92503608edd902388fb8c73e94e9cb1e25"
+        }
+    },
+    "installer": {
+        "script": [
+            "$proc = Start-Process \"$dir\\$fname\" -ArgumentList @('/S', \"/D=$dir\") -Wait -PassThru",
+            "if ($proc.ExitCode -ne 0) { throw \"OpenFOAM installer failed with exit code $($proc.ExitCode).\" }"
+        ]
+    },
+    "post_install": [
+        "Remove-Item \"$dir\\$fname\"",
+        "if (!(Test-Path \"$dir\\msys64\\msys2_shell.cmd\")) { throw 'OpenFOAM installation is incomplete.' }"
+    ],
+    "bin": [
+        [
+            "OpenFOAM-MSYS2.bat",
+            "openfoam"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "OpenFOAM-MSYS2.bat",
+            "OpenFOAM MSYS2 Terminal"
+        ]
+    ],
+    "checkver": {
+        "url": "https://dl.openfoam.com/source/latest/",
+        "regex": "OpenFOAM-v(\\d{4})-windows-mingw\\.exe"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://downloads.sourceforge.net/project/openfoam/v$version/OpenFOAM-v$version-windows-mingw.exe"
+            }
+        }
+    }
+}
