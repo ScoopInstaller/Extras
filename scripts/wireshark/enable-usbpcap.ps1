@@ -27,6 +27,6 @@ if (Test-Path $src_exe) {
         Write-Output "Linking $(Resolve-Path $dst_exe -Relative -RelativeBasePath $PSScriptRoot) => $src_exe"
     }
 } else {
-    Write-Error "'$exe_name' not found. Please ensure USBPcap is installed, and the computer has been restarted after installation.
+    Write-Warning "'$exe_name' not found. Please ensure USBPcap is installed, and the computer has been restarted after installation.
 If it still fails, you need to manually copy USBPCapCMD.exe from the USBPcap install location to '$dst_dir'"
 }
