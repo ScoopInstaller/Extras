@@ -1,0 +1,45 @@
+{
+    "version": "1.10.5",
+    "description": "A C language SIXEL encoder/decoder implementation",
+    "homepage": "https://github.com/libsixel/libsixel",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/libsixel/libsixel/archive/refs/tags/v1.10.5.tar.gz",
+            "hash": "b6654928bd423f92e6da39eb1f40f10000ae2cc6247247fc1882dcff6acbdfc8"
+        },
+        "32bit": {
+            "url": "https://github.com/libsixel/libsixel/archive/refs/tags/v1.10.5.tar.gz",
+            "hash": "b6654928bd423f92e6da39eb1f40f10000ae2cc6247247fc1882dcff6acbdfc8"
+        }
+    },
+    "depends": [
+        "git",
+        "mingw",
+        "make"
+    ],
+    "installer": {
+        "script": [
+            "$process = Start-Process -NoNewWindow -Wait -PassThru -FilePath powershell -ArgumentList \" cd $dir; mv libsixel-1.10.5\\* .; Remove-Item -Recurse -Force libsixel-1.10.5; sh ./configure --host=i686-w64-mingw32; make\"",
+            "$exitCode = $process.ExitCode",
+            "if ($exitCode -ne 0) { scoop uninstall libsixel; echo \"Error while installing\"; exit 1 }"
+        ]
+    },
+    "bin": [
+        "converters\\img2sixel.exe",
+        "converters\\sixel2png.exe"
+    ],
+    "checkver": {
+        "github": "https://github.com/libsixel/libsixel"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/libsixel/libsixel/releases/download/v$version/libsixel-$version.tar.gz"
+            },
+            "32bit": {
+                "url": "https://github.com/libsixel/libsixel/releases/download/v$version/libsixel-$version.tar.gz"
+            }
+        }
+    }
+}
