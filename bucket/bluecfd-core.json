@@ -1,0 +1,50 @@
+{
+    "version": "2024-1",
+    "description": "Native Windows build of OpenFOAM 12, including ParaView 5.11.2, MS-MPI 10.1.2 and a MSYS2 CLI/development stack.",
+    "homepage": "https://bluecfd.github.io/Core/",
+    "license": "GPL-3.0-or-later",
+    "notes": [
+        "blueCFD-Core must be installed in a path without spaces.",
+        "Run 'bluecfd' (or the Start Menu shortcut) to open the MSYS2 terminal with the blueCFD-Core environment already set up.",
+        "'blueCFD-Core DOS Prompt' opens a cmd session with the OpenFOAM 12 environment variables set instead.",
+        "For more details see: https://bluecfd.github.io/Core/UserGuide/"
+    ],
+    "suggest": {
+        "MS-MPI": "main/msmpi"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/blueCFD/Core/releases/download/blueCFD-Core-2024-1/blueCFD-Core-2024-1-win64-setup.exe",
+            "hash": "7f2d036698dc6a5385bda665a71feef9e81b065abf7d013571a6e9afaf585baa"
+        }
+    },
+    "innosetup": true,
+    "pre_install": "if ($dir -match ' ') { throw 'blueCFD-Core must be installed in a path without spaces.' }",
+    "bin": [
+        [
+            "blueCFD-Core_MSys2_mingw64.bat",
+            "bluecfd"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "blueCFD-Core_MSys2_mingw64.bat",
+            "blueCFD-Core MSYS2 Terminal"
+        ],
+        [
+            "DOS_Mode_OF12.bat",
+            "blueCFD-Core DOS Prompt"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/blueCFD/Core",
+        "regex": "blueCFD-Core-([\\d-]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/blueCFD/Core/releases/download/blueCFD-Core-$version/blueCFD-Core-$version-win64-setup.exe"
+            }
+        }
+    }
+}
