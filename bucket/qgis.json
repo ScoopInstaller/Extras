@@ -1,0 +1,43 @@
+{
+    "version": "4.2.3-2",
+    "description": "A free and open source geographic information system (GIS)",
+    "homepage": "https://www.qgis.org/",
+    "license": "GPL-2.0-or-later",
+    "architecture": {
+        "64bit": {
+            "url": "https://download.qgis.org/downloads/QGIS-OSGeo4W-4.2.3-2.msi",
+            "hash": "c9b4b837350d00eecb77ae5c965219b3f74776e1921f7460b3859c898f38b1cf"
+        }
+    },
+    "extract_dir": "QGIS 4.2.3",
+    "post_install": [
+        "if (-not $global) {",
+        "  (Get-Content \"$dir\\etc\\postinstall\\qgis.bat\" -Raw).Replace('\"%WINDIR%\\regedit\" /s', '\"%SystemRoot%\\System32\\reg.exe\" import') |",
+        "    Set-Content \"$dir\\etc\\postinstall\\qgis.bat\" -Encoding Ascii",
+        "  Get-ChildItem \"$dir\\apps\\qgis\" -Filter qgis.reg.tmpl -Recurse |",
+        "    ForEach-Object { (Get-Content $_.FullName -Raw).Replace('HKEY_CLASSES_ROOT', 'HKEY_CURRENT_USER\\Software\\Classes') | Set-Content $_.FullName -Encoding Ascii }",
+        "}",
+        "& \"$dir\\etc\\postinstall.bat\" \"$(shortcut_folder $global)\\OSGeo4W\" \"%USERPROFILE%\\Desktop\" 0 1"
+    ],
+    "bin": [
+        "OSGeo4W.bat",
+        "bin\\o4w_env.bat"
+    ],
+    "pre_uninstall": "& \"$dir\\etc\\preremove.bat\"",
+    "checkver": {
+        "url": "https://github.com/qgis/QGIS-Website/raw/main/data/conf.json",
+        "jsonpath": "$.lr_msi",
+        "regex": "/QGIS-OSGeo4W-([\\d.]+(-\\d+)?)\\.msi"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://download.qgis.org/downloads/QGIS-OSGeo4W-$version.msi",
+                "hash": {
+                    "url": "https://download.qgis.org/downloads/QGIS-OSGeo4W-$version.sha256sum"
+                }
+            }
+        },
+        "extract_dir": "QGIS $majorVersion.$minorVersion.$patchVersion"
+    }
+}
