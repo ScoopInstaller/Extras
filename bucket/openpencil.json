@@ -1,0 +1,64 @@
+{
+    "version": "0.16.0",
+    "description": "AI-native design editor. Open-source Figma alternative.",
+    "homepage": "https://openpencil.dev",
+    "license": "MIT",
+    "notes": [
+        "OpenPencil checks for updates on startup and this cannot be disabled in the app.",
+        "When the update window appears, click 'Later' and use 'scoop update openpencil' instead.",
+        "For .pen and .fig file associations, run:",
+        "reg import \"$dir\\install-associations.reg\""
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/open-pencil/open-pencil/releases/download/v0.16.0/OpenPencil_0.16.0_x64-setup.exe#/dl.7z",
+            "hash": "1b851ac488ce9be437f8b321cadb87ee169f9a1d11968d8e8be87742c9d4df4b"
+        },
+        "arm64": {
+            "url": "https://github.com/open-pencil/open-pencil/releases/download/v0.16.0/OpenPencil_0.16.0_arm64-setup.exe#/dl.7z",
+            "hash": "98f4c26d85bb1323b2d95f7064df655b6f82de3d2a7d08481ea4bca4f1a747db"
+        }
+    },
+    "pre_install": "Remove-Item \"$dir\\`$*\", \"$dir\\uninst*\" -Force -Recurse",
+    "post_install": [
+        "$dirpath = \"$dir\".Replace('\\', '\\\\')",
+        "'install-associations', 'uninstall-associations' | ForEach-Object {",
+        "    if (Test-Path \"$bucketsdir\\$bucket\\scripts\\openpencil\\$_.reg\") {",
+        "        $content = (Get-Content \"$bucketsdir\\$bucket\\scripts\\openpencil\\$_.reg\").Replace('$dirpath', $dirpath)",
+        "        if ($global) { $content = $content.Replace('HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE') }",
+        "        Set-Content \"$dir\\$_.reg\" $content -Encoding Ascii -Force",
+        "    }",
+        "}"
+    ],
+    "bin": "OpenPencil.exe",
+    "shortcuts": [
+        [
+            "OpenPencil.exe",
+            "OpenPencil"
+        ]
+    ],
+    "uninstaller": {
+        "script": [
+            "if ($cmd -eq 'uninstall') {",
+            "    reg import \"$dir\\uninstall-associations.reg\" *> $null",
+            "    Remove-Item 'HKCU:\\Software\\Classes\\openpencil' -Recurse -Force -ErrorAction SilentlyContinue",
+            "}"
+        ]
+    },
+    "checkver": {
+        "github": "https://github.com/open-pencil/open-pencil"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/open-pencil/open-pencil/releases/download/v$version/OpenPencil_$version_x64-setup.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/open-pencil/open-pencil/releases/download/v$version/OpenPencil_$version_arm64-setup.exe#/dl.7z"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/SHA256SUMS"
+        }
+    }
+}
