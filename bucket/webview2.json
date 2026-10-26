@@ -7,7 +7,8 @@
         "url": "https://developer.microsoft.com/microsoft-edge/api/eula/webview2"
     },
     "notes": [
-        "Overrides any natively installed Runtime through environment variable 'WEBVIEW2_BROWSER_EXECUTABLE_FOLDER' & the registry key 'HKCU\\SOFTWARE\\Microsoft\\EdgeUpdate'.",
+        "Overrides any natively installed Runtime through environment variable 'WEBVIEW2_BROWSER_EXECUTABLE_FOLDER'.",
+        "Overrides any natively installed Runtime for the current user through the registry key 'HKCU\\SOFTWARE\\Microsoft\\EdgeUpdate'.",
         "This is architecture-specific: Applications must match the runtime architecture, for example install the 32-bit build (--arch 32bit) to support 32-bit applications."
     ],
     "architecture": {
@@ -32,12 +33,14 @@
     },
     "installer": {
         "script": [
+            "if ($global) { return }",
             "reg.exe add \"HKCU\\SOFTWARE\\Microsoft\\EdgeUpdate\\Clients\\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}\" /v \"pv\" /t \"REG_SZ\" /d \"$version\" /f | Out-Null",
             "reg.exe add \"HKCU\\SOFTWARE\\Microsoft\\EdgeUpdate\\ClientState\\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}\" /v \"EBWebView\" /t \"REG_SZ\" /d \"$dir\" /f | Out-Null"
         ]
     },
     "uninstaller": {
         "script": [
+            "if ($global) { return }",
             "reg.exe delete \"HKCU\\SOFTWARE\\Microsoft\\EdgeUpdate\\Clients\\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}\" /v \"pv\" /f | Out-Null",
             "reg.exe delete \"HKCU\\SOFTWARE\\Microsoft\\EdgeUpdate\\ClientState\\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}\" /v \"EBWebView\" /f | Out-Null"
         ]
