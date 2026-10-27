@@ -5,14 +5,22 @@
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/agalwood/Motrix/releases/download/v2.0.1/Motrix-Setup-2.0.1.exe#/dl.7z",
-            "hash": "sha512:028770c98212097d1f9e07151f435969edb01c230877f539fd20195ba266aaeb975c3a63d6a5bf315dcccae5f1a79c8bd7a85e863b53709665cd0167bdfe28f6",
-            "pre_install": [
-                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-                "Remove-Item \"$dir\\`$*\" -Force -Recurse"
-            ]
+            "url": "https://github.com/agalwood/Motrix/releases/download/v2.0.1/Motrix-2.0.1-win.zip",
+            "hash": "cd32454df95c24458e37aeb3db85b6ed34ba9da3ff8acebfffa8fac025b2d645"
+        },
+        "arm64": {
+            "url": "https://github.com/agalwood/Motrix/releases/download/v2.0.1/Motrix-2.0.1-arm64.zip",
+            "hash": "9101aea3f8de820a8c594b705b33c55f0d85c082cc732debeb7102131e59548c"
         }
     },
+    "post_install": [
+        "# Disable built-in update mechanism to prevent conflicts with Scoop's update management",
+        "$yaml = \"$dir\\resources\\app-update.yml\"",
+        "$content = Get-Content -Path $yaml | Foreach-Object {",
+        "    if ($_.StartsWith('url')) { \"$($_.Replace('url', '# url')) # Disabled by Scoop\" } else { $_ }",
+        "}",
+        "Set-Content $yaml -Value $content -Encoding ascii"
+    ],
     "shortcuts": [
         [
             "Motrix.exe",
@@ -25,11 +33,10 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/agalwood/Motrix/releases/download/v$version/Motrix-Setup-$version.exe#/dl.7z",
-                "hash": {
-                    "url": "$baseurl/latest.yml",
-                    "regex": "sha512:\\s+$base64"
-                }
+                "url": "https://github.com/agalwood/Motrix/releases/download/v$version/Motrix-$version-win.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/agalwood/Motrix/releases/download/v$version/Motrix-$version-arm64.zip"
             }
         }
     }
