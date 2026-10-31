@@ -1,0 +1,43 @@
+{
+  "version": "0.100.0",
+  "description": "Free CAD/CAE software designed to create electric diagrams, schematics, and panel layouts.",
+  "homepage": "https://qelectrotech.org/",
+  "license": "GPL-2.0-or-later",
+  "extract_dir": "qelectrotech-0.100.0+git8590-x86-win64-readytouse",
+  "architecture": {
+    "64bit": {
+      "url": "https://github.com/qelectrotech/qelectrotech-source-mirror/releases/download/0.100/qelectrotech-0.100.0%2Bgit8590-x86-win64-readytouse.7z",
+      "hash": "552402198011f37633ffcff4f9ce561a9abaf22dc14f9cc09ddc231245b16445"
+    }
+  },
+  "bin": "bin/qelectrotech.exe",
+  "shortcuts": [
+    [
+      "bin/qelectrotech.exe",
+      "QElectroTech"
+    ]
+  ],
+  "post_install": [
+    "if (Test-Path \"$dir\\lang\") {",
+    "    Copy-Item -Path \"$dir\\lang\" -Destination \"$dir\\bin\\lang\" -Recurse -Force",
+    "}"
+  ],
+  "persist": [
+    "conf",
+    "elements",
+    "titleblocks"
+  ],
+  "checkver": {
+    "url": "https://api.github.com/repos/qelectrotech/qelectrotech-source-mirror/releases",
+    "jsonpath": "$[*].assets[*].browser_download_url",
+    "regex": "download/(?<tag>[\\d.]+)/qelectrotech-(?<version>[\\d.]+)(?<build>(?:\\+|%2B)git\\d+)?-x86-win64-readytouse\\.(?:7z|zip)"
+  },
+  "autoupdate": {
+    "extract_dir": "qelectrotech-$version$matchBuild-x86-win64-readytouse",
+    "architecture": {
+      "64bit": {
+        "url": "https://github.com/qelectrotech/qelectrotech-source-mirror/releases/download/$matchTag/qelectrotech-$version$matchBuild-x86-win64-readytouse.7z"
+      }
+    }
+  }
+}
