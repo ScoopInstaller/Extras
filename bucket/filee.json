@@ -1,0 +1,39 @@
+{
+    "version": "1.11.0",
+    "description": "A free, open-source file converter you use by dragging.",
+    "homepage": "https://filee.sh",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/KnifeLemon/Filee/releases/download/v1.11.0/Filee-1.11.0-win-Portable.zip",
+            "hash": "c1efb31a39f1bd6e25e12749e85bb63dd5a2f14306df9fa5eec3e6b987416a7b"
+        }
+    },
+    "bin": "cli\\filee.cmd",
+    "shortcuts": [
+        [
+            "Filee.exe",
+            "Filee"
+        ]
+    ],
+    "pre_uninstall": [
+        "if ($cmd -eq 'uninstall') {",
+        "    Remove-Item -LiteralPath 'HKCU:\\Software\\Classes\\*\\shell\\Filee' -Recurse -Force -ErrorAction SilentlyContinue",
+        "    Get-AppxPackage -Name 'Filee.ExplorerMenu' | Remove-AppxPackage -ErrorAction SilentlyContinue",
+        "}"
+    ],
+    "checkver": {
+        "github": "https://github.com/KnifeLemon/Filee"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/KnifeLemon/Filee/releases/download/v$version/Filee-$version-win-Portable.zip"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/Filee-$version-SHA256SUMS.txt",
+            "regex": "$sha256\\s+$basename"
+        }
+    }
+}
