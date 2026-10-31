@@ -1,0 +1,33 @@
+{
+    "version": "3.0.11",
+    "description": "Dopamine is an audio player which tries to make organizing and listening to music as simple and pretty as possible.",
+    "homepage": "https://digimezzo.github.io/site/home",
+    "license": "GPL-3.0",
+    "url": "https://github.com/digimezzo/dopamine/releases/download/v3.0.11/Dopamine-3.0.11.exe#/DopamineSetup.exe",
+    "hash": "ea34581a39c07df3ddaeaacb646e668ad5da05684aaa3fac602b69d80db5da6d",
+    "installer": {
+        "args": [
+            "/S",
+            "/D=$dir"
+        ]
+    },
+    "pre_uninstall": [
+        "Get-Process -Name 'Dopamine','dopamine-updater' -ErrorAction SilentlyContinue | Where-Object { $_.Path -like \"*\\apps\\dopamine3\\*\" } | ForEach-Object { taskkill /F /T /PID $_.Id 2>$null }",
+        "Start-Sleep -Seconds 1"
+    ],
+    "uninstaller": {
+        "script": "Start-Process -FilePath \"$dir\\Uninstall Dopamine.exe\" -ArgumentList '/S' -Wait"
+    },
+    "shortcuts": [
+        [
+            "Dopamine.exe",
+            "Dopamine 3"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/digimezzo/dopamine"
+    },
+    "autoupdate": {
+        "url": "https://github.com/digimezzo/dopamine/releases/download/v$version/Dopamine-$version.exe#/DopamineSetup.exe"
+    }
+}
