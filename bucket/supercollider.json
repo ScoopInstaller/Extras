@@ -1,0 +1,72 @@
+{
+    "version": "3.14.1",
+    "description": "An audio server, programming language, and IDE for sound synthesis and algorithmic composition.",
+    "homepage": "https://supercollider.github.io",
+    "license": {
+        "identifier": "GPL-3.0",
+        "url": "https://github.com/supercollider/supercollider/blob/develop/COPYING"
+    },
+    "notes": [
+        "The IDE cache directories are at `%localappdata%\\scide` and `%appdata%\\scide` on Windows.",
+        "------------",
+        "To make SymbolicLink from `%localappdata%\\SuperCollider` to the `persist_dir\\localappdata\\SuperCollider`, Run:",
+        "   Invoke-Expression -Command \"& `\"$dir\\link-localappdata.ps1`\"\"",
+        "To unlink, Run:",
+        "   Invoke-Expression -Command \"& `\"$dir\\unlink-localappdata.ps1`\"\"",
+        "------------",
+        "To make SymbolicLink from `%programdata%\\SuperCollider` to the `persist_dir\\programdata\\SuperCollider`, Run:",
+        "   Invoke-Expression -Command \"& `\"$dir\\link-programdata.ps1`\"\"",
+        "To unlink, Run:",
+        "   Invoke-Expression -Command \"& `\"$dir\\unlink-programdata.ps1`\"\"",
+        "------------",
+        "For more information: https://github.com/supercollider/supercollider/wiki/Path-searching"
+    ],
+    "suggest": {
+        "cmake": "main/cmake"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/supercollider/supercollider/releases/download/Version-3.14.1/SuperCollider-3.14.1-win64.zip",
+            "hash": "a5f95416307d35c039ca53a9f9c6151c26585064d3229521093a60dddb9458cd"
+        }
+    },
+    "shortcuts": [
+        [
+            "scide.exe",
+            "SuperCollider"
+        ]
+    ],
+    "bin": [
+        "scide.exe",
+        "sclang.exe",
+        "scsynth.exe"
+    ],
+    "persist": [
+        "LocalAppData\\SuperCollider",
+        "ProgramData\\SuperCollider"
+    ],
+    "post_install": "Copy-Item -Path \"$bucketsdir\\$bucket\\scripts\\$app\\*link-*.ps1\" \"$dir\"",
+    "pre_uninstall": [
+        "Invoke-Expression -Command \"& `\"$dir\\unlink-localappdata.ps1`\"\"",
+        "Invoke-Expression -Command \"& `\"$dir\\unlink-programdata.ps1`\"\""
+    ],
+    "checkver": {
+        "github": "https://github.com/supercollider/supercollider",
+        "url": "https://api.github.com/repositories/4228314/releases",
+        "regex": "Version-([\\d.]+)"
+    },
+    "extract_dir": "SuperCollider",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/supercollider/supercollider/releases/download/Version-$version/SuperCollider-$version-win64.zip"
+            }
+        },
+        "hash": {
+            "mode": "json",
+            "url": "https://api.github.com/repositories/4228314/releases",
+            "jsonpath": "$[?(@.tag_name == 'Version-$version')].assets[?(@.browser_download_url == '$url')].digest",
+            "regex": "sha256:\\s*([a-f0-9]+)"
+        }
+    }
+}
