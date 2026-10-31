@@ -36,6 +36,32 @@
             "ZCode"
         ]
     ],
+    "post_uninstall": [
+        "# Preserve context menus during updates; only clean up on an explicit uninstall.",
+        "if ($cmd -ne 'uninstall') { return }",
+        "$executables = @(\"$dir\\ZCode.exe\", \"$(appdir $app $global)\\current\\ZCode.exe\")",
+        "$hives = @('HKEY_CURRENT_USER')",
+        "if ($global) { $hives += 'HKEY_LOCAL_MACHINE' }",
+        "foreach ($hive in $hives) {",
+        "    foreach ($type in @('Directory', 'Directory\\Background', 'Drive', 'Folder')) {",
+        "        $key = \"Registry::$hive\\Software\\Classes\\$type\\shell\\ZCode.OpenInZCode\"",
+        "        try {",
+        "            $command = (Get-Item -LiteralPath \"$key\\command\" -ErrorAction Stop).GetValue('')",
+        "            # Do not remove a menu owned by another ZCode installation.",
+        "            if ($command -is [string] -and $command -match '^\\s*(?:\"([^\"]+)\"|([^\\s\"]+))(?:\\s|$)') {",
+        "                $executable = if ($Matches[1]) { $Matches[1] } else { $Matches[2] }",
+        "                if ($executable -in $executables) {",
+        "                    Remove-Item -LiteralPath $key -Recurse -Force -ErrorAction Stop",
+        "                }",
+        "            }",
+        "        } catch [System.Management.Automation.ItemNotFoundException] {",
+        "            # Already removed by ZCode or a previous cleanup; nothing to do.",
+        "        } catch {",
+        "            Write-Warning \"Could not clean up ZCode context menu '${key}': $_\"",
+        "        }",
+        "    }",
+        "}"
+    ],
     "checkver": {
         "regex": "ZCode-(?<version>\\d+(?:\\.\\d+)+)-win-x64\\.exe"
     },
