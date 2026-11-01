@@ -1,0 +1,49 @@
+{
+    "version": "7.1.0",
+    "description": "Sophia Script for Windows (Windows 10, PowerShell 5.1). The most advanced PowerShell module on GitHub for fine-tuning Windows and automating routine tasks.",
+    "homepage": "https://github.com/farag2/Sophia-Script-for-Windows",
+    "license": "MIT",
+    "notes": [
+        "This package provides Sophia Script for Windows 10, PowerShell 5.1 only.",
+        "Other editions: sophia-script, sophia-script-ps7, sophia-script-ltsc2024, sophia-script-ltsc2024-ps7, sophia-script-win10-ps7, sophia-script-ltsc2019, sophia-script-ltsc2021."
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/farag2/Sophia-Script-for-Windows/releases/download/8.1.0/Sophia.Script.for.Windows.10.v7.1.0.zip",
+            "hash": "ecc11da7632033a8481bf11079b51bbc4f04e028b8ddb617f319d0e7634a2b0b",
+            "extract_dir": "Sophia_Script_for_Windows_10_v7.1.0"
+        }
+    },
+    "pre_install": [
+        "$Build = [int](Get-ItemPropertyValue -Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion' -Name CurrentBuild)",
+        "$ProductName = Get-ItemPropertyValue -Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion' -Name ProductName",
+        "if (-not ($Build -eq 19045)) {",
+        "    $AppDir = Split-Path -Path $dir -Parent",
+        "    Remove-Item -LiteralPath $dir -Recurse -Force",
+        "    if (-not (Get-ChildItem -LiteralPath $AppDir -Force)) { Remove-Item -LiteralPath $AppDir -Force }",
+        "    abort \"This package is for Windows 10, PowerShell 5.1. Detected: $ProductName (build $Build). Run 'scoop search sophia-script' to pick the right edition.\"",
+        "}"
+    ],
+    "bin": [
+        [
+            "Sophia.ps1",
+            "Sophia"
+        ],
+        [
+            "Sophia.ps1",
+            "SophiaScript"
+        ]
+    ],
+    "checkver": {
+        "url": "https://raw.githubusercontent.com/farag2/Sophia-Script-for-Windows/main/sophia_script_versions.json",
+        "regex": "(?s)^(?=.*?\"Sophia_Script_Windows_11_PowerShell_5_1\"\\s*:\\s*\"(?<tag>[\\d.]+)\").*?\"Sophia_Script_Windows_10_PowerShell_5_1\"\\s*:\\s*\"(?<version>[\\d.]+)\""
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/farag2/Sophia-Script-for-Windows/releases/download/$matchTag/Sophia.Script.for.Windows.10.v$version.zip",
+                "extract_dir": "Sophia_Script_for_Windows_10_v$version"
+            }
+        }
+    }
+}

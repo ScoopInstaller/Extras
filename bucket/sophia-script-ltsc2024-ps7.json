@@ -1,0 +1,50 @@
+{
+    "version": "8.1.0",
+    "description": "Sophia Script for Windows (Windows 11 Enterprise LTSC 2024, PowerShell 7). The most advanced PowerShell module on GitHub for fine-tuning Windows and automating routine tasks.",
+    "homepage": "https://github.com/farag2/Sophia-Script-for-Windows",
+    "license": "MIT",
+    "notes": [
+        "This package provides Sophia Script for Windows 11 Enterprise LTSC 2024, PowerShell 7 only.",
+        "Other editions: sophia-script, sophia-script-ps7, sophia-script-ltsc2024, sophia-script-win10, sophia-script-win10-ps7, sophia-script-ltsc2019, sophia-script-ltsc2021."
+    ],
+    "suggest": {
+        "PowerShell 7": "main/pwsh"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/farag2/Sophia-Script-for-Windows/releases/download/8.1.0/Sophia.Script.for.Windows.11.LTSC.2024.PowerShell.7.v8.1.0.zip",
+            "hash": "38a158454cdaae3aa127d5ffcaa9275e7f45dc0e4a668d9984ff8a3372892847",
+            "extract_dir": "Sophia_Script_for_Windows_11_LTSC_2024_PowerShell_7_v8.1.0"
+        }
+    },
+    "pre_install": [
+        "$Build = [int](Get-ItemPropertyValue -Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion' -Name CurrentBuild)",
+        "$ProductName = Get-ItemPropertyValue -Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion' -Name ProductName",
+        "if (-not (($Build -gt 19045) -and ($ProductName -match 'LTSC 2024'))) {",
+        "    $AppDir = Split-Path -Path $dir -Parent",
+        "    Remove-Item -LiteralPath $dir -Recurse -Force",
+        "    if (-not (Get-ChildItem -LiteralPath $AppDir -Force)) { Remove-Item -LiteralPath $AppDir -Force }",
+        "    abort \"This package is for Windows 11 Enterprise LTSC 2024, PowerShell 7. Detected: $ProductName (build $Build). Run 'scoop search sophia-script' to pick the right edition.\"",
+        "}",
+        "if (-not (Get-Command -Name pwsh -ErrorAction SilentlyContinue)) { warn 'This edition runs on PowerShell 7 only. Install it: scoop install main/pwsh' }"
+    ],
+    "bin": [
+        [
+            "Sophia.ps1",
+            "Sophia"
+        ],
+        [
+            "Sophia.ps1",
+            "SophiaScript"
+        ]
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/farag2/Sophia-Script-for-Windows/releases/download/$version/Sophia.Script.for.Windows.11.LTSC.2024.PowerShell.7.v$version.zip",
+                "extract_dir": "Sophia_Script_for_Windows_11_LTSC_2024_PowerShell_7_v$version"
+            }
+        }
+    }
+}
