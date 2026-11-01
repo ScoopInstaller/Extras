@@ -1,0 +1,54 @@
+{
+    "version": "0.7.2",
+    "description": "Project management for human + agent teams",
+    "homepage": "https://multica.ai",
+    "license": {
+        "identifier": "Apache-2.0",
+        "url": "https://github.com/multica-ai/multica/blob/main/LICENSE"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/multica-ai/multica/releases/download/v0.7.2/multica-desktop-0.7.2-windows-x64.exe#/dl.7z",
+            "hash": "sha512:837c55186e425519adb1548d3ba83f3a9a678b1fc557b9d7746b3e16393ff6d478d97916346bfc4b74ec77b1dae46f68bc6a328267783a0b4f9ae2901618bc4d",
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$*\", \"$dir\\*.nsi\" -Recurse"
+            ]
+        },
+        "arm64": {
+            "url": "https://github.com/multica-ai/multica/releases/download/v0.7.2/multica-desktop-0.7.2-windows-arm64.exe#/dl.7z",
+            "hash": "sha512:58254ec4a84d4b52a67cb3e3a01e21013118219028bbadf3853264ba91c8f3b9b76aa804fb3ec21efb55bdef459921473231a408e86fa1b92f418429cb42b0b2",
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-arm64.7z\" \"$dir\"",
+                "Remove-Item \"$dir\\`$*\", \"$dir\\*.nsi\" -Recurse"
+            ]
+        }
+    },
+    "shortcuts": [
+        [
+            "Multica.exe",
+            "Multica"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/multica-ai/multica"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/multica-ai/multica/releases/download/v$version/multica-desktop-$version-windows-x64.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest.yml",
+                    "regex": "sha512:\\s*$base64"
+                }
+            },
+            "arm64": {
+                "url": "https://github.com/multica-ai/multica/releases/download/v$version/multica-desktop-$version-windows-arm64.exe#/dl.7z",
+                "hash": {
+                    "url": "$baseurl/latest-arm64.yml",
+                    "regex": "sha512:\\s*$base64"
+                }
+            }
+        }
+    }
+}
