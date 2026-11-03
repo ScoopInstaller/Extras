@@ -31,8 +31,10 @@
         ]
     },
     "pre_uninstall": [
-        "if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
-        "Start-Process \"$dir\\resources\\clash-verge-service-uninstall.exe\" -Wait -Verb 'RunAs' -WindowStyle 'Hidden'; Start-Sleep -Seconds 3"
+        "if (Get-Service -Name 'clash_verge_service' -ErrorAction 'SilentlyContinue') {",
+        "    if (!(is_admin)) { error \"$app requires admin rights to $cmd\"; break }",
+        "    Start-Process \"$dir\\resources\\clash-verge-service-uninstall.exe\" -Wait -Verb 'RunAs' -WindowStyle 'Hidden'; Start-Sleep -Seconds 3",
+        "}"
     ],
     "uninstaller": {
         "script": "Remove-Item \"$env:APPDATA\\io.github.clash-verge-rev.clash-verge-rev\" -Recurse -Force -ErrorAction 'SilentlyContinue'"
