@@ -20,7 +20,7 @@
             "if ((Test-Path $src) -and (-not (Test-Path $msi))) { Rename-Item $src $msi }",
             "$log = \"$dir\\install.log\"",
             "$proc = Start-Process msiexec.exe -Wait -PassThru -Verb RunAs -ArgumentList @('/i', \"`\"$msi`\"\", '/qn', '/norestart', '/l*v', \"`\"$log`\"\")",
-            "if ($proc.ExitCode -notin 0, 3010, 1641) { throw \"msiexec /i failed with exit code $($proc.ExitCode); see $log\" }"
+            "if ($proc.ExitCode -eq 3010) { warn 'Install needs a restart to complete.' } elseif ($proc.ExitCode -notin 0, 1641) { throw \"msiexec /i failed with exit code $($proc.ExitCode); see $log\" }"
         ]
     },
     "uninstaller": {
@@ -28,7 +28,7 @@
             "$msi = \"$dir\\Aikonic_${version}_x64_en-US.msi\"",
             "if (Test-Path $msi) {",
             "    $proc = Start-Process msiexec.exe -Wait -PassThru -Verb RunAs -ArgumentList @('/x', \"`\"$msi`\"\", '/qn', '/norestart')",
-            "    if ($proc.ExitCode -notin 0, 3010, 1641) { throw \"msiexec /x failed with exit code $($proc.ExitCode)\" }",
+            "    if ($proc.ExitCode -eq 3010) { warn 'Removal needs a restart to complete.' } elseif ($proc.ExitCode -notin 0, 1641) { throw \"msiexec /x failed with exit code $($proc.ExitCode)\" }",
             "}"
         ]
     },
