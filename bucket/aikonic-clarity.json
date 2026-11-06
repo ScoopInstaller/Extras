@@ -15,6 +15,10 @@
     },
     "installer": {
         "script": [
+            "$wi = New-Object -ComObject WindowsInstaller.Installer",
+            "$present = @(foreach ($pc in $wi.RelatedProducts('{60D68585-5CD9-5C88-BADE-6A812D7E762C}')) { [version]$wi.ProductInfo($pc, 'VersionString') })",
+            "$newest = $present | Sort-Object -Descending | Select-Object -First 1",
+            "if ($newest -and ($newest -ge [version]$version)) { throw \"Aikonic $newest is already installed, so Scoop has not installed $version over it and nothing was changed. Aikonic updates itself from the app.\" }",
             "$src = \"$dir\\installer.bin\"",
             "$msi = \"$dir\\Aikonic_${version}_x64_en-US.msi\"",
             "if ((Test-Path $src) -and (-not (Test-Path $msi))) { Rename-Item $src $msi }",
@@ -26,9 +30,9 @@
     "uninstaller": {
         "script": [
             "$msi = \"$dir\\Aikonic_${version}_x64_en-US.msi\"",
-            "if (Test-Path $msi) {",
+            "if (($cmd -eq 'uninstall') -and (Test-Path $msi)) {",
             "    $proc = Start-Process msiexec.exe -Wait -PassThru -Verb RunAs -ArgumentList @('/x', \"`\"$msi`\"\", '/qn', '/norestart')",
-            "    if ($proc.ExitCode -eq 3010) { warn 'Removal needs a restart to complete.' } elseif ($proc.ExitCode -notin 0, 1641) { throw \"msiexec /x failed with exit code $($proc.ExitCode)\" }",
+            "    if ($proc.ExitCode -eq 1605) { warn \"Aikonic $version is no longer installed, so Scoop removed nothing. A newer Aikonic may still be installed; remove it from Windows Settings if you want it gone.\" } elseif ($proc.ExitCode -eq 3010) { warn 'Removal needs a restart to complete.' } elseif ($proc.ExitCode -notin 0, 1641) { throw \"msiexec /x failed with exit code $($proc.ExitCode)\" }",
             "}"
         ]
     },
