@@ -1,5 +1,5 @@
 {
-    "version": "261021",
+    "version": "261021-1.7.23159.0",
     "description": "Highly customizable media player",
     "homepage": "https://potplayer.daum.net",
     "license": {
@@ -96,18 +96,31 @@
     ],
     "checkver": {
         "url": "https://t1.daumcdn.net/potplayer/PotPlayer/v4/Update2/UpdateEng.html",
-        "regex": "\\[(\\d+)\\]"
+        "script": [
+            "$date = if ($page -match '\\[(\\d+)\\]') { $Matches[1] } else { '' }",
+            "if ($date.Length -eq 0) { error 'Failed to extract date from page'; return '' }",
+            "$tempFile = New-TemporaryFile",
+            "$wc = [System.Net.HttpWebRequest]::Create(\"https://t1.daumcdn.net/potplayer/PotPlayer/Version/$date/PotPlayerSetup64.exe\")",
+            "$wc.AddRange(0, 1000000)",
+            "$out = $tempFile.OpenWrite()",
+            "$wc.GetResponse().GetResponseStream().CopyTo($out)",
+            "$out.Close()",
+            "$versionInfo = (Get-Item $tempFile.FullName).VersionInfo",
+            "Remove-Item $tempFile.FullName -Force -ErrorAction Ignore",
+            "return \"$date-$($versionInfo.ProductVersion)\""
+        ],
+        "regex": "(\\d+-\\d+(?:\\.\\d+)+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://t1.daumcdn.net/potplayer/PotPlayer/Version/$version/PotPlayerSetup64.exe#/dl.7z"
+                "url": "https://t1.daumcdn.net/potplayer/PotPlayer/Version/$majorVersion/PotPlayerSetup64.exe#/dl.7z"
             },
             "32bit": {
-                "url": "https://t1.daumcdn.net/potplayer/PotPlayer/Version/$version/PotPlayerSetup.exe#/dl.7z"
+                "url": "https://t1.daumcdn.net/potplayer/PotPlayer/Version/$majorVersion/PotPlayerSetup.exe#/dl.7z"
             },
             "arm64": {
-                "url": "https://t1.daumcdn.net/potplayer/PotPlayer/Version/$version/PotPlayerSetupARM64.exe#/dl.7z"
+                "url": "https://t1.daumcdn.net/potplayer/PotPlayer/Version/$majorVersion/PotPlayerSetupARM64.exe#/dl.7z"
             }
         }
     }
