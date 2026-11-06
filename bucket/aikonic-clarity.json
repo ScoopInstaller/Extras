@@ -15,16 +15,19 @@
     },
     "installer": {
         "script": [
-            "$wi = New-Object -ComObject WindowsInstaller.Installer",
-            "$present = @(foreach ($pc in $wi.RelatedProducts('{60D68585-5CD9-5C88-BADE-6A812D7E762C}')) { [version]$wi.ProductInfo($pc, 'VersionString') })",
-            "$newest = $present | Sort-Object -Descending | Select-Object -First 1",
-            "if ($newest -and ($newest -ge [version]$version)) { throw \"Aikonic $newest is already installed, so Scoop has not installed $version over it and nothing was changed. Aikonic updates itself from the app.\" }",
             "$src = \"$dir\\installer.bin\"",
             "$msi = \"$dir\\Aikonic_${version}_x64_en-US.msi\"",
             "if ((Test-Path $src) -and (-not (Test-Path $msi))) { Rename-Item $src $msi }",
-            "$log = \"$dir\\install.log\"",
-            "$proc = Start-Process msiexec.exe -Wait -PassThru -Verb RunAs -ArgumentList @('/i', \"`\"$msi`\"\", '/qn', '/norestart', '/l*v', \"`\"$log`\"\")",
-            "if ($proc.ExitCode -eq 3010) { warn 'Install needs a restart to complete.' } elseif ($proc.ExitCode -notin 0, 1641) { throw \"msiexec /i failed with exit code $($proc.ExitCode); see $log\" }"
+            "$wi = New-Object -ComObject WindowsInstaller.Installer",
+            "$present = @(foreach ($pc in $wi.RelatedProducts('{60D68585-5CD9-5C88-BADE-6A812D7E762C}')) { [version]$wi.ProductInfo($pc, 'VersionString') })",
+            "$newest = $present | Sort-Object -Descending | Select-Object -First 1",
+            "if ($newest -and ($newest -ge [version]$version)) {",
+            "    warn \"Aikonic $newest is already installed, so Scoop did not reinstall $version. Aikonic updates itself from the app.\"",
+            "} else {",
+            "    $log = \"$dir\\install.log\"",
+            "    $proc = Start-Process msiexec.exe -Wait -PassThru -Verb RunAs -ArgumentList @('/i', \"`\"$msi`\"\", '/qn', '/norestart', '/l*v', \"`\"$log`\"\")",
+            "    if ($proc.ExitCode -eq 3010) { warn 'Install needs a restart to complete.' } elseif ($proc.ExitCode -notin 0, 1641) { throw \"msiexec /i failed with exit code $($proc.ExitCode); see $log\" }",
+            "}"
         ]
     },
     "uninstaller": {
