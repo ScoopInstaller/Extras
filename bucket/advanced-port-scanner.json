@@ -1,0 +1,38 @@
+{
+    "version": "2.5.3869",
+    "description": "Network scanner allowing you to quickly find open ports on network computers.",
+    "homepage": "https://www.advanced-port-scanner.com/",
+    "license": "Freeware",
+    "url": "https://download.advanced-port-scanner.com/download/files/Advanced_Port_Scanner_2.5.3869.exe#dl.7z",
+    "hash": "d0c1662ce239e4d288048c0e3324ec52962f6ddda77da0cb7af9c1d9c2f1e2eb",
+    "post_install": [
+        "$path = Join-Path $dir 'platforms'",
+        "New-Item -Path $path -ItemType Directory | Out-Null",
+        "Move-Item -LiteralPath (Join-Path $dir 'qwindows.dll') $path",
+        "$path = Join-Path $dir 'printsupport'",
+        "New-Item -Path $path -ItemType Directory | Out-Null",
+        "Move-Item -LiteralPath (Join-Path $dir 'windowsprintersupport.dll') $path"
+    ],
+    "persist": [
+        "advanced_port_scanner_Favorites.bin",
+        "advanced_port_scanner_Comments.bin",
+        "advanced_port_scanner_Aliases.bin",
+        "advanced_port_scanner_MAC.bin"
+    ],
+    "##": "New-Item will silently fail if persist file already exists in install folder.",
+    "pre_install": "$manifest.persist | ForEach-Object { New-Item -Path (Join-Path -Path $dir -ChildPath $_) -ItemType File -ErrorAction SilentlyContinue | Out-Null }",
+    "shortcuts": [
+        [
+            "advanced_port_scanner.exe",
+            "Advanced Port Scanner"
+        ]
+    ],
+    "bin": [
+        "advanced_port_scanner_console.exe",
+        "advanced_port_scanner.exe"
+    ],
+    "checkver": "Advanced_Port_Scanner_(\\d+\\.\\d+\\.\\d+)\\.exe",
+    "autoupdate": {
+        "url": "https://download.advanced-port-scanner.com/download/files/Advanced_Port_Scanner_$version.exe"
+    }
+}
