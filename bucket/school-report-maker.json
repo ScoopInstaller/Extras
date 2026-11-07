@@ -1,4 +1,5 @@
 {
+    "##": "The MSI is renamed to setup.msi_ so Scoop does not auto-extract it. It must stay in $dir so the uninstaller can find it.",
     "version": "2.3.28",
     "description": "Offline school report card system for Ugandan secondary schools. Builds report cards from teacher-entered marks with A-E grading, aggregates, division and automatic remarks.",
     "homepage": "https://derycode.online/projects/school-report-maker.html",
@@ -9,18 +10,23 @@
     "notes": "Runs fully offline. The whole school is stored in one local file with rotating backups.",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/asiimwe3/school-report-maker/releases/download/v2.4.31/SchoolReportMaker-2.3.28.msi",
+            "url": "https://github.com/asiimwe3/school-report-maker/releases/download/v2.4.31/SchoolReportMaker-2.3.28.msi#/setup.msi_",
             "hash": "84a1e3957f13bc9a11641b14aa086e0a3981b4ad14469f44eee8660868b78319"
         }
     },
-    "installer": {
-        "script": [
-            "msiexec /i \"$dir\\SchoolReportMaker-2.3.28.msi\" /qn /norestart"
-        ]
-    },
-    "uninstaller": {
-        "script": [
-            "msiexec /x \"$dir\\SchoolReportMaker-2.3.28.msi\" /qn /norestart"
-        ]
-    }
+    "pre_install": [
+        "if (!(is_admin)) { error \"$app requires administrator rights to install\"; break }",
+        "$msi = \"$dir\\setup.msi_\"",
+        "if (!(Test-Path $msi)) { error 'installer not found at $msi'; break }",
+        "$proc = Start-Process msiexec -ArgumentList @('/i', \"`\"$msi`\"\", '/qn', '/norestart') -Wait -PassThru -Verb RunAs",
+        "if ($proc.ExitCode -ne 0) { error \"msiexec install failed with exit code $($proc.ExitCode)\"; break }"
+    ],
+    "pre_uninstall": [
+        "if (!(is_admin)) { error \"$app requires administrator rights to uninstall\"; break }",
+        "$msi = \"$dir\\setup.msi_\"",
+        "if (!(Test-Path $msi)) { warn 'installer missing; skipping msiexec uninstall'; break }",
+        "$proc = Start-Process msiexec -ArgumentList @('/x', \"`\"$msi`\"\", '/qn', '/norestart') -Wait -PassThru -Verb RunAs",
+        "# 1605 = product not installed, 3010 = reboot required: both acceptable at uninstall",
+        "if ($proc.ExitCode -notin @(0, 1605, 3010)) { error \"msiexec uninstall failed with exit code $($proc.ExitCode)\"; break }"
+    ]
 }
