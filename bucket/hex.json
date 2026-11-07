@@ -1,0 +1,51 @@
+{
+    "version": "3.3.0",
+    "description": "Press-and-hold a hotkey to transcribe your voice and paste the text wherever you're typing.",
+    "homepage": "https://anoma.ly/hex",
+    "license": "MIT",
+    "notes": [
+        "Start Hex from the Start Menu shortcut, or run 'hex start'.",
+        "Updates are handled by Scoop: run 'scoop update hex'.",
+        "Speech models and settings live in your user profile, not in the scoop folder, so they survive updates."
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/anomalyco/hex/releases/download/v3.3.0/hex-3.3.0-windows-x64.exe#/hex.exe",
+            "hash": "8eb6dfb49d59d30d7834fdbe52e4ac598a650989c2611590585fb4210d4fd1b2"
+        },
+        "arm64": {
+            "url": "https://github.com/anomalyco/hex/releases/download/v3.3.0/hex-3.3.0-windows-arm64.exe#/hex.exe",
+            "hash": "33bf443b322552379eee83e397a383d83ef249c8270cd21658a28ee8a2759fb8"
+        }
+    },
+    "pre_uninstall": "Get-Process -Name hex -ErrorAction SilentlyContinue | Where-Object { $_.Path -like \"$dir\\*\" } | Stop-Process -Force",
+    "bin": "hex.exe",
+    "shortcuts": [
+        [
+            "hex.exe",
+            "Hex",
+            "app"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/anomalyco/hex"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/anomalyco/hex/releases/download/v$version/hex-$version-windows-x64.exe#/hex.exe",
+                "hash": {
+                    "url": "https://api.github.com/repos/anomalyco/hex/releases/tags/v$version",
+                    "jsonpath": "$.assets[?(@.name == 'hex-$version-windows-x64.exe')].digest"
+                }
+            },
+            "arm64": {
+                "url": "https://github.com/anomalyco/hex/releases/download/v$version/hex-$version-windows-arm64.exe#/hex.exe",
+                "hash": {
+                    "url": "https://api.github.com/repos/anomalyco/hex/releases/tags/v$version",
+                    "jsonpath": "$.assets[?(@.name == 'hex-$version-windows-arm64.exe')].digest"
+                }
+            }
+        }
+    }
+}
