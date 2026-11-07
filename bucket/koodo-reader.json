@@ -24,12 +24,37 @@
             "Remove-Item \"$dir\\`$*\" -Force -Recurse"
         ]
     },
+    "notes": [
+        "Koodo Reader does not auto-migrate into the Scoop portable User Data folder.",
+        "Default non-portable data may live under %APPDATA%\\koodo-reader or %APPDATA%\\Koodo Reader.",
+        "On first install with empty persist, Scoop best-effort copies from those paths into $persist_dir\\User Data."
+    ],
+    "pre_install": [
+        "if (-not (Test-Path \"$persist_dir\\User Data\\*\")) {",
+        "    $sources = @(",
+        "        \"$env:APPDATA\\koodo-reader\",",
+        "        \"$env:APPDATA\\Koodo Reader\",",
+        "        \"$env:LOCALAPPDATA\\koodo-reader\",",
+        "        \"$env:LOCALAPPDATA\\Koodo Reader\"",
+        "    )",
+        "    foreach ($src in $sources) {",
+        "        if (Test-Path \"$src\\*\") {",
+        "            info \"[Portable Mode] Copying user data from $src ...\"",
+        "            New-Item -ItemType Directory -Path \"$persist_dir\\User Data\" -Force | Out-Null",
+        "            Copy-Item \"$src\\*\" \"$persist_dir\\User Data\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "            break",
+        "        }",
+        "    }",
+        "}"
+    ],
     "shortcuts": [
         [
             "Koodo Reader.exe",
-            "Koodo Reader"
+            "Koodo Reader",
+            "--user-data-dir=\"$dir\\User Data\""
         ]
     ],
+    "persist": "User Data",
     "checkver": {
         "url": "https://koodoreader.com/en/download",
         "regex": "Stable Version.*?(?<version>[\\d.]+)<"
