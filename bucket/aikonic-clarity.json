@@ -23,6 +23,7 @@
             "$newest = $present | Sort-Object -Descending | Select-Object -First 1",
             "if ($newest -and ($newest -ge [version]$version)) {",
             "    warn \"Aikonic $newest is already installed, so Scoop did not reinstall $version. Aikonic updates itself from the app.\"",
+            "    Set-Content \"$dir\\not-installed-by-scoop\" \"Aikonic $newest was already installed; Scoop ran no msiexec.\"",
             "} else {",
             "    $log = \"$dir\\install.log\"",
             "    $proc = Start-Process msiexec.exe -Wait -PassThru -Verb RunAs -ArgumentList @('/i', \"`\"$msi`\"\", '/qn', '/norestart', '/l*v', \"`\"$log`\"\")",
@@ -33,7 +34,9 @@
     "uninstaller": {
         "script": [
             "$msi = \"$dir\\Aikonic_${version}_x64_en-US.msi\"",
-            "if (($cmd -eq 'uninstall') -and (Test-Path $msi)) {",
+            "if (($cmd -eq 'uninstall') -and (Test-Path \"$dir\\not-installed-by-scoop\")) {",
+            "    warn 'Scoop did not install this Aikonic, so it has left it in place. Remove it from Windows Settings if you want it gone.'",
+            "} elseif (($cmd -eq 'uninstall') -and (Test-Path $msi)) {",
             "    $proc = Start-Process msiexec.exe -Wait -PassThru -Verb RunAs -ArgumentList @('/x', \"`\"$msi`\"\", '/qn', '/norestart')",
             "    if ($proc.ExitCode -eq 1605) { warn \"Aikonic $version is no longer installed, so Scoop removed nothing. A newer Aikonic may still be installed; remove it from Windows Settings if you want it gone.\" } elseif ($proc.ExitCode -eq 3010) { warn 'Removal needs a restart to complete.' } elseif ($proc.ExitCode -notin 0, 1641) { throw \"msiexec /x failed with exit code $($proc.ExitCode)\" }",
             "}"
