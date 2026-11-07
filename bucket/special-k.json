@@ -8,33 +8,26 @@
     "innosetup": true,
     "architecture": {
         "64bit": {
-            "pre_install": "Rename-Item \"$dir\\SKIF,1.exe\" SKIF.exe; Remove-Item \"$dir\\SKIF,2.exe\"",
-            "bin": [
-                "SKIF.exe",
-                "SKIV.exe"
-            ],
-            "shortcuts": [
-                [
-                    "SKIF.exe",
-                    "Special K\\Special K Injection Frontend (SKIF)"
-                ],
-                [
-                    "SKIV.exe",
-                    "Special K\\Special K Image Viewer (SKIV)"
-                ]
-            ]
+            "pre_install": "'SKIF', 'SKIV' | ForEach-Object { Rename-Item \"$dir\\$_,1.exe\" \"$_.exe\"; Remove-Item \"$dir\\$_,2.exe\" }"
         },
         "32bit": {
-            "pre_install": "Rename-Item \"$dir\\SKIF,2.exe\" SKIF.exe; Remove-Item \"$dir\\SKIF,1.exe\"",
-            "bin": "SKIF.exe",
-            "shortcuts": [
-                [
-                    "SKIF.exe",
-                    "Special K\\Special K Injection Frontend (SKIF)"
-                ]
-            ]
+            "pre_install": "'SKIF', 'SKIV' | ForEach-Object { Rename-Item \"$dir\\$_,2.exe\" \"$_.exe\"; Remove-Item \"$dir\\$_,1.exe\" }"
         }
     },
+    "bin": [
+        "SKIF.exe",
+        "SKIV.exe"
+    ],
+    "shortcuts": [
+        [
+            "SKIF.exe",
+            "Special K\\Special K Injection Frontend (SKIF)"
+        ],
+        [
+            "SKIV.exe",
+            "Special K\\Special K Image Viewer (SKIV)"
+        ]
+    ],
     "post_install": [
         "'PlugIns' | ForEach-Object {",
         "    if (Test-Path -Path \"$dir\\$_.original\" -PathType Container) {",
