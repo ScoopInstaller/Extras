@@ -8,30 +8,15 @@
     "innosetup": true,
     "architecture": {
         "64bit": {
-            "pre_install": "Rename-Item \"$dir\\SKIF,1.exe\" SKIF.exe; Remove-Item \"$dir\\SKIF,2.exe\"",
-            "bin": [
-                "SKIF.exe",
-                "SKIV.exe"
-            ],
-            "shortcuts": [
-                [
-                    "SKIF.exe",
-                    "Special K\\Special K Injection Frontend (SKIF)"
-                ],
-                [
-                    "SKIV.exe",
-                    "Special K\\Special K Image Viewer (SKIV)"
-                ]
+            "pre_install": [
+                "Get-ChildItem \"$dir\\*,1.*\" -Recurse | Rename-Item -NewName { $_.Name -replace ',1\\.', '.' }",
+                "Get-ChildItem \"$dir\\*,2.*\" -Recurse | Remove-Item"
             ]
         },
         "32bit": {
-            "pre_install": "Rename-Item \"$dir\\SKIF,2.exe\" SKIF.exe; Remove-Item \"$dir\\SKIF,1.exe\"",
-            "bin": "SKIF.exe",
-            "shortcuts": [
-                [
-                    "SKIF.exe",
-                    "Special K\\Special K Injection Frontend (SKIF)"
-                ]
+            "pre_install": [
+                "Get-ChildItem \"$dir\\*,2.*\" -Recurse | Rename-Item -NewName { $_.Name -replace ',2\\.', '.' }",
+                "Get-ChildItem \"$dir\\*,1.*\" -Recurse | Remove-Item"
             ]
         }
     },
@@ -42,6 +27,20 @@
         "        Remove-Item -Path \"$dir\\$_.original\" -Recurse -Force -ErrorAction SilentlyContinue",
         "    }",
         "}"
+    ],
+    "bin": [
+        "SKIF.exe",
+        "SKIV.exe"
+    ],
+    "shortcuts": [
+        [
+            "SKIF.exe",
+            "Special K\\Special K Injection Frontend (SKIF)"
+        ],
+        [
+            "SKIV.exe",
+            "Special K\\Special K Image Viewer (SKIV)"
+        ]
     ],
     "persist": [
         "Global",
