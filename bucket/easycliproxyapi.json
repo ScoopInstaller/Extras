@@ -22,6 +22,9 @@
         "if (!(Test-Path \"$persist_dir\\config.toml\")) {",
         "    New-Item -ItemType File -Path \"$dir\\config.toml\" -Force | Out-Null",
         "}",
+        "if (!(Test-Path \"$persist_dir\\theme-selection.json\")) {",
+        "    '{\"version\":1,\"selectedId\":\"light\"}' | Set-Content \"$dir\\theme-selection.json\" -Encoding Ascii",
+        "}",
         "if (!(Test-Path \"$persist_dir\\cpa-core\\config.yaml\")) {",
         "    Get-Item \"$dir\\cpa-core\\CLIProxyAPI_*.zip\" | Expand-7zipArchive -DestinationPath \"$dir\\cpa-core\" -Switches 'config.example.yaml'",
         "    $config = Get-Content \"$dir\\cpa-core\\config.example.yaml\" -Raw -Encoding UTF8",
@@ -35,6 +38,14 @@
         "    [System.IO.File]::WriteAllText(\"$dir\\cpa-core\\config.yaml\", $config, (New-Object System.Text.UTF8Encoding $false))",
         "}"
     ],
+    "pre_uninstall": [
+        "# Theme saves replace the file, which can break Scoop's hardlink.",
+        "if (Test-Path -LiteralPath \"$dir\\theme-selection.json\" -PathType Leaf) {",
+        "    New-Item -ItemType Directory -Path $persist_dir -Force | Out-Null",
+        "    $themeSelection = [System.IO.File]::ReadAllBytes(\"$dir\\theme-selection.json\")",
+        "    [System.IO.File]::WriteAllBytes(\"$persist_dir\\theme-selection.json\", $themeSelection)",
+        "}"
+    ],
     "shortcuts": [
         [
             "EasyCLIProxyAPI.exe",
@@ -43,6 +54,8 @@
     ],
     "persist": [
         "config.toml",
+        "theme-selection.json",
+        "themes",
         "oauth",
         "usage-records",
         "cpa-core\\config.yaml"
