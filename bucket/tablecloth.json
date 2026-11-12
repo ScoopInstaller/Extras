@@ -1,0 +1,53 @@
+{
+    "version": "1.20.5",
+    "description": "Isolates South Korean internet banking and e-government services using Windows Sandbox.",
+    "homepage": "https://github.com/yourtablecloth/TableCloth",
+    "license": {
+        "identifier": "Proprietary|AGPL-3.0",
+        "url": "https://github.com/yourtablecloth/TableCloth/blob/main/LICENSE-COMMERCIAL|https://github.com/yourtablecloth/TableCloth/blob/main/LICENSE-AGPL"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/yourtablecloth/TableCloth/releases/download/v1.20.5/TableCloth_1.20.5.0_Release_x64_Portable.zip",
+            "hash": "de129430931f535e4dc5ffc528610adbdd59e1dfeb5ed6f66d80bd198048d8c0"
+        },
+        "arm64": {
+            "url": "https://github.com/yourtablecloth/TableCloth/releases/download/v1.20.5/TableCloth_1.20.5.0_Release_arm64_Portable.zip",
+            "hash": "bcb3a4c4d81df9b35e9b98457c8d492864db4bed6e01153c70412ccc3b594d71"
+        }
+    },
+    "extract_dir": "current",
+    "post_install": [
+        "$appDataDirName = \"TableCloth.Data\"",
+        "$localAppDataPath = \"$env:LOCALAPPDATA\\$appDataDirName\"",
+        "$targetJsonPath = \"$localAppDataPath\\Preferences.json\"",
+        "$realSandboxDataPath = \"$persist_dir\\Data\"",
+        "if (!(Test-Path $realSandboxDataPath)) { New-Item -ItemType Directory -Path $realSandboxDataPath | Out-Null }",
+        "if (!(Test-Path $localAppDataPath)) { New-Item -ItemType Directory -Path $localAppDataPath | Out-Null }",
+        "if (!(Test-Path $targetJsonPath)) {",
+        "    $jsonContent = @{ 'DataDirectoryHostPath' = $realSandboxDataPath } | ConvertTo-Json",
+        "    Set-Content -Path $targetJsonPath -Value $jsonContent -Encoding UTF8",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "TableCloth.exe",
+            "TableCloth"
+        ]
+    ],
+    "persist": "Data",
+    "uninstaller": {
+        "script": "Remove-Item \"$env:LOCALAPPDATA\\TableCloth.Data\" -Force -Recurse -ErrorAction SilentlyContinue"
+    },
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/yourtablecloth/TableCloth/releases/download/v$version/TableCloth_$version.0_Release_x64_Portable.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/yourtablecloth/TableCloth/releases/download/v$version/TableCloth_$version.0_Release_arm64_Portable.zip"
+            }
+        }
+    }
+}
