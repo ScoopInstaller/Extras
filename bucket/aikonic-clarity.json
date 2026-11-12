@@ -1,0 +1,60 @@
+{
+    "version": "1.1.34",
+    "description": "Honest hardware monitoring for Windows. No account, no telemetry.",
+    "homepage": "https://aikonic.app/clarity/",
+    "license": "Freeware",
+    "notes": [
+        "Aikonic installs a Windows service and a Microsoft-attested kernel driver, so msiexec needs admin rights.",
+        "Windows will show one UAC prompt during install; accept it."
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://aikonic.app/download/Aikonic_1.1.34_x64_en-US.msi#/installer.bin",
+            "hash": "4a9da921d82b1944b6d878f622e3fb5e8526226ec6b73842bbef6639e9e00752"
+        }
+    },
+    "installer": {
+        "script": [
+            "$src = \"$dir\\installer.bin\"",
+            "$msi = \"$dir\\Aikonic_${version}_x64_en-US.msi\"",
+            "if ((Test-Path $src) -and (-not (Test-Path $msi))) { Rename-Item $src $msi }",
+            "$wi = New-Object -ComObject WindowsInstaller.Installer",
+            "$present = @(foreach ($pc in $wi.RelatedProducts('{60D68585-5CD9-5C88-BADE-6A812D7E762C}')) { [version]$wi.ProductInfo($pc, 'VersionString') })",
+            "$newest = $present | Sort-Object -Descending | Select-Object -First 1",
+            "if ($newest -and ($newest -ge [version]$version)) {",
+            "    warn \"Aikonic $newest is already installed, so Scoop did not reinstall $version. Aikonic updates itself from the app.\"",
+            "    Set-Content \"$dir\\not-installed-by-scoop\" \"Aikonic $newest was already installed; Scoop ran no msiexec.\"",
+            "} else {",
+            "    $log = \"$dir\\install.log\"",
+            "    $proc = Start-Process msiexec.exe -Wait -PassThru -Verb RunAs -ArgumentList @('/i', \"`\"$msi`\"\", '/qn', '/norestart', '/l*v', \"`\"$log`\"\")",
+            "    if ($proc.ExitCode -eq 3010) { warn 'Install needs a restart to complete.' } elseif ($proc.ExitCode -notin 0, 1641) { throw \"msiexec /i failed with exit code $($proc.ExitCode); see $log\" }",
+            "}"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "$msi = \"$dir\\Aikonic_${version}_x64_en-US.msi\"",
+            "if (($cmd -eq 'uninstall') -and (Test-Path \"$dir\\not-installed-by-scoop\")) {",
+            "    warn 'Scoop did not install this Aikonic, so it has left it in place. Remove it from Windows Settings if you want it gone.'",
+            "} elseif (($cmd -eq 'uninstall') -and (Test-Path $msi)) {",
+            "    $proc = Start-Process msiexec.exe -Wait -PassThru -Verb RunAs -ArgumentList @('/x', \"`\"$msi`\"\", '/qn', '/norestart')",
+            "    if ($proc.ExitCode -eq 1605) { warn \"Aikonic $version is no longer installed, so Scoop removed nothing. A newer Aikonic may still be installed; remove it from Windows Settings if you want it gone.\" } elseif ($proc.ExitCode -eq 3010) { warn 'Removal needs a restart to complete.' } elseif ($proc.ExitCode -notin 0, 1641) { throw \"msiexec /x failed with exit code $($proc.ExitCode)\" }",
+            "}"
+        ]
+    },
+    "checkver": {
+        "url": "https://aikonic.app/download/",
+        "regex": "Aikonic_([\\d.]+)_x64_en-US\\.msi"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://aikonic.app/download/Aikonic_$version_x64_en-US.msi#/installer.bin",
+                "hash": {
+                    "url": "https://aikonic.app/download/Aikonic_$version_x64_en-US.msi.sha256",
+                    "regex": "([a-f0-9]{64})"
+                }
+            }
+        }
+    }
+}
