@@ -1,0 +1,54 @@
+{
+    "version": "115.4.0",
+    "description": "Compiler optimized, private Firefox fork",
+    "homepage": "https://thorium.rocks/mercury",
+    "license": "MPL-2.0",
+    "notes": [
+        "To set profile 'Scoop' as *DEFAULT*, or profiles/settings was lost after update:",
+        "  - Run 'Firefox Profile Manager', choose 'Scoop' then click 'Start Firefox'.",
+        "  - Visit 'about:profiles' page in Firefox to check *DEFAULT* profile.",
+        "For details: https://support.mozilla.org/en-US/kb/profile-manager-create-remove-switch-firefox-profiles"
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Alex313031/Mercury/releases/download/v.115.4.0/mercury_115.4.0_win64.zip",
+            "hash": "sha512:c279c6f126e270e01a9ec2b3dd2409cd33ed5b491e534655141a5df2aeec750267e6c2bcba48a300cf0b95f58ebb9b11d6a4d03f7b9065a0f13396823e49a324"
+        }
+    },
+    "extract_dir": "bin",
+    "post_install": [
+        "mercury -CreateProfile \"Scoop $persist_dir\\profile\"",
+        "$Addition = \"$persist_dir\\addition\"",
+        "if (Test-Path $Addition) {",
+        "  info 'Copying additional items...'",
+        "  Copy-Item -Path $Addition\\* -Destination $dir -Force -Recurse -ErrorAction SilentlyContinue",
+        "}"
+    ],
+    "bin": "mercury.exe",
+    "shortcuts": [
+        [
+            "mercury.exe",
+            "Mercury"
+        ],
+        [
+            "Mercury.exe",
+            "Mercury Profile Manager",
+            "-P"
+        ]
+    ],
+    "persist": [
+        "distribution",
+        "profile"
+    ],
+    "checkver": {
+        "github":"https://github.com/Alex313031/Mercury",
+        "regex": "v\\.([0-9]+(\\.[0-9]+)+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Alex313031/Mercury/releases/download/v.$version/mercury_$version_win64.zip"
+            }
+        }
+    }
+}
