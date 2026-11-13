@@ -18,6 +18,26 @@
             "extract_dir": "EasyCLIProxyAPI-v0.3.98-Windows-aarch64"
         }
     },
+    "pre_install": [
+        "if (!(Test-Path \"$persist_dir\\config.toml\")) {",
+        "    New-Item -ItemType File -Path \"$dir\\config.toml\" -Force | Out-Null",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\theme-selection.json\")) {",
+        "    '{\"version\":1,\"selectedId\":\"light\"}' | Set-Content \"$dir\\theme-selection.json\" -Encoding Ascii",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\cpa-core\\config.yaml\")) {",
+        "    Get-Item \"$dir\\cpa-core\\CLIProxyAPI_*.zip\" | Expand-7zipArchive -DestinationPath \"$dir\\cpa-core\" -Switches 'config.example.yaml'",
+        "    $config = Get-Content \"$dir\\cpa-core\\config.example.yaml\" -Raw -Encoding UTF8",
+        "    # Add EasyCLIProxyAPI defaults",
+        "    $config = $config -replace '(?m)^  host:[^\\r\\n]*', '  host: 127.0.0.1'",
+        "    $config = $config -replace '(?m)^  api-keys:\\r?\\n(?:    - [^\\r\\n]*\\r?\\n)+', \"  api-keys:`n    - '123456'`n\"",
+        "    $config = $config -replace '(?m)^  auth-dir:[^\\r\\n]*', '  auth-dir: ../oauth'",
+        "    $config = $config -replace '(?m)^    usage-statistics-enabled:[^\\r\\n]*', '    usage-statistics-enabled: true'",
+        "    $config = $config -replace '(?m)^  session-affinity-ttl:[^\\r\\n]*', '  session-affinity-ttl: \"\"'",
+        "    $config = $config -replace '(?m)^requests:\\r?$', \"requests:`n  streaming: {bootstrap-retries: 0}\"",
+        "    [System.IO.File]::WriteAllText(\"$dir\\cpa-core\\config.yaml\", $config, (New-Object System.Text.UTF8Encoding $false))",
+        "}"
+    ],
     "pre_uninstall": [
         "# Theme saves replace the file, which can break Scoop's hardlink.",
         "if (Test-Path -LiteralPath \"$dir\\theme-selection.json\" -PathType Leaf) {",
