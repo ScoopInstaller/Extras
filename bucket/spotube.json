@@ -5,11 +5,16 @@
     "license": "BSD-4-Clause",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/KRTirtho/spotube/releases/download/v6.0.0/Spotube-windows-x86_64-setup.exe",
+            "url": "https://github.com/KRTirtho/spotube/releases/download/v6.0.0/Spotube-windows-x86_64-setup.exe#/dl.7z",
             "hash": "d7e073ead0707fcdfcc50074e88721b7df38dc10248eadafc346867e156c6e8d"
         }
     },
-    "innosetup": true,
+    "installer": {
+        "script": [
+            "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Select-Object -First 1 | Expand-7zipArchive -DestinationPath $dir",
+            "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Force -Recurse -ErrorAction Ignore"
+        ]
+    },
     "shortcuts": [
         [
             "spotube.exe",
@@ -22,12 +27,8 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/KRTirtho/spotube/releases/download/v$version/Spotube-windows-x86_64-setup.exe"
+                "url": "https://github.com/KRTirtho/spotube/releases/download/v$version/Spotube-windows-x86_64-setup.exe#/dl.7z"
             }
-        },
-        "hash": {
-            "url": "$baseurl/RELEASE.sha256sum",
-            "regex": "$sha256\\s+\\./$basename"
         }
     }
 }
