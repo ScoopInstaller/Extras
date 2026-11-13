@@ -1,5 +1,5 @@
 {
-    "version": "202611031638",
+    "version": "202611122045",
     "description": "A free, open source, and cross-platform media player",
     "homepage": "https://mpv.io",
     "license": "LGPL-2.1-or-later,GPL-2.0-or-later",
@@ -12,12 +12,12 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/zhongfly/mpv-winbuild/releases/download/2026-11-03-46787be250/mpv-x86_64-20261103-git-46787be250.7z",
-            "hash": "d0eba58795893dea5d98bda2a9b81a7e2ddf9b6fc98e37464f705624689ac0f3"
+            "url": "https://github.com/zhongfly/mpv-winbuild/releases/download/2026-11-12-fe753a7824/mpv-x86_64-20261112-git-fe753a7824.7z",
+            "hash": "7511f8514cee4562b79d17c60c1e9d7e861eb6d60cdf065ce84e735b54b7a7f5"
         },
         "arm64": {
-            "url": "https://github.com/zhongfly/mpv-winbuild/releases/download/2026-11-03-46787be250/mpv-aarch64-20261103-git-46787be250.7z",
-            "hash": "3d01db383d4d6964d3a4f4d3df24a96b80db2de77628b4a233ec12a8c9b034fb"
+            "url": "https://github.com/zhongfly/mpv-winbuild/releases/download/2026-11-12-fe753a7824/mpv-aarch64-20261112-git-fe753a7824.7z",
+            "hash": "d14a8e791e3c07064f57c9edd7b55e2996cf98cb2c0d2100bfad4d889b529971"
         }
     },
     "pre_install": "'updater.bat', 'installer' | ForEach-Object { Remove-Item \"$dir\\$_\" -Recurse }",
@@ -31,9 +31,13 @@
     "persist": "portable_config",
     "checkver": {
         "github": "https://api.github.com/repos/zhongfly/mpv-winbuild/releases/latest",
-        "jsonpath": "$..['tag_name', 'name']",
-        "regex": "(?<tag>(?<year>\\d{4})-(?<month>\\d{2})-(?<day>\\d{2})-(?<commit>[a-f0-9]{10})).*?(?<hour>\\d{2}):(?<minute>\\d{2})",
-        "replace": "${year}${month}${day}${hour}${minute}"
+        "script": [
+            "$tag = [regex]::Match($page, '\"tag_name\"\\s*:\\s*\"(?<tag>[^\"]+)\"').Groups['tag'].Value",
+            "$updated = [regex]::Match($page, '\"updated_at\"\\s*:\\s*\"(?<updated>[^\"]+)\"').Groups['updated'].Value",
+            "if (-not $tag -or -not $updated) { error 'Failed to parse release JSON'; return }",
+            "\"$tag $($updated -replace '[-:TZ]', '')\""
+        ],
+        "regex": "^(?<tag>(?<year>\\d{4})-(?<month>\\d{2})-(?<day>\\d{2})-(?<commit>[a-f0-9]{10})) (?<version>\\d{12})\\d+$"
     },
     "autoupdate": {
         "architecture": {
