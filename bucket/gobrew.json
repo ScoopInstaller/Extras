@@ -1,0 +1,69 @@
+{
+    "version": "1.10.17",
+    "description": "Go version manager. Install and switch between Go versions without root or a shell rehash.",
+    "homepage": "https://github.com/kevincobain2000/gobrew",
+    "license": "MIT",
+    "notes": [
+        "gobrew uses symlinks to switch between Go versions.",
+        "To create symlinks without elevated privileges, enable Developer Mode in the Settings app."
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/kevincobain2000/gobrew/releases/download/v1.10.17/gobrew-windows-amd64.exe",
+            "hash": "aabc9fbd9e62a2f63d6863b858527f79cb5573aab8f2ce3a4f13c74fc7cc2731",
+            "bin": [
+                [
+                    "gobrew-windows-amd64.exe",
+                    "gobrew"
+                ]
+            ]
+        },
+        "arm64": {
+            "url": "https://github.com/kevincobain2000/gobrew/releases/download/v1.10.17/gobrew-windows-arm64.exe",
+            "hash": "b4fdc72d797fe43c4d7fd82f37c182151b0ad8825b39d5b24f7f4024b614ede2",
+            "bin": [
+                [
+                    "gobrew-windows-arm64.exe",
+                    "gobrew"
+                ]
+            ]
+        }
+    },
+    "installer": {
+        "script": [
+            "$first_entry = $env:GOPATH -split ';' | ForEach-Object { $_.Trim() } | Where-Object { $_ } | Select-Object -First 1",
+            "$bin_path = if ($first_entry) { Join-Path $first_entry 'bin' } else { \"$env:USERPROFILE\\go\\bin\" }",
+            "Add-Path -Path $bin_path -Global:$global -Force"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "$first_entry = $env:GOPATH -split ';' | ForEach-Object { $_.Trim() } | Where-Object { $_ } | Select-Object -First 1",
+            "$bin_path = if ($first_entry) { Join-Path $first_entry 'bin' } else { \"$env:USERPROFILE\\go\\bin\" }",
+            "Remove-Path -Path $bin_path -Global:$global"
+        ]
+    },
+    "env_add_path": [
+        ".gobrew\\current\\bin",
+        ".gobrew\\bin"
+    ],
+    "env_set": {
+        "GOBREW_ROOT": "$dir",
+        "GOROOT": "$dir\\.gobrew\\current\\go"
+    },
+    "persist": ".gobrew",
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/kevincobain2000/gobrew/releases/download/v$version/gobrew-windows-amd64.exe"
+            },
+            "arm64": {
+                "url": "https://github.com/kevincobain2000/gobrew/releases/download/v$version/gobrew-windows-arm64.exe"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/gobrew_$version_checksums.txt"
+        }
+    }
+}
