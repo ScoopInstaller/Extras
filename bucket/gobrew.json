@@ -31,16 +31,16 @@
     },
     "installer": {
         "script": [
-            "$envgopath = \"$env:USERPROFILE\\go\"",
-            "if ($env:GOPATH) { $envgopath = $env:GOPATH }",
-            "Add-Path -Path \"$envgopath\\bin\" -Global:$global -Force"
+            "$first_entry = $env:GOPATH -split ';' | ForEach-Object { $_.Trim() } | Where-Object { $_ } | Select-Object -First 1",
+            "$bin_path = if ($first_entry) { Join-Path $first_entry 'bin' } else { \"$env:USERPROFILE\\go\\bin\" }",
+            "Add-Path -Path $bin_path -Global:$global -Force"
         ]
     },
     "uninstaller": {
         "script": [
-            "$envgopath = \"$env:USERPROFILE\\go\"",
-            "if ($env:GOPATH) { $envgopath = $env:GOPATH }",
-            "Remove-Path -Path \"$envgopath\\bin\" -Global:$global"
+            "$first_entry = $env:GOPATH -split ';' | ForEach-Object { $_.Trim() } | Where-Object { $_ } | Select-Object -First 1",
+            "$bin_path = if ($first_entry) { Join-Path $first_entry 'bin' } else { \"$env:USERPROFILE\\go\\bin\" }",
+            "Remove-Path -Path $bin_path -Global:$global"
         ]
     },
     "env_add_path": [
