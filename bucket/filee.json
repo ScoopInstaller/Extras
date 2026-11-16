@@ -13,6 +13,13 @@
             "hash": "d0ffbdf0e8c07838866dd5f13e8e4dfd9b94308c48edb6016f93a6c7744833fb"
         }
     },
+    "post_install": [
+        "if ((Test-Path \"$env:APPDATA\\Filee\\*\") -and (-not (Test-Path \"$persist_dir\\data\\*\"))) {",
+        "    Write-Host \"`r`nMove app data from non-portable version...\"",
+        "    Copy-Item -Path \"$env:APPDATA\\Filee\\*\" -Destination \"$persist_dir\\data\" -Force -Recurse -ErrorAction Stop | Out-Null",
+        "    Remove-Item $env:APPDATA\\Filee -Force -Recurse",
+        "}"
+    ],
     "bin": "cli\\filee.cmd",
     "shortcuts": [
         [
@@ -20,6 +27,7 @@
             "Filee"
         ]
     ],
+    "persist": "data",
     "pre_uninstall": [
         "if ($cmd -eq 'uninstall') {",
         "    Remove-Item -LiteralPath 'HKCU:\\Software\\Classes\\*\\shell\\Filee' -Recurse -Force -ErrorAction SilentlyContinue",
