@@ -1,5 +1,5 @@
 {
-    "version": "0.3.77",
+    "version": "0.3.107",
     "description": "Cross-platform GUI desktop management client for CLIProxyAPI",
     "homepage": "https://github.com/router-for-me/EasyCLIProxyAPI",
     "license": "MIT",
@@ -8,19 +8,22 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/router-for-me/EasyCLIProxyAPI/releases/download/v0.3.77/EasyCLIProxyAPI-v0.3.77-Windows-amd64.zip",
-            "hash": "f0b744cfacddf569dac3cc82dfd899f8cdf8367c9fe1dd181bf0d3ff20994af8",
-            "extract_dir": "EasyCLIProxyAPI-v0.3.77-Windows-amd64"
+            "url": "https://github.com/router-for-me/EasyCLIProxyAPI/releases/download/v0.3.107/EasyCLIProxyAPI-v0.3.107-Windows-amd64.zip",
+            "hash": "220e3ef38877d42805003eab819868a6db32a3f2a28f5427ab23e54403af8e1c",
+            "extract_dir": "EasyCLIProxyAPI-v0.3.107-Windows-amd64"
         },
         "arm64": {
-            "url": "https://github.com/router-for-me/EasyCLIProxyAPI/releases/download/v0.3.77/EasyCLIProxyAPI-v0.3.77-Windows-aarch64.zip",
-            "hash": "40f81b8dc3708c57875df0fab654eec5ebea415df6d4e58380e3f41d8a7d72f1",
-            "extract_dir": "EasyCLIProxyAPI-v0.3.77-Windows-aarch64"
+            "url": "https://github.com/router-for-me/EasyCLIProxyAPI/releases/download/v0.3.107/EasyCLIProxyAPI-v0.3.107-Windows-aarch64.zip",
+            "hash": "13df557c958a679d9fb324e6796e4508418526b6d8cb1fce0f11539964a1b422",
+            "extract_dir": "EasyCLIProxyAPI-v0.3.107-Windows-aarch64"
         }
     },
     "pre_install": [
         "if (!(Test-Path \"$persist_dir\\config.toml\")) {",
         "    New-Item -ItemType File -Path \"$dir\\config.toml\" -Force | Out-Null",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\theme-selection.json\")) {",
+        "    '{\"version\":1,\"selectedId\":\"light\"}' | Set-Content \"$dir\\theme-selection.json\" -Encoding Ascii",
         "}",
         "if (!(Test-Path \"$persist_dir\\cpa-core\\config.yaml\")) {",
         "    Get-Item \"$dir\\cpa-core\\CLIProxyAPI_*.zip\" | Expand-7zipArchive -DestinationPath \"$dir\\cpa-core\" -Switches 'config.example.yaml'",
@@ -35,6 +38,14 @@
         "    [System.IO.File]::WriteAllText(\"$dir\\cpa-core\\config.yaml\", $config, (New-Object System.Text.UTF8Encoding $false))",
         "}"
     ],
+    "pre_uninstall": [
+        "# Theme saves replace the file, which can break Scoop's hardlink.",
+        "if (Test-Path -LiteralPath \"$dir\\theme-selection.json\" -PathType Leaf) {",
+        "    New-Item -ItemType Directory -Path $persist_dir -Force | Out-Null",
+        "    $themeSelection = [System.IO.File]::ReadAllBytes(\"$dir\\theme-selection.json\")",
+        "    [System.IO.File]::WriteAllBytes(\"$persist_dir\\theme-selection.json\", $themeSelection)",
+        "}"
+    ],
     "shortcuts": [
         [
             "EasyCLIProxyAPI.exe",
@@ -42,7 +53,10 @@
         ]
     ],
     "persist": [
+        "agents",
         "config.toml",
+        "theme-selection.json",
+        "themes",
         "oauth",
         "usage-records",
         "cpa-core\\config.yaml"
