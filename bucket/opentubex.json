@@ -1,0 +1,48 @@
+{
+    "version": "0.38.1-beta",
+    "description": "Private YouTube client",
+    "homepage": "https://opentubex.org/",
+    "license": "AGPL-3.0-or-later",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/OpenTubeX/OpenTubeX/releases/download/v0.38.1-beta/opentubex-0.38.1-beta-win-x64-portable.zip",
+            "hash": "c2322a5b8b13b2e9377e498cc5bcf9ed6a81a783c5b4c321ce14bc587b1a2166"
+        },
+        "arm64": {
+            "url": "https://github.com/OpenTubeX/OpenTubeX/releases/download/v0.38.1-beta/opentubex-0.38.1-beta-win-arm64-portable.zip",
+            "hash": "7dbfede5985c1e99505e10930f96c07bb66a74c631bf2a82e589e6cb06c674b4"
+        }
+    },
+    "pre_install": [
+        "# Run as an installed app, not in portable mode.",
+        "Remove-Item -LiteralPath \"$dir\\portable.marker\", \"$dir\\version.dll\", \"$dir\\.interposer\", \"$dir\\LANCommander.Interposer.LICENSE.txt\" -Recurse -Force -ErrorAction Ignore"
+    ],
+    "post_uninstall": [
+        "# Updates keep the old version directory, so only an uninstall removes the opentubex:// link registration.",
+        "$key = 'HKCU:\\Software\\Classes\\opentubex'",
+        "$command = (Get-ItemProperty -LiteralPath \"$key\\shell\\open\\command\" -ErrorAction Ignore).'(default)'",
+        "if (-not (Test-Path -LiteralPath $dir) -and $command -like \"*$([WildcardPattern]::Escape((Split-Path $dir)))\\*\") {",
+        "    Remove-Item -LiteralPath $key -Recurse -Force",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "OpenTubeX.exe",
+            "OpenTubeX"
+        ]
+    ],
+    "checkver": {
+        "github": "https://api.github.com/repos/OpenTubeX/OpenTubeX/releases/latest",
+        "regex": "v([\\w.-]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/OpenTubeX/OpenTubeX/releases/download/v$version/opentubex-$version-win-x64-portable.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/OpenTubeX/OpenTubeX/releases/download/v$version/opentubex-$version-win-arm64-portable.zip"
+            }
+        }
+    }
+}
