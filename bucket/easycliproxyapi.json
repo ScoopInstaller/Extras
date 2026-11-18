@@ -1,5 +1,5 @@
 {
-    "version": "0.3.44",
+    "version": "0.3.113",
     "description": "Cross-platform GUI desktop management client for CLIProxyAPI",
     "homepage": "https://github.com/router-for-me/EasyCLIProxyAPI",
     "license": "MIT",
@@ -8,19 +8,33 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/router-for-me/EasyCLIProxyAPI/releases/download/v0.3.44/EasyCLIProxyAPI-v0.3.44-Windows-amd64.zip",
-            "hash": "30410273359739752bde29b81e5ce1b321a2f10ac9ce220e59cb7ebee6215d21",
-            "extract_dir": "EasyCLIProxyAPI-v0.3.44-Windows-amd64"
+            "url": "https://github.com/router-for-me/EasyCLIProxyAPI/releases/download/v0.3.113/EasyCLIProxyAPI-v0.3.113-Windows-amd64.zip",
+            "hash": "9fe23e69707a429bc557e7a2992f69cd4cebf1eb1817d90582ec1aa83dc509dd",
+            "extract_dir": "EasyCLIProxyAPI-v0.3.113-Windows-amd64"
         },
         "arm64": {
-            "url": "https://github.com/router-for-me/EasyCLIProxyAPI/releases/download/v0.3.44/EasyCLIProxyAPI-v0.3.44-Windows-aarch64.zip",
-            "hash": "6296c3b986eca9776e33da383a31f821da77701c270cd817b03b60e881757098",
-            "extract_dir": "EasyCLIProxyAPI-v0.3.44-Windows-aarch64"
+            "url": "https://github.com/router-for-me/EasyCLIProxyAPI/releases/download/v0.3.113/EasyCLIProxyAPI-v0.3.113-Windows-aarch64.zip",
+            "hash": "2c66f68c6ea8f4b22684c80ede271c51ccc41641f630a0f106102752a0bb58fe",
+            "extract_dir": "EasyCLIProxyAPI-v0.3.113-Windows-aarch64"
         }
     },
     "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\config.toml\")) {",
-        "    New-Item -ItemType File -Path \"$dir\\config.toml\" -Force | Out-Null",
+        "$portableManifest = Get-Content -LiteralPath \"$dir\\portable-app.json\" -Raw | ConvertFrom-Json",
+        "$portableManifest.autoUpdate = $false",
+        "",
+        "[System.IO.File]::WriteAllText(\"$dir\\portable-app.json\", ($portableManifest | ConvertTo-Json -Depth 10))",
+        "$defaults = @{",
+        "    'config.toml' = ''",
+        "    'theme-selection.json' = '{\"version\":1,\"selectedId\":\"light\"}'",
+        "    'privacy-mode.json' = 'false'",
+        "    'usage-view-preferences.json' = '{}'",
+        "    'skill-states.json' = '{}'",
+        "    'mcp-servers.json' = '[]'",
+        "}",
+        "foreach ($file in $defaults.Keys) {",
+        "    if (!(Test-Path -LiteralPath \"$persist_dir\\$file\") -and !(Test-Path -LiteralPath \"$dir\\$file\")) {",
+        "        $defaults[$file] | Set-Content -LiteralPath \"$dir\\$file\" -Encoding Ascii -ErrorAction Stop",
+        "    }",
         "}",
         "if (!(Test-Path \"$persist_dir\\cpa-core\\config.yaml\")) {",
         "    Get-Item \"$dir\\cpa-core\\CLIProxyAPI_*.zip\" | Expand-7zipArchive -DestinationPath \"$dir\\cpa-core\" -Switches 'config.example.yaml'",
@@ -35,6 +49,22 @@
         "    [System.IO.File]::WriteAllText(\"$dir\\cpa-core\\config.yaml\", $config, (New-Object System.Text.UTF8Encoding $false))",
         "}"
     ],
+    "pre_uninstall": [
+        "# File saves can replace the file, which can break Scoop's hardlink.",
+        "foreach ($file in $manifest.persist) {",
+        "    $source = Get-Item -LiteralPath \"$dir\\$file\" -ErrorAction SilentlyContinue",
+        "    $target = Join-Path $persist_dir $file",
+        "    if (!$source) { continue }",
+        "    if (!$source.PSIsContainer) {",
+        "        New-Item -ItemType Directory -Path (Split-Path -Parent $target) -Force -ErrorAction Stop | Out-Null",
+        "        $content = [System.IO.File]::ReadAllBytes($source.FullName)",
+        "        [System.IO.File]::WriteAllBytes($target, $content)",
+        "    } elseif (!$source.LinkType) {",
+        "        New-Item -ItemType Directory -Path $target -Force -ErrorAction Stop | Out-Null",
+        "        Get-ChildItem -LiteralPath $source.FullName -Force | Copy-Item -Destination $target -Recurse -Force -ErrorAction Stop",
+        "    }",
+        "}"
+    ],
     "shortcuts": [
         [
             "EasyCLIProxyAPI.exe",
@@ -42,10 +72,18 @@
         ]
     ],
     "persist": [
+        "agents",
         "config.toml",
+        "theme-selection.json",
+        "themes",
         "oauth",
         "usage-records",
-        "cpa-core\\config.yaml"
+        "cpa-core\\config.yaml",
+        "privacy-mode.json",
+        "usage-view-preferences.json",
+        "skill-states.json",
+        "mcp-servers.json",
+        "agent-usage"
     ],
     "checkver": {
         "github": "https://github.com/router-for-me/EasyCLIProxyAPI"

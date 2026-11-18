@@ -1,12 +1,16 @@
 {
-    "version": "0.12",
-    "description": "A high-precision scientific calculator featuring a fast, keyboard-driven user interface.",
-    "homepage": "https://heldercorreia.bitbucket.io/speedcrunch/",
+    "version": "1.1.0",
+    "description": "A free, open-source high-precision scientific calculator. Built for STEM professionals, students and teachers.",
+    "homepage": "https://speedcrunch.org",
     "license": "GPL-2.0-or-later",
-    "url": "https://bitbucket.org/heldercorreia/speedcrunch/downloads/SpeedCrunch-0.12-win32.zip",
-    "hash": "024362bccd7908b508192cd90c2f6a716b5aa4fa5c7ff2aea9a1bf49d6580175",
-    "extract_dir": "SpeedCrunch-0.12-win32",
-    "pre_install": "Get-ChildItem \"$persist_dir\\*\" -Include 'history.json', 'SpeedCrunch.ini' -ErrorAction SilentlyContinue | Copy-Item -Destination \"$dir\" -ErrorAction SilentlyContinue",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/heldercorreia/speedcrunch/releases/download/v1.1.0/SpeedCrunch-1.1-windows-x64.zip",
+            "hash": "39eb01472c41c10aa4fa660bff4e06a895a3b6b47a25d156bf0c642fecd4e0b9",
+            "extract_dir": "SpeedCrunch-1.1-windows-x64"
+        }
+    },
+    "pre_install": "Copy-Item -Path \"$persist_dir\\SpeedCrunch.ini\" -Destination $dir -ErrorAction Ignore",
     "bin": "speedcrunch.exe",
     "shortcuts": [
         [
@@ -14,16 +18,20 @@
             "SpeedCrunch"
         ]
     ],
+    "persist": "sessions",
     "pre_uninstall": [
-        "ensure \"$persist_dir\"",
-        "Get-ChildItem \"$dir\\*\" -Include 'history.json', 'SpeedCrunch.ini' -ErrorAction SilentlyContinue | Copy-Item -Destination \"$persist_dir\" -ErrorAction SilentlyContinue"
+        "ensure $persist_dir | Out-Null",
+        "Copy-Item -Path \"$dir\\SpeedCrunch.ini\" -Destination $persist_dir -ErrorAction Ignore"
     ],
     "checkver": {
-        "url": "https://heldercorreia.bitbucket.io/speedcrunch/download.html",
-        "regex": "<h1>Version\\s+([\\d.]+)<\\/h1>"
+        "github": "https://github.com/heldercorreia/speedcrunch"
     },
     "autoupdate": {
-        "url": "https://bitbucket.org/heldercorreia/speedcrunch/downloads/SpeedCrunch-$version-win32.zip",
-        "extract_dir": "SpeedCrunch-$version-win32"
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/heldercorreia/speedcrunch/releases/download/v$version/SpeedCrunch-$majorVersion.$minorVersion-windows-x64.zip",
+                "extract_dir": "SpeedCrunch-$majorVersion.$minorVersion-windows-x64"
+            }
+        }
     }
 }

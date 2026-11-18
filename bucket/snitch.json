@@ -1,0 +1,38 @@
+{
+    "version": "1.6.4",
+    "description": "Open-source application firewall and network observer with Sigma rules",
+    "homepage": "https://aixisstudio.github.io/Snitch/",
+    "license": "AGPL-3.0-or-later",
+    "notes": [
+        "Snitch requires Npcap for packet capture on Windows.",
+        "Download Npcap: https://npcap.com/#download"
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/aiXisStudio/Snitch/releases/download/v1.6.4/Snitch-Setup-windows.exe#/dl.7z",
+            "hash": "sha512:e1e2b64599ed0204105655abf17bc0cfd384618ba281ea58ba5e7eaf28d7f7d3b78e777123dd17daa0266efdee2b27aed340383a71c0f4272f441223b9a12232",
+            "pre_install": "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\""
+        }
+    },
+    "post_install": "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\" -Recurse",
+    "shortcuts": [
+        [
+            "Snitch.exe",
+            "Snitch"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/aiXisStudio/Snitch"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/aiXisStudio/Snitch/releases/download/v$version/Snitch-Setup-windows.exe#/dl.7z"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "sha512:\\s+$base64"
+        }
+    }
+}

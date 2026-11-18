@@ -1,23 +1,38 @@
 {
-    "version": "6.7.0",
+    "version": "7.1.0",
     "description": "CPU/GPU benchmark software",
     "homepage": "https://www.geekbench.com/",
     "license": {
         "identifier": "Proprietary",
         "url": "https://www.primatelabs.com/legal/eula-v5.html"
     },
+    "suggest": {
+        "vcredist": "extras/vcredist2022",
+        "Microsoft Edge WebView2": "extras/webview2"
+    },
     "architecture": {
         "64bit": {
-            "url": "https://cdn.geekbench.com/Geekbench-6.7.0-WindowsSetup.exe",
-            "hash": "01f0af1024b536ee6f7884a53dd2c13c978718641ba8d13a219ca1401f6c76ef"
+            "url": "https://cdn.geekbench.com/Geekbench-7.1.0-WindowsSetup.exe",
+            "hash": "0a388e786de3978d57e28561fee4e1703c312853faaf79dcc8690cc225885669",
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\$fname\" -Overwrite Skip -Removal",
+                "Remove-Item \"$dir\\*aarch64*\" -ErrorAction Ignore"
+            ]
+        },
+        "arm64": {
+            "url": "https://cdn.geekbench.com/Geekbench-7.1.0-WindowsSetup.exe",
+            "hash": "0a388e786de3978d57e28561fee4e1703c312853faaf79dcc8690cc225885669",
+            "pre_install": [
+                "Expand-7zipArchive \"$dir\\$fname\" -Overwrite All -Removal",
+                "Remove-Item \"$dir\\*x86_64*\", \"$dir\\*x64*\", \"$dir\\*avx2*\", \"$dir\\cpuidsdk64.dll\" -ErrorAction Ignore"
+            ]
         }
     },
     "installer": {
         "script": [
-            "Expand-7zipArchive \"$dir\\$fname\" -Overwrite 'Skip' -Removal",
             "Move-Item \"$dir\\geekbench ?.exe\" \"$dir\\geekbench_gui.exe\"",
             "Move-Item \"$dir\\geekbench?.exe\" \"$dir\\geekbench.exe\"",
-            "Remove-Item \"$dir\\$*\", \"$dir\\geekbench_aarch64.exe\", \"$dir\\Uninstall*\" -Recurse"
+            "Remove-Item \"$dir\\`$*\", \"$dir\\Uninstall*\", \"$dir\\vc_redist*.exe\" -Recurse"
         ]
     },
     "bin": "geekbench.exe",
@@ -34,6 +49,9 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
+                "url": "https://cdn.geekbench.com/Geekbench-$version-WindowsSetup.exe"
+            },
+            "arm64": {
                 "url": "https://cdn.geekbench.com/Geekbench-$version-WindowsSetup.exe"
             }
         }

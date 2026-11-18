@@ -1,0 +1,52 @@
+{
+    "version": "3.43",
+    "description": "A free duplicate file cleanup tool for Windows© XP/Vista/7/8/8.1/10.",
+    "homepage": "https://clonespy.com/",
+    "license": {
+        "identifier": "Freeware",
+        "url": "https://clonespy.com/disclaimer/"
+    },
+    "url": "https://clonespy.com/english/download/cspy343.exe#/dl.7z",
+    "hash": "6f1c39f521d7ccdc2c0cfb8a69d456c57b6094e95afc9d9294d85f35eb116a45",
+    "architecture": {
+        "32bit": {
+            "pre_install": "if (Test-Path \"$dir\\CloneSpy64.exe\") { Remove-Item \"$dir\\CloneSpy64.exe\" }"
+        },
+        "64bit": {
+            "pre_install": [
+                "if (Test-Path \"$dir\\CloneSpy.exe\") { Remove-Item \"$dir\\CloneSpy.exe\" }",
+                "Rename-Item \"$dir\\CloneSpy64.exe\" 'CloneSpy.exe'"
+            ]
+        }
+    },
+    "installer": {
+        "script": [
+            "if (Test-Path \"$dir\") { Remove-Item \"$dir\\`$*\" -Recurse }",
+            "'CloneSpy.log', 'CSDefault.cst', 'CloneSpy.ini' | ForEach-Object {",
+            "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
+            "}"
+        ]
+    },
+    "persist": [
+        "CloneSpy.log",
+        "CSDefault.cst",
+        "CloneSpy.ini"
+    ],
+    "shortcuts": [
+        [
+            "CloneSpy.exe",
+            "CloneSpy"
+        ],
+        [
+            "CloneSpy.chm",
+            "CloneSpy Help"
+        ]
+    ],
+    "checkver": {
+        "url": "https://clonespy.com/download/",
+        "regex": "<strong>CloneSpy V([\\d.]+)</strong>"
+    },
+    "autoupdate": {
+        "url": "https://clonespy.com/english/download/cspy$cleanVersion.exe#/dl.7z"
+    }
+}

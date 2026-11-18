@@ -1,18 +1,22 @@
 {
-    "version": "0.1.0",
+    "version": "0.1.10",
     "description": "Desktop app for orchestrating AI coding agents like Claude Code, Codex, Cursor CLI and OpenCode",
     "homepage": "https://t3.codes",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/pingdotgg/t3code/releases/download/v0.1.0/T3-Code-0.1.0-x64.exe#/dl.7z",
-            "hash": "sha512:13719c1d33048ed20295da582ca4b2aaf5d2433f6fe6b6420d1653fe4661fa89e4b2d5c23d2266c4810fe7d0801ee070017d2cb9cf80c8bff9a9e49f775672b9",
-            "pre_install": [
-                "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\"",
-                "Remove-Item \"$dir\\`$*\", \"$dir\\*.nsi\" -Recurse"
-            ]
+            "url": "https://github.com/pingdotgg/t3code/releases/download/v0.1.10/T3-Code-0.1.10-x64.exe#/dl.7z",
+            "hash": "sha512:23c665676ab064a3df98c5d6eb305f6afb22296a274f396ba6bb7a0cf3e21ddfddc139a696c86fa873b799619a30464709bd353a64c3154ad951c2b5cf5967da"
+        },
+        "arm64": {
+            "url": "https://github.com/pingdotgg/t3code/releases/download/v0.1.10/T3-Code-0.1.10-arm64.exe#/dl.7z",
+            "hash": "sha512:b77796f5aa2dd93f6203cc89d00dbfd0a6e507f6d2052cfd26e333d188f2e182aef1de9985610b30714738d20489a8b6fdb192148edaf4e1d4a22fb51237720a"
         }
     },
+    "pre_install": [
+        "Get-Item \"$dir\\`$PLUGINSDIR\\app*.7z\" | Select-Object -First 1 | Expand-7zipArchive -DestinationPath $dir",
+        "Remove-Item \"$dir\\`$*\", \"$dir\\Uninst*\" -Force -Recurse -ErrorAction Ignore"
+    ],
     "post_install": [
         "if (Test-Path $env:USERPROFILE\\.t3) {",
         "    Write-Host \"`r`nMove user config from non-portable version...\"",
@@ -49,12 +53,15 @@
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/pingdotgg/t3code/releases/download/v$version/T3-Code-$version-x64.exe#/dl.7z",
-                "hash": {
-                    "url": "$baseurl/latest.yml",
-                    "regex": "(?sm)$basename.*?$base64"
-                }
+                "url": "https://github.com/pingdotgg/t3code/releases/download/v$version/T3-Code-$version-x64.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/pingdotgg/t3code/releases/download/v$version/T3-Code-$version-arm64.exe#/dl.7z"
             }
+        },
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "(?sm)$basename.*?$base64"
         }
     }
 }

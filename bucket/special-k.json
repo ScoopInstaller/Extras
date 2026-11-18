@@ -1,37 +1,22 @@
 {
-    "version": "26.10.10",
+    "version": "26.11.4.1",
     "description": "Lovingly referred to as the Swiss Army Knife of PC gaming, Special K does a bit of everything.",
     "homepage": "https://www.special-k.info",
     "license": "GPL-3.0-only",
-    "url": "https://sk-data.special-k.info/repository/SpecialK_26.10.10.exe",
-    "hash": "891211c5bde4cd7fafb22f41b496ed71a344985cd59461022db2371e882b8b50",
+    "url": "https://sk-data.special-k.info/repository/SpecialK_26.11.4.1.exe",
+    "hash": "3ef2e09d653191b73bcf5bbc35cf484fe589f416064a2701650485b9882a430b",
     "innosetup": true,
     "architecture": {
         "64bit": {
-            "pre_install": "Rename-Item \"$dir\\SKIF,1.exe\" SKIF.exe; Remove-Item \"$dir\\SKIF,2.exe\"",
-            "bin": [
-                "SKIF.exe",
-                "SKIV.exe"
-            ],
-            "shortcuts": [
-                [
-                    "SKIF.exe",
-                    "Special K\\Special K Injection Frontend (SKIF)"
-                ],
-                [
-                    "SKIV.exe",
-                    "Special K\\Special K Image Viewer (SKIV)"
-                ]
+            "pre_install": [
+                "Get-ChildItem \"$dir\\*,1.*\" -Recurse | Rename-Item -NewName { $_.Name -replace ',1\\.', '.' }",
+                "Get-ChildItem \"$dir\\*,2.*\" -Recurse | Remove-Item"
             ]
         },
         "32bit": {
-            "pre_install": "Rename-Item \"$dir\\SKIF,2.exe\" SKIF.exe; Remove-Item \"$dir\\SKIF,1.exe\"",
-            "bin": "SKIF.exe",
-            "shortcuts": [
-                [
-                    "SKIF.exe",
-                    "Special K\\Special K Injection Frontend (SKIF)"
-                ]
+            "pre_install": [
+                "Get-ChildItem \"$dir\\*,2.*\" -Recurse | Rename-Item -NewName { $_.Name -replace ',2\\.', '.' }",
+                "Get-ChildItem \"$dir\\*,1.*\" -Recurse | Remove-Item"
             ]
         }
     },
@@ -42,6 +27,20 @@
         "        Remove-Item -Path \"$dir\\$_.original\" -Recurse -Force -ErrorAction SilentlyContinue",
         "    }",
         "}"
+    ],
+    "bin": [
+        "SKIF.exe",
+        "SKIV.exe"
+    ],
+    "shortcuts": [
+        [
+            "SKIF.exe",
+            "Special K\\Special K Injection Frontend (SKIF)"
+        ],
+        [
+            "SKIV.exe",
+            "Special K\\Special K Image Viewer (SKIV)"
+        ]
     ],
     "persist": [
         "Global",
