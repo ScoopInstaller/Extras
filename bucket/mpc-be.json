@@ -36,16 +36,23 @@
         }
     },
     "pre_install": [
-        "@('mpc-be64.ini', 'mpc-be.ini', 'default.mpcpl', 'favorites.mpc_lst') | ForEach-Object {",
+        "@('mpc-be64.ini', 'mpc-be.ini', 'default.mpcpl', 'favorites.mpc_lst', 'history.mpc_lst') | ForEach-Object {",
         "    if ((Get-Item \"$persist_dir\\$_\" 2>$null).PSIsContainer) { Remove-Item \"$persist_dir\\$_\" }",
         "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
-        "}"
+        "}",
+        "Get-ChildItem \"$persist_dir\\*.mpcpl\" -Exclude 'default.mpcpl' -File -ErrorAction SilentlyContinue | Copy-Item -Destination $dir -Force"
+    ],
+    "pre_uninstall": [
+        "ensure $persist_dir | Out-Null",
+        "Get-ChildItem \"$persist_dir\\*.mpcpl\" -Exclude 'default.mpcpl' -File -ErrorAction SilentlyContinue | Remove-Item -Force",
+        "Get-ChildItem \"$dir\\*.mpcpl\" -Exclude 'default.mpcpl' -File -ErrorAction SilentlyContinue | Copy-Item -Destination $persist_dir -Force"
     ],
     "persist": [
         "mpc-be64.ini",
         "mpc-be.ini",
         "default.mpcpl",
-        "favorites.mpc_lst"
+        "favorites.mpc_lst",
+        "history.mpc_lst"
     ],
     "checkver": {
         "github": "https://github.com/Aleksoid1978/MPC-BE"
