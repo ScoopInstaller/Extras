@@ -19,11 +19,22 @@
         }
     },
     "pre_install": [
-        "if (!(Test-Path \"$persist_dir\\config.toml\")) {",
-        "    New-Item -ItemType File -Path \"$dir\\config.toml\" -Force | Out-Null",
+        "$portableManifest = Get-Content -LiteralPath \"$dir\\portable-app.json\" -Raw | ConvertFrom-Json",
+        "$portableManifest.autoUpdate = $false",
+        "",
+        "[System.IO.File]::WriteAllText(\"$dir\\portable-app.json\", ($portableManifest | ConvertTo-Json -Depth 10))",
+        "$defaults = @{",
+        "    'config.toml' = ''",
+        "    'theme-selection.json' = '{\"version\":1,\"selectedId\":\"light\"}'",
+        "    'privacy-mode.json' = 'false'",
+        "    'usage-view-preferences.json' = '{}'",
+        "    'skill-states.json' = '{}'",
+        "    'mcp-servers.json' = '[]'",
         "}",
-        "if (!(Test-Path \"$persist_dir\\theme-selection.json\")) {",
-        "    '{\"version\":1,\"selectedId\":\"light\"}' | Set-Content \"$dir\\theme-selection.json\" -Encoding Ascii",
+        "foreach ($file in $defaults.Keys) {",
+        "    if (!(Test-Path -LiteralPath \"$persist_dir\\$file\") -and !(Test-Path -LiteralPath \"$dir\\$file\")) {",
+        "        $defaults[$file] | Set-Content -LiteralPath \"$dir\\$file\" -Encoding Ascii -ErrorAction Stop",
+        "    }",
         "}",
         "if (!(Test-Path \"$persist_dir\\cpa-core\\config.yaml\")) {",
         "    Get-Item \"$dir\\cpa-core\\CLIProxyAPI_*.zip\" | Expand-7zipArchive -DestinationPath \"$dir\\cpa-core\" -Switches 'config.example.yaml'",
@@ -39,11 +50,19 @@
         "}"
     ],
     "pre_uninstall": [
-        "# Theme saves replace the file, which can break Scoop's hardlink.",
-        "if (Test-Path -LiteralPath \"$dir\\theme-selection.json\" -PathType Leaf) {",
-        "    New-Item -ItemType Directory -Path $persist_dir -Force | Out-Null",
-        "    $themeSelection = [System.IO.File]::ReadAllBytes(\"$dir\\theme-selection.json\")",
-        "    [System.IO.File]::WriteAllBytes(\"$persist_dir\\theme-selection.json\", $themeSelection)",
+        "# File saves can replace the file, which can break Scoop's hardlink.",
+        "foreach ($file in $manifest.persist) {",
+        "    $source = Get-Item -LiteralPath \"$dir\\$file\" -ErrorAction SilentlyContinue",
+        "    $target = Join-Path $persist_dir $file",
+        "    if (!$source) { continue }",
+        "    if (!$source.PSIsContainer) {",
+        "        New-Item -ItemType Directory -Path (Split-Path -Parent $target) -Force -ErrorAction Stop | Out-Null",
+        "        $content = [System.IO.File]::ReadAllBytes($source.FullName)",
+        "        [System.IO.File]::WriteAllBytes($target, $content)",
+        "    } elseif (!$source.LinkType) {",
+        "        New-Item -ItemType Directory -Path $target -Force -ErrorAction Stop | Out-Null",
+        "        Get-ChildItem -LiteralPath $source.FullName -Force | Copy-Item -Destination $target -Recurse -Force -ErrorAction Stop",
+        "    }",
         "}"
     ],
     "shortcuts": [
@@ -59,7 +78,12 @@
         "themes",
         "oauth",
         "usage-records",
-        "cpa-core\\config.yaml"
+        "cpa-core\\config.yaml",
+        "privacy-mode.json",
+        "usage-view-preferences.json",
+        "skill-states.json",
+        "mcp-servers.json",
+        "agent-usage"
     ],
     "checkver": {
         "github": "https://github.com/router-for-me/EasyCLIProxyAPI"
