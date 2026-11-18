@@ -55,6 +55,7 @@
     ],
     "pre_uninstall": [
         "# Snapshot playlist tabs to a staging folder first; replace the saved set only after every copy succeeded",
+        "if (Get-Process -Name 'mpc-be*' -ErrorAction SilentlyContinue | Where-Object { $_.Path -like \"$(Split-Path $dir)\\*\" }) { throw 'MPC-BE is running. Close it and try again.' }",
         "ensure $persist_dir | Out-Null",
         "$stage = \"$persist_dir\\.mpcpl-staging\"",
         "if (Test-Path $stage) { Remove-Item $stage -Recurse -Force -ErrorAction Stop }",
