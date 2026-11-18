@@ -40,12 +40,29 @@
         "    if ((Get-Item \"$persist_dir\\$_\" 2>$null).PSIsContainer) { Remove-Item \"$persist_dir\\$_\" }",
         "    if (!(Test-Path \"$persist_dir\\$_\")) { New-Item \"$dir\\$_\" | Out-Null }",
         "}",
-        "Get-ChildItem \"$persist_dir\\*.mpcpl\" -Exclude 'default.mpcpl' -File -ErrorAction SilentlyContinue | Copy-Item -Destination $dir -Force"
+        "# One-time migration: installs made before tabs/history were persisted keep them in the previous version directory",
+        "if (!(Test-Path \"$persist_dir\\history.mpc_lst\")) {",
+        "    $prev = Get-ChildItem (Split-Path $dir) -Directory | Where-Object { $_.Name -notin @((Split-Path $dir -Leaf), 'current') -and (Test-Path \"$($_.FullName)\\mpc-be*.exe\") } |",
+        "        Sort-Object { try { [version]$_.Name } catch { [version]'0.0' } }, LastWriteTime | Select-Object -Last 1",
+        "    if ($prev) {",
+        "        Get-ChildItem \"$($prev.FullName)\\*.mpcpl\" -File -ErrorAction Stop | Where-Object Name -NE 'default.mpcpl' | Copy-Item -Destination $dir -Force -ErrorAction Stop",
+        "        if (Test-Path \"$($prev.FullName)\\history.mpc_lst\") { Copy-Item \"$($prev.FullName)\\history.mpc_lst\" -Destination $dir -Force -ErrorAction Stop }",
+        "    }",
+        "}",
+        "if (Test-Path $persist_dir) {",
+        "    Get-ChildItem \"$persist_dir\\*.mpcpl\" -File -ErrorAction Stop | Where-Object Name -NE 'default.mpcpl' | Copy-Item -Destination $dir -Force -ErrorAction Stop",
+        "}"
     ],
     "pre_uninstall": [
+        "# Snapshot playlist tabs to a staging folder first; replace the saved set only after every copy succeeded",
         "ensure $persist_dir | Out-Null",
-        "Get-ChildItem \"$persist_dir\\*.mpcpl\" -Exclude 'default.mpcpl' -File -ErrorAction SilentlyContinue | Remove-Item -Force",
-        "Get-ChildItem \"$dir\\*.mpcpl\" -Exclude 'default.mpcpl' -File -ErrorAction SilentlyContinue | Copy-Item -Destination $persist_dir -Force"
+        "$stage = \"$persist_dir\\.mpcpl-staging\"",
+        "if (Test-Path $stage) { Remove-Item $stage -Recurse -Force -ErrorAction Stop }",
+        "New-Item $stage -ItemType Directory -ErrorAction Stop | Out-Null",
+        "Get-ChildItem \"$dir\\*.mpcpl\" -File -ErrorAction Stop | Where-Object Name -NE 'default.mpcpl' | Copy-Item -Destination $stage -Force -ErrorAction Stop",
+        "Get-ChildItem \"$persist_dir\\*.mpcpl\" -File -ErrorAction Stop | Where-Object Name -NE 'default.mpcpl' | Remove-Item -Force -ErrorAction Stop",
+        "Get-ChildItem \"$stage\\*.mpcpl\" -File -ErrorAction Stop | Move-Item -Destination $persist_dir -Force -ErrorAction Stop",
+        "Remove-Item $stage -Recurse -Force"
     ],
     "persist": [
         "mpc-be64.ini",
