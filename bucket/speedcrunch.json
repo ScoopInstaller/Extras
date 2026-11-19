@@ -1,13 +1,13 @@
 {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "description": "A free, open-source high-precision scientific calculator. Built for STEM professionals, students and teachers.",
     "homepage": "https://speedcrunch.org",
     "license": "GPL-2.0-or-later",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/heldercorreia/speedcrunch/releases/download/v1.1.0/SpeedCrunch-1.1-windows-x64.zip",
-            "hash": "39eb01472c41c10aa4fa660bff4e06a895a3b6b47a25d156bf0c642fecd4e0b9",
-            "extract_dir": "SpeedCrunch-1.1-windows-x64"
+            "url": "https://github.com/heldercorreia/speedcrunch/releases/download/v1.2.0/SpeedCrunch-1.2.0-windows-x64.zip",
+            "hash": "570328420087e5096992427f83de529b775d4bb2d056e9d97e3626ed031fb61d",
+            "extract_dir": "SpeedCrunch-1.2.0-windows-x64"
         }
     },
     "pre_install": "Copy-Item -Path \"$persist_dir\\SpeedCrunch.ini\" -Destination $dir -ErrorAction Ignore",
@@ -24,13 +24,15 @@
         "Copy-Item -Path \"$dir\\SpeedCrunch.ini\" -Destination $persist_dir -ErrorAction Ignore"
     ],
     "checkver": {
-        "github": "https://github.com/heldercorreia/speedcrunch"
+        "github": "https://api.github.com/repos/heldercorreia/speedcrunch/releases/latest",
+        "jsonpath": "$..browser_download_url",
+        "regex": "download/(?:v|V)([\\d.]+)/SpeedCrunch-(?<short>[\\d.]+)-windows-x64\\.zip"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/heldercorreia/speedcrunch/releases/download/v$version/SpeedCrunch-$majorVersion.$minorVersion-windows-x64.zip",
-                "extract_dir": "SpeedCrunch-$majorVersion.$minorVersion-windows-x64"
+                "url": "https://github.com/heldercorreia/speedcrunch/releases/download/v$version/SpeedCrunch-$matchShort-windows-x64.zip",
+                "extract_dir": "SpeedCrunch-$matchShort-windows-x64"
             }
         }
     }
