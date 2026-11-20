@@ -1,25 +1,35 @@
 {
-    "version": "0.4.905",
+    "version": "0.4.911",
     "description": "A powerful harness of its own, and the best herdr GUI.",
     "homepage": "https://alma.now",
     "license": "Proprietary",
+    "notes": "Please manually disable Alma's auto-update feature in the settings to prevent the updater from installing the program in unintended locations.",
     "suggest": {
         "herdr": "herdr"
     },
     "architecture": {
         "64bit": {
-            "url": "https://github.com/yetone/alma-releases/releases/download/v0.4.905/alma-0.4.905-win-x64.exe#/dl.7z",
-            "hash": "sha512:da8ee80344993bd06c071f232da6a09995f1c79ed314da4a20af4ba52c154cfcc3081057702ec749dfc64ff38b31a98143bc34c42a59a6b4067ccaf70730e75e",
-            "installer": {
-                "script": "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse"
-            }
+            "url": "https://github.com/yetone/alma-releases/releases/download/v0.4.911/alma-0.4.911-win-x64.exe#/dl.7z",
+            "hash": "sha512:7e00a2a8718f2a161419c59d21f594b179fec69937ee49ff4fb9a856dd46f6258aac4424db4dcb4ba0ef56d96ffc9bdf7a287f2c361838795f7dfb546fa7d2de"
         }
     },
+    "pre_install": [
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\Uninstall*\" -Force -Recurse",
+        "if (!(Test-Path \"$persist_dir\\ui-prefs.json\")) { New-Item \"$dir\\ui-prefs.json\" | Out-Null }"
+    ],
     "shortcuts": [
         [
             "Alma.exe",
             "Alma"
         ]
+    ],
+    "env_set": {
+        "ALMA_DATA_DIR": "$dir\\data",
+        "ALMA_NATIVE_PREFS": "$dir\\ui-prefs.json"
+    },
+    "persist": [
+        "data",
+        "ui-prefs.json"
     ],
     "checkver": {
         "github": "https://github.com/yetone/alma-releases"
