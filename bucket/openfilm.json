@@ -1,5 +1,5 @@
 {
-    "##": "The NSIS installer is unpacked instead of executed: it runs a custom PowerShell script and registers an uninstaller, neither of which belongs to a portable Scoop install.",
+    "##": "The NSIS installer runs a custom script and registers an uninstaller, so only its payload is unpacked.",
     "version": "0.4.1",
     "description": "Open source AI video agent that turns coding agents into video agents",
     "homepage": "https://openfilm.dev",
@@ -16,7 +16,7 @@
     "installer": {
         "script": [
             "Get-Item -Path \"$dir\\`$PLUGINSDIR\\app-64.7z\" | Expand-7zipArchive -DestinationPath \"$dir\"",
-            "# The built-in updater would install a second copy outside Scoop; without the feed the app reports it never updates",
+            "# electron-updater would install a second copy outside Scoop, so remove its feed",
             "Remove-Item -Path \"$dir\\resources\\app-update.yml\" -Force -ErrorAction Ignore",
             "Remove-Item -Path \"$dir\\`$PLUGINSDIR\", \"$dir\\`$R0\", \"$dir\\uninstallerIcon.ico\" -Recurse -Force -ErrorAction Ignore"
         ]
