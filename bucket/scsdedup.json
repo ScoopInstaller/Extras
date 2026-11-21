@@ -1,0 +1,33 @@
+{
+    "version": "1.0.38",
+    "description": "Find duplicate files on Windows by content hash and see how much space they waste",
+    "homepage": "https://dedup.scsoi.com",
+    "license": {
+        "identifier": "Proprietary",
+        "url": "https://dedup.scsoi.com/terms"
+    },
+    "url": "https://github.com/shuyingegit/scsdedup/releases/download/v1.0.38/scsdedup-1.0.38-setup-win64.exe",
+    "hash": "5f4447f7df32bdc79d758f9696d2a24f28fb55c4153a66b851b14b970e46e88b",
+    "checkver": {
+        "url": "https://github.com/shuyingegit/scsdedup/releases.atom",
+        "regex": "releases/tag/v?([0-9.]+)\""
+    },
+    "installer": {
+        "file": "scsdedup-1.0.38-setup-win64.exe",
+        "args": ["/SP-", "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART"]
+    },
+    "uninstaller": {
+        "script": [
+            "$roots = @(\"$env:LOCALAPPDATA\\Programs\\ScsDedup\", \"$env:ProgramFiles\\ScsDedup\", \"${env:ProgramFiles(x86)}\\ScsDedup\")",
+            "$uninstaller = Get-ChildItem -Path $roots -Filter 'unins*.exe' -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1",
+            "if (-not $uninstaller) { throw 'ScsDedup uninstaller (unins*.exe) not found in the install directory.' }",
+            "$p = Start-Process -FilePath $uninstaller.FullName -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART' -Wait -PassThru",
+            "if ($p.ExitCode -ne 0) { throw \"ScsDedup uninstaller failed with exit code $($p.ExitCode).\" }"
+        ]
+    },
+    "autoupdate": {
+        "url": "https://github.com/shuyingegit/scsdedup/releases/download/v$version/scsdedup-$version-setup-win64.exe",
+        "hash": { "url": "$url.digest" },
+        "installer": { "file": "scsdedup-$version-setup-win64.exe" }
+    }
+}
