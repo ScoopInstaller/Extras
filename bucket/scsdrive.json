@@ -14,28 +14,20 @@
     },
     "installer": {
         "file": "scsdriver-1.1.2-setup-win64.exe",
-        "args": [
-            "/VERYSILENT",
-            "/SUPPRESSMSGBOXES",
-            "/NORESTART"
-        ]
+        "args": ["/SP-", "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART"]
     },
     "uninstaller": {
-        "file": "scsdriver-1.1.2-setup-win64.exe",
-        "args": [
-            "/VERYSILENT",
-            "/SUPPRESSMSGBOXES",
-            "/NORESTART",
-            "/UNINSTALL"
+        "script": [
+            "$roots = @(\"$env:LOCALAPPDATA\\Programs\\ScsDrive\", \"$env:ProgramFiles\\ScsDrive\", \"${env:ProgramFiles(x86)}\\ScsDrive\")",
+            "$uninstaller = Get-ChildItem -Path $roots -Filter 'unins*.exe' -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1",
+            "if (-not $uninstaller) { throw 'ScsDrive uninstaller (unins*.exe) not found in the install directory.' }",
+            "$p = Start-Process -FilePath $uninstaller.FullName -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART' -Wait -PassThru",
+            "if ($p.ExitCode -ne 0) { throw \"ScsDrive uninstaller failed with exit code $($p.ExitCode).\" }"
         ]
     },
     "autoupdate": {
         "url": "https://github.com/shuyingegit/scsdriver/releases/download/v$version/scsdriver-$version-setup-win64.exe",
-        "hash": {
-            "url": "$url.digest"
-        },
-        "installer": {
-            "file": "scsdriver-$version-setup-win64.exe"
-        }
+        "hash": { "url": "$url.digest" },
+        "installer": { "file": "scsdriver-$version-setup-win64.exe" }
     }
 }
