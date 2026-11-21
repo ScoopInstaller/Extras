@@ -24,8 +24,8 @@
     },
     "pre_install": [
         "'$PLUGINSDIR', 'vc_redist*', 'uninstall-wireshark.exe' | ForEach-Object { \"$dir/$_\" } | Remove-Item -Recurse -ErrorAction Ignore",
-        "Get-ChildItem -Path \"$dir/npcap-*.exe\" | Select-Object -First 1 | Rename-Item -NewName 'npcap-installer.exe'",
-        "Get-ChildItem -Path \"$dir/USBPcapSetup-*.exe\" | Select-Object -First 1 | Rename-Item -NewName 'USBPcap-installer.exe'",
+        "Get-ChildItem -Path \"$dir/npcap-[0-9]*.exe\" | Select-Object -First 1 | Move-Item -Force -Destination \"$dir/npcap-installer.exe\"",
+        "Get-ChildItem -Path \"$dir/USBPcapSetup-*.exe\" | Select-Object -First 1 | Move-Item -Force -Destination \"$dir/USBPcap-installer.exe\"",
         "$data = \"$persist_dir/Data\"",
         "$preferences = \"$data/preferences\"",
         "if (!(Test-Path $preferences)) {",
@@ -35,7 +35,7 @@
     ],
     "post_install": [
         "Copy-Item -Force \"$bucketsdir/extras/scripts/wireshark/*\" \"$dir\"",
-        "& \"$dir/enable-usbpcap.ps1\" 2>$null   # Attempt try to enable USBPcap if already installed"
+        "& \"$dir/enable-usbpcap.ps1\" 3>$null   # Attempt try to enable USBPcap if already installed"
     ],
     "bin": [
         "capinfos.exe",
