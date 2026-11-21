@@ -6,28 +6,45 @@
         "identifier": "Proprietary",
         "url": "https://subst.scsoi.com/terms"
     },
-    "url": "https://github.com/shuyingegit/scssubst/releases/download/v1.0.32/scssubst-1.0.32-setup-win64.exe",
-    "hash": "7a8e524484f6fc92bbcb28b6971960b8dd4d9bd46ef0ca05d2d53405cc28d918",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/shuyingegit/scssubst/releases/download/v1.0.32/scssubst-1.0.32-setup-win64.exe",
+            "hash": "7a8e524484f6fc92bbcb28b6971960b8dd4d9bd46ef0ca05d2d53405cc28d918"
+        }
+    },
     "checkver": {
         "url": "https://github.com/shuyingegit/scssubst/releases.atom",
         "regex": "releases/tag/v?([0-9.]+)\""
     },
     "installer": {
         "file": "scssubst-1.0.32-setup-win64.exe",
-        "args": ["/SP-", "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART"]
+        "args": [
+            "/SP-",
+            "/VERYSILENT",
+            "/SUPPRESSMSGBOXES",
+            "/NORESTART",
+            "/DIR=\"$dir\""
+        ]
     },
     "uninstaller": {
         "script": [
-            "$roots = @(\"$env:LOCALAPPDATA\\Programs\\ScsSubst\", \"$env:ProgramFiles\\ScsSubst\", \"${env:ProgramFiles(x86)}\\ScsSubst\")",
-            "$uninstaller = Get-ChildItem -Path $roots -Filter 'unins*.exe' -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1",
-            "if (-not $uninstaller) { throw 'ScsSubst uninstaller (unins*.exe) not found in the install directory.' }",
+            "$uninstaller = Get-ChildItem -Path \"$dir\" -Filter 'unins*.exe' -ErrorAction 'SilentlyContinue' | Select-Object -First 1",
+            "if (-not $uninstaller) { throw 'ScsSubst uninstaller (unins*.exe) not found in the install directory $dir.' }",
             "$p = Start-Process -FilePath $uninstaller.FullName -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART' -Wait -PassThru",
             "if ($p.ExitCode -ne 0) { throw \"ScsSubst uninstaller failed with exit code $($p.ExitCode).\" }"
         ]
     },
     "autoupdate": {
-        "url": "https://github.com/shuyingegit/scssubst/releases/download/v$version/scssubst-$version-setup-win64.exe",
-        "hash": { "url": "$url.digest" },
-        "installer": { "file": "scssubst-$version-setup-win64.exe" }
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/shuyingegit/scssubst/releases/download/v$version/scssubst-$version-setup-win64.exe",
+                "hash": {
+                    "url": "$url.digest"
+                },
+                "installer": {
+                    "file": "scssubst-$version-setup-win64.exe"
+                }
+            }
+        }
     }
 }
