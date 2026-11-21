@@ -1,7 +1,8 @@
 {
     "##": [
-        "Please avoid renaming the binaries, as this may cause compatibility issues.",
-        "Ensure you use the original filenames: 'TE64.exe' for 64-bit and 'TE32.exe' for 32-bit."
+        "addons/ holds both bundled and user-installed add-ons; persist it and merge new bundled files without overwriting (Scoop#2185).",
+        "Stage via pre_install; addons.original/ is an internal persist_data detail (Scoop#2897), not a manifest contract.",
+        "Add-ons are updated independently by the Add-ons updater, so never overwrite existing files."
     ],
     "version": "26.9.20",
     "description": "A tabbed file manager with Add-on support.",
@@ -39,7 +40,12 @@
             ]
         }
     },
-    "persist": "config",
+    "pre_install": "$ErrorActionPreference = 'Stop'; $bundled = Join-Path $dir 'addons'; $stage = Join-Path $persist_dir ('addons.bundled-' + $version); if (Test-Path -LiteralPath $bundled) { New-Item -ItemType Directory -Path $persist_dir -Force -ErrorAction Stop | Out-Null; if (Test-Path -LiteralPath $stage) { Remove-Item -LiteralPath $stage -Recurse -Force -ErrorAction Stop }; Move-Item -LiteralPath $bundled -Destination $stage -ErrorAction Stop }",
+    "persist": [
+        "config",
+        "addons"
+    ],
+    "post_install": "$src = Join-Path $persist_dir ('addons.bundled-' + $version); $dst = Join-Path $dir 'addons'; if (Test-Path $src) { Get-ChildItem -LiteralPath $src -Recurse -File | ForEach-Object { $to = Join-Path $dst $_.FullName.Substring($src.Length).TrimStart('\\'); if (-not (Test-Path $to)) { New-Item -ItemType Directory -Path (Split-Path $to -Parent) -Force | Out-Null; Copy-Item -LiteralPath $_.FullName -Destination $to } }; Remove-Item -LiteralPath $src -Recurse -Force }",
     "checkver": {
         "github": "https://api.github.com/repos/tablacus/TablacusExplorer/releases/latest",
         "jsonpath": "$.assets[?(@.name =~ /te\\d+\\.zip/i)].browser_download_url",
