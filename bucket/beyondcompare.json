@@ -6,6 +6,7 @@
         "identifier": "Shareware",
         "url": "https://www.scootersoftware.com/kb/licensev5"
     },
+    "depends": "innounp",
     "notes": [
         "The manifest already updated to v5, if you want to stay on v4 proceed as follows:",
         "",
@@ -20,24 +21,32 @@
     "architecture": {
         "64bit": {
             "installer": {
-                "args": [
-                    "/DIR=\"$dir\"",
-                    "/VERYSILENT",
-                    "/PORTABLE"
+                "script": [
+                    "Expand-InnoArchive \"$dir\\$fname\" -Removal",
+                    "Rename-Item \"$dir\\BCompare,2.exe\" \"$dir\\BCompare.exe\"",
+                    "Rename-Item \"$dir\\7z,2.dll\" \"$dir\\7z.dll\"",
+                    "Rename-Item \"$dir\\mscoree,2.dll\" \"$dir\\mscoree.dll\"",
+                    "Rename-Item \"$dir\\PdfToText,2.exe\" \"$dir\\PdfToText.exe\"",
+                    "Rename-Item \"$dir\\BCUnRAR,2.dll\" \"$dir\\BCUnRAR.dll\"",
+                    "Remove-Item \"$dir\\*,*\" -Force"
                 ]
             }
         },
         "32bit": {
             "installer": {
-                "args": [
-                    "/32",
-                    "/DIR=\"$dir\"",
-                    "/VERYSILENT",
-                    "/PORTABLE"
+                "script": [
+                    "Expand-InnoArchive \"$dir\\$fname\" -Removal",
+                    "Rename-Item \"$dir\\BCompare,1.exe\" \"$dir\\BCompare.exe\"",
+                    "Rename-Item \"$dir\\7z,1.dll\" \"$dir\\7z.dll\"",
+                    "Rename-Item \"$dir\\mscoree,1.dll\" \"$dir\\mscoree.dll\"",
+                    "Rename-Item \"$dir\\PdfToText,1.exe\" \"$dir\\PdfToText.exe\"",
+                    "Rename-Item \"$dir\\BCUnRAR,1.dll\" \"$dir\\BCUnRAR.dll\"",
+                    "Remove-Item \"$dir\\*,*\" -Force"
                 ]
             }
         }
     },
+    "extract_dir": "Beyond Compare 5",
     "bin": [
         "Bcomp.exe",
         "BCompare.exe"
@@ -46,6 +55,10 @@
         [
             "BCompare.exe",
             "Beyond Compare 5"
+        ],
+        [
+            "BCClipboard.exe",
+            "Clipboard Compare"
         ]
     ],
     "pre_install": [
@@ -67,6 +80,21 @@
         "Helpers",
         "Packers"
     ],
+    "post_install": [
+        "$dir_escaped = \"$dir\".Replace('\\', '\\\\')",
+        "\"install-context-$architecture\", \"uninstall-context\" | ForEach-Object {",
+        "  if (Test-Path \"$bucketsdir\\$bucket\\scripts\\beyondcompare\\$_.reg\") {",
+        "    $content = Get-Content \"$bucketsdir\\$bucket\\scripts\\beyondcompare\\$_.reg\"",
+        "    $content = $content.Replace('$install_dir', $dir_escaped)",
+        "    $content = $content.Replace('$version', $version)",
+        "    $outfile_no_arch = $_.Replace(\"-$architecture\", \"\")",
+        "    $content | Set-Content -Path \"$dir\\$outfile_no_arch.reg\"",
+        "  }",
+        "}",
+        "if (Test-Path \"$dir\\install-context.reg\") {",
+        "  regedit /s \"$dir\\install-context.reg\"",
+        "}"
+    ],
     "pre_uninstall": [
         "# Hardlinks won't work properly here to persist files, because this app creates a new file instead of writing to the existing one.",
         "# Please keep the file list the same in both pre_install and post_install scripts.",
@@ -74,6 +102,9 @@
         "    if (Test-Path \"$dir\\$_\") {",
         "        Copy-Item \"$dir\\$_\" \"$persist_dir\\$_\" -Force",
         "    }",
+        "}",
+        "if (Test-Path \"$dir\\uninstall-context.reg\") {",
+        "  regedit /s \"$dir\\uninstall-context.reg\"",
         "}"
     ],
     "checkver": {
