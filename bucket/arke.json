@@ -24,12 +24,13 @@
     "pre_uninstall": [
         "if ($cmd -eq 'uninstall') {",
         "    $arkeArgs = @('--uninstall', '--quiet')",
-        "    $retry = 'scoop uninstall arke'",
+        "    $scope = if ($global) { ' --global' } else { '' }",
+        "    $retry = \"scoop uninstall arke$scope\"",
         "    if ($purge) { $retry += ' --purge' } else { $arkeArgs += '--keep-settings' }",
         "    $arke = Start-Process \"$dir\\arke.exe\" -ArgumentList $arkeArgs -Wait -PassThru",
         "    if ($arke.ExitCode -ne 0) {",
         "        warn 'Arke could not undo everything it set up (for example the search service, if its administrator prompt was declined).'",
-        "        warn \"To finish, run 'scoop install arke', then '$retry' again.\"",
+        "        warn \"To finish, run 'scoop install arke$scope', then '$retry' again.\"",
         "    }",
         "}"
     ],
