@@ -29,7 +29,10 @@
         "    }",
         "}",
         "if (Test-Path -LiteralPath \"$dir\\WebView2\") {",
-        "    & \"$env:SystemRoot\\System32\\icacls.exe\" \"$dir\\WebView2\" /grant '*S-1-15-2-1:(OI)(CI)(RX)' '*S-1-15-2-2:(OI)(CI)(RX)' /C /Q 2>&1 | Out-Null",
+        "    $icaclsOut = & \"$env:SystemRoot\\System32\\icacls.exe\" \"$dir\\WebView2\" /grant '*S-1-15-2-1:(OI)(CI)(RX)' '*S-1-15-2-2:(OI)(CI)(RX)' /C /Q 2>&1",
+        "    if ($LASTEXITCODE -ne 0) {",
+        "        abort \"`nFailed to grant AppContainer permissions on '$dir\\WebView2' (icacls exit code $LASTEXITCODE): $($icaclsOut -join ' ')\"",
+        "    }",
         "}"
     ],
     "shortcuts": [
@@ -40,9 +43,11 @@
     ],
     "uninstaller": {
         "script": [
-            "$wv2Link = \"$dir\\NewExperience\\WebView2\"",
-            "if ((Test-Path -LiteralPath $wv2Link) -and ((Get-Item -LiteralPath $wv2Link).Attributes -band [IO.FileAttributes]::ReparsePoint)) {",
-            "    [IO.Directory]::Delete($wv2Link)",
+            "if ($cmd -eq 'uninstall') {",
+            "    $wv2Link = \"$dir\\NewExperience\\WebView2\"",
+            "    if ((Test-Path -LiteralPath $wv2Link) -and ((Get-Item -LiteralPath $wv2Link).Attributes -band [IO.FileAttributes]::ReparsePoint)) {",
+            "        [IO.Directory]::Delete($wv2Link)",
+            "    }",
             "}"
         ]
     },
