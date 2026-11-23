@@ -25,7 +25,11 @@
         "if ($cmd -eq 'uninstall') {",
         "    $arkeArgs = @('--uninstall', '--quiet')",
         "    if (-not $purge) { $arkeArgs += '--keep-settings' }",
-        "    Start-Process \"$dir\\arke.exe\" -ArgumentList $arkeArgs -Wait",
+        "    $arke = Start-Process \"$dir\\arke.exe\" -ArgumentList $arkeArgs -Wait -PassThru",
+        "    if ($arke.ExitCode -ne 0) {",
+        "        warn 'Arke could not undo everything it set up (for example the search service, if its administrator prompt was declined).'",
+        "        warn 'To finish, install Arke again and run: arke --uninstall'",
+        "    }",
         "}"
     ],
     "checkver": "github",
