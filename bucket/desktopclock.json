@@ -17,6 +17,8 @@
     "pre_install": [
         "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
         "if (Test-Path -Path \"$persist_dir\\DesktopClock.settings\" -PathType Leaf) {",
+        "    # Abort the install if the restore fails; otherwise the default settings would overwrite the saved ones later.",
+        "    $ErrorActionPreference = 'Stop'",
         "    Copy-Item -Path \"$persist_dir\\DesktopClock.settings\" -Destination $dir -Force",
         "}"
     ],
