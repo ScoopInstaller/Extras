@@ -1,14 +1,32 @@
 {
-    "version": "0.3.8859.20616",
+    "version": "1.2.1",
     "description": "QuickInstaller is a free software updater and installer for Windows for both installers and portable applications.",
     "homepage": "https://quickinstaller.net/",
     "license": {
         "identifier": "Freeware",
         "url": "https://quickinstaller.net/legal/terms-of-service"
     },
-    "url": "https://app.quickinstaller.net/downloads/QuickInstallerSetup.exe",
-    "hash": "260e487feb6870c01bd8440117aebae4a7ca4cbc14cbbe4aca84b91b26c160d4",
-    "innosetup": true,
+    "architecture": {
+        "64bit": {
+            "url": "https://app.quickinstaller.net/downloads/QuickInstaller-1.2.1-stable-portable-win-x64.zip",
+            "hash": "1b580a05ef17f68cedd1ae72ea880275c0aa202bbc45ec98fec8aa5ac426cf49"
+        },
+        "32bit": {
+            "url": "https://app.quickinstaller.net/downloads/QuickInstaller-1.2.1-stable-portable-win-x86.zip",
+            "hash": "4652deb9ff704baf29b86db42b070d95b47b9f932de86f1db08d344d182223aa"
+        }
+    },
+    "pre_install": [
+        "# QuickInstaller saves QuickInstaller.ini by replacing the file, which would break a persisted hard link,",
+        "# so copy it in and out instead.",
+        "if (Test-Path \"$persist_dir\\QuickInstaller.ini\") { Copy-Item \"$persist_dir\\QuickInstaller.ini\" \"$dir\\\" -ErrorAction Stop }"
+    ],
+    "pre_uninstall": [
+        "if (Test-Path \"$dir\\QuickInstaller.ini\") {",
+        "    ensure $persist_dir | Out-Null",
+        "    Copy-Item \"$dir\\QuickInstaller.ini\" \"$persist_dir\\\" -Force -ErrorAction Stop",
+        "}"
+    ],
     "bin": "QuickInstaller.exe",
     "shortcuts": [
         [
@@ -18,9 +36,16 @@
     ],
     "checkver": {
         "url": "https://quickinstaller.net/download",
-        "regex": "latest version ([\\d.]+)\\. Release Date"
+        "regex": "QuickInstaller-([\\d.]+)-stable-portable-win-x64\\.zip"
     },
     "autoupdate": {
-        "url": "https://app.quickinstaller.net/downloads/QuickInstallerSetup.exe"
+        "architecture": {
+            "64bit": {
+                "url": "https://app.quickinstaller.net/downloads/QuickInstaller-$version-stable-portable-win-x64.zip"
+            },
+            "32bit": {
+                "url": "https://app.quickinstaller.net/downloads/QuickInstaller-$version-stable-portable-win-x86.zip"
+            }
+        }
     }
 }
