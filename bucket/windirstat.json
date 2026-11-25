@@ -16,6 +16,19 @@
             "extract_dir": "arm64"
         }
     },
+    "pre_install": [
+        "# WinDirStat runs in portable mode only while WinDirStat.ini exists next to the executable,",
+        "# so copy the file instead of persisting it, which would always create it.",
+        "if (Test-Path \"$persist_dir\\WinDirStat.ini\") { Copy-Item \"$persist_dir\\WinDirStat.ini\" \"$dir\\\" }"
+    ],
+    "pre_uninstall": [
+        "if (Test-Path \"$dir\\WinDirStat.ini\") {",
+        "    ensure $persist_dir | Out-Null",
+        "    Copy-Item \"$dir\\WinDirStat.ini\" \"$persist_dir\\\" -Force",
+        "} else {",
+        "    Remove-Item \"$persist_dir\\WinDirStat.ini\" -Force -ErrorAction Ignore",
+        "}"
+    ],
     "shortcuts": [
         [
             "WinDirStat.exe",
