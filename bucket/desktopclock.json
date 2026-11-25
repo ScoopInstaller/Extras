@@ -16,9 +16,9 @@
     },
     "pre_install": [
         "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
+        "# Abort the install if the restore fails; otherwise the default settings would overwrite the saved ones later.",
+        "$ErrorActionPreference = 'Stop'",
         "if (Test-Path -Path \"$persist_dir\\DesktopClock.settings\" -PathType Leaf) {",
-        "    # Abort the install if the restore fails; otherwise the default settings would overwrite the saved ones later.",
-        "    $ErrorActionPreference = 'Stop'",
         "    Copy-Item -Path \"$persist_dir\\DesktopClock.settings\" -Destination $dir -Force",
         "}"
     ],
@@ -30,9 +30,9 @@
     ],
     "pre_uninstall": [
         "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
+        "# Abort the uninstall if the backup fails, instead of deleting the settings with the app directory.",
+        "$ErrorActionPreference = 'Stop'",
         "if (Test-Path -Path \"$dir\\DesktopClock.settings\" -PathType Leaf) {",
-        "    # Abort the uninstall if the backup fails, instead of deleting the settings with the app directory.",
-        "    $ErrorActionPreference = 'Stop'",
         "    ensure $persist_dir | Out-Null",
         "    Copy-Item -Path \"$dir\\DesktopClock.settings\" -Destination $persist_dir -Force",
         "}"
