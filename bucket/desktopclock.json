@@ -29,6 +29,8 @@
     "pre_uninstall": [
         "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
         "if (Test-Path -Path \"$dir\\DesktopClock.settings\" -PathType Leaf) {",
+        "    # Abort the uninstall if the backup fails, instead of deleting the settings with the app directory.",
+        "    $ErrorActionPreference = 'Stop'",
         "    ensure $persist_dir | Out-Null",
         "    Copy-Item -Path \"$dir\\DesktopClock.settings\" -Destination $persist_dir -Force",
         "}"
