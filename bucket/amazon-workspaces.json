@@ -21,6 +21,18 @@
         "   $key = $xml.SelectSingleNode(\"(//configuration/appSettings/add[@key='UpdateUrl'])[1]\")",
         "   $key.Value = ''",
         "   $xml.Save($configFile)",
+        "}",
+        "# Run bundled MSI setup scripts for the NewExperience client (WebView2 junction & .NET runtime hardlinks)",
+        "foreach ($script in 'create-junctions.ps1', 'create-hardlinks.ps1') {",
+        "    if (Test-Path -LiteralPath \"$dir\\$script\") {",
+        "        & \"$dir\\$script\" -InstallDir $dir *>&1 | Out-Null",
+        "    }",
+        "}",
+        "if (Test-Path -LiteralPath \"$dir\\WebView2\") {",
+        "    $icaclsOut = & \"$env:SystemRoot\\System32\\icacls.exe\" \"$dir\\WebView2\" /grant '*S-1-15-2-1:(OI)(CI)(RX)' '*S-1-15-2-2:(OI)(CI)(RX)' /C /Q 2>&1",
+        "    if ($LASTEXITCODE -ne 0) {",
+        "        abort \"`nFailed to grant AppContainer permissions on '$dir\\WebView2' (icacls exit code $LASTEXITCODE): $($icaclsOut -join ' ')\"",
+        "    }",
         "}"
     ],
     "shortcuts": [
@@ -29,6 +41,16 @@
             "Amazon Workspaces"
         ]
     ],
+    "uninstaller": {
+        "script": [
+            "if ($cmd -eq 'uninstall') {",
+            "    $wv2Link = \"$dir\\NewExperience\\WebView2\"",
+            "    if ((Test-Path -LiteralPath $wv2Link) -and ((Get-Item -LiteralPath $wv2Link).Attributes -band [IO.FileAttributes]::ReparsePoint)) {",
+            "        [IO.Directory]::Delete($wv2Link)",
+            "    }",
+            "}"
+        ]
+    },
     "checkver": {
         "url": "https://s3.amazonaws.com/workspaces-client-updates/prod/global/windows/WorkSpacesAppCastx64.xml",
         "regex": "title>Version ([\\d.]+)</"
