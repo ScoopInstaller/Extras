@@ -1,0 +1,96 @@
+{
+    "version": "10.0.12",
+    "description": "Microsoft .NET Runtime, installed from the ZIP archive without admin rights",
+    "homepage": "https://dotnet.microsoft.com/download/dotnet",
+    "license": "MIT",
+    "suggest": {
+        "vcredist": "extras/vcredist2022"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://builds.dotnet.microsoft.com/dotnet/Runtime/10.0.12/dotnet-runtime-10.0.12-win-x64.zip",
+            "hash": "sha512:844fa99e16fd6f44e0a7c29def7a82d7846902334d6a955248a9519a4dddb3f5acceb9c9223bef69f8c83b8ae2417537e5b76dddf79fb7117dc85b5039bc1297"
+        },
+        "32bit": {
+            "url": "https://builds.dotnet.microsoft.com/dotnet/Runtime/10.0.12/dotnet-runtime-10.0.12-win-x86.zip",
+            "hash": "sha512:5c19bde0b37a780ee188ecdc338d334caeeb591d6e1f62c3f2a9757bcce7a14a9805359508c29436a56e494ef19167c2843e10e6bb06c1724005d8da874feab2"
+        },
+        "arm64": {
+            "url": "https://builds.dotnet.microsoft.com/dotnet/Runtime/10.0.12/dotnet-runtime-10.0.12-win-arm64.zip",
+            "hash": "sha512:1f939a42c52919e789038fed6d410771eb41b5d0ff65c6dd117b200a5623a734cb6b2a25e00d4932d779b3bbe200f165977633d18fdb8dec03f9307527169c04"
+        }
+    },
+    "post_install": [
+        "# Link this runtime into the root shared by all .NET packages (side-by-side)",
+        "$root = Join-Path (basedir $global) 'shared\\dotnet'",
+        "foreach ($d in Get-ChildItem \"$original_dir\\host\\fxr\\*\", \"$original_dir\\shared\\*\\*\" -Directory) {",
+        "    $link = Join-Path $root $d.FullName.Substring($original_dir.Length + 1)",
+        "    New-Item -ItemType Directory -Force (Split-Path $link) | Out-Null",
+        "    $old = Get-Item $link -Force -ErrorAction SilentlyContinue",
+        "    if ($old -and (Test-Path $link)) { continue }",
+        "    if ($old) { [IO.Directory]::Delete($link) }",
+        "    New-Item -ItemType Junction -Path $link -Target $d.FullName | Out-Null",
+        "}",
+        "$exe = \"$root\\dotnet.exe\"",
+        "if (!(Test-Path $exe) -or (Get-Item $exe).VersionInfo.FileVersionRaw -lt (Get-Item \"$original_dir\\dotnet.exe\").VersionInfo.FileVersionRaw) {",
+        "    Copy-Item \"$original_dir\\dotnet.exe\" $exe -Force",
+        "}",
+        "New-Item -ItemType Junction -Path \"$original_dir\\dotnet-root\" -Target $root | Out-Null"
+    ],
+    "env_add_path": "dotnet-root",
+    "env_set": {
+        "DOTNET_ROOT": "$(basedir $global)\\shared\\dotnet"
+    },
+    "pre_uninstall": [
+        "# Unlink this package's runtimes, handing each over to another installed package that provides it",
+        "$root = Join-Path (basedir $global) 'shared\\dotnet'",
+        "if (Get-Item \"$dir\\dotnet-root\" -Force -ErrorAction SilentlyContinue) { [IO.Directory]::Delete(\"$dir\\dotnet-root\") }",
+        "if (Test-Path $root) {",
+        "    $pattern = \"$root\\host\\fxr\\*\", \"$root\\shared\\*\\*\"",
+        "    $owned = Get-ChildItem $pattern -Directory | Where-Object { \"$($_.Target)\".StartsWith(\"$dir\\\", 'OrdinalIgnoreCase') }",
+        "    $others = Get-ChildItem (Join-Path (appsdir $global) '*\\*') -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Parent.FullName -ne (Split-Path $dir) } | Sort-Object { $_.Name -ne 'current' }",
+        "    foreach ($l in $owned) {",
+        "        $rel = $l.FullName.Substring($root.Length + 1)",
+        "        [IO.Directory]::Delete($l.FullName)",
+        "        $src = $others | ForEach-Object { Join-Path $(if ($_.Target) { \"$($_.Target)\" } else { $_.FullName }) $rel } | Where-Object { Test-Path $_ } | Select-Object -First 1",
+        "        if ($src) { New-Item -ItemType Junction -Path $l.FullName -Target $src | Out-Null }",
+        "    }",
+        "    if (!(Get-ChildItem $pattern -Directory)) {",
+        "        if (!(Test-Path \"$root\\sdk\")) { Remove-Item \"$root\\dotnet.exe\" -Force -ErrorAction SilentlyContinue }",
+        "        foreach ($p in \"$root\\host\\fxr\", \"$root\\shared\\*\", \"$root\\host\", \"$root\\shared\", $root) {",
+        "            Get-Item $p -ErrorAction SilentlyContinue | Where-Object { !(Get-ChildItem $_.FullName -Force) } | Remove-Item",
+        "        }",
+        "    }",
+        "}"
+    ],
+    "post_uninstall": [
+        "# env_set removal wiped DOTNET_ROOT; restore it while another runtime remains",
+        "$root = Join-Path (basedir $global) 'shared\\dotnet'",
+        "if (Test-Path $root) {",
+        "    Set-EnvVar -Name 'DOTNET_ROOT' -Value $root -Global:$global",
+        "    $env:DOTNET_ROOT = $root",
+        "}"
+    ],
+    "checkver": {
+        "url": "https://builds.dotnet.microsoft.com/dotnet/release-metadata/releases-index.json",
+        "jsonpath": "$.releases-index[?(@.support-phase == 'active')].latest-runtime",
+        "regex": "([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://builds.dotnet.microsoft.com/dotnet/Runtime/$version/dotnet-runtime-$version-win-x64.zip"
+            },
+            "32bit": {
+                "url": "https://builds.dotnet.microsoft.com/dotnet/Runtime/$version/dotnet-runtime-$version-win-x86.zip"
+            },
+            "arm64": {
+                "url": "https://builds.dotnet.microsoft.com/dotnet/Runtime/$version/dotnet-runtime-$version-win-arm64.zip"
+            }
+        },
+        "hash": {
+            "url": "https://builds.dotnet.microsoft.com/dotnet/release-metadata/$majorVersion.$minorVersion/releases.json",
+            "regex": "(?s)$basename.*?$sha512"
+        }
+    }
+}
