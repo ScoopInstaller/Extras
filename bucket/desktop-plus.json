@@ -1,0 +1,47 @@
+{
+    "version": "3.6.4.2",
+    "description": "A GitHub Desktop fork with advanced functionality and improvements.",
+    "homepage": "https://desktop-plus.org",
+    "license": "MIT",
+    "notes": [
+        "Desktop Plus includes a CLI that lets you open repositories and clone them directly from the terminal.",
+        "You can try `desktop-plus-cli --help`.",
+        "See more on https://github.com/desktop-plus/desktop-plus/blob/main/docs/cli.md"
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/desktop-plus/desktop-plus/releases/download/v3.6.4.2/DesktopPlus-v3.6.4.2-windows-x64.exe#/DesktopPlus.exe",
+            "hash": "bc5fa422fdd99ead0581c6009105d19f8ecb7c0330ca76fbbd2272c80ec371a8"
+        },
+        "arm64": {
+            "url": "https://github.com/desktop-plus/desktop-plus/releases/download/v3.6.4.2/DesktopPlus-v3.6.4.2-windows-arm64.exe#/DesktopPlus.exe",
+            "hash": "f914123816c81bc458d2e48a7e9f266ec9f44447f48d24fe5f442c39684ca39b"
+        }
+    },
+    "post_install": [
+        "$batPath = \"$env:LOCALAPPDATA\\DesktopPlus\\bin\\desktop-plus-cli.bat\"",
+        "if (Test-Path $batPath) {",
+        "    shim $batPath $global 'desktop-plus-cli'",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "DesktopPlus.exe",
+            "Desktop Plus"
+        ]
+    ],
+    "post_uninstall": "rm_shim 'desktop-plus-cli' \"$(shimdir $global)\"",
+    "checkver": {
+        "github": "https://github.com/desktop-plus/desktop-plus"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/desktop-plus/desktop-plus/releases/download/v$version/DesktopPlus-v$version-windows-x64.exe#/DesktopPlus.exe"
+            },
+            "arm64": {
+                "url": "https://github.com/desktop-plus/desktop-plus/releases/download/v$version/DesktopPlus-v$version-windows-arm64.exe#/DesktopPlus.exe"
+            }
+        }
+    }
+}
