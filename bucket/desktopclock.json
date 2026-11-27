@@ -1,0 +1,51 @@
+{
+    "version": "5.7.0",
+    "description": "Customizable digital clock widget for your Windows desktop with themes, countdowns, and time zones.",
+    "homepage": "https://github.com/danielchalmers/DesktopClock",
+    "license": "MIT",
+    "notes": ".NET Framework 4.8.1 or higher is required.",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/danielchalmers/DesktopClock/releases/download/v5.7.0/DesktopClock-5.7.0-x64.zip",
+            "hash": "1b2b664916e673ce4ef1fe0768c11e28a08451624c0d0b5e621234893f893529"
+        },
+        "arm64": {
+            "url": "https://github.com/danielchalmers/DesktopClock/releases/download/v5.7.0/DesktopClock-5.7.0-arm64.zip",
+            "hash": "0aa8658f6bdcfeeb925bd61be4f9cd89dd484b26689f48df9c609483b1a60fbf"
+        }
+    },
+    "pre_install": [
+        "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
+        "# Abort the install if the restore fails; otherwise the default settings would overwrite the saved ones later.",
+        "$ErrorActionPreference = 'Stop'",
+        "if (Test-Path -Path \"$persist_dir\\DesktopClock.settings\" -PathType Leaf) {",
+        "    Copy-Item -Path \"$persist_dir\\DesktopClock.settings\" -Destination $dir -Force",
+        "}"
+    ],
+    "shortcuts": [
+        [
+            "DesktopClock.exe",
+            "DesktopClock"
+        ]
+    ],
+    "pre_uninstall": [
+        "# Hardlinks cannot work properly here, as this app would create a new file instead of writing directly.",
+        "# Abort the uninstall if the backup fails, instead of deleting the settings with the app directory.",
+        "$ErrorActionPreference = 'Stop'",
+        "if (Test-Path -Path \"$dir\\DesktopClock.settings\" -PathType Leaf) {",
+        "    ensure $persist_dir | Out-Null",
+        "    Copy-Item -Path \"$dir\\DesktopClock.settings\" -Destination $persist_dir -Force",
+        "}"
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/danielchalmers/DesktopClock/releases/download/v$version/DesktopClock-$version-x64.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/danielchalmers/DesktopClock/releases/download/v$version/DesktopClock-$version-arm64.zip"
+            }
+        }
+    }
+}
