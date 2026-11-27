@@ -1,0 +1,38 @@
+{
+    "version": "0.6.17",
+    "description": "The Image Comparison & Analysis Tool (ICAT) is an application which allows you to make image quality comparisons with speed and ease.",
+    "homepage": "https://www.nvidia.com/en-us/geforce/technologies/icat/",
+    "license": "Unknown",
+    "architecture": {
+        "64bit": {
+            "url": "https://icat-public-releases.s3.amazonaws.com/ICAT-0.6.17.exe#/dl.7z",
+            "hash": "02b25072944451a64f1f051b2adf0bbebb1ebb8919bc2017ebc59b631fb717c9",
+            "extract_dir": "$PLUGINSDIR"
+        }
+    },
+    "pre_install": [
+        "Get-ChildItem -Path \"$dir\" -Exclude 'app-64.7z' | Remove-Item -Recurse -Force",
+        "Expand-7zipArchive -Path \"$dir\\app-64.7z\" -DestinationPath \"$dir\"",
+        "Remove-Item \"$dir\\app-64.7z\" -Force"
+    ],
+    "bin": [
+        [
+            "ICAT.exe",
+            "ICAT"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "ICAT.exe",
+            "NVIDIA\\ICAT"
+        ]
+    ],
+    "checkver": "ICAT-([\\d.]+)\\.exe",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://icat-public-releases.s3.amazonaws.com/ICAT-$version.exe#/dl.7z"
+            }
+        }
+    }
+}
