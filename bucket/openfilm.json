@@ -1,0 +1,40 @@
+{
+    "##": "The NSIS installer runs a custom script and registers an uninstaller, so only its payload is unpacked.",
+    "version": "0.4.1",
+    "description": "Open source AI video agent that turns coding agents into video agents",
+    "homepage": "https://openfilm.dev",
+    "license": {
+        "identifier": "MIT",
+        "url": "https://github.com/openfilm/openfilm/blob/main/LICENSE"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/openfilm/openfilm/releases/download/v0.4.1/OpenFilm-Setup-x64.exe#/dl.7z",
+            "hash": "5edac2c23e723756722eb9d6896710d48cb4985105cdf55e211cca85da029bf5"
+        }
+    },
+    "installer": {
+        "script": [
+            "Get-Item -Path \"$dir\\`$PLUGINSDIR\\app-64.7z\" | Expand-7zipArchive -DestinationPath \"$dir\"",
+            "# electron-updater would install a second copy outside Scoop, so remove its feed",
+            "Remove-Item -Path \"$dir\\resources\\app-update.yml\" -Force -ErrorAction Ignore",
+            "Remove-Item -Path \"$dir\\`$PLUGINSDIR\", \"$dir\\`$R0\", \"$dir\\uninstallerIcon.ico\" -Recurse -Force -ErrorAction Ignore"
+        ]
+    },
+    "shortcuts": [
+        [
+            "OpenFilm.exe",
+            "OpenFilm"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/openfilm/openfilm"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/openfilm/openfilm/releases/download/v$version/OpenFilm-Setup-x64.exe#/dl.7z"
+            }
+        }
+    }
+}
