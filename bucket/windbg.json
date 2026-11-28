@@ -1,0 +1,39 @@
+{
+    "version": "1.2611.4001.0",
+    "description": "WinDbg is a debugger that can be used to analyze crash dumps, debug live user-mode and kernel-mode code, and examine CPU registers and memory.",
+    "homepage": "https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/",
+    "license": "Proprietary",
+    "url": "https://windbg.download.prss.microsoft.com/dbazure/prod/1-2611-4001-0/windbg.msixbundle#/dl.7z",
+    "hash": "158f6365f365a939429977f7bc4ca3d15f8c2a39bc3acd2b297fc36a31d69274",
+    "installer": {
+        "script": [
+            "$metadataPath = Join-Path $dir 'AppxMetadata'",
+            "$xml = [xml](Get-Content (Join-Path $metadataPath 'AppxBundleManifest.xml'))",
+            "Remove-Item $metadataPath -Force -Recurse",
+            "$x64Package = $xml.Bundle.Packages.Package | Where-Object Architecture -eq 'x64'",
+            "Write-Host -ForegroundColor Yellow ('Expanding {0} ({1}) v{2}' -f $x64Package.FileName, $x64Package.Architecture, $x64Package.Version)",
+            "Expand-7zipArchive -Path (Join-Path $dir $x64Package.FileName)  -DestinationPath (Join-Path $dir Application)",
+            "Get-ChildItem -File $dir | Remove-Item"
+        ]
+    },
+    "shortcuts": [
+        [
+            "Application/DbgX.Shell.exe",
+            "WinDbg"
+        ]
+    ],
+    "bin": [
+        [
+            "Application/DbgX.Shell.exe",
+            "WinDbg"
+        ]
+    ],
+    "checkver": {
+        "url": "https://learn.microsoft.com/en-us/windows-hardware/drivers/debuggercmds/windbg-release-notes",
+        "regex": "<h2\\sid=\"\\d+\">(?<major>\\d{1,5})\\.(?<minor>\\d{1,5})\\.(?<build>\\d{1,5})\\.(?<revision>\\d{1,5})<\\/h2>",
+        "replace": "${major}.${minor}.${build}.${revision}"
+    },
+    "autoupdate": {
+        "url": "https://windbg.download.prss.microsoft.com/dbazure/prod/$matchMajor-$matchMinor-$matchBuild-$matchRevision/windbg.msixbundle#/dl.7z"
+    }
+}
