@@ -1,0 +1,45 @@
+{
+    "version": "6.59.2.1",
+    "description": "Ultra-lightweight, high-performance image viewer for Windows with DirectComposition, SIMD acceleration, RAW/HDR, and color management",
+    "homepage": "https://github.com/justnullname/QuickView",
+    "license": "GPL-3.0-only",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/justnullname/QuickView/releases/download/v6.59.2.1/QuickView_v6.59.2.1_AMD64.zip",
+            "hash": "4daa1d5ea9fc890e9657a07aab3f60127d4c4ee99e5601e380ec065b9e301f79"
+        },
+        "arm64": {
+            "url": "https://github.com/justnullname/QuickView/releases/download/v6.59.2.1/QuickView_v6.59.2.1_ARM64.zip",
+            "hash": "12e8dd793c14afdc8c6c66f4e5c33587d37373f93b984221473b6b2b5933721f"
+        }
+    },
+    "pre_install": [
+        "if (-not (Test-Path \"$persist_dir\\QuickView.ini\")) { New-Item \"$dir\\QuickView.ini\" -ItemType File | Out-Null }",
+        "if (-not (Test-Path \"$persist_dir\\ai_actions.json\")) { New-Item \"$dir\\ai_actions.json\" -ItemType File | Out-Null }"
+    ],
+    "bin": "QuickView.exe",
+    "shortcuts": [
+        [
+            "QuickView.exe",
+            "QuickView"
+        ]
+    ],
+    "persist": [
+        "QuickView.ini",
+        "ai_actions.json"
+    ],
+    "checkver": {
+        "url": "https://api.github.com/repos/justnullname/QuickView/releases/latest",
+        "regex": "\"tag_name\":\\s*\"v([\\d.]+)\"[\\s\\S]*?QuickView_v(?<asset>[\\d.]+)_AMD64\\.zip"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/justnullname/QuickView/releases/download/v$version/QuickView_v$matchAsset_AMD64.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/justnullname/QuickView/releases/download/v$version/QuickView_v$matchAsset_ARM64.zip"
+            }
+        }
+    }
+}
