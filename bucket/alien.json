@@ -1,21 +1,38 @@
 {
-    "version": "4.12.3",
+    "version": "5.0.0-beta.6",
     "description": "ALIEN is a CUDA-powered artificial life simulation program.",
     "homepage": "https://github.com/chrxh/alien",
     "license": "BSD-3-Clause",
-    "notes": "An Nvidia graphics card with compute capability of at least 6.0 is required.",
+    "notes": [
+        "Requires an NVIDIA graphics card of the GeForce GTX 16 or RTX 20 series or newer (compute capability 7.5).",
+        "For AMD graphics cards of the Radeon RX 6000 series or newer (experimental), start alien-amd.exe in the folder shown by 'scoop prefix alien'."
+    ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/chrxh/alien/releases/download/v4.12.3/alien-installer.msi",
-            "hash": "75e26da00b6fe8ed33c38181d1fbca63b252653606ac4626bff4bf4285d32dd3"
+            "url": "https://github.com/chrxh/alien/releases/download/v5.0.0-beta.6/alien-setup.exe",
+            "hash": "5718c27cb7eb7a688a0642464d1533339da74604b84680c054377cac3003b3d6"
         }
     },
-    "bin": "bin/alien.exe",
-    "checkver": "github",
+    "innosetup": true,
+    "shortcuts": [
+        [
+            "alien.exe",
+            "ALIEN"
+        ]
+    ],
+    "persist": [
+        "resources\\autosave",
+        "simulations"
+    ],
+    "checkver": {
+        "github": "https://api.github.com/repos/chrxh/alien/releases/latest",
+        "jsonpath": "$.tag_name",
+        "regex": "^v([\\d.]+(?:-[\\w.]+)?)$"
+    },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/chrxh/alien/releases/download/v$version/alien-installer.msi"
+                "url": "https://github.com/chrxh/alien/releases/download/v$version/alien-setup.exe"
             }
         }
     }
