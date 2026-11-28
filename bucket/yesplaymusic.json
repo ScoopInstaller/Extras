@@ -1,21 +1,21 @@
 {
-    "version": "0.4.11",
-    "description": "Cloud music player based on NetEase Player, featuring more elegant UI",
-    "homepage": "https://music.qier222.com",
+    "version": "3.0.0",
+    "description": "A better-looking desktop music player for local files, media servers, and plugins.",
+    "homepage": "https://yesplaymusic.0xtangerine.com",
     "license": {
-        "identifier": "MIT",
-        "url": "https://github.com/qier222/YesPlayMusic/blob/master/LICENSE"
+        "identifier": "GPL-3.0-only",
+        "url": "https://github.com/qier222/YesPlayMusic/blob/main/LICENSE"
     },
+    "notes": [
+        "YesPlayMusic 3.0 is a rewrite and no longer includes NetEase Cloud Music.",
+        "Online music is provided by plugins: https://github.com/topics/yesplaymusic-plugin"
+    ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/qier222/YesPlayMusic/releases/download/v0.4.11/YesPlayMusic-Setup-0.4.11.exe#/dl.7z",
-            "hash": "sha512:31c670ab8bdd9f1a5edd856ceffe1e8cdfd415ed6a40612987849ba23f0a9fa286b8bed7b4e78cd36e0b310af42147cd3804f8325fb4c178400df2efc8f1ad61"
+            "url": "https://github.com/qier222/YesPlayMusic/releases/download/v3.0.0/YesPlayMusic-3.0.0-windows-x64-portable.zip",
+            "hash": "1eb5890f34c2b9287d05a6695dac332beda9b56b78c6573d22e0fbdfd3279bd5"
         }
     },
-    "pre_install": [
-        "Expand-7zipArchive -Path \"$dir\\`$PLUGINSDIR\\app-64.7z\" -DestinationPath \"$dir\"",
-        "Remove-Item -Path \"$dir\\`$*\" -Recurse -Force -ErrorAction SilentlyContinue"
-    ],
     "shortcuts": [
         [
             "YesPlayMusic.exe",
@@ -24,18 +24,14 @@
     ],
     "checkver": {
         "github": "https://api.github.com/repos/qier222/YesPlayMusic/releases/latest",
-        "jsonpath": "$.assets[?(@.name =~ /Setup.+exe/i)].browser_download_url",
-        "regex": "download/v([\\d.-]+)/(?<name>[^\"]+)(?=\")"
+        "jsonpath": "$.tag_name",
+        "regex": "v([\\d.]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://github.com/qier222/YesPlayMusic/releases/download/v$version/$matchName#/dl.7z"
+                "url": "https://github.com/qier222/YesPlayMusic/releases/download/v$version/YesPlayMusic-$version-windows-x64-portable.zip"
             }
-        },
-        "hash": {
-            "url": "$baseurl/latest.yml",
-            "regex": "sha512:\\s+$base64"
         }
     }
 }
