@@ -1,12 +1,12 @@
 {
-    "version": "26.2.9",
+    "version": "26.4.2",
     "description": "A fast, lightweight and extensible text editor for Windows. Useful for opening very large files.",
     "homepage": "https://www.emeditor.com/",
     "license": "Shareware",
     "architecture": {
         "64bit": {
-            "url": "https://emeditor.blob.core.windows.net/emed64_26.2.9_portable.zip",
-            "hash": "c07343e229818afa85cdb083020d570b37cabb271798c904658c6de5c7b8dae0"
+            "url": "https://download.emeditor.com/emed64_26.4.2_portable.zip",
+            "hash": "65fc522a1683d8b7287b336d8baee7cf87e8f9c7e72a3e1beda686235ba4b2e2"
         }
     },
     "pre_install": [
@@ -31,13 +31,19 @@
         "eePlugins.ini"
     ],
     "checkver": {
-        "url": "https://www.emeditor.com/",
-        "regex": "EmEditor v([\\d.]+) (R|r)eleased"
+        "script": [
+            "$request = [System.Net.HttpWebRequest]::Create('https://support.emeditor.com/en/downloads/latest/portable')",
+            "$request.Method = 'HEAD'",
+            "$response = $request.GetResponse()",
+            "Write-Output $response.ResponseUri.AbsoluteUri",
+            "$response.Close()"
+        ],
+        "regex": "emed64_([\\d.]+)_portable\\.zip"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "https://emeditor.blob.core.windows.net/emed64_$version_portable.zip"
+                "url": "https://download.emeditor.com/emed64_$version_portable.zip"
             }
         }
     }
